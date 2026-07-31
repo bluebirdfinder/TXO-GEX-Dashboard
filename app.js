@@ -1,6 +1,6 @@
 /**
- * TXO GEX Dashboard Application Logic v22.0
- * 尋鳥 Bluebird Finder | 100% Official TAIFEX Exact Trust Option SC/BP Engine
+ * TXO GEX Dashboard Application Logic v25.0
+ * 尋鳥 Bluebird Finder | 100% Zero-Config Automatic Public API Quote & GEX Engine
  */
 
 let gexData = null;
@@ -10,7 +10,6 @@ let currentSortKey = 'volume';
 let currentSortOrder = 'desc';
 
 const VALID_PASSCODE = 'GEX2026';
-const WORKER_URL = 'https://taifex-gex-proxy.bluebird-finder-tw.workers.dev';
 
 document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
@@ -133,7 +132,7 @@ async function attemptDecrypt(passcode) {
       localStorage.setItem('txo_gex_passcode', cleanPass);
       document.getElementById('passcode-modal').style.display = 'none';
       renderDashboard();
-      startRealTimeQuotes();
+      startAutoPublicQuotes();
       return;
     }
   } catch (err) {
@@ -143,7 +142,7 @@ async function attemptDecrypt(passcode) {
       localStorage.setItem('txo_gex_passcode', cleanPass);
       document.getElementById('passcode-modal').style.display = 'none';
       renderDashboard();
-      startRealTimeQuotes();
+      startAutoPublicQuotes();
       return;
     }
   }
@@ -186,13 +185,6 @@ function getFallbackData() {
     net_gex: Math.round((Math.max(0, 18 - Math.abs(k - (spot + 300))/50) - Math.max(0, 18 - Math.abs(k - (spot - 300))/50)) * 10) / 10
   }));
 
-  const friday_gex = strikes.map(k => ({
-    strike: k,
-    call_gex: Math.round(Math.max(0, 12 - Math.abs(k - (spot + 150))/50) * 10) / 10,
-    put_gex: Math.round(-Math.max(0, 12 - Math.abs(k - (spot - 150))/50) * 10) / 10,
-    net_gex: Math.round((Math.max(0, 12 - Math.abs(k - (spot + 150))/50) - Math.max(0, 12 - Math.abs(k - (spot - 150))/50)) * 10) / 10
-  }));
-
   return {
     date: new Date().toISOString().split('T')[0],
     spot_price: spot,
@@ -205,7 +197,7 @@ function getFallbackData() {
     pc_ratio: 108.5,
     total_gex: total_gex,
     weekly_gex: total_gex,
-    friday_gex: friday_gex,
+    friday_gex: total_gex,
     monthly_gex: total_gex,
     retail_mini_ratio: 4.5,
     retail_micro_ratio: 6.9,
@@ -226,56 +218,72 @@ function getFallbackData() {
     stock_futures: [
       { code: "2330", name: "台積電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 2205.0, change_pct: 0.23, volume: 38450, foreign_net: 4200, dealer_net: 1100, trend: "Bull" },
       { code: "2454", name: "聯發科期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 3235.0, change_pct: 2.70, volume: 12800, foreign_net: 850, dealer_net: -200, trend: "Bull" },
-      { code: "2317", name: "鴻海期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 229.5, change_pct: -3.16, volume: 24100, foreign_net: -3600, dealer_net: 1500, trend: "Bear" },
-      { code: "2382", name: "廣達期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 279.0, change_pct: -9.85, volume: 16800, foreign_net: -2400, dealer_net: -320, trend: "Bear" },
-      { code: "2303", name: "聯電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 110.0, change_pct: 7.32, volume: 45100, foreign_net: 6700, dealer_net: 1200, trend: "Bull" },
-      { code: "1519", name: "華城期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 663.0, change_pct: -0.75, volume: 7800, foreign_net: -950, dealer_net: -310, trend: "Bear" }
+      { code: "2317", name: "鴻海期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 229.5, change_pct: -3.16, volume: 24100, foreign_net: -3600, dealer_net: 1500, trend: "Bear" }
     ]
   };
 }
 
-async function startRealTimeQuotes() {
+/**
+ * 100% Zero-Config Automatic Public API Quote Poller
+ * Directly fetches TWSE & Yahoo Public Data feeds without any Webhook setup needed.
+ */
+async function startAutoPublicQuotes() {
   if (realTimeInterval) clearInterval(realTimeInterval);
 
   const badgeEl = document.getElementById('mode-badge');
   if (badgeEl) {
-    badgeEl.innerHTML = '⚡ 盤後連線中';
+    badgeEl.innerHTML = '🌐 官方公開數據自動同步中';
     badgeEl.style.borderColor = '#00d2ff';
     badgeEl.style.color = '#00d2ff';
   }
 
-  async function fetchRealTime() {
+  async function fetchPublicQuotes() {
     if (document.hidden) return;
     
     const nowTimeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
     const updateEl = document.getElementById('stat-last-update');
     if (updateEl) {
-      updateEl.innerHTML = `⚡ 報價連線時間: <strong>${nowTimeStr}</strong>`;
+      updateEl.innerHTML = `🌐 數據同步時間: <strong>${nowTimeStr}</strong>`;
     }
 
+    // 1. TWSE Official MIS Public Quote API
     try {
-      const res = await fetch(WORKER_URL + '?t=' + Date.now());
+      const res = await fetch('https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw&t=' + Date.now());
       if (res.ok) {
         const json = await res.json();
-        
-        if (json.txf_price) {
-          document.getElementById('stat-txf-price').innerText = Number(json.txf_price).toLocaleString();
-        }
-        if (json.spot_price) {
-          document.getElementById('stat-spot').innerText = Number(json.spot_price).toLocaleString();
-          if (gexData) gexData.spot_price = Number(json.spot_price);
-        }
-        if (json.two_price) {
-          document.getElementById('stat-two-price').innerText = Number(json.two_price).toLocaleString();
+        const info = json.msgArray && json.msgArray[0];
+        if (info && info.z && info.z !== '-') {
+          const liveSpot = parseFloat(info.z);
+          document.getElementById('stat-spot').innerText = liveSpot.toLocaleString();
+          if (gexData && Math.abs(liveSpot - gexData.spot_price) >= 1) {
+            gexData.spot_price = Math.round(liveSpot);
+            renderDashboard();
+          }
+          return;
         }
       }
-    } catch (e) {
-      // Fallback pulse
-    }
+    } catch (e) {}
+
+    // 2. Yahoo Finance Public TAIEX API Fallback
+    try {
+      const yRes = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=1m&range=1d&t=' + Date.now());
+      if (yRes.ok) {
+        const yJson = await yRes.json();
+        const meta = yJson.chart.result[0].meta;
+        const livePrice = meta.regularMarketPrice || meta.chartPreviousClose;
+        if (livePrice) {
+          document.getElementById('stat-spot').innerText = Number(livePrice).toLocaleString();
+          if (gexData && Math.abs(livePrice - gexData.spot_price) >= 1) {
+            gexData.spot_price = Math.round(livePrice);
+            renderDashboard();
+          }
+        }
+      }
+    } catch (err) {}
   }
 
-  fetchRealTime();
-  realTimeInterval = setInterval(fetchRealTime, 3000);
+  fetchPublicQuotes();
+  realTimeInterval = setInterval(fetchPublicQuotes, 5000);
 }
 
 function renderDashboard() {
@@ -467,24 +475,31 @@ function populateInstitutionalMatrix() {
     { date: "7/31", top5_net: 6420, top10_net: 9850, top5_spec_net: 5890, top10_spec_net: 8410, foreign_fut_net: -14200, trust_fut_net: 4200, dealer_fut_net: 1100, foreign_stock_net: 185.4, trust_stock_net: 62.8, dealer_stock_net: -24.5, foreign_opt_call_net: 0.60, foreign_opt_put_net: -0.28, trust_opt_call_net: -3.08, trust_opt_put_net: 0.003, dealer_opt_call_net: 1.83, dealer_opt_put_net: 1.42, pc_ratio: 108.5 }
   ];
 
-  const formatNumWithDot = (val, isAmount = false, suffix = '') => {
+  const formatCellSymmetric = (val, isAmount = false, suffix = '') => {
     if (val === undefined || val === null) return '-';
-    const dot = val >= 0 ? ' 🔴' : ' 🟢';
+    const dot = val >= 0 ? '🔴' : '🟢';
     const formattedVal = isAmount ? (val >= 0 ? `+${val}` : `${val}`) : (val >= 0 ? `+${val.toLocaleString()}` : `${val.toLocaleString()}`);
-    return `<span style="color: var(--text-main); font-weight: 500;">${formattedVal}${suffix}${dot}</span>`;
+    
+    return `
+      <div class="cell-num-wrapper">
+        <span class="cell-num-val">${formattedVal}</span>
+        <span class="cell-num-unit">${suffix}</span>
+        <span class="cell-num-dot">${dot}</span>
+      </div>
+    `;
   };
 
   if (futBody) {
     futBody.innerHTML = history.map(h => `
       <tr>
         <td><strong>${h.date}</strong></td>
-        <td>${formatNumWithDot(h.top5_net, false, ' 口')}</td>
-        <td>${formatNumWithDot(h.top10_net, false, ' 口')}</td>
-        <td>${formatNumWithDot(h.top5_spec_net, false, ' 口')}</td>
-        <td>${formatNumWithDot(h.top10_spec_net, false, ' 口')}</td>
-        <td>${formatNumWithDot(h.foreign_fut_net, false, ' 口')}</td>
-        <td>${formatNumWithDot(h.trust_fut_net, false, ' 口')}</td>
-        <td>${formatNumWithDot(h.dealer_fut_net, false, ' 口')}</td>
+        <td>${formatCellSymmetric(h.top5_net, false, '口')}</td>
+        <td>${formatCellSymmetric(h.top10_net, false, '口')}</td>
+        <td>${formatCellSymmetric(h.top5_spec_net, false, '口')}</td>
+        <td>${formatCellSymmetric(h.top10_spec_net, false, '口')}</td>
+        <td>${formatCellSymmetric(h.foreign_fut_net, false, '口')}</td>
+        <td>${formatCellSymmetric(h.trust_fut_net, false, '口')}</td>
+        <td>${formatCellSymmetric(h.dealer_fut_net, false, '口')}</td>
       </tr>
     `).join('');
   }
@@ -493,12 +508,12 @@ function populateInstitutionalMatrix() {
     cashBody.innerHTML = history.map(h => `
       <tr>
         <td><strong>${h.date}</strong></td>
-        <td>${formatNumWithDot(h.foreign_stock_net, true, ' 億')}</td>
-        <td>${formatNumWithDot(h.trust_stock_net, true, ' 億')}</td>
-        <td>${formatNumWithDot(h.dealer_stock_net, true, ' 億')}</td>
-        <td>Call: ${formatNumWithDot(h.foreign_opt_call_net, true, '億')} / Put: ${formatNumWithDot(h.foreign_opt_put_net, true, '億')}</td>
-        <td>Call: ${formatNumWithDot(h.trust_opt_call_net, true, '億')} / Put: ${formatNumWithDot(h.trust_opt_put_net, true, '億')}</td>
-        <td>Call: ${formatNumWithDot(h.dealer_opt_call_net, true, '億')} / Put: ${formatNumWithDot(h.dealer_opt_put_net, true, '億')}</td>
+        <td>${formatCellSymmetric(h.foreign_stock_net, true, '億')}</td>
+        <td>${formatCellSymmetric(h.trust_stock_net, true, '億')}</td>
+        <td>${formatCellSymmetric(h.dealer_stock_net, true, '億')}</td>
+        <td>Call: ${formatCellSymmetric(h.foreign_opt_call_net, true, '億')} / Put: ${formatCellSymmetric(h.foreign_opt_put_net, true, '億')}</td>
+        <td>Call: ${formatCellSymmetric(h.trust_opt_call_net, true, '億')} / Put: ${formatCellSymmetric(h.trust_opt_put_net, true, '億')}</td>
+        <td>Call: ${formatCellSymmetric(h.dealer_opt_call_net, true, '億')} / Put: ${formatCellSymmetric(h.dealer_opt_put_net, true, '億')}</td>
         <td><strong style="color: var(--text-main);">${h.pc_ratio}%</strong></td>
       </tr>
     `).join('');

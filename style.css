@@ -1,7 +1,8 @@
 /*
-  TXO GEX Dashboard Styling System (Taiwan Market Color Standard v6.0)
+  TXO GEX Dashboard Styling System (Taiwan Market Color Standard v7.0)
   Red = Rise / Bull / Call (台灣股市紅漲)
   Green = Drop / Bear / Put (台灣股市綠跌)
+  Pixel-Perfect Financial Table Alignment System
 */
 
 :root {
@@ -135,6 +136,7 @@ header {
   font-size: 1.8rem;
   font-weight: 700;
   margin: 6px 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-sub {
@@ -149,6 +151,7 @@ header {
   margin-bottom: 16px;
   border-bottom: 1px solid var(--panel-border);
   padding-bottom: 8px;
+  flex-wrap: wrap;
 }
 
 .tab-btn {
@@ -163,13 +166,18 @@ header {
   transition: all 0.2s ease;
 }
 
-.tab-btn.active {
-  background: var(--panel-bg);
-  color: var(--primary-accent);
-  border: 1px solid var(--panel-border);
+.tab-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-/* Panel Containers */
+.tab-btn.active {
+  color: var(--primary-accent);
+  background: rgba(0, 210, 255, 0.1);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+}
+
+/* Panel */
 .panel {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
@@ -190,11 +198,11 @@ header {
   font-weight: 700;
 }
 
-/* Scrollable Container with Explicit Height & Sticky Headers */
+/* Table Scroll Container */
 .table-scroll-container {
-  max-height: 500px !important;
-  overflow-y: scroll !important;
-  overflow-x: auto !important;
+  max-height: 480px;
+  overflow-y: auto;
+  overflow-x: auto;
   border: 1px solid var(--panel-border);
   border-radius: 8px;
   position: relative;
@@ -229,8 +237,8 @@ header {
 }
 
 .matrix-table th, .matrix-table td {
-  padding: 12px 14px;
-  text-align: left;
+  padding: 10px 12px;
+  text-align: center;
   border-bottom: 1px solid var(--panel-border);
 }
 
@@ -251,6 +259,37 @@ header {
   top: 0 !important;
   z-index: 10;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Pixel-Perfect Financial Numerical Cell Layout */
+.cell-num-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cell-num-val {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Outfit', monospace;
+  min-width: 62px;
+  font-weight: 500;
+}
+
+.cell-num-unit {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  width: 20px;
+  text-align: left;
+}
+
+.cell-num-dot {
+  width: 18px;
+  text-align: center;
+  font-size: 0.85rem;
 }
 
 /* Taiwan Red/Green Tag Helpers */
@@ -293,16 +332,6 @@ header {
   box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
 }
 
-.badge-neutral {
-  background: rgba(139, 148, 158, 0.12);
-  color: #8b949e;
-  border: 1px solid rgba(139, 148, 158, 0.2);
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  display: inline-block;
-}
-
 /* Sentiment Bar */
 .sentiment-bar-container {
   margin-top: 12px;
@@ -313,62 +342,90 @@ header {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   overflow: hidden;
+  margin-top: 6px;
   position: relative;
-  margin-top: 8px;
 }
 
 .sentiment-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--put-color), var(--gold-accent), var(--call-color));
-  transition: width 0.5s ease;
+  background: linear-gradient(90deg, #ff5252, #ffd700, #00e676);
+  transition: width 0.3s ease;
 }
 
-/* Passcode Modal Overlay */
+/* Footer */
+footer {
+  text-align: center;
+  padding: 20px 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--panel-border);
+  margin-top: 40px;
+}
+
+footer p {
+  margin-bottom: 4px;
+}
+
+/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(10, 14, 23, 0.95);
-  backdrop-filter: blur(8px);
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 14, 23, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  padding: 20px;
 }
 
 .modal-content {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
-  padding: 30px;
   border-radius: 16px;
-  width: 90%;
-  max-width: 420px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  padding: 28px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--text-main);
 }
 
 .passcode-input {
   width: 100%;
   padding: 12px;
-  border-radius: 8px;
-  border: 1px solid var(--panel-border);
   background: rgba(0, 0, 0, 0.3);
-  color: #fff;
-  font-size: 1rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  text-align: center;
   margin: 12px 0;
-  outline: none;
 }
 
 .passcode-input:focus {
+  outline: none;
   border-color: var(--primary-accent);
-}
-
-footer {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid var(--panel-border);
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--text-muted);
 }
