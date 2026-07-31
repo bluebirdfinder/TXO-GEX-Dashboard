@@ -1,5 +1,5 @@
 /*
-  TXO GEX Dashboard Styling System (Taiwan Market Color Standard v5.0)
+  TXO GEX Dashboard Styling System (Taiwan Market Color Standard v6.0)
   Red = Rise / Bull / Call (台灣股市紅漲)
   Green = Drop / Bear / Put (台灣股市綠跌)
 */
@@ -213,7 +213,7 @@ header {
 }
 
 .table-scroll-container::-webkit-scrollbar-thumb {
-  background: #475569 !important; /* 標準質感深灰捲軸 */
+  background: #475569 !important;
   border-radius: 4px !important;
 }
 
@@ -234,6 +234,14 @@ header {
   border-bottom: 1px solid var(--panel-border);
 }
 
+.matrix-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.matrix-table tbody tr:hover {
+  background: rgba(0, 210, 255, 0.04);
+}
+
 /* Sticky Header styling */
 .matrix-table th {
   color: var(--text-main);
@@ -247,17 +255,52 @@ header {
 
 /* Taiwan Red/Green Tag Helpers */
 .tag-bull {
-  color: var(--call-color); /* 🔴 台灣亮紅增長 */
+  color: var(--call-color);
   font-weight: bold;
 }
 
 .tag-bear {
-  color: var(--put-color);  /* 🟢 台灣翡翠綠跌 */
+  color: var(--put-color);
   font-weight: bold;
 }
 
 .tag-neutral {
   color: var(--text-muted);
+}
+
+/* FinTech Glowing Pill Badges */
+.badge-bull {
+  background: rgba(255, 82, 82, 0.12);
+  color: #ff5252;
+  border: 1px solid rgba(255, 82, 82, 0.3);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(255, 82, 82, 0.15);
+}
+
+.badge-bear {
+  background: rgba(0, 230, 118, 0.12);
+  color: #00e676;
+  border: 1px solid rgba(0, 230, 118, 0.3);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
+}
+
+.badge-neutral {
+  background: rgba(139, 148, 158, 0.12);
+  color: #8b949e;
+  border: 1px solid rgba(139, 148, 158, 0.2);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  display: inline-block;
 }
 
 /* Sentiment Bar */

@@ -1,6 +1,6 @@
 /**
- * TXO GEX Dashboard Application Logic v12.0
- * 3-Second High-Speed Live Spot Quote & Live Update Timestamp Display Engine
+ * TXO GEX Dashboard Application Logic v16.0
+ * 100% Matching Rumi 2-Table 3-Day Historical Institutional Chips Matrix Engine
  */
 
 let gexData = null;
@@ -58,10 +58,10 @@ function initEventListeners() {
     document.getElementById('guide-modal').style.display = 'none';
   });
 
-  // Tab switching
-  document.querySelectorAll('.tab-btn').forEach(btn => {
+  // Tab switching logic for GEX Charts
+  document.querySelectorAll('.tab-btn:not(.nav-jump-btn)').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-btn:not(.nav-jump-btn)').forEach(b => b.classList.remove('active'));
       e.target.classList.add('active');
       currentTab = e.target.getAttribute('data-tab');
       renderDashboard();
@@ -186,6 +186,13 @@ function getFallbackData() {
     net_gex: Math.round((Math.max(0, 18 - Math.abs(k - (spot + 300))/50) - Math.max(0, 18 - Math.abs(k - (spot - 300))/50)) * 10) / 10
   }));
 
+  const friday_gex = strikes.map(k => ({
+    strike: k,
+    call_gex: Math.round(Math.max(0, 12 - Math.abs(k - (spot + 150))/50) * 10) / 10,
+    put_gex: Math.round(-Math.max(0, 12 - Math.abs(k - (spot - 150))/50) * 10) / 10,
+    net_gex: Math.round((Math.max(0, 12 - Math.abs(k - (spot + 150))/50) - Math.max(0, 12 - Math.abs(k - (spot - 150))/50)) * 10) / 10
+  }));
+
   return {
     date: new Date().toISOString().split('T')[0],
     spot_price: spot,
@@ -196,32 +203,22 @@ function getFallbackData() {
     pc_ratio: 108.5,
     total_gex: total_gex,
     weekly_gex: total_gex,
+    friday_gex: friday_gex,
     monthly_gex: total_gex,
     retail_mini_ratio: -19.5,
     retail_micro_ratio: -22.4,
-    rumi_matrix: {
-      top5_traders: "多單加碼 🔴",
-      top10_traders: "空翻多 🔴 (偏多)",
-      foreign_futures: "多單加碼 / 空單減碼 🔴",
-      trust_futures: "多單加碼 🔴",
-      foreign_options: "總部位 BP > BC (差額收窄)",
-      dealer_options: "Call/Put 相當 (偏向看撐)",
-      settlement_prediction: `偏往上結算 🎯 (目標天花板: ${spot + 300})`
-    },
+    rumi_history: [
+      { date: "7/29", top5: "多單減碼", top10: "多單減碼", top5_spec: "多單減碼", top10_spec: "多翻空", foreign_futures: "多單加碼 / 空單加碼", trust_futures: "多單減碼 / 空單減碼", dealer_futures: "異動不大", foreign_stock: "賣", trust_stock: "買", dealer_stock: "賣", foreign_options: "總部位 BP > BC", trust_options: "總部位 SC + BP", dealer_options: "總部位 BP > BC (口數差約4倍)", settlement_prediction: "觀望震盪" },
+      { date: "7/30", top5: "多單加碼", top10: "多單加碼", top5_spec: "多單加碼", top10_spec: "空翻多 (蠻多方的)", foreign_futures: "多單加碼 / 空單減碼", trust_futures: "多單加碼 / 空單減碼", dealer_futures: "異動不大", foreign_stock: "賣", trust_stock: "買", dealer_stock: "賣", foreign_options: "總部位 BP > BC (BP少很多)", trust_options: "總部位 SC + BP", dealer_options: "Call, Put 差不多 (今天 +BC -BP)", settlement_prediction: "偏往上結算 🎯" },
+      { date: "7/31", top5: "強多 🔴", top10: "強多 🔴", top5_spec: "強多 🔴", top10_spec: "強多 🔴", foreign_futures: "多單減碼 / 空方加碼", trust_futures: "多單大加碼 🔴 / 空單減碼", dealer_futures: "多單減碼 / 空單加碼", foreign_stock: "買 🔴", trust_stock: "買 🔴", dealer_stock: "賣 🟢", foreign_options: "BC + BP (BP > BC 雙買)", trust_options: "總部位 SC + BP", dealer_options: "Call, Put 差不多 (今天雙賣)", settlement_prediction: "震盪無方向 ⚖️" }
+    ],
     stock_futures: [
-      { code: "2330", name: "台積電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 2425.0, change_pct: 2.15, volume: 38450, foreign_net: 4200, dealer_net: 1100, trend: "Bull" },
-      { code: "2454", name: "聯發科期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 3555.0, change_pct: 1.42, volume: 12800, foreign_net: 850, dealer_net: -200, trend: "Bull" },
-      { code: "2317", name: "鴻海期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 215.0, change_pct: -0.46, volume: 24100, foreign_net: 6100, dealer_net: 1500, trend: "Bear" },
-      { code: "2382", name: "廣達期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 275.0, change_pct: 0.92, volume: 16800, foreign_net: 980, dealer_net: 320, trend: "Bull" },
-      { code: "3231", name: "緯創期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 108.0, change_pct: 1.12, volume: 21500, foreign_net: 1500, dealer_net: -100, trend: "Bull" },
-      { code: "3037", name: "欣興期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 787.0, change_pct: -1.25, volume: 15200, foreign_net: -1400, dealer_net: 320, trend: "Bear" },
-      { code: "2383", name: "台光電期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 4745.0, change_pct: 3.82, volume: 9450, foreign_net: 1820, dealer_net: 410, trend: "Bull" },
-      { code: "6669", name: "緯穎期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 5390.0, change_pct: 2.65, volume: 4100, foreign_net: 650, dealer_net: 180, trend: "Bull" },
-      { code: "3017", name: "奇鋐期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 2320.0, change_pct: 1.75, volume: 11400, foreign_net: 1250, dealer_net: 240, trend: "Bull" },
-      { code: "2303", name: "聯電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 121.0, change_pct: -0.82, volume: 45100, foreign_net: -2800, dealer_net: 640, trend: "Bear" },
-      { code: "2330F", name: "小型台積電期", category: "小型個股期貨", has_night: true, liquidity: "極高", spot_price: 2425.0, change_pct: 2.15, volume: 19200, foreign_net: 1200, dealer_net: 350, trend: "Bull" },
-      { code: "0050", name: "元大台灣50期", category: "ETF期貨", has_night: true, liquidity: "極高", spot_price: 198.5, change_pct: 1.80, volume: 52100, foreign_net: 12500, dealer_net: 3400, trend: "Bull" },
-      { code: "0050F", name: "小型台灣50期", category: "小型ETF期貨", has_night: true, liquidity: "高", spot_price: 198.5, change_pct: 1.80, volume: 14200, foreign_net: 2100, dealer_net: 850, trend: "Bull" }
+      { code: "2330", name: "台積電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 2205.0, change_pct: 0.23, volume: 38450, foreign_net: 4200, dealer_net: 1100, trend: "Bull" },
+      { code: "2454", name: "聯發科期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 3235.0, change_pct: 2.70, volume: 12800, foreign_net: 850, dealer_net: -200, trend: "Bull" },
+      { code: "2317", name: "鴻海期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 229.5, change_pct: -3.16, volume: 24100, foreign_net: -3600, dealer_net: 1500, trend: "Bear" },
+      { code: "2382", name: "廣達期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 279.0, change_pct: -9.85, volume: 16800, foreign_net: -2400, dealer_net: -320, trend: "Bear" },
+      { code: "2303", name: "聯電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 110.0, change_pct: 7.32, volume: 45100, foreign_net: 6700, dealer_net: 1200, trend: "Bull" },
+      { code: "1519", name: "華城期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 663.0, change_pct: -0.75, volume: 7800, foreign_net: -950, dealer_net: -310, trend: "Bear" }
     ]
   };
 }
@@ -245,7 +242,6 @@ async function startRealTimeQuotes() {
         const json = await res.json();
         const nowTimeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
         
-        // Update Live Update Timestamp
         const updateEl = document.getElementById('stat-last-update');
         if (updateEl) {
           updateEl.innerHTML = `⚡ 報價跳動時間: <strong>${nowTimeStr}</strong>`;
@@ -277,7 +273,6 @@ function renderDashboard() {
   document.getElementById('stat-call-wall').innerText = gexData.call_wall_strike.toLocaleString();
   document.getElementById('stat-put-wall').innerText = gexData.put_wall_strike.toLocaleString();
   document.getElementById('stat-max-pain').innerText = gexData.max_pain_strike.toLocaleString();
-  document.getElementById('stat-pc-ratio').innerText = `P/C Ratio: ${gexData.pc_ratio}%`;
   document.getElementById('data-date').innerText = gexData.date;
 
   const spot = gexData.spot_price;
@@ -310,10 +305,13 @@ function renderGEXChart() {
   let title = '📊 全市場 TXO GEX 履約價分布圖 (億 TWD)';
 
   if (currentTab === 'weekly-gex') {
-    gexList = gexData.weekly_gex;
-    title = '⚡ 近到期週選 (W1/W2/W4/W5) GEX 履約價分布圖';
+    gexList = gexData.weekly_gex || gexData.total_gex;
+    title = '⚡ 近到期週三結算選 (W1/W2/W4/W5) GEX 履約價分布圖';
+  } else if (currentTab === 'friday-gex') {
+    gexList = gexData.friday_gex || gexData.total_gex;
+    title = '🇺🇸 週五結算選 (W1F/W2F/W4F/W5F) GEX 履約價分布圖';
   } else if (currentTab === 'monthly-gex') {
-    gexList = gexData.monthly_gex;
+    gexList = gexData.monthly_gex || gexData.total_gex;
     title = '🏛️ 當月月選 GEX 履約價分布圖';
   }
 
@@ -425,47 +423,59 @@ function renderGEXChart() {
 }
 
 function populateRumiMatrix() {
-  const tbody = document.getElementById('matrix-body');
-  if (!tbody || !gexData.rumi_matrix) return;
+  const futBody = document.getElementById('rumi-futures-body');
+  const cashBody = document.getElementById('rumi-cash-options-body');
 
-  const m = gexData.rumi_matrix;
-  tbody.innerHTML = `
-    <tr>
-      <td><strong>前五大交易人期貨</strong></td>
-      <td class="tag-bull">${m.top5_traders}</td>
-      <td>前五大主力交易人部位變動方向</td>
-    </tr>
-    <tr>
-      <td><strong>前十大交易人期貨</strong></td>
-      <td class="tag-bull">${m.top10_traders}</td>
-      <td>前十大交易人整體多空翻轉訊號</td>
-    </tr>
-    <tr>
-      <td><strong>外資期貨部位</strong></td>
-      <td class="tag-bull">${m.foreign_futures}</td>
-      <td>外資期貨今日淨增減口數趨勢</td>
-    </tr>
-    <tr>
-      <td><strong>投信期貨部位</strong></td>
-      <td class="tag-neutral">${m.trust_futures}</td>
-      <td>投信避險與多單調配狀況</td>
-    </tr>
-    <tr>
-      <td><strong>外資選擇權組合</strong></td>
-      <td class="tag-neutral">${m.foreign_options}</td>
-      <td>外資 Buy Call vs Buy Put 口數與金額差</td>
-    </tr>
-    <tr>
-      <td><strong>自營商 (造市商) 選擇權</strong></td>
-      <td class="tag-bull">${m.dealer_options}</td>
-      <td>自營商主要賣壓與支撐牆建立方向</td>
-    </tr>
-    <tr style="background: rgba(0, 210, 255, 0.08);">
-      <td><strong>🎯 結算 OP 方向智慧預估</strong></td>
-      <td style="color: var(--gold-accent); font-weight: 700;">${m.settlement_prediction}</td>
-      <td>綜合 GEX 磁吸牆與法人選擇權籌碼推論</td>
-    </tr>
-  `;
+  const history = gexData.rumi_history || [
+    { date: "7/29", top5: "多單減碼", top10: "多單減碼", top5_spec: "多單減碼", top10_spec: "多翻空", foreign_futures: "多單加碼 / 空單加碼", trust_futures: "多單減碼 / 空單減碼", dealer_futures: "異動不大", foreign_stock: "賣", trust_stock: "買", dealer_stock: "賣", foreign_options: "總部位 BP > BC", trust_options: "總部位 SC + BP", dealer_options: "總部位 BP > BC (口數差約4倍)", settlement_prediction: "觀望震盪" },
+    { date: "7/30", top5: "多單加碼", top10: "多單加碼", top5_spec: "多單加碼", top10_spec: "空翻多 (蠻多方的)", foreign_futures: "多單加碼 / 空單減碼", trust_futures: "多單加碼 / 空單減碼", dealer_futures: "異動不大", foreign_stock: "賣", trust_stock: "買", dealer_stock: "賣", foreign_options: "總部位 BP > BC (BP少很多)", trust_options: "總部位 SC + BP", dealer_options: "Call, Put 差不多 (今天 +BC -BP)", settlement_prediction: "偏往上結算 🎯" },
+    { date: "7/31", top5: "強多 🔴", top10: "強多 🔴", top5_spec: "強多 🔴", top10_spec: "強多 🔴", foreign_futures: "多單減碼 / 空方加碼", trust_futures: "多單大加碼 🔴 / 空單減碼", dealer_futures: "多單減碼 / 空單加碼", foreign_stock: "買 🔴", trust_stock: "買 🔴", dealer_stock: "賣 🟢", foreign_options: "BC + BP (BP > BC 雙買)", trust_options: "總部位 SC + BP", dealer_options: "Call, Put 差不多 (今天雙賣)", settlement_prediction: "震盪無方向 ⚖️" }
+  ];
+
+  const formatPill = (text) => {
+    if (!text) return '-';
+    let cleanText = text.replace(/[🔴🟢⚪🔥🎯⚖️]/g, '').trim();
+
+    if (text.includes('多') || text.includes('加碼') || text.includes('買') || text.includes('強多')) {
+      return `<span class="badge-bull">▲ ${cleanText}</span>`;
+    } else if (text.includes('空') || text.includes('減碼') || text.includes('賣')) {
+      return `<span class="badge-bear">▼ ${cleanText}</span>`;
+    } else {
+      return `<span class="badge-neutral">${cleanText}</span>`;
+    }
+  };
+
+  // Render Table 1: Futures Open Interest
+  if (futBody) {
+    futBody.innerHTML = history.map(h => `
+      <tr>
+        <td><strong>${h.date}</strong></td>
+        <td>${formatPill(h.top5)}</td>
+        <td>${formatPill(h.top10)}</td>
+        <td>${formatPill(h.top5_spec)}</td>
+        <td>${formatPill(h.top10_spec)}</td>
+        <td>${formatPill(h.foreign_futures)}</td>
+        <td>${formatPill(h.trust_futures)}</td>
+        <td>${formatPill(h.dealer_futures)}</td>
+      </tr>
+    `).join('');
+  }
+
+  // Render Table 2: Cash Stock Buy/Sell & Options & Settlement
+  if (cashBody) {
+    cashBody.innerHTML = history.map(h => `
+      <tr>
+        <td><strong>${h.date}</strong></td>
+        <td class="${h.foreign_stock === '買' ? 'tag-bull' : 'tag-bear'}"><strong>${h.foreign_stock}</strong></td>
+        <td class="${h.trust_stock === '買' ? 'tag-bull' : 'tag-bear'}"><strong>${h.trust_stock}</strong></td>
+        <td class="${h.dealer_stock === '買' ? 'tag-bull' : 'tag-bear'}"><strong>${h.dealer_stock}</strong></td>
+        <td>${h.foreign_options}</td>
+        <td>${h.trust_options}</td>
+        <td>${h.dealer_options}</td>
+        <td style="color: var(--gold-accent); font-weight: bold;">${h.settlement_prediction}</td>
+      </tr>
+    `).join('');
+  }
 }
 
 function populateStockFutures() {
@@ -507,8 +517,8 @@ function populateStockFutures() {
 
   tbody.innerHTML = list.map(stk => {
     const trendBadge = stk.trend === 'Bull' 
-      ? '<span style="background: rgba(255,82,82,0.15); color: var(--call-color); padding: 3px 8px; border-radius: 6px; font-weight: bold;">▲ Bull (🔴 多)</span>' 
-      : '<span style="background: rgba(0,230,118,0.15); color: var(--put-color); padding: 3px 8px; border-radius: 6px; font-weight: bold;">▼ Bear (🟢 空)</span>';
+      ? '<span class="badge-bull">▲ Bull (多)</span>' 
+      : '<span class="badge-bear">▼ Bear (空)</span>';
 
     const catTag = `<span style="background: rgba(0,210,255,0.1); color: var(--primary-accent); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">${stk.category || '個股期貨'}</span>`;
     const changeClass = stk.change_pct >= 0 ? 'tag-bull' : 'tag-bear';

@@ -167,11 +167,12 @@
 
     <!-- Tabs Container -->
     <div class="tabs-container">
-      <button class="tab-btn active" data-tab="total-gex">全市場 Total GEX</button>
-      <button class="tab-btn" data-tab="weekly-gex">週三結算選 (W1/W2/W4/W5)</button>
-      <button class="tab-btn" data-tab="monthly-gex">當月月選 GEX</button>
-      <button class="tab-btn" data-tab="futures-sentiment">期貨與散戶籌碼</button>
-      <button class="tab-btn" data-tab="stock-futures">熱門個股期貨 (4大類別篩選)</button>
+      <button class="tab-btn active" data-tab="total-gex">📊 全市場 Total GEX</button>
+      <button class="tab-btn" data-tab="weekly-gex">⚡ 週三結算選 (W1/W2/W4/W5)</button>
+      <button class="tab-btn" data-tab="friday-gex">🇺🇸 週五結算選 (W1F/W2F/W4F/W5F)</button>
+      <button class="tab-btn" data-tab="monthly-gex">🏛️ 當月月選 GEX</button>
+      <button class="tab-btn nav-jump-btn" data-tab="nav-sentiment" onclick="document.getElementById('sentiment-panel').scrollIntoView({behavior: 'smooth'})">📉 散戶多空籌碼 ↓</button>
+      <button class="tab-btn nav-jump-btn" data-tab="nav-stocks" onclick="document.getElementById('stock-futures-panel').scrollIntoView({behavior: 'smooth'})">💎 熱門個股期貨 (270檔) ↓</button>
     </div>
 
     <!-- Main Chart Panel -->
@@ -189,7 +190,7 @@
       <div id="gex-chart" style="width: 100%; height: 480px;"></div>
     </div>
 
-    <!-- Sentiment Meter Panel (Appears on Futures Sentiment Tab) -->
+    <!-- Sentiment Meter Panel -->
     <div id="sentiment-panel" class="panel">
       <div class="panel-title">📉 微台與小台 散戶多空比 (Retail Sentiment Index)</div>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
@@ -207,24 +208,60 @@
       </div>
     </div>
 
-    <!-- Daily Rumi-style Matrix Panel -->
+    <!-- Daily Rumi-style 2-Table Matrix Panel (100% Matching Rumi's Screenshot Layout) -->
     <div class="panel">
-      <div class="panel-title">📋 每日三大法人與大戶動向速查矩陣</div>
-      <table class="matrix-table">
-        <thead>
-          <tr>
-            <th>籌碼項目</th>
-            <th>解讀動作與趨勢</th>
-            <th>說明與市場意涵</th>
-          </tr>
-        </thead>
-        <tbody id="matrix-body">
-          <!-- Populated by JavaScript -->
-        </tbody>
-      </table>
+      <div class="panel-title" style="margin-bottom: 14px;">📋 每日三大法人與大戶動向速查矩陣（露米連續 3 日歷程版）</div>
+
+      <!-- Table 1: 期貨未平倉 (Futures Open Interest 3-Day History) -->
+      <h4 style="color: var(--primary-accent); font-size: 0.95rem; margin-bottom: 8px;">1. 期貨未平倉動向追蹤 (Futures Open Interest)</h4>
+      <div style="overflow-x: auto; margin-bottom: 24px;">
+        <table class="matrix-table" style="text-align: center;">
+          <thead>
+            <tr style="background: #18202d;">
+              <th style="width: 70px; text-align: center;">日期</th>
+              <th style="text-align: center;">前五大</th>
+              <th style="text-align: center;">前十大</th>
+              <th style="text-align: center;">前五特法</th>
+              <th style="text-align: center;">前十特法</th>
+              <th style="text-align: center;">外資</th>
+              <th style="text-align: center;">投信</th>
+              <th style="text-align: center;">自營商</th>
+            </tr>
+          </thead>
+          <tbody id="rumi-futures-body">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table 2: 現貨、選擇權與結算 OP 方向 (Cash, Options & Settlement Prediction) -->
+      <h4 style="color: var(--gold-accent); font-size: 0.95rem; margin-bottom: 8px;">2. 現貨買賣超、選擇權籌碼與結算 OP 方向 (Cash & Options)</h4>
+      <div style="overflow-x: auto;">
+        <table class="matrix-table" style="text-align: center;">
+          <thead>
+            <tr style="background: #18202d;">
+              <th style="width: 70px; text-align: center;" rowspan="2">日期</th>
+              <th style="text-align: center;" colspan="3">現貨 (三大法人買賣超)</th>
+              <th style="text-align: center;" colspan="3">選擇權 (籌碼佈局)</th>
+              <th style="text-align: center;" rowspan="2">結算 OP 方向</th>
+            </tr>
+            <tr style="background: #1e293b;">
+              <th style="text-align: center;">外資</th>
+              <th style="text-align: center;">投信</th>
+              <th style="text-align: center;">自營</th>
+              <th style="text-align: center;">外資</th>
+              <th style="text-align: center;">投信</th>
+              <th style="text-align: center;">自營</th>
+            </tr>
+          </thead>
+          <tbody id="rumi-cash-options-body">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Stock Futures Interactive Screener Panel with Scrollable Table Container & Sticky Header -->
+    <!-- Stock Futures Interactive Screener Panel -->
     <div id="stock-futures-panel" class="panel">
       <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 12px;">
         <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -232,7 +269,6 @@
           <input type="text" id="search-stock-input" placeholder="🔍 搜尋代號/名稱..." style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.8rem;">
         </div>
 
-        <!-- 4 Category Filter Pills -->
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; width: 100%;">
           <span style="font-size: 0.85rem; color: var(--text-muted);">契約類別切換：</span>
           <select id="category-filter-select" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--primary-accent); background: #121721; color: var(--primary-accent); font-weight: 600; font-size: 0.85rem;">

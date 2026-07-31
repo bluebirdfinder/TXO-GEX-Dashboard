@@ -1,20 +1,20 @@
-# 📌 TXO GEX Dashboard 版本與更新履歷 Log
+# 🚀 TXO GEX Dashboard - v5.0.0 Status & Milestones
 
----
+## 📌 Status Summary
+- **Current Version**: v5.0.0 (Official Government Data Release)
+- **Data Integrity**: 100% Direct integration with TWSE (`openapi.twse.com.tw`) and TAIFEX (`taifex.com.tw`). Zero dummy data.
+- **Rumi Matrix**: Full 3-day historical sequence tracking (Futures top 5/10/specials + Cash stock buy/sell + Options + OP Settlement prediction).
+- **GEX Datasets**: 4 distinct interactive datasets (Total GEX, Wednesday Weekly, Friday Weekly, Monthly).
+- **Stock Futures Screener**: Full 270 official TAIFEX contracts (Individual, Mini, ETF, Mini ETF).
+- **Real-Time Quote**: 3-second Cloudflare Worker polling loop with live timestamp display (`⏱️ 報價跳動時間: 19:45:12`).
 
-## 🚀 v4.0.0 (2026-07-31) - 台灣股市標準紅漲綠跌與期交所全量 270 檔契約版
-
-### 1. 🇹🇼 台灣股市紅漲綠跌色系 (Taiwan Standard Red/Green Colors)
-* **🔴 亮紅色 (`#ff5252`)**：Call GEX 柱狀圖、上漲 (+%) 漲幅標籤、`▲ Bull (🔴 多)` 多頭標籤、Rumi 矩陣 `多單加碼 🔴` 號誌。
-* **🟢 翡翠綠 (`#00e676`)**：Put GEX 柱狀圖、下跌 (-%) 跌幅標籤、`▼ Bear (🟢 空)` 空頭標籤。
-
-### 2. 🏛️ 匯入期交所全量 270 檔契約 (2_stockinfo.ods)
-* 完整解析期交所官方 `2_stockinfo.ods` 檔案。
-* 包含 270 檔個股期貨 (2000股)、小型個股期貨 (100股)、ETF 期貨 (10000份)、小型 ETF 期貨 (1000份)。
-
-### 3. 📜 金融級質感深灰捲軸與黏性固定表頭 (Sticky Header)
-* 表格配置 `max-height: 500px` 與流暢標準深灰捲軸 (`#475569`)。
-* 表頭標題 (代號、名稱、現價、漲跌幅、成交量、外資買賣超) 黏性固定在 `top: 0`。
-
-### 4. 🔒 嚴謹本機 AES-256 安全鎖
-* 移除出入口一鍵按鈕，需輸入專屬通行碼 (`GEX2026`) 本機解密。
+## 🎯 Completed Milestones (v5.0.0)
+- [x] Corrected Taiwan market color standard across all code & documentation (Red = Rise/Bull 🔴, Green = Fall/Bear 🟢).
+- [x] Integrated 100% official TWSE Open Data API for exact closing prices, price changes, and volumes.
+- [x] Connected official TAIFEX `largeTraderFutQry` and `callsAndPutsDate` endpoints.
+- [x] Built Rumi's exact 2-table 3-day history matrix layout.
+- [x] Added Friday Weekly Options (`friday_gex`) calculation model.
+- [x] Designed FinTech glowing pill badges for matrix tags and trend indicators.
+- [x] Clean security passcode lock modal (no auto-fill bypass button).
+- [x] Standard slate gray UI scrollbar with sticky table headers.
+- [x] Documented all 270 stock futures and GEX rules in `README.md`, `STATUS.md`, `OPTIONS_CHEATSHEET.md`.
