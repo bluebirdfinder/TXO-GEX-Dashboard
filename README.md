@@ -1,70 +1,106 @@
-# 台指期與台指選擇權 (TXO) GEX 動態儀表板與籌碼分析系統
+# 📈 TAIFEX TXO GEX 動態儀表板 (TAIFEX TXO Options GEX & Stock Futures Dashboard v3.0.0)
 
-## 📌 專案簡介 (Project Overview)
-本專案為一個極簡、現代且高視覺質感的 web 儀表板，專為台灣期貨與選擇權交易者打造。
-系統結合**台指選擇權 (TXO) 的 Gamma Exposure (GEX) 波動度分析**與**大台、小台、微台及個股期貨的散戶/大戶籌碼指標**，協助使用者快速判讀市場多空轉折、造市商避險牆與結算磁吸效應。
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.10%2B-green.svg)
+![Plotly](https://img.shields.io/badge/Plotly.js-2.27.0-orange.svg)
+![Security](https://img.shields.io/badge/AES--256-Encrypted-red.svg)
+![Status](https://img.shields.io/badge/Version-v3.0.0--Live-brightgreen.svg)
+
+> **台指選擇權 Gamma Exposure (GEX) 波動度量化分析與 4 大類股票期貨籌碼儀表板**  
+> 提供台指選擇權 Delta/Gamma 對沖曝光分析、零 Gamma 轉折點計算、三大法人籌碼矩陣與個股/ETF 期貨多欄位動態篩選器。
 
 ---
 
-## 🛠️ 技術架構與運作邏輯 (Architecture)
+## 🌟 核心特色 (Key Features)
 
+### 1. 🎯 100% 動態現價對齊 GEX 柱狀圖 (GEX Profile)
+- **動態點位對齊**：自動抓取最新加權現價 (~43,120)，並圍繞現價動態鋪設 $\pm 750$ 點履約價網格。
+- **三向柱與淨曝光**：
+  - 翡翠綠柱：Call GEX（造市商多頭避險）
+  - 珊瑚紅柱：Put GEX（造市商空頭避險）
+  - 青藍色軌跡線：Net GEX 淨曝光分布
+- **關鍵指標標註**：現價 Spot 虛線、Zero Gamma (波動度轉折點) 點線、Call Wall (天花板) 與 Put Wall (地板)。
+- **三種到期切換**：全市場 Total GEX、近到期週選 (W1/W2/W4/W5) GEX、當月月選 GEX。
+
+### 2. 💎 股票與 ETF 期貨 4 大類別互動篩選器 (Interactive Stock Futures Screener)
+- **4 大契約類別獨立劃分**：
+  1. 🏢 **個股期貨** (標準 2,000 股/口，如台積電期 `2330`)
+  2. 🔹 **小型個股期貨** (小型 100 股/口，如小型台積電期 `2330F`)
+  3. 📈 **ETF 期貨** (標準 10,000 份/口，如 `0050`、`0056`、`00878`)
+  4. 🔸 **小型 ETF 期貨** (小型 1,000 份/口，如小型台灣50期 `0050F`)
+- **多欄位升降冪排序 (Column Sorting)**：點擊表頭標題（代號、現價、漲跌幅 %、成交量、外資買賣超、自營商買賣超）即刻動態排序。
+- **夜盤與關鍵字過濾**：`☑ 僅顯示有夜盤標的` 與 `🔍 關鍵字搜尋框`。
+- **多空趨勢標籤**：標示亮眼 `▲ Bull` (多頭) 與 `▼ Bear` (空頭) 狀態。
+
+### 3. 📉 散戶多空比與三大法人動向矩陣
+- **微台與小台散戶多空比**：追蹤散戶未平倉部位，作為反向市場指標。
+- **三大法人動向矩陣**：彙整前五大/前十大交易人期貨、外資期貨淨口數、自營商選擇權組合與結算 OP 方向預估。
+
+### 4. 🔒 隱私與安全性 (Passcode Protection)
+- **AES-256 端到端本機解密**：數據全自動經過 AES-256 加密存儲。
+- **原生顯示/隱藏密碼與一鍵解密**：支援 `👁️ 顯示密碼` 原生開關與 `⚡ 一鍵自動填入預設通行碼 (GEX2026)` 按鈕。
+
+---
+
+## 🏛️ 權威數據源 (Official Data Sources)
+
+1. **台灣期交所 (TAIFEX) 官方 CSV 接口**：
+   - 選擇權行情與未平倉：`https://www.taifex.com.tw/cht/3/optDailyMarketReport`
+   - 官方 Delta / Gamma 矩陣：`https://www.taifex.com.tw/cht/3/optDailyDelta`
+   - 三大法人期貨籌碼：`https://www.taifex.com.tw/cht/3/futDailyMarketReport`
+   - 股票期貨官方總目錄：`https://www.taifex.com.tw/cht/2/stockLists`
+2. **Yahoo Finance API & Cloudflare Worker 代理**：
+   - 夜盤加權與微台/小台即時報價代理 (`https://taifex-gex-proxy...`)。
+
+---
+
+## 🧮 GEX 核心數學模型 (Mathematical Formula)
+
+### Black-Scholes Gamma ($\Gamma$)：
+$$\Gamma = \frac{N'(d_1)}{S \cdot \sigma \cdot \sqrt{T}}$$
+其中 $d_1 = \frac{\ln(S/K) + (r + \frac{1}{2}\sigma^2)T}{\sigma \sqrt{T}}$
+
+### TXO GEX 金額公式 (億 TWD)：
+$$\text{Call GEX}_{K} = \frac{\text{Call OI}_{K} \times \Gamma_{K} \times S^2 \times 50}{10^8}$$
+$$\text{Put GEX}_{K} = -\frac{\text{Put OI}_{K} \times \Gamma_{K} \times S^2 \times 50}{10^8}$$
+$$\text{Net GEX}_{K} = \text{Call GEX}_{K} + \text{Put GEX}_{K}$$
+
+* TXO 契約乘數：**50 TWD / 點**。
+
+---
+
+## 📁 專案架構 (Project Structure)
+
+```text
+txo-gex-dashboard/
+├── index.html                 # 儀表板前端 HTML (4大類別表單, Plotly 容器, Passcode 模組)
+├── style.css                  # 深色主題極簡 CSS 樣式
+├── app.js                     # 前端應用邏輯 (密碼解密, Plotly 繪圖, 4類別排序過濾, 代理連線)
+├── OPTIONS_CHEATSHEET.md      # 選擇權口訣與 GEX 判讀速查表
+├── STATUS.md                  # 專案版本與更新履歷 Log
+├── README.md                  # 專案完整說明文件 (本檔案)
+├── scripts/
+│   └── fetch_and_calc.py      # TAIFEX 數據抓取, GEX 計算與 AES-256 加密腳本
+├── data/
+│   ├── gex_data.json          # 原始產出 JSON 數據檔
+│   └── encrypted_gex.json     # AES-256 加密封包
+├── cloudflare/
+│   └── worker.js              # Cloudflare Worker 免封鎖即時報價代理
+└── .github/
+    └── workflows/
+        └── daily_update.yml   # 每日 15:15 TWD 自動運算與部署工作流
 ```
-┌────────────────────────────────────────────────────────┐
-│ 1. 雲端每日排程 (GitHub Actions)                       │
-│    每日 15:15 觸發 Python 腳本                          │
-│    ├──> 抓取期交所 TAIFEX 當日數據                       │
-│    ├──> 計算 Black-Scholes Gamma & GEX 矩陣             │
-│    ├──> 產出「露米風」三大法人籌碼速查矩陣              │
-│    └──> 用專屬 Passcode 對數據進行 AES-256 加密         │
-└──────────────────────────┬─────────────────────────────┘
-                           │ 部署產出物 (encrypted_gex.json)
-                           ▼
-┌────────────────────────────────────────────────────────┐
-│ 2. GitHub Pages 靜態託管 + Cloudflare Worker            │
-│    ├──> Cloudflare Worker 作為即時價格中繼代理 (5s Cache)│
-│    └──> 免費託管，0 伺服器營運成本                     │
-└──────────────────────────┬─────────────────────────────┘
-                           │ 瀏覽存取 (公司 IT 視為標準 HTTPS)
-                           ▼
-┌────────────────────────────────────────────────────────┐
-│ 3. 使用者瀏覽器端 (PC / 手機)                          │
-│    ├──> 驗證通行碼解密 (AES-256 本機解密)               │
-│    ├──> JS 動態引擎連線夜盤即時價格，即時重算 GEX 曲線 │
-│    └──> 呈現 GEX 柱狀圖、散戶多空比與選單               │
-└──────────────────────────┴─────────────────────────────┘
-```
 
 ---
 
-## 💡 核心功能模組 (Key Features)
+## 🚀 部署與使用說明 (Deployment)
 
-### 1. TXO 選擇權 GEX 波動度模組 (GEX Engine)
-- **多合約切換**：`全市場 Total GEX` | `週三結算選 (W1/W2/W4/W5)` | `週五結算選` | `月結算選`
-- **時段動態切換**：`☀️ 盤後靜態` vs `🌙 夜盤即時動態追蹤`
-- **核心指標標示**：
-  - **Zero Gamma Level (轉折點)**：區分多頭平穩區與空頭避險引爆區。
-  - **Call Wall (天花板)** & **Put Wall (支撐地板)**。
-  - **Max Pain (最大痛點)** & **P/C Ratio**。
-
-### 2. 期貨籌碼與散戶多空比模組 (Futures Sentiment Engine)
-- **標的支援**：大台 (TX)、小台 (MTX)、微台 (TMA)、熱門個股期貨 (如台積電 2330、鴻海 2317 等)。
-- **散戶多空比**：微台/小台散戶淨部位佔全市場比率，極致做多（被套）與極致做空（被軋）視覺警示。
-- **大台當量 (TX Equivalent)**：自動將 `大台 + (小台/4) + (微台/20)` 統一統計。
-- **智能標籤系統**：
-  - 🌙 `【有夜盤】`：標示具備夜盤交易之個股期貨。
-  - ⚠️ `【流動性較低提醒】`：針對成交量較稀疏之個股期貨或選擇權提供警告。
-
-### 3. 自動化三大法人與大戶動向速查矩陣 (Rumi-style Matrix)
-- 自動將每日期貨與選擇權部位變化「翻譯」為直覺文字：
-  - `多單加碼 / 空單減碼` | `空翻多` | `多翻空` | `BC+BP (雙買)` | `結算偏向建議`
-
-### 4. 內建新手教學與法律合規 (Education & Compliance)
-- 內建 **「選擇權與 GEX 懶人包教學 Modal」**，協助快速記憶 Buy/Sell Call/Put 意涵。
-- 附帶符合台灣《證券投資顧問法》與《期貨交易法》規範之**免責聲明**。
+1. 將本 Repository 複製或部署至 **GitHub Pages**。
+2. 開啟網站點擊 `⚡ 填入預設通行碼並進入 (GEX2026)` 或輸入 `GEX2026` 驗證解密。
+3. 可點擊 `❓ 判讀教學` 檢視選擇權 BC/SC/BP/SP 口訣與 GEX 三招判讀。
 
 ---
 
-## 🔒 安全性與權限保護 (Security & Access Control)
-- **AES-256 端到端加密**：GitHub Pages 上的數據檔為加密狀態，未授權第三方無法直接讀取。
-- **Passcode 驗證**：使用者需輸入通行碼，由前端 JavaScript 於瀏覽器記憶體中解密。
-- **IT 無感**：公司電腦僅進行標準 HTTPS 網頁瀏覽，無內網爬蟲或異常連線紀錄。
+## ⚖️ 免責與法律聲明 (Disclaimer)
+
+本專案（包含圖表、GEX 計算數據與分析說明）僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。

@@ -26,7 +26,7 @@
     <div class="modal-content">
       <h2>🔒 請輸入解密通行碼 (Passcode)</h2>
       <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">
-        本系統數據經端到端 AES-256 加密保護，請輸入專屬通行碼進行本機解密與存取。
+        本系統數據經端到端加密保護，請輸入專屬通行碼進行本機解密與存取。
       </p>
       
       <div style="position: relative; margin: 16px 0 8px 0;">
@@ -35,14 +35,18 @@
 
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 0.85rem; color: var(--text-muted);">
         <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
-          <input type="checkbox" id="toggle-show-pass"> 👁️ 顯示輸入的密碼
+          <input type="checkbox" id="toggle-show-pass" onchange="document.getElementById('passcode-field').type = this.checked ? 'text' : 'password'"> 👁️ 顯示輸入的密碼
         </label>
         <span style="font-size: 0.75rem; color: #888;">(大小寫不限)</span>
       </div>
 
-      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
         <button id="unlock-btn" class="btn btn-primary" style="width: 100%;">驗證並解密儀表板</button>
+        <button id="auto-fill-btn" class="btn" style="width: 100%; border-color: var(--gold-accent); color: var(--gold-accent);" onclick="document.getElementById('passcode-field').value='GEX2026'; attemptDecrypt('GEX2026');">
+          ⚡ 填入預設通行碼並進入 (GEX2026)
+        </button>
       </div>
+
       <p id="passcode-error" style="color: var(--put-color); font-size: 0.8rem; margin-top: 10px; display: none;">
         ❌ 通行碼錯誤或數據讀取失敗，請確認密碼後重試。
       </p>
@@ -124,32 +128,32 @@
     <div class="summary-grid">
       <div class="stat-card">
         <div class="stat-label">加權/台指現價 (Spot)</div>
-        <div id="stat-spot" class="stat-value">23,450</div>
+        <div id="stat-spot" class="stat-value">43,120</div>
         <div class="stat-sub">基底價位</div>
       </div>
 
       <div class="stat-card zero-gamma">
         <div class="stat-label">Zero Gamma (轉折點)</div>
-        <div id="stat-zero-gamma" class="stat-value" style="color: var(--gold-accent);">23,320</div>
+        <div id="stat-zero-gamma" class="stat-value" style="color: var(--gold-accent);">42,970</div>
         <div id="stat-gamma-status" class="stat-sub">🟢 正 Gamma 多頭平穩區</div>
       </div>
 
       <div class="stat-card call-wall">
         <div class="stat-label">Call Wall (最大天花板)</div>
-        <div id="stat-call-wall" class="stat-value" style="color: var(--call-color);">23,600</div>
+        <div id="stat-call-wall" class="stat-value" style="color: var(--call-color);">43,400</div>
         <div class="stat-sub">造市商最大 Call 賣壓牆</div>
       </div>
 
       <div class="stat-card put-wall">
         <div class="stat-label">Put Wall (最大地板)</div>
-        <div id="stat-put-wall" class="stat-value" style="color: var(--put-color);">23,200</div>
+        <div id="stat-put-wall" class="stat-value" style="color: var(--put-color);">42,800</div>
         <div class="stat-sub">造市商最大 Put 支撐牆</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Max Pain (最大痛點)</div>
-        <div id="stat-max-pain" class="stat-value">23,400</div>
-        <div id="stat-pc-ratio" class="stat-sub">P/C Ratio: 105.0%</div>
+        <div id="stat-max-pain" class="stat-value">43,100</div>
+        <div id="stat-pc-ratio" class="stat-sub">P/C Ratio: 108.5%</div>
       </div>
     </div>
 
@@ -159,7 +163,7 @@
       <button class="tab-btn" data-tab="weekly-gex">週三結算選 (W1/W2/W4/W5)</button>
       <button class="tab-btn" data-tab="monthly-gex">當月月選 GEX</button>
       <button class="tab-btn" data-tab="futures-sentiment">期貨與散戶籌碼</button>
-      <button class="tab-btn" data-tab="stock-futures">熱門個股期貨</button>
+      <button class="tab-btn" data-tab="stock-futures">熱門個股期貨 (4大類別篩選)</button>
     </div>
 
     <!-- Main Chart Panel -->
@@ -212,21 +216,48 @@
       </table>
     </div>
 
-    <!-- Stock Futures Panel -->
+    <!-- Stock Futures Interactive Screener Panel with 4 Category Filters -->
     <div id="stock-futures-panel" class="panel">
-      <div class="panel-title">💎 熱門個股期貨籌碼與夜盤清單</div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
-        包含標記 🌙 <code>【有夜盤】</code> 之權值股期貨。若標示 ⚠️ <code>【流動性較低提醒】</code> 則代表選擇權數據僅供參考。
+      <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <div class="panel-title">💎 個股與 ETF 期貨 4 大類別篩選明細 (MOFI 風格表單)</div>
+          <input type="text" id="search-stock-input" placeholder="🔍 搜尋代號/名稱..." style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.8rem;">
+        </div>
+
+        <!-- 4 Category Filter Pills -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; width: 100%;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);">契約類別切換：</span>
+          <select id="category-filter-select" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--primary-accent); background: #121721; color: var(--primary-accent); font-weight: 600; font-size: 0.85rem;">
+            <option value="all">🌐 全部契約 (All Categories)</option>
+            <option value="個股期貨">🏢 個股期貨 (標準 2000股)</option>
+            <option value="小型個股期貨">🔹 小型個股期貨 (100股)</option>
+            <option value="ETF期貨">📈 ETF 期貨 (10000份)</option>
+            <option value="小型ETF期貨">🔸 小型 ETF 期貨 (1000份)</option>
+          </select>
+
+          <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--gold-accent); margin-left: auto; font-size: 0.85rem;">
+            <input type="checkbox" id="filter-night-only"> 🌙 僅顯示有夜盤標的
+          </label>
+        </div>
+      </div>
+
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin: 8px 0 12px 0;">
+        💡 提示：可點擊表頭標題（如「漲跌幅」、「成交量」、「外資買賣超」）進行升冪/降冪排序。
       </p>
-      <table class="matrix-table">
+
+      <table class="matrix-table sortable-table">
         <thead>
           <tr>
-            <th>個股代號/名稱</th>
-            <th>夜盤狀態</th>
-            <th>流動性</th>
-            <th>參考股價</th>
-            <th>外資期貨淨部位</th>
-            <th>自營商期貨淨部位</th>
+            <th data-sort="code" style="cursor: pointer;">代號 ⇕</th>
+            <th data-sort="name" style="cursor: pointer;">標的名稱 ⇕</th>
+            <th data-sort="category" style="cursor: pointer;">契約類別 ⇕</th>
+            <th data-sort="trend" style="cursor: pointer;">趨勢 ⇕</th>
+            <th data-sort="spot_price" style="cursor: pointer;">現價 (TWD) ⇕</th>
+            <th data-sort="change_pct" style="cursor: pointer;">漲跌幅 % ⇕</th>
+            <th data-sort="volume" style="cursor: pointer;">成交量 (口) ⇕</th>
+            <th data-sort="foreign_net" style="cursor: pointer;">外資期貨淨部位 ⇕</th>
+            <th data-sort="dealer_net" style="cursor: pointer;">自營商期貨淨部位 ⇕</th>
+            <th>夜盤標籤</th>
           </tr>
         </thead>
         <tbody id="stock-futures-body">

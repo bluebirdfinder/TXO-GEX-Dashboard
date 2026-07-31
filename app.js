@@ -1,11 +1,14 @@
 /**
- * TXO GEX Dashboard Application Logic
- * Integrates Cloudflare Worker Proxy for Night Session Real-Time Quotes
+ * TXO GEX Dashboard Application Logic v4.0
+ * 4 Contract Categories Filter (個股期貨, 小型個股期貨, ETF期貨, 小型ETF期貨)
  */
 
 let gexData = null;
 let currentTab = 'total-gex';
 let realTimeInterval = null;
+let currentSortKey = 'volume';
+let currentSortOrder = 'desc';
+
 const VALID_PASSCODE = 'GEX2026';
 const WORKER_URL = 'https://taifex-gex-proxy.bluebird-finder-tw.workers.dev';
 
@@ -25,7 +28,6 @@ function initEventListeners() {
     attemptDecrypt(inputPass);
   });
 
-  // Toggle Show/Hide Password
   const togglePass = document.getElementById('toggle-show-pass');
   if (togglePass) {
     togglePass.addEventListener('change', (e) => {
@@ -36,14 +38,10 @@ function initEventListeners() {
     });
   }
 
-  // Allow pressing Enter key in password field
   const passField = document.getElementById('passcode-field');
   if (passField) {
     passField.addEventListener('keyup', (e) => {
-      if (e.key === 'Enter') {
-        const inputPass = passField.value;
-        attemptDecrypt(inputPass);
-      }
+      if (e.key === 'Enter') attemptDecrypt(passField.value);
     });
   }
 
@@ -60,12 +58,42 @@ function initEventListeners() {
     document.getElementById('guide-modal').style.display = 'none';
   });
 
+  // Tab switching
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       e.target.classList.add('active');
       currentTab = e.target.getAttribute('data-tab');
       renderDashboard();
+    });
+  });
+
+  // Stock Futures Filters & Category Dropdown
+  const filterCategory = document.getElementById('category-filter-select');
+  if (filterCategory) {
+    filterCategory.addEventListener('change', () => populateStockFutures());
+  }
+
+  const filterNight = document.getElementById('filter-night-only');
+  if (filterNight) {
+    filterNight.addEventListener('change', () => populateStockFutures());
+  }
+
+  const searchInput = document.getElementById('search-stock-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => populateStockFutures());
+  }
+
+  document.querySelectorAll('.sortable-table th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const sortKey = th.getAttribute('data-sort');
+      if (currentSortKey === sortKey) {
+        currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSortKey = sortKey;
+        currentSortOrder = 'desc';
+      }
+      populateStockFutures();
     });
   });
 }
@@ -76,14 +104,12 @@ async function attemptDecrypt(passcode) {
 
   const cleanPass = (passcode || '').trim().toUpperCase();
 
-  // Case-insensitive passcode validation
   if (cleanPass !== VALID_PASSCODE) {
     errEl.style.display = 'block';
     return;
   }
 
   try {
-    // 1. Try to fetch encrypted payload first
     let res = await fetch('data/encrypted_gex.json');
     if (res.ok) {
       const encObj = await res.json();
@@ -92,7 +118,6 @@ async function attemptDecrypt(passcode) {
       }
     }
     
-    // 2. Fallback to raw JSON
     if (!gexData) {
       let rawRes = await fetch('data/gex_data.json');
       if (rawRes.ok) {
@@ -100,7 +125,6 @@ async function attemptDecrypt(passcode) {
       }
     }
 
-    // 3. Robust In-Memory Fallback if static files fail over CDN
     if (!gexData) {
       gexData = getFallbackData();
     }
@@ -114,7 +138,6 @@ async function attemptDecrypt(passcode) {
     }
   } catch (err) {
     console.error('Decryption error:', err);
-    // Use fallback data so user is never blocked
     gexData = getFallbackData();
     if (gexData) {
       localStorage.setItem('txo_gex_passcode', cleanPass);
@@ -152,25 +175,25 @@ function decryptPayload(b64Str, passcode) {
 }
 
 function getFallbackData() {
-  const spot = 23450;
+  const spot = 43120;
   const strikes = [];
-  for (let i = -10; i <= 10; i++) strikes.push(spot + i * 50);
+  for (let i = -15; i <= 15; i++) strikes.push(spot + i * 50);
 
   const total_gex = strikes.map(k => ({
     strike: k,
-    call_gex: Math.round(Math.max(0, 15 - Math.abs(k - 23600)/50) * 10) / 10,
-    put_gex: Math.round(-Math.max(0, 15 - Math.abs(k - 23200)/50) * 10) / 10,
-    net_gex: Math.round((Math.max(0, 15 - Math.abs(k - 23600)/50) - Math.max(0, 15 - Math.abs(k - 23200)/50)) * 10) / 10
+    call_gex: Math.round(Math.max(0, 18 - Math.abs(k - (spot + 300))/50) * 10) / 10,
+    put_gex: Math.round(-Math.max(0, 18 - Math.abs(k - (spot - 300))/50) * 10) / 10,
+    net_gex: Math.round((Math.max(0, 18 - Math.abs(k - (spot + 300))/50) - Math.max(0, 18 - Math.abs(k - (spot - 300))/50)) * 10) / 10
   }));
 
   return {
     date: new Date().toISOString().split('T')[0],
     spot_price: spot,
-    zero_gamma_level: 23320,
-    call_wall_strike: 23600,
-    put_wall_strike: 23200,
-    max_pain_strike: 23400,
-    pc_ratio: 105.0,
+    zero_gamma_level: spot - 150,
+    call_wall_strike: spot + 300,
+    put_wall_strike: spot - 300,
+    max_pain_strike: spot,
+    pc_ratio: 108.5,
     total_gex: total_gex,
     weekly_gex: total_gex,
     monthly_gex: total_gex,
@@ -183,12 +206,15 @@ function getFallbackData() {
       trust_futures: "多單加碼 🟢",
       foreign_options: "總部位 BP > BC (差額收窄)",
       dealer_options: "Call/Put 相當 (偏向看撐)",
-      settlement_prediction: "偏往上結算 🎯 (目標天花板: 23,600)"
+      settlement_prediction: `偏往上結算 🎯 (目標天花板: ${spot + 300})`
     },
     stock_futures: [
-      { code: "2330", name: "台積電期貨", has_night: true, liquidity: "高", spot_price: 965.0, foreign_net: 4200, dealer_net: 1100 },
-      { code: "2454", name: "聯發科期貨", has_night: true, liquidity: "高", spot_price: 1240.0, foreign_net: 850, dealer_net: -200 },
-      { code: "2317", name: "鴻海期貨", has_night: true, liquidity: "高", spot_price: 205.0, foreign_net: 6100, dealer_net: 1500 }
+      { code: "2330", name: "台積電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 2425.0, change_pct: 2.15, volume: 38450, foreign_net: 4200, dealer_net: 1100, trend: "Bull" },
+      { code: "2454", name: "聯發科期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 3555.0, change_pct: 1.42, volume: 12800, foreign_net: 850, dealer_net: -200, trend: "Bull" },
+      { code: "2317", name: "鴻海期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 215.0, change_pct: -0.46, volume: 24100, foreign_net: 6100, dealer_net: 1500, trend: "Bear" },
+      { code: "2330F", name: "小型台積電期", category: "小型個股期貨", has_night: true, liquidity: "極高", spot_price: 2425.0, change_pct: 2.15, volume: 19200, foreign_net: 1200, dealer_net: 350, trend: "Bull" },
+      { code: "0050", name: "元大台灣50期", category: "ETF期貨", has_night: true, liquidity: "極高", spot_price: 198.5, change_pct: 1.80, volume: 52100, foreign_net: 12500, dealer_net: 3400, trend: "Bull" },
+      { code: "0050F", name: "小型台灣50期", category: "小型ETF期貨", has_night: true, liquidity: "高", spot_price: 198.5, change_pct: 1.80, volume: 14200, foreign_net: 2100, dealer_net: 850, trend: "Bull" }
     ]
   };
 }
@@ -205,7 +231,7 @@ async function startRealTimeQuotes() {
         const json = await res.json();
         if (json.spot_price && gexData) {
           const newSpot = Math.round(json.spot_price);
-          if (newSpot !== gexData.spot_price) {
+          if (Math.abs(newSpot - gexData.spot_price) > 5) {
             gexData.spot_price = newSpot;
             document.getElementById('stat-spot').innerText = newSpot.toLocaleString();
             document.getElementById('mode-badge').innerHTML = '🌙 夜盤即時連線中';
@@ -227,7 +253,6 @@ async function startRealTimeQuotes() {
 function renderDashboard() {
   if (!gexData) return;
 
-  // 1. Update Summary Cards
   document.getElementById('stat-spot').innerText = gexData.spot_price.toLocaleString();
   document.getElementById('stat-zero-gamma').innerText = gexData.zero_gamma_level.toLocaleString();
   document.getElementById('stat-call-wall').innerText = gexData.call_wall_strike.toLocaleString();
@@ -247,10 +272,8 @@ function renderDashboard() {
     statusEl.style.color = 'var(--put-color)';
   }
 
-  // 2. Render GEX Chart based on current tab
   renderGEXChart();
 
-  // 3. Render Sentiment Bar
   const microRatio = gexData.retail_micro_ratio || -22.4;
   const miniRatio = gexData.retail_mini_ratio || -19.5;
   document.getElementById('micro-ratio-val').innerText = `${microRatio}% (${microRatio < 0 ? '散戶做空 ➔ 偏嘎空' : '散戶做多 ➔ 偏拉回'})`;
@@ -259,10 +282,7 @@ function renderDashboard() {
   const fillWidth = Math.max(5, Math.min(95, 50 + (microRatio * 1.5)));
   document.getElementById('sentiment-fill').style.width = `${fillWidth}%`;
 
-  // 4. Populate Rumi Matrix Table
   populateRumiMatrix();
-
-  // 5. Populate Stock Futures Table
   populateStockFutures();
 }
 
@@ -382,7 +402,6 @@ function renderGEXChart() {
   };
 
   const config = { responsive: true, displayModeBar: false };
-
   Plotly.newPlot('gex-chart', [traceCall, tracePut, traceNet], layout, config);
 }
 
@@ -434,14 +453,66 @@ function populateStockFutures() {
   const tbody = document.getElementById('stock-futures-body');
   if (!tbody || !gexData.stock_futures) return;
 
-  tbody.innerHTML = gexData.stock_futures.map(stk => `
-    <tr>
-      <td><strong>${stk.code} ${stk.name}</strong></td>
-      <td>${stk.has_night ? '🌙 <span style="color: var(--call-color)">有夜盤</span>' : '⚪ 無夜盤'}</td>
-      <td>${stk.liquidity}</td>
-      <td>${stk.spot_price}</td>
-      <td class="${stk.foreign_net >= 0 ? 'tag-bull' : 'tag-bear'}">${stk.foreign_net >= 0 ? '+' : ''}${stk.foreign_net} 口</td>
-      <td class="${stk.dealer_net >= 0 ? 'tag-bull' : 'tag-bear'}">${stk.dealer_net >= 0 ? '+' : ''}${stk.dealer_net} 口</td>
-    </tr>
-  `).join('');
+  let list = [...gexData.stock_futures];
+
+  // 1. Contract Category Dropdown Filter
+  const filterCat = document.getElementById('category-filter-select');
+  if (filterCat && filterCat.value !== 'all') {
+    list = list.filter(stk => stk.category === filterCat.value);
+  }
+
+  // 2. Checkbox Night Session Filter
+  const filterNight = document.getElementById('filter-night-only');
+  if (filterNight && filterNight.checked) {
+    list = list.filter(stk => stk.has_night);
+  }
+
+  // 3. Search Keyword Filter
+  const searchInput = document.getElementById('search-stock-input');
+  if (searchInput && searchInput.value.trim()) {
+    const kw = searchInput.value.trim().toLowerCase();
+    list = list.filter(stk => stk.code.toLowerCase().includes(kw) || stk.name.toLowerCase().includes(kw));
+  }
+
+  // 4. Dynamic Column Sorting
+  list.sort((a, b) => {
+    let valA = a[currentSortKey];
+    let valB = b[currentSortKey];
+
+    if (valA === undefined) valA = '';
+    if (valB === undefined) valB = '';
+
+    if (typeof valA === 'string') valA = valA.toLowerCase();
+    if (typeof valB === 'string') valB = valB.toLowerCase();
+
+    if (valA < valB) return currentSortOrder === 'asc' ? -1 : 1;
+    if (valA > valB) return currentSortOrder === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  // 5. Render Rows with MOFI-style Trend Badges and Category Tags
+  tbody.innerHTML = list.map(stk => {
+    const trendBadge = stk.trend === 'Bull' 
+      ? '<span style="background: rgba(0,230,118,0.15); color: var(--call-color); padding: 3px 8px; border-radius: 6px; font-weight: bold;">▲ Bull</span>' 
+      : '<span style="background: rgba(255,82,82,0.15); color: var(--put-color); padding: 3px 8px; border-radius: 6px; font-weight: bold;">▼ Bear</span>';
+
+    const catTag = `<span style="background: rgba(0,210,255,0.1); color: var(--primary-accent); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">${stk.category || '個股期貨'}</span>`;
+    const changeClass = stk.change_pct >= 0 ? 'tag-bull' : 'tag-bear';
+    const changeSign = stk.change_pct >= 0 ? '+' : '';
+
+    return `
+      <tr>
+        <td><strong>${stk.code}</strong></td>
+        <td>${stk.name}</td>
+        <td>${catTag}</td>
+        <td>${trendBadge}</td>
+        <td><strong>${stk.spot_price.toLocaleString()}</strong></td>
+        <td class="${changeClass}"><strong>${changeSign}${stk.change_pct}%</strong></td>
+        <td>${stk.volume ? stk.volume.toLocaleString() : '-'} 口</td>
+        <td class="${stk.foreign_net >= 0 ? 'tag-bull' : 'tag-bear'}">${stk.foreign_net >= 0 ? '+' : ''}${stk.foreign_net} 口</td>
+        <td class="${stk.dealer_net >= 0 ? 'tag-bull' : 'tag-bear'}">${stk.dealer_net >= 0 ? '+' : ''}${stk.dealer_net} 口</td>
+        <td>${stk.has_night ? '🌙 <span style="color: var(--call-color)">有夜盤</span>' : '⚪ 無夜盤'}</td>
+      </tr>
+    `;
+  }).join('');
 }
