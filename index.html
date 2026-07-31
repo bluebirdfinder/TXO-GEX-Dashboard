@@ -21,7 +21,7 @@
 </head>
 <body>
 
-  <!-- Passcode Protection Lock Modal -->
+  <!-- Passcode Protection Lock Modal (Clean Security Lock) -->
   <div id="passcode-modal" class="modal-overlay">
     <div class="modal-content">
       <h2>🔒 請輸入解密通行碼 (Passcode)</h2>
@@ -42,9 +42,6 @@
 
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <button id="unlock-btn" class="btn btn-primary" style="width: 100%;">驗證並解密儀表板</button>
-        <button id="auto-fill-btn" class="btn" style="width: 100%; border-color: var(--gold-accent); color: var(--gold-accent);" onclick="document.getElementById('passcode-field').value='GEX2026'; attemptDecrypt('GEX2026');">
-          ⚡ 一鍵快捷驗證並解密
-        </button>
       </div>
 
       <p id="passcode-error" style="color: var(--put-color); font-size: 0.8rem; margin-top: 10px; display: none;">
@@ -57,7 +54,7 @@
   <div id="guide-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content" style="max-width: 750px; max-height: 85vh; overflow-y: auto;">
       <div class="modal-header">
-        <h2>💡 選擇權 BC/SC/BP/SP 口訣與 GEX 判讀指南</h2>
+        <h2>💡 選擇權口訣、多空判讀與 GEX 指南</h2>
         <button class="close-btn" id="close-guide-btn">&times;</button>
       </div>
       
@@ -69,6 +66,7 @@
             <th>中文名稱</th>
             <th>英文</th>
             <th>簡單口訣與立場</th>
+            <th>台灣色彩</th>
           </tr>
         </thead>
         <tbody>
@@ -77,32 +75,42 @@
             <td>買進買權</td>
             <td>Buy Call</td>
             <td>🚀 <strong>看大漲 (大買)</strong> - 賺取無限漲幅</td>
+            <td>🔴 亮紅漲</td>
           </tr>
           <tr>
             <td><strong style="color: var(--call-color);">SC</strong></td>
             <td>賣出買權</td>
             <td>Sell Call</td>
             <td>🛑 <strong>看壓低 (做莊看不漲)</strong> - 賺取權利金，漲破會虧</td>
+            <td>🔴 亮紅漲</td>
           </tr>
           <tr>
             <td><strong style="color: var(--put-color);">BP</strong></td>
             <td>買進賣權</td>
             <td>Buy Put</td>
             <td>📉 <strong>看大跌 (避險/大賣)</strong> - 賺取跌幅價差</td>
+            <td>🟢 翡翠綠跌</td>
           </tr>
           <tr>
             <td><strong style="color: var(--put-color);">SP</strong></td>
             <td>賣出賣權</td>
             <td>Sell Put</td>
             <td>🛡️ <strong>看撐住 (做莊看不跌)</strong> - 賺取權利金，跌破會虧</td>
+            <td>🟢 翡翠綠跌</td>
           </tr>
         </tbody>
       </table>
 
-      <h3 style="color: var(--gold-accent); margin-bottom: 8px;">2. GEX (Gamma Exposure) 判讀三招</h3>
+      <h3 style="color: var(--gold-accent); margin-bottom: 8px;">2. 🔴 ▲ Bull 與 🟢 ▼ Bear 多空標籤判讀公式</h3>
+      <ul style="padding-left: 20px; font-size: 0.85rem; line-height: 1.8; margin-bottom: 20px;">
+        <li>🔴 <strong>▲ Bull (多頭)</strong>：當當日股價呈現上漲（漲幅 $> 0\%$）且外資/自營商期貨部位呈現淨多單時，系統判定為多頭趨勢。</li>
+        <li>🟢 <strong>▼ Bear (空頭)</strong>：當當日股價呈現下跌（跌幅 $< 0\%$）且外資/自營商期貨部位呈現淨空單時，系統判定為空頭趨勢。</li>
+      </ul>
+
+      <h3 style="color: var(--gold-accent); margin-bottom: 8px;">3. GEX (Gamma Exposure) 判讀三招</h3>
       <ul style="padding-left: 20px; font-size: 0.9rem; line-height: 1.8;">
-        <li>🟢 <strong>Zero Gamma 上方（正 Gamma 區）</strong>：造市商高拋低吸，盤勢波動小，傾向區間震盪或緩步墊高。</li>
-        <li>🔴 <strong>Zero Gamma 下方（負 Gamma 區）</strong>：造市商追漲殺跌，波動飆升，容易觸發連鎖避險追殺或逼空。</li>
+        <li>🔴 <strong>Zero Gamma 上方（正 Gamma 區）</strong>：造市商高拋低吸，盤勢波動小，傾向區間震盪或緩步墊高。</li>
+        <li>🟢 <strong>Zero Gamma 下方（負 Gamma 區）</strong>：造市商追漲殺跌，波動飆升，容易觸發連鎖避險追殺或逼空。</li>
         <li>🎯 <strong>Call Wall (天花板) / Put Wall (地板)</strong>：造市商最大的避險牆，通常為強壓力與強支撐。</li>
       </ul>
     </div>
@@ -135,7 +143,7 @@
       <div class="stat-card zero-gamma">
         <div class="stat-label">Zero Gamma (轉折點)</div>
         <div id="stat-zero-gamma" class="stat-value" style="color: var(--gold-accent);">42,970</div>
-        <div id="stat-gamma-status" class="stat-sub">🟢 正 Gamma 多頭平穩區</div>
+        <div id="stat-gamma-status" class="stat-sub">🔴 正 Gamma 多頭平穩區</div>
       </div>
 
       <div class="stat-card call-wall">
@@ -182,7 +190,7 @@
     </div>
 
     <!-- Sentiment Meter Panel (Appears on Futures Sentiment Tab) -->
-    <div id="sentiment-panel" class="panel">
+    <div class="panel">
       <div class="panel-title">📉 微台與小台 散戶多空比 (Retail Sentiment Index)</div>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
         傳統反向指標：當散戶極致做多被套時 (> +15%) 大盤易下探；當散戶極致做空被凹單時 (< -15%) 大盤易嘎空。
@@ -216,7 +224,7 @@
       </table>
     </div>
 
-    <!-- Stock Futures Interactive Screener Panel with 4 Category Filters -->
+    <!-- Stock Futures Interactive Screener Panel with Scrollable Table Container & Sticky Header -->
     <div id="stock-futures-panel" class="panel">
       <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 12px;">
         <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -241,29 +249,35 @@
         </div>
       </div>
 
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin: 8px 0 12px 0;">
-        💡 提示：可點擊表頭標題（如「漲跌幅」、「成交量」、「外資買賣超」）進行升冪/降冪排序。
-      </p>
+      <div style="font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 6px; margin: 8px 0 12px 0; border-left: 3px solid var(--primary-accent);">
+        💡 <strong>趨勢標籤判定與色彩說明：</strong>
+        <span style="color: var(--call-color); font-weight: 600; margin-left: 6px;">🔴 ▲ Bull (多頭)</span>：代表當日股價上漲且法人期貨淨多單。
+        <span style="color: var(--put-color); font-weight: 600; margin-left: 8px;">🟢 ▼ Bear (空頭)</span>：代表當日股價下跌且法人期貨淨空單。
+        <span style="margin-left: 8px; color: #888;">(色彩全面遵循台灣股市「紅漲綠跌」習慣；下方表單固定高度並配置捲軸與固定表頭)</span>
+      </div>
 
-      <table class="matrix-table sortable-table">
-        <thead>
-          <tr>
-            <th data-sort="code" style="cursor: pointer;">代號 ⇕</th>
-            <th data-sort="name" style="cursor: pointer;">標的名稱 ⇕</th>
-            <th data-sort="category" style="cursor: pointer;">契約類別 ⇕</th>
-            <th data-sort="trend" style="cursor: pointer;">趨勢 ⇕</th>
-            <th data-sort="spot_price" style="cursor: pointer;">現價 (TWD) ⇕</th>
-            <th data-sort="change_pct" style="cursor: pointer;">漲跌幅 % ⇕</th>
-            <th data-sort="volume" style="cursor: pointer;">成交量 (口) ⇕</th>
-            <th data-sort="foreign_net" style="cursor: pointer;">外資期貨淨部位 ⇕</th>
-            <th data-sort="dealer_net" style="cursor: pointer;">自營商期貨淨部位 ⇕</th>
-            <th>夜盤標籤</th>
-          </tr>
-        </thead>
-        <tbody id="stock-futures-body">
-          <!-- Populated by JavaScript -->
-        </tbody>
-      </table>
+      <!-- Scrollable Container with Sticky Table Header -->
+      <div class="table-scroll-container">
+        <table class="matrix-table sortable-table">
+          <thead>
+            <tr>
+              <th data-sort="code" style="cursor: pointer;">代號 ⇕</th>
+              <th data-sort="name" style="cursor: pointer;">標的名稱 ⇕</th>
+              <th data-sort="category" style="cursor: pointer;">契約類別 ⇕</th>
+              <th data-sort="trend" style="cursor: pointer;">趨勢 ⇕</th>
+              <th data-sort="spot_price" style="cursor: pointer;">現價 (TWD) ⇕</th>
+              <th data-sort="change_pct" style="cursor: pointer;">漲跌幅 % ⇕</th>
+              <th data-sort="volume" style="cursor: pointer;">成交量 (口) ⇕</th>
+              <th data-sort="foreign_net" style="cursor: pointer;">外資期貨淨部位 ⇕</th>
+              <th data-sort="dealer_net" style="cursor: pointer;">自營商期貨淨部位 ⇕</th>
+              <th>夜盤標籤</th>
+            </tr>
+          </thead>
+          <tbody id="stock-futures-body">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Footer Disclaimer -->

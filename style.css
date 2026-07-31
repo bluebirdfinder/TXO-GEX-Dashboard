@@ -1,14 +1,23 @@
-/* TXO GEX Dashboard - Dark Theme & Glassmorphism Design System */
+/*
+  TXO GEX Dashboard Styling System (Taiwan Market Color Standard v3.0)
+  Red = Rise / Bull / Call (台灣股市紅漲)
+  Green = Drop / Bear / Put (台灣股市綠跌)
+*/
+
 :root {
-  --bg-dark: #0b0e14;
-  --panel-bg: rgba(22, 27, 34, 0.75);
-  --panel-border: rgba(255, 255, 255, 0.1);
-  --primary-accent: #00d2ff;
-  --call-color: #00e676;
-  --put-color: #ff5252;
+  --bg-dark: #0a0e17;
+  --panel-bg: #121721;
+  --panel-border: #1e293b;
   --text-main: #e6edf3;
   --text-muted: #8b949e;
+  
+  --primary-accent: #00d2ff;
   --gold-accent: #ffd700;
+
+  /* Taiwan Market Standard Colors: Red = Gain/Bull, Green = Fall/Bear */
+  --call-color: #ff5252; /* 🔴 台灣紅漲 / Bull */
+  --put-color: #00e676;  /* 🟢 台灣綠跌 / Bear */
+
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -20,44 +29,37 @@
 
 body {
   background-color: var(--bg-dark);
-  background-image: 
-    radial-gradient(at 10% 10%, rgba(0, 210, 255, 0.08) 0px, transparent 50%),
-    radial-gradient(at 90% 90%, rgba(0, 230, 118, 0.05) 0px, transparent 50%);
   color: var(--text-main);
   font-family: var(--font-family);
-  min-height: 100vh;
-  line-height: 1.6;
+  line-height: 1.5;
+  padding: 20px;
 }
 
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 20px;
 }
 
-/* Header Navbar */
+/* Header */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
-  background: var(--panel-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--panel-border);
-  border-radius: 16px;
   margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--panel-border);
 }
 
 .logo-area h1 {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #00d2ff 0%, #00e676 100%);
+  background: linear-gradient(90deg, #00d2ff, #3a7bd5);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .tagline {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
 }
 
@@ -67,115 +69,112 @@ header {
 }
 
 .btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   color: var(--text-main);
   padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 500;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .btn:hover {
-  background: rgba(0, 210, 255, 0.15);
   border-color: var(--primary-accent);
+  color: var(--primary-accent);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #00d2ff 0%, #0088ff 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #0088ff, #00d2ff);
   border: none;
-  font-weight: 600;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
 }
 
 /* Summary Grid Cards */
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
 
 .stat-card {
   background: var(--panel-bg);
-  backdrop-filter: blur(10px);
   border: 1px solid var(--panel-border);
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 16px;
   position: relative;
   overflow: hidden;
 }
 
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--primary-accent);
+.stat-card.call-wall {
+  border-left: 4px solid var(--call-color);
 }
 
-.stat-card.call-wall::before { background: var(--call-color); }
-.stat-card.put-wall::before { background: var(--put-color); }
-.stat-card.zero-gamma::before { background: var(--gold-accent); }
+.stat-card.put-wall {
+  border-left: 4px solid var(--put-color);
+}
+
+.stat-card.zero-gamma {
+  border-left: 4px solid var(--gold-accent);
+}
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .stat-value {
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  margin-top: 4px;
+  margin: 6px 0;
 }
 
 .stat-sub {
   font-size: 0.75rem;
-  color: var(--primary-accent);
-  margin-top: 2px;
+  color: var(--text-muted);
 }
 
-/* Tab Bar */
+/* Tabs */
 .tabs-container {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
   border-bottom: 1px solid var(--panel-border);
-  padding-bottom: 12px;
-  overflow-x: auto;
+  padding-bottom: 8px;
 }
 
 .tab-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  padding: 8px 18px;
+  padding: 8px 16px;
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 8px;
   cursor: pointer;
-  white-space: nowrap;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
 .tab-btn.active {
-  background: rgba(0, 210, 255, 0.15);
+  background: var(--panel-bg);
   color: var(--primary-accent);
-  border: 1px solid rgba(0, 210, 255, 0.3);
+  border: 1px solid var(--panel-border);
 }
 
-/* Main Dashboard Panel */
+/* Panel Containers */
 .panel {
   background: var(--panel-bg);
-  backdrop-filter: blur(12px);
   border: 1px solid var(--panel-border);
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 20px;
   margin-bottom: 24px;
 }
 
@@ -188,42 +187,42 @@ header {
 
 .panel-title {
   font-size: 1.1rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-weight: 700;
 }
 
-/* Sentiment Bar */
-.sentiment-bar-container {
-  margin-top: 16px;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 16px;
-  border-radius: 12px;
+/* Scrollable Container with Sticky Headers */
+.table-scroll-container {
+  max-height: 520px;
+  overflow-y: auto;
+  overflow-x: auto;
   border: 1px solid var(--panel-border);
-}
-
-.sentiment-meter {
-  height: 12px;
-  width: 100%;
-  background: #333;
-  border-radius: 6px;
+  border-radius: 8px;
   position: relative;
-  overflow: hidden;
-  margin: 10px 0;
 }
 
-.sentiment-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--put-color) 0%, var(--gold-accent) 50%, var(--call-color) 100%);
-  transition: width 0.5s ease;
+/* Custom Sleek Scrollbar */
+.table-scroll-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* Rumi Table */
+.table-scroll-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: #2a364f;
+  border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-accent);
+}
+
+/* Tables */
 .matrix-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 12px;
   font-size: 0.85rem;
 }
 
@@ -233,75 +232,98 @@ header {
   border-bottom: 1px solid var(--panel-border);
 }
 
+/* Sticky Header styling */
 .matrix-table th {
-  background: rgba(0, 0, 0, 0.2);
-  color: var(--text-muted);
+  color: var(--text-main);
   font-weight: 600;
+  background: #18202d;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.tag-bull { color: var(--call-color); font-weight: 600; }
-.tag-bear { color: var(--put-color); font-weight: 600; }
-.tag-neutral { color: var(--gold-accent); }
+/* Taiwan Red/Green Tag Helpers */
+.tag-bull {
+  color: var(--call-color); /* 🔴 台灣亮紅增長 */
+  font-weight: bold;
+}
 
-/* Modal Dialog */
+.tag-bear {
+  color: var(--put-color);  /* 🟢 台灣翡翠綠跌 */
+  font-weight: bold;
+}
+
+.tag-neutral {
+  color: var(--text-muted);
+}
+
+/* Sentiment Bar */
+.sentiment-bar-container {
+  margin-top: 12px;
+}
+
+.sentiment-meter {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 8px;
+}
+
+.sentiment-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--put-color), var(--gold-accent), var(--call-color));
+  transition: width 0.5s ease;
+}
+
+/* Passcode Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 14, 23, 0.95);
   backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .modal-content {
-  background: #121721;
+  background: var(--panel-bg);
   border: 1px solid var(--panel-border);
-  border-radius: 20px;
-  padding: 32px;
-  max-width: 600px;
+  padding: 30px;
+  border-radius: 16px;
   width: 90%;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-}
-
-.modal-content.hidden { display: none; }
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.close-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 1.5rem;
-  cursor: pointer;
+  max-width: 420px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
 .passcode-input {
   width: 100%;
-  padding: 14px;
-  background: rgba(0, 0, 0, 0.4);
+  padding: 12px;
+  border-radius: 8px;
   border: 1px solid var(--panel-border);
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.3);
   color: #fff;
   font-size: 1rem;
-  margin: 16px 0;
+  margin: 12px 0;
+  outline: none;
 }
 
-/* Footer Disclaimer */
+.passcode-input:focus {
+  border-color: var(--primary-accent);
+}
+
 footer {
-  text-align: center;
-  padding: 24px;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  border-top: 1px solid var(--panel-border);
   margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--panel-border);
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }

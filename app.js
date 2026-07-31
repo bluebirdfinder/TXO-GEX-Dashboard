@@ -1,6 +1,6 @@
 /**
- * TXO GEX Dashboard Application Logic v4.0
- * 4 Contract Categories Filter (個股期貨, 小型個股期貨, ETF期貨, 小型ETF期貨)
+ * TXO GEX Dashboard Application Logic v8.0
+ * Instant Night Mode Badge Update & Cache Busting
  */
 
 let gexData = null;
@@ -110,7 +110,7 @@ async function attemptDecrypt(passcode) {
   }
 
   try {
-    let res = await fetch('data/encrypted_gex.json');
+    let res = await fetch('data/encrypted_gex.json?v=' + Date.now());
     if (res.ok) {
       const encObj = await res.json();
       if (encObj.payload) {
@@ -119,7 +119,7 @@ async function attemptDecrypt(passcode) {
     }
     
     if (!gexData) {
-      let rawRes = await fetch('data/gex_data.json');
+      let rawRes = await fetch('data/gex_data.json?v=' + Date.now());
       if (rawRes.ok) {
         gexData = await rawRes.json();
       }
@@ -200,10 +200,10 @@ function getFallbackData() {
     retail_mini_ratio: -19.5,
     retail_micro_ratio: -22.4,
     rumi_matrix: {
-      top5_traders: "多單加碼 🟢",
+      top5_traders: "多單加碼 🔴",
       top10_traders: "空翻多 🔥 (偏多)",
-      foreign_futures: "多單加碼 / 空單減碼 🟢",
-      trust_futures: "多單加碼 🟢",
+      foreign_futures: "多單加碼 / 空單減碼 🔴",
+      trust_futures: "多單加碼 🔴",
       foreign_options: "總部位 BP > BC (差額收窄)",
       dealer_options: "Call/Put 相當 (偏向看撐)",
       settlement_prediction: `偏往上結算 🎯 (目標天花板: ${spot + 300})`
@@ -212,8 +212,25 @@ function getFallbackData() {
       { code: "2330", name: "台積電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 2425.0, change_pct: 2.15, volume: 38450, foreign_net: 4200, dealer_net: 1100, trend: "Bull" },
       { code: "2454", name: "聯發科期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 3555.0, change_pct: 1.42, volume: 12800, foreign_net: 850, dealer_net: -200, trend: "Bull" },
       { code: "2317", name: "鴻海期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 215.0, change_pct: -0.46, volume: 24100, foreign_net: 6100, dealer_net: 1500, trend: "Bear" },
+      { code: "2382", name: "廣達期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 275.0, change_pct: 0.92, volume: 16800, foreign_net: 980, dealer_net: 320, trend: "Bull" },
+      { code: "3231", name: "緯創期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 108.0, change_pct: 1.12, volume: 21500, foreign_net: 1500, dealer_net: -100, trend: "Bull" },
+      { code: "3037", name: "欣興期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 787.0, change_pct: -1.25, volume: 15200, foreign_net: -1400, dealer_net: 320, trend: "Bear" },
+      { code: "2383", name: "台光電期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 4745.0, change_pct: 3.82, volume: 9450, foreign_net: 1820, dealer_net: 410, trend: "Bull" },
+      { code: "6669", name: "緯穎期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 5390.0, change_pct: 2.65, volume: 4100, foreign_net: 650, dealer_net: 180, trend: "Bull" },
+      { code: "3017", name: "奇鋐期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 2320.0, change_pct: 1.75, volume: 11400, foreign_net: 1250, dealer_net: 240, trend: "Bull" },
+      { code: "2303", name: "聯電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 121.0, change_pct: -0.82, volume: 45100, foreign_net: -2800, dealer_net: 640, trend: "Bear" },
+      { code: "2881", name: "富邦金期", category: "個股期貨", has_night: false, liquidity: "高", spot_price: 92.5, change_pct: 0.54, volume: 14200, foreign_net: 2100, dealer_net: 540, trend: "Bull" },
+      { code: "2882", name: "國泰金期", category: "個股期貨", has_night: false, liquidity: "高", spot_price: 68.2, change_pct: 0.29, volume: 12800, foreign_net: 1800, dealer_net: 410, trend: "Bull" },
+      { code: "2603", name: "長榮期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 182.5, change_pct: 0.55, volume: 18900, foreign_net: -1200, dealer_net: 450, trend: "Bull" },
+      { code: "2609", name: "陽明期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 72.4, change_pct: 1.12, volume: 21400, foreign_net: 1500, dealer_net: 680, trend: "Bull" },
+      { code: "1519", name: "華城期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 850.0, change_pct: 3.66, volume: 7800, foreign_net: 1250, dealer_net: 310, trend: "Bull" },
       { code: "2330F", name: "小型台積電期", category: "小型個股期貨", has_night: true, liquidity: "極高", spot_price: 2425.0, change_pct: 2.15, volume: 19200, foreign_net: 1200, dealer_net: 350, trend: "Bull" },
+      { code: "2454F", name: "小型聯發科期", category: "小型個股期貨", has_night: true, liquidity: "高", spot_price: 3555.0, change_pct: 1.42, volume: 8400, foreign_net: 310, dealer_net: -80, trend: "Bull" },
+      { code: "6669F", name: "小型緯穎期", category: "小型個股期貨", has_night: true, liquidity: "高", spot_price: 5390.0, change_pct: 2.65, volume: 3100, foreign_net: 240, dealer_net: 60, trend: "Bull" },
       { code: "0050", name: "元大台灣50期", category: "ETF期貨", has_night: true, liquidity: "極高", spot_price: 198.5, change_pct: 1.80, volume: 52100, foreign_net: 12500, dealer_net: 3400, trend: "Bull" },
+      { code: "0056", name: "元大高股息期", category: "ETF期貨", has_night: true, liquidity: "高", spot_price: 38.2, change_pct: 0.65, volume: 28400, foreign_net: 3100, dealer_net: 1200, trend: "Bull" },
+      { code: "00878", name: "國泰永續高股息期", category: "ETF期貨", has_night: true, liquidity: "高", spot_price: 23.4, change_pct: 0.43, volume: 31200, foreign_net: 4200, dealer_net: 980, trend: "Bull" },
+      { code: "00919", name: "群益台灣精選高息期", category: "ETF期貨", has_night: true, liquidity: "高", spot_price: 25.1, change_pct: 0.80, volume: 24500, foreign_net: 2800, dealer_net: 750, trend: "Bull" },
       { code: "0050F", name: "小型台灣50期", category: "小型ETF期貨", has_night: true, liquidity: "高", spot_price: 198.5, change_pct: 1.80, volume: 14200, foreign_net: 2100, dealer_net: 850, trend: "Bull" }
     ]
   };
@@ -222,11 +239,18 @@ function getFallbackData() {
 async function startRealTimeQuotes() {
   if (realTimeInterval) clearInterval(realTimeInterval);
 
+  const badgeEl = document.getElementById('mode-badge');
+  if (badgeEl) {
+    badgeEl.innerHTML = '🌙 夜盤即時連線中';
+    badgeEl.style.borderColor = '#ff5252';
+    badgeEl.style.color = '#ff5252';
+  }
+
   async function fetchRealTime() {
     if (document.hidden) return;
     
     try {
-      const res = await fetch(WORKER_URL);
+      const res = await fetch(WORKER_URL + '?t=' + Date.now());
       if (res.ok) {
         const json = await res.json();
         if (json.spot_price && gexData) {
@@ -234,9 +258,6 @@ async function startRealTimeQuotes() {
           if (Math.abs(newSpot - gexData.spot_price) > 5) {
             gexData.spot_price = newSpot;
             document.getElementById('stat-spot').innerText = newSpot.toLocaleString();
-            document.getElementById('mode-badge').innerHTML = '🌙 夜盤即時連線中';
-            document.getElementById('mode-badge').style.borderColor = '#00e676';
-            document.getElementById('mode-badge').style.color = '#00e676';
             renderGEXChart();
           }
         }
@@ -265,10 +286,10 @@ function renderDashboard() {
   const zg = gexData.zero_gamma_level;
   const statusEl = document.getElementById('stat-gamma-status');
   if (spot >= zg) {
-    statusEl.innerHTML = '🟢 正 Gamma 多頭平穩區';
+    statusEl.innerHTML = '🔴 正 Gamma 多頭平穩區 (台灣紅漲)';
     statusEl.style.color = 'var(--call-color)';
   } else {
-    statusEl.innerHTML = '🔴 負 Gamma 避險引爆區';
+    statusEl.innerHTML = '🟢 負 Gamma 避險引爆區 (台灣綠跌)';
     statusEl.style.color = 'var(--put-color)';
   }
 
@@ -276,8 +297,8 @@ function renderDashboard() {
 
   const microRatio = gexData.retail_micro_ratio || -22.4;
   const miniRatio = gexData.retail_mini_ratio || -19.5;
-  document.getElementById('micro-ratio-val').innerText = `${microRatio}% (${microRatio < 0 ? '散戶做空 ➔ 偏嘎空' : '散戶做多 ➔ 偏拉回'})`;
-  document.getElementById('mini-ratio-val').innerText = `${miniRatio}% (${miniRatio < 0 ? '散戶做空' : '散戶做多'})`;
+  document.getElementById('micro-ratio-val').innerText = `${microRatio}% (${microRatio < 0 ? '散戶死做空 ➔ 偏嘎空' : '散戶死做多 ➔ 偏拉回'})`;
+  document.getElementById('mini-ratio-val').innerText = `${miniRatio}% (${miniRatio < 0 ? '散戶死做空' : '散戶死做多'})`;
 
   const fillWidth = Math.max(5, Math.min(95, 50 + (microRatio * 1.5)));
   document.getElementById('sentiment-fill').style.width = `${fillWidth}%`;
@@ -308,17 +329,17 @@ function renderGEXChart() {
   const traceCall = {
     x: strikes,
     y: callGex,
-    name: 'Call GEX (綠)',
+    name: 'Call GEX (🔴 台灣紅)',
     type: 'bar',
-    marker: { color: '#00e676', opacity: 0.85 }
+    marker: { color: '#ff5252', opacity: 0.85 }
   };
 
   const tracePut = {
     x: strikes,
     y: putGex,
-    name: 'Put GEX (紅)',
+    name: 'Put GEX (🟢 台灣綠)',
     type: 'bar',
-    marker: { color: '#ff5252', opacity: 0.85 }
+    marker: { color: '#00e676', opacity: 0.85 }
   };
 
   const traceNet = {
@@ -455,26 +476,22 @@ function populateStockFutures() {
 
   let list = [...gexData.stock_futures];
 
-  // 1. Contract Category Dropdown Filter
   const filterCat = document.getElementById('category-filter-select');
   if (filterCat && filterCat.value !== 'all') {
     list = list.filter(stk => stk.category === filterCat.value);
   }
 
-  // 2. Checkbox Night Session Filter
   const filterNight = document.getElementById('filter-night-only');
   if (filterNight && filterNight.checked) {
     list = list.filter(stk => stk.has_night);
   }
 
-  // 3. Search Keyword Filter
   const searchInput = document.getElementById('search-stock-input');
   if (searchInput && searchInput.value.trim()) {
     const kw = searchInput.value.trim().toLowerCase();
     list = list.filter(stk => stk.code.toLowerCase().includes(kw) || stk.name.toLowerCase().includes(kw));
   }
 
-  // 4. Dynamic Column Sorting
   list.sort((a, b) => {
     let valA = a[currentSortKey];
     let valB = b[currentSortKey];
@@ -490,11 +507,10 @@ function populateStockFutures() {
     return 0;
   });
 
-  // 5. Render Rows with MOFI-style Trend Badges and Category Tags
   tbody.innerHTML = list.map(stk => {
     const trendBadge = stk.trend === 'Bull' 
-      ? '<span style="background: rgba(0,230,118,0.15); color: var(--call-color); padding: 3px 8px; border-radius: 6px; font-weight: bold;">▲ Bull</span>' 
-      : '<span style="background: rgba(255,82,82,0.15); color: var(--put-color); padding: 3px 8px; border-radius: 6px; font-weight: bold;">▼ Bear</span>';
+      ? '<span style="background: rgba(255,82,82,0.15); color: var(--call-color); padding: 3px 8px; border-radius: 6px; font-weight: bold;">▲ Bull (🔴 多)</span>' 
+      : '<span style="background: rgba(0,230,118,0.15); color: var(--put-color); padding: 3px 8px; border-radius: 6px; font-weight: bold;">▼ Bear (🟢 空)</span>';
 
     const catTag = `<span style="background: rgba(0,210,255,0.1); color: var(--primary-accent); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">${stk.category || '個股期貨'}</span>`;
     const changeClass = stk.change_pct >= 0 ? 'tag-bull' : 'tag-bear';
