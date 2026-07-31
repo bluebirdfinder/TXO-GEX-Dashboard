@@ -1,7 +1,6 @@
 /**
- * TXO GEX Dashboard Application Logic v10.0
- * Loads 270 Official TAIFEX Contracts Directly from 2_stockinfo.ods
- * Standard Normal UI Slate Gray Scrollbar
+ * TXO GEX Dashboard Application Logic v11.0
+ * 3-Second High-Speed Live Spot Quote & Dynamic GEX Re-render Engine
  */
 
 let gexData = null;
@@ -246,10 +245,11 @@ async function startRealTimeQuotes() {
         const json = await res.json();
         if (json.spot_price && gexData) {
           const newSpot = Math.round(json.spot_price);
-          if (Math.abs(newSpot - gexData.spot_price) > 5) {
+          // If spot price updates, re-render chart dynamically!
+          if (Math.abs(newSpot - gexData.spot_price) >= 1) {
             gexData.spot_price = newSpot;
             document.getElementById('stat-spot').innerText = newSpot.toLocaleString();
-            renderGEXChart();
+            renderDashboard();
           }
         }
       }
@@ -259,7 +259,8 @@ async function startRealTimeQuotes() {
   }
 
   fetchRealTime();
-  realTimeInterval = setInterval(fetchRealTime, 10000);
+  // High-speed 3-second live quote polling & dynamic re-rendering!
+  realTimeInterval = setInterval(fetchRealTime, 3000);
 }
 
 function renderDashboard() {
