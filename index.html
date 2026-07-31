@@ -190,7 +190,7 @@
     </div>
 
     <!-- Sentiment Meter Panel (Appears on Futures Sentiment Tab) -->
-    <div class="panel">
+    <div id="sentiment-panel" class="panel">
       <div class="panel-title">📉 微台與小台 散戶多空比 (Retail Sentiment Index)</div>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
         傳統反向指標：當散戶極致做多被套時 (> +15%) 大盤易下探；當散戶極致做空被凹單時 (< -15%) 大盤易嘎空。
@@ -228,7 +228,7 @@
     <div id="stock-futures-panel" class="panel">
       <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 12px;">
         <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-          <div class="panel-title">💎 個股與 ETF 期貨 4 大類別篩選明細 (表單)</div>
+          <div class="panel-title">💎 期交所全量 270 檔個股與 ETF 期貨篩選明細</div>
           <input type="text" id="search-stock-input" placeholder="🔍 搜尋代號/名稱..." style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.8rem;">
         </div>
 
@@ -236,7 +236,7 @@
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; width: 100%;">
           <span style="font-size: 0.85rem; color: var(--text-muted);">契約類別切換：</span>
           <select id="category-filter-select" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--primary-accent); background: #121721; color: var(--primary-accent); font-weight: 600; font-size: 0.85rem;">
-            <option value="all">🌐 全部契約 (All Categories)</option>
+            <option value="all">🌐 全部 270 檔契約 (All Categories)</option>
             <option value="個股期貨">🏢 個股期貨 (標準 2000股)</option>
             <option value="小型個股期貨">🔹 小型個股期貨 (100股)</option>
             <option value="ETF期貨">📈 ETF 期貨 (10000份)</option>
@@ -253,7 +253,7 @@
         💡 <strong>趨勢標籤判定與色彩說明：</strong>
         <span style="color: var(--call-color); font-weight: 600; margin-left: 6px;">🔴 ▲ Bull (多頭)</span>：代表當日股價上漲且法人期貨淨多單。
         <span style="color: var(--put-color); font-weight: 600; margin-left: 8px;">🟢 ▼ Bear (空頭)</span>：代表當日股價下跌且法人期貨淨空單。
-        <span style="margin-left: 8px; color: #888;">(色彩全面遵循台灣股市「紅漲綠跌」習慣；下方表單固定高度並配置捲軸與固定表頭)</span>
+        <span style="margin-left: 8px; color: #888;">(色彩全面遵循台灣股市「紅漲綠跌」習慣；表單固定高度配置質感深灰捲軸與固定表頭)</span>
       </div>
 
       <!-- Scrollable Container with Sticky Table Header -->

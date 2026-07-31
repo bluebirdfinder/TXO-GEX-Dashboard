@@ -1,0 +1,1622 @@
+[
+  {
+    "code": "1303",
+    "name": "南亞期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2002",
+    "name": "中鋼期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2303",
+    "name": "聯電期",
+    "category": "個股期貨",
+    "has_night": true
+  },
+  {
+    "code": "2330",
+    "name": "台積電期",
+    "category": "個股期貨",
+    "has_night": true
+  },
+  {
+    "code": "2881",
+    "name": "富邦金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1301",
+    "name": "台塑期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2324",
+    "name": "仁寶期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2409",
+    "name": "友達期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2880",
+    "name": "華南金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2882",
+    "name": "國泰金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2886",
+    "name": "兆豐金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2887",
+    "name": "台新新光金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2891",
+    "name": "中信金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1216",
+    "name": "統一期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1402",
+    "name": "遠東新期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1605",
+    "name": "華新期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2323",
+    "name": "中環期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2352",
+    "name": "佳世達期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2371",
+    "name": "大同期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2408",
+    "name": "南亞科期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2603",
+    "name": "長榮期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2609",
+    "name": "陽明期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2610",
+    "name": "華航期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2801",
+    "name": "彰銀期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2890",
+    "name": "永豐金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1101",
+    "name": "台泥期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1326",
+    "name": "台化期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2317",
+    "name": "鴻海期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2337",
+    "name": "旺宏期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2357",
+    "name": "華碩期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2382",
+    "name": "廣達期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2412",
+    "name": "中華電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2884",
+    "name": "玉山金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2885",
+    "name": "元大金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2892",
+    "name": "第一金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3481",
+    "name": "群創期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2353",
+    "name": "宏碁期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2454",
+    "name": "聯發科期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2915",
+    "name": "潤泰全期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3231",
+    "name": "緯創期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1102",
+    "name": "亞泥期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1210",
+    "name": "大成期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1312",
+    "name": "國喬期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1314",
+    "name": "中石化期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1319",
+    "name": "東陽期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1440",
+    "name": "南紡期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1504",
+    "name": "東元期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1560",
+    "name": "中砂期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1590",
+    "name": "亞德客-KY期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1718",
+    "name": "中纖期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1722",
+    "name": "台肥期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2006",
+    "name": "東和鋼鐵期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2027",
+    "name": "大成鋼期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2049",
+    "name": "上銀期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2059",
+    "name": "川湖期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2105",
+    "name": "正新期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2201",
+    "name": "裕隆期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2301",
+    "name": "光寶科期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2308",
+    "name": "台達電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2312",
+    "name": "金寶期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2313",
+    "name": "華通期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2331",
+    "name": "精英期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2332",
+    "name": "友訊期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2340",
+    "name": "台亞期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2344",
+    "name": "華邦電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2347",
+    "name": "聯強期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2354",
+    "name": "鴻準期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2376",
+    "name": "技嘉期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2377",
+    "name": "微星期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2379",
+    "name": "瑞昱期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2385",
+    "name": "群光期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2392",
+    "name": "正崴期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2393",
+    "name": "億光期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2401",
+    "name": "凌陽期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2404",
+    "name": "漢唐期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2449",
+    "name": "京元電子期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2455",
+    "name": "全新期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2457",
+    "name": "飛宏期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2458",
+    "name": "義隆期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2474",
+    "name": "可成期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2481",
+    "name": "強茂期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2485",
+    "name": "兆赫期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2489",
+    "name": "瑞軒期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2492",
+    "name": "華新科期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2498",
+    "name": "宏達電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2515",
+    "name": "中工期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2520",
+    "name": "冠德期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2542",
+    "name": "興富發期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2548",
+    "name": "華固期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2605",
+    "name": "新興期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2618",
+    "name": "長榮航期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2834",
+    "name": "臺企銀期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2913",
+    "name": "農林期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3006",
+    "name": "晶豪科期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3008",
+    "name": "大立光期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3019",
+    "name": "亞光期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3034",
+    "name": "聯詠期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3035",
+    "name": "智原期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3036",
+    "name": "文曄期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3037",
+    "name": "欣興期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3042",
+    "name": "晶技期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3189",
+    "name": "景碩期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3376",
+    "name": "新日興期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3380",
+    "name": "明泰期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3443",
+    "name": "創意期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3533",
+    "name": "嘉澤期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3653",
+    "name": "健策期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3673",
+    "name": "TPK-KY期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3702",
+    "name": "大聯大期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "4938",
+    "name": "和碩期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5534",
+    "name": "長虹期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6005",
+    "name": "群益證期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6153",
+    "name": "嘉聯益期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6176",
+    "name": "瑞儀期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6213",
+    "name": "聯茂期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6239",
+    "name": "力成期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6271",
+    "name": "同欣電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6278",
+    "name": "台表科期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6282",
+    "name": "康舒期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6285",
+    "name": "啟碁期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8039",
+    "name": "台虹期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8163",
+    "name": "達方期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "9904",
+    "name": "寶成期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "9939",
+    "name": "宏全期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "9945",
+    "name": "潤泰新期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1477",
+    "name": "聚陽期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1802",
+    "name": "台玻期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2328",
+    "name": "廣宇期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3044",
+    "name": "健鼎期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3045",
+    "name": "台灣大期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3406",
+    "name": "玉晶光期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6269",
+    "name": "台郡期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "9914",
+    "name": "美利達期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5880",
+    "name": "合庫金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2356",
+    "name": "英業達期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2883",
+    "name": "凱基金期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "4904",
+    "name": "遠傳期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "4958",
+    "name": "臻鼎-KY期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5871",
+    "name": "中租-KY期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1476",
+    "name": "儒鴻期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2327",
+    "name": "國巨*期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8046",
+    "name": "南電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2355",
+    "name": "敬鵬期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2360",
+    "name": "致茂期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2439",
+    "name": "美律期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6257",
+    "name": "矽格期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "9938",
+    "name": "百和期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1565",
+    "name": "精華期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3105",
+    "name": "穩懋期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3152",
+    "name": "璟德期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3211",
+    "name": "順達期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3260",
+    "name": "威剛期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3264",
+    "name": "欣銓期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3691",
+    "name": "碩禾期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "4123",
+    "name": "晟德期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5009",
+    "name": "榮剛期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5347",
+    "name": "世界期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5371",
+    "name": "中光電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5483",
+    "name": "中美晶期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6121",
+    "name": "新普期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6147",
+    "name": "頎邦期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8044",
+    "name": "網家期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8069",
+    "name": "元太期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8299",
+    "name": "群聯期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "0050",
+    "name": "元大台灣50ETF期",
+    "category": "ETF期貨",
+    "has_night": true
+  },
+  {
+    "code": "006205",
+    "name": "富邦上証ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "006206",
+    "name": "元大上證50ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "2231",
+    "name": "為升期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6116",
+    "name": "彩晶期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6279",
+    "name": "胡連期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "00636",
+    "name": "國泰中國A50ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00639",
+    "name": "富邦深100ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00643",
+    "name": "群益深証中小ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "2345",
+    "name": "智邦期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6414",
+    "name": "樺漢期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1536",
+    "name": "和大期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1909",
+    "name": "榮成期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3081",
+    "name": "聯亞期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3552",
+    "name": "同致期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6274",
+    "name": "台燿期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6488",
+    "name": "環球晶期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6510",
+    "name": "精測期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3711",
+    "name": "日月光投控期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3227",
+    "name": "原相期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "4162",
+    "name": "智擎期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "4736",
+    "name": "泰博期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5425",
+    "name": "台半期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "0056",
+    "name": "元大高股息ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "2633",
+    "name": "台灣高鐵期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5269",
+    "name": "祥碩期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3529",
+    "name": "力旺期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2383",
+    "name": "台光電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6173",
+    "name": "信昌電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6182",
+    "name": "合晶期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8436",
+    "name": "大江期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5457",
+    "name": "宣德期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8358",
+    "name": "金居期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8086",
+    "name": "宏捷科期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3706",
+    "name": "神達期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3324",
+    "name": "雙鴻期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6669",
+    "name": "緯穎期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3293",
+    "name": "鈊象期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5274",
+    "name": "信驊期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3714",
+    "name": "富采期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2606",
+    "name": "裕民期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3532",
+    "name": "台勝科期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1907",
+    "name": "永豐餘期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3374",
+    "name": "精材期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1717",
+    "name": "長興期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1904",
+    "name": "正隆期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3078",
+    "name": "僑威期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2441",
+    "name": "超豐期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8150",
+    "name": "南茂期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2338",
+    "name": "光罩期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2388",
+    "name": "威盛期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2615",
+    "name": "萬海期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6547",
+    "name": "高端疫苗期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6770",
+    "name": "力積電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3017",
+    "name": "奇鋐期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5388",
+    "name": "中磊期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2634",
+    "name": "漢翔期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "4128",
+    "name": "中天期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "4919",
+    "name": "新唐期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "00878",
+    "name": "國泰永續高股息ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "1609",
+    "name": "大亞期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2368",
+    "name": "金像電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6443",
+    "name": "元晶期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "4743",
+    "name": "合一期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6245",
+    "name": "立端期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5904",
+    "name": "寶雅期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "9958",
+    "name": "世紀鋼期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "00885",
+    "name": "富邦越南ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00923",
+    "name": "群益台ESG低碳50ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00679B",
+    "name": "元大美債20年ETF期",
+    "category": "ETF期貨",
+    "has_night": true
+  },
+  {
+    "code": "1795",
+    "name": "美時期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1905",
+    "name": "華紙期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1513",
+    "name": "中興電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "00893",
+    "name": "國泰智能電動車ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00719B",
+    "name": "元大美債1-3ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "3005",
+    "name": "神基期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8112",
+    "name": "至上期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "00919",
+    "name": "群益台灣精選高息ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00929",
+    "name": "復華台灣科技優息ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00772B",
+    "name": "中信高評級公司債ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00940",
+    "name": "元大台灣價值高息ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "3680",
+    "name": "家登期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1503",
+    "name": "士電期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6139",
+    "name": "亞翔期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6188",
+    "name": "廣明期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "5876",
+    "name": "上海商銀期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6505",
+    "name": "台塑化期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6526",
+    "name": "達發期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "00937B",
+    "name": "群益ESG投等債20+ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00687B",
+    "name": "國泰20年美債ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "3661",
+    "name": "世芯-KY期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6472",
+    "name": "保瑞期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "00757",
+    "name": "統一FANG+ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "2486",
+    "name": "一詮期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6757",
+    "name": "台灣虎航期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6223",
+    "name": "旺矽期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2329",
+    "name": "華泰期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6290",
+    "name": "良維期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1608",
+    "name": "華榮期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2367",
+    "name": "燿華期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2421",
+    "name": "建準期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3665",
+    "name": "貿聯-KY期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "0052",
+    "name": "富邦科技ETF期",
+    "category": "ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "2395",
+    "name": "研華期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "8932",
+    "name": "智通*期",
+    "category": "個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "1519",
+    "name": "華城期",
+    "category": "個股期貨",
+    "has_night": false
+  }
+]

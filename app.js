@@ -1,6 +1,7 @@
 /**
- * TXO GEX Dashboard Application Logic v8.0
- * Instant Night Mode Badge Update & Cache Busting
+ * TXO GEX Dashboard Application Logic v10.0
+ * Loads 270 Official TAIFEX Contracts Directly from 2_stockinfo.ods
+ * Standard Normal UI Slate Gray Scrollbar
  */
 
 let gexData = null;
@@ -201,7 +202,7 @@ function getFallbackData() {
     retail_micro_ratio: -22.4,
     rumi_matrix: {
       top5_traders: "多單加碼 🔴",
-      top10_traders: "空翻多 🔥 (偏多)",
+      top10_traders: "空翻多 🔴 (偏多)",
       foreign_futures: "多單加碼 / 空單減碼 🔴",
       trust_futures: "多單加碼 🔴",
       foreign_options: "總部位 BP > BC (差額收窄)",
@@ -219,18 +220,8 @@ function getFallbackData() {
       { code: "6669", name: "緯穎期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 5390.0, change_pct: 2.65, volume: 4100, foreign_net: 650, dealer_net: 180, trend: "Bull" },
       { code: "3017", name: "奇鋐期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 2320.0, change_pct: 1.75, volume: 11400, foreign_net: 1250, dealer_net: 240, trend: "Bull" },
       { code: "2303", name: "聯電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 121.0, change_pct: -0.82, volume: 45100, foreign_net: -2800, dealer_net: 640, trend: "Bear" },
-      { code: "2881", name: "富邦金期", category: "個股期貨", has_night: false, liquidity: "高", spot_price: 92.5, change_pct: 0.54, volume: 14200, foreign_net: 2100, dealer_net: 540, trend: "Bull" },
-      { code: "2882", name: "國泰金期", category: "個股期貨", has_night: false, liquidity: "高", spot_price: 68.2, change_pct: 0.29, volume: 12800, foreign_net: 1800, dealer_net: 410, trend: "Bull" },
-      { code: "2603", name: "長榮期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 182.5, change_pct: 0.55, volume: 18900, foreign_net: -1200, dealer_net: 450, trend: "Bull" },
-      { code: "2609", name: "陽明期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 72.4, change_pct: 1.12, volume: 21400, foreign_net: 1500, dealer_net: 680, trend: "Bull" },
-      { code: "1519", name: "華城期", category: "個股期貨", has_night: true, liquidity: "高", spot_price: 850.0, change_pct: 3.66, volume: 7800, foreign_net: 1250, dealer_net: 310, trend: "Bull" },
       { code: "2330F", name: "小型台積電期", category: "小型個股期貨", has_night: true, liquidity: "極高", spot_price: 2425.0, change_pct: 2.15, volume: 19200, foreign_net: 1200, dealer_net: 350, trend: "Bull" },
-      { code: "2454F", name: "小型聯發科期", category: "小型個股期貨", has_night: true, liquidity: "高", spot_price: 3555.0, change_pct: 1.42, volume: 8400, foreign_net: 310, dealer_net: -80, trend: "Bull" },
-      { code: "6669F", name: "小型緯穎期", category: "小型個股期貨", has_night: true, liquidity: "高", spot_price: 5390.0, change_pct: 2.65, volume: 3100, foreign_net: 240, dealer_net: 60, trend: "Bull" },
       { code: "0050", name: "元大台灣50期", category: "ETF期貨", has_night: true, liquidity: "極高", spot_price: 198.5, change_pct: 1.80, volume: 52100, foreign_net: 12500, dealer_net: 3400, trend: "Bull" },
-      { code: "0056", name: "元大高股息期", category: "ETF期貨", has_night: true, liquidity: "高", spot_price: 38.2, change_pct: 0.65, volume: 28400, foreign_net: 3100, dealer_net: 1200, trend: "Bull" },
-      { code: "00878", name: "國泰永續高股息期", category: "ETF期貨", has_night: true, liquidity: "高", spot_price: 23.4, change_pct: 0.43, volume: 31200, foreign_net: 4200, dealer_net: 980, trend: "Bull" },
-      { code: "00919", name: "群益台灣精選高息期", category: "ETF期貨", has_night: true, liquidity: "高", spot_price: 25.1, change_pct: 0.80, volume: 24500, foreign_net: 2800, dealer_net: 750, trend: "Bull" },
       { code: "0050F", name: "小型台灣50期", category: "小型ETF期貨", has_night: true, liquidity: "高", spot_price: 198.5, change_pct: 1.80, volume: 14200, foreign_net: 2100, dealer_net: 850, trend: "Bull" }
     ]
   };

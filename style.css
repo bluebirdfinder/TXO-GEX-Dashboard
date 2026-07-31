@@ -1,5 +1,5 @@
 /*
-  TXO GEX Dashboard Styling System (Taiwan Market Color Standard v3.0)
+  TXO GEX Dashboard Styling System (Taiwan Market Color Standard v5.0)
   Red = Rise / Bull / Call (台灣股市紅漲)
   Green = Drop / Bear / Put (台灣股市綠跌)
 */
@@ -190,33 +190,35 @@ header {
   font-weight: 700;
 }
 
-/* Scrollable Container with Sticky Headers */
+/* Scrollable Container with Explicit Height & Sticky Headers */
 .table-scroll-container {
-  max-height: 520px;
-  overflow-y: auto;
-  overflow-x: auto;
+  max-height: 500px !important;
+  overflow-y: scroll !important;
+  overflow-x: auto !important;
   border: 1px solid var(--panel-border);
   border-radius: 8px;
   position: relative;
+  display: block;
 }
 
-/* Custom Sleek Scrollbar */
+/* Standard Normal UI Scrollbar (Slate Gray) */
 .table-scroll-container::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 8px !important;
+  height: 8px !important;
 }
 
 .table-scroll-container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.table-scroll-container::-webkit-scrollbar-thumb {
-  background: #2a364f;
+  background: #0f172a !important;
   border-radius: 4px;
 }
 
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: #475569 !important; /* 標準質感深灰捲軸 */
+  border-radius: 4px !important;
+}
+
 .table-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-accent);
+  background: #64748b !important;
 }
 
 /* Tables */
@@ -236,11 +238,11 @@ header {
 .matrix-table th {
   color: var(--text-main);
   font-weight: 600;
-  background: #18202d;
-  position: sticky;
-  top: 0;
+  background: #18202d !important;
+  position: sticky !important;
+  top: 0 !important;
   z-index: 10;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* Taiwan Red/Green Tag Helpers */
