@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>TXO GEX 動態儀表板 | 台指選擇權與期貨籌碼分析</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Plotly.js for Interactive Charts -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+  <!-- CryptoJS for AES Decryption -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Passcode Protection Lock Modal -->
+  <div id="passcode-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h2>🔒 請輸入解密通行碼 (Passcode)</h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">
+        本系統數據經端到端 AES-256 加密保護，請輸入專屬通行碼進行本機解密與存取。
+      </p>
+      <input type="password" id="passcode-field" class="passcode-input" placeholder="輸入通行碼 (預設: GEX2026)..." autocomplete="off">
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button id="unlock-btn" class="btn btn-primary" style="width: 100%;">驗證並解密儀表板</button>
+      </div>
+      <p id="passcode-error" style="color: var(--put-color); font-size: 0.8rem; margin-top: 10px; display: none;">
+        ❌ 通行碼錯誤或數據損毀，請重試。
+      </p>
+    </div>
+  </div>
+
+  <!-- Options & GEX Education Guide Modal -->
+  <div id="guide-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 750px; max-height: 85vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h2>💡 選擇權 BC/SC/BP/SP 口訣與 GEX 判讀指南</h2>
+        <button class="close-btn" id="close-guide-btn">&times;</button>
+      </div>
+      
+      <h3 style="color: var(--primary-accent); margin-bottom: 8px;">1. 選擇權基本動作速記口訣</h3>
+      <table class="matrix-table" style="margin-bottom: 20px;">
+        <thead>
+          <tr>
+            <th>代號</th>
+            <th>中文名稱</th>
+            <th>英文</th>
+            <th>簡單口訣與立場</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color: var(--call-color);">BC</strong></td>
+            <td>買進買權</td>
+            <td>Buy Call</td>
+            <td>🚀 <strong>看大漲 (大買)</strong> - 賺取無限漲幅</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--call-color);">SC</strong></td>
+            <td>賣出買權</td>
+            <td>Sell Call</td>
+            <td>🛑 <strong>看壓低 (做莊看不漲)</strong> - 賺取權利金，漲破會虧</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--put-color);">BP</strong></td>
+            <td>買進賣權</td>
+            <td>Buy Put</td>
+            <td>📉 <strong>看大跌 (避險/大賣)</strong> - 賺取跌幅價差</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--put-color);">SP</strong></td>
+            <td>賣出賣權</td>
+            <td>Sell Put</td>
+            <td>🛡️ <strong>看撐住 (做莊看不跌)</strong> - 賺取權利金，跌破會虧</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="color: var(--gold-accent); margin-bottom: 8px;">2. GEX (Gamma Exposure) 判讀三招</h3>
+      <ul style="padding-left: 20px; font-size: 0.9rem; line-height: 1.8;">
+        <li>🟢 <strong>Zero Gamma 上方（正 Gamma 區）</strong>：造市商高拋低吸，盤勢波動小，傾向區間震盪或緩步墊高。</li>
+        <li>🔴 <strong>Zero Gamma 下方（負 Gamma 區）</strong>：造市商追漲殺跌，波動飆升，容易觸發連鎖避險追殺或逼空。</li>
+        <li>🎯 <strong>Call Wall (天花板) / Put Wall (地板)</strong>：造市商最大的避險牆，通常為強壓力與強支撐。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="logo-area">
+        <h1>TAIFEX TXO GEX 儀表板</h1>
+        <div class="tagline">台指選擇權 Gamma Exposure 波動度與期貨籌碼量化分析</div>
+      </div>
+      <div class="nav-controls">
+        <button id="mode-badge" class="btn" style="border-color: var(--gold-accent); color: var(--gold-accent);">
+          ☀️ 盤後靜態模式
+        </button>
+        <button id="open-guide-btn" class="btn">❓ 判讀教學</button>
+        <button id="relock-btn" class="btn">🔒 鎖定</button>
+      </div>
+    </header>
+
+    <!-- Top Summary Stat Cards -->
+    <div class="summary-grid">
+      <div class="stat-card">
+        <div class="stat-label">加權/台指現價 (Spot)</div>
+        <div id="stat-spot" class="stat-value">23,450</div>
+        <div class="stat-sub">基底價位</div>
+      </div>
+
+      <div class="stat-card zero-gamma">
+        <div class="stat-label">Zero Gamma (轉折點)</div>
+        <div id="stat-zero-gamma" class="stat-value" style="color: var(--gold-accent);">23,320</div>
+        <div id="stat-gamma-status" class="stat-sub">🟢 正 Gamma 多頭平穩區</div>
+      </div>
+
+      <div class="stat-card call-wall">
+        <div class="stat-label">Call Wall (最大天花板)</div>
+        <div id="stat-call-wall" class="stat-value" style="color: var(--call-color);">23,600</div>
+        <div class="stat-sub">造市商最大 Call 賣壓牆</div>
+      </div>
+
+      <div class="stat-card put-wall">
+        <div class="stat-label">Put Wall (最大地板)</div>
+        <div id="stat-put-wall" class="stat-value" style="color: var(--put-color);">23,200</div>
+        <div class="stat-sub">造市商最大 Put 支撐牆</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Max Pain (最大痛點)</div>
+        <div id="stat-max-pain" class="stat-value">23,400</div>
+        <div id="stat-pc-ratio" class="stat-sub">P/C Ratio: 105.0%</div>
+      </div>
+    </div>
+
+    <!-- Tabs Container -->
+    <div class="tabs-container">
+      <button class="tab-btn active" data-tab="total-gex">全市場 Total GEX</button>
+      <button class="tab-btn" data-tab="weekly-gex">週三結算選 (W1/W2/W4/W5)</button>
+      <button class="tab-btn" data-tab="monthly-gex">當月月選 GEX</button>
+      <button class="tab-btn" data-tab="futures-sentiment">期貨與散戶籌碼</button>
+      <button class="tab-btn" data-tab="stock-futures">熱門個股期貨</button>
+    </div>
+
+    <!-- Main Chart Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <div id="chart-panel-title" class="panel-title">
+          📊 全市場 TXO GEX 履約價分布圖 (億 TWD)
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          數據更新日期: <span id="data-date">2026-07-31</span>
+        </div>
+      </div>
+
+      <!-- Plotly Container -->
+      <div id="gex-chart" style="width: 100%; height: 480px;"></div>
+    </div>
+
+    <!-- Sentiment Meter Panel (Appears on Futures Sentiment Tab) -->
+    <div id="sentiment-panel" class="panel">
+      <div class="panel-title">📉 微台與小台 散戶多空比 (Retail Sentiment Index)</div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+        傳統反向指標：當散戶極致做多被套時 (> +15%) 大盤易下探；當散戶極致做空被凹單時 (< -15%) 大盤易嘎空。
+      </p>
+
+      <div class="sentiment-bar-container">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <span>微台散戶多空比: <strong id="micro-ratio-val" style="color: var(--call-color);">-22.4% (散戶死做空 ➔ 偏嘎空)</strong></span>
+          <span>小台散戶多空比: <strong id="mini-ratio-val" style="color: var(--call-color);">-19.5% (散戶死做空)</strong></span>
+        </div>
+        <div class="sentiment-meter">
+          <div id="sentiment-fill" class="sentiment-fill" style="width: 30%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Rumi-style Matrix Panel -->
+    <div class="panel">
+      <div class="panel-title">📋 每日三大法人與大戶動向速查矩陣</div>
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>籌碼項目</th>
+            <th>解讀動作與趨勢</th>
+            <th>說明與市場意涵</th>
+          </tr>
+        </thead>
+        <tbody id="matrix-body">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Stock Futures Panel -->
+    <div id="stock-futures-panel" class="panel">
+      <div class="panel-title">💎 熱門個股期貨籌碼與夜盤清單</div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+        包含標記 🌙 <code>【有夜盤】</code> 之權值股期貨。若標示 ⚠️ <code>【流動性較低提醒】</code> 則代表選擇權數據僅供參考。
+      </p>
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>個股代號/名稱</th>
+            <th>夜盤狀態</th>
+            <th>流動性</th>
+            <th>參考股價</th>
+            <th>外資期貨淨部位</th>
+            <th>自營商期貨淨部位</th>
+          </tr>
+        </thead>
+        <tbody id="stock-futures-body">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Footer Disclaimer -->
+    <footer>
+      <p>⚖️ <strong>免責與法律聲明 (Disclaimer)</strong></p>
+      <p>本網站（包含數據圖表、GEX 計算結果與分析說明）僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。</p>
+      <p>衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
