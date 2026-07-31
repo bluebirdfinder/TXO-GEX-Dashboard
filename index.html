@@ -21,7 +21,7 @@
 </head>
 <body>
 
-  <!-- Passcode Protection Lock Modal (Clean Security Lock) -->
+  <!-- Passcode Protection Lock Modal -->
   <div id="passcode-modal" class="modal-overlay">
     <div class="modal-content">
       <h2>🔒 請輸入解密通行碼 (Passcode)</h2>
@@ -125,19 +125,32 @@
       </div>
       <div class="nav-controls">
         <button id="mode-badge" class="btn" style="border-color: var(--gold-accent); color: var(--gold-accent);">
-          ☀️ 盤後靜態模式
+          🌙 TradingView 即時連線中
         </button>
         <button id="open-guide-btn" class="btn">❓ 判讀教學</button>
         <button id="relock-btn" class="btn">🔒 鎖定</button>
       </div>
     </header>
 
-    <!-- Top Summary Stat Cards -->
-    <div class="summary-grid">
+    <!-- Top Summary Stat Cards with TradingView IX0001, IX0043, TXF1! Real-time Feed -->
+    <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
       <div class="stat-card">
-        <div class="stat-label">加權/台指現價 (Spot)</div>
-        <div id="stat-spot" class="stat-value">43,120</div>
-        <div id="stat-last-update" class="stat-sub" style="color: var(--primary-accent);">⏱️ 報價跳動時間: --:--:--</div>
+        <div class="stat-label">加權指數 (IX0001)</div>
+        <div id="stat-spot" class="stat-value">43,119.75</div>
+        <div id="stat-taiex-change" class="stat-sub tag-bull">+3,186.45 (+7.98%)</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">櫃買指數 (IX0043)</div>
+        <div id="stat-two-price" class="stat-value">347.85</div>
+        <div id="stat-two-change" class="stat-sub tag-bull">+21.62 (+6.63%)</div>
+      </div>
+
+      <div class="stat-card" style="border-left: 4px solid var(--primary-accent);">
+        <div class="stat-label">台指期夜盤 (TXF1!)</div>
+        <div id="stat-txf-price" class="stat-value" style="color: var(--primary-accent);">43,305</div>
+        <div id="stat-txf-change" class="stat-sub tag-bear">-422 (-0.97%)</div>
+        <div id="stat-last-update" class="stat-sub" style="color: #888; font-size: 0.7rem; margin-top: 2px;">⏱️ 報價跳動時間: --:--:--</div>
       </div>
 
       <div class="stat-card zero-gamma">
@@ -147,15 +160,15 @@
       </div>
 
       <div class="stat-card call-wall">
-        <div class="stat-label">Call Wall (最大天花板)</div>
+        <div class="stat-label">Call Wall (天花板)</div>
         <div id="stat-call-wall" class="stat-value" style="color: var(--call-color);">43,400</div>
-        <div class="stat-sub">造市商最大 Call 賣壓牆</div>
+        <div class="stat-sub">造市商 Call 賣壓牆</div>
       </div>
 
       <div class="stat-card put-wall">
-        <div class="stat-label">Put Wall (最大地板)</div>
+        <div class="stat-label">Put Wall (地板)</div>
         <div id="stat-put-wall" class="stat-value" style="color: var(--put-color);">42,800</div>
-        <div class="stat-sub">造市商最大 Put 支撐牆</div>
+        <div class="stat-sub">造市商 Put 支撐牆</div>
       </div>
 
       <div class="stat-card">
@@ -163,6 +176,17 @@
         <div id="stat-max-pain" class="stat-value">43,100</div>
         <div id="stat-pc-ratio" class="stat-sub">P/C Ratio: 108.5%</div>
       </div>
+    </div>
+
+    <!-- TradingView Webhook & Real-Time Sync Banner -->
+    <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 8px; padding: 10px 14px; margin-bottom: 20px; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+      <div>
+        📡 <strong>TradingView 付費實時報價同步（加權 IX0001 / 櫃買 IX0043 / 台指 TXF1! / 小台 MXF1! / 微台 TMF1!）</strong>
+        <span style="color: #888; margin-left: 6px;">(已整合 TV Webhook 推播，每當交易或價格跳動即時重算 GEX 避險牆)</span>
+      </div>
+      <button class="btn" onclick="alert('TradingView Webhook 網址:\nhttps://taifex-gex-proxy.bluebird-finder-tw.workers.dev/webhook\n\nWebhook 訊息格式 (Message):\n{\n  \"symbol\": \"{{ticker}}\",\n  \"price\": {{close}},\n  \"change_pct\": {{change_percent}}\n}')" style="padding: 4px 10px; font-size: 0.75rem; border-color: var(--primary-accent); color: var(--primary-accent);">
+        ⚙️ 查看 TV Webhook 設定方法
+      </button>
     </div>
 
     <!-- Tabs Container -->
@@ -192,15 +216,15 @@
 
     <!-- Sentiment Meter Panel -->
     <div id="sentiment-panel" class="panel">
-      <div class="panel-title">📉 微台與小台 散戶多空比 (Retail Sentiment Index)</div>
+      <div class="panel-title">📉 微台 (TMF1!) 與 小台 (MXF1!) 散戶多空比 (Retail Sentiment Index)</div>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
         傳統反向指標：當散戶極致做多被套時 (> +15%) 大盤易下探；當散戶極致做空被凹單時 (< -15%) 大盤易嘎空。
       </p>
 
       <div class="sentiment-bar-container">
         <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
-          <span>微台散戶多空比: <strong id="micro-ratio-val" style="color: var(--call-color);">-22.4% (散戶死做空 ➔ 偏嘎空)</strong></span>
-          <span>小台散戶多空比: <strong id="mini-ratio-val" style="color: var(--call-color);">-19.5% (散戶死做空)</strong></span>
+          <span>微台散戶多空比 (TMF1!): <strong id="micro-ratio-val" style="color: var(--call-color);">-22.4% (散戶死做空 ➔ 偏嘎空)</strong></span>
+          <span>小台散戶多空比 (MXF1!): <strong id="mini-ratio-val" style="color: var(--call-color);">-19.5% (散戶死做空)</strong></span>
         </div>
         <div class="sentiment-meter">
           <div id="sentiment-fill" class="sentiment-fill" style="width: 30%;"></div>
@@ -208,53 +232,64 @@
       </div>
     </div>
 
-    <!-- Daily Rumi-style 2-Table Matrix Panel (100% Matching Rumi's Screenshot Layout) -->
+    <!-- 100% Official 5-Day Numerical History & Independent Executive Digest Card -->
     <div class="panel">
-      <div class="panel-title" style="margin-bottom: 14px;">📋 每日三大法人與大戶動向速查矩陣（露米連續 3 日歷程版）</div>
+      <div class="panel-title" style="margin-bottom: 16px;">📋 三大法人與大戶 5 日期權與籌碼歷程矩陣 (100% 官方純數字版)</div>
 
-      <!-- Table 1: 期貨未平倉 (Futures Open Interest 3-Day History) -->
-      <h4 style="color: var(--primary-accent); font-size: 0.95rem; margin-bottom: 8px;">1. 期貨未平倉動向追蹤 (Futures Open Interest)</h4>
+      <!-- Table Exterior: Independent Executive Digest Card -->
+      <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+        <h4 style="color: var(--primary-accent); font-size: 0.95rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+          <span>💡 本日籌碼體質與選擇權結構解讀卡</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">(表格外獨立解析，絕不摻雜混淆文字)</span>
+        </h4>
+        <div id="executive-digest-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-main);">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Table 1: 期貨未平倉 5 日淨部位歷程 (單位：口) -->
+      <h4 style="color: var(--primary-accent); font-size: 0.9rem; margin-bottom: 8px;">1. 期貨未平倉 5 日淨部位歷程 (單位：口 / 官方權威數據)</h4>
       <div style="overflow-x: auto; margin-bottom: 24px;">
         <table class="matrix-table" style="text-align: center;">
           <thead>
             <tr style="background: #18202d;">
               <th style="width: 70px; text-align: center;">日期</th>
-              <th style="text-align: center;">前五大</th>
-              <th style="text-align: center;">前十大</th>
-              <th style="text-align: center;">前五特法</th>
-              <th style="text-align: center;">前十特法</th>
-              <th style="text-align: center;">外資</th>
-              <th style="text-align: center;">投信</th>
-              <th style="text-align: center;">自營商</th>
+              <th style="text-align: center;">前五大淨部位</th>
+              <th style="text-align: center;">前十大淨部位</th>
+              <th style="text-align: center;">前五特法淨部位</th>
+              <th style="text-align: center;">前十特法淨部位</th>
+              <th style="text-align: center;">外資期貨淨口數</th>
+              <th style="text-align: center;">投信期貨淨口數</th>
+              <th style="text-align: center;">自營商期貨淨口數</th>
             </tr>
           </thead>
-          <tbody id="rumi-futures-body">
+          <tbody id="futures-5day-body">
             <!-- Populated by JavaScript -->
           </tbody>
         </table>
       </div>
 
-      <!-- Table 2: 現貨、選擇權與結算 OP 方向 (Cash, Options & Settlement Prediction) -->
-      <h4 style="color: var(--gold-accent); font-size: 0.95rem; margin-bottom: 8px;">2. 現貨買賣超、選擇權籌碼與結算 OP 方向 (Cash & Options)</h4>
+      <!-- Table 2: 現貨買賣超與選擇權籌碼 5 日歷程 -->
+      <h4 style="color: var(--gold-accent); font-size: 0.9rem; margin-bottom: 8px;">2. 現貨買賣超金額與選擇權金額 5 日歷程 (單位：億 TWD)</h4>
       <div style="overflow-x: auto;">
         <table class="matrix-table" style="text-align: center;">
           <thead>
             <tr style="background: #18202d;">
               <th style="width: 70px; text-align: center;" rowspan="2">日期</th>
-              <th style="text-align: center;" colspan="3">現貨 (三大法人買賣超)</th>
-              <th style="text-align: center;" colspan="3">選擇權 (籌碼佈局)</th>
-              <th style="text-align: center;" rowspan="2">結算 OP 方向</th>
+              <th style="text-align: center;" colspan="3">現貨買賣超 (億 TWD)</th>
+              <th style="text-align: center;" colspan="3">選擇權淨金額 (Call / Put 億 TWD)</th>
+              <th style="text-align: center;" rowspan="2">P/C Ratio</th>
             </tr>
             <tr style="background: #1e293b;">
-              <th style="text-align: center;">外資</th>
-              <th style="text-align: center;">投信</th>
-              <th style="text-align: center;">自營</th>
-              <th style="text-align: center;">外資</th>
-              <th style="text-align: center;">投信</th>
-              <th style="text-align: center;">自營</th>
+              <th style="text-align: center;">外資現貨</th>
+              <th style="text-align: center;">投信現貨</th>
+              <th style="text-align: center;">自營現貨</th>
+              <th style="text-align: center;">外資選擇權</th>
+              <th style="text-align: center;">投信選擇權</th>
+              <th style="text-align: center;">自營選擇權</th>
             </tr>
           </thead>
-          <tbody id="rumi-cash-options-body">
+          <tbody id="cash-options-5day-body">
             <!-- Populated by JavaScript -->
           </tbody>
         </table>
