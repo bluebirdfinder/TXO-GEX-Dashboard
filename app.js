@@ -6,12 +6,12 @@
 let gexData = null;
 let currentTab = 'total-gex';
 let realTimeInterval = null;
+const VALID_PASSCODE = 'GEX2026';
 const WORKER_URL = 'https://taifex-gex-proxy.bluebird-finder-tw.workers.dev';
 
 document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
   
-  // Check if passcode is saved in localStorage
   const savedPass = localStorage.getItem('txo_gex_passcode');
   if (savedPass) {
     document.getElementById('passcode-field').value = savedPass;
@@ -38,7 +38,6 @@ function initEventListeners() {
     document.getElementById('guide-modal').style.display = 'none';
   });
 
-  // Tab switching
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -53,17 +52,26 @@ async function attemptDecrypt(passcode) {
   const errEl = document.getElementById('passcode-error');
   errEl.style.display = 'none';
 
+  if (passcode !== VALID_PASSCODE) {
+    errEl.style.display = 'block';
+    return;
+  }
+
   try {
+    // 1. Try to fetch encrypted payload first
     let res = await fetch('data/encrypted_gex.json');
-    if (!res.ok) {
-      res = await fetch('data/gex_data.json');
-      gexData = await res.json();
-    } else {
+    if (res.ok) {
       const encObj = await res.json();
       if (encObj.payload) {
         gexData = decryptPayload(encObj.payload, passcode);
-      } else {
-        gexData = encObj;
+      }
+    }
+    
+    // 2. Fallback to raw JSON if needed
+    if (!gexData) {
+      let rawRes = await fetch('data/gex_data.json');
+      if (rawRes.ok) {
+        gexData = await rawRes.json();
       }
     }
 
@@ -72,21 +80,13 @@ async function attemptDecrypt(passcode) {
       document.getElementById('passcode-modal').style.display = 'none';
       renderDashboard();
       startRealTimeQuotes();
-    } else {
-      errEl.style.display = 'block';
+      return;
     }
   } catch (err) {
     console.error('Decryption error:', err);
-    try {
-      let rawRes = await fetch('data/gex_data.json');
-      gexData = await rawRes.json();
-      document.getElementById('passcode-modal').style.display = 'none';
-      renderDashboard();
-      startRealTimeQuotes();
-    } catch (e) {
-      errEl.style.display = 'block';
-    }
   }
+
+  errEl.style.display = 'block';
 }
 
 function decryptPayload(b64Str, passcode) {
