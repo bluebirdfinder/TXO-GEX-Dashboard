@@ -5,7 +5,6 @@
 
 let gexData = null;
 let currentTab = 'total-gex';
-let passcodeKey = 'GEX2026';
 let realTimeInterval = null;
 const WORKER_URL = 'https://taifex-gex-proxy.bluebird-finder-tw.workers.dev';
 
@@ -55,7 +54,6 @@ async function attemptDecrypt(passcode) {
   errEl.style.display = 'none';
 
   try {
-    // Fetch encrypted payload first, fallback to raw data
     let res = await fetch('data/encrypted_gex.json');
     if (!res.ok) {
       res = await fetch('data/gex_data.json');
@@ -63,7 +61,7 @@ async function attemptDecrypt(passcode) {
     } else {
       const encObj = await res.json();
       if (encObj.payload) {
-        gexData = decryptOpenSSL(encObj.payload, passcode);
+        gexData = decryptPayload(encObj.payload, passcode);
       } else {
         gexData = encObj;
       }
@@ -91,38 +89,25 @@ async function attemptDecrypt(passcode) {
   }
 }
 
-function decryptOpenSSL(b64Str, passcode) {
+function decryptPayload(b64Str, passcode) {
   try {
-    const rawData = CryptoJS.enc.Base64.parse(b64Str);
-    const salt = CryptoJS.lib.WordArray.create(rawData.words.slice(2, 4), 8);
-    const ciphertext = CryptoJS.lib.WordArray.create(rawData.words.slice(4), rawData.sigBytes - 16);
+    const cipherWords = CryptoJS.enc.Base64.parse(b64Str);
+    const cipherLatin1 = CryptoJS.enc.Latin1.stringify(cipherWords);
+    
+    const keyHash = CryptoJS.SHA256(passcode);
+    const keyLatin1 = CryptoJS.enc.Latin1.stringify(keyHash);
 
-    const hasher = CryptoJS.algo.MD5.create();
-    let keyIv = CryptoJS.lib.WordArray.create();
-    let prev = CryptoJS.lib.WordArray.create();
-
-    while (keyIv.sigBytes < 48) {
-      hasher.reset();
-      hasher.append(prev);
-      hasher.append(CryptoJS.enc.Utf8.parse(passcode));
-      hasher.append(salt);
-      prev = hasher.finalize();
-      keyIv.concat(prev);
+    let plainStr = '';
+    for (let i = 0; i < cipherLatin1.length; i++) {
+      const c = cipherLatin1.charCodeAt(i);
+      const k = keyLatin1.charCodeAt(i % keyLatin1.length);
+      plainStr += String.fromCharCode(c ^ k);
     }
 
-    const key = CryptoJS.lib.WordArray.create(keyIv.words.slice(0, 8), 32);
-    const iv = CryptoJS.lib.WordArray.create(keyIv.words.slice(8, 12), 16);
-
-    const decrypted = CryptoJS.AES.decrypt({ ciphertext: ciphertext }, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-
-    const decryptedStr = decrypted.toString(CryptoJS.enc.Utf8);
-    return JSON.parse(decryptedStr);
+    const utf8Str = decodeURIComponent(escape(plainStr));
+    return JSON.parse(utf8Str);
   } catch (e) {
-    console.error('OpenSSL decrypt fail:', e);
+    console.error('Decryption failed:', e);
     return null;
   }
 }
@@ -130,9 +115,7 @@ function decryptOpenSSL(b64Str, passcode) {
 async function startRealTimeQuotes() {
   if (realTimeInterval) clearInterval(realTimeInterval);
 
-  // Poll Cloudflare Worker every 10 seconds for real-time night session price
   async function fetchRealTime() {
-    // Only fetch if tab is visible to save bandwidth
     if (document.hidden) return;
     
     try {
