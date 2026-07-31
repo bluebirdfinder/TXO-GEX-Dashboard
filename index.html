@@ -28,12 +28,23 @@
       <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">
         本系統數據經端到端 AES-256 加密保護，請輸入專屬通行碼進行本機解密與存取。
       </p>
-      <input type="password" id="passcode-field" class="passcode-input" placeholder="請輸入通行碼..." autocomplete="off">
+      
+      <div style="position: relative; margin: 16px 0 8px 0;">
+        <input type="password" id="passcode-field" class="passcode-input" placeholder="請輸入通行碼..." autocomplete="off">
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 0.85rem; color: var(--text-muted);">
+        <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <input type="checkbox" id="toggle-show-pass"> 👁️ 顯示輸入的密碼
+        </label>
+        <span style="font-size: 0.75rem; color: #888;">(大小寫不限)</span>
+      </div>
+
       <div style="display: flex; gap: 10px; justify-content: flex-end;">
         <button id="unlock-btn" class="btn btn-primary" style="width: 100%;">驗證並解密儀表板</button>
       </div>
       <p id="passcode-error" style="color: var(--put-color); font-size: 0.8rem; margin-top: 10px; display: none;">
-        ❌ 通行碼錯誤或數據損毀，請重試。
+        ❌ 通行碼錯誤或數據讀取失敗，請確認密碼後重試。
       </p>
     </div>
   </div>
