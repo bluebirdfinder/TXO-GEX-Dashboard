@@ -1,11 +1,10 @@
 /**
- * TXO GEX Dashboard Application Logic v28.0
- * 尋鳥 Bluebird Finder | 100% Fully Automated Multi-Source Failover Live Quote Engine
+ * TXO GEX Dashboard Application Logic v29.0
+ * 尋鳥 Bluebird Finder | Official TAIFEX Daytime Close Positioning Engine
  */
 
 let gexData = null;
 let currentTab = 'total-gex';
-let realTimeInterval = null;
 let currentSortKey = 'volume';
 let currentSortOrder = 'desc';
 
@@ -132,7 +131,6 @@ async function attemptDecrypt(passcode) {
       localStorage.setItem('txo_gex_passcode', cleanPass);
       document.getElementById('passcode-modal').style.display = 'none';
       renderDashboard();
-      startAutoPublicQuotes();
       return;
     }
   } catch (err) {
@@ -142,7 +140,6 @@ async function attemptDecrypt(passcode) {
       localStorage.setItem('txo_gex_passcode', cleanPass);
       document.getElementById('passcode-modal').style.display = 'none';
       renderDashboard();
-      startAutoPublicQuotes();
       return;
     }
   }
@@ -174,7 +171,7 @@ function decryptPayload(b64Str, passcode) {
 }
 
 function getFallbackData() {
-  const spot = 42086.0;
+  const spot = 43119.75;
   const strikes = [];
   for (let i = -15; i <= 15; i++) strikes.push(Math.round(spot/50)*50 + i * 50);
 
@@ -186,15 +183,16 @@ function getFallbackData() {
   }));
 
   return {
-    date: new Date().toISOString().split('T')[0],
+    date: "2026-07-31",
+    last_updated_time: "2026-07-31 13:45",
     spot_price: spot,
     two_price: 347.85,
-    txf_price: 42086,
-    zero_gamma_level: 42500,
-    call_wall_strike: 43100,
-    put_wall_strike: 41800,
-    max_pain_strike: 42500,
-    pc_ratio: 118.5,
+    txf_price: 43305,
+    zero_gamma_level: 42970,
+    call_wall_strike: 43400,
+    put_wall_strike: 42800,
+    max_pain_strike: 43100,
+    pc_ratio: 108.5,
     total_gex: total_gex,
     weekly_gex: total_gex,
     friday_gex: total_gex,
@@ -209,11 +207,11 @@ function getFallbackData() {
       { date: "7/31", top5_net: 6420, top10_net: 9850, top5_spec_net: 5890, top10_spec_net: 8410, foreign_fut_net: -14200, trust_fut_net: 4200, dealer_fut_net: 1100, foreign_stock_net: 185.4, trust_stock_net: 62.8, dealer_stock_net: -24.5, foreign_opt_call_net: 0.60, foreign_opt_put_net: -0.28, trust_opt_call_net: -3.08, trust_opt_put_net: 0.003, dealer_opt_call_net: 1.83, dealer_opt_put_net: 1.42, pc_ratio: 108.5 }
     ],
     executive_digest: {
-      date: new Date().toISOString().split('T')[0],
+      date: "2026-07-31",
       futures_summary: "前五大與前十大交易人多單加碼（+6,420口 / +9,850口），特定法人整體期貨結構偏多佈局。",
       cash_summary: "現貨買賣超呈現「外資大買超 +185.4億」與「投信連續買超 +62.8億」，自營商微幅調節 -24.5億。",
       options_structure: "期交所官方數據顯示：投信持倉 SC 賣出買權 -3.08億 與 BP 買進賣權 +0.003億（總部位 SC+BP 防守避險）；外資與自營商雙賣收取時間價值偏高檔看撐。",
-      settlement_outlook: "🎯 盤中急殺下探 42,086 關卡，跌破 Zero Gamma (42,500) 觸發造市商動態 Delta 追賣賣壓！當前關鍵支撐落在 41,800 Put Wall！"
+      settlement_outlook: "🎯 綜合日盤官方結算籌碼與 GEX 避險牆，當前支撐位於 42,800 Put Wall，上檔壓力 43,400 Call Wall，預計結算偏向【高檔震盪看撐】。"
     },
     stock_futures: [
       { code: "2330", name: "台積電期", category: "個股期貨", has_night: true, liquidity: "極高", spot_price: 2205.0, change_pct: 0.23, volume: 38450, foreign_net: 4200, dealer_net: 1100, trend: "Bull" },
@@ -223,79 +221,18 @@ function getFallbackData() {
   };
 }
 
-/**
- * 100% Fully Automated Multi-Source Live Quote Engine
- * Seamlessly updates 台指期 (TXF1!) and Spot Price without any cheap manual buttons.
- */
-async function startAutoPublicQuotes() {
-  if (realTimeInterval) clearInterval(realTimeInterval);
-
-  const badgeEl = document.getElementById('mode-badge');
-  if (badgeEl) {
-    badgeEl.innerHTML = '⚡ 全自動數據極速連線中';
-    badgeEl.style.borderColor = '#00d2ff';
-    badgeEl.style.color = '#00d2ff';
-  }
-
-  async function fetchPublicQuotes() {
-    if (document.hidden) return;
-    
-    const nowTimeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
-    const updateEl = document.getElementById('stat-last-update');
-    if (updateEl) {
-      updateEl.innerHTML = `⚡ 極速同步時間: <strong>${nowTimeStr}</strong>`;
-    }
-
-    let fetchedPrice = null;
-
-    // 1. Primary: TWSE MIS Official Public Quote API
-    try {
-      const res = await fetch('https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw&t=' + Date.now());
-      if (res.ok) {
-        const json = await res.json();
-        const info = json.msgArray && json.msgArray[0];
-        if (info && info.z && info.z !== '-') {
-          fetchedPrice = parseFloat(info.z);
-        }
-      }
-    } catch (e) {}
-
-    // 2. Secondary Fallback: Yahoo Finance Public TAIEX API
-    if (!fetchedPrice) {
-      try {
-        const yRes = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=1m&range=1d&t=' + Date.now());
-        if (yRes.ok) {
-          const yJson = await yRes.json();
-          const meta = yJson.chart.result[0].meta;
-          fetchedPrice = meta.regularMarketPrice || meta.chartPreviousClose;
-        }
-      } catch (err) {}
-    }
-
-    if (fetchedPrice && fetchedPrice > 0) {
-      document.getElementById('stat-spot').innerText = Number(fetchedPrice).toLocaleString();
-      document.getElementById('stat-txf-price').innerText = Number(fetchedPrice).toLocaleString();
-      
-      if (gexData && Math.abs(fetchedPrice - gexData.spot_price) >= 1) {
-        gexData.spot_price = Math.round(fetchedPrice);
-        gexData.txf_price = Math.round(fetchedPrice);
-        renderDashboard();
-      }
-    }
-  }
-
-  fetchPublicQuotes();
-  realTimeInterval = setInterval(fetchPublicQuotes, 3000);
-}
-
 function renderDashboard() {
   if (!gexData) return;
 
-  const currentPrice = gexData.txf_price || gexData.spot_price || 42086;
+  const spot = gexData.spot_price || 43119.75;
+  const txf = gexData.txf_price || 43305;
+  const lastTime = gexData.last_updated_time || (gexData.date + ' 13:45');
 
-  document.getElementById('stat-spot').innerText = (gexData.spot_price || 43119.75).toLocaleString();
+  document.getElementById('stat-spot').innerText = spot.toLocaleString();
   document.getElementById('stat-two-price').innerText = (gexData.two_price || 347.85).toLocaleString();
-  document.getElementById('stat-txf-price').innerText = currentPrice.toLocaleString();
+  document.getElementById('stat-txf-price').innerText = txf.toLocaleString();
+
+  document.getElementById('stat-last-update').innerHTML = `📅 最後更新: <strong>${lastTime}</strong>`;
 
   document.getElementById('stat-zero-gamma').innerText = gexData.zero_gamma_level.toLocaleString();
   document.getElementById('stat-call-wall').innerText = gexData.call_wall_strike.toLocaleString();
@@ -305,7 +242,7 @@ function renderDashboard() {
 
   const zg = gexData.zero_gamma_level;
   const statusEl = document.getElementById('stat-gamma-status');
-  if (currentPrice >= zg) {
+  if (spot >= zg) {
     statusEl.innerHTML = '🔴 正 Gamma 多頭平穩區 (台灣紅漲)';
     statusEl.style.color = 'var(--call-color)';
   } else {
@@ -344,7 +281,7 @@ function renderGEXChart() {
 
   document.getElementById('chart-panel-title').innerText = title;
 
-  const currentPrice = gexData.txf_price || gexData.spot_price;
+  const currentPrice = gexData.spot_price;
   const strikes = gexList.map(item => item.strike);
   const callGex = gexList.map(item => item.call_gex);
   const putGex = gexList.map(item => item.put_gex);
@@ -459,7 +396,7 @@ function populateInstitutionalMatrix() {
     futures_summary: "前五大與前十大交易人多單加碼（+6,420口 / +9,850口），特定法人整體期貨結構偏多佈局。",
     cash_summary: "現貨買賣超呈現「外資大買超 +185.4億」與「投信連續買超 +62.8億」，自營商微幅調節 -24.5億。",
     options_structure: "期交所官方數據顯示：投信持倉 SC 賣出買權 -3.08億 與 BP 買進賣權 +0.003億（總部位 SC+BP 防守避險）；外資與自營商雙賣收取時間價值偏高檔看撐。",
-    settlement_outlook: "🎯 盤中急殺下探 42,086 關卡，跌破 Zero Gamma (42,500) 觸發造市商動態 Delta 追賣賣壓！當前關鍵支撐落在 41,800 Put Wall！"
+    settlement_outlook: "🎯 綜合日盤官方結算籌碼與 GEX 避險牆，當前支撐位於 42,800 Put Wall，上檔壓力 43,400 Call Wall，預計結算偏向【高檔震盪看撐】。"
   };
 
   if (digestEl) {
