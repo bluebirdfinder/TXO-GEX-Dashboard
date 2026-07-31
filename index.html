@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>TXO GEX 動態儀表板 | 台指選擇權與期貨籌碼分析</title>
+  <title>尋鳥 Bluebird Finder | TXO GEX 量化儀表板</title>
   
   <!-- Modern Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,7 +54,7 @@
   <div id="guide-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content" style="max-width: 750px; max-height: 85vh; overflow-y: auto;">
       <div class="modal-header">
-        <h2>💡 選擇權口訣、多空判讀與 GEX 指南</h2>
+        <h2>💡 選擇權口訣與 GEX 指南</h2>
         <button class="close-btn" id="close-guide-btn">&times;</button>
       </div>
       
@@ -100,39 +100,35 @@
           </tr>
         </tbody>
       </table>
-
-      <h3 style="color: var(--gold-accent); margin-bottom: 8px;">2. 🔴 ▲ Bull 與 🟢 ▼ Bear 多空標籤判讀公式</h3>
-      <ul style="padding-left: 20px; font-size: 0.85rem; line-height: 1.8; margin-bottom: 20px;">
-        <li>🔴 <strong>▲ Bull (多頭)</strong>：當當日股價呈現上漲（漲幅 $> 0\%$）且外資/自營商期貨部位呈現淨多單時，系統判定為多頭趨勢。</li>
-        <li>🟢 <strong>▼ Bear (空頭)</strong>：當當日股價呈現下跌（跌幅 $< 0\%$）且外資/自營商期貨部位呈現淨空單時，系統判定為空頭趨勢。</li>
-      </ul>
-
-      <h3 style="color: var(--gold-accent); margin-bottom: 8px;">3. GEX (Gamma Exposure) 判讀三招</h3>
-      <ul style="padding-left: 20px; font-size: 0.9rem; line-height: 1.8;">
-        <li>🔴 <strong>Zero Gamma 上方（正 Gamma 區）</strong>：造市商高拋低吸，盤勢波動小，傾向區間震盪或緩步墊高。</li>
-        <li>🟢 <strong>Zero Gamma 下方（負 Gamma 區）</strong>：造市商追漲殺跌，波動飆升，容易觸發連鎖避險追殺或逼空。</li>
-        <li>🎯 <strong>Call Wall (天花板) / Put Wall (地板)</strong>：造市商最大的避險牆，通常為強壓力與強支撐。</li>
-      </ul>
     </div>
   </div>
 
   <div class="container">
-    <!-- Header -->
+    <!-- Header with 尋鳥 Bluebird Finder Branding -->
     <header>
-      <div class="logo-area">
-        <h1>TAIFEX TXO GEX 儀表板</h1>
-        <div class="tagline">台指選擇權 Gamma Exposure 波動度與期貨籌碼量化分析</div>
+      <div class="logo-area" style="display: flex; align-items: center; gap: 16px;">
+        <div id="user-avatar-container" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--primary-accent); overflow: hidden; background: #1a2234; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 14px rgba(0,210,255,0.4);">
+          <img id="user-avatar-img" src="assets/avatar.png" alt="尋鳥 Bluebird Finder" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='block';">
+          <span id="avatar-fallback" style="display: none; font-size: 1.5rem;">🐦</span>
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h1 style="background: linear-gradient(135deg, #00d2ff 0%, #ffd700 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-size: 1.6rem; letter-spacing: 1px;">尋鳥 Bluebird Finder</h1>
+            <span style="font-size: 0.75rem; background: rgba(0,210,255,0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); padding: 2px 8px; border-radius: 12px; font-weight: 600;">TXO GEX 量化系統</span>
+          </div>
+          <div class="tagline">台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼分析</div>
+        </div>
       </div>
       <div class="nav-controls">
         <button id="mode-badge" class="btn" style="border-color: var(--gold-accent); color: var(--gold-accent);">
-          🌙 TradingView 即時連線中
+          ⚡ 盤後連線中
         </button>
         <button id="open-guide-btn" class="btn">❓ 判讀教學</button>
         <button id="relock-btn" class="btn">🔒 鎖定</button>
       </div>
     </header>
 
-    <!-- Top Summary Stat Cards with TradingView IX0001, IX0043, TXF1! Real-time Feed -->
+    <!-- Top Summary Stat Cards -->
     <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
       <div class="stat-card">
         <div class="stat-label">加權指數 (IX0001)</div>
@@ -150,7 +146,7 @@
         <div class="stat-label">台指期夜盤 (TXF1!)</div>
         <div id="stat-txf-price" class="stat-value" style="color: var(--primary-accent);">43,305</div>
         <div id="stat-txf-change" class="stat-sub tag-bear">-422 (-0.97%)</div>
-        <div id="stat-last-update" class="stat-sub" style="color: #888; font-size: 0.7rem; margin-top: 2px;">⏱️ 報價跳動時間: --:--:--</div>
+        <div id="stat-last-update" class="stat-sub" style="color: #888; font-size: 0.7rem; margin-top: 2px;">⏱️ 報價連線時間: --:--:--</div>
       </div>
 
       <div class="stat-card zero-gamma">
@@ -176,17 +172,6 @@
         <div id="stat-max-pain" class="stat-value">43,100</div>
         <div id="stat-pc-ratio" class="stat-sub">P/C Ratio: 108.5%</div>
       </div>
-    </div>
-
-    <!-- TradingView Webhook & Real-Time Sync Banner -->
-    <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 8px; padding: 10px 14px; margin-bottom: 20px; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-      <div>
-        📡 <strong>TradingView 付費實時報價同步（加權 IX0001 / 櫃買 IX0043 / 台指 TXF1! / 小台 MXF1! / 微台 TMF1!）</strong>
-        <span style="color: #888; margin-left: 6px;">(已整合 TV Webhook 推播，每當交易或價格跳動即時重算 GEX 避險牆)</span>
-      </div>
-      <button class="btn" onclick="alert('TradingView Webhook 網址:\nhttps://taifex-gex-proxy.bluebird-finder-tw.workers.dev/webhook\n\nWebhook 訊息格式 (Message):\n{\n  \"symbol\": \"{{ticker}}\",\n  \"price\": {{close}},\n  \"change_pct\": {{change_percent}}\n}')" style="padding: 4px 10px; font-size: 0.75rem; border-color: var(--primary-accent); color: var(--primary-accent);">
-        ⚙️ 查看 TV Webhook 設定方法
-      </button>
     </div>
 
     <!-- Tabs Container -->
@@ -218,29 +203,28 @@
     <div id="sentiment-panel" class="panel">
       <div class="panel-title">📉 微台 (TMF1!) 與 小台 (MXF1!) 散戶多空比 (Retail Sentiment Index)</div>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
-        傳統反向指標：當散戶極致做多被套時 (> +15%) 大盤易下探；當散戶極致做空被凹單時 (< -15%) 大盤易嘎空。
+        傳統反向指標：當散戶做多比率偏高 (> +15%) 大盤易下探；當散戶做空比率偏高 (< -15%) 大盤易嘎空。
       </p>
 
       <div class="sentiment-bar-container">
         <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
-          <span>微台散戶多空比 (TMF1!): <strong id="micro-ratio-val" style="color: var(--call-color);">-22.4% (散戶死做空 ➔ 偏嘎空)</strong></span>
-          <span>小台散戶多空比 (MXF1!): <strong id="mini-ratio-val" style="color: var(--call-color);">-19.5% (散戶死做空)</strong></span>
+          <span>微台散戶多空比 (TMF1!): <strong id="micro-ratio-val" style="color: var(--call-color);">6.9% (散戶做多 ➔ 偏拉回)</strong></span>
+          <span>小台散戶多空比 (MXF1!): <strong id="mini-ratio-val" style="color: var(--call-color);">4.5% (散戶做多)</strong></span>
         </div>
         <div class="sentiment-meter">
-          <div id="sentiment-fill" class="sentiment-fill" style="width: 30%;"></div>
+          <div id="sentiment-fill" class="sentiment-fill" style="width: 55%;"></div>
         </div>
       </div>
     </div>
 
-    <!-- 100% Official 5-Day Numerical History & Independent Executive Digest Card -->
+    <!-- 100% Official 5-Day Numerical History & Clean Digest Card -->
     <div class="panel">
-      <div class="panel-title" style="margin-bottom: 16px;">📋 三大法人與大戶 5 日期權與籌碼歷程矩陣 (100% 官方純數字版)</div>
+      <div class="panel-title" style="margin-bottom: 16px;">📋 三大法人與大戶 5 日期權與籌碼歷程矩陣</div>
 
-      <!-- Table Exterior: Independent Executive Digest Card -->
+      <!-- Executive Digest Card -->
       <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
-        <h4 style="color: var(--primary-accent); font-size: 0.95rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-          <span>💡 本日籌碼體質與選擇權結構解讀卡</span>
-          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">(表格外獨立解析，絕不摻雜混淆文字)</span>
+        <h4 style="color: var(--primary-accent); font-size: 0.95rem; margin-bottom: 10px;">
+          💡 本日籌碼體質與選擇權結構解讀
         </h4>
         <div id="executive-digest-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-main);">
           <!-- Populated by JavaScript -->
@@ -248,7 +232,7 @@
       </div>
 
       <!-- Table 1: 期貨未平倉 5 日淨部位歷程 (單位：口) -->
-      <h4 style="color: var(--primary-accent); font-size: 0.9rem; margin-bottom: 8px;">1. 期貨未平倉 5 日淨部位歷程 (單位：口 / 官方權威數據)</h4>
+      <h4 style="color: var(--primary-accent); font-size: 0.9rem; margin-bottom: 8px;">1. 期貨未平倉 5 日淨部位歷程 (單位：口)</h4>
       <div style="overflow-x: auto; margin-bottom: 24px;">
         <table class="matrix-table" style="text-align: center;">
           <thead>
@@ -353,7 +337,7 @@
 
     <!-- Footer Disclaimer -->
     <footer>
-      <p>⚖️ <strong>免責與法律聲明 (Disclaimer)</strong></p>
+      <p>⚖️ <strong>尋鳥 Bluebird Finder 免責與法律聲明</strong></p>
       <p>本網站（包含數據圖表、GEX 計算結果與分析說明）僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。</p>
       <p>衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。</p>
     </footer>

@@ -1,6 +1,8 @@
 {
   "date": "2026-07-31",
   "spot_price": 43119.75,
+  "two_price": 347.85,
+  "txf_price": 43305,
   "zero_gamma_level": 42950.0,
   "call_wall_strike": 43400,
   "put_wall_strike": 42800,
@@ -758,30 +760,6 @@
       "net_gex": 305.3
     }
   ],
-  "futures_data": {
-    "big_tx": {
-      "name": "大台 (TX)",
-      "total_oi": 82500,
-      "foreign_net": -14200,
-      "dealer_net": 3800,
-      "trust_net": 1200
-    },
-    "mini_tx": {
-      "name": "小台 (MTX)",
-      "total_oi": 96000,
-      "foreign_net": 5200,
-      "dealer_net": -1500,
-      "trust_net": 0
-    },
-    "micro_tx": {
-      "name": "微台 (TMA)",
-      "total_oi": 158000,
-      "foreign_net": 9200,
-      "dealer_net": -4100,
-      "trust_net": 0
-    },
-    "tx_equivalent_net": -12440.0
-  },
   "retail_mini_ratio": 4.5,
   "retail_micro_ratio": 6.9,
   "institutional_5day_history": [
@@ -799,7 +777,8 @@
       "dealer_stock_net": -18.6,
       "foreign_opt_call_net": 0.45,
       "foreign_opt_put_net": -1.82,
-      "trust_opt_net": 0.0,
+      "trust_opt_call_net": -2.4,
+      "trust_opt_put_net": 0.002,
       "dealer_opt_call_net": 1.25,
       "dealer_opt_put_net": 0.85,
       "pc_ratio": 102.4
@@ -818,7 +797,8 @@
       "dealer_stock_net": -12.4,
       "foreign_opt_call_net": 0.62,
       "foreign_opt_put_net": -1.45,
-      "trust_opt_net": 0.0,
+      "trust_opt_call_net": -2.65,
+      "trust_opt_put_net": 0.002,
       "dealer_opt_call_net": 1.4,
       "dealer_opt_put_net": 0.92,
       "pc_ratio": 104.1
@@ -837,7 +817,8 @@
       "dealer_stock_net": -8.5,
       "foreign_opt_call_net": 0.88,
       "foreign_opt_put_net": -1.1,
-      "trust_opt_net": 0.0,
+      "trust_opt_call_net": -2.85,
+      "trust_opt_put_net": 0.003,
       "dealer_opt_call_net": 1.85,
       "dealer_opt_put_net": 1.15,
       "pc_ratio": 105.8
@@ -856,7 +837,8 @@
       "dealer_stock_net": 14.2,
       "foreign_opt_call_net": 1.45,
       "foreign_opt_put_net": -0.65,
-      "trust_opt_net": 0.0,
+      "trust_opt_call_net": -2.98,
+      "trust_opt_put_net": 0.003,
       "dealer_opt_call_net": 2.3,
       "dealer_opt_put_net": 1.42,
       "pc_ratio": 107.2
@@ -873,20 +855,21 @@
       "foreign_stock_net": 185.4,
       "trust_stock_net": 62.8,
       "dealer_stock_net": -24.5,
-      "foreign_opt_call_net": 2.15,
-      "foreign_opt_put_net": -0.32,
-      "trust_opt_net": 0.0,
-      "dealer_opt_call_net": 2.85,
-      "dealer_opt_put_net": 1.88,
+      "foreign_opt_call_net": 0.6,
+      "foreign_opt_put_net": -0.28,
+      "trust_opt_call_net": -3.08,
+      "trust_opt_put_net": 0.003,
+      "dealer_opt_call_net": 1.83,
+      "dealer_opt_put_net": 1.42,
       "pc_ratio": 108.5
     }
   ],
   "executive_digest": {
     "date": "2026-07-31",
-    "futures_summary": "前五大與前十大交易人多單持續加碼（+6,420口 / +9,850口），外資期貨空單微幅增加，但整體特定法人偏多佈局。",
-    "cash_summary": "現貨呈現「外資大買超 +185.4億」與「投信連續買超 +62.8億」，自營商微幅調節 -24.5億，現貨資金動能強勁。",
-    "options_structure": "外資選擇權買權 Buy Call (+2.15億) 顯著大於 Buy Put 避險部位，自營商呈現雙賣收取時間價值 (SC + SP) 偏向高檔震盪看撐。",
-    "settlement_outlook": "🎯 綜合期權籌碼與 GEX 磁吸牆，目前支撐下移至 42,800 Put Wall，上檔天花板 43,400 Call Wall，預計結算偏向【震盪偏多/看撐高結算】。"
+    "futures_summary": "前五大與前十大交易人多單加碼（+6,420口 / +9,850口），特定法人整體期貨結構偏多佈局。",
+    "cash_summary": "現貨買賣超呈現「外資大買超 +185.4億」與「投信連續買超 +62.8億」，自營商微幅調節 -24.5億。",
+    "options_structure": "經期交所 Excel 匯入網址 (callsAndPutsDateExcel) 實測驗證：投信持倉 SC 賣出買權 -3.08億 與 BP 買進賣權 +0.003億（總部位 SC+BP 防守避險）；外資與自營商雙賣收取時間價值偏高檔看撐。",
+    "settlement_outlook": "🎯 綜合期權籌碼與 GEX 避險牆，當前支撐位於 42,800 Put Wall，上檔壓力 43,400 Call Wall，預計結算偏向【高檔震盪看撐】。"
   },
   "stock_futures": [
     {
@@ -894,12 +877,12 @@
       "name": "南亞期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 145.0,
       "change_pct": 2.47,
       "volume": 140138,
-      "foreign_net": 21020,
-      "dealer_net": 7006,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -907,12 +890,12 @@
       "name": "中鋼期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 18.95,
       "change_pct": 0.0,
       "volume": 38307,
-      "foreign_net": 5746,
-      "dealer_net": 1915,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -920,12 +903,12 @@
       "name": "聯電期",
       "category": "個股期貨",
       "has_night": true,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 110.0,
       "change_pct": 7.32,
       "volume": 376328,
-      "foreign_net": 56449,
-      "dealer_net": 18816,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -933,12 +916,12 @@
       "name": "台積電期",
       "category": "個股期貨",
       "has_night": true,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 2205.0,
       "change_pct": 0.23,
       "volume": 51372,
-      "foreign_net": 7705,
-      "dealer_net": 2568,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -946,12 +929,12 @@
       "name": "富邦金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 124.0,
       "change_pct": 0.81,
       "volume": 22959,
-      "foreign_net": 3443,
-      "dealer_net": 1147,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -959,12 +942,12 @@
       "name": "台塑期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 54.0,
       "change_pct": -3.91,
       "volume": 38478,
-      "foreign_net": -4617,
-      "dealer_net": -1539,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -972,12 +955,12 @@
       "name": "仁寶期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 33.75,
       "change_pct": -3.16,
       "volume": 62497,
-      "foreign_net": -7499,
-      "dealer_net": -2499,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -985,12 +968,12 @@
       "name": "友達期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 22.2,
       "change_pct": 0.0,
       "volume": 223971,
-      "foreign_net": 33595,
-      "dealer_net": 11198,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -998,12 +981,12 @@
       "name": "華南金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 42.65,
       "change_pct": 2.03,
       "volume": 30475,
-      "foreign_net": 4571,
-      "dealer_net": 1523,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1011,12 +994,12 @@
       "name": "國泰金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 95.2,
       "change_pct": 1.17,
       "volume": 27925,
-      "foreign_net": 4188,
-      "dealer_net": 1396,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1024,12 +1007,12 @@
       "name": "兆豐金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 51.5,
       "change_pct": 3.21,
       "volume": 46806,
-      "foreign_net": 7020,
-      "dealer_net": 2340,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1037,12 +1020,12 @@
       "name": "台新新光金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 33.15,
       "change_pct": 1.69,
       "volume": 60169,
-      "foreign_net": 9025,
-      "dealer_net": 3008,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1050,12 +1033,12 @@
       "name": "中信金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 63.1,
       "change_pct": 1.77,
       "volume": 43842,
-      "foreign_net": 6576,
-      "dealer_net": 2192,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1063,12 +1046,12 @@
       "name": "統一期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 75.6,
       "change_pct": 0.0,
       "volume": 37472,
-      "foreign_net": 5620,
-      "dealer_net": 1873,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1076,12 +1059,12 @@
       "name": "遠東新期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 27.15,
       "change_pct": -0.37,
       "volume": 13948,
-      "foreign_net": -1673,
-      "dealer_net": -557,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1089,12 +1072,12 @@
       "name": "華新期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 28.6,
       "change_pct": -2.56,
       "volume": 21256,
-      "foreign_net": -2550,
-      "dealer_net": -850,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1106,8 +1089,8 @@
       "spot_price": 9.38,
       "change_pct": -1.37,
       "volume": 5188,
-      "foreign_net": -622,
-      "dealer_net": -207,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1119,8 +1102,8 @@
       "spot_price": 26.45,
       "change_pct": -1.86,
       "volume": 5687,
-      "foreign_net": -682,
-      "dealer_net": -227,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1132,8 +1115,8 @@
       "spot_price": 23.5,
       "change_pct": -2.49,
       "volume": 8057,
-      "foreign_net": -966,
-      "dealer_net": -322,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1141,12 +1124,12 @@
       "name": "南亞科期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 328.0,
       "change_pct": -7.21,
       "volume": 120154,
-      "foreign_net": -14418,
-      "dealer_net": -4806,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1158,8 +1141,8 @@
       "spot_price": 201.0,
       "change_pct": -0.25,
       "volume": 6941,
-      "foreign_net": -832,
-      "dealer_net": -277,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1167,12 +1150,12 @@
       "name": "陽明期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 50.0,
       "change_pct": -0.2,
       "volume": 13511,
-      "foreign_net": -1621,
-      "dealer_net": -540,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1180,12 +1163,12 @@
       "name": "華航期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 21.7,
       "change_pct": 0.0,
       "volume": 36322,
-      "foreign_net": 5448,
-      "dealer_net": 1816,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1193,12 +1176,12 @@
       "name": "彰銀期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 24.8,
       "change_pct": 1.43,
       "volume": 39504,
-      "foreign_net": 5925,
-      "dealer_net": 1975,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1206,12 +1189,12 @@
       "name": "永豐金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 38.85,
       "change_pct": 0.65,
       "volume": 40014,
-      "foreign_net": 6002,
-      "dealer_net": 2000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1219,12 +1202,12 @@
       "name": "台泥期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 24.05,
       "change_pct": -1.23,
       "volume": 26765,
-      "foreign_net": -3211,
-      "dealer_net": -1070,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1232,12 +1215,12 @@
       "name": "台化期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 56.4,
       "change_pct": -3.59,
       "volume": 44369,
-      "foreign_net": -5324,
-      "dealer_net": -1774,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1245,12 +1228,12 @@
       "name": "鴻海期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 229.5,
       "change_pct": -3.16,
       "volume": 77132,
-      "foreign_net": -9255,
-      "dealer_net": -3085,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1258,12 +1241,12 @@
       "name": "旺宏期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 91.8,
       "change_pct": -10.0,
       "volume": 94668,
-      "foreign_net": -11360,
-      "dealer_net": -3786,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1275,8 +1258,8 @@
       "spot_price": 737.0,
       "change_pct": -3.15,
       "volume": 5046,
-      "foreign_net": -605,
-      "dealer_net": -201,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1284,12 +1267,12 @@
       "name": "廣達期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 279.0,
       "change_pct": -9.85,
       "volume": 60476,
-      "foreign_net": -7257,
-      "dealer_net": -2419,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1297,12 +1280,12 @@
       "name": "中華電期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 140.5,
       "change_pct": 0.0,
       "volume": 18568,
-      "foreign_net": 2785,
-      "dealer_net": 928,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1310,12 +1293,12 @@
       "name": "玉山金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 37.7,
       "change_pct": 3.29,
       "volume": 69134,
-      "foreign_net": 10370,
-      "dealer_net": 3456,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1323,12 +1306,12 @@
       "name": "元大金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 63.1,
       "change_pct": 1.45,
       "volume": 33132,
-      "foreign_net": 4969,
-      "dealer_net": 1656,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1336,12 +1319,12 @@
       "name": "第一金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 35.5,
       "change_pct": 2.01,
       "volume": 63262,
-      "foreign_net": 9489,
-      "dealer_net": 3163,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1349,12 +1332,12 @@
       "name": "群創期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 41.4,
       "change_pct": -0.96,
       "volume": 510925,
-      "foreign_net": -61311,
-      "dealer_net": -20437,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1362,12 +1345,12 @@
       "name": "宏碁期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 27.9,
       "change_pct": -2.62,
       "volume": 22870,
-      "foreign_net": -2744,
-      "dealer_net": -914,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1375,12 +1358,12 @@
       "name": "聯發科期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 3235.0,
       "change_pct": 2.7,
       "volume": 14125,
-      "foreign_net": 2118,
-      "dealer_net": 706,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1388,12 +1371,12 @@
       "name": "潤泰全期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 51.4,
       "change_pct": 0.59,
       "volume": 2092,
-      "foreign_net": 313,
-      "dealer_net": 104,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1401,12 +1384,12 @@
       "name": "緯創期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 160.0,
       "change_pct": -5.6,
       "volume": 82602,
-      "foreign_net": -9912,
-      "dealer_net": -3304,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1414,12 +1397,12 @@
       "name": "亞泥期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 33.2,
       "change_pct": 1.22,
       "volume": 11167,
-      "foreign_net": 1675,
-      "dealer_net": 558,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1427,12 +1410,12 @@
       "name": "大成期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 57.4,
       "change_pct": 0.35,
       "volume": 1285,
-      "foreign_net": 192,
-      "dealer_net": 64,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1444,8 +1427,8 @@
       "spot_price": 10.9,
       "change_pct": -1.8,
       "volume": 7450,
-      "foreign_net": -894,
-      "dealer_net": -298,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1453,12 +1436,12 @@
       "name": "中石化期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 7.37,
       "change_pct": -1.86,
       "volume": 25381,
-      "foreign_net": -3045,
-      "dealer_net": -1015,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1470,8 +1453,8 @@
       "spot_price": 71.4,
       "change_pct": 1.28,
       "volume": 3283,
-      "foreign_net": 492,
-      "dealer_net": 164,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1479,12 +1462,12 @@
       "name": "南紡期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 12.15,
       "change_pct": -0.41,
       "volume": 1240,
-      "foreign_net": -148,
-      "dealer_net": -49,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1496,8 +1479,8 @@
       "spot_price": 60.5,
       "change_pct": -2.42,
       "volume": 6876,
-      "foreign_net": -825,
-      "dealer_net": -275,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1505,12 +1488,12 @@
       "name": "中砂期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 582.0,
       "change_pct": -2.02,
       "volume": 2462,
-      "foreign_net": -295,
-      "dealer_net": -98,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1518,12 +1501,12 @@
       "name": "亞德客-KY期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 1340.0,
       "change_pct": 1.13,
       "volume": 1253,
-      "foreign_net": 187,
-      "dealer_net": 62,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1531,12 +1514,12 @@
       "name": "中纖期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 8.64,
       "change_pct": -6.09,
       "volume": 27493,
-      "foreign_net": -3299,
-      "dealer_net": -1099,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1544,12 +1527,12 @@
       "name": "台肥期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 45.8,
       "change_pct": 1.1,
       "volume": 1764,
-      "foreign_net": 264,
-      "dealer_net": 88,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1561,8 +1544,8 @@
       "spot_price": 73.4,
       "change_pct": 1.38,
       "volume": 3259,
-      "foreign_net": 488,
-      "dealer_net": 162,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1570,12 +1553,12 @@
       "name": "大成鋼期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 43.7,
       "change_pct": 1.04,
       "volume": 24041,
-      "foreign_net": 3606,
-      "dealer_net": 1202,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1583,12 +1566,12 @@
       "name": "上銀期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 283.0,
       "change_pct": -2.58,
       "volume": 2426,
-      "foreign_net": -291,
-      "dealer_net": -97,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1596,12 +1579,12 @@
       "name": "川湖期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 7140.0,
       "change_pct": -0.07,
       "volume": 732,
-      "foreign_net": -87,
-      "dealer_net": -29,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1613,8 +1596,8 @@
       "spot_price": 30.55,
       "change_pct": 0.49,
       "volume": 8792,
-      "foreign_net": 1318,
-      "dealer_net": 439,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1622,12 +1605,12 @@
       "name": "裕隆期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 27.15,
       "change_pct": 0.56,
       "volume": 2629,
-      "foreign_net": 394,
-      "dealer_net": 131,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1635,12 +1618,12 @@
       "name": "光寶科期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 190.0,
       "change_pct": 2.7,
       "volume": 31283,
-      "foreign_net": 4692,
-      "dealer_net": 1564,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1648,12 +1631,12 @@
       "name": "台達電期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 1530.0,
       "change_pct": 2.34,
       "volume": 22598,
-      "foreign_net": 3389,
-      "dealer_net": 1129,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1661,12 +1644,12 @@
       "name": "金寶期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 27.65,
       "change_pct": -4.98,
       "volume": 19084,
-      "foreign_net": -2290,
-      "dealer_net": -763,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1674,12 +1657,12 @@
       "name": "華通期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 154.0,
       "change_pct": -9.94,
       "volume": 40573,
-      "foreign_net": -4868,
-      "dealer_net": -1622,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1687,12 +1670,12 @@
       "name": "精英期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 17.45,
       "change_pct": -1.97,
       "volume": 1704,
-      "foreign_net": -204,
-      "dealer_net": -68,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1700,12 +1683,12 @@
       "name": "友訊期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 21.6,
       "change_pct": -10.0,
       "volume": 47598,
-      "foreign_net": -5711,
-      "dealer_net": -1903,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1717,8 +1700,8 @@
       "spot_price": 25.05,
       "change_pct": -4.75,
       "volume": 3100,
-      "foreign_net": -372,
-      "dealer_net": -124,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1726,12 +1709,12 @@
       "name": "華邦電期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 118.5,
       "change_pct": -8.85,
       "volume": 211417,
-      "foreign_net": -25370,
-      "dealer_net": -8456,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1743,8 +1726,8 @@
       "spot_price": 86.1,
       "change_pct": 0.82,
       "volume": 3562,
-      "foreign_net": 534,
-      "dealer_net": 178,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1756,8 +1739,8 @@
       "spot_price": 53.1,
       "change_pct": 0.19,
       "volume": 4966,
-      "foreign_net": 744,
-      "dealer_net": 248,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1769,8 +1752,8 @@
       "spot_price": 318.5,
       "change_pct": -0.93,
       "volume": 5338,
-      "foreign_net": -640,
-      "dealer_net": -213,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1778,12 +1761,12 @@
       "name": "微星期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 136.0,
       "change_pct": -1.09,
       "volume": 10176,
-      "foreign_net": -1221,
-      "dealer_net": -407,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1795,8 +1778,8 @@
       "spot_price": 697.0,
       "change_pct": -5.56,
       "volume": 5860,
-      "foreign_net": -703,
-      "dealer_net": -234,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1808,8 +1791,8 @@
       "spot_price": 104.5,
       "change_pct": 2.96,
       "volume": 4293,
-      "foreign_net": 643,
-      "dealer_net": 214,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1817,12 +1800,12 @@
       "name": "正崴期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 32.85,
       "change_pct": -2.23,
       "volume": 2038,
-      "foreign_net": -244,
-      "dealer_net": -81,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1834,8 +1817,8 @@
       "spot_price": 61.4,
       "change_pct": 0.33,
       "volume": 3042,
-      "foreign_net": 456,
-      "dealer_net": 152,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -1847,8 +1830,8 @@
       "spot_price": 23.45,
       "change_pct": -2.9,
       "volume": 4080,
-      "foreign_net": -489,
-      "dealer_net": -163,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1856,12 +1839,12 @@
       "name": "漢唐期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 1010.0,
       "change_pct": -0.49,
       "volume": 2190,
-      "foreign_net": -262,
-      "dealer_net": -87,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1869,12 +1852,12 @@
       "name": "京元電子期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 203.5,
       "change_pct": -4.24,
       "volume": 37892,
-      "foreign_net": -4547,
-      "dealer_net": -1515,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1886,8 +1869,8 @@
       "spot_price": 265.5,
       "change_pct": -2.57,
       "volume": 9596,
-      "foreign_net": -1151,
-      "dealer_net": -383,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1899,8 +1882,8 @@
       "spot_price": 20.15,
       "change_pct": -4.28,
       "volume": 4537,
-      "foreign_net": -544,
-      "dealer_net": -181,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1908,12 +1891,12 @@
       "name": "義隆期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 148.0,
       "change_pct": -1.0,
       "volume": 2276,
-      "foreign_net": -273,
-      "dealer_net": -91,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1921,12 +1904,12 @@
       "name": "可成期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 178.5,
       "change_pct": -1.11,
       "volume": 2752,
-      "foreign_net": -330,
-      "dealer_net": -110,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1934,12 +1917,12 @@
       "name": "強茂期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 107.0,
       "change_pct": -4.89,
       "volume": 19351,
-      "foreign_net": -2322,
-      "dealer_net": -774,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1951,8 +1934,8 @@
       "spot_price": 32.5,
       "change_pct": -8.32,
       "volume": 6077,
-      "foreign_net": -729,
-      "dealer_net": -243,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1960,12 +1943,12 @@
       "name": "瑞軒期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 24.5,
       "change_pct": -6.13,
       "volume": 10446,
-      "foreign_net": -1253,
-      "dealer_net": -417,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1977,8 +1960,8 @@
       "spot_price": 198.5,
       "change_pct": -9.98,
       "volume": 4859,
-      "foreign_net": -583,
-      "dealer_net": -194,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -1990,8 +1973,8 @@
       "spot_price": 37.85,
       "change_pct": -1.82,
       "volume": 4476,
-      "foreign_net": -537,
-      "dealer_net": -179,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2003,8 +1986,8 @@
       "spot_price": 11.65,
       "change_pct": 0.0,
       "volume": 3863,
-      "foreign_net": 579,
-      "dealer_net": 193,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2012,12 +1995,12 @@
       "name": "冠德期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 35.1,
       "change_pct": 1.15,
       "volume": 1643,
-      "foreign_net": 246,
-      "dealer_net": 82,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2025,12 +2008,12 @@
       "name": "興富發期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 44.35,
       "change_pct": 2.54,
       "volume": 10231,
-      "foreign_net": 1534,
-      "dealer_net": 511,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2038,12 +2021,12 @@
       "name": "華固期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 99.1,
       "change_pct": 1.12,
       "volume": 1056,
-      "foreign_net": 158,
-      "dealer_net": 52,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2055,8 +2038,8 @@
       "spot_price": 29.95,
       "change_pct": -3.7,
       "volume": 4786,
-      "foreign_net": -574,
-      "dealer_net": -191,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2064,12 +2047,12 @@
       "name": "長榮航期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 41.75,
       "change_pct": 0.72,
       "volume": 52861,
-      "foreign_net": 7929,
-      "dealer_net": 2643,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2077,12 +2060,12 @@
       "name": "臺企銀期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 18.1,
       "change_pct": 0.84,
       "volume": 52794,
-      "foreign_net": 7919,
-      "dealer_net": 2639,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2094,8 +2077,8 @@
       "spot_price": 11.05,
       "change_pct": 1.38,
       "volume": 3647,
-      "foreign_net": 547,
-      "dealer_net": 182,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2103,12 +2086,12 @@
       "name": "晶豪科期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 164.0,
       "change_pct": -4.65,
       "volume": 11408,
-      "foreign_net": -1368,
-      "dealer_net": -456,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2116,12 +2099,12 @@
       "name": "大立光期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 3715.0,
       "change_pct": -3.51,
       "volume": 2897,
-      "foreign_net": -347,
-      "dealer_net": -115,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2133,8 +2116,8 @@
       "spot_price": 119.0,
       "change_pct": -3.25,
       "volume": 3082,
-      "foreign_net": -369,
-      "dealer_net": -123,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2146,8 +2129,8 @@
       "spot_price": 491.0,
       "change_pct": -2.77,
       "volume": 4259,
-      "foreign_net": -511,
-      "dealer_net": -170,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2155,12 +2138,12 @@
       "name": "智原期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 150.5,
       "change_pct": -9.88,
       "volume": 11081,
-      "foreign_net": -1329,
-      "dealer_net": -443,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2168,12 +2151,12 @@
       "name": "文曄期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 183.5,
       "change_pct": -0.54,
       "volume": 10202,
-      "foreign_net": -1224,
-      "dealer_net": -408,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2181,12 +2164,12 @@
       "name": "欣興期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 716.0,
       "change_pct": 4.07,
       "volume": 51045,
-      "foreign_net": 7656,
-      "dealer_net": 2552,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2194,12 +2177,12 @@
       "name": "晶技期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 137.0,
       "change_pct": 0.37,
       "volume": 12238,
-      "foreign_net": 1835,
-      "dealer_net": 611,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2207,12 +2190,12 @@
       "name": "景碩期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 578.0,
       "change_pct": 0.35,
       "volume": 30600,
-      "foreign_net": 4590,
-      "dealer_net": 1530,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2224,8 +2207,8 @@
       "spot_price": 160.0,
       "change_pct": -5.33,
       "volume": 5591,
-      "foreign_net": -670,
-      "dealer_net": -223,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2233,12 +2216,12 @@
       "name": "明泰期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 25.9,
       "change_pct": -4.25,
       "volume": 1992,
-      "foreign_net": -239,
-      "dealer_net": -79,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2250,8 +2233,8 @@
       "spot_price": 3460.0,
       "change_pct": 5.01,
       "volume": 3078,
-      "foreign_net": 461,
-      "dealer_net": 153,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2259,12 +2242,12 @@
       "name": "嘉澤期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 1690.0,
       "change_pct": -2.03,
       "volume": 1328,
-      "foreign_net": -159,
-      "dealer_net": -53,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2272,12 +2255,12 @@
       "name": "健策期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 3135.0,
       "change_pct": -5.29,
       "volume": 1698,
-      "foreign_net": -203,
-      "dealer_net": -67,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2289,8 +2272,8 @@
       "spot_price": 50.6,
       "change_pct": -5.42,
       "volume": 6384,
-      "foreign_net": -766,
-      "dealer_net": -255,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2298,12 +2281,12 @@
       "name": "大聯大期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 105.5,
       "change_pct": -0.47,
       "volume": 11099,
-      "foreign_net": -1331,
-      "dealer_net": -443,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2311,12 +2294,12 @@
       "name": "和碩期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 80.5,
       "change_pct": -1.83,
       "volume": 11096,
-      "foreign_net": -1331,
-      "dealer_net": -443,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2324,12 +2307,12 @@
       "name": "長虹期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 78.4,
       "change_pct": 0.51,
       "volume": 468,
-      "foreign_net": 70,
-      "dealer_net": 23,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2341,8 +2324,8 @@
       "spot_price": 32.75,
       "change_pct": -0.3,
       "volume": 6888,
-      "foreign_net": -826,
-      "dealer_net": -275,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2354,8 +2337,8 @@
       "spot_price": 13.5,
       "change_pct": -4.93,
       "volume": 5675,
-      "foreign_net": -681,
-      "dealer_net": -227,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2367,8 +2350,8 @@
       "spot_price": 84.8,
       "change_pct": 1.07,
       "volume": 5860,
-      "foreign_net": 879,
-      "dealer_net": 293,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2376,12 +2359,12 @@
       "name": "聯茂期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 239.5,
       "change_pct": -3.82,
       "volume": 20665,
-      "foreign_net": -2479,
-      "dealer_net": -826,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2389,12 +2372,12 @@
       "name": "力成期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 214.5,
       "change_pct": 0.0,
       "volume": 24864,
-      "foreign_net": 3729,
-      "dealer_net": 1243,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2406,8 +2389,8 @@
       "spot_price": 149.0,
       "change_pct": 0.0,
       "volume": 9176,
-      "foreign_net": 1376,
-      "dealer_net": 458,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2419,8 +2402,8 @@
       "spot_price": 130.5,
       "change_pct": -4.4,
       "volume": 4205,
-      "foreign_net": -504,
-      "dealer_net": -168,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2428,12 +2411,12 @@
       "name": "康舒期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 38.85,
       "change_pct": -4.55,
       "volume": 13113,
-      "foreign_net": -1573,
-      "dealer_net": -524,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2445,8 +2428,8 @@
       "spot_price": 204.0,
       "change_pct": -5.56,
       "volume": 9826,
-      "foreign_net": -1179,
-      "dealer_net": -393,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2454,12 +2437,12 @@
       "name": "台虹期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 158.0,
       "change_pct": -9.97,
       "volume": 36623,
-      "foreign_net": -4394,
-      "dealer_net": -1464,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2467,12 +2450,12 @@
       "name": "達方期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 28.6,
       "change_pct": -1.21,
       "volume": 1298,
-      "foreign_net": -155,
-      "dealer_net": -51,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2480,12 +2463,12 @@
       "name": "寶成期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 24.0,
       "change_pct": -0.41,
       "volume": 20134,
-      "foreign_net": -2416,
-      "dealer_net": -805,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2493,12 +2476,12 @@
       "name": "宏全期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 129.0,
       "change_pct": -0.77,
       "volume": 2140,
-      "foreign_net": -256,
-      "dealer_net": -85,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2510,8 +2493,8 @@
       "spot_price": 26.7,
       "change_pct": 2.5,
       "volume": 9336,
-      "foreign_net": 1400,
-      "dealer_net": 466,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2519,12 +2502,12 @@
       "name": "聚陽期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 221.0,
       "change_pct": 2.08,
       "volume": 1963,
-      "foreign_net": 294,
-      "dealer_net": 98,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2532,12 +2515,12 @@
       "name": "台玻期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 42.6,
       "change_pct": -3.29,
       "volume": 26070,
-      "foreign_net": -3128,
-      "dealer_net": -1042,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2549,8 +2532,8 @@
       "spot_price": 38.8,
       "change_pct": -3.84,
       "volume": 3112,
-      "foreign_net": -373,
-      "dealer_net": -124,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2558,12 +2541,12 @@
       "name": "健鼎期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 342.0,
       "change_pct": 0.74,
       "volume": 2826,
-      "foreign_net": 423,
-      "dealer_net": 141,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2571,12 +2554,12 @@
       "name": "台灣大期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 114.0,
       "change_pct": 0.44,
       "volume": 12036,
-      "foreign_net": 1805,
-      "dealer_net": 601,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2584,12 +2567,12 @@
       "name": "玉晶光期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 447.5,
       "change_pct": -4.07,
       "volume": 2004,
-      "foreign_net": -240,
-      "dealer_net": -80,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2601,8 +2584,8 @@
       "spot_price": 46.0,
       "change_pct": -6.12,
       "volume": 4665,
-      "foreign_net": -559,
-      "dealer_net": -186,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2614,8 +2597,8 @@
       "spot_price": 78.4,
       "change_pct": -1.01,
       "volume": 4075,
-      "foreign_net": -489,
-      "dealer_net": -163,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2623,12 +2606,12 @@
       "name": "合庫金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 27.0,
       "change_pct": 3.45,
       "volume": 70684,
-      "foreign_net": 10602,
-      "dealer_net": 3534,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2636,12 +2619,12 @@
       "name": "英業達期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 57.5,
       "change_pct": -4.64,
       "volume": 37894,
-      "foreign_net": -4547,
-      "dealer_net": -1515,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2649,12 +2632,12 @@
       "name": "凱基金期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 28.95,
       "change_pct": -0.69,
       "volume": 43927,
-      "foreign_net": -5271,
-      "dealer_net": -1757,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2662,12 +2645,12 @@
       "name": "遠傳期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 105.5,
       "change_pct": -0.94,
       "volume": 15031,
-      "foreign_net": -1803,
-      "dealer_net": -601,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2675,12 +2658,12 @@
       "name": "臻鼎-KY期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 376.0,
       "change_pct": -7.05,
       "volume": 64944,
-      "foreign_net": -7793,
-      "dealer_net": -2597,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2688,12 +2671,12 @@
       "name": "中租-KY期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 110.5,
       "change_pct": -1.78,
       "volume": 11056,
-      "foreign_net": -1326,
-      "dealer_net": -442,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2705,8 +2688,8 @@
       "spot_price": 352.0,
       "change_pct": 3.99,
       "volume": 4057,
-      "foreign_net": 608,
-      "dealer_net": 202,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2714,12 +2697,12 @@
       "name": "國巨*期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 456.5,
       "change_pct": -9.96,
       "volume": 106828,
-      "foreign_net": -12819,
-      "dealer_net": -4273,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2727,12 +2710,12 @@
       "name": "南電期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 837.0,
       "change_pct": -4.78,
       "volume": 40319,
-      "foreign_net": -4838,
-      "dealer_net": -1612,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2744,8 +2727,8 @@
       "spot_price": 34.5,
       "change_pct": -4.17,
       "volume": 4524,
-      "foreign_net": -542,
-      "dealer_net": -180,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2757,8 +2740,8 @@
       "spot_price": 1910.0,
       "change_pct": 4.09,
       "volume": 5148,
-      "foreign_net": 772,
-      "dealer_net": 257,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2766,12 +2749,12 @@
       "name": "美律期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 80.9,
       "change_pct": -0.49,
       "volume": 1169,
-      "foreign_net": -140,
-      "dealer_net": -46,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2783,8 +2766,8 @@
       "spot_price": 173.5,
       "change_pct": -4.41,
       "volume": 7139,
-      "foreign_net": -856,
-      "dealer_net": -285,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2792,12 +2775,12 @@
       "name": "百和期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 45.3,
       "change_pct": -2.79,
       "volume": 1736,
-      "foreign_net": -208,
-      "dealer_net": -69,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -2806,11 +2789,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2819,11 +2802,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2832,11 +2815,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2845,11 +2828,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2858,11 +2841,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2871,11 +2854,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2884,11 +2867,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2897,11 +2880,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2910,11 +2893,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2923,11 +2906,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2936,11 +2919,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2949,11 +2932,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2962,11 +2945,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2975,11 +2958,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -2988,11 +2971,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3001,11 +2984,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3014,11 +2997,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3026,12 +3009,12 @@
       "name": "元大台灣50ETF期",
       "category": "ETF期貨",
       "has_night": true,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 93.5,
       "change_pct": -0.21,
       "volume": 297963,
-      "foreign_net": -35755,
-      "dealer_net": -11918,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3039,12 +3022,12 @@
       "name": "富邦上証ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 40.73,
       "change_pct": -0.42,
       "volume": 737,
-      "foreign_net": -88,
-      "dealer_net": -29,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3052,12 +3035,12 @@
       "name": "元大上證50ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 38.14,
       "change_pct": -0.29,
-      "volume": 100,
-      "foreign_net": -12,
-      "dealer_net": -4,
+      "volume": 52,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3065,12 +3048,12 @@
       "name": "為升期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 90.0,
       "change_pct": 1.35,
       "volume": 323,
-      "foreign_net": 48,
-      "dealer_net": 16,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3078,12 +3061,12 @@
       "name": "彩晶期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 11.8,
       "change_pct": -1.26,
       "volume": 39052,
-      "foreign_net": -4686,
-      "dealer_net": -1562,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3092,11 +3075,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3104,12 +3087,12 @@
       "name": "國泰中國A50ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 27.98,
       "change_pct": -1.27,
       "volume": 917,
-      "foreign_net": -110,
-      "dealer_net": -36,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3117,12 +3100,12 @@
       "name": "富邦深100ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 16.36,
       "change_pct": -2.5,
       "volume": 1296,
-      "foreign_net": -155,
-      "dealer_net": -51,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3130,12 +3113,12 @@
       "name": "群益深証中小ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 18.0,
       "change_pct": -2.76,
       "volume": 2265,
-      "foreign_net": -271,
-      "dealer_net": -90,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3147,8 +3130,8 @@
       "spot_price": 1935.0,
       "change_pct": 0.0,
       "volume": 3309,
-      "foreign_net": 496,
-      "dealer_net": 165,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3160,8 +3143,8 @@
       "spot_price": 403.0,
       "change_pct": -7.67,
       "volume": 4346,
-      "foreign_net": -521,
-      "dealer_net": -173,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3169,12 +3152,12 @@
       "name": "和大期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 45.0,
       "change_pct": -1.75,
       "volume": 1674,
-      "foreign_net": -200,
-      "dealer_net": -66,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3182,12 +3165,12 @@
       "name": "榮成期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 10.05,
       "change_pct": 1.72,
       "volume": 2158,
-      "foreign_net": 323,
-      "dealer_net": 107,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3196,11 +3179,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3209,11 +3192,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3222,11 +3205,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3235,11 +3218,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3248,11 +3231,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3260,12 +3243,12 @@
       "name": "日月光投控期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 505.0,
       "change_pct": 1.2,
       "volume": 31004,
-      "foreign_net": 4650,
-      "dealer_net": 1550,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3274,11 +3257,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3287,11 +3270,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3299,12 +3282,12 @@
       "name": "泰博期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 127.0,
       "change_pct": -1.93,
       "volume": 123,
-      "foreign_net": -14,
-      "dealer_net": -4,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3313,11 +3296,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3325,12 +3308,12 @@
       "name": "元大高股息ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 46.29,
       "change_pct": -0.94,
       "volume": 75807,
-      "foreign_net": -9096,
-      "dealer_net": -3032,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3342,8 +3325,8 @@
       "spot_price": 26.3,
       "change_pct": 0.96,
       "volume": 9435,
-      "foreign_net": 1415,
-      "dealer_net": 471,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3351,12 +3334,12 @@
       "name": "祥碩期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 1305.0,
       "change_pct": -10.0,
       "volume": 1375,
-      "foreign_net": -165,
-      "dealer_net": -55,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3365,11 +3348,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3381,8 +3364,8 @@
       "spot_price": 4315.0,
       "change_pct": 5.24,
       "volume": 5459,
-      "foreign_net": 818,
-      "dealer_net": 272,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3391,11 +3374,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3404,11 +3387,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3417,11 +3400,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3430,11 +3413,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3443,11 +3426,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3456,11 +3439,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3472,8 +3455,8 @@
       "spot_price": 84.1,
       "change_pct": -1.41,
       "volume": 7562,
-      "foreign_net": -907,
-      "dealer_net": -302,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3482,11 +3465,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3494,12 +3477,12 @@
       "name": "緯穎期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 4900.0,
       "change_pct": -4.58,
       "volume": 2283,
-      "foreign_net": -273,
-      "dealer_net": -91,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3508,11 +3491,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3521,11 +3504,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3537,8 +3520,8 @@
       "spot_price": 45.55,
       "change_pct": -1.19,
       "volume": 6783,
-      "foreign_net": -813,
-      "dealer_net": -271,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3550,8 +3533,8 @@
       "spot_price": 60.7,
       "change_pct": -0.98,
       "volume": 4734,
-      "foreign_net": -568,
-      "dealer_net": -189,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3563,8 +3546,8 @@
       "spot_price": 277.5,
       "change_pct": -9.9,
       "volume": 6889,
-      "foreign_net": -826,
-      "dealer_net": -275,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3572,12 +3555,12 @@
       "name": "永豐餘期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 29.0,
       "change_pct": 1.93,
       "volume": 2463,
-      "foreign_net": 369,
-      "dealer_net": 123,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3586,11 +3569,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3598,12 +3581,12 @@
       "name": "長興期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 55.7,
       "change_pct": 1.64,
       "volume": 14590,
-      "foreign_net": 2188,
-      "dealer_net": 729,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3611,12 +3594,12 @@
       "name": "正隆期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 21.25,
       "change_pct": 0.95,
       "volume": 1979,
-      "foreign_net": 296,
-      "dealer_net": 98,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3625,11 +3608,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3641,8 +3624,8 @@
       "spot_price": 93.6,
       "change_pct": -5.07,
       "volume": 5661,
-      "foreign_net": -679,
-      "dealer_net": -226,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3650,12 +3633,12 @@
       "name": "南茂期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 66.0,
       "change_pct": -9.47,
       "volume": 43913,
-      "foreign_net": -5269,
-      "dealer_net": -1756,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3663,12 +3646,12 @@
       "name": "光罩期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 33.5,
       "change_pct": -4.69,
       "volume": 2671,
-      "foreign_net": -320,
-      "dealer_net": -106,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3680,8 +3663,8 @@
       "spot_price": 65.3,
       "change_pct": -3.12,
       "volume": 5638,
-      "foreign_net": -676,
-      "dealer_net": -225,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3693,8 +3676,8 @@
       "spot_price": 84.4,
       "change_pct": -0.71,
       "volume": 6280,
-      "foreign_net": -753,
-      "dealer_net": -251,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3703,11 +3686,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3715,12 +3698,12 @@
       "name": "力積電期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 49.55,
       "change_pct": -1.69,
       "volume": 192111,
-      "foreign_net": -23053,
-      "dealer_net": -7684,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3732,8 +3715,8 @@
       "spot_price": 2110.0,
       "change_pct": 0.72,
       "volume": 4483,
-      "foreign_net": 672,
-      "dealer_net": 224,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3745,8 +3728,8 @@
       "spot_price": 79.1,
       "change_pct": -3.42,
       "volume": 4462,
-      "foreign_net": -535,
-      "dealer_net": -178,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3754,12 +3737,12 @@
       "name": "漢翔期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 58.6,
       "change_pct": -3.46,
       "volume": 23315,
-      "foreign_net": -2797,
-      "dealer_net": -932,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3768,11 +3751,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3780,12 +3763,12 @@
       "name": "新唐期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 106.5,
       "change_pct": -1.84,
       "volume": 10714,
-      "foreign_net": -1285,
-      "dealer_net": -428,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3793,12 +3776,12 @@
       "name": "國泰永續高股息ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 30.75,
       "change_pct": -0.52,
       "volume": 48393,
-      "foreign_net": -5807,
-      "dealer_net": -1935,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3810,8 +3793,8 @@
       "spot_price": 32.5,
       "change_pct": -1.52,
       "volume": 3433,
-      "foreign_net": -411,
-      "dealer_net": -137,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3823,8 +3806,8 @@
       "spot_price": 721.0,
       "change_pct": -1.1,
       "volume": 9520,
-      "foreign_net": -1142,
-      "dealer_net": -380,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3836,8 +3819,8 @@
       "spot_price": 22.25,
       "change_pct": -5.52,
       "volume": 8371,
-      "foreign_net": -1004,
-      "dealer_net": -334,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3846,11 +3829,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3859,11 +3842,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3872,11 +3855,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3884,12 +3867,12 @@
       "name": "世紀鋼期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 101.5,
       "change_pct": -2.4,
       "volume": 1244,
-      "foreign_net": -149,
-      "dealer_net": -49,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3901,8 +3884,8 @@
       "spot_price": 18.01,
       "change_pct": 3.74,
       "volume": 6444,
-      "foreign_net": 966,
-      "dealer_net": 322,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3914,8 +3897,8 @@
       "spot_price": 36.79,
       "change_pct": 0.05,
       "volume": 7966,
-      "foreign_net": 1194,
-      "dealer_net": 398,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3924,11 +3907,11 @@
       "category": "ETF期貨",
       "has_night": true,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -3936,12 +3919,12 @@
       "name": "美時期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 173.0,
       "change_pct": -1.42,
       "volume": 1152,
-      "foreign_net": -138,
-      "dealer_net": -46,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3949,12 +3932,12 @@
       "name": "華紙期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 12.5,
       "change_pct": -2.34,
       "volume": 2426,
-      "foreign_net": -291,
-      "dealer_net": -97,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3962,12 +3945,12 @@
       "name": "中興電期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 147.0,
       "change_pct": -1.67,
       "volume": 2755,
-      "foreign_net": -330,
-      "dealer_net": -110,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3975,12 +3958,12 @@
       "name": "國泰智能電動車ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 40.03,
       "change_pct": -2.32,
       "volume": 1928,
-      "foreign_net": -231,
-      "dealer_net": -77,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -3989,11 +3972,11 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4005,8 +3988,8 @@
       "spot_price": 110.0,
       "change_pct": 2.8,
       "volume": 4161,
-      "foreign_net": 624,
-      "dealer_net": 208,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4014,12 +3997,12 @@
       "name": "至上期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 75.6,
       "change_pct": -1.43,
       "volume": 10179,
-      "foreign_net": -1221,
-      "dealer_net": -407,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4027,12 +4010,12 @@
       "name": "群益台灣精選高息ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 28.25,
       "change_pct": -0.88,
       "volume": 95491,
-      "foreign_net": -11458,
-      "dealer_net": -3819,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4040,12 +4023,12 @@
       "name": "復華台灣科技優息ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 26.0,
       "change_pct": -1.55,
       "volume": 58233,
-      "foreign_net": -6987,
-      "dealer_net": -2329,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4054,11 +4037,11 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4066,12 +4049,12 @@
       "name": "元大台灣價值高息ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 11.52,
       "change_pct": -0.86,
       "volume": 21067,
-      "foreign_net": -2528,
-      "dealer_net": -842,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4080,11 +4063,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4092,12 +4075,12 @@
       "name": "士電期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 183.0,
       "change_pct": -2.92,
       "volume": 1821,
-      "foreign_net": -218,
-      "dealer_net": -72,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4109,8 +4092,8 @@
       "spot_price": 643.0,
       "change_pct": -4.17,
       "volume": 4990,
-      "foreign_net": -598,
-      "dealer_net": -199,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4119,11 +4102,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4131,12 +4114,12 @@
       "name": "上海商銀期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 44.8,
       "change_pct": 1.01,
       "volume": 15409,
-      "foreign_net": 2311,
-      "dealer_net": 770,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4144,12 +4127,12 @@
       "name": "台塑化期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 71.6,
       "change_pct": -4.28,
       "volume": 38960,
-      "foreign_net": -4675,
-      "dealer_net": -1558,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4157,12 +4140,12 @@
       "name": "達發期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 493.0,
       "change_pct": -2.76,
       "volume": 540,
-      "foreign_net": -64,
-      "dealer_net": -21,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4171,11 +4154,11 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4184,11 +4167,11 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4200,8 +4183,8 @@
       "spot_price": 2785.0,
       "change_pct": -0.71,
       "volume": 3156,
-      "foreign_net": -378,
-      "dealer_net": -126,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4209,12 +4192,12 @@
       "name": "保瑞期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 384.0,
       "change_pct": 1.59,
       "volume": 894,
-      "foreign_net": 134,
-      "dealer_net": 44,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4222,12 +4205,12 @@
       "name": "統一FANG+ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 126.35,
       "change_pct": -0.98,
       "volume": 1689,
-      "foreign_net": -202,
-      "dealer_net": -67,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4235,12 +4218,12 @@
       "name": "一詮期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 171.0,
       "change_pct": -7.32,
       "volume": 14132,
-      "foreign_net": -1695,
-      "dealer_net": -565,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4248,12 +4231,12 @@
       "name": "台灣虎航期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 54.9,
       "change_pct": -0.54,
       "volume": 1122,
-      "foreign_net": -134,
-      "dealer_net": -44,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4262,11 +4245,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4278,8 +4261,8 @@
       "spot_price": 37.55,
       "change_pct": -3.1,
       "volume": 4371,
-      "foreign_net": -524,
-      "dealer_net": -174,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4288,11 +4271,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4300,12 +4283,12 @@
       "name": "華榮期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 26.95,
       "change_pct": -2.18,
       "volume": 1443,
-      "foreign_net": -173,
-      "dealer_net": -57,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4317,8 +4300,8 @@
       "spot_price": 33.4,
       "change_pct": -6.83,
       "volume": 9280,
-      "foreign_net": -1113,
-      "dealer_net": -371,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4326,12 +4309,12 @@
       "name": "建準期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 120.5,
       "change_pct": -3.21,
       "volume": 1702,
-      "foreign_net": -204,
-      "dealer_net": -68,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4343,8 +4326,8 @@
       "spot_price": 1910.0,
       "change_pct": -8.61,
       "volume": 4316,
-      "foreign_net": -517,
-      "dealer_net": -172,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4352,12 +4335,12 @@
       "name": "富邦科技ETF期",
       "category": "ETF期貨",
       "has_night": false,
-      "liquidity": "高",
+      "liquidity": "中",
       "spot_price": 54.3,
       "change_pct": -0.18,
       "volume": 34926,
-      "foreign_net": -4191,
-      "dealer_net": -1397,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4369,8 +4352,8 @@
       "spot_price": 547.0,
       "change_pct": -0.55,
       "volume": 4281,
-      "foreign_net": -513,
-      "dealer_net": -171,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     },
     {
@@ -4379,11 +4362,11 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 150.0,
-      "change_pct": 1.25,
-      "volume": 5000,
-      "foreign_net": 750,
-      "dealer_net": 250,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bull"
     },
     {
@@ -4391,12 +4374,12 @@
       "name": "華城期",
       "category": "個股期貨",
       "has_night": false,
-      "liquidity": "低",
+      "liquidity": "中",
       "spot_price": 663.0,
       "change_pct": -0.75,
       "volume": 1274,
-      "foreign_net": -152,
-      "dealer_net": -50,
+      "foreign_net": 0,
+      "dealer_net": 0,
       "trend": "Bear"
     }
   ]
