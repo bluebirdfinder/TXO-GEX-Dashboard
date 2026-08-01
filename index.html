@@ -100,6 +100,67 @@
           </tr>
         </tbody>
       </table>
+  <!-- Institutional Sentiment Taxonomy Modal -->
+  <div id="taxonomy-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 750px; max-height: 85vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h2>🏛️ 外資與十大特人期貨【單日變化量 ($\Delta$ Net OI)】分級標準說明</h2>
+        <button class="close-btn" id="close-taxonomy-btn">&times;</button>
+      </div>
+
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
+        本系統採用「動態指數校正演算法」，依據當前台指期指數動態計算門檻與契約金額（億 TWD），精準判讀法人態度。
+      </p>
+
+      <table class="matrix-table" style="margin-bottom: 16px; font-size: 0.85rem;">
+        <thead>
+          <tr style="background: #18202d;">
+            <th>單日變化量 ($\Delta$ Net OI)</th>
+            <th>對應契約金額 (以指數為基準)</th>
+            <th>語意形容詞標籤</th>
+            <th>市場實戰含義</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color: var(--call-color);">$+6,000$ 口以上</strong></td>
+            <td>$+600$ 億 TWD 以上</td>
+            <td>🔥 <strong>高檔大舉回補 / 追擊多單</strong></td>
+            <td>空單大幅獲利平倉或強勢追多，極易觸發嘎空行情。</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--call-color);">$+2,500 \sim +5,999$ 口</strong></td>
+            <td>$+250 \sim +600$ 億 TWD</td>
+            <td>📈 <strong>顯著回補偏多</strong></td>
+            <td>避險空單順利回補，高檔壓回壓力顯著減輕。</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--text-main);">$-2,499 \sim +2,499$ 口</strong></td>
+            <td>$-250 \sim +250$ 億 TWD</td>
+            <td>⚖️ <strong>中性觀望 / 微幅調整</strong></td>
+            <td>法人維持既有防守架構，由內資與個股主導。</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--put-color);">$-2,500 \sim -5,999$ 口</strong></td>
+            <td>$-250 \sim -600$ 億 TWD</td>
+            <td>📉 <strong>顯著加碼加空</strong></td>
+            <td>高檔避險需求上升，法人開始佈局防守性空單。</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--put-color);">$-6,000$ 口以上</strong></td>
+            <td>$-600$ 億 TWD 以上</td>
+            <td>⚠️ <strong>暴增高檔避險 / 重手加空</strong></td>
+            <td>法人急抓避險或重手加碼空單，高檔拉回風險飆升。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4 style="color: var(--gold-accent); font-size: 0.9rem; margin: 12px 0 6px 0;">💡 複合智慧標籤與共振規則</h4>
+      <ul style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; padding-left: 20px;">
+        <li><strong>🔥【高檔雙雄共振偏多】</strong>：外資顯著回補 ＋ 十大特人多單大加碼。</li>
+        <li><strong>⚠️【高檔避險共振重空】</strong>：外資重手加空 ＋ 十大特人空單大加碼。</li>
+        <li><strong>⚔️【土洋對作 / 主力逢低吸籌】</strong>：外資加空但十大特人大加多。</li>
+      </ul>
     </div>
   </div>
 
@@ -223,9 +284,14 @@
 
       <!-- Executive Digest Card -->
       <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
-        <h4 style="color: var(--primary-accent); font-size: 0.95rem; margin-bottom: 10px;">
-          💡 本日籌碼體質與選擇權結構解讀
-        </h4>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h4 style="color: var(--primary-accent); font-size: 0.95rem; margin: 0;">
+            💡 本日籌碼體質與選擇權結構解讀
+          </h4>
+          <button id="open-taxonomy-btn" class="btn" style="padding: 2px 10px; font-size: 0.75rem; border-color: var(--primary-accent); color: var(--primary-accent);">
+            ℹ️ 籌碼分級標準說明
+          </button>
+        </div>
         <div id="executive-digest-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-main);">
           <!-- Populated by JavaScript -->
         </div>

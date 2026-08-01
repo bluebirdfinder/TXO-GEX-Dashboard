@@ -56,6 +56,20 @@ function initEventListeners() {
     document.getElementById('guide-modal').style.display = 'none';
   });
 
+  const openTaxonomyBtn = document.getElementById('open-taxonomy-btn');
+  if (openTaxonomyBtn) {
+    openTaxonomyBtn.addEventListener('click', () => {
+      document.getElementById('taxonomy-modal').style.display = 'flex';
+    });
+  }
+
+  const closeTaxonomyBtn = document.getElementById('close-taxonomy-btn');
+  if (closeTaxonomyBtn) {
+    closeTaxonomyBtn.addEventListener('click', () => {
+      document.getElementById('taxonomy-modal').style.display = 'none';
+    });
+  }
+
   // Tab switching logic for GEX Charts
   document.querySelectorAll('.tab-btn:not(.nav-jump-btn)').forEach(btn => {
     btn.addEventListener('click', (e) => {
