@@ -14,12 +14,20 @@ on:
 
   workflow_dispatch: # Allows 1-click manual trigger from GitHub UI anytime on phone or PC
 
+# Grant GITHUB_TOKEN write access to repository contents for automated commits
+permissions:
+  contents: write
+
 jobs:
   update-official-taifex-positioning:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
