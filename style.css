@@ -429,3 +429,110 @@ footer p {
   outline: none;
   border-color: var(--primary-accent);
 }
+
+/* ==========================================================================
+   Mobile Responsive Optimization (iOS / Android Devices)
+   ========================================================================== */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+
+  .logo-area h1 {
+    font-size: 1.35rem;
+  }
+
+  .tagline {
+    font-size: 0.78rem;
+  }
+
+  .nav-controls {
+    width: 100%;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .btn {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+
+  /* 2x2 Grid for Stat Cards on Mobile */
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .stat-label {
+    font-size: 0.72rem !important;
+  }
+
+  .stat-value {
+    font-size: 1.3rem !important;
+    margin: 4px 0 !important;
+  }
+
+  .stat-sub {
+    font-size: 0.7rem !important;
+  }
+
+  /* Horizontal Scrollable Tabs Bar */
+  .tabs-container {
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    flex-wrap: nowrap !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 14px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-btn {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .panel {
+    padding: 12px !important;
+    margin-bottom: 16px !important;
+    border-radius: 10px !important;
+  }
+
+  .panel-title {
+    font-size: 0.95rem !important;
+  }
+
+  /* Compact Touch Tables */
+  .matrix-table {
+    font-size: 0.76rem !important;
+  }
+
+  .matrix-table th, .matrix-table td {
+    padding: 6px 6px !important;
+  }
+
+  .cell-num-val {
+    min-width: 48px !important;
+    font-size: 0.76rem !important;
+  }
+
+  .modal-content {
+    padding: 16px !important;
+    max-width: 95% !important;
+  }
+}
+
