@@ -232,7 +232,11 @@ function renderDashboard() {
   document.getElementById('stat-two-price').innerText = (gexData.two_price || 347.85).toLocaleString();
   document.getElementById('stat-txf-price').innerText = txf.toLocaleString();
 
-  document.getElementById('stat-last-update').innerHTML = `📅 最後更新: <strong>${lastTime}</strong>`;
+  const sessionBadge = gexData.session_name 
+    ? `<span style="margin-left: 8px; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: #00d2ff; font-size: 0.85rem; border: 1px solid rgba(0, 210, 255, 0.3);">${gexData.session_name}</span>` 
+    : '';
+
+  document.getElementById('stat-last-update').innerHTML = `📅 最後更新: <strong>${lastTime}</strong> ${sessionBadge}`;
 
   document.getElementById('stat-zero-gamma').innerText = gexData.zero_gamma_level.toLocaleString();
   document.getElementById('stat-call-wall').innerText = gexData.call_wall_strike.toLocaleString();
