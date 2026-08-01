@@ -297,10 +297,48 @@ def generate_gex_data():
         }
     ]
 
+    # Calculate Net Change Sentiment for Foreign & Speculator Positioning
+    last_foreign_net = institutional_5day_history[-1]["foreign_fut_net"] if institutional_5day_history else -14200
+    prev_foreign_net = institutional_5day_history[-2]["foreign_fut_net"] if len(institutional_5day_history) >= 2 else -12400
+    foreign_change = last_foreign_net - prev_foreign_net
+
+    # Notional value per contract at current txf_price (Contract multiplier = 200 TWD)
+    contract_notional_billion = round((abs(foreign_change) * txf_price * 200) / 1e8, 1)
+    change_sign = "+" if foreign_change >= 0 else ""
+
+    # Dynamic scaling threshold based on txf_price (Base 20,000 index)
+    scale_factor = max(1.0, txf_price / 20000.0)
+    thresh_extreme = int(5000 * scale_factor)
+    thresh_significant = int(2000 * scale_factor)
+
+    if foreign_change >= thresh_extreme:
+        sentiment_tag = "🔥 高檔大舉回補 / 追擊多單"
+        sentiment_desc = f"外資單日大幅回補 {change_sign}{foreign_change:,} 口（約 {change_sign}{contract_notional_billion} 億 TWD 契約金額），強烈防範嘎空追多。"
+    elif foreign_change >= thresh_significant:
+        sentiment_tag = "📈 顯著回補偏多"
+        sentiment_desc = f"外資單日顯著回補 {change_sign}{foreign_change:,} 口（約 {change_sign}{contract_notional_billion} 億 TWD 契約金額），上檔壓回壓力明顯減輕。"
+    elif foreign_change <= -thresh_extreme:
+        sentiment_tag = "⚠️ 暴增高檔避險 / 重手加空"
+        sentiment_desc = f"外資單日重手加空 {foreign_change:,} 口（約 -{contract_notional_billion} 億 TWD 契約金額），高檔下檔避險風險飆升。"
+    elif foreign_change <= -thresh_significant:
+        sentiment_tag = "📉 顯著加碼加空"
+        sentiment_desc = f"外資單日加碼空單 {foreign_change:,} 口（約 -{contract_notional_billion} 億 TWD 契約金額），防守避險需求上升。"
+    else:
+        sentiment_tag = "⚖️ 中性觀望 / 微幅調整"
+        sentiment_desc = f"外資單日微幅變動 {change_sign}{foreign_change:,} 口（約 {change_sign}{contract_notional_billion} 億 TWD），法人維持既有防守姿態。"
+
+    institutional_sentiment = {
+        "tag": sentiment_tag,
+        "foreign_net_oi": last_foreign_net,
+        "daily_change": foreign_change,
+        "notional_billion": contract_notional_billion,
+        "description": sentiment_desc
+    }
+
     settlement_text = (
-        f"🌙【夜盤收盤校正】經期交所官方 Excel (futDailyMarketExcel?marketCode=1) 匯入驗證：夜盤近月台指期收盤價 {txf_price}。最新支撐點 {put_wall_strike} Put Wall，上檔壓力點 {call_wall_strike} Call Wall。"
+        f"🌙【夜盤收盤校正】經期交所官方 Excel (futDailyMarketExcel?marketCode=1) 匯入驗證：夜盤近月台指期收盤價 {txf_price}。【{sentiment_tag}】{sentiment_desc} 最新支撐點 {put_wall_strike} Put Wall，上檔壓力點 {call_wall_strike} Call Wall。"
         if is_night_session
-        else "🎯 綜合日盤官方結算籌碼與 GEX 避險牆，當前支撐位於 42,800 Put Wall，上檔壓力 43,400 Call Wall，預計結算偏向【高檔震盪看撐】。"
+        else f"🎯 綜合日盤官方結算籌碼與 GEX 避險牆。【{sentiment_tag}】{sentiment_desc} 當前支撐位於 {put_wall_strike} Put Wall，上檔壓力 {call_wall_strike} Call Wall。"
     )
 
     executive_digest = {
@@ -357,6 +395,7 @@ def generate_gex_data():
         "retail_mini_ratio": 4.5,
         "retail_micro_ratio": 6.9,
         "institutional_5day_history": institutional_5day_history,
+        "institutional_sentiment": institutional_sentiment,
         "executive_digest": executive_digest,
         "stock_futures": stock_futures
     }
