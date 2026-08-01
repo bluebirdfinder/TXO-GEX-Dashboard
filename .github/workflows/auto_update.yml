@@ -1,0 +1,44 @@
+name: TAIFEX Data Engine (Day & Night Sessions)
+
+on:
+  schedule:
+    # --- 🌙 夜盤 Failover 重試窗口 (05:30, 06:00, 06:30 TWD) ---
+    - cron: '30 21 * * 0-4'  # 05:30 TWD
+    - cron: '0 22 * * 0-4'   # 06:00 TWD
+    - cron: '30 22 * * 0-4'  # 06:30 TWD
+
+    # --- ☀️ 日盤 Failover 重試窗口 (15:30, 16:00, 16:30 TWD) ---
+    - cron: '30 7 * * 1-5'   # 15:30 TWD
+    - cron: '0 8 * * 1-5'    # 16:00 TWD
+    - cron: '30 8 * * 1-5'   # 16:30 TWD
+
+  workflow_dispatch: # 手動一鍵觸發按鈕
+
+jobs:
+  update-official-taifex-positioning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install beautifulsoup4 requests
+
+      - name: Fetch Official TAIFEX Positioning Data
+        run: |
+          python scripts/fetch_and_calc.py
+
+      - name: Commit and Push Official Payload
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/gex_data.json data/encrypted_gex.json
+          git status
+          git diff-index --quiet HEAD || (git commit -m "🏛️ [Official] TAIFEX Day/Night Session Positioning & GEX Baseline [skip ci]" && git push)
