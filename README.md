@@ -89,6 +89,19 @@ txo-gex-dashboard/
 
 ---
 
+## 🚀 未來展望與富邦 API 即時串流升級藍圖 (Fubon SDK Roadmap)
+
+1. **🔒 前後端分離與金鑰安全架構**：
+   - 嚴禁於公開前端 JS 編寫富邦 API 登入憑證與金鑰。
+   - 採用**本地 / VPS 常駐 Python 引擎**，透過富邦 WebSocket 接收即時台指期點數 $S_t$，後端完成 GEX 重算後再將 JSON 輕量推播至前端。
+2. **⚡ Dynamic GEX 盤中實時對沖追蹤**：
+   - 結合日盤 Static OI 與盤中即時 $S_t$ / IV，動態刷新各履約價 $\Gamma_t$ 與買賣權牆 (Call/Put Wall) 位移。
+3. **📈 成交量加權 GEX (vGEX / Volume-Weighted GEX)**：
+   - 算式：$$\text{vGEX}_K = \Gamma_K \times \text{Volume}_K \times 50 \times S_t^2 \times 0.01$$
+   - 當特定履約價 vGEX 突然爆量增加，代表大資金正進行盤中建倉，為盤中價格突破或轉折的強烈信號。
+
+---
+
 ## ⚖️ 免責與法律聲明
 
 本網站及其包含之數據圖表、GEX 計算結果與語意分析說明，僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。

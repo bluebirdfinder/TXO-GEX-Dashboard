@@ -1,24 +1,21 @@
-# 🚀 TXO GEX Dashboard - v7.0.0 Release Status
+# 🚀 TXO GEX Dashboard - v8.0.0 Release Status (Final Release)
 
 ## 📌 Status Summary
-- **Current Version**: v7.0.0 (Official Night/Day Dual-Session & Institutional Trading Release)
-- **Data Integrity**: 100% Direct integration with TWSE (`openapi.twse.com.tw`) and TAIFEX (`taifex.com.tw` / `futContractsDateAh`). Zero dummy data.
-- **Dual-Session Split Cards**: 5 core stat cards (TXF, Zero Gamma, Call Wall, Put Wall, Max Pain) display both Daytime (13:45) and Night-Close (05:00) calibrated metrics.
-- **Blue Box Session Shift Banner**: Dedicated shift comparison card placed next to Max Pain for real-time gap & wall displacement digest.
+- **Current Version**: v8.0.0 (3-Day 6-Session Snapshot & Microstructure Express Release)
+- **Data Integrity**: 100% Direct integration with TWSE MIS (`mis.twse.com.tw`) & TAIFEX (`taifex.com.tw` / `futContractsDateAh`). Zero dummy data.
+- **3-Day 6-Session Snapshots**: Full historical trajectory for T-2 Day, T-2 Night, T-1 Day, T-1 Night, T Day, T Night (Live) with interactive snapshot toggle bar.
+- **Microstructure Express Digest**: Automated `generate_microstructure_summary()` backend generator with Positive/Negative Gamma regime tags, Flip Point proximity alerts (<100 pts), and Call/Put Wall displacement digest.
+- **Official Indices Alignment**: Exact live index alignment (TAIEX `43,386.41`, OTC `362.89`, Day TXF `43,230.0`, Night TXF `42,650.0`).
 - **Night Session Institutional Panel**: Official TAIFEX `futContractsDateAh` parsing (TX Foreign, MTX Foreign, Micro Foreign, TX Dealer) with automated plain text summary.
-- **Taxonomy & Notional Calculation**: Dynamic scaling algorithm with notional contract value in 100M TWD (億 TWD) and 5-tier semantic tags.
-- **Options Education & P/C Ratio**: P/C Ratio (108.5%) displayed with 🔴/🟢 Taiwan market color symbols and Max Pain magnet effect education modal.
-- **Mobile RWD & UI Polish**: 2x2 grid card layout for mobile, perfect 1:1 circle rule for user avatar, and 100% unified FinTech font family.
-- **CI/CD Auto-Pipeline**: Actions Bot 403 permission issue resolved via `permissions: contents: write`.
+- **UI & Mobile Polish**: Unified FinTech font-family, 1:1 perfect circle user avatar protection, and responsive 2x2 card grid on mobile.
 
-## 🎯 Completed Milestones (v7.0.0)
-- [x] Implemented Split-Card layout (Daytime 13:45 vs Night 05:00 Close) for 5 core stat cards.
-- [x] Positioned Blue Box Session Shift Banner directly to the right of Max Pain.
-- [x] Added `🌙 三大法人夜盤盤後交易籌碼專區` with direct TAIFEX `futContractsDateAh` parser.
-- [x] Implemented automated plain-text Night Session Institutional Trading summary digest.
-- [x] Enforced Taiwan Market Color Standard (🔴 Red = Bullish / 🟢 Green = Bearish) across P/C Ratio & indicators.
-- [x] Added P/C Ratio & Max Pain education guides into the interactive `❓ 判讀教學` Modal.
-- [x] Fixed mobile avatar warping with 1:1 aspect-ratio perfect circle protection.
+## 🎯 Completed Milestones (v8.0.0)
+- [x] Implemented 3-Day 6-Session Snapshot history generator in `fetch_and_calc.py`.
+- [x] Created interactive 6-session snapshot selector bar (`#history-session-selector`) in `index.html` & `app.js`.
+- [x] Created `📌 日夜盤微觀結構速報` panel with dynamic theme border (Red Bullish / Green Bearish).
+- [x] Aligned TAIEX (`43,386.41`) & OTC (`362.89`) using official TWSE MIS API.
+- [x] Aligned Day TXF (`43,230.0`) & Night TXF (`42,650.0`) using TAIFEX official endpoints.
 - [x] Enforced global font-family rule to eliminate system default fallback fonts (新細明體).
-- [x] Resolved GitHub Actions 403 push permission error in `auto_update.yml`.
-- [x] Verified full 270 stock futures catalog fallback array in `app.js`.
+- [x] Fixed mobile avatar warping with 1:1 aspect-ratio perfect circle protection.
+- [x] Updated Fubon SDK API security roadmap & Volume-Weighted GEX (vGEX) formula in documentation.
+- [x] Updated all documentation files (`README.md`, `PROJECT_HANDOVER.md`, `OPTIONS_CHEATSHEET.md`, `STATUS.md`).

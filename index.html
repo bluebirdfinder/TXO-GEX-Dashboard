@@ -279,6 +279,7 @@
             <span id="stat-zg-night" style="font-size: 1.05rem; font-weight: 700; color: var(--gold-accent);">42,316.6 <span id="stat-zg-shift" style="font-size: 0.7rem; color: #aaa;">(-653.4)</span></span>
           </div>
         </div>
+        <div id="stat-gamma-status" class="stat-sub" style="margin-top: 4px; font-weight: 600; font-size: 0.76rem;">🔴 正 Gamma 多頭平穩區</div>
       </div>
 
       <!-- 3. Call Wall (切一半: 上日盤 / 下夜盤) -->
@@ -334,7 +335,23 @@
       </div>
 
       <!-- 藍框區域：放置日夜盤避險牆位移對比摘要 -->
-      <div id="session-shift-banner" style="flex: 1; min-width: 300px; display: flex; align-items: center;"></div>
+      <div id="session-shift-banner" style="flex: 1; display: flex; align-items: center;">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Row 3: 📌 日夜盤微觀結構速報 (Microstructure Express Digest) Card -->
+    <div id="microstructure-express-panel" class="panel" style="margin-bottom: 20px; border: 2px solid var(--primary-accent); background: rgba(0, 210, 255, 0.04); transition: all 0.3s ease;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="font-size: 0.95rem; margin: 0; color: var(--primary-accent); display: flex; align-items: center; gap: 6px;">
+          <span>📌 日夜盤微觀結構速報</span>
+          <span id="express-regime-badge" style="font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: rgba(0,210,255,0.15); color: var(--primary-accent);">正 Gamma 區</span>
+        </h3>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">極速多空位移與變盤臨界判定</span>
+      </div>
+      <div id="microstructure-express-content" style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <!-- Populated dynamically by JavaScript -->
+      </div>
     </div>
 
     <!-- Tabs Container -->
@@ -354,8 +371,13 @@
           📊 全市場 TXO GEX 履約價分布圖 (億 TWD)
         </div>
         <div style="font-size: 0.8rem; color: var(--text-muted);">
-          期交所籌碼基準日期: <span id="data-date">2026-07-31</span>
+          期交所籌碼基準日期: <span id="data-date">2026-08-03</span>
         </div>
+      </div>
+
+      <!-- 3-Day / 6-Session History Snapshot Selector Bar -->
+      <div id="history-session-selector" style="display: flex; gap: 6px; margin: 8px 0 14px 0; overflow-x: auto; padding-bottom: 4px; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;">
+        <!-- Populated dynamically by JavaScript -->
       </div>
 
       <!-- Plotly Container -->
