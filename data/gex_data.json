@@ -1,8 +1,19 @@
 {
-  "date": "2026-08-02",
+  "date": "2026-08-03",
   "session_type": "NIGHT",
   "session_name": "🌙 夜盤收盤價校正 (05:00 Close)",
-  "last_updated_time": "2026-08-02 23:30",
+  "session_shift": {
+    "txf_shift": -655.0,
+    "call_wall_shift": -600,
+    "put_wall_shift": -600,
+    "zero_gamma_shift": -653.4,
+    "day_txf_price": 43305.0,
+    "day_call_wall": 43400,
+    "day_put_wall": 42800,
+    "day_zero_gamma": 42970.0,
+    "day_max_pain": 43100
+  },
+  "last_updated_time": "2026-08-03 15:46",
   "spot_price": 42466.61,
   "two_price": 347.85,
   "txf_price": 42650.0,
@@ -874,8 +885,20 @@
     "notional_billion": 153.5,
     "description": "外資單日微幅變動 -1,800 口（約 153.5 億 TWD），法人維持既有防守姿態。"
   },
+  "night_institutional_trading": {
+    "tx_foreign_net_vol": -2,
+    "tx_foreign_net_amt": -0.64,
+    "tx_dealer_net_vol": 0,
+    "tx_dealer_net_amt": 0.0,
+    "tx_trust_net_vol": 0,
+    "mini_foreign_net_vol": -3692,
+    "micro_foreign_net_vol": -10530,
+    "night_sentiment": "⚖️ 外資夜盤中性觀望",
+    "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤僅微變 -2 口，籌碼結構維繫中性觀望姿態。"
+  },
   "executive_digest": {
-    "date": "2026-08-02",
+    "date": "2026-08-03",
+    "session_shift_summary": "🌉 <strong>日夜盤避險牆位移對比</strong>：夜盤 TXF (`42650.0`) 相較日盤 (`43305.0`) 變動 <strong>-655.0 點</strong>。天花板 Call Wall (-600點 ➔ `42800`)，地板 Put Wall (-600點 ➔ `42200`)。開盤觀察 `42200` 防守位。",
     "futures_summary": "前五大與前十大交易人多單加碼（+6,420口 / +9,850口），特定法人整體期貨結構偏多佈局。",
     "cash_summary": "現貨買賣超呈現「外資大買超 +185.4億」與「投信連續買超 +62.8億」，自營商微幅調節 -24.5億。",
     "options_structure": "經期交所 Excel 匯入網址 (callsAndPutsDateExcel) 實測驗證：投信持倉 SC 賣出買權 -3.08億 與 BP 買進賣權 +0.003億（總部位 SC+BP 防守避險）；外資與自營商雙賣收取時間價值偏高檔看撐。",
