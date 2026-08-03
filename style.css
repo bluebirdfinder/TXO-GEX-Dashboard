@@ -563,3 +563,54 @@ footer p {
   }
 }
 
+/* ============================================================
+   Optimization v8.1 — New Features Styling
+   ============================================================ */
+
+/* Data Freshness LED Pulse Animation */
+@keyframes freshPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(0.85); }
+}
+
+@keyframes warnPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+#freshness-indicator { user-select: none; }
+
+/* Overlay Compare Button Active State */
+#overlay-compare-btn.active {
+  background: var(--primary-accent) !important;
+  color: #000 !important;
+  border-color: var(--primary-accent) !important;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(0,210,255,0.4);
+}
+
+/* Nav controls layout */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* LocalStorage cache notice banner */
+#cache-notice-banner {
+  background: rgba(255,215,0,0.08);
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  color: var(--gold-accent);
+  margin-bottom: 12px;
+}
+
+/* Mobile: compact freshness indicator */
+@media (max-width: 768px) {
+  #freshness-indicator { padding: 4px 8px !important; }
+  #freshness-text { display: none !important; }
+  #overlay-compare-btn { font-size: 0.72rem !important; padding: 3px 8px !important; }
+}

@@ -41,7 +41,7 @@
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <button id="unlock-btn" class="btn btn-primary" style="width: 100%;">驗證並解密儀表板</button>
+        <button id="unlock-btn" class="btn btn-primary" style="width: 100%;" onclick="attemptDecrypt(document.getElementById('passcode-field').value)">驗證並解密儀表板</button>
       </div>
 
       <p id="passcode-error" style="color: var(--put-color); font-size: 0.8rem; margin-top: 10px; display: none;">
@@ -228,6 +228,11 @@
         <button id="mode-badge" class="btn" style="border-color: var(--gold-accent); color: var(--gold-accent);">
           🏛️ 官方日盤結算定案版
         </button>
+        <!-- Data Freshness Indicator LED -->
+        <div id="freshness-indicator" title="資料更新時效" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid var(--panel-border);background:rgba(255,255,255,0.04);cursor:default;">
+          <span id="freshness-dot" style="width:10px;height:10px;border-radius:50%;background:#00e676;display:inline-block;box-shadow:0 0 6px #00e676;animation:freshPulse 2s infinite;"></span>
+          <span id="freshness-text" style="font-size:0.78rem;color:var(--text-muted);">資料更新中...</span>
+        </div>
         <button id="open-guide-btn" class="btn">❓ 判讀教學</button>
         <button id="relock-btn" class="btn">🔒 鎖定</button>
       </div>
@@ -366,18 +371,29 @@
 
     <!-- Main Chart Panel -->
     <div class="panel">
-      <div class="panel-header">
+      <div class="panel-header" style="flex-wrap:wrap;gap:8px;">
         <div id="chart-panel-title" class="panel-title">
           📊 全市場 TXO GEX 履約價分布圖 (億 TWD)
         </div>
-        <div style="font-size: 0.8rem; color: var(--text-muted);">
-          期交所籌碼基準日期: <span id="data-date">2026-08-03</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <!-- Overlay Compare Toggle -->
+          <button id="overlay-compare-btn" class="btn" style="font-size:0.78rem;padding:4px 12px;border-radius:16px;border-color:var(--primary-accent);color:var(--primary-accent);" title="疊加顯示 T日盤 vs T夜盤 GEX 差異">
+            🔀 疊加對比
+          </button>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            期交所籌碼基準日期: <span id="data-date">2026-08-03</span>
+          </div>
         </div>
       </div>
 
       <!-- 3-Day / 6-Session History Snapshot Selector Bar -->
       <div id="history-session-selector" style="display: flex; gap: 6px; margin: 8px 0 14px 0; overflow-x: auto; padding-bottom: 4px; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;">
         <!-- Populated dynamically by JavaScript -->
+      </div>
+
+      <!-- Overlay mode legend -->
+      <div id="overlay-legend" style="display:none;margin-bottom:8px;padding:8px 14px;background:rgba(0,210,255,0.06);border:1px solid rgba(0,210,255,0.2);border-radius:8px;font-size:0.82rem;color:var(--text-muted);">
+        🔀 <strong style="color:var(--primary-accent);">疊加對比模式</strong>：半透明 = T日盤，實線 = T夜盤 (Live)。點擊「疊加對比」再次關閉。
       </div>
 
       <!-- Plotly Container -->
