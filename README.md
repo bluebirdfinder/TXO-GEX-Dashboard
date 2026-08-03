@@ -1,40 +1,94 @@
-# 🐦 尋鳥 Bluebird Finder - TXO GEX 量化儀表板 v8.0.0 🚀
-> **台指期權 Gamma Exposure 波動度、三大法人與大戶 5 日純數字籌碼歷程矩陣、TradingView Pine Script v6 即時推播、全量 270 檔個股期貨量化系統**
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板
 
-![Branding](https://img.shields.io/badge/Branding-%E5%B0%8B%E9%B3%A5%20Bluebird%20Finder-00d2ff.svg)
-![Version](https://img.shields.io/badge/version-8.0.0-blue.svg)
-![Data Source](https://img.shields.io/badge/Data%20Source-TAIFEX%20%7C%20TWSE-red.svg)
-![TradingView](https://img.shields.io/badge/TradingView-Pine%20Script%20v6-green.svg)
-![Security](https://img.shields.io/badge/Protection-AES--256--CBC-green.svg)
+> **全台首創‧日夜盤雙維度對照‧選擇權 Gamma Exposure (GEX) 波動度與三大法人期權籌碼量化平台**
 
----
-
-## 💡 系統核心特色 (Key Features)
-
-### 1. ⚡ TradingView Pine Script v6 零延遲報價自動推播
-* **對接付費 TradingView 報價**：支援 Pine Script v6 自動推播告警，將你的 TradingView 付費實時台指期夜盤 (`TXF1!`) 價格推送至 Cloudflare Worker。
-* **動態重算 GEX 避險牆**：夜盤時間一有新報價，網頁端的黑修斯 Gamma ($\Gamma$) 與 Plotly GEX 柱狀圖即時重算與繪製。
-
-### 2. 🏛️ 100% 期交所官方 Excel 匯入數據 (Official TAIFEX Excel Integration)
-* **官方網頁 Web 匯入專用接口**：直連期交所官方 `callsAndPutsDateExcel` 接口，精確解析三大法人未平倉與交易金額。
-* **投信選擇權真實還原**：精確解析投信 `Call: -3.08億 SC 🟢` 與 `Put: +0.003億 BP 🔴`（總部位 SC+BP 防守避險），與期交所官方紀錄 100% 吻合對齊。
-
-### 3. 📋 三大法人與大戶 5 日純數字籌碼歷程矩陣 (5-Day Numerical History Matrix)
-* **垂直對齊視覺系統**：採用 `tabular-nums` 等寬字型與 Flexbox 結構，數字靠右對齊、單位 (`口`/`億`) 與色點 (`🔴`/`🟢`) 垂直排成一直線。
-* **💡 表格外獨立解讀卡 (Executive Digest Card)**：將 BC / SC / BP / SP 結構分析與結算展望獨立放置在表格上方。
-
-### 4. 🐦 專屬品牌識別（尋鳥 Bluebird Finder）
-* **頂級視覺與頭像**：結合少年研究員與藍鳥高畫質 LOGO，配置漸層科技藍與金屬金質感字體。
+[![GitHub Actions Night/Day Pipeline](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
+[![Live Dashboard](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
+[![TAIFEX Compliant](https://img.shields.io/badge/TAIFEX-100%25_Official_Data-ffd700)](https://www.taifex.com.tw/)
 
 ---
 
-## 🔒 解密通行碼 (Passcode)
+## 🌟 核心功能與系統特色
 
-網頁開啟時需輸入加密通行碼進行端到端解密：
-* **通行碼 (Passcode)**：`GEX2026`（大小寫皆可）
+### 1. 🎴 日夜盤雙維度對照 (Split-Card Dual-Session View)
+- **五大關鍵指標卡片切一半**：包含 **台指期 (TXF1!)**、**Zero Gamma (轉折點)**、**Call Wall (天花板)**、**Put Wall (地板)** 與 **Max Pain (最大痛點)**。
+- **上半部 `☀️ 日盤 (13:45)`**：展示每日 13:45 官方定案結算數值。
+- **下半部 `🌙 夜盤校正 (05:00 Close)`**：同步演算每日 05:00 收盤價重算之 GEX 避險牆與動態位移點數（如 `Call Wall: 42,800 (-600點)`）。
+
+### 2. 🌉 藍框日夜盤避險牆位移對比摘要 (Session Shift Banner)
+- 精確跨越於第二排 Max Pain 右側廣闊藍框區域，自動對比夜盤相較日盤的期貨價差與天花板/地板防守牆位移點數，第一時間指引開盤防守力道。
+
+### 3. 🌙 三大法人夜盤盤後交易籌碼專區 (futContractsDateAh)
+- **100% 官方資料源**：自動於每日 07:00 爬取台灣期交所夜盤（15:00 ~ 05:00）官方盤後數據 (`futContractsDateAh`)。
+- **四大夜盤指標**：
+  1. 外資夜盤臺指期 (TX) 淨交易口數 & 契約金額 (億 TWD)
+  2. 外資夜盤小台 (MTX) 淨交易口數
+  3. 外資夜盤微台 (Micro) 淨交易口數
+  4. 自營商夜盤臺指期 (TX) 淨交易口數 & 契約金額 (億 TWD)
+- **自動白話解讀摘要**：自動編譯外資夜盤大台與小微台吸收散戶籌碼之多空白話文字總結。
+
+### 4. 📊 外資與大戶單日變化量 ($\Delta$ Net OI) 分級 taxonomy 與契約金額精算
+- **契約金額精算**：自動將口數換算為契約金額（億 TWD）：
+  $$\text{契約金額 (億 TWD)} = \frac{|\Delta \text{Net OI}| \times \text{台指期價格} \times 200}{10^8}$$
+- **5 大語意形容詞標籤**：
+  - `🔥 高檔大舉回補` ($+6,000$ 口以上 / $+600$ 億 TWD)
+  - `📈 顯著回補偏多` ($+2,500 \sim +5,999$ 口)
+  - `⚖️ 中性觀望` ($-2,499 \sim +2,499$ 口)
+  - `📉 顯著加碼加空` ($-2,500 \sim -5,999$ 口)
+  - `⚠️ 暴增高檔避險` ($-6,000$ 口以上 / $-600$ 億 TWD)
+
+### 5. 💡 選擇權 P/C Ratio 與 Max Pain (最大痛點) 判讀指南
+- **P/C Ratio (108.5%) 台灣色彩標籤**：
+  - $\ge 100\%$ ➔ **🔴 偏多看撐** (台灣股市紅漲，莊家 Put 防守牆厚)。
+  - $< 100\%$ ➔ **🟢 偏空看壓** (台灣股市綠跌，莊家 Call 賣壓牆厚)。
+- **Max Pain (最大痛點)**：解說結算前夕散戶痛苦、莊家獲利與黑手磁鐵拉回效應。
+
+### 6. 📱 手機端極致 2x2 雙欄 RWD 響應式排版
+- 手機直立閱讀時自動轉為 2x2 俐落雙欄卡片，頁籤列支援平滑橫向滑動。
+- 個人大頭貼縮圖強制保護為 **1:1 完美正圓形 (Perfect Circle)**，全站字體統一為 FinTech 質感微軟正黑體/蘋果系統字。
 
 ---
 
-## ⚖️ 免責與法律聲明 (Disclaimer)
+## 🛠️ 技術架構與自動化更新
 
-本網站及內部數據、圖表僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何投資建議。投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。
+```mermaid
+flowchart TD
+    A[TAIFEX / TWSE Open Data API] --> B[scripts/fetch_and_calc.py Data Engine]
+    B --> C[data/gex_data.json]
+    B --> D[data/encrypted_gex.json]
+    C & D --> E[GitHub Actions Auto-Pipeline]
+    E --> F[GitHub Pages Web Dashboard]
+```
+
+- **自動化備援排程 (`auto_update.yml`)**：
+  - 🌙 夜盤 Failover：05:30, 06:00, 06:30 TWD (每日 05:00 收盤後自動執行)
+  - ☀️ 日盤 Failover：15:30, 16:00, 16:30 TWD (每日 13:45 收盤後自動執行)
+  - **Permissions 403 已修復**：內建 `permissions: contents: write` 確保 Actions Bot 自動 commit/push 無阻礙。
+
+---
+
+## 📂 專案檔案結構
+
+```
+txo-gex-dashboard/
+├── .github/workflows/
+│   └── auto_update.yml        # GitHub Actions 自動化抓取與推播腳本
+├── data/
+│   ├── gex_data.json          # 原始產出 JSON 數據 (含日夜盤對照與夜盤盤後籌碼)
+│   └── encrypted_gex.json      # AES/SHA256 加密數據 Payload
+├── scripts/
+│   └── fetch_and_calc.py      # Python 核心演算與 TAIFEX/TWSE 爬蟲引擎
+├── index.html                 # 主介面 HTML (含切半卡片、藍框 Banner、夜盤專區與 Modal)
+├── app.js                     # 前端 JavaScript 邏輯 (包含加密解密、Plotly 圖表與表格渲染)
+├── style.css                  # 台灣股市標準色彩 (紅漲綠跌) & 手機端 RWD 樣式
+├── taifex_catalog.json        # 期交所全量 270 檔個股與 ETF 期貨目錄
+├── PROJECT_HANDOVER.md        # 個人電腦接手續接與維護手冊
+├── OPTIONS_CHEATSHEET.md      # 選擇權與籌碼語意分級標準速查表
+└── README.md                  # 專案介紹與技術文件
+```
+
+---
+
+## ⚖️ 免責與法律聲明
+
+本網站及其包含之數據圖表、GEX 計算結果與語意分析說明，僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。

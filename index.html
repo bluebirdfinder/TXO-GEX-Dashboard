@@ -100,6 +100,47 @@
           </tr>
         </tbody>
       </table>
+
+      <h3 style="color: var(--gold-accent); margin: 16px 0 8px 0;">2. P/C Ratio (Put/Call 未平倉比率) 判讀速查表</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">
+        公式：$\text{Put/Call Ratio} = (\text{Put 總未平倉} / \text{Call 總未平倉}) \times 100\%$。比較莊家「地板防守牆」與「天花板壓頂牆」的厚度。
+      </p>
+      <table class="matrix-table" style="margin-bottom: 16px; font-size: 0.85rem;">
+        <thead>
+          <tr style="background: #18202d;">
+            <th>P/C Ratio 數值</th>
+            <th>台灣標準色彩</th>
+            <th>莊家佈局意圖</th>
+            <th>實戰判讀指南</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>＞ 100%</strong> (例如 108.5%)</td>
+            <td>🔴 <strong>紅球 (台灣紅漲)</strong></td>
+            <td>莊家 Put 地板防守牆蓋得比較厚</td>
+            <td><strong style="color: var(--call-color);">🔴 偏多看撐</strong>。下檔有較強防守支撐。</td>
+          </tr>
+          <tr>
+            <td><strong>＝ 100%</strong></td>
+            <td>⚖️ <strong>中性球</strong></td>
+            <td>多空防守牆力道相當</td>
+            <td>⚖️ <strong>中性震盪</strong>。</td>
+          </tr>
+          <tr>
+            <td><strong>＜ 100%</strong> (例如 85.0%)</td>
+            <td>🟢 <strong>綠球 (台灣綠跌)</strong></td>
+            <td>莊家 Call 天花板賣壓牆蓋得比較厚</td>
+            <td><strong style="color: var(--put-color);">🟢 偏空看壓</strong>。上檔賣壓偏重，不易大漲。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="color: var(--primary-accent); margin: 16px 0 8px 0;">3. Max Pain (最大痛點) 黑手磁鐵原理</h3>
+      <ul style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; padding-left: 20px; margin-bottom: 16px;">
+        <li><strong>什麼是最大痛點？</strong> 讓買彩券的散戶（買方）虧最多錢、賣權利金的莊家（賣方）賺最多錢的履約價。</li>
+        <li><strong>黑手磁鐵效應</strong>：每週三結算前夕，台指期價格極易像被磁鐵吸住一樣，朝 Max Pain 數字靠攏，使買方權利金雙歸零。</li>
+      </ul>
     </div>
   </div>
 
@@ -192,50 +233,108 @@
       </div>
     </header>
 
-    <!-- Top Summary Stat Cards -->
-    <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+    <!-- Top Summary Stat Cards (6 Cards in Row 1) -->
+    <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 12px;">
+      <!-- 加權指數 -->
       <div class="stat-card">
         <div class="stat-label">加權指數 (IX0001)</div>
-        <div id="stat-spot" class="stat-value">43,119.75</div>
+        <div id="stat-spot" class="stat-value" style="font-size: 1.5rem;">43,119.75</div>
         <div id="stat-taiex-change" class="stat-sub tag-bull">+3,186.45 (+7.98%)</div>
       </div>
 
+      <!-- 櫃買指數 -->
       <div class="stat-card">
         <div class="stat-label">櫃買指數 (IX0043)</div>
-        <div id="stat-two-price" class="stat-value">347.85</div>
+        <div id="stat-two-price" class="stat-value" style="font-size: 1.5rem;">347.85</div>
         <div id="stat-two-change" class="stat-sub tag-bull">+21.62 (+6.63%)</div>
       </div>
 
-      <div class="stat-card" style="border-left: 4px solid var(--primary-accent);">
-        <div class="stat-label">台指期 (TXF1!)</div>
-        <div id="stat-txf-price" class="stat-value" style="color: var(--primary-accent);">43,305</div>
-        <div id="stat-txf-change" class="stat-sub tag-bear">-422 (-0.97%)</div>
-        <div id="stat-last-update" class="stat-sub" style="color: #888; font-size: 0.7rem; margin-top: 2px;">📅 最後更新: 2026-07-31 13:45</div>
+      <!-- 1. 台指期 (切一半: 上日盤 / 下夜盤) -->
+      <div class="stat-card" style="border-left: 4px solid var(--primary-accent); padding: 10px 12px;">
+        <div class="stat-label" style="font-weight: 700; color: var(--primary-accent);">台指期 (TXF1!)</div>
+        <div class="split-box" style="margin-top: 4px;">
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
+            <span id="stat-txf-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,305</span>
+          </div>
+          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,210,255,0.1); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--primary-accent);">🌙 夜盤 (05:00)</span>
+            <span id="stat-txf-night" style="font-size: 1.05rem; font-weight: 700; color: var(--primary-accent);">42,650 <span id="stat-txf-shift" style="font-size: 0.7rem; color: var(--put-color);">(-655)</span></span>
+          </div>
+        </div>
       </div>
 
-      <div class="stat-card zero-gamma">
-        <div class="stat-label">Zero Gamma (轉折點)</div>
-        <div id="stat-zero-gamma" class="stat-value" style="color: var(--gold-accent);">42,970</div>
-        <div id="stat-gamma-status" class="stat-sub">🔴 正 Gamma 多頭平穩區</div>
+      <!-- 2. Zero Gamma (切一半: 上日盤 / 下夜盤) -->
+      <div class="stat-card zero-gamma" style="padding: 10px 12px;">
+        <div class="stat-label" style="font-weight: 700; color: var(--gold-accent);">Zero Gamma (轉折點)</div>
+        <div class="split-box" style="margin-top: 4px;">
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
+            <span id="stat-zg-day" style="font-size: 1rem; font-weight: 700; color: #fff;">42,970</span>
+          </div>
+          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,215,0,0.1); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--gold-accent);">🌙 夜盤校正</span>
+            <span id="stat-zg-night" style="font-size: 1.05rem; font-weight: 700; color: var(--gold-accent);">42,316.6 <span id="stat-zg-shift" style="font-size: 0.7rem; color: #aaa;">(-653.4)</span></span>
+          </div>
+        </div>
       </div>
 
-      <div class="stat-card call-wall">
-        <div class="stat-label">Call Wall (天花板)</div>
-        <div id="stat-call-wall" class="stat-value" style="color: var(--call-color);">43,400</div>
-        <div class="stat-sub">造市商 Call 賣壓牆</div>
+      <!-- 3. Call Wall (切一半: 上日盤 / 下夜盤) -->
+      <div class="stat-card call-wall" style="padding: 10px 12px;">
+        <div class="stat-label" style="font-weight: 700; color: var(--call-color);">Call Wall (天花板)</div>
+        <div class="split-box" style="margin-top: 4px;">
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
+            <span id="stat-call-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,400</span>
+          </div>
+          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,82,82,0.1); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--call-color);">🌙 夜盤校正</span>
+            <span id="stat-call-night" style="font-size: 1.05rem; font-weight: 700; color: var(--call-color);">42,800 <span id="stat-call-shift" style="font-size: 0.7rem; color: #aaa;">(-600點)</span></span>
+          </div>
+        </div>
       </div>
 
-      <div class="stat-card put-wall">
-        <div class="stat-label">Put Wall (地板)</div>
-        <div id="stat-put-wall" class="stat-value" style="color: var(--put-color);">42,800</div>
-        <div class="stat-sub">造市商 Put 支撐牆</div>
+      <!-- 4. Put Wall (切一半: 上日盤 / 下夜盤) -->
+      <div class="stat-card put-wall" style="padding: 10px 12px;">
+        <div class="stat-label" style="font-weight: 700; color: var(--put-color);">Put Wall (地板)</div>
+        <div class="split-box" style="margin-top: 4px;">
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
+            <span id="stat-put-day" style="font-size: 1rem; font-weight: 700; color: #fff;">42,800</span>
+          </div>
+          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,230,118,0.1); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--put-color);">🌙 夜盤校正</span>
+            <span id="stat-put-night" style="font-size: 1.05rem; font-weight: 700; color: var(--put-color);">42,200 <span id="stat-put-shift" style="font-size: 0.7rem; color: #aaa;">(-600點)</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: 5. Max Pain (Left) + Blue Box Shift Summary Banner (Right) -->
+    <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: stretch; flex-wrap: wrap;">
+      <!-- 5. Max Pain (切一半: 上日盤 / 下夜盤) -->
+      <div class="stat-card" style="width: 220px; flex-shrink: 0; padding: 10px 12px; background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px;">
+        <div class="stat-label" style="font-weight: 700;">Max Pain (最大痛點)</div>
+        <div class="split-box" style="margin-top: 4px;">
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
+            <span id="stat-mp-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,100</span>
+          </div>
+          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
+          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 3px 6px; border-radius: 4px;">
+            <span style="font-size: 0.72rem; color: var(--primary-accent);">🌙 夜盤校正</span>
+            <span id="stat-mp-night" style="font-size: 1.05rem; font-weight: 700; color: var(--primary-accent);">42,500 <span id="stat-mp-shift" style="font-size: 0.7rem; color: #aaa;">(-600點)</span></span>
+          </div>
+        </div>
+        <div id="stat-pc-ratio" class="stat-sub" style="color: var(--primary-accent); margin-top: 6px; font-font-weight: 600; font-size: 0.78rem;">P/C Ratio: 108.5%</div>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-label">Max Pain (最大痛點)</div>
-        <div id="stat-max-pain" class="stat-value">43,100</div>
-        <div id="stat-pc-ratio" class="stat-sub">P/C Ratio: 108.5%</div>
-      </div>
+      <!-- 藍框區域：放置日夜盤避險牆位移對比摘要 -->
+      <div id="session-shift-banner" style="flex: 1; min-width: 300px; display: flex; align-items: center;"></div>
     </div>
 
     <!-- Tabs Container -->
@@ -278,6 +377,52 @@
         <div class="sentiment-meter">
           <div id="sentiment-fill" class="sentiment-fill" style="width: 55%;"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- Night Session Institutional Trading Panel -->
+    <div id="night-trading-panel" class="panel" style="border: 1px solid rgba(0, 210, 255, 0.3); background: rgba(10, 20, 35, 0.6); margin-bottom: 24px;">
+      <div class="panel-header" style="margin-bottom: 12px;">
+        <div class="panel-title" style="color: var(--primary-accent); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <span>🌙 三大法人夜盤盤後交易籌碼專區 (15:00 ~ 05:00)</span>
+          <span id="night-trading-badge" class="badge-bull" style="font-size: 0.78rem;">⚖️ 外資夜盤中性觀望</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          期交所 futContractsDateAh (每日 07:00 盤後定案)
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+        <!-- 外資夜盤台指期 -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--panel-border); padding: 12px; border-radius: 8px;">
+          <div style="font-size: 0.8rem; color: var(--text-muted);">外資夜盤 TX 淨交易口數</div>
+          <div id="night-foreign-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0;">-7 口</div>
+          <div id="night-foreign-amt" style="font-size: 0.75rem; color: var(--gold-accent);">契約金額: +0.27 億 TWD</div>
+        </div>
+
+        <!-- 外資小台夜盤 -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--panel-border); padding: 12px; border-radius: 8px;">
+          <div style="font-size: 0.8rem; color: var(--text-muted);">外資夜盤小台 (MTX)</div>
+          <div id="night-mini-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0; color: var(--call-color);">+3,394 口</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">小台指夜盤動態</div>
+        </div>
+
+        <!-- 外資微台夜盤 -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--panel-border); padding: 12px; border-radius: 8px;">
+          <div style="font-size: 0.8rem; color: var(--text-muted);">外資夜盤微台 (Micro)</div>
+          <div id="night-micro-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0; color: var(--call-color);">+4,200 口</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">微型台指夜盤動態</div>
+        </div>
+
+        <!-- 自營商夜盤期貨 -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--panel-border); padding: 12px; border-radius: 8px;">
+          <div style="font-size: 0.8rem; color: var(--text-muted);">自營商夜盤 TX 淨交易</div>
+          <div id="night-dealer-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0; color: var(--put-color);">-235 口</div>
+          <div id="night-dealer-amt" style="font-size: 0.75rem; color: var(--text-muted);">契約金額: -1.98 億 TWD</div>
+        </div>
+      </div>
+      <div id="night-trading-summary" style="margin-top: 12px; font-size: 0.85rem; color: var(--gold-accent); background: rgba(255, 215, 0, 0.06); padding: 10px 14px; border-radius: 8px; border-left: 3px solid var(--gold-accent); line-height: 1.6;">
+        <!-- Populated by JavaScript -->
       </div>
     </div>
 

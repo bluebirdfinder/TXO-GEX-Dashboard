@@ -19,21 +19,36 @@
   --call-color: #ff5252; /* 🔴 台灣紅漲 / Bull */
   --put-color: #00e676;  /* 🟢 台灣綠跌 / Bear */
 
-  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-* {
+*, input, select, button, textarea, table, th, td {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: var(--font-family) !important;
 }
 
 body {
   background-color: var(--bg-dark);
   color: var(--text-main);
-  font-family: var(--font-family);
+  font-family: var(--font-family) !important;
   line-height: 1.5;
   padding: 20px;
+}
+
+/* User Avatar Perfect Circle Protection Rule */
+#user-avatar-container {
+  width: 52px !important;
+  height: 52px !important;
+  min-width: 52px !important;
+  min-height: 52px !important;
+  max-width: 52px !important;
+  max-height: 52px !important;
+  flex-shrink: 0 !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
 }
 
 .container {
@@ -444,6 +459,18 @@ footer p {
     gap: 12px;
     padding-bottom: 12px;
     margin-bottom: 16px;
+  }
+
+  #user-avatar-container {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    max-width: 48px !important;
+    max-height: 48px !important;
+    flex-shrink: 0 !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important;
   }
 
   .logo-area h1 {

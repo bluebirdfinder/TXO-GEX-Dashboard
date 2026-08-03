@@ -1,23 +1,41 @@
-# 🏛️ 期交所 TXO GEX Dashboard - 專案交接與開發指引手冊
+# 🏛️ 期交所 TXO GEX Dashboard - 專案交接與開發指引手冊 (最新完整版)
 
-本手冊整理了近期的**討論紀錄、架構決策、日夜盤自動更新機制**，以及**如何在個人筆電上透過 Antigravity IDE / VS Code 繼續進行富邦 API 即時數據開發**的詳細步驟。
+本手冊整理了近期的**討論紀錄、架構決策、日夜盤雙維度對照、夜盤盤後籌碼專區**，以及**如何在個人筆電上透過 Antigravity IDE / VS Code 繼續進行富邦 API 即時數據開發**的詳細步驟。
 
 ---
 
-## 📌 一、 專案現狀與今日完成事項
+## 📌 一、 專案現狀與完整功能簡介
 
-1. **夜盤 (Night Session) Excel 匯入與 GEX 重算**：
-   - 整合期交所官方 Excel 端點：`https://www.taifex.com.tw/cht/3/futDailyMarketExcel?marketCode=1`
-   - 精確提取夜盤近月台指期收盤價與成交量，並以此重新校正當前最新 GEX 避險牆、Zero Gamma Level 與 Call/Put Wall。
-   - 前端 Dashboard 頂部自動標註盤別標示（如 `🌙 夜盤收盤價校正 (05:00 Close)` 或 `☀️ 日盤結算籌碼 (13:45 Close)`）。
+1. **🎴 頂部五大數據卡片日夜盤切一半 (Split-Card)**：
+   - 包含台指期 (TXF)、Zero Gamma、Call Wall、Put Wall、Max Pain。
+   - **上半部 `☀️ 日盤 (13:45)`**：展示每日 13:45 官方定案結算數值。
+   - **下半部 `🌙 夜盤校正 (05:00)`**：展示每日 05:00 收盤價重算之 GEX 避險牆與位移點數（如 `Call Wall: 42,800 (-600點)`）。
 
-2. **GitHub Actions 時間保險與工作流程整合**：
-   - 刪除舊有重複的 `daily_update.yml`。
-   - 統整為單一工作流程 `.github/workflows/auto_update.yml`（名稱：`TAIFEX Data Engine (Day & Night Sessions)`）。
-   - **時間保險機制 (3-Step Failover)**：
-     - **🌙 夜盤更新**：台灣時間 **05:30**, **06:00**, **06:30**
-     - **☀️ 日盤更新**：台灣時間 **15:30**, **16:00**, **16:30**
-   - **一鍵手動執行**：配置 `workflow_dispatch:`，隨時可於 GitHub 網頁/手機 App Actions 頁面點擊 **"Run workflow"** 手動拉取最新數據。
+2. **🟦 藍框對比摘要區 (Session Shift Banner)**：
+   - 精確放置於第二排 Max Pain 右側廣闊區域，以亮藍邊框 (`border: 2px solid #00d2ff`) 展示夜盤相較日盤的期貨價差與避險牆位移對比。
+
+3. **🌙 三大法人夜盤盤後交易籌碼專區 (futContractsDateAh)**：
+   - 每日 07:00 自動爬取期交所夜盤盤後官方數據：
+     - 外資夜盤台指期 (TX) 淨交易口數 & 契約金額 (億 TWD)
+     - 外資夜盤小台 (MTX) 淨交易口數
+     - 外資夜盤微台 (Micro) 淨交易口數
+     - 自營商夜盤台指期 (TX) 淨交易口數 & 契約金額 (億 TWD)
+   - 底部自動編譯 **「💡 夜盤籌碼白話解讀」** 文字摘要。
+
+4. **📊 外資與大戶籌碼單日變化量 ($\Delta$ Net OI) 分級與契約金額精算**：
+   - 算式：$\text{契約金額 (億 TWD)} = (|\Delta \text{Net OI}| \times \text{txf\_price} \times 200) / 1e8$
+   - 帶出 5 大語意標籤 (`🔥 高檔大舉回補` / `📈 顯著回補` / `⚖️ 中性觀望` / `📉 顯著加碼加空` / `⚠️ 暴增高檔避險`)。
+
+5. **💡 選擇權 P/C Ratio 與 Max Pain (最大痛點) 判讀指南**：
+   - Max Pain 卡片底部內建 **`P/C Ratio: 108.5% (🔴 偏多看撐)`** 標籤（嚴格遵循台灣股市「紅漲綠跌」色彩）。
+   - 彈窗 Modal 包含全套選擇權口訣、P/C Ratio 判讀與 Max Pain 黑手磁鐵拉回教學。
+
+6. **📱 手機端極致 2x2 雙欄 RWD 響應式排版**：
+   - 頂部卡片自動排版為 2x2 雙欄，頁籤列支援平滑橫滑。
+   - 大頭貼縮圖強制維護為 **1:1 完美正圓形 (Perfect Circle)**，全站字體 100% 統一為 FinTech 質感微軟正黑體/蘋果系統字。
+
+7. **⚙️ GitHub Actions 403 權限修復**：
+   - `.github/workflows/auto_update.yml` 內建 `permissions: contents: write`，徹底解決 Actions 機器人推播時的 403 權限拒絕問題。
 
 ---
 
@@ -27,36 +45,26 @@
 - `.github/workflows/auto_update.yml`：GitHub Actions 自動日夜盤 Cron 排程與手動觸發工作流程。
 - `data/gex_data.json` & `encrypted_gex.json`：計算產出之 JSON 原檔與 AES-256 加密密文。
 - `app.js` & `index.html` & `style.css`：Dashboard 視覺化與解密渲染前端。
-- `taifex_catalog.json` & `full_270_futures.json`：個股期貨 270 檔目錄與參考資料。
+- `taifex_catalog.json`：期交所全量 270 檔個股與 ETF 期貨目錄。
+- `PROJECT_HANDOVER.md`：專案交接與個人電腦開發手冊。
+- `OPTIONS_CHEATSHEET.md`：選擇權與籌碼語意分級標準速查表。
+- `README.md`： GitHub 專案首頁說明與架構圖。
 
 ---
 
-## 🚀 三、 將最新成果上傳至 GitHub 的步驟
-
-請在現有電腦的終端機（PowerShell 或 Git Bash）執行以下命令，將今日完成的所有程式碼與數據推送到您的 GitHub 倉庫：
-
-```bash
-git status
-git add .
-git commit -m "🏛️ [Feat] 成功整合期交所夜盤 Excel 自動抓取、3-Step Failover 排程與前端 Session 標示"
-git push
-```
-
----
-
-## 💻 四、 在個人筆電續接開發指南 (Antigravity IDE / VS Code)
+## 💻 三、 在個人筆電續接開發指南 (Antigravity IDE / VS Code)
 
 當您回到個人筆電時，請按照以下步驟開啟專案：
 
 ### Step 1: 從 GitHub 下載專案
 開啟個人筆電的終端機 (Terminal / PowerShell)，執行：
 ```bash
-git clone <您的 GitHub 倉庫網址>
-cd txo-gex-dashboard
+git clone https://github.com/bluebirdfinder/TXO-GEX-Dashboard.git
+cd TXO-GEX-Dashboard
 ```
 
 ### Step 2: 使用 IDE 開啟專案
-- **使用 Antigravity IDE**：在 Antigravity IDE 中點選 `Open Folder` 並選擇 `txo-gex-dashboard` 目錄。
+- **使用 Antigravity IDE**：在 Antigravity IDE 中點選 `Open Folder` 並選擇 `TXO-GEX-Dashboard` 目錄。
 - **使用 VS Code**：執行 `code .` 或點擊 `File > Open Folder` 打開專案目錄。
 
 ### Step 3: 富邦 API 即時數據串流開發步驟 (未來規劃)
@@ -75,5 +83,4 @@ cd txo-gex-dashboard
 
 ## 🎯 總結
 
-今日要求之**日盤與夜盤 Excel 匯入、時間保險重試、手動按鈕、Session 標籤與籌碼變化量形容詞規範已全數寫入專案文件**。您隨時可以將變更推送到 GitHub，並在個人筆電上無縫續接！
-
+今日所有**切半卡片、藍框 Banner、夜盤盤後籌碼專區、P/C Ratio 紅綠球、270 檔個股期貨、手機版正圓形頭像與 GitHub Actions 403 修復**全數完成並同步更新至所有 Markdown 文件中。您隨時可以安心將檔案推送到 GitHub！
