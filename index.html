@@ -243,15 +243,15 @@
       <!-- 加權指數 -->
       <div class="stat-card">
         <div class="stat-label">加權指數 (IX0001)</div>
-        <div id="stat-spot" class="stat-value" style="font-size: 1.5rem;">43,119.75</div>
-        <div id="stat-taiex-change" class="stat-sub tag-bull">+3,186.45 (+7.98%)</div>
+        <div id="stat-spot" class="stat-value" style="font-size: 1.5rem;">43,386.41</div>
+        <div id="stat-taiex-change" class="stat-sub tag-bull">+266.66 (+0.62%)</div>
       </div>
 
       <!-- 櫃買指數 -->
       <div class="stat-card">
         <div class="stat-label">櫃買指數 (IX0043)</div>
-        <div id="stat-two-price" class="stat-value" style="font-size: 1.5rem;">347.85</div>
-        <div id="stat-two-change" class="stat-sub tag-bull">+21.62 (+6.63%)</div>
+        <div id="stat-two-price" class="stat-value" style="font-size: 1.5rem;">362.89</div>
+        <div id="stat-two-change" class="stat-sub tag-bull">+1.85 (+0.51%)</div>
       </div>
 
       <!-- 1. 台指期 (切一半: 上日盤 / 下夜盤) -->
@@ -260,12 +260,12 @@
         <div class="split-box" style="margin-top: 4px;">
           <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
             <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
-            <span id="stat-txf-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,305</span>
+            <span id="stat-txf-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,230</span>
           </div>
           <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
           <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,210,255,0.1); padding: 3px 6px; border-radius: 4px;">
             <span style="font-size: 0.72rem; color: var(--primary-accent);">🌙 夜盤 (05:00)</span>
-            <span id="stat-txf-night" style="font-size: 1.05rem; font-weight: 700; color: var(--primary-accent);">42,650 <span id="stat-txf-shift" style="font-size: 0.7rem; color: var(--put-color);">(-655)</span></span>
+            <span id="stat-txf-night" style="font-size: 1.05rem; font-weight: 700; color: var(--primary-accent);">42,505 <span id="stat-txf-shift" style="font-size: 0.7rem; color: var(--put-color);">(-725)</span></span>
           </div>
         </div>
       </div>
@@ -342,6 +342,37 @@
       <!-- 藍框區域：放置日夜盤避險牆位移對比摘要 -->
       <div id="session-shift-banner" style="flex: 1; display: flex; align-items: center;">
         <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- 近三日綜合市場行情與 Gamma 關鍵位對照表 -->
+    <div id="recent-3days-panel" class="panel" style="margin-bottom: 20px; border: 1px solid var(--panel-border); background: var(--panel-bg); border-radius: 12px; padding: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <h3 style="font-size: 1.05rem; margin: 0; color: var(--primary-accent); display: flex; align-items: center; gap: 8px;">
+          <span>📊 近三日市場籌碼與 Gamma 關鍵位對照表</span>
+        </h3>
+        <span style="font-size: 0.78rem; color: var(--text-muted);">近 3 個交易日現貨、期貨、Zero Gamma、Call/Put Wall 及 Max Pain 多空動態對照</span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="sortable-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 980px;">
+          <thead>
+            <tr style="background: rgba(255,255,255,0.06); text-align: left; border-bottom: 2px solid var(--panel-border);">
+              <th style="padding: 10px 10px; color: var(--gold-accent);">交易日 (盤別)</th>
+              <th style="padding: 10px 10px; color: var(--text-main);">加權指數 (IX0001)</th>
+              <th style="padding: 10px 10px; color: var(--text-main);">櫃買指數 (IX0043)</th>
+              <th style="padding: 10px 10px; color: var(--gold-accent);">☀️ 台指日盤 (13:45結算)</th>
+              <th style="padding: 10px 10px; color: var(--primary-accent);">🌙 台指夜盤 (接續次日05:00)</th>
+              <th style="padding: 10px 10px; color: var(--gold-accent);">Zero Gamma (轉折點)</th>
+              <th style="padding: 10px 10px; color: var(--call-color);">Call Wall (天花板)</th>
+              <th style="padding: 10px 10px; color: var(--put-color);">Put Wall (地板)</th>
+              <th style="padding: 10px 10px; color: var(--primary-accent);">Max Pain (最大痛點)</th>
+              <th style="padding: 10px 10px; color: var(--text-muted);">市場說明與註解</th>
+            </tr>
+          </thead>
+          <tbody id="recent-3days-tbody">
+            <!-- Populated dynamically by JavaScript -->
+          </tbody>
+        </table>
       </div>
     </div>
 
