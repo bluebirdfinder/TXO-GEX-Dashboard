@@ -11,18 +11,18 @@
     "day_txf_price": 43357.0,
     "day_call_wall": 43700,
     "day_put_wall": 43100,
-    "day_zero_gamma": 43210.7,
+    "day_zero_gamma": 43236.4,
     "day_max_pain": 43400
   },
-  "last_updated_time": "2026-08-04 23:01",
-  "spot_price": 43360.66,
+  "last_updated_time": "2026-08-04 23:34",
+  "spot_price": 43386.41,
   "spot_change_val": 266.66,
   "spot_change_pct": 0.62,
-  "two_price": 375.03,
+  "two_price": 362.89,
   "two_change_val": 1.85,
   "two_change_pct": 0.51,
   "txf_price": 44539.0,
-  "zero_gamma_level": 43210.7,
+  "zero_gamma_level": 43236.4,
   "call_wall_strike": 43700,
   "put_wall_strike": 43100,
   "max_pain_strike": 43400,
@@ -30,753 +30,753 @@
   "total_gex": [
     {
       "strike": 42650,
-      "call_gex": 692.62,
-      "put_gex": -1250.6,
-      "net_gex": -557.98
+      "call_gex": 678.3,
+      "put_gex": -1230.1,
+      "net_gex": -551.8
     },
     {
       "strike": 42700,
-      "call_gex": 722.61,
-      "put_gex": -1452.92,
-      "net_gex": -730.31
+      "call_gex": 708.48,
+      "put_gex": -1430.82,
+      "net_gex": -722.34
     },
     {
       "strike": 42750,
-      "call_gex": 753.42,
-      "put_gex": -1704.37,
-      "net_gex": -950.95
+      "call_gex": 739.59,
+      "put_gex": -1680.1,
+      "net_gex": -940.51
     },
     {
       "strike": 42800,
-      "call_gex": 784.92,
-      "put_gex": -2014.45,
-      "net_gex": -1229.54
+      "call_gex": 771.51,
+      "put_gex": -1987.33,
+      "net_gex": -1215.83
     },
     {
       "strike": 42850,
-      "call_gex": 819.09,
-      "put_gex": -2391.13,
-      "net_gex": -1572.04
+      "call_gex": 806.21,
+      "put_gex": -2360.51,
+      "net_gex": -1554.3
     },
     {
       "strike": 42900,
-      "call_gex": 858.74,
-      "put_gex": -2837.21,
-      "net_gex": -1978.47
+      "call_gex": 846.44,
+      "put_gex": -2802.65,
+      "net_gex": -1956.21
     },
     {
       "strike": 42950,
-      "call_gex": 907.01,
-      "put_gex": -3345.62,
-      "net_gex": -2438.61
+      "call_gex": 895.35,
+      "put_gex": -3307.18,
+      "net_gex": -2411.83
     },
     {
       "strike": 43000,
-      "call_gex": 971.62,
-      "put_gex": -3893.25,
-      "net_gex": -2921.63
+      "call_gex": 960.58,
+      "put_gex": -3851.77,
+      "net_gex": -2891.19
     },
     {
       "strike": 43050,
-      "call_gex": 1062.29,
-      "put_gex": -4438.16,
-      "net_gex": -3375.88
+      "call_gex": 1051.81,
+      "put_gex": -4395.39,
+      "net_gex": -3343.58
     },
     {
       "strike": 43100,
-      "call_gex": 1194.41,
-      "put_gex": -4919.67,
-      "net_gex": -3725.25
+      "call_gex": 1184.41,
+      "put_gex": -4878.14,
+      "net_gex": -3693.74
     },
     {
       "strike": 43150,
-      "call_gex": 1385.74,
-      "put_gex": -5268.88,
-      "net_gex": -3883.14
+      "call_gex": 1376.17,
+      "put_gex": -5231.56,
+      "net_gex": -3855.39
     },
     {
       "strike": 43200,
-      "call_gex": 1655.51,
-      "put_gex": -5425.27,
-      "net_gex": -3769.76
+      "call_gex": 1646.52,
+      "put_gex": -5394.88,
+      "net_gex": -3748.35
     },
     {
       "strike": 43250,
-      "call_gex": 2018.59,
-      "put_gex": -5352.71,
-      "net_gex": -3334.12
+      "call_gex": 2010.68,
+      "put_gex": -5331.14,
+      "net_gex": -3320.46
     },
     {
       "strike": 43300,
-      "call_gex": 2475.51,
-      "put_gex": -5053.92,
-      "net_gex": -2578.41
+      "call_gex": 2469.66,
+      "put_gex": -5041.76,
+      "net_gex": -2572.1
     },
     {
       "strike": 43350,
-      "call_gex": 3007.96,
-      "put_gex": -4571.73,
-      "net_gex": -1563.77
+      "call_gex": 3005.71,
+      "put_gex": -4568.28,
+      "net_gex": -1562.58
     },
     {
       "strike": 43400,
-      "call_gex": 3572.6,
-      "put_gex": -3976.98,
-      "net_gex": -404.38
+      "call_gex": 3575.81,
+      "put_gex": -3980.53,
+      "net_gex": -404.71
     },
     {
       "strike": 43450,
-      "call_gex": 4104.77,
-      "put_gex": -3350.65,
-      "net_gex": 754.12
+      "call_gex": 4115.3,
+      "put_gex": -3359.05,
+      "net_gex": 756.24
     },
     {
       "strike": 43500,
-      "call_gex": 4531.78,
-      "put_gex": -2762.46,
-      "net_gex": 1769.32
+      "call_gex": 4550.91,
+      "put_gex": -2773.71,
+      "net_gex": 1777.2
     },
     {
       "strike": 43550,
-      "call_gex": 4790.92,
-      "put_gex": -2260.3,
-      "net_gex": 2530.62
+      "call_gex": 4818.92,
+      "put_gex": -2272.92,
+      "net_gex": 2546.0
     },
     {
       "strike": 43600,
-      "call_gex": 4843.96,
-      "put_gex": -1862.65,
-      "net_gex": 2981.31
+      "call_gex": 4879.79,
+      "put_gex": -1875.75,
+      "net_gex": 3004.05
     },
     {
       "strike": 43650,
-      "call_gex": 4691.82,
-      "put_gex": -1566.22,
-      "net_gex": 3125.6
+      "call_gex": 4733.33,
+      "put_gex": -1579.46,
+      "net_gex": 3153.87
     },
     {
       "strike": 43700,
-      "call_gex": 4368.07,
-      "put_gex": -1355.54,
-      "net_gex": 3012.53
+      "call_gex": 4412.42,
+      "put_gex": -1368.92,
+      "net_gex": 3043.5
     },
     {
       "strike": 43750,
-      "call_gex": 3929.95,
-      "put_gex": -1209.6,
-      "net_gex": 2720.35
+      "call_gex": 3974.29,
+      "put_gex": -1223.26,
+      "net_gex": 2751.03
     },
     {
       "strike": 43800,
-      "call_gex": 3438.4,
-      "put_gex": -1108.63,
-      "net_gex": 2329.76
+      "call_gex": 3480.39,
+      "put_gex": -1122.76,
+      "net_gex": 2357.63
     },
     {
       "strike": 43850,
-      "call_gex": 2946.47,
-      "put_gex": -1036.72,
-      "net_gex": 1909.75
+      "call_gex": 2984.61,
+      "put_gex": -1051.42,
+      "net_gex": 1933.19
     },
     {
       "strike": 43900,
-      "call_gex": 2491.75,
-      "put_gex": -982.02,
-      "net_gex": 1509.73
+      "call_gex": 2525.46,
+      "put_gex": -997.33,
+      "net_gex": 1528.13
     },
     {
       "strike": 43950,
-      "call_gex": 2094.29,
-      "put_gex": -937.6,
-      "net_gex": 1156.69
+      "call_gex": 2123.71,
+      "put_gex": -953.48,
+      "net_gex": 1170.23
     },
     {
       "strike": 44000,
-      "call_gex": 1758.62,
-      "put_gex": -899.16,
-      "net_gex": 859.46
+      "call_gex": 1784.31,
+      "put_gex": -915.55,
+      "net_gex": 868.77
     },
     {
       "strike": 44050,
-      "call_gex": 1482.32,
-      "put_gex": -863.44,
-      "net_gex": 618.88
+      "call_gex": 1505.03,
+      "put_gex": -880.21,
+      "net_gex": 624.82
     },
     {
       "strike": 44100,
-      "call_gex": 1258.54,
-      "put_gex": -829.19,
-      "net_gex": 429.35
+      "call_gex": 1279.0,
+      "put_gex": -846.23,
+      "net_gex": 432.77
     },
     {
       "strike": 44150,
-      "call_gex": 1078.31,
-      "put_gex": -796.15,
-      "net_gex": 282.16
+      "call_gex": 1097.11,
+      "put_gex": -813.34,
+      "net_gex": 283.77
     }
   ],
   "weekly_gex": [
     {
       "strike": 42650,
-      "call_gex": 249.88,
-      "put_gex": -322.04,
-      "net_gex": -72.15
+      "call_gex": 240.69,
+      "put_gex": -310.19,
+      "net_gex": -69.5
     },
     {
       "strike": 42700,
-      "call_gex": 268.34,
-      "put_gex": -381.04,
-      "net_gex": -112.7
+      "call_gex": 259.14,
+      "put_gex": -367.98,
+      "net_gex": -108.84
     },
     {
       "strike": 42750,
-      "call_gex": 287.01,
-      "put_gex": -465.81,
-      "net_gex": -178.8
+      "call_gex": 277.9,
+      "put_gex": -451.03,
+      "net_gex": -173.12
     },
     {
       "strike": 42800,
-      "call_gex": 305.39,
-      "put_gex": -587.17,
-      "net_gex": -281.78
+      "call_gex": 296.47,
+      "put_gex": -570.01,
+      "net_gex": -273.55
     },
     {
       "strike": 42850,
-      "call_gex": 324.47,
-      "put_gex": -754.41,
-      "net_gex": -429.94
+      "call_gex": 315.81,
+      "put_gex": -734.28,
+      "net_gex": -418.47
     },
     {
       "strike": 42900,
-      "call_gex": 345.07,
-      "put_gex": -972.54,
-      "net_gex": -627.47
+      "call_gex": 336.73,
+      "put_gex": -949.05,
+      "net_gex": -612.32
     },
     {
       "strike": 42950,
-      "call_gex": 368.59,
-      "put_gex": -1239.11,
-      "net_gex": -870.52
+      "call_gex": 360.62,
+      "put_gex": -1212.32,
+      "net_gex": -851.7
     },
     {
       "strike": 43000,
-      "call_gex": 398.45,
-      "put_gex": -1538.45,
-      "net_gex": -1140.0
+      "call_gex": 390.85,
+      "put_gex": -1509.1,
+      "net_gex": -1118.25
     },
     {
       "strike": 43050,
-      "call_gex": 439.88,
-      "put_gex": -1843.08,
-      "net_gex": -1403.21
+      "call_gex": 432.6,
+      "put_gex": -1812.62,
+      "net_gex": -1380.01
     },
     {
       "strike": 43100,
-      "call_gex": 500.48,
-      "put_gex": -2116.1,
-      "net_gex": -1615.62
+      "call_gex": 493.49,
+      "put_gex": -2086.52,
+      "net_gex": -1593.03
     },
     {
       "strike": 43150,
-      "call_gex": 589.25,
-      "put_gex": -2318.16,
-      "net_gex": -1728.91
+      "call_gex": 582.52,
+      "put_gex": -2291.66,
+      "net_gex": -1709.15
     },
     {
       "strike": 43200,
-      "call_gex": 715.77,
-      "put_gex": -2418.49,
-      "net_gex": -1702.72
+      "call_gex": 709.42,
+      "put_gex": -2397.03,
+      "net_gex": -1687.61
     },
     {
       "strike": 43250,
-      "call_gex": 886.18,
-      "put_gex": -2399.54,
-      "net_gex": -1513.36
+      "call_gex": 880.59,
+      "put_gex": -2384.38,
+      "net_gex": -1503.8
     },
     {
       "strike": 43300,
-      "call_gex": 1100.46,
-      "put_gex": -2267.36,
-      "net_gex": -1166.9
+      "call_gex": 1096.33,
+      "put_gex": -2258.85,
+      "net_gex": -1162.52
     },
     {
       "strike": 43350,
-      "call_gex": 1349.31,
-      "put_gex": -2044.36,
-      "net_gex": -695.05
+      "call_gex": 1347.71,
+      "put_gex": -2041.94,
+      "net_gex": -694.23
     },
     {
       "strike": 43400,
-      "call_gex": 1612.09,
-      "put_gex": -1766.73,
-      "net_gex": -154.64
+      "call_gex": 1614.32,
+      "put_gex": -1769.17,
+      "net_gex": -154.86
     },
     {
       "strike": 43450,
-      "call_gex": 1856.95,
-      "put_gex": -1473.45,
-      "net_gex": 383.51
+      "call_gex": 1864.3,
+      "put_gex": -1479.28,
+      "net_gex": 385.02
     },
     {
       "strike": 43500,
-      "call_gex": 2049.68,
-      "put_gex": -1197.69,
-      "net_gex": 851.99
+      "call_gex": 2063.08,
+      "put_gex": -1205.52,
+      "net_gex": 857.56
     },
     {
       "strike": 43550,
-      "call_gex": 2158.94,
-      "put_gex": -962.38,
-      "net_gex": 1196.56
+      "call_gex": 2178.62,
+      "put_gex": -971.15,
+      "net_gex": 1207.46
     },
     {
       "strike": 43600,
-      "call_gex": 2164.21,
-      "put_gex": -776.09,
-      "net_gex": 1388.11
+      "call_gex": 2189.53,
+      "put_gex": -785.17,
+      "net_gex": 1404.35
     },
     {
       "strike": 43650,
-      "call_gex": 2063.54,
-      "put_gex": -638.11,
-      "net_gex": 1425.43
+      "call_gex": 2093.02,
+      "put_gex": -647.22,
+      "net_gex": 1445.8
     },
     {
       "strike": 43700,
-      "call_gex": 1872.6,
-      "put_gex": -541.15,
-      "net_gex": 1331.45
+      "call_gex": 1904.21,
+      "put_gex": -550.29,
+      "net_gex": 1353.92
     },
     {
       "strike": 43750,
-      "call_gex": 1621.72,
-      "put_gex": -474.32,
-      "net_gex": 1147.4
+      "call_gex": 1653.3,
+      "put_gex": -483.56,
+      "net_gex": 1169.74
     },
     {
       "strike": 43800,
-      "call_gex": 1345.94,
-      "put_gex": -428.45,
-      "net_gex": 917.48
+      "call_gex": 1375.65,
+      "put_gex": -437.91,
+      "net_gex": 937.74
     },
     {
       "strike": 43850,
-      "call_gex": 1077.13,
-      "put_gex": -394.99,
-      "net_gex": 682.14
+      "call_gex": 1103.71,
+      "put_gex": -404.74,
+      "net_gex": 698.97
     },
     {
       "strike": 43900,
-      "call_gex": 840.08,
-      "put_gex": -368.72,
-      "net_gex": 471.36
+      "call_gex": 863.0,
+      "put_gex": -378.78,
+      "net_gex": 484.22
     },
     {
       "strike": 43950,
-      "call_gex": 647.07,
-      "put_gex": -345.84,
-      "net_gex": 301.23
+      "call_gex": 666.42,
+      "put_gex": -356.18,
+      "net_gex": 310.23
     },
     {
       "strike": 44000,
-      "call_gex": 500.02,
-      "put_gex": -324.6,
-      "net_gex": 175.42
+      "call_gex": 516.27,
+      "put_gex": -335.15,
+      "net_gex": 181.12
     },
     {
       "strike": 44050,
-      "call_gex": 393.93,
-      "put_gex": -303.88,
-      "net_gex": 90.05
+      "call_gex": 407.76,
+      "put_gex": -314.55,
+      "net_gex": 93.21
     },
     {
       "strike": 44100,
-      "call_gex": 320.29,
-      "put_gex": -283.44,
-      "net_gex": 36.85
+      "call_gex": 332.38,
+      "put_gex": -294.14,
+      "net_gex": 38.24
     },
     {
       "strike": 44150,
-      "call_gex": 269.56,
-      "put_gex": -263.42,
-      "net_gex": 6.15
+      "call_gex": 280.44,
+      "put_gex": -274.05,
+      "net_gex": 6.39
     }
   ],
   "friday_gex": [
     {
       "strike": 42650,
-      "call_gex": 148.5,
-      "put_gex": -180.28,
-      "net_gex": -31.78
+      "call_gex": 145.2,
+      "put_gex": -176.27,
+      "net_gex": -31.07
     },
     {
       "strike": 42700,
-      "call_gex": 155.06,
-      "put_gex": -191.65,
-      "net_gex": -36.59
+      "call_gex": 151.85,
+      "put_gex": -187.68,
+      "net_gex": -35.84
     },
     {
       "strike": 42750,
-      "call_gex": 161.4,
-      "put_gex": -207.55,
-      "net_gex": -46.16
+      "call_gex": 158.3,
+      "put_gex": -203.58,
+      "net_gex": -45.27
     },
     {
       "strike": 42800,
-      "call_gex": 167.47,
-      "put_gex": -232.11,
-      "net_gex": -64.64
+      "call_gex": 164.52,
+      "put_gex": -228.02,
+      "net_gex": -63.5
     },
     {
       "strike": 42850,
-      "call_gex": 173.23,
-      "put_gex": -271.97,
-      "net_gex": -98.74
+      "call_gex": 170.44,
+      "put_gex": -267.6,
+      "net_gex": -97.15
     },
     {
       "strike": 42900,
-      "call_gex": 179.35,
-      "put_gex": -335.12,
-      "net_gex": -155.77
+      "call_gex": 176.74,
+      "put_gex": -330.24,
+      "net_gex": -153.5
     },
     {
       "strike": 42950,
-      "call_gex": 185.84,
-      "put_gex": -428.98,
-      "net_gex": -243.14
+      "call_gex": 183.42,
+      "put_gex": -423.39,
+      "net_gex": -239.97
     },
     {
       "strike": 43000,
-      "call_gex": 194.6,
-      "put_gex": -557.83,
-      "net_gex": -363.23
+      "call_gex": 192.36,
+      "put_gex": -551.42,
+      "net_gex": -359.06
     },
     {
       "strike": 43050,
-      "call_gex": 207.67,
-      "put_gex": -717.22,
-      "net_gex": -509.55
+      "call_gex": 205.6,
+      "put_gex": -710.09,
+      "net_gex": -504.49
     },
     {
       "strike": 43100,
-      "call_gex": 229.54,
-      "put_gex": -890.75,
-      "net_gex": -661.21
+      "call_gex": 227.61,
+      "put_gex": -883.27,
+      "net_gex": -655.65
     },
     {
       "strike": 43150,
-      "call_gex": 266.51,
-      "put_gex": -1052.11,
-      "net_gex": -785.6
+      "call_gex": 264.68,
+      "put_gex": -1044.88,
+      "net_gex": -780.21
     },
     {
       "strike": 43200,
-      "call_gex": 325.78,
-      "put_gex": -1169.84,
-      "net_gex": -844.06
+      "call_gex": 324.05,
+      "put_gex": -1163.61,
+      "net_gex": -839.56
     },
     {
       "strike": 43250,
-      "call_gex": 414.99,
-      "put_gex": -1219.36,
-      "net_gex": -804.37
+      "call_gex": 413.42,
+      "put_gex": -1214.75,
+      "net_gex": -801.33
     },
     {
       "strike": 43300,
-      "call_gex": 535.39,
-      "put_gex": -1188.17,
-      "net_gex": -652.78
+      "call_gex": 534.19,
+      "put_gex": -1185.5,
+      "net_gex": -651.31
     },
     {
       "strike": 43350,
-      "call_gex": 681.16,
-      "put_gex": -1085.35,
-      "net_gex": -404.18
+      "call_gex": 680.68,
+      "put_gex": -1084.58,
+      "net_gex": -403.9
     },
     {
       "strike": 43400,
-      "call_gex": 834.84,
-      "put_gex": -933.35,
-      "net_gex": -98.51
+      "call_gex": 835.54,
+      "put_gex": -934.13,
+      "net_gex": -98.59
     },
     {
       "strike": 43450,
-      "call_gex": 971.73,
-      "put_gex": -763.38,
-      "net_gex": 208.34
+      "call_gex": 974.04,
+      "put_gex": -765.2,
+      "net_gex": 208.84
     },
     {
       "strike": 43500,
-      "call_gex": 1063.46,
-      "put_gex": -603.16,
-      "net_gex": 460.3
+      "call_gex": 1067.63,
+      "put_gex": -605.52,
+      "net_gex": 462.11
     },
     {
       "strike": 43550,
-      "call_gex": 1089.36,
-      "put_gex": -471.25,
-      "net_gex": 618.11
+      "call_gex": 1095.32,
+      "put_gex": -473.83,
+      "net_gex": 621.49
     },
     {
       "strike": 43600,
-      "call_gex": 1042.06,
-      "put_gex": -374.07,
-      "net_gex": 667.99
+      "call_gex": 1049.37,
+      "put_gex": -376.7,
+      "net_gex": 672.67
     },
     {
       "strike": 43650,
-      "call_gex": 933.03,
-      "put_gex": -308.52,
-      "net_gex": 624.51
+      "call_gex": 941.02,
+      "put_gex": -311.16,
+      "net_gex": 629.86
     },
     {
       "strike": 43700,
-      "call_gex": 785.52,
-      "put_gex": -267.63,
-      "net_gex": 517.88
+      "call_gex": 793.45,
+      "put_gex": -270.34,
+      "net_gex": 523.12
     },
     {
       "strike": 43750,
-      "call_gex": 628.1,
-      "put_gex": -243.29,
-      "net_gex": 384.8
+      "call_gex": 635.42,
+      "put_gex": -246.13,
+      "net_gex": 389.29
     },
     {
       "strike": 43800,
-      "call_gex": 483.85,
-      "put_gex": -228.43,
-      "net_gex": 255.41
+      "call_gex": 490.23,
+      "put_gex": -231.45,
+      "net_gex": 258.79
     },
     {
       "strike": 43850,
-      "call_gex": 367.6,
-      "put_gex": -218.55,
-      "net_gex": 149.06
+      "call_gex": 373.02,
+      "put_gex": -221.77,
+      "net_gex": 151.26
     },
     {
       "strike": 43900,
-      "call_gex": 282.9,
-      "put_gex": -210.51,
-      "net_gex": 72.39
+      "call_gex": 287.51,
+      "put_gex": -213.94,
+      "net_gex": 73.56
     },
     {
       "strike": 43950,
-      "call_gex": 226.9,
-      "put_gex": -203.19,
-      "net_gex": 23.71
+      "call_gex": 230.95,
+      "put_gex": -206.82,
+      "net_gex": 24.13
     },
     {
       "strike": 44000,
-      "call_gex": 191.64,
-      "put_gex": -196.21,
-      "net_gex": -4.58
+      "call_gex": 195.35,
+      "put_gex": -200.02,
+      "net_gex": -4.67
     },
     {
       "strike": 44050,
-      "call_gex": 170.04,
-      "put_gex": -188.93,
-      "net_gex": -18.89
+      "call_gex": 173.6,
+      "put_gex": -192.89,
+      "net_gex": -19.29
     },
     {
       "strike": 44100,
-      "call_gex": 156.31,
-      "put_gex": -181.4,
-      "net_gex": -25.09
+      "call_gex": 159.82,
+      "put_gex": -185.48,
+      "net_gex": -25.66
     },
     {
       "strike": 44150,
-      "call_gex": 146.47,
-      "put_gex": -173.68,
-      "net_gex": -27.21
+      "call_gex": 149.99,
+      "put_gex": -177.85,
+      "net_gex": -27.86
     }
   ],
   "monthly_gex": [
     {
       "strike": 42650,
-      "call_gex": 294.23,
-      "put_gex": -748.28,
-      "net_gex": -454.05
+      "call_gex": 292.41,
+      "put_gex": -743.64,
+      "net_gex": -451.23
     },
     {
       "strike": 42700,
-      "call_gex": 299.22,
-      "put_gex": -880.23,
-      "net_gex": -581.02
+      "call_gex": 297.49,
+      "put_gex": -875.15,
+      "net_gex": -577.66
     },
     {
       "strike": 42750,
-      "call_gex": 305.01,
-      "put_gex": -1031.0,
-      "net_gex": -725.99
+      "call_gex": 303.38,
+      "put_gex": -1025.49,
+      "net_gex": -722.11
     },
     {
       "strike": 42800,
-      "call_gex": 312.06,
-      "put_gex": -1195.17,
-      "net_gex": -883.11
+      "call_gex": 310.52,
+      "put_gex": -1189.3,
+      "net_gex": -878.78
     },
     {
       "strike": 42850,
-      "call_gex": 321.4,
-      "put_gex": -1364.75,
-      "net_gex": -1043.36
+      "call_gex": 319.96,
+      "put_gex": -1358.64,
+      "net_gex": -1038.68
     },
     {
       "strike": 42900,
-      "call_gex": 334.32,
-      "put_gex": -1529.55,
-      "net_gex": -1195.23
+      "call_gex": 332.97,
+      "put_gex": -1523.36,
+      "net_gex": -1190.39
     },
     {
       "strike": 42950,
-      "call_gex": 352.58,
-      "put_gex": -1677.53,
-      "net_gex": -1324.95
+      "call_gex": 351.31,
+      "put_gex": -1671.47,
+      "net_gex": -1320.16
     },
     {
       "strike": 43000,
-      "call_gex": 378.58,
-      "put_gex": -1796.98,
-      "net_gex": -1418.4
+      "call_gex": 377.37,
+      "put_gex": -1791.26,
+      "net_gex": -1413.88
     },
     {
       "strike": 43050,
-      "call_gex": 414.74,
-      "put_gex": -1877.86,
-      "net_gex": -1463.11
+      "call_gex": 413.6,
+      "put_gex": -1872.68,
+      "net_gex": -1459.08
     },
     {
       "strike": 43100,
-      "call_gex": 464.39,
-      "put_gex": -1912.81,
-      "net_gex": -1448.42
+      "call_gex": 463.31,
+      "put_gex": -1908.36,
+      "net_gex": -1445.05
     },
     {
       "strike": 43150,
-      "call_gex": 529.98,
-      "put_gex": -1898.61,
-      "net_gex": -1368.63
+      "call_gex": 528.97,
+      "put_gex": -1895.01,
+      "net_gex": -1366.04
     },
     {
       "strike": 43200,
-      "call_gex": 613.95,
-      "put_gex": -1836.93,
-      "net_gex": -1222.98
+      "call_gex": 613.05,
+      "put_gex": -1834.24,
+      "net_gex": -1221.18
     },
     {
       "strike": 43250,
-      "call_gex": 717.42,
-      "put_gex": -1733.81,
-      "net_gex": -1016.39
+      "call_gex": 716.67,
+      "put_gex": -1732.01,
+      "net_gex": -1015.34
     },
     {
       "strike": 43300,
-      "call_gex": 839.66,
-      "put_gex": -1598.39,
-      "net_gex": -758.73
+      "call_gex": 839.15,
+      "put_gex": -1597.42,
+      "net_gex": -758.27
     },
     {
       "strike": 43350,
-      "call_gex": 977.49,
-      "put_gex": -1442.02,
-      "net_gex": -464.53
+      "call_gex": 977.31,
+      "put_gex": -1441.76,
+      "net_gex": -464.45
     },
     {
       "strike": 43400,
-      "call_gex": 1125.68,
-      "put_gex": -1276.91,
-      "net_gex": -151.23
+      "call_gex": 1125.96,
+      "put_gex": -1277.22,
+      "net_gex": -151.27
     },
     {
       "strike": 43450,
-      "call_gex": 1276.09,
-      "put_gex": -1113.82,
-      "net_gex": 162.27
+      "call_gex": 1276.95,
+      "put_gex": -1114.57,
+      "net_gex": 162.38
     },
     {
       "strike": 43500,
-      "call_gex": 1418.64,
-      "put_gex": -961.61,
-      "net_gex": 457.02
+      "call_gex": 1420.2,
+      "put_gex": -962.67,
+      "net_gex": 457.53
     },
     {
       "strike": 43550,
-      "call_gex": 1542.62,
-      "put_gex": -826.67,
-      "net_gex": 715.94
+      "call_gex": 1544.98,
+      "put_gex": -827.94,
+      "net_gex": 717.04
     },
     {
       "strike": 43600,
-      "call_gex": 1637.69,
-      "put_gex": -712.48,
-      "net_gex": 925.21
+      "call_gex": 1640.9,
+      "put_gex": -713.88,
+      "net_gex": 927.02
     },
     {
       "strike": 43650,
-      "call_gex": 1695.25,
-      "put_gex": -619.6,
-      "net_gex": 1075.66
+      "call_gex": 1699.3,
+      "put_gex": -621.07,
+      "net_gex": 1078.22
     },
     {
       "strike": 43700,
-      "call_gex": 1709.95,
-      "put_gex": -546.76,
-      "net_gex": 1163.19
+      "call_gex": 1714.76,
+      "put_gex": -548.29,
+      "net_gex": 1166.46
     },
     {
       "strike": 43750,
-      "call_gex": 1680.13,
-      "put_gex": -491.98,
-      "net_gex": 1188.15
+      "call_gex": 1685.57,
+      "put_gex": -493.57,
+      "net_gex": 1192.0
     },
     {
       "strike": 43800,
-      "call_gex": 1608.62,
-      "put_gex": -451.75,
-      "net_gex": 1156.87
+      "call_gex": 1614.51,
+      "put_gex": -453.4,
+      "net_gex": 1161.11
     },
     {
       "strike": 43850,
-      "call_gex": 1501.74,
-      "put_gex": -423.18,
-      "net_gex": 1078.55
+      "call_gex": 1507.88,
+      "put_gex": -424.91,
+      "net_gex": 1082.96
     },
     {
       "strike": 43900,
-      "call_gex": 1368.77,
-      "put_gex": -402.79,
-      "net_gex": 965.98
+      "call_gex": 1374.95,
+      "put_gex": -404.61,
+      "net_gex": 970.34
     },
     {
       "strike": 43950,
-      "call_gex": 1220.32,
-      "put_gex": -388.57,
-      "net_gex": 831.75
+      "call_gex": 1226.35,
+      "put_gex": -390.49,
+      "net_gex": 835.86
     },
     {
       "strike": 44000,
-      "call_gex": 1066.97,
-      "put_gex": -378.35,
-      "net_gex": 688.62
+      "call_gex": 1072.69,
+      "put_gex": -380.38,
+      "net_gex": 692.31
     },
     {
       "strike": 44050,
-      "call_gex": 918.35,
-      "put_gex": -370.63,
-      "net_gex": 547.72
+      "call_gex": 923.67,
+      "put_gex": -372.78,
+      "net_gex": 550.89
     },
     {
       "strike": 44100,
-      "call_gex": 781.94,
-      "put_gex": -364.34,
-      "net_gex": 417.6
+      "call_gex": 786.8,
+      "put_gex": -366.61,
+      "net_gex": 420.19
     },
     {
       "strike": 44150,
-      "call_gex": 662.28,
-      "put_gex": -359.06,
-      "net_gex": 303.22
+      "call_gex": 666.68,
+      "put_gex": -361.44,
+      "net_gex": 305.23
     }
   ],
   "retail_mini_ratio": 4.5,
@@ -5486,16 +5486,16 @@
       "date_label": "8/04 (T日)",
       "day_date_note": "8/04 13:45",
       "night_date_note": "8/05 05:00收盤",
-      "spot_price": 43360.66,
+      "spot_price": 43386.41,
       "spot_change_val": 266.66,
       "spot_change_pct": 0.62,
-      "two_price": 375.03,
+      "two_price": 362.89,
       "two_change_val": 15.04,
       "two_change_pct": 4.32,
       "day_txf_price": 43357.0,
       "night_txf_price": 44539.0,
       "night_txf_shift": 1182.0,
-      "zero_gamma_level": 43210.7,
+      "zero_gamma_level": 43236.4,
       "zero_gamma_shift": 0.0,
       "zero_gamma_regime": "🔴 正 Gamma 波動度抑制區 (平穩震盪)",
       "call_wall_strike": 43700,
@@ -5583,7 +5583,7 @@
     "regime_label": "🔴 正 Gamma 波動度抑制區 (平穩震盪)",
     "theme_color": "bull",
     "flip_dist": 150.0,
-    "full_html": "\n        <p style=\"margin-bottom: 6px;\"><strong>🔴 正 Gamma 波動度抑制區 (平穩震盪)</strong> — 標的物處於正 Gamma 區間，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。</p>\n        <p style=\"margin-bottom: 6px;\">📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (`43210.7`) 尚有 <strong>150.0 點</strong>緩衝防守區。</p>\n        <p style=\"margin-bottom: 0;\">🛑 <strong>Call Wall 賣壓牆</strong>：天花板固守於 <code>43700</code>。 🛡️ <strong>Put Wall 支撐牆</strong>：地板固守於 <code>43100</code>。</p>\n        "
+    "full_html": "\n        <p style=\"margin-bottom: 6px;\"><strong>🔴 正 Gamma 波動度抑制區 (平穩震盪)</strong> — 標的物處於正 Gamma 區間，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。</p>\n        <p style=\"margin-bottom: 6px;\">📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (`43236.4`) 尚有 <strong>150.0 點</strong>緩衝防守區。</p>\n        <p style=\"margin-bottom: 0;\">🛑 <strong>Call Wall 賣壓牆</strong>：天花板固守於 <code>43700</code>。 🛡️ <strong>Put Wall 支撐牆</strong>：地板固守於 <code>43100</code>。</p>\n        "
   },
   "executive_digest": {
     "date": "2026-08-04",
@@ -5600,9 +5600,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 170.5,
-      "change_pct": 3.33,
-      "volume": 91900,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5613,9 +5613,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 18.85,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 35645,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5626,9 +5626,9 @@
       "category": "個股期貨",
       "has_night": true,
       "liquidity": "中",
-      "spot_price": 118.5,
-      "change_pct": 0.42,
-      "volume": 181714,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5639,12 +5639,12 @@
       "category": "個股期貨",
       "has_night": true,
       "liquidity": "中",
-      "spot_price": 2320.0,
-      "change_pct": -2.11,
-      "volume": 41021,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2881",
@@ -5652,12 +5652,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 128.5,
-      "change_pct": -0.77,
-      "volume": 29296,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1301",
@@ -5665,9 +5665,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 55.3,
-      "change_pct": 2.79,
-      "volume": 23236,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5678,9 +5678,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 37.0,
-      "change_pct": 1.79,
-      "volume": 43359,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5691,9 +5691,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 24.45,
-      "change_pct": 2.3,
-      "volume": 130656,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5704,9 +5704,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 43.25,
-      "change_pct": 0.46,
-      "volume": 25543,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5717,12 +5717,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 99.2,
-      "change_pct": -1.29,
-      "volume": 25339,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2886",
@@ -5730,12 +5730,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 50.7,
-      "change_pct": -1.74,
-      "volume": 35883,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2887",
@@ -5743,9 +5743,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 35.55,
-      "change_pct": 0.71,
-      "volume": 46044,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5756,9 +5756,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 64.8,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 43740,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5769,9 +5769,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 73.9,
-      "change_pct": 1.23,
-      "volume": 25972,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5782,9 +5782,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 27.15,
-      "change_pct": 0.93,
-      "volume": 13974,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5795,9 +5795,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 33.75,
-      "change_pct": 2.9,
-      "volume": 22515,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5808,9 +5808,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 10.3,
-      "change_pct": 1.48,
-      "volume": 5080,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5821,9 +5821,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 28.9,
-      "change_pct": 1.58,
-      "volume": 3723,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5834,9 +5834,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 25.25,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 6337,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5847,9 +5847,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 436.0,
-      "change_pct": 9.96,
-      "volume": 119676,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5860,12 +5860,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 206.0,
-      "change_pct": -0.72,
-      "volume": 5794,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2609",
@@ -5873,9 +5873,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 51.0,
-      "change_pct": 0.39,
-      "volume": 10095,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5886,9 +5886,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 22.45,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 35115,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5899,12 +5899,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 25.2,
-      "change_pct": -0.79,
-      "volume": 68817,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2890",
@@ -5912,12 +5912,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 39.6,
-      "change_pct": -1.12,
-      "volume": 31750,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1101",
@@ -5925,12 +5925,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 23.55,
-      "change_pct": -1.05,
-      "volume": 25392,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1326",
@@ -5938,9 +5938,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 58.2,
-      "change_pct": 3.37,
-      "volume": 28720,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5951,12 +5951,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 250.0,
-      "change_pct": -1.19,
-      "volume": 41095,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2337",
@@ -5964,9 +5964,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 120.0,
-      "change_pct": 8.6,
-      "volume": 118147,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5977,9 +5977,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 806.0,
-      "change_pct": 0.88,
-      "volume": 4052,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -5990,9 +5990,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 300.5,
-      "change_pct": 1.35,
-      "volume": 24772,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6003,12 +6003,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 136.5,
-      "change_pct": -1.8,
-      "volume": 15621,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2884",
@@ -6016,12 +6016,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 38.0,
-      "change_pct": -1.17,
-      "volume": 40822,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2885",
@@ -6029,9 +6029,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 69.0,
-      "change_pct": 1.47,
-      "volume": 36549,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6042,12 +6042,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 35.3,
-      "change_pct": -1.81,
-      "volume": 54577,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3481",
@@ -6055,9 +6055,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 47.8,
-      "change_pct": 4.37,
-      "volume": 348151,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6068,9 +6068,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 29.05,
-      "change_pct": 0.87,
-      "volume": 13523,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6081,12 +6081,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 3865.0,
-      "change_pct": -1.15,
-      "volume": 17318,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2915",
@@ -6094,12 +6094,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 51.8,
-      "change_pct": -1.33,
-      "volume": 1983,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3231",
@@ -6107,9 +6107,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 195.0,
-      "change_pct": 4.84,
-      "volume": 153901,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6120,12 +6120,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 32.4,
-      "change_pct": -0.92,
-      "volume": 10095,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1210",
@@ -6133,12 +6133,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 55.5,
-      "change_pct": -0.89,
-      "volume": 4170,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1312",
@@ -6146,9 +6146,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 11.6,
-      "change_pct": 1.31,
-      "volume": 4541,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6159,12 +6159,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 7.65,
-      "change_pct": -0.13,
-      "volume": 18767,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1319",
@@ -6172,9 +6172,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 72.0,
-      "change_pct": 0.84,
-      "volume": 1102,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6185,9 +6185,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 12.3,
-      "change_pct": 0.41,
-      "volume": 1236,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6198,9 +6198,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 65.4,
-      "change_pct": 0.15,
-      "volume": 5515,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6211,9 +6211,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 675.0,
-      "change_pct": 0.6,
-      "volume": 1247,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6224,9 +6224,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1425.0,
-      "change_pct": 0.71,
-      "volume": 986,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6237,9 +6237,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 9.99,
-      "change_pct": 4.06,
-      "volume": 70749,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6250,12 +6250,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 45.1,
-      "change_pct": -0.88,
-      "volume": 3697,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2006",
@@ -6263,9 +6263,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 82.5,
-      "change_pct": 2.61,
-      "volume": 5570,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6276,12 +6276,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 44.25,
-      "change_pct": -0.45,
-      "volume": 12225,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2049",
@@ -6289,9 +6289,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 332.0,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 5562,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6302,9 +6302,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 9495.0,
-      "change_pct": 9.96,
-      "volume": 866,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6315,9 +6315,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 30.45,
-      "change_pct": 0.5,
-      "volume": 5089,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6328,12 +6328,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 27.2,
-      "change_pct": -0.91,
-      "volume": 3334,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2301",
@@ -6341,9 +6341,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 252.0,
-      "change_pct": 9.8,
-      "volume": 67014,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6354,9 +6354,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1620.0,
-      "change_pct": 2.53,
-      "volume": 20958,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6367,9 +6367,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 32.3,
-      "change_pct": 1.73,
-      "volume": 13600,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6380,9 +6380,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 198.5,
-      "change_pct": 7.01,
-      "volume": 47270,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6393,9 +6393,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 19.3,
-      "change_pct": 3.21,
-      "volume": 1886,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6406,9 +6406,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 23.85,
-      "change_pct": 7.43,
-      "volume": 69942,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6419,9 +6419,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 31.7,
-      "change_pct": 7.82,
-      "volume": 4176,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6432,9 +6432,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 157.0,
-      "change_pct": 9.79,
-      "volume": 121631,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6445,9 +6445,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 93.8,
-      "change_pct": 2.29,
-      "volume": 2526,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6458,12 +6458,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 56.0,
-      "change_pct": -0.71,
-      "volume": 3075,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2376",
@@ -6471,9 +6471,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 332.0,
-      "change_pct": 2.31,
-      "volume": 10157,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6484,9 +6484,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 149.5,
-      "change_pct": 4.55,
-      "volume": 19543,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6497,9 +6497,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 723.0,
-      "change_pct": 2.7,
-      "volume": 4183,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6510,12 +6510,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 104.0,
-      "change_pct": -1.89,
-      "volume": 2551,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2392",
@@ -6523,9 +6523,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 34.85,
-      "change_pct": 1.16,
-      "volume": 967,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6536,9 +6536,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 57.5,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 11557,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6549,9 +6549,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 27.15,
-      "change_pct": 5.03,
-      "volume": 3623,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6562,9 +6562,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1110.0,
-      "change_pct": 0.45,
-      "volume": 1758,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6575,9 +6575,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 245.5,
-      "change_pct": 5.14,
-      "volume": 31680,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6588,9 +6588,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 353.0,
-      "change_pct": 9.97,
-      "volume": 5155,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6601,9 +6601,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 23.0,
-      "change_pct": 3.14,
-      "volume": 1179,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6614,9 +6614,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 157.5,
-      "change_pct": 0.64,
-      "volume": 1775,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6627,12 +6627,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 181.0,
-      "change_pct": -0.82,
-      "volume": 2345,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2481",
@@ -6640,9 +6640,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 130.0,
-      "change_pct": 0.78,
-      "volume": 33192,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6653,9 +6653,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 40.8,
-      "change_pct": 6.53,
-      "volume": 7336,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6666,9 +6666,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 30.1,
-      "change_pct": 7.89,
-      "volume": 9912,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6679,9 +6679,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 259.5,
-      "change_pct": 8.35,
-      "volume": 33258,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6692,9 +6692,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 40.1,
-      "change_pct": 0.5,
-      "volume": 4229,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6705,12 +6705,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 12.0,
-      "change_pct": -0.41,
-      "volume": 5761,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2520",
@@ -6718,12 +6718,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 34.1,
-      "change_pct": -1.73,
-      "volume": 1244,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2542",
@@ -6731,9 +6731,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 44.15,
-      "change_pct": 0.68,
-      "volume": 7108,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6744,12 +6744,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 97.5,
-      "change_pct": -0.91,
-      "volume": 1021,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2605",
@@ -6757,9 +6757,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 31.25,
-      "change_pct": 0.16,
-      "volume": 2604,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6770,9 +6770,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 43.8,
-      "change_pct": 0.23,
-      "volume": 49619,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6783,9 +6783,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 16.9,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 77008,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6796,9 +6796,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 10.85,
-      "change_pct": 0.46,
-      "volume": 1334,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6809,9 +6809,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 217.5,
-      "change_pct": 9.85,
-      "volume": 16630,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6822,9 +6822,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 4355.0,
-      "change_pct": 9.97,
-      "volume": 1870,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6835,12 +6835,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 131.0,
-      "change_pct": -1.5,
-      "volume": 3444,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3034",
@@ -6848,9 +6848,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 524.0,
-      "change_pct": 0.96,
-      "volume": 4340,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6861,9 +6861,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 166.0,
-      "change_pct": 3.75,
-      "volume": 6345,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6874,9 +6874,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 212.5,
-      "change_pct": 3.91,
-      "volume": 9844,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6887,9 +6887,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 924.0,
-      "change_pct": 6.82,
-      "volume": 54032,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6900,9 +6900,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 169.5,
-      "change_pct": 9.71,
-      "volume": 18717,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6913,9 +6913,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 767.0,
-      "change_pct": 9.89,
-      "volume": 6043,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6926,12 +6926,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 179.5,
-      "change_pct": -0.28,
-      "volume": 1919,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3380",
@@ -6939,9 +6939,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 29.25,
-      "change_pct": 0.69,
-      "volume": 1245,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6952,12 +6952,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 4145.0,
-      "change_pct": -0.96,
-      "volume": 3005,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3533",
@@ -6965,9 +6965,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2010.0,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 847,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6978,9 +6978,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 4145.0,
-      "change_pct": 9.95,
-      "volume": 2786,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -6991,9 +6991,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 59.9,
-      "change_pct": 3.81,
-      "volume": 5120,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7004,9 +7004,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 117.5,
-      "change_pct": 1.29,
-      "volume": 8678,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7017,9 +7017,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 88.4,
-      "change_pct": 2.08,
-      "volume": 15092,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7030,12 +7030,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 77.5,
-      "change_pct": -0.13,
-      "volume": 690,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6005",
@@ -7043,9 +7043,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 34.85,
-      "change_pct": 0.87,
-      "volume": 7340,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7056,9 +7056,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 15.5,
-      "change_pct": 4.73,
-      "volume": 3465,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7069,9 +7069,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 87.1,
-      "change_pct": 1.04,
-      "volume": 4458,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7082,9 +7082,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 310.0,
-      "change_pct": 7.27,
-      "volume": 21166,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7095,9 +7095,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 256.5,
-      "change_pct": 7.55,
-      "volume": 23856,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7108,9 +7108,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 179.5,
-      "change_pct": 6.85,
-      "volume": 8147,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7121,9 +7121,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 153.0,
-      "change_pct": 5.15,
-      "volume": 2759,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7134,9 +7134,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 47.9,
-      "change_pct": 7.28,
-      "volume": 14828,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7147,9 +7147,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 252.5,
-      "change_pct": 5.65,
-      "volume": 7880,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7160,9 +7160,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 200.0,
-      "change_pct": 4.99,
-      "volume": 30999,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7173,9 +7173,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 32.1,
-      "change_pct": 4.22,
-      "volume": 1281,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7186,12 +7186,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 23.75,
-      "change_pct": -2.26,
-      "volume": 28043,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "9939",
@@ -7199,9 +7199,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 131.0,
-      "change_pct": 1.95,
-      "volume": 1205,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7212,12 +7212,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 26.7,
-      "change_pct": -0.93,
-      "volume": 6793,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1477",
@@ -7225,9 +7225,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 222.0,
-      "change_pct": 1.6,
-      "volume": 2220,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7238,9 +7238,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 52.3,
-      "change_pct": 9.99,
-      "volume": 40657,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7251,9 +7251,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 42.85,
-      "change_pct": 0.35,
-      "volume": 1256,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7264,9 +7264,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 392.0,
-      "change_pct": 4.81,
-      "volume": 3573,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7277,12 +7277,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 111.0,
-      "change_pct": -0.89,
-      "volume": 10565,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3406",
@@ -7290,9 +7290,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 502.0,
-      "change_pct": 2.87,
-      "volume": 1822,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7303,9 +7303,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 56.1,
-      "change_pct": 3.7,
-      "volume": 4478,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7316,12 +7316,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 76.2,
-      "change_pct": -0.26,
-      "volume": 1339,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "5880",
@@ -7329,12 +7329,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 26.55,
-      "change_pct": -1.3,
-      "volume": 32000,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2356",
@@ -7342,9 +7342,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 66.0,
-      "change_pct": 3.29,
-      "volume": 34604,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7355,9 +7355,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 30.55,
-      "change_pct": 0.49,
-      "volume": 37259,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7368,12 +7368,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 101.0,
-      "change_pct": -2.42,
-      "volume": 11770,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "4958",
@@ -7381,9 +7381,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 444.0,
-      "change_pct": 5.34,
-      "volume": 35726,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7394,12 +7394,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 111.5,
-      "change_pct": -1.33,
-      "volume": 5026,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1476",
@@ -7407,9 +7407,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 354.5,
-      "change_pct": 2.31,
-      "volume": 1242,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7420,9 +7420,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 566.0,
-      "change_pct": 2.54,
-      "volume": 97625,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7433,9 +7433,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1045.0,
-      "change_pct": 9.65,
-      "volume": 5508,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7446,9 +7446,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 39.5,
-      "change_pct": 3.27,
-      "volume": 3851,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7459,12 +7459,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1925.0,
-      "change_pct": -1.79,
-      "volume": 6067,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2439",
@@ -7472,9 +7472,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 81.2,
-      "change_pct": 0.62,
-      "volume": 1946,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7485,9 +7485,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 199.5,
-      "change_pct": 2.05,
-      "volume": 4557,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7498,9 +7498,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 42.7,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 2278,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7732,12 +7732,12 @@
       "category": "ETF期貨",
       "has_night": true,
       "liquidity": "中",
-      "spot_price": 100.65,
-      "change_pct": -1.32,
-      "volume": 121774,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "006205",
@@ -7745,9 +7745,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 40.74,
-      "change_pct": 0.22,
-      "volume": 102,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7758,12 +7758,12 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 37.81,
-      "change_pct": -0.42,
-      "volume": 10,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2231",
@@ -7771,12 +7771,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 94.2,
-      "change_pct": -2.28,
-      "volume": 369,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6116",
@@ -7784,9 +7784,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 12.95,
-      "change_pct": 3.6,
-      "volume": 20300,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7810,9 +7810,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 28.19,
-      "change_pct": 0.61,
-      "volume": 193,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7823,9 +7823,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 16.95,
-      "change_pct": 2.54,
-      "volume": 452,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7836,9 +7836,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 18.4,
-      "change_pct": 1.6,
-      "volume": 3034,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7849,12 +7849,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2320.0,
-      "change_pct": -0.64,
-      "volume": 4443,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6414",
@@ -7862,12 +7862,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 436.5,
-      "change_pct": -0.23,
-      "volume": 2019,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1536",
@@ -7875,9 +7875,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 50.2,
-      "change_pct": 2.97,
-      "volume": 1562,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7888,9 +7888,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 10.1,
-      "change_pct": 0.5,
-      "volume": 3688,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -7966,12 +7966,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 585.0,
-      "change_pct": -4.1,
-      "volume": 52645,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3227",
@@ -8005,12 +8005,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 128.0,
-      "change_pct": -0.39,
-      "volume": 96,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "5425",
@@ -8031,9 +8031,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 50.6,
-      "change_pct": 1.57,
-      "volume": 37286,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8044,12 +8044,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 25.75,
-      "change_pct": -0.58,
-      "volume": 6064,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "5269",
@@ -8057,9 +8057,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1360.0,
-      "change_pct": 1.49,
-      "volume": 567,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8083,9 +8083,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 5140.0,
-      "change_pct": 3.21,
-      "volume": 2925,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8174,9 +8174,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 91.3,
-      "change_pct": 2.01,
-      "volume": 14277,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8200,9 +8200,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 6205.0,
-      "change_pct": 4.73,
-      "volume": 2967,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8239,9 +8239,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 53.7,
-      "change_pct": 6.55,
-      "volume": 6292,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8252,9 +8252,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 63.4,
-      "change_pct": 0.63,
-      "volume": 2932,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8265,9 +8265,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 291.5,
-      "change_pct": 10.0,
-      "volume": 570,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8278,9 +8278,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 29.5,
-      "change_pct": 1.2,
-      "volume": 2012,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8304,9 +8304,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 63.6,
-      "change_pct": 3.08,
-      "volume": 7146,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8317,9 +8317,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 21.35,
-      "change_pct": 0.95,
-      "volume": 1452,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8343,9 +8343,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 119.5,
-      "change_pct": 8.14,
-      "volume": 13939,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8356,9 +8356,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 82.5,
-      "change_pct": 6.31,
-      "volume": 39268,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8369,9 +8369,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 38.9,
-      "change_pct": 3.46,
-      "volume": 1511,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8382,9 +8382,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 80.3,
-      "change_pct": 5.8,
-      "volume": 8797,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8395,9 +8395,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 86.1,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 5374,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8421,9 +8421,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 60.1,
-      "change_pct": 9.87,
-      "volume": 186379,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8434,9 +8434,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2600.0,
-      "change_pct": 1.96,
-      "volume": 5548,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8447,9 +8447,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 89.2,
-      "change_pct": 2.06,
-      "volume": 2752,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8460,12 +8460,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 60.5,
-      "change_pct": -0.33,
-      "volume": 21596,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "4128",
@@ -8486,9 +8486,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 129.5,
-      "change_pct": 4.02,
-      "volume": 8058,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8499,9 +8499,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 32.57,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 57183,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8512,9 +8512,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 35.35,
-      "change_pct": 2.02,
-      "volume": 3408,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8525,9 +8525,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 897.0,
-      "change_pct": 2.87,
-      "volume": 13604,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8538,9 +8538,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 25.8,
-      "change_pct": 3.41,
-      "volume": 4041,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8590,9 +8590,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 105.5,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 1174,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8603,9 +8603,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 18.38,
-      "change_pct": 0.6,
-      "volume": 2596,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8616,12 +8616,12 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 40.2,
-      "change_pct": -0.47,
-      "volume": 13180,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "00679B",
@@ -8642,12 +8642,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 186.0,
-      "change_pct": -0.53,
-      "volume": 1117,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1905",
@@ -8655,9 +8655,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 13.15,
-      "change_pct": 2.73,
-      "volume": 2534,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8668,9 +8668,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 159.0,
-      "change_pct": 2.25,
-      "volume": 2773,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8681,9 +8681,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 43.11,
-      "change_pct": 1.01,
-      "volume": 1342,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8707,12 +8707,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 114.0,
-      "change_pct": -0.44,
-      "volume": 2723,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "8112",
@@ -8720,9 +8720,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 85.2,
-      "change_pct": 4.67,
-      "volume": 17224,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8733,9 +8733,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 29.51,
-      "change_pct": 0.2,
-      "volume": 43726,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8746,9 +8746,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 28.15,
-      "change_pct": 2.1,
-      "volume": 29714,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8772,9 +8772,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 12.23,
-      "change_pct": 0.91,
-      "volume": 14347,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8798,9 +8798,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 195.0,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 1209,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8811,9 +8811,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 786.0,
-      "change_pct": 2.75,
-      "volume": 4172,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8837,12 +8837,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 44.15,
-      "change_pct": -1.12,
-      "volume": 8402,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6505",
@@ -8850,9 +8850,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 68.2,
-      "change_pct": 0.74,
-      "volume": 20035,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8863,9 +8863,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 575.0,
-      "change_pct": 4.17,
-      "volume": 940,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8902,9 +8902,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 3390.0,
-      "change_pct": 4.31,
-      "volume": 1610,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8915,12 +8915,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 392.0,
-      "change_pct": -1.13,
-      "volume": 414,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "00757",
@@ -8928,9 +8928,9 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 137.4,
-      "change_pct": 3.27,
-      "volume": 2086,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8941,9 +8941,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 221.0,
-      "change_pct": 7.02,
-      "volume": 8720,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -8954,12 +8954,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 55.9,
-      "change_pct": -1.06,
-      "volume": 1041,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6223",
@@ -8980,9 +8980,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 43.25,
-      "change_pct": 2.13,
-      "volume": 2654,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -9006,9 +9006,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 34.25,
-      "change_pct": 9.95,
-      "volume": 5652,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -9019,9 +9019,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 40.45,
-      "change_pct": 6.45,
-      "volume": 7636,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -9032,12 +9032,12 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 135.5,
-      "change_pct": -0.73,
-      "volume": 1381,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3665",
@@ -9045,9 +9045,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2300.0,
-      "change_pct": 9.79,
-      "volume": 3964,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -9058,12 +9058,12 @@
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 58.65,
-      "change_pct": -0.85,
-      "volume": 30596,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2395",
@@ -9071,9 +9071,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 576.0,
+      "spot_price": 100.0,
       "change_pct": 0.0,
-      "volume": 3976,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
@@ -9097,9 +9097,9 @@
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 713.0,
-      "change_pct": 1.42,
-      "volume": 1467,
+      "spot_price": 100.0,
+      "change_pct": 0.0,
+      "volume": 1000,
       "foreign_net": 0,
       "dealer_net": 0,
       "trend": "Bull"
