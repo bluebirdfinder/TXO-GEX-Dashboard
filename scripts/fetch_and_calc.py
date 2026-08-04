@@ -22,6 +22,11 @@ import urllib.parse
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 
+try:
+    from fubon_api_provider import fubon_provider
+except Exception:
+    fubon_provider = None
+
 PASSCODE = "GEX2026"
 
 def fetch_official_taifex_night_data():
