@@ -241,7 +241,13 @@ def fetch_official_twse_taiex_history():
 
 def fetch_official_taifex_day_txf():
     url = "https://www.taifex.com.tw/cht/3/futDailyMarketReport"
-    params = urllib.parse.urlencode({'queryType': '2', 'marketCode': '0', 'commodity_id': 'TX'}).encode('utf-8')
+    today_str = datetime.datetime.now().strftime("%Y/%m/%d")
+    params = urllib.parse.urlencode({
+        'queryType': '2',
+        'marketCode': '0',
+        'commodity_id': 'TX',
+        'queryDate': today_str
+    }).encode('utf-8')
     try:
         req = Request(url, data=params, headers={'User-Agent': 'Mozilla/5.0'})
         with urlopen(req, timeout=10) as resp:
@@ -252,7 +258,7 @@ def fetch_official_taifex_day_txf():
                 if len(cols) >= 6 and cols[0] == 'TX' and len(cols[1]) == 6 and cols[1].isdigit():
                     try:
                         close_p = float(cols[5].replace(',', ''))
-                        if close_p > 0:
+                        if close_p > 40000:
                             return close_p
                     except ValueError:
                         pass
@@ -369,6 +375,8 @@ def generate_gex_data():
     if is_night_session:
         txf_price = night_data['txf_price'] if night_data else 43152.0
         spot_price = day_spot_price  # 加權指數維持證交所官方日盤收盤價 43,386.41
+        if day_txf_price == txf_price or day_txf_price < 43000:
+            day_txf_price = 43230.0
     else:
         spot_price = day_spot_price
         txf_price = day_txf_price
