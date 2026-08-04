@@ -827,9 +827,9 @@ def generate_gex_data():
         "history_6_sessions": session_snapshots,
         "recent_3_days_summary": [
             {
-                "date_label": "8/03 (T日)",
-                "day_date_note": "8/03 13:45",
-                "night_date_note": "8/04 05:00收盤",
+                "date_label": f"{t_3days[2].month}/{t_3days[2].day:02d} (T日)",
+                "day_date_note": f"{t_3days[2].month}/{t_3days[2].day:02d} 13:45",
+                "night_date_note": f"{(t_3days[2] + datetime.timedelta(days=1)).month}/{(t_3days[2] + datetime.timedelta(days=1)).day:02d} 05:00收盤",
                 "spot_price": spot_price if spot_price else 43386.41,
                 "spot_change_val": 266.66,
                 "spot_change_pct": 0.62,
@@ -850,12 +850,12 @@ def generate_gex_data():
                 "max_pain_shift": session_shift["max_pain_shift"],
                 "pc_ratio": pc_ratio if pc_ratio else 112.93,
                 "pc_ratio_desc": "🔴 偏多看撐",
-                "notes": "加權小漲 266 點，夜盤台指期微幅拉回 -78 點"
+                "notes": "加權收盤 43,386 點，夜盤台指期微幅拉回 -78 點"
             },
             {
-                "date_label": "7/31 (T-1)",
-                "day_date_note": "7/31 13:45",
-                "night_date_note": "8/01 05:00收盤",
+                "date_label": f"{t_3days[1].month}/{t_3days[1].day:02d} (T-1)",
+                "day_date_note": f"{t_3days[1].month}/{t_3days[1].day:02d} 13:45",
+                "night_date_note": f"{(t_3days[1] + datetime.timedelta(days=1)).month}/{(t_3days[1] + datetime.timedelta(days=1)).day:02d} 05:00收盤",
                 "spot_price": 43119.75,
                 "spot_change_val": 3186.45,
                 "spot_change_pct": 7.98,
@@ -879,9 +879,9 @@ def generate_gex_data():
                 "notes": "日盤暴漲 +3,392 點，夜盤獲利拉回 -1,028 點"
             },
             {
-                "date_label": "7/30 (T-2)",
-                "day_date_note": "7/30 13:45",
-                "night_date_note": "7/31 05:00收盤",
+                "date_label": f"{t_3days[0].month}/{t_3days[0].day:02d} (T-2)",
+                "day_date_note": f"{t_3days[0].month}/{t_3days[0].day:02d} 13:45",
+                "night_date_note": f"{(t_3days[0] + datetime.timedelta(days=1)).month}/{(t_3days[0] + datetime.timedelta(days=1)).day:02d} 05:00收盤",
                 "spot_price": 39933.30,
                 "spot_change_val": -105.88,
                 "spot_change_pct": -0.26,
