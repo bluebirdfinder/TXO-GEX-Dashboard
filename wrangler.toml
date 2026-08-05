@@ -9,6 +9,7 @@ FUBON_QUOTE_PATH = "/quote"
 
 # Put sensitive values in Cloudflare Worker secrets instead of source control.
 # Example secrets to create in Cloudflare Dashboard:
+#   PRIVATE_ACCESS_TOKEN
 #   FUBON_AUTH_HEADER
 #   FUBON_API_TOKEN
 #   FUBON_API_KEY

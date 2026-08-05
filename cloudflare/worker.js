@@ -43,6 +43,19 @@ function buildAuthHeaders(env) {
   return headers;
 }
 
+function isAuthorizedPrivateRequest(request, env) {
+  const configuredToken = env.PRIVATE_ACCESS_TOKEN;
+  if (!configuredToken) {
+    return false;
+  }
+
+  const headerToken = request.headers.get('X-Private-Token') || '';
+  const bearerToken = request.headers.get('Authorization') || '';
+  const bearerValue = bearerToken.startsWith('Bearer ') ? bearerToken.replace(/^Bearer\s+/i, '') : '';
+
+  return headerToken === configuredToken || bearerValue === configuredToken;
+}
+
 function pickNumber(value) {
   if (value === null || value === undefined) return null;
   const num = Number(value);
@@ -74,9 +87,27 @@ export default {
     }
 
     const url = new URL(request.url);
+
+    if (url.pathname === '/health') {
+      return new Response(JSON.stringify({ status: 'ok', message: 'Private proxy heartbeat is healthy.' }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     if (url.pathname !== '/quote') {
       return new Response(JSON.stringify({ status: 'ok', message: 'Use /quote to fetch a server-side live quote.' }), {
         status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (!isAuthorizedPrivateRequest(request, env)) {
+      return new Response(JSON.stringify({
+        status: 'error',
+        message: 'Private access denied. Add X-Private-Token or Authorization Bearer token.'
+      }), {
+        status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
