@@ -221,12 +221,12 @@
             <h1 style="background: linear-gradient(135deg, #00d2ff 0%, #ffd700 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-size: 1.6rem; letter-spacing: 1px;">尋鳥 Bluebird Finder</h1>
             <span style="font-size: 0.75rem; background: rgba(0,210,255,0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); padding: 2px 8px; border-radius: 12px; font-weight: 600;">TXO GEX 量化系統</span>
           </div>
-          <div class="tagline">台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼分析</div>
+          <div class="tagline">台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼分析（公開頁面僅提供盤後快照）</div>
         </div>
       </div>
       <div class="nav-controls">
         <button id="mode-badge" class="btn" style="border-color: var(--gold-accent); color: var(--gold-accent);">
-          🏛️ 日盤 / 夜盤盤後快照版
+          🏛️ 公開版：日盤 / 夜盤盤後快照
         </button>
         <!-- Data Freshness Indicator LED -->
         <div id="freshness-indicator" title="資料更新時效" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid var(--panel-border);background:rgba(255,255,255,0.04);cursor:default;">
@@ -241,6 +241,12 @@
         <button id="relock-btn" class="btn">🔒 鎖定</button>
       </div>
     </header>
+
+    <div class="panel" style="margin-bottom: 12px; border: 1px solid rgba(0,210,255,0.24); background: rgba(0,210,255,0.05);">
+      <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
+        本公開頁僅呈現期交所與 TWSE 已定案之日盤 / 夜盤盤後快照資料，供歷史與籌碼對照分析之用，不提供盤中即時行情。
+      </div>
+    </div>
 
     <!-- Top Summary Stat Cards (6 Cards in Row 1) -->
     <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 12px;">
@@ -355,7 +361,7 @@
         <h3 style="font-size: 1.05rem; margin: 0; color: var(--primary-accent); display: flex; align-items: center; gap: 8px;">
           <span>📊 近三日市場籌碼與 Gamma 關鍵位對照表</span>
         </h3>
-        <span style="font-size: 0.78rem; color: var(--text-muted);">近 3 個交易日盤後快照：現貨、期貨、Zero Gamma、Call/Put Wall 及 Max Pain 多空動態對照</span>
+        <span style="font-size: 0.78rem; color: var(--text-muted);">近 3 個交易日盤後定案快照：現貨、期貨、Zero Gamma、Call/Put Wall 及 Max Pain 多空動態對照</span>
       </div>
       <div style="overflow-x: auto;">
         <table class="sortable-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 980px;">
