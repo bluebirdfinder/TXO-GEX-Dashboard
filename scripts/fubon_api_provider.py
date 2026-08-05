@@ -59,17 +59,24 @@ class FubonAPIProvider:
             logging.info("Fubon Neo SDK module found. Authenticating client...")
             sdk = FubonSDK()
             
-            # Login and activate SDK session
-            # res = sdk.login(self.account_no, self.secret_key, self.cert_path, self.cert_pass)
-            # if res.is_success:
-            #     self.sdk_instance = sdk
-            #     self.is_active = True
-            #     logging.info("Fubon API Provider: Successfully authenticated & active!")
-            # else:
-            #     logging.warning(f"Fubon API Login failed: {res.message}. Falling back to Web API.")
-            #     self.is_active = False
-            
-            self.is_active = False # Default until online signing completed
+            # Login and activate SDK session (Support apikey_login for SDK v2.2.7+)
+            if self.api_key and self.cert_path:
+                if hasattr(sdk, "apikey_login"):
+                    res = sdk.apikey_login(self.account_no, self.api_key, self.cert_path, self.cert_pass)
+                else:
+                    res = sdk.login(self.account_no, self.secret_key or self.api_key, self.cert_path, self.cert_pass)
+                
+                if res and (getattr(res, "is_success", False) or getattr(res, "status", None) == True or hasattr(res, "data")):
+                    self.sdk_instance = sdk
+                    self.is_active = True
+                    logging.info("🎉 Fubon API Provider: Successfully authenticated & active!")
+                else:
+                    msg = getattr(res, "message", str(res))
+                    logging.warning(f"Fubon API Login returned: {msg}. Defaulting to Web API fallback.")
+                    self.is_active = False
+            else:
+                logging.info("Fubon API credentials incomplete in .env. Operating in Web API fallback mode.")
+                self.is_active = False
         except ImportError:
             logging.info("fubon_neo SDK package not installed locally. Using Web API fallback.")
             self.is_active = False
