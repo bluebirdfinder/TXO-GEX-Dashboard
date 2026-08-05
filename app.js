@@ -729,7 +729,7 @@ function renderDashboard() {
   try { populateStockFutures(); } catch (stockErr) { console.error('Stock futures error:', stockErr); }
   try { renderRecent3DaysTable(); } catch (tblErr) { console.error('3-Day Table error:', tblErr); }
 }
-let currentSessionIndex = 5; // Default to Live T-Night Session (Index 5)
+let currentSessionIndex = 5; // Default to the current T-night snapshot session (Index 5)
 
 function renderHistorySessionSelector() {
   const container = document.getElementById('history-session-selector');
@@ -887,7 +887,7 @@ function renderGEXChart() {
   const config = { responsive: true, displayModeBar: false };
 
   // ============================================================
-  // Overlay Compare Mode: T日盤 vs T夜盤 (Live) side-by-side
+  // Overlay Compare Mode: T日盤 vs T夜盤盤後快照 side-by-side
   // ============================================================
   if (isOverlayMode) {
     const snapshots = gexData.history_6_sessions || [];
