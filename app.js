@@ -175,9 +175,14 @@ async function attemptDecrypt(passcode) {
     try {
       const cached = localStorage.getItem(CACHE_KEY);
       if (cached) {
-        gexData = JSON.parse(cached);
-        console.log('[Cache] Loaded GEX data from localStorage cache.');
-        showCacheNotice();
+        const parsed = JSON.parse(cached);
+        if (isCacheDataFresh(parsed)) {
+          gexData = parsed;
+          console.log('[Cache] Loaded GEX data from localStorage cache.');
+          showCacheNotice();
+        } else {
+          console.warn('[Cache] Ignored stale localStorage cache entry.');
+        }
       }
     } catch (cacheErr) {
       console.warn('[Cache] Failed to load from localStorage:', cacheErr);
@@ -218,12 +223,20 @@ function showCacheNotice() {
   const header = container.querySelector('header');
   const notice = document.createElement('div');
   notice.id = 'cache-notice-banner';
-  notice.innerHTML = '⚠️ 網路資料載入失敗，目前顯示上次緩存的資料。請執行 Python 腳本更新後重新載入。';
+  notice.innerHTML = '⚠️ 網路資料載入失敗，目前顯示最近一次成功快取的盤後快照。';
   if (header && header.nextSibling) {
     container.insertBefore(notice, header.nextSibling);
   } else if (header) {
     container.appendChild(notice);
   }
+}
+
+function isCacheDataFresh(data) {
+  if (!data || !data.last_updated_time) return false;
+  const stamp = new Date(data.last_updated_time.replace(' ', 'T'));
+  const now = new Date();
+  const diffHours = Math.abs(now - stamp) / 36e5;
+  return diffHours < 48;
 }
 
 // Data Freshness Indicator LED
@@ -527,11 +540,11 @@ function getFallbackData() {
       full_html: "<p style='margin-bottom:6px;'><strong>🔴 正 Gamma 波動度抑制區 (平穩震盪)</strong> — 標的物處於正 Gamma 區間，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。</p><p style='margin-bottom:6px;'>📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (<code>42,355.0</code>) 尚有 <strong>150.0 點</strong>緩衝防守區。</p><p style='margin-bottom:0;'>🛑 <strong>Call Wall 賣壓牆</strong>：天花板固守於 <code>42,800</code>。 🛡️ <strong>Put Wall 支撐牆</strong>：地板固守於 <code>42,200</code>。</p>"
     },
     institutional_5day_history: [
-      { date: "7/28", top5_net: -850, top10_net: -1200, foreign_fut_net: -16200, foreign_stock_net: -88.2, pc_ratio: 104.1 },
-      { date: "7/29", top5_net: 420, top10_net: 1150, foreign_fut_net: -15100, foreign_stock_net: -45.6, pc_ratio: 105.8 },
-      { date: "7/30", top5_net: 3850, top10_net: 5920, foreign_fut_net: -12400, foreign_stock_net: 32.5, pc_ratio: 107.2 },
-      { date: "7/31", top5_net: 6420, top10_net: 9850, foreign_fut_net: -14200, foreign_stock_net: 185.4, pc_ratio: 108.5 },
-      { date: "8/03", top5_net: 6420, top10_net: 9850, foreign_fut_net: -14200, foreign_stock_net: 185.4, pc_ratio: 108.5 }
+      { date: "8/05", top5_net: 6420, top10_net: 9850, foreign_fut_net: -14200, foreign_stock_net: 185.4, pc_ratio: 108.5 },
+      { date: "8/04", top5_net: 3850, top10_net: 5920, foreign_fut_net: -12400, foreign_stock_net: 32.5, pc_ratio: 107.2 },
+      { date: "8/03", top5_net: 420, top10_net: 1150, foreign_fut_net: -15100, foreign_stock_net: -45.6, pc_ratio: 105.8 },
+      { date: "7/31", top5_net: -850, top10_net: -1200, foreign_fut_net: -16200, foreign_stock_net: -88.2, pc_ratio: 104.1 },
+      { date: "7/30", top5_net: -1250, top10_net: -3420, foreign_fut_net: -18500, foreign_stock_net: -125.4, pc_ratio: 102.4 }
     ],
     executive_digest: {
       date: "2026-08-03",
@@ -1037,13 +1050,13 @@ function populateInstitutionalMatrix() {
     `;
   }
 
-  const history = gexData.institutional_5day_history || [
-    { date: "7/25", top5_net: -1250, top10_net: -3420, top5_spec_net: -980, top10_spec_net: -2100, foreign_fut_net: -18500, trust_fut_net: 2100, dealer_fut_net: -450, foreign_stock_net: -125.4, trust_stock_net: 42.1, dealer_stock_net: -18.6, foreign_opt_call_net: 0.45, foreign_opt_put_net: -1.82, trust_opt_call_net: -2.40, trust_opt_put_net: 0.002, dealer_opt_call_net: 1.25, dealer_opt_put_net: 0.85, pc_ratio: 102.4 },
-    { date: "7/28", top5_net: -850, top10_net: -1200, top5_spec_net: -420, top10_spec_net: -890, foreign_fut_net: -16200, trust_fut_net: 2450, dealer_fut_net: -120, foreign_stock_net: -88.2, trust_stock_net: 38.5, dealer_stock_net: -12.4, foreign_opt_call_net: 0.62, foreign_opt_put_net: -1.45, trust_opt_call_net: -2.65, trust_opt_put_net: 0.002, dealer_opt_call_net: 1.40, dealer_opt_put_net: 0.92, pc_ratio: 104.1 },
-    { date: "7/29", top5_net: 420, top10_net: 1150, top5_spec_net: 650, top10_spec_net: 1420, foreign_fut_net: -15100, trust_fut_net: 3100, dealer_fut_net: 380, foreign_stock_net: -45.6, trust_stock_net: 51.2, dealer_stock_net: -8.5, foreign_opt_call_net: 0.88, foreign_opt_put_net: -1.10, trust_opt_call_net: -2.85, trust_opt_put_net: 0.003, dealer_opt_call_net: 1.85, dealer_opt_put_net: 1.15, pc_ratio: 105.8 },
-    { date: "7/30", top5_net: 3850, top10_net: 5920, top5_spec_net: 3210, top10_spec_net: 4850, foreign_fut_net: -12400, trust_fut_net: 3650, dealer_fut_net: 850, foreign_stock_net: 32.5, trust_stock_net: 48.0, dealer_stock_net: 14.2, foreign_opt_call_net: 1.45, foreign_opt_put_net: -0.65, trust_opt_call_net: -2.98, trust_opt_put_net: 0.003, dealer_opt_call_net: 2.30, dealer_opt_put_net: 1.42, pc_ratio: 107.2 },
-    { date: "7/31", top5_net: 6420, top10_net: 9850, top5_spec_net: 5890, top10_spec_net: 8410, foreign_fut_net: -14200, trust_fut_net: 4200, dealer_fut_net: 1100, foreign_stock_net: 185.4, trust_stock_net: 62.8, dealer_stock_net: -24.5, foreign_opt_call_net: 0.60, foreign_opt_put_net: -0.28, trust_opt_call_net: -3.08, trust_opt_put_net: 0.003, dealer_opt_call_net: 1.83, dealer_opt_put_net: 1.42, pc_ratio: 108.5 }
-  ];
+  const history = Array.isArray(gexData.institutional_5day_history)
+    ? [...gexData.institutional_5day_history].sort((a, b) => {
+        const aDate = a && a.date ? new Date(`2026 ${a.date}`) : new Date(0);
+        const bDate = b && b.date ? new Date(`2026 ${b.date}`) : new Date(0);
+        return bDate - aDate;
+      })
+    : [];
 
   const formatCellSymmetric = (val, isAmount = false, suffix = '') => {
     if (val === undefined || val === null) return '-';
@@ -1157,86 +1170,7 @@ function renderRecent3DaysTable() {
   const tbody = document.getElementById('recent-3days-tbody');
   if (!tbody || !gexData) return;
 
-  const list = gexData.recent_3_days_summary || [
-    {
-      date_label: "8/03 (T日)",
-      day_date_note: "8/03 13:45",
-      night_date_note: "8/04 05:00收盤",
-      spot_price: gexData.spot_price || 43386.41,
-      spot_change_val: gexData.spot_change_val !== undefined ? gexData.spot_change_val : 266.66,
-      spot_change_pct: gexData.spot_change_pct !== undefined ? gexData.spot_change_pct : 0.62,
-      two_price: gexData.two_price || 362.89,
-      two_change_val: 15.04,
-      two_change_pct: 4.32,
-      day_txf_price: 43230.0,
-      night_txf_price: gexData.txf_price || 43152.0,
-      night_txf_shift: -78.0,
-      zero_gamma_level: gexData.zero_gamma_level || 43080.0,
-      zero_gamma_shift: -78.0,
-      zero_gamma_regime: (gexData.microstructure_summary && gexData.microstructure_summary.regime_label) ? gexData.microstructure_summary.regime_label : "🔴 正 Gamma 波動度抑制區 (平穩震盪)",
-      call_wall_strike: gexData.call_wall_strike || 43500,
-      call_wall_shift: -100,
-      put_wall_strike: gexData.put_wall_strike || 42900,
-      put_wall_shift: 250,
-      max_pain_strike: gexData.max_pain_strike || 43200,
-      max_pain_shift: 200,
-      pc_ratio: gexData.pc_ratio || 112.93,
-      pc_ratio_desc: "🔴 偏多看撐",
-      notes: "加權小漲 266 點，夜盤台指期微幅拉回 -78 點"
-    },
-    {
-      date_label: "7/31 (T-1)",
-      day_date_note: "7/31 13:45",
-      night_date_note: "8/01 05:00收盤",
-      spot_price: 43119.75,
-      spot_change_val: 3186.45,
-      spot_change_pct: 7.98,
-      two_price: 347.85,
-      two_change_val: 21.62,
-      two_change_pct: 6.63,
-      day_txf_price: 43678.0,
-      night_txf_price: 42650.0,
-      night_txf_shift: -1028.0,
-      zero_gamma_level: 42970.0,
-      zero_gamma_shift: -1028.0,
-      zero_gamma_regime: "🟢 負 Gamma 波動度放大區 (避險引爆)",
-      call_wall_strike: 43600,
-      call_wall_shift: 300,
-      put_wall_strike: 42400,
-      put_wall_shift: -600,
-      max_pain_strike: 43000,
-      max_pain_shift: -678,
-      pc_ratio: 108.5,
-      pc_ratio_desc: "🔴 偏多看撐",
-      notes: "日盤暴漲 +3,392 點，夜盤獲利拉回 -1,028 點"
-    },
-    {
-      date_label: "7/30 (T-2)",
-      day_date_note: "7/30 13:45",
-      night_date_note: "7/31 05:00收盤",
-      spot_price: 39933.30,
-      spot_change_val: -105.88,
-      spot_change_pct: -0.26,
-      two_price: 326.23,
-      two_change_val: -8.01,
-      two_change_pct: -2.40,
-      day_txf_price: 40270.0,
-      night_txf_price: 40287.0,
-      night_txf_shift: 17.0,
-      zero_gamma_level: 40120.0,
-      zero_gamma_shift: 17.0,
-      zero_gamma_regime: "🔴 正 Gamma 區域震盪區 (平穩震盪)",
-      call_wall_strike: 40600,
-      call_wall_shift: 200,
-      put_wall_strike: 40000,
-      put_wall_shift: 200,
-      max_pain_strike: 40300,
-      max_pain_shift: 200,
-      pc_ratio: 107.2,
-      pc_ratio_desc: "🔴 偏多看撐",
-      notes: "結算後高檔整理，夜盤平穩微升 +17 點"
-    }
-  ];
+  const list = Array.isArray(gexData.recent_3_days_summary) ? gexData.recent_3_days_summary : [];
 
   tbody.innerHTML = list.map((item, idx) => {
     // ---- Session Pending (未開盤) Logic ----
