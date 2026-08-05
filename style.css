@@ -578,7 +578,31 @@ footer p {
   50%       { opacity: 0.6; }
 }
 
+/* Live Tick Flash Animation (for intraday real-time price updates) */
+@keyframes liveTickFlash {
+  0%   { color: inherit; text-shadow: none; }
+  20%  { color: #00e676; text-shadow: 0 0 8px rgba(0, 230, 118, 0.8); }
+  60%  { color: #00e676; text-shadow: 0 0 4px rgba(0, 230, 118, 0.4); }
+  100% { color: inherit; text-shadow: none; }
+}
+
+.live-tick-flash {
+  animation: liveTickFlash 0.8s ease-out;
+}
+
 #freshness-indicator { user-select: none; }
+
+/* Live Polling Badge */
+#live-polling-badge {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 230, 118, 0.35);
+  background: rgba(0, 230, 118, 0.06);
+  cursor: default;
+}
 
 /* Overlay Compare Button Active State */
 #overlay-compare-btn.active {

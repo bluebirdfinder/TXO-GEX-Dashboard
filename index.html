@@ -233,6 +233,10 @@
           <span id="freshness-dot" style="width:10px;height:10px;border-radius:50%;background:#00e676;display:inline-block;box-shadow:0 0 6px #00e676;animation:freshPulse 2s infinite;"></span>
           <span id="freshness-text" style="font-size:0.78rem;color:var(--text-muted);">資料更新中...</span>
         </div>
+        <!-- Live Polling Badge (shown during trading hours) -->
+        <div id="live-polling-badge" title="盤中即時報價跳動中" style="display:none;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1px solid rgba(0,230,118,0.35);background:rgba(0,230,118,0.06);cursor:default;">
+          <!-- Populated by JavaScript -->
+        </div>
         <button id="open-guide-btn" class="btn">❓ 判讀教學</button>
         <button id="relock-btn" class="btn">🔒 鎖定</button>
       </div>

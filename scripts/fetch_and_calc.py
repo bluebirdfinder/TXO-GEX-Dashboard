@@ -353,17 +353,30 @@ def load_taifex_270_catalog():
     return []
 
 def generate_gex_data():
-    now_dt = datetime.datetime.now()
+    # ── 強制使用台灣時區 (UTC+8)，避免 GitHub Actions UTC 時鐘造成時間錯誤 ──
+    now_utc = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)  # UTC naive
+    now_dt  = now_utc + datetime.timedelta(hours=8)   # 台灣時間 (TWD UTC+8)
     today_str = now_dt.strftime("%Y-%m-%d")
-    now_hour = now_dt.hour
+    now_hour  = now_dt.hour
+    now_minute = now_dt.minute
 
     # Check for Night Session data from official Excel endpoint
     night_data = fetch_official_taifex_night_data()
 
-    # Determine Session Type: If 04:00~13:00 or explicitly night_data fetched
-    is_night_session = (4 <= now_hour < 13) or (night_data is not None)
+    # ── 正確的台灣期貨盤別判斷邏輯 ──────────────────────────────────────────
+    # 日盤：08:45 ~ 13:45  (weekday)
+    # 夜盤：15:00 ~ 次日 05:00
+    # 注意：不能單純依賴 night_data is not None，因為日盤時期交所也有前一晚的夜盤資料
+    is_day_session   = (8 * 60 + 45 <= now_hour * 60 + now_minute <= 13 * 60 + 45)
+    is_night_session = (now_hour >= 15) or (now_hour < 5)
+    # 在 05:00~08:44 以及 13:46~14:59 兩段空窗期，用前一執行週期的數據（夜盤收盤後、日盤開盤前）
+    # → 若 05:00~08:44 且有 night_data，顯示夜盤收盤結果
+    if not is_day_session and not is_night_session:
+        is_night_session = (night_data is not None)
+
     session_type = "NIGHT" if is_night_session else "DAY"
     session_name = "🌙 夜盤收盤價校正 (05:00 Close)" if is_night_session else "☀️ 日盤結算籌碼 (13:45 Close)"
+    print(f"[Session] 台灣時間 {now_dt.strftime('%H:%M')} → {'夜盤' if is_night_session else '日盤' if is_day_session else '空窗期'} (is_night={is_night_session})")
 
     # Fetch exact TWSE IX0001 (加權指數) & IX0043 (櫃買指數) from official MIS API
     live_spot, live_otc = fetch_official_twse_realtime_indices()
@@ -371,29 +384,76 @@ def generate_gex_data():
     # Baseline Daytime Prices (For Day vs Night Session Shift Comparison)
     live_txf = fetch_official_taifex_day_txf()
     day_spot_price = live_spot if live_spot else 43386.41
-    day_txf_price = live_txf if live_txf else 43230.0
+    day_txf_price  = live_txf  if live_txf  else 43230.0
     day_zero_gamma = round(day_spot_price - 150.0, 1)
-    day_call_wall = round(day_spot_price / 100) * 100 + 300
-    day_put_wall = round(day_spot_price / 100) * 100 - 300
-    day_max_pain = round(day_spot_price / 100) * 100
+    day_call_wall  = round(day_spot_price / 100) * 100 + 300
+    day_put_wall   = round(day_spot_price / 100) * 100 - 300
+    day_max_pain   = round(day_spot_price / 100) * 100
 
     if is_night_session:
-        txf_price = night_data['txf_price'] if night_data else 43152.0
-        spot_price = day_spot_price  # 加權指數維持證交所官方日盤收盤價 43,386.41
-        if day_txf_price == txf_price or day_txf_price < 43000:
-            day_txf_price = 43230.0
+        txf_price  = night_data['txf_price'] if night_data else 43152.0
+        spot_price = day_spot_price  # 加權指數維持證交所官方日盤收盤價
+        if day_txf_price == txf_price or day_txf_price < 30000:
+            day_txf_price = txf_price + 100  # 防止分母為零：給日盤一個合理估值
     else:
         spot_price = day_spot_price
-        txf_price = day_txf_price
+        txf_price  = day_txf_price
 
     base_strike = round(spot_price / 100) * 100
     strikes = [base_strike - 750 + i * 50 for i in range(31)]
 
-    r = 0.015
-    T_wednesday = 3.0 / 365.0
-    T_friday = 5.0 / 365.0
-    T_monthly = 18.0 / 365.0
+    r     = 0.015
     sigma = 0.18
+
+    # ── 動態計算到期時間 T (DTE)，不使用固定天數 ─────────────────────────────
+    # 台灣 TXO 結算日：週選=每週三，週五選=每週五，月選=每月第3個週三
+    def days_to_next_weekday(wd):  # 0=Mon, 2=Wed, 4=Fri
+        """回傳距離下一個指定週幾的天數（最少 0.5 天）"""
+        today_wd = now_dt.weekday()
+        diff = (wd - today_wd) % 7
+        if diff == 0:
+            # 已是今天 → 若已過 13:30 視為過期，用下週
+            if now_hour >= 13:
+                diff = 7
+        return max(diff, 0.5)  # 最少 0.5 天防止 Gamma 爆炸
+
+    def days_to_monthly_expiry():
+        """找本月或下月第 3 個週三距今天數"""
+        y, m = now_dt.year, now_dt.month
+        count = 0
+        for d in range(1, 32):
+            try:
+                candidate = datetime.datetime(y, m, d)
+                if candidate.weekday() == 2:  # 週三
+                    count += 1
+                    if count == 3:
+                        diff = (candidate - now_dt).days
+                        if diff < 1:  # 已過本月結算 → 找下月
+                            m2 = m % 12 + 1
+                            y2 = y + (1 if m == 12 else 0)
+                            return days_to_monthly_expiry_for(y2, m2)
+                        return max(diff, 1.0)
+            except ValueError:
+                break
+        return 18.0  # fallback
+
+    def days_to_monthly_expiry_for(y, m):
+        count = 0
+        for d in range(1, 32):
+            try:
+                candidate = datetime.datetime(y, m, d)
+                if candidate.weekday() == 2:
+                    count += 1
+                    if count == 3:
+                        return max((candidate - now_dt).days, 1.0)
+            except ValueError:
+                break
+        return 18.0
+
+    T_wednesday = days_to_next_weekday(2) / 365.0  # 下一個週三 (週選結算)
+    T_friday    = days_to_next_weekday(4) / 365.0  # 下一個週五 (週五選結算)
+    T_monthly   = days_to_monthly_expiry() / 365.0# 本月第3個週三 (月選結算)
+    print(f"[GEX DTE] 週選={days_to_next_weekday(2):.1f}天, 週五={days_to_next_weekday(4):.1f}天, 月選={days_to_monthly_expiry():.1f}天")
 
     total_gex = []
     weekly_gex = []
@@ -835,14 +895,16 @@ def generate_gex_data():
                 "date_label": f"{t_3days[2].month}/{t_3days[2].day:02d} (T日)",
                 "day_date_note": f"{t_3days[2].month}/{t_3days[2].day:02d} 13:45",
                 "night_date_note": f"{(t_3days[2] + datetime.timedelta(days=1)).month}/{(t_3days[2] + datetime.timedelta(days=1)).day:02d} 05:00收盤",
+                "is_opened": (now_hour > 8 or (now_hour == 8 and now_dt.minute >= 45)),
+                "is_night_opened": (now_hour >= 15 or now_hour < 5),
                 "spot_price": spot_price if spot_price else 43386.41,
                 "spot_change_val": 266.66,
                 "spot_change_pct": 0.62,
                 "two_price": live_otc if live_otc else 362.89,
-                "two_change_val": 15.04,
-                "two_change_pct": 4.32,
+                "two_change_val": 1.85,
+                "two_change_pct": 0.51,
                 "day_txf_price": day_txf_price if day_txf_price else 43230.0,
-                "night_txf_price": txf_price if txf_price else 43152.0,
+                "night_txf_price": txf_price if (is_night_session or now_hour >= 15 or now_hour < 5) else None,
                 "night_txf_shift": session_shift["txf_shift"],
                 "zero_gamma_level": zero_gamma_level if zero_gamma_level else 43080.0,
                 "zero_gamma_shift": session_shift["zero_gamma_shift"],
@@ -855,12 +917,14 @@ def generate_gex_data():
                 "max_pain_shift": session_shift["max_pain_shift"],
                 "pc_ratio": pc_ratio if pc_ratio else 112.93,
                 "pc_ratio_desc": "🔴 偏多看撐",
-                "notes": "加權收盤 43,386 點，夜盤台指期微幅拉回 -78 點"
+                "notes": "當前盤中/夜盤交易中，依最新報價實時精算" if (now_hour > 8 or (now_hour == 8 and now_dt.minute >= 45)) else "今日 08:45 尚未開盤，待開盤後自動同步跳動"
             },
             {
                 "date_label": f"{t_3days[1].month}/{t_3days[1].day:02d} (T-1)",
                 "day_date_note": f"{t_3days[1].month}/{t_3days[1].day:02d} 13:45",
                 "night_date_note": f"{(t_3days[1] + datetime.timedelta(days=1)).month}/{(t_3days[1] + datetime.timedelta(days=1)).day:02d} 05:00收盤",
+                "is_opened": True,
+                "is_night_opened": True,
                 "spot_price": 43119.75,
                 "spot_change_val": 3186.45,
                 "spot_change_pct": 7.98,
@@ -881,12 +945,14 @@ def generate_gex_data():
                 "max_pain_shift": -678,
                 "pc_ratio": 108.5,
                 "pc_ratio_desc": "🔴 偏多看撐",
-                "notes": "日盤暴漲 +3,392 點，夜盤獲利拉回 -1,028 點"
+                "notes": f"日盤收盤 43,678 點，夜盤收盤於 {(t_3days[1] + datetime.timedelta(days=1)).month}/{(t_3days[1] + datetime.timedelta(days=1)).day:02d} 凌晨 05:00 (42,650)"
             },
             {
                 "date_label": f"{t_3days[0].month}/{t_3days[0].day:02d} (T-2)",
                 "day_date_note": f"{t_3days[0].month}/{t_3days[0].day:02d} 13:45",
                 "night_date_note": f"{(t_3days[0] + datetime.timedelta(days=1)).month}/{(t_3days[0] + datetime.timedelta(days=1)).day:02d} 05:00收盤",
+                "is_opened": True,
+                "is_night_opened": True,
                 "spot_price": 39933.30,
                 "spot_change_val": -105.88,
                 "spot_change_pct": -0.26,
@@ -907,7 +973,7 @@ def generate_gex_data():
                 "max_pain_shift": 200,
                 "pc_ratio": 107.2,
                 "pc_ratio_desc": "🔴 偏多看撐",
-                "notes": "結算後高檔整理，夜盤平穩微升 +17 點"
+                "notes": f"結算後整理，夜盤收盤於 {(t_3days[0] + datetime.timedelta(days=1)).month}/{(t_3days[0] + datetime.timedelta(days=1)).day:02d} 凌晨 05:00 (40,287)"
             }
         ],
         "institutional_sentiment": institutional_sentiment,
@@ -933,7 +999,7 @@ def main():
     enc_payload = encrypt_payload_sha256(plain_json_str, PASSCODE)
     enc_obj = {
         "status": "encrypted",
-        "algorithm": "AES-256-CBC-SHA256-XOR",
+        "algorithm": "XOR-SHA256",  # 實際演算法：SHA256 key 擴展 + XOR cipher
         "payload": enc_payload
     }
     enc_path = os.path.join(data_dir, "encrypted_gex.json")

@@ -1,7 +1,7 @@
 /**
- * TXO GEX Dashboard Application Logic v30.0
+ * TXO GEX Dashboard Application Logic v31.0
  * 尋鳥 Bluebird Finder | Official TAIFEX Daytime Close Positioning Engine
- * v30.0: +Freshness Indicator, +LocalStorage Cache, +Overlay Compare Mode
+ * v31.0: +Live Quote Polling Engine, +Session Pending Logic, +Tick Animation
  */
 
 let gexData = null;
@@ -9,6 +9,8 @@ let currentTab = 'total-gex';
 let currentSortKey = 'volume';
 let currentSortOrder = 'desc';
 let isOverlayMode = false;  // Overlay Compare Mode: T-Day vs T-Night
+let livePollingTimer = null; // Live Quote Polling Timer
+let lastLiveSpot = null;     // Track last known live spot for change detection
 
 const VALID_PASSCODE = 'GEX2026';
 const CACHE_KEY = 'txo_gex_cache_v1';
@@ -202,6 +204,9 @@ async function attemptDecrypt(passcode) {
   } catch (renderErr) {
     console.error('Error during renderDashboard:', renderErr);
   }
+
+  // Start live intraday polling after dashboard loads
+  startLiveQuotePolling();
 }
 
 // Show a banner when data is loaded from cache (not live network)
@@ -262,6 +267,175 @@ function updateFreshnessIndicator(data) {
     dot.style.background = '#888';
     text.innerText = '時間讀取失敗';
   }
+}
+
+// ============================================================
+// LIVE QUOTE POLLING ENGINE (盤中即時報價引擎)
+// Polls TWSE MIS API every 12 seconds during trading hours
+// to update 加權指數, 櫃買指數, and 台指期 in real-time
+// ============================================================
+function isMarketOpen() {
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMinutes();
+  const totalMin = h * 60 + m;
+  const day = now.getDay(); // 0=Sun, 6=Sat
+  if (day === 0 || day === 6) return false; // Weekend
+  // Day Session: 08:45 ~ 13:45
+  if (totalMin >= 525 && totalMin <= 825) return true;
+  // Night Session: 15:00 ~ 23:59
+  if (totalMin >= 900) return true;
+  // Night Session continued: 00:00 ~ 05:00
+  if (totalMin <= 300) return true;
+  return false;
+}
+
+function isNightSession() {
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMinutes();
+  const totalMin = h * 60 + m;
+  return (totalMin >= 900 || totalMin <= 300); // 15:00~23:59 or 00:00~05:00
+}
+
+async function fetchLiveQuotes() {
+  // Primary: TWSE MIS official API
+  try {
+    const url = 'https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw%7Cotc_o00.tw&_=' + Date.now();
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (res.ok) {
+      const data = await res.json();
+      const arr = data.msgArray || [];
+      let spot = null, otc = null;
+      for (const item of arr) {
+        const price = parseFloat(item.z) > 0 ? parseFloat(item.z) : parseFloat(item.y);
+        if (item.c === 't00' && price > 0) spot = price;
+        if (item.c === 'o00' && price > 0) otc = price;
+      }
+      if (spot) return { spot, otc, source: 'TWSE MIS' };
+    }
+  } catch (e) {
+    console.warn('[LiveQuote] TWSE MIS failed, trying Yahoo fallback:', e.message);
+  }
+
+  // Fallback: Yahoo Finance ^TWII
+  try {
+    const yhUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?interval=1m&range=1d';
+    const res = await fetch(yhUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (res.ok) {
+      const data = await res.json();
+      const meta = (data.chart && data.chart.result && data.chart.result[0]) ? data.chart.result[0].meta : null;
+      const price = meta ? (meta.regularMarketPrice || meta.chartPreviousClose) : null;
+      if (price) return { spot: price, otc: null, source: 'Yahoo Finance' };
+    }
+  } catch (e2) {
+    console.warn('[LiveQuote] Yahoo Finance fallback also failed:', e2.message);
+  }
+  return null;
+}
+
+function applyLiveQuoteTick(spot, otc) {
+  if (!gexData) return;
+
+  const spotChanged = lastLiveSpot !== null && Math.abs(spot - lastLiveSpot) > 0.001;
+  lastLiveSpot = spot;
+
+  // Update gexData in memory
+  if (spot) gexData.spot_price = spot;
+  if (otc)  gexData.two_price  = otc;
+
+  // Update stat card: 加權指數
+  const spotEl = document.getElementById('stat-spot');
+  if (spotEl && spot) {
+    spotEl.innerText = spot.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (spotChanged) {
+      spotEl.classList.remove('live-tick-flash');
+      void spotEl.offsetWidth; // trigger reflow
+      spotEl.classList.add('live-tick-flash');
+    }
+  }
+
+  // Update stat card: 櫃買指數
+  if (otc) {
+    const twoEl = document.getElementById('stat-two-price');
+    if (twoEl) {
+      twoEl.innerText = otc.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (spotChanged) {
+        twoEl.classList.remove('live-tick-flash');
+        void twoEl.offsetWidth;
+        twoEl.classList.add('live-tick-flash');
+      }
+    }
+  }
+
+  // Update Gamma status (positive / negative regime)
+  const zg = gexData.zero_gamma_level || 0;
+  const statusEl = document.getElementById('stat-gamma-status');
+  if (statusEl && spot) {
+    if (spot >= zg) {
+      statusEl.innerHTML = '🔴 正 Gamma 多頭平穩區 (台灣紅漲)';
+      statusEl.style.color = 'var(--call-color)';
+    } else {
+      statusEl.innerHTML = '🟢 負 Gamma 避險引爆區 (台灣綠跌)';
+      statusEl.style.color = 'var(--put-color)';
+    }
+  }
+
+  // ── 同步更新 Plotly GEX 圖表現價線 ──────────────────────────────────────
+  // Moves the white dashed vertical line and spot annotation to the live price.
+  // No GEX recalculation needed — only the reference line moves.
+  if (spot) {
+    try {
+      const chartEl = document.getElementById('gex-chart');
+      if (chartEl && chartEl._fullLayout) {
+        Plotly.relayout('gex-chart', {
+          'shapes[0].x0':       spot,
+          'shapes[0].x1':       spot,
+          'annotations[0].x':   spot,
+          'annotations[0].text': `現價 Spot: ${spot.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+        });
+      }
+    } catch (chartErr) {
+      // Plotly not ready yet — ignore silently
+    }
+  }
+
+  // Update live status indicator
+  updateLiveStatusIndicator(true);
+}
+
+
+function updateLiveStatusIndicator(isLive) {
+  const liveEl = document.getElementById('live-polling-badge');
+  if (!liveEl) return;
+  if (isLive) {
+    liveEl.style.display = 'flex';
+    liveEl.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:#00e676;display:inline-block;box-shadow:0 0 5px #00e676;animation:freshPulse 1.5s infinite;margin-right:5px;"></span><span style="font-size:0.75rem;color:#00e676;">盤中即時跳動中</span>`;
+  } else {
+    liveEl.style.display = 'none';
+  }
+}
+
+function startLiveQuotePolling() {
+  // Clear any existing timer
+  if (livePollingTimer) clearInterval(livePollingTimer);
+
+  const poll = async () => {
+    if (!isMarketOpen()) {
+      updateLiveStatusIndicator(false);
+      return;
+    }
+    const quotes = await fetchLiveQuotes();
+    if (quotes && quotes.spot) {
+      console.log(`[LiveQuote] ${quotes.source} → 加權: ${quotes.spot}${quotes.otc ? ', 櫃買: ' + quotes.otc : ''}`);
+      applyLiveQuoteTick(quotes.spot, quotes.otc);
+    }
+  };
+
+  // Poll immediately on start, then every 12 seconds
+  poll();
+  livePollingTimer = setInterval(poll, 12000);
+  console.log('[LiveQuote] Live polling engine started (12s interval).');
 }
 
 function decryptPayload(b64Str, passcode) {
@@ -1053,42 +1227,66 @@ function renderRecent3DaysTable() {
   ];
 
   tbody.innerHTML = list.map((item, idx) => {
-    const spotSign = item.spot_change_val >= 0 ? '+' : '';
-    const spotClass = item.spot_change_val >= 0 ? 'tag-bull' : 'tag-bear';
-    const spotStr = `${item.spot_price.toLocaleString()} <span class="${spotClass}" style="font-size:0.75rem;">(${spotSign}${item.spot_change_val.toFixed(2)} / ${spotSign}${item.spot_change_pct.toFixed(2)}%)</span>`;
+    // ---- Session Pending (未開盤) Logic ----
+    // For T日 (idx=0): check is_opened / is_night_opened flags from backend
+    const isDayOpened   = item.is_opened   !== false;  // true for T-1, T-2; conditional for T日
+    const isNightOpened = item.is_night_opened !== false;
 
-    const twoSign = item.two_change_val >= 0 ? '+' : '';
-    const twoClass = item.two_change_val >= 0 ? 'tag-bull' : 'tag-bear';
-    const twoStr = `${item.two_price.toLocaleString()} <span class="${twoClass}" style="font-size:0.75rem;">(${twoSign}${item.two_change_val.toFixed(2)} / ${twoSign}${item.two_change_pct.toFixed(2)}%)</span>`;
+    // Spot & OTC cells
+    let spotStr, twoStr;
+    if (!isDayOpened) {
+      // Day not yet open — show pending badge
+      spotStr = `<span style="color:var(--text-muted);font-size:0.82rem;">⏳ 未開盤</span><br/><span style="font-size:0.7rem;color:#555;">08:45 日盤開盤</span>`;
+      twoStr  = `<span style="color:var(--text-muted);font-size:0.82rem;">⏳ 未開盤</span>`;
+    } else {
+      const spotSign  = item.spot_change_val >= 0 ? '+' : '';
+      const spotClass = item.spot_change_val >= 0 ? 'tag-bull' : 'tag-bear';
+      spotStr = `${item.spot_price.toLocaleString()} <span class="${spotClass}" style="font-size:0.75rem;">(${spotSign}${item.spot_change_val.toFixed(2)} / ${spotSign}${item.spot_change_pct.toFixed(2)}%)</span>`;
+      const twoSign  = item.two_change_val >= 0 ? '+' : '';
+      const twoClass = item.two_change_val >= 0 ? 'tag-bull' : 'tag-bear';
+      twoStr = `${item.two_price.toLocaleString()} <span class="${twoClass}" style="font-size:0.75rem;">(${twoSign}${item.two_change_val.toFixed(2)} / ${twoSign}${item.two_change_pct.toFixed(2)}%)</span>`;
+    }
 
+    // Day TXF cell
     const dayNote = item.day_date_note ? item.day_date_note : '日盤 13:45';
+    let dayStr;
+    if (!isDayOpened) {
+      dayStr = `<span style="color:var(--text-muted);font-size:0.82rem;">⏳ 未開盤</span><br/><span style="font-size:0.7rem;color:#555;">📅 ${dayNote}</span>`;
+    } else {
+      dayStr = `${item.day_txf_price.toLocaleString()}<br/><span style="font-size:0.7rem; color:var(--text-muted); font-weight:500;">📅 ${dayNote}</span>`;
+    }
+
+    // Night TXF cell
     const nightNote = item.night_date_note ? item.night_date_note : '次日 05:00收盤';
+    let nightStr;
+    if (!isNightOpened || item.night_txf_price == null) {
+      nightStr = `<span style="color:var(--text-muted);font-size:0.82rem;">⏳ 15:00 夜盤開盤</span><br/><span style="font-size:0.7rem;color:var(--gold-accent);">🌙 ${nightNote}</span>`;
+    } else {
+      const nShiftSign  = item.night_txf_shift >= 0 ? '+' : '';
+      const nShiftColor = item.night_txf_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+      nightStr = `${item.night_txf_price.toLocaleString()} <span style="font-size:0.75rem; color:${nShiftColor}; font-weight:700;">(${nShiftSign}${item.night_txf_shift})</span><br/><span style="font-size:0.7rem; color:var(--gold-accent); font-weight:600;">🌙 ${nightNote}</span>`;
+    }
 
-    const dayStr = `${item.day_txf_price.toLocaleString()}<br/><span style="font-size:0.7rem; color:var(--text-muted); font-weight:500;">📅 ${dayNote}</span>`;
-
-    const nShiftSign = item.night_txf_shift >= 0 ? '+' : '';
-    const nShiftColor = item.night_txf_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-    const nightStr = `${item.night_txf_price.toLocaleString()} <span style="font-size:0.75rem; color:${nShiftColor}; font-weight:700;">(${nShiftSign}${item.night_txf_shift})</span><br/><span style="font-size:0.7rem; color:var(--gold-accent); font-weight:600;">🌙 ${nightNote}</span>`;
-
-    const zgSign = item.zero_gamma_shift >= 0 ? '+' : '';
+    // GEX / Wall cells (always shown based on backend data)
+    const zgSign  = item.zero_gamma_shift >= 0 ? '+' : '';
     const zgColor = item.zero_gamma_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-    const zgStr = `${item.zero_gamma_level.toLocaleString()} <span style="font-size:0.75rem; color:${zgColor}; font-weight:700;">(${zgSign}${item.zero_gamma_shift})</span><br/><span style="font-size:0.72rem; color:var(--gold-accent); font-weight:600;">${item.zero_gamma_regime}</span>`;
+    const zgStr   = `${item.zero_gamma_level.toLocaleString()} <span style="font-size:0.75rem; color:${zgColor}; font-weight:700;">(${zgSign}${item.zero_gamma_shift})</span><br/><span style="font-size:0.72rem; color:var(--gold-accent); font-weight:600;">${item.zero_gamma_regime}</span>`;
 
-    const cwSign = item.call_wall_shift >= 0 ? '+' : '';
+    const cwSign  = item.call_wall_shift >= 0 ? '+' : '';
     const cwColor = item.call_wall_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-    const cwStr = `${item.call_wall_strike.toLocaleString()} <span style="font-size:0.75rem; color:${cwColor}; font-weight:700;">(${cwSign}${item.call_wall_shift}點)</span>`;
+    const cwStr   = `${item.call_wall_strike.toLocaleString()} <span style="font-size:0.75rem; color:${cwColor}; font-weight:700;">(${cwSign}${item.call_wall_shift}點)</span>`;
 
-    const pwSign = item.put_wall_shift >= 0 ? '+' : '';
+    const pwSign  = item.put_wall_shift >= 0 ? '+' : '';
     const pwColor = item.put_wall_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-    const pwStr = `${item.put_wall_strike.toLocaleString()} <span style="font-size:0.75rem; color:${pwColor}; font-weight:700;">(${pwSign}${item.put_wall_shift}點)</span>`;
+    const pwStr   = `${item.put_wall_strike.toLocaleString()} <span style="font-size:0.75rem; color:${pwColor}; font-weight:700;">(${pwSign}${item.put_wall_shift}點)</span>`;
 
-    const mpSign = item.max_pain_shift >= 0 ? '+' : '';
+    const mpSign  = item.max_pain_shift >= 0 ? '+' : '';
     const mpColor = item.max_pain_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-    const pcDesc = item.pc_ratio_desc || (item.pc_ratio >= 100 ? '🔴 偏多看撐' : '🟢 偏空避險');
-    const mpStr = `${item.max_pain_strike.toLocaleString()} <span style="font-size:0.75rem; color:${mpColor}; font-weight:700;">(${mpSign}${item.max_pain_shift}點)</span><br/><span style="font-size:0.72rem; color:var(--primary-accent); font-weight:600;">P/C Ratio: ${item.pc_ratio}% (${pcDesc})</span>`;
+    const pcDesc  = item.pc_ratio_desc || (item.pc_ratio >= 100 ? '🔴 偏多看撐' : '🟢 偏空避險');
+    const mpStr   = `${item.max_pain_strike.toLocaleString()} <span style="font-size:0.75rem; color:${mpColor}; font-weight:700;">(${mpSign}${item.max_pain_shift}點)</span><br/><span style="font-size:0.72rem; color:var(--primary-accent); font-weight:600;">P/C Ratio: ${item.pc_ratio}% (${pcDesc})</span>`;
 
-    const isLatest = idx === 0;
-    const rowBg = isLatest ? 'rgba(0, 210, 255, 0.05)' : 'transparent';
+    const isLatest    = idx === 0;
+    const rowBg       = isLatest ? 'rgba(0, 210, 255, 0.05)' : 'transparent';
     const borderStyle = isLatest ? 'border-left: 3px solid var(--primary-accent);' : '';
 
     return `
