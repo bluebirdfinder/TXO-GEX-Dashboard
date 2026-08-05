@@ -1,66 +1,133 @@
 /**
- * Cloudflare Worker Proxy for TAIEX Real-time Index & Futures Quotes
- * Uses open Yahoo Finance API (^TWII) to bypass TAIFEX WAF IP blocks.
+ * Secure Cloudflare Worker proxy for the TXO dashboard.
+ *
+ * Important security rule:
+ * - Never put Fubon API keys, tokens, or secrets in the browser bundle.
+ * - Keep them in Cloudflare Worker secrets / environment variables only.
  */
+
+const DEFAULT_ALLOWED_ORIGIN = 'https://bluebirdfinder.github.io';
+
+function makeCorsHeaders(request, env) {
+  const origin = request.headers.get('Origin') || '';
+  const allowedOrigin = env.ALLOWED_ORIGIN || DEFAULT_ALLOWED_ORIGIN;
+  const allowOrigin = origin && (origin === allowedOrigin || origin.startsWith('https://bluebirdfinder.github.io'))
+    ? origin
+    : allowedOrigin;
+
+  return {
+    'Access-Control-Allow-Origin': allowOrigin,
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400'
+  };
+}
+
+function buildAuthHeaders(env) {
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  };
+
+  if (env.FUBON_AUTH_HEADER) {
+    headers.Authorization = env.FUBON_AUTH_HEADER;
+  } else if (env.FUBON_API_TOKEN) {
+    headers.Authorization = `Bearer ${env.FUBON_API_TOKEN}`;
+  }
+
+  if (env.FUBON_API_KEY && env.FUBON_API_SECRET) {
+    headers['X-API-Key'] = env.FUBON_API_KEY;
+    headers['X-API-Secret'] = env.FUBON_API_SECRET;
+  }
+
+  return headers;
+}
+
+function pickNumber(value) {
+  if (value === null || value === undefined) return null;
+  const num = Number(value);
+  return Number.isFinite(num) ? num : null;
+}
+
+function normalizeQuotePayload(data) {
+  const payload = data?.data || data?.result || data?.payload || data || {};
+
+  const spot = pickNumber(payload.spot_price ?? payload.spot ?? payload.last ?? payload.price ?? payload.close ?? payload.latestPrice);
+  const txf = pickNumber(payload.txf_price ?? payload.txf ?? payload.futuresPrice ?? payload.futurePrice ?? payload.quote ?? spot);
+  const ts = payload.timestamp || payload.time || payload.updatedAt || new Date().toISOString();
+
+  return {
+    status: 'success',
+    symbol: payload.symbol || 'TXF1',
+    spot_price: spot,
+    txf_price: txf ?? spot,
+    timestamp: ts
+  };
+}
 
 export default {
   async fetch(request, env, ctx) {
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    };
+    const corsHeaders = makeCorsHeaders(request, env);
 
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // Yahoo Finance Open API for TAIEX (^TWII)
-    const targetUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/^TWII?interval=1m&range=1d';
+    const url = new URL(request.url);
+    if (url.pathname !== '/quote') {
+      return new Response(JSON.stringify({ status: 'ok', message: 'Use /quote to fetch a server-side live quote.' }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const baseUrl = env.FUBON_API_BASE_URL;
+    const quotePath = env.FUBON_QUOTE_PATH || '/quote';
+
+    if (!baseUrl) {
+      return new Response(JSON.stringify({
+        status: 'error',
+        message: 'Missing FUBON_API_BASE_URL in Cloudflare Worker secrets.'
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
     try {
-      const cache = caches.default;
-      let response = await cache.match(request);
+      const upstreamUrl = `${baseUrl.replace(/\/$/, '')}${quotePath}`;
+      const authHeaders = buildAuthHeaders(env);
+      const upstreamResponse = await fetch(upstreamUrl, {
+        method: 'GET',
+        headers: authHeaders
+      });
 
-      if (!response) {
-        const fetchResponse = await fetch(targetUrl, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'application/json'
-          }
+      if (!upstreamResponse.ok) {
+        return new Response(JSON.stringify({
+          status: 'error',
+          message: 'Upstream quote provider returned an error.'
+        }), {
+          status: upstreamResponse.status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
-
-        const data = await fetchResponse.json();
-        
-        let price = null;
-        if (data.chart && data.chart.result && data.chart.result[0]) {
-          const meta = data.chart.result[0].meta;
-          price = meta.regularMarketPrice || meta.chartPreviousClose;
-        }
-
-        const payload = JSON.stringify({
-          status: 'success',
-          symbol: '^TWII',
-          spot_price: price,
-          timestamp: new Date().toISOString(),
-          raw: data
-        }, null, 2);
-
-        response = new Response(payload, {
-          status: 200,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-            'Cache-Control': 'public, max-age=5'
-          }
-        });
-
-        ctx.waitUntil(cache.put(request, response.clone()));
       }
 
-      return response;
+      const data = await upstreamResponse.json();
+      const payload = normalizeQuotePayload(data);
+
+      return new Response(JSON.stringify(payload), {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=5'
+        }
+      });
     } catch (err) {
-      return new Response(JSON.stringify({ status: 'error', message: err.message }), {
+      return new Response(JSON.stringify({
+        status: 'error',
+        message: 'Unable to retrieve live quote from the secure proxy.'
+      }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });

@@ -226,15 +226,15 @@
       </div>
       <div class="nav-controls">
         <button id="mode-badge" class="btn" style="border-color: var(--gold-accent); color: var(--gold-accent);">
-          🏛️ 官方日盤結算定案版
+          🏛️ 日盤 / 夜盤盤後快照版
         </button>
         <!-- Data Freshness Indicator LED -->
         <div id="freshness-indicator" title="資料更新時效" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid var(--panel-border);background:rgba(255,255,255,0.04);cursor:default;">
           <span id="freshness-dot" style="width:10px;height:10px;border-radius:50%;background:#00e676;display:inline-block;box-shadow:0 0 6px #00e676;animation:freshPulse 2s infinite;"></span>
           <span id="freshness-text" style="font-size:0.78rem;color:var(--text-muted);">資料更新中...</span>
         </div>
-        <!-- Live Polling Badge (shown during trading hours) -->
-        <div id="live-polling-badge" title="盤中即時報價跳動中" style="display:none;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1px solid rgba(0,230,118,0.35);background:rgba(0,230,118,0.06);cursor:default;">
+        <!-- Compliance-safe note: public page only shows post-close snapshot data -->
+        <div id="live-polling-badge" title="公開頁面僅提供盤後快照，不提供盤中即時行情" style="display:none;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1px solid rgba(0,230,118,0.35);background:rgba(0,230,118,0.06);cursor:default;">
           <!-- Populated by JavaScript -->
         </div>
         <button id="open-guide-btn" class="btn">❓ 判讀教學</button>
@@ -355,7 +355,7 @@
         <h3 style="font-size: 1.05rem; margin: 0; color: var(--primary-accent); display: flex; align-items: center; gap: 8px;">
           <span>📊 近三日市場籌碼與 Gamma 關鍵位對照表</span>
         </h3>
-        <span style="font-size: 0.78rem; color: var(--text-muted);">近 3 個交易日現貨、期貨、Zero Gamma、Call/Put Wall 及 Max Pain 多空動態對照</span>
+        <span style="font-size: 0.78rem; color: var(--text-muted);">近 3 個交易日盤後快照：現貨、期貨、Zero Gamma、Call/Put Wall 及 Max Pain 多空動態對照</span>
       </div>
       <div style="overflow-x: auto;">
         <table class="sortable-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 980px;">
@@ -428,7 +428,7 @@
 
       <!-- Overlay mode legend -->
       <div id="overlay-legend" style="display:none;margin-bottom:8px;padding:8px 14px;background:rgba(0,210,255,0.06);border:1px solid rgba(0,210,255,0.2);border-radius:8px;font-size:0.82rem;color:var(--text-muted);">
-        🔀 <strong style="color:var(--primary-accent);">疊加對比模式</strong>：半透明 = T日盤，實線 = T夜盤 (Live)。點擊「疊加對比」再次關閉。
+        🔀 <strong style="color:var(--primary-accent);">疊加對比模式</strong>：半透明 = T日盤，實線 = T夜盤盤後快照。點擊「疊加對比」再次關閉。
       </div>
 
       <!-- Plotly Container -->
