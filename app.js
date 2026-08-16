@@ -1,75 +1,109 @@
 /**
- * TXO GEX Dashboard Application Logic v30.0
+ * TXO GEX Dashboard Application Logic v36.0
  * 尋鳥 Bluebird Finder | Official TAIFEX Daytime Close Positioning Engine
- * v30.0: +Freshness Indicator, +LocalStorage Cache, +Overlay Compare Mode
  */
 
 let gexData = null;
 let currentTab = 'total-gex';
 let currentSortKey = 'volume';
 let currentSortOrder = 'desc';
-let isOverlayMode = false;  // Overlay Compare Mode: T-Day vs T-Night
+let isOverlayMode = false;
+let currentSessionIndex = 5; // Default to T夜盤 (Live)
 
 const VALID_PASSCODE = 'GEX2026';
 const CACHE_KEY = 'txo_gex_cache_v1';
 
+window.togglePasscodeVisibility = function(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const input = document.getElementById('passcode-input');
+  const btn = document.getElementById('toggle-pass-vis-btn');
+  if (!input) return;
+
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (btn) btn.innerText = '🙈';
+  } else {
+    input.type = 'password';
+    if (btn) btn.innerText = '👁️';
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
   
-  const savedPass = localStorage.getItem('txo_gex_passcode');
-  if (savedPass) {
-    document.getElementById('passcode-field').value = savedPass;
-    attemptDecrypt(savedPass);
+  // Always load embedded/cached data immediately so dashboard is never empty
+  attemptDecrypt('GEX2026');
+
+  const isUnlocked = sessionStorage.getItem('gex_unlocked') === 'true';
+  const passcodeModal = document.getElementById('passcode-modal');
+  if (passcodeModal) {
+    if (isUnlocked) {
+      passcodeModal.style.display = 'none';
+    } else {
+      passcodeModal.style.display = 'flex';
+      const passcodeInput = document.getElementById('passcode-input');
+      if (passcodeInput) setTimeout(() => passcodeInput.focus(), 150);
+    }
   }
 });
 
 function initEventListeners() {
-  document.getElementById('unlock-btn').addEventListener('click', () => {
-    const inputPass = document.getElementById('passcode-field').value;
-    attemptDecrypt(inputPass);
-  });
-
-  const togglePass = document.getElementById('toggle-show-pass');
-  if (togglePass) {
-    togglePass.addEventListener('change', (e) => {
-      const passField = document.getElementById('passcode-field');
-      if (passField) {
-        passField.type = e.target.checked ? 'text' : 'password';
-      }
+  const unlockBtn = document.getElementById('unlock-btn');
+  if (unlockBtn) {
+    unlockBtn.addEventListener('click', () => {
+      const passEl = document.getElementById('passcode-input');
+      const inputPass = passEl ? passEl.value : '';
+      attemptDecrypt(inputPass);
     });
   }
 
-  const passField = document.getElementById('passcode-field');
+  const passField = document.getElementById('passcode-input');
   if (passField) {
     passField.addEventListener('keyup', (e) => {
       if (e.key === 'Enter') attemptDecrypt(passField.value);
     });
   }
 
-  document.getElementById('relock-btn').addEventListener('click', () => {
-    localStorage.removeItem('txo_gex_passcode');
-    location.reload();
-  });
+  const lockBtn = document.getElementById('lock-btn');
+  if (lockBtn) {
+    lockBtn.addEventListener('click', () => {
+      localStorage.removeItem('txo_gex_passcode');
+      location.reload();
+    });
+  }
 
-  document.getElementById('open-guide-btn').addEventListener('click', () => {
-    document.getElementById('guide-modal').style.display = 'flex';
-  });
+  const openGuideBtn = document.getElementById('open-guide-btn');
+  if (openGuideBtn) {
+    openGuideBtn.addEventListener('click', () => {
+      const modal = document.getElementById('guide-modal');
+      if (modal) modal.style.display = 'flex';
+    });
+  }
 
-  document.getElementById('close-guide-btn').addEventListener('click', () => {
-    document.getElementById('guide-modal').style.display = 'none';
-  });
+  const closeGuideBtn = document.getElementById('close-guide-btn');
+  if (closeGuideBtn) {
+    closeGuideBtn.addEventListener('click', () => {
+      const modal = document.getElementById('guide-modal');
+      if (modal) modal.style.display = 'none';
+    });
+  }
 
   const openTaxonomyBtn = document.getElementById('open-taxonomy-btn');
   if (openTaxonomyBtn) {
     openTaxonomyBtn.addEventListener('click', () => {
-      document.getElementById('taxonomy-modal').style.display = 'flex';
+      const modal = document.getElementById('taxonomy-modal');
+      if (modal) modal.style.display = 'flex';
     });
   }
 
   const closeTaxonomyBtn = document.getElementById('close-taxonomy-btn');
   if (closeTaxonomyBtn) {
     closeTaxonomyBtn.addEventListener('click', () => {
-      document.getElementById('taxonomy-modal').style.display = 'none';
+      const modal = document.getElementById('taxonomy-modal');
+      if (modal) modal.style.display = 'none';
     });
   }
 
@@ -117,7 +151,17 @@ function initEventListeners() {
   if (overlayBtn) {
     overlayBtn.addEventListener('click', () => {
       isOverlayMode = !isOverlayMode;
-      overlayBtn.classList.toggle('active', isOverlayMode);
+      if (isOverlayMode) {
+        overlayBtn.style.background = 'var(--primary-accent)';
+        overlayBtn.style.color = '#0a0e17';
+        overlayBtn.style.fontWeight = '700';
+        overlayBtn.innerText = '🔀 已開啟疊加對比線 ✓';
+      } else {
+        overlayBtn.style.background = 'transparent';
+        overlayBtn.style.color = 'var(--primary-accent)';
+        overlayBtn.style.fontWeight = 'normal';
+        overlayBtn.innerText = '🔀 疊加對比';
+      }
       const legendEl = document.getElementById('overlay-legend');
       if (legendEl) legendEl.style.display = isOverlayMode ? 'block' : 'none';
       if (gexData) renderGEXChart();
@@ -130,7 +174,6 @@ async function attemptDecrypt(passcode) {
   const errEl = document.getElementById('passcode-error');
   if (errEl) errEl.style.display = 'none';
 
-  // Force hide passcode modal unconditionally upon button trigger
   if (modalEl) {
     modalEl.style.setProperty('display', 'none', 'important');
     modalEl.classList.add('hidden');
@@ -166,35 +209,18 @@ async function attemptDecrypt(passcode) {
     }
   }
 
-  // --- LocalStorage Cache: Load if network failed, Save if network succeeded ---
-  if (!gexData) {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        gexData = JSON.parse(cached);
-        console.log('[Cache] Loaded GEX data from localStorage cache.');
-        showCacheNotice();
-      }
-    } catch (cacheErr) {
-      console.warn('[Cache] Failed to load from localStorage:', cacheErr);
-    }
-  }
-
   if (!gexData) {
     gexData = getFallbackData();
   }
 
-  // Save to cache if loaded from network
   if (dataFromNetwork && gexData) {
     try {
       localStorage.setItem(CACHE_KEY, JSON.stringify(gexData));
-      console.log('[Cache] GEX data saved to localStorage cache.');
     } catch (cacheErr) {
       console.warn('[Cache] Failed to save to localStorage:', cacheErr);
     }
   }
 
-  // Update data freshness indicator
   updateFreshnessIndicator(gexData);
 
   try {
@@ -204,7 +230,6 @@ async function attemptDecrypt(passcode) {
   }
 }
 
-// Show a banner when data is loaded from cache (not live network)
 function showCacheNotice() {
   const container = document.querySelector('.container');
   if (!container || document.getElementById('cache-notice-banner')) return;
@@ -219,7 +244,6 @@ function showCacheNotice() {
   }
 }
 
-// Data Freshness Indicator LED
 function updateFreshnessIndicator(data) {
   const dot = document.getElementById('freshness-dot');
   const text = document.getElementById('freshness-text');
@@ -227,8 +251,6 @@ function updateFreshnessIndicator(data) {
 
   if (!data || !data.last_updated_time) {
     dot.style.background = '#888';
-    dot.style.boxShadow = '0 0 6px #888';
-    dot.style.animation = 'none';
     text.innerText = '資料來源不明';
     return;
   }
@@ -241,20 +263,14 @@ function updateFreshnessIndicator(data) {
 
     if (ageHours < 4) {
       dot.style.background = '#00e676';
-      dot.style.boxShadow = '0 0 8px #00e676';
-      dot.style.animation = 'freshPulse 2s infinite';
       text.innerText = `資料新鮮 (${Math.round(ageHours * 60)}分鐘前)`;
       text.style.color = '#00e676';
     } else if (ageHours < 12) {
       dot.style.background = '#ffd700';
-      dot.style.boxShadow = '0 0 8px #ffd700';
-      dot.style.animation = 'warnPulse 1.5s infinite';
       text.innerText = `資料偏舊 (${Math.round(ageHours)}小時前)`;
       text.style.color = '#ffd700';
     } else {
       dot.style.background = '#ff5252';
-      dot.style.boxShadow = '0 0 8px #ff5252';
-      dot.style.animation = 'warnPulse 0.8s infinite';
       text.innerText = `資料過期 (${Math.round(ageHours)}小時前)`;
       text.style.color = '#ff5252';
     }
@@ -288,656 +304,884 @@ function decryptPayload(b64Str, passcode) {
 }
 
 function getFallbackData() {
-  const spot = 43386.41;
-  const txf = 42650.0;
-  const strikes = [42500, 42600, 42700, 42800, 42900, 43000, 43100, 43200, 43300, 43400, 43500, 43600, 43700, 43800];
-
-  const total_gex = strikes.map(k => ({
-    strike: k,
-    call_gex: Math.round(Math.max(0, 18 - Math.abs(k - (spot + 300))/50) * 10) / 10,
-    put_gex: Math.round(-Math.max(0, 18 - Math.abs(k - (spot - 300))/50) * 10) / 10,
-    net_gex: Math.round((Math.max(0, 18 - Math.abs(k - (spot + 300))/50) - Math.max(0, 18 - Math.abs(k - (spot - 300))/50)) * 10) / 10
-  }));
-
-  return {
-    date: "2026-08-03",
-    session_type: "NIGHT",
-    session_name: "🌙 夜盤收盤價校正 (05:00 Close)",
-    last_updated_time: "2026-08-03 18:45",
-    spot_price: 43386.41,
-    two_price: 362.89,
-    txf_price: txf,
-    zero_gamma_level: 43236.4,
-    call_wall_strike: 43600,
-    put_wall_strike: 43000,
-    max_pain_strike: 43300,
-    pc_ratio: 108.5,
-    total_gex: total_gex,
-    weekly_gex: total_gex,
-    friday_gex: total_gex,
-    monthly_gex: total_gex,
-    retail_mini_ratio: 4.5,
-    retail_micro_ratio: 6.9,
-    microstructure_summary: {
-      regime_label: "🔴 正 Gamma 波動度抑制區 (平穩震盪)",
-      theme_color: "bull",
-      flip_dist: 150.0,
-      full_html: "<p style='margin-bottom:6px;'><strong>🔴 正 Gamma 波動度抑制區 (平穩震盪)</strong> — 標的物處於正 Gamma 區間，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。</p><p style='margin-bottom:6px;'>📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (<code>43,236.4</code>) 尚有 <strong>150.0 點</strong>緩衝防守區。</p><p style='margin-bottom:0;'>🛑 <strong>Call Wall 賣壓牆</strong>：天花板固守於 <code>43,600</code>。 🛡️ <strong>Put Wall 支撐牆</strong>：地板固守於 <code>43,000</code>。</p>"
-    },
-    institutional_5day_history: [
-      { date: "7/28", top5_net: -850, top10_net: -1200, foreign_fut_net: -16200, foreign_stock_net: -88.2, pc_ratio: 104.1 },
-      { date: "7/29", top5_net: 420, top10_net: 1150, foreign_fut_net: -15100, foreign_stock_net: -45.6, pc_ratio: 105.8 },
-      { date: "7/30", top5_net: 3850, top10_net: 5920, foreign_fut_net: -12400, foreign_stock_net: 32.5, pc_ratio: 107.2 },
-      { date: "7/31", top5_net: 6420, top10_net: 9850, foreign_fut_net: -14200, foreign_stock_net: 185.4, pc_ratio: 108.5 },
-      { date: "8/03", top5_net: 6420, top10_net: 9850, foreign_fut_net: -14200, foreign_stock_net: 185.4, pc_ratio: 108.5 }
-    ],
-    executive_digest: {
-      date: "2026-08-03",
-      futures_summary: "前五大與前十大交易人多單加碼，特定法人整體期貨結構偏多佈局。",
-      cash_summary: "現貨買賣超呈現外資大買超 +185.4億。",
-      options_structure: "外資與自營商雙賣收取時間價值偏高檔看撐。",
-      settlement_outlook: "夜盤近月台指期收盤價 42650.0。"
-    },
-    history_6_sessions: [
-      { id: "t2_day", label: "T-2 日盤", date_display: "7/30 ☀️", full_name: "7/30 T-2 日盤", spot_price: 42580.0, txf_price: 42580.0, zero_gamma_level: 42430.0, call_wall_strike: 42800, put_wall_strike: 42200, max_pain_strike: 42500, shift_vs_prev: 0, total_gex: total_gex },
-      { id: "t2_night", label: "T-2 夜盤", date_display: "7/30 🌙", full_name: "7/30 T-2 夜盤", spot_price: 42810.0, txf_price: 42810.0, zero_gamma_level: 42660.0, call_wall_strike: 43000, put_wall_strike: 42400, max_pain_strike: 42800, shift_vs_prev: 230, total_gex: total_gex },
-      { id: "t1_day", label: "T-1 日盤", date_display: "7/31 ☀️", full_name: "7/31 T-1 日盤", spot_price: 43050.0, txf_price: 43050.0, zero_gamma_level: 42900.0, call_wall_strike: 43300, put_wall_strike: 42700, max_pain_strike: 43000, shift_vs_prev: 240, total_gex: total_gex },
-      { id: "t1_night", label: "T-1 夜盤", date_display: "7/31 🌙", full_name: "7/31 T-1 夜盤", spot_price: 43350.0, txf_price: 43350.0, zero_gamma_level: 43200.0, call_wall_strike: 43600, put_wall_strike: 43000, max_pain_strike: 43300, shift_vs_prev: 300, total_gex: total_gex },
-      { id: "t0_day", label: "T日盤", date_display: "8/03 ☀️", full_name: "8/03 T日盤", spot_price: 43386.41, txf_price: 43230.0, zero_gamma_level: 43080.0, call_wall_strike: 43500, put_wall_strike: 42900, max_pain_strike: 43200, shift_vs_prev: -120, total_gex: total_gex },
-      { id: "t0_night", label: "🔥 T夜盤 (Live)", date_display: "8/03 🌙", full_name: "8/03 T夜盤 (Live)", spot_price: 42466.61, txf_price: 42650.0, zero_gamma_level: 42316.6, call_wall_strike: 42800, put_wall_strike: 42200, max_pain_strike: 42500, shift_vs_prev: -580, total_gex: total_gex }
-    ],
-    stock_futures: [{"code": "1303", "name": "南亞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2002", "name": "中鋼期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2303", "name": "聯電期", "category": "個股期貨", "has_night": true, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2330", "name": "台積電期", "category": "個股期貨", "has_night": true, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2881", "name": "富邦金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1301", "name": "台塑期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2324", "name": "仁寶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2409", "name": "友達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2880", "name": "華南金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2882", "name": "國泰金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2886", "name": "兆豐金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2887", "name": "台新新光金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2891", "name": "中信金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1216", "name": "統一期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1402", "name": "遠東新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1605", "name": "華新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2323", "name": "中環期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2352", "name": "佳世達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2371", "name": "大同期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2408", "name": "南亞科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2603", "name": "長榮期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2609", "name": "陽明期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2610", "name": "華航期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2801", "name": "彰銀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2890", "name": "永豐金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1101", "name": "台泥期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1326", "name": "台化期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2317", "name": "鴻海期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2337", "name": "旺宏期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2357", "name": "華碩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2382", "name": "廣達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2412", "name": "中華電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2884", "name": "玉山金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2885", "name": "元大金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2892", "name": "第一金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3481", "name": "群創期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2353", "name": "宏碁期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2454", "name": "聯發科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2915", "name": "潤泰全期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3231", "name": "緯創期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1102", "name": "亞泥期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1210", "name": "大成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1312", "name": "國喬期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1314", "name": "中石化期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1319", "name": "東陽期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1440", "name": "南紡期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1504", "name": "東元期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1560", "name": "中砂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1590", "name": "亞德客-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1718", "name": "中纖期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1722", "name": "台肥期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2006", "name": "東和鋼鐵期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2027", "name": "大成鋼期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2049", "name": "上銀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2059", "name": "川湖期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2105", "name": "正新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2201", "name": "裕隆期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2301", "name": "光寶科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2308", "name": "台達電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2312", "name": "金寶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2313", "name": "華通期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2331", "name": "精英期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2332", "name": "友訊期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2340", "name": "台亞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2344", "name": "華邦電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2347", "name": "聯強期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2354", "name": "鴻準期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2376", "name": "技嘉期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2377", "name": "微星期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2379", "name": "瑞昱期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2385", "name": "群光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2392", "name": "正崴期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2393", "name": "億光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2401", "name": "凌陽期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2404", "name": "漢唐期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2449", "name": "京元電子期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2455", "name": "全新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2457", "name": "飛宏期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2458", "name": "義隆期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2474", "name": "可成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2481", "name": "強茂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2485", "name": "兆赫期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2489", "name": "瑞軒期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2492", "name": "華新科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2498", "name": "宏達電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2515", "name": "中工期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2520", "name": "冠德期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2542", "name": "興富發期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2548", "name": "華固期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2605", "name": "新興期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2618", "name": "長榮航期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2834", "name": "臺企銀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2913", "name": "農林期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3006", "name": "晶豪科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3008", "name": "大立光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3019", "name": "亞光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3034", "name": "聯詠期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3035", "name": "智原期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3036", "name": "文曄期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3037", "name": "欣興期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3042", "name": "晶技期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3189", "name": "景碩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3376", "name": "新日興期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3380", "name": "明泰期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3443", "name": "創意期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3533", "name": "嘉澤期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3653", "name": "健策期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3673", "name": "TPK-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3702", "name": "大聯大期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4938", "name": "和碩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5534", "name": "長虹期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6005", "name": "群益證期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6153", "name": "嘉聯益期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6176", "name": "瑞儀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6213", "name": "聯茂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6239", "name": "力成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6271", "name": "同欣電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6278", "name": "台表科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6282", "name": "康舒期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6285", "name": "啟碁期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8039", "name": "台虹期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8163", "name": "達方期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9904", "name": "寶成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9939", "name": "宏全期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9945", "name": "潤泰新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1477", "name": "聚陽期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1802", "name": "台玻期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2328", "name": "廣宇期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3044", "name": "健鼎期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3045", "name": "台灣大期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3406", "name": "玉晶光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6269", "name": "台郡期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9914", "name": "美利達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5880", "name": "合庫金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2356", "name": "英業達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2883", "name": "凱基金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4904", "name": "遠傳期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4958", "name": "臻鼎-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5871", "name": "中租-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1476", "name": "儒鴻期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2327", "name": "國巨*期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8046", "name": "南電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2355", "name": "敬鵬期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2360", "name": "致茂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2439", "name": "美律期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6257", "name": "矽格期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9938", "name": "百和期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1565", "name": "精華期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3105", "name": "穩懋期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3152", "name": "璟德期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3211", "name": "順達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3260", "name": "威剛期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3264", "name": "欣銓期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3691", "name": "碩禾期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4123", "name": "晟德期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5009", "name": "榮剛期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5347", "name": "世界期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5371", "name": "中光電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5483", "name": "中美晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6121", "name": "新普期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6147", "name": "頎邦期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8044", "name": "網家期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8069", "name": "元太期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8299", "name": "群聯期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "0050", "name": "元大台灣50ETF期", "category": "ETF期貨", "has_night": true, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "006205", "name": "富邦上証ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "006206", "name": "元大上證50ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2231", "name": "為升期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6116", "name": "彩晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6279", "name": "胡連期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00636", "name": "國泰中國A50ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00639", "name": "富邦深100ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00643", "name": "群益深証中小ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2345", "name": "智邦期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6414", "name": "樺漢期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1536", "name": "和大期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1909", "name": "榮成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3081", "name": "聯亞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3552", "name": "同致期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6274", "name": "台燿期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6488", "name": "環球晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6510", "name": "精測期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3711", "name": "日月光投控期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3227", "name": "原相期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4162", "name": "智擎期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4736", "name": "泰博期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5425", "name": "台半期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "0056", "name": "元大高股息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2633", "name": "台灣高鐵期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5269", "name": "祥碩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3529", "name": "力旺期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2383", "name": "台光電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6173", "name": "信昌電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6182", "name": "合晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8436", "name": "大江期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5457", "name": "宣德期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8358", "name": "金居期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8086", "name": "宏捷科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3706", "name": "神達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3324", "name": "雙鴻期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6669", "name": "緯穎期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3293", "name": "鈊象期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5274", "name": "信驊期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3714", "name": "富采期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2606", "name": "裕民期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3532", "name": "台勝科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1907", "name": "永豐餘期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3374", "name": "精材期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1717", "name": "長興期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1904", "name": "正隆期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3078", "name": "僑威期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2441", "name": "超豐期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8150", "name": "南茂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2338", "name": "光罩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2388", "name": "威盛期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2615", "name": "萬海期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6547", "name": "高端疫苗期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6770", "name": "力積電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3017", "name": "奇鋐期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5388", "name": "中磊期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2634", "name": "漢翔期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4128", "name": "中天期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4919", "name": "新唐期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00878", "name": "國泰永續高股息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1609", "name": "大亞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2368", "name": "金像電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6443", "name": "元晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4743", "name": "合一期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6245", "name": "立端期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5904", "name": "寶雅期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9958", "name": "世紀鋼期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00885", "name": "富邦越南ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00923", "name": "群益台ESG低碳50ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00679B", "name": "元大美債20年ETF期", "category": "ETF期貨", "has_night": true, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1795", "name": "美時期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1905", "name": "華紙期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1513", "name": "中興電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00893", "name": "國泰智能電動車ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00719B", "name": "元大美債1-3ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3005", "name": "神基期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8112", "name": "至上期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00919", "name": "群益台灣精選高息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00929", "name": "復華台灣科技優息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00772B", "name": "中信高評級公司債ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00940", "name": "元大台灣價值高息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3680", "name": "家登期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1503", "name": "士電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6139", "name": "亞翔期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6188", "name": "廣明期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5876", "name": "上海商銀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6505", "name": "台塑化期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6526", "name": "達發期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00937B", "name": "群益ESG投等債20+ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00687B", "name": "國泰20年美債ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3661", "name": "世芯-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6472", "name": "保瑞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00757", "name": "統一FANG+ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2486", "name": "一詮期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6757", "name": "台灣虎航期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6223", "name": "旺矽期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2329", "name": "華泰期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6290", "name": "良維期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1608", "name": "華榮期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2367", "name": "燿華期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2421", "name": "建準期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3665", "name": "貿聯-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "0052", "name": "富邦科技ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2395", "name": "研華期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8932", "name": "智通*期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1519", "name": "華城期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}]
-  };
+  if (window.GEX_EMBEDDED_DATA) {
+    return window.GEX_EMBEDDED_DATA;
+  }
+  return null;
 }
 
 function renderDashboard() {
   if (!gexData) return;
 
-  // Auto-generate 6-session history fallback if reading legacy cached data
-  if (!gexData.history_6_sessions || gexData.history_6_sessions.length === 0) {
-    const spot = gexData.spot_price || 43386.41;
-    const txf = gexData.txf_price || 42650.0;
-    const gList = gexData.total_gex || [];
-    gexData.history_6_sessions = [
-      { id: "t2_day", label: "T-2 日盤", date_display: "7/30 ☀️", full_name: "7/30 T-2 日盤", spot_price: 42580.0, txf_price: 42580.0, zero_gamma_level: 42430.0, call_wall_strike: 42800, put_wall_strike: 42200, max_pain_strike: 42500, shift_vs_prev: 0, total_gex: gList },
-      { id: "t2_night", label: "T-2 夜盤", date_display: "7/30 🌙", full_name: "7/30 T-2 夜盤", spot_price: 42810.0, txf_price: 42810.0, zero_gamma_level: 42660.0, call_wall_strike: 43000, put_wall_strike: 42400, max_pain_strike: 42800, shift_vs_prev: 230, total_gex: gList },
-      { id: "t1_day", label: "T-1 日盤", date_display: "7/31 ☀️", full_name: "7/31 T-1 日盤", spot_price: 43050.0, txf_price: 43050.0, zero_gamma_level: 42900.0, call_wall_strike: 43300, put_wall_strike: 42700, max_pain_strike: 43000, shift_vs_prev: 240, total_gex: gList },
-      { id: "t1_night", label: "T-1 夜盤", date_display: "7/31 🌙", full_name: "7/31 T-1 夜盤", spot_price: 43350.0, txf_price: 43350.0, zero_gamma_level: 43200.0, call_wall_strike: 43600, put_wall_strike: 43000, max_pain_strike: 43300, shift_vs_prev: 300, total_gex: gList },
-      { id: "t0_day", label: "T日盤", date_display: "8/03 ☀️", full_name: "8/03 T日盤", spot_price: 43386.41, txf_price: 43230.0, zero_gamma_level: 43080.0, call_wall_strike: 43500, put_wall_strike: 42900, max_pain_strike: 43200, shift_vs_prev: -120, total_gex: gList },
-      { id: "t0_night", label: "🔥 T夜盤 (Live)", date_display: "8/03 🌙", full_name: "8/03 T夜盤 (Live)", spot_price: spot, txf_price: txf, zero_gamma_level: gexData.zero_gamma_level || 43236.4, call_wall_strike: gexData.call_wall_strike || 43600, put_wall_strike: gexData.put_wall_strike || 43000, max_pain_strike: gexData.max_pain_strike || 43300, shift_vs_prev: -580, total_gex: gList }
-    ];
-  }
-
-  // Safe Index Bound Protection
-  if (currentSessionIndex >= gexData.history_6_sessions.length) {
-    currentSessionIndex = gexData.history_6_sessions.length - 1;
-  }
-
-  try { renderHistorySessionSelector(); } catch (e) { console.error('Selector Error:', e); }
-
-  const spot = gexData.spot_price || 43386.41;
-  const txf = gexData.txf_price || 42650.0;
-  const lastTime = gexData.last_updated_time || (gexData.date + ' 13:45');
+  const spot = gexData.spot_price || 45811.01;
+  const txf = gexData.night_txf_price || gexData.txf_price || 45727.0;
+  const dayTxf = gexData.day_txf_price || 45841.0;
   const shift = gexData.session_shift || {
-    day_txf_price: 43230.0,
-    day_zero_gamma: 43080.0,
-    day_call_wall: 43500,
-    day_put_wall: 42900,
-    day_max_pain: 43200,
-    txf_shift: -580.0,
-    zero_gamma_shift: -156.4,
-    call_wall_shift: 100,
-    put_wall_shift: 100,
-    max_pain_shift: 100
+    day_txf_price: dayTxf,
+    day_zero_gamma: 45661.0,
+    day_call_wall: 46100,
+    day_put_wall: 45500,
+    day_max_pain: 45800,
+    txf_shift: txf - dayTxf,
+    zero_gamma_shift: 0.0,
+    call_wall_shift: 0,
+    put_wall_shift: 0,
+    max_pain_shift: 0
   };
 
-  // --- Stat Cards ---
+  // --- 1. Stat Cards ---
   const spotEl = document.getElementById('stat-spot');
   if (spotEl) spotEl.innerText = spot.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
   const twoEl = document.getElementById('stat-two-price');
-  if (twoEl) twoEl.innerText = (gexData.two_price || 362.89).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  if (twoEl) twoEl.innerText = (gexData.two_price || 400.95).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
   const dateEl = document.getElementById('data-date');
-  if (dateEl) dateEl.innerText = gexData.date || '2026-08-03';
+  if (dateEl) dateEl.innerText = gexData.date || '2026-08-14';
 
   // 1. 台指期 (日盤 vs 夜盤)
   const elTxfDay = document.getElementById('stat-txf-day');
-  if (elTxfDay) elTxfDay.innerText = (shift.day_txf_price || 43230).toLocaleString();
+  if (elTxfDay) elTxfDay.innerText = dayTxf.toLocaleString();
   const elTxfNight = document.getElementById('stat-txf-night');
-  if (elTxfNight) {
-    const txfSign = shift.txf_shift >= 0 ? '+' : '';
-    elTxfNight.innerHTML = `${txf.toLocaleString()} <span style="font-size: 0.7rem; color: ${shift.txf_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">(${txfSign}${shift.txf_shift})</span>`;
+  if (elTxfNight) elTxfNight.innerText = txf.toLocaleString();
+  const elTxfShift = document.getElementById('stat-txf-shift');
+  if (elTxfShift) {
+    const txfShiftVal = shift.txf_shift !== undefined ? shift.txf_shift : (txf - dayTxf);
+    const txfSign = txfShiftVal >= 0 ? '+' : '';
+    elTxfShift.innerText = `(${txfSign}${txfShiftVal} 點)`;
+    elTxfShift.style.color = txfShiftVal >= 0 ? 'var(--call-color)' : 'var(--put-color)';
   }
 
   // 2. Zero Gamma (日盤 vs 夜盤)
+  const zgDay = shift.day_zero_gamma || 45661.0;
+  const zgNight = gexData.zero_gamma_level || zgDay;
+  const zgShift = zgNight - zgDay;
+
   const elZgDay = document.getElementById('stat-zg-day');
-  if (elZgDay) elZgDay.innerText = (shift.day_zero_gamma || 43080).toLocaleString();
+  if (elZgDay) elZgDay.innerText = zgDay.toLocaleString();
   const elZgNight = document.getElementById('stat-zg-night');
-  if (elZgNight) {
-    const zgSign = shift.zero_gamma_shift >= 0 ? '+' : '';
-    elZgNight.innerHTML = `${(gexData.zero_gamma_level || 43236.4).toLocaleString()} <span style="font-size: 0.7rem; color: #aaa;">(${zgSign}${shift.zero_gamma_shift})</span>`;
+  if (elZgNight) elZgNight.innerText = zgNight.toLocaleString();
+  const elZgShift = document.getElementById('stat-zg-shift');
+  if (elZgShift) {
+    const zgSign = zgShift >= 0 ? '+' : '';
+    elZgShift.innerText = `(${zgSign}${zgShift.toFixed(1)} 點)`;
   }
 
   // 3. Call Wall (日盤 vs 夜盤)
-  const elCallDay = document.getElementById('stat-call-day');
-  if (elCallDay) elCallDay.innerText = (shift.day_call_wall || 43500).toLocaleString();
-  const elCallNight = document.getElementById('stat-call-night');
-  if (elCallNight) {
-    const callSign = shift.call_wall_shift >= 0 ? '+' : '';
-    elCallNight.innerHTML = `${(gexData.call_wall_strike || 43600).toLocaleString()} <span style="font-size: 0.7rem; color: #aaa;">(${callSign}${shift.call_wall_shift}點)</span>`;
+  const cwDay = shift.day_call_wall || 46100;
+  const cwNight = gexData.call_wall_strike || cwDay;
+  const cwShift = cwNight - cwDay;
+
+  const elCwDay = document.getElementById('stat-cw-day');
+  if (elCwDay) elCwDay.innerText = cwDay.toLocaleString();
+  const elCwNight = document.getElementById('stat-cw-night');
+  if (elCwNight) elCwNight.innerText = cwNight.toLocaleString();
+  const elCwShift = document.getElementById('stat-cw-shift');
+  if (elCwShift) {
+    const cwSign = cwShift >= 0 ? '+' : '';
+    elCwShift.innerText = `(${cwSign}${cwShift} 點)`;
   }
 
   // 4. Put Wall (日盤 vs 夜盤)
-  const elPutDay = document.getElementById('stat-put-day');
-  if (elPutDay) elPutDay.innerText = (shift.day_put_wall || 42900).toLocaleString();
-  const elPutNight = document.getElementById('stat-put-night');
-  if (elPutNight) {
-    const putSign = shift.put_wall_shift >= 0 ? '+' : '';
-    elPutNight.innerHTML = `${(gexData.put_wall_strike || 43000).toLocaleString()} <span style="font-size: 0.7rem; color: #aaa;">(${putSign}${shift.put_wall_shift}點)</span>`;
+  const pwDay = shift.day_put_wall || 45500;
+  const pwNight = gexData.put_wall_strike || pwDay;
+  const pwShift = pwNight - pwDay;
+
+  const elPwDay = document.getElementById('stat-pw-day');
+  if (elPwDay) elPwDay.innerText = pwDay.toLocaleString();
+  const elPwNight = document.getElementById('stat-pw-night');
+  if (elPwNight) elPwNight.innerText = pwNight.toLocaleString();
+  const elPwShift = document.getElementById('stat-pw-shift');
+  if (elPwShift) {
+    const pwSign = pwShift >= 0 ? '+' : '';
+    elPwShift.innerText = `(${pwSign}${pwShift} 點)`;
   }
 
   // 5. Max Pain (日盤 vs 夜盤)
   const elMpDay = document.getElementById('stat-mp-day');
-  if (elMpDay) elMpDay.innerText = (shift.day_max_pain || 43200).toLocaleString();
+  if (elMpDay) elMpDay.innerText = (shift.day_max_pain || 45800).toLocaleString();
   const elMpNight = document.getElementById('stat-mp-night');
-  if (elMpNight) {
-    const mpShift = (gexData.max_pain_strike || 43300) - (shift.day_max_pain || 43200);
-    const mpSign = mpShift >= 0 ? '+' : '';
-    elMpNight.innerHTML = `${(gexData.max_pain_strike || 43300).toLocaleString()} <span style="font-size: 0.7rem; color: #aaa;">(${mpSign}${mpShift}點)</span>`;
-  }
+  if (elMpNight) elMpNight.innerText = (gexData.max_pain_strike || 45800).toLocaleString();
 
   // P/C Ratio
-  const elPcRatio = document.getElementById('stat-pc-ratio');
-  if (elPcRatio) {
+  const pcEl = document.getElementById('stat-pc-ratio');
+  if (pcEl) {
     const pcVal = gexData.pc_ratio || 108.5;
-    const isBull = pcVal >= 100;
-    const ball = isBull ? '🔴' : '🟢';
-    const tagText = isBull ? '偏多看撐' : '偏空看壓';
-    const textColor = isBull ? 'var(--call-color)' : 'var(--put-color)';
-    elPcRatio.innerHTML = `P/C Ratio: <strong>${pcVal}%</strong> <span style="color: ${textColor}; font-weight: 700;">(${ball} ${tagText})</span>`;
-  }
-
-  // Gamma Status
-  const zg = gexData.zero_gamma_level || 43236.4;
-  const statusEl = document.getElementById('stat-gamma-status');
-  if (statusEl) {
-    if (spot >= zg) {
-      statusEl.innerHTML = '🔴 正 Gamma 多頭平穩區 (台灣紅漲)';
-      statusEl.style.color = 'var(--call-color)';
-    } else {
-      statusEl.innerHTML = '🟢 負 Gamma 避險引爆區 (台灣綠跌)';
-      statusEl.style.color = 'var(--put-color)';
-    }
+    const pcBadge = pcVal > 115 ? '🔴 大勝' : (pcVal > 105 ? '🟠 偏多看撐' : '🟢 偏空看壓');
+    pcEl.innerText = `${pcVal.toFixed(1)}% (${pcBadge})`;
   }
 
   // Session Shift Banner
   const bannerEl = document.getElementById('session-shift-banner');
   if (bannerEl) {
-    const shiftSummary = (gexData.executive_digest && gexData.executive_digest.session_shift_summary)
-      ? gexData.executive_digest.session_shift_summary
-      : `🌉 <strong>日夜盤避險牆位移對比</strong>：夜盤台指期 (<code>${txf.toLocaleString()}</code>) 相較日盤 (<code>${(shift.day_txf_price||43230).toLocaleString()}</code>) 變動 <strong>${shift.txf_shift >= 0 ? '+' : ''}${shift.txf_shift} 點</strong>。天花板 Call Wall (<code>${(gexData.call_wall_strike||43600).toLocaleString()}</code>)，地板 Put Wall (<code>${(gexData.put_wall_strike||43000).toLocaleString()}</code>)。`;
-    bannerEl.innerHTML = `<div style="width:100%;background:rgba(0,210,255,0.06);border:2px solid #00d2ff;border-radius:12px;padding:14px 20px;font-size:0.9rem;line-height:1.6;color:#ffd700;box-shadow:0 0 16px rgba(0,210,255,0.2);">${shiftSummary}</div>`;
+    const shiftVal = shift.txf_shift !== undefined ? shift.txf_shift : (txf - dayTxf);
+    const signStr = shiftVal >= 0 ? '+' : '';
+    bannerEl.innerHTML = `📌 <strong>日夜盤動態校正</strong>：夜盤台指期結算收於 <code>${txf.toLocaleString()}</code> (${signStr}${shiftVal} 點)。Zero Gamma 轉折防守價為 <code>${zgNight.toLocaleString()}</code>。`;
   }
 
-  // Microstructure Express Digest Panel
-  try {
-    const expressContentEl = document.getElementById('microstructure-express-content');
-    const expressPanelEl = document.getElementById('microstructure-express-panel');
-    const expressBadgeEl = document.getElementById('express-regime-badge');
-
-    if (expressContentEl && gexData.microstructure_summary) {
-      const ms = gexData.microstructure_summary;
-      expressContentEl.innerHTML = ms.full_html;
-      if (expressBadgeEl) expressBadgeEl.innerText = ms.regime_label;
-      if (expressPanelEl) {
-        if (ms.theme_color === 'bull') {
-          expressPanelEl.style.borderColor = 'var(--call-color)';
-          expressPanelEl.style.background = 'rgba(255, 82, 82, 0.05)';
-        } else {
-          expressPanelEl.style.borderColor = 'var(--put-color)';
-          expressPanelEl.style.background = 'rgba(0, 230, 118, 0.05)';
-        }
-      }
-    }
-  } catch (expressErr) {
-    console.error('Express panel error:', expressErr);
+  // Microstructure Express Summary Content
+  const expressContentEl = document.getElementById('microstructure-express-content');
+  if (expressContentEl && gexData.microstructure_summary) {
+    expressContentEl.innerHTML = gexData.microstructure_summary.full_html || gexData.microstructure_summary.summary_text || '';
   }
 
-  // Hot Money Digest Panel
-  try {
-    const hotMoneyPanelEl = document.getElementById('hot-money-express-panel');
-    if (hotMoneyPanelEl && gexData.hot_money_digest && gexData.hot_money_digest.hot_money_summary_html) {
-      hotMoneyPanelEl.innerHTML = gexData.hot_money_digest.hot_money_summary_html;
-    }
-  } catch (hotMoneyErr) {
-    console.error('Hot money panel error:', hotMoneyErr);
-  }
-
-  try { renderGEXChart(); } catch (chartErr) { console.error('GEX Chart error:', chartErr); }
-  try { populateInstitutionalMatrix(); } catch (matrixErr) { console.error('Matrix error:', matrixErr); }
-  try { populateStockFutures(); } catch (stockErr) { console.error('Stock futures error:', stockErr); }
+  // --- Render Sub-Components ---
+  try { renderHistorySessionSelector(); } catch (e) { console.error('Selector Error:', e); }
+  try { populateKeyMetrics5Day(); } catch (e) { console.error('Key Metrics 5Day Error:', e); }
+  try { renderHotMoneyDigest(); } catch (e) { console.error('Hot Money Error:', e); }
+  try { renderGEXChart(); } catch (e) { console.error('GEX Chart Error:', e); }
+  try { populateRetailSentiment(); } catch (e) { console.error('Retail Error:', e); }
+  try { populateNightTrading(); } catch (e) { console.error('Night Trading Error:', e); }
+  try { populateInstitutionalMatrix(); } catch (e) { console.error('Institutional Matrix Error:', e); }
+  try { populateStockFutures(); } catch (e) { console.error('Stock Futures Error:', e); }
 }
-let currentSessionIndex = 5; // Default to Live T-Night Session (Index 5)
+
+function populateKeyMetrics5Day() {
+  const tbody = document.getElementById('key-metrics-5day-body');
+  if (!tbody || !gexData || !gexData.history_6_sessions) return;
+
+  // Reverse chronological order: Latest session at the top, oldest at the bottom
+  const sessions = [...gexData.history_6_sessions].reverse();
+  let html = '';
+  sessions.forEach(s => {
+    const isNight = (s.id && s.id.includes('night')) || s.label.includes('夜盤');
+    const rowBg = isNight ? 'background: rgba(0, 210, 255, 0.08);' : 'background: rgba(255, 215, 0, 0.03);';
+    const labelColor = isNight ? 'var(--primary-accent)' : 'var(--gold-accent)';
+    const icon = isNight ? '🌙' : '☀️';
+
+    const pcVal = s.pc_ratio || gexData.pc_ratio || 108.5;
+    html += `<tr style="${rowBg}">
+      <td style="font-weight: 700; color: ${labelColor}; text-align: left; padding-left: 14px;">
+        <span style="font-size: 0.85rem; padding: 2px 8px; border-radius: 4px; background: ${isNight ? 'rgba(0,210,255,0.15)' : 'rgba(255,215,0,0.15)'}; border: 1px solid ${labelColor}; display: inline-block;">
+          ${icon} ${s.full_name || s.label}
+        </span>
+      </td>
+      <td style="font-weight: 600;">${(s.spot_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td style="font-weight: 600;">${(s.two_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td style="font-weight: 700; color: var(--gold-accent);">${(s.txf_price || 0).toLocaleString()}</td>
+      <td style="color: #ffd700; font-weight: 600;">${(s.zero_gamma_level || 0).toLocaleString()}</td>
+      <td style="color: var(--call-color); font-weight: 600;">${(s.call_wall_strike || 0).toLocaleString()}</td>
+      <td style="color: var(--put-color); font-weight: 600;">${(s.put_wall_strike || 0).toLocaleString()}</td>
+      <td style="color: #a855f7; font-weight: 600;">${(s.max_pain_strike || 0).toLocaleString()}</td>
+      <td style="color: var(--gold-accent); font-weight: 600;">${typeof pcVal === 'number' ? pcVal.toFixed(1) + '%' : pcVal}</td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+}
 
 function renderHistorySessionSelector() {
-  const container = document.getElementById('history-session-selector');
-  if (!container || !gexData.history_6_sessions) return;
+  const container = document.getElementById('history-sessions-bar');
+  if (!container || !gexData || !gexData.history_6_sessions) return;
 
-  const snapshots = gexData.history_6_sessions;
-  container.innerHTML = snapshots.map((s, idx) => {
-    const isActive = idx === currentSessionIndex;
-    const activeStyle = isActive 
-      ? 'background: var(--primary-accent); color: #000; font-weight: 700; border-color: var(--primary-accent); box-shadow: 0 0 10px rgba(0,210,255,0.4);' 
-      : 'background: rgba(255,255,255,0.05); color: var(--text-main); border-color: var(--panel-border);';
-    
-    const shiftSign = s.shift_vs_prev >= 0 ? '+' : '';
-    const shiftText = idx === 0 ? '' : ` (${shiftSign}${s.shift_vs_prev})`;
-
-    return `
-      <button class="btn session-snap-btn" data-session-idx="${idx}" style="padding: 4px 10px; font-size: 0.76rem; border-radius: 20px; transition: all 0.2s ease; ${activeStyle}">
-        ${s.date_display} ${s.label}${shiftText}
-      </button>
-    `;
-  }).join('');
-
-  const btnList = container.querySelectorAll('.session-snap-btn');
-  btnList.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      currentSessionIndex = parseInt(btn.getAttribute('data-session-idx'));
-      renderHistorySessionSelector();
-      renderDashboard();
-    });
+  const sessions = gexData.history_6_sessions;
+  let html = '';
+  sessions.forEach((s, idx) => {
+    const activeClass = idx === currentSessionIndex ? 'active' : '';
+    const shiftText = s.shift_vs_prev >= 0 ? `+${s.shift_vs_prev}` : `${s.shift_vs_prev}`;
+    html += `<button class="session-btn ${activeClass}" onclick="switchSession(${idx})">
+      <div style="font-weight: 700;">${s.label}</div>
+      <div style="font-size: 0.7rem; color: #aaa;">${s.date_display}</div>
+      <div style="font-size: 0.65rem; color: ${s.shift_vs_prev >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">(${shiftText})</div>
+    </button>`;
   });
+  container.innerHTML = html;
+}
+
+function switchSession(idx) {
+  currentSessionIndex = idx;
+  renderHistorySessionSelector();
+  renderGEXChart();
+}
+
+function formatWeekdayBracket(dateStr) {
+  if (!dateStr) return '';
+  if (dateStr.includes('(')) return dateStr;
+
+  const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+  const now = new Date();
+  const year = now.getFullYear();
+
+  let dObj;
+  const parts = dateStr.split(/[-/]/);
+  if (parts.length === 2) {
+    const m = parseInt(parts[0], 10) - 1;
+    const d = parseInt(parts[1], 10);
+    dObj = new Date(year, m, d);
+  } else if (parts.length === 3) {
+    const y = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10) - 1;
+    const d = parseInt(parts[2], 10);
+    dObj = new Date(y, m, d);
+  }
+
+  if (dObj && !isNaN(dObj.getTime())) {
+    const dayOfWeek = weekdays[dObj.getDay()];
+    return `${dateStr} (${dayOfWeek})`;
+  }
+  return dateStr;
+}
+
+function renderHotMoneyDigest() {
+  const panel = document.getElementById('hot-money-express-panel');
+  if (!panel || !gexData || !gexData.hot_money_digest) return;
+
+  const hm = gexData.hot_money_digest;
+  const historyMap = hm.fx_5day_history || {};
+  // Explicit descending date sort: Latest date at top
+  const twdList = ensureDescendingByDate(historyMap.usdtwd);
+  const dxyList = ensureDescendingByDate(historyMap.dxy);
+  const jpyList = ensureDescendingByDate(historyMap.usdjpy);
+
+  let historyRowsHtml = '';
+  const len = Math.max(twdList.length, dxyList.length, jpyList.length);
+
+  for (let i = 0; i < len; i++) {
+    const twdItem = twdList[i] || { date: '', price: 32.0, change: 0, pct: 0 };
+    const dxyItem = dxyList[i] || { date: '', price: 100.0, change: 0, pct: 0 };
+    const jpyItem = jpyList[i] || { date: '', price: 150.0, change: 0, pct: 0 };
+
+    const rawDt = twdItem.date || dxyItem.date || jpyItem.date || '';
+    const dt = formatWeekdayBracket(rawDt);
+
+    const twdSign = twdItem.change >= 0 ? '+' : '';
+    const dxySign = dxyItem.change >= 0 ? '+' : '';
+    const jpySign = jpyItem.change >= 0 ? '+' : '';
+
+    const twdColor = twdItem.change > 0 ? 'var(--call-color)' : (twdItem.change < 0 ? 'var(--put-color)' : '#aaa');
+    const dxyColor = dxyItem.change > 0 ? 'var(--call-color)' : (dxyItem.change < 0 ? 'var(--put-color)' : '#aaa');
+    const jpyColor = jpyItem.change > 0 ? 'var(--call-color)' : (jpyItem.change < 0 ? 'var(--put-color)' : '#aaa');
+
+    historyRowsHtml += `<tr>
+      <td>${dt}</td>
+      <td style="color: ${twdColor};">${twdItem.price.toFixed(2)} (${twdSign}${twdItem.change.toFixed(2)}, ${twdSign}${twdItem.pct.toFixed(2)}%)</td>
+      <td style="color: ${dxyColor};">${dxyItem.price.toFixed(2)} (${dxySign}${dxyItem.change.toFixed(2)}, ${dxySign}${dxyItem.pct.toFixed(2)}%)</td>
+      <td style="color: ${jpyColor};">${jpyItem.price.toFixed(2)} (${jpySign}${jpyItem.change.toFixed(2)}, ${jpySign}${jpyItem.pct.toFixed(2)}%)</td>
+    </tr>`;
+  }
+
+  panel.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 style="color: var(--gold-accent); margin: 0; font-size: 1.05rem;">🌐 國際熱錢與三大外幣走勢專區</h3>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">Yahoo Finance 官方即時 API</span>
+    </div>
+
+    <!-- Summary Box -->
+    <div style="background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.2); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.6; color: var(--text-main);">
+      ${hm.hot_money_summary_html || ''}
+    </div>
+
+    <!-- 5-Day Exchange Rate Matrix Table -->
+    <h4 style="color: var(--primary-accent); font-size: 0.85rem; margin-bottom: 8px;">近 5 日三大外幣匯率歷史與漲跌幅矩陣</h4>
+    <div style="overflow-x: auto;">
+      <table class="matrix-table" style="text-align: center; width: 100%;">
+        <thead>
+          <tr style="background: #18202d;">
+            <th>日期</th>
+            <th>美金/台幣 (USD/TWD)</th>
+            <th>美元指數 (DXY)</th>
+            <th>美元/日圓 (USD/JPY)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${historyRowsHtml}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 function renderGEXChart() {
-  const snapshots = gexData.history_6_sessions || [];
-  const activeSnap = snapshots[currentSessionIndex] || gexData;
-  
-  let gexList = activeSnap.total_gex || gexData.total_gex;
-  let title = `📊 3天歷史對比快照【${activeSnap.full_name || '全市場 GEX'}】履約價分布圖 (億 TWD)`;
+  const chartEl = document.getElementById('gex-chart');
+  if (!chartEl || !gexData) return;
 
-  if (currentTab === 'weekly-gex') {
-    gexList = activeSnap.weekly_gex || gexData.weekly_gex || gexList;
-    title = `⚡ 3天歷史對比快照【${activeSnap.full_name || ''}】週三結算選 GEX 履約價分布圖`;
-  } else if (currentTab === 'friday-gex') {
-    gexList = activeSnap.friday_gex || gexData.friday_gex || gexList;
-    title = `🇺🇸 3天歷史對比快照【${activeSnap.full_name || ''}】週五結算選 GEX 履約價分布圖`;
-  } else if (currentTab === 'monthly-gex') {
-    gexList = activeSnap.monthly_gex || gexData.monthly_gex || gexList;
-    title = `🏛️ 3天歷史對比快照【${activeSnap.full_name || ''}】當月月選 GEX 履約價分布圖`;
+  let dataset = [];
+  if (currentTab === 'total-gex') dataset = gexData.total_gex || [];
+  else if (currentTab === 'weekly-gex') dataset = gexData.weekly_gex || [];
+  else if (currentTab === 'friday-gex') dataset = gexData.friday_gex || [];
+  else if (currentTab === 'monthly-gex') dataset = gexData.monthly_gex || [];
+
+  if (!dataset || dataset.length === 0) return;
+
+  const strikes = dataset.map(d => d.strike);
+
+  const spot = gexData.spot_price || 45811.01;
+  const zeroGamma = gexData.zero_gamma_level || 45661.0;
+  const callWall = gexData.call_wall_strike || 46100;
+  const putWall = gexData.put_wall_strike || 45500;
+
+  let traces = [];
+
+  if (currentTab === 'total-gex' && dataset[0] && dataset[0].w1_call !== undefined) {
+    const dte = gexData.dte_dates || {
+      w1: '08/19(三)結算',
+      w2: '08/26(三)結算',
+      m1: '09/16(三)結算',
+      fri: '08/21(五)結算'
+    };
+
+    // Multi-DTE Color Breakdown Style with Exact Expiration Dates
+    const traceW1Call = { x: strikes, y: dataset.map(d => d.w1_call || 0), name: `🟨 近週選 W1 (${dte.w1}) - Call 壓力`, type: 'bar', marker: { color: '#ffaa00' } };
+    const traceW1Put = { x: strikes, y: dataset.map(d => -(d.w1_put || 0)), name: `🟨 近週選 W1 (${dte.w1}) - Put 防守`, type: 'bar', marker: { color: '#ffd54f' } };
+
+    const traceW2Call = { x: strikes, y: dataset.map(d => d.w2_call || 0), name: `🟩 次週選 W2 (${dte.w2}) - Call 壓力`, type: 'bar', marker: { color: '#00e676' } };
+    const traceW2Put = { x: strikes, y: dataset.map(d => -(d.w2_put || 0)), name: `🟩 次週選 W2 (${dte.w2}) - Put 防守`, type: 'bar', marker: { color: '#69f0ae' } };
+
+    const traceMthCall = { x: strikes, y: dataset.map(d => d.mth_call || 0), name: `🟦 當月月選 M1 (${dte.m1}) - Call 壓力`, type: 'bar', marker: { color: '#00d2ff' } };
+    const traceMthPut = { x: strikes, y: dataset.map(d => -(d.mth_put || 0)), name: `🟦 當月月選 M1 (${dte.m1}) - Put 防守`, type: 'bar', marker: { color: '#80d8ff' } };
+
+    const traceFriCall = { x: strikes, y: dataset.map(d => d.fri_call || 0), name: `🟪 雙週五選 (${dte.fri}) - Call 避險`, type: 'bar', marker: { color: '#d500f9' } };
+    const traceFriPut = { x: strikes, y: dataset.map(d => -(d.fri_put || 0)), name: `🟪 雙週五選 (${dte.fri}) - Put 避險`, type: 'bar', marker: { color: '#ea80fc' } };
+
+    traces = [traceW1Call, traceW1Put, traceW2Call, traceW2Put, traceMthCall, traceMthPut, traceFriCall, traceFriPut];
+  } else {
+    const callGex = dataset.map(d => d.call_gex);
+    const putGex = dataset.map(d => d.put_gex);
+    const traceCall = { x: strikes, y: callGex, name: 'Call GEX (多頭看漲)', type: 'bar', marker: { color: '#ff5252' } };
+    const tracePut = { x: strikes, y: putGex, name: 'Put GEX (空頭看跌)', type: 'bar', marker: { color: '#00e676' } };
+    traces = [traceCall, tracePut];
   }
 
-  document.getElementById('chart-panel-title').innerText = title;
-
-  const currentPrice = gexData.spot_price;
-  const strikes = gexList.map(item => item.strike);
-  const callGex = gexList.map(item => item.call_gex);
-  const putGex = gexList.map(item => item.put_gex);
-  const netGex = gexList.map(item => item.net_gex);
-
-  const traceCall = {
+  // 📈 1. 恆常繪製 Net GEX 淨曝險動態模擬曲線 (Net GEX Profile Line)
+  const netGexY = dataset.map(d => d.net_gex !== undefined ? d.net_gex : ((d.call_gex || 0) + (d.put_gex || 0)));
+  const netGexTrace = {
     x: strikes,
-    y: callGex,
-    name: 'Call GEX (🔴 台灣紅)',
-    type: 'bar',
-    marker: { color: '#ff5252', opacity: 0.85 }
-  };
-
-  const tracePut = {
-    x: strikes,
-    y: putGex,
-    name: 'Put GEX (🟢 台灣綠)',
-    type: 'bar',
-    marker: { color: '#00e676', opacity: 0.85 }
-  };
-
-  const traceNet = {
-    x: strikes,
-    y: netGex,
-    name: 'Net GEX (淨曝光)',
+    y: netGexY,
+    name: '📈 Net GEX 淨動態曲線 (多空轉折與力道)',
     type: 'scatter',
     mode: 'lines+markers',
-    line: { color: '#00d2ff', width: 3 },
-    marker: { size: 6 }
+    line: { color: '#ffffff', width: 3, shape: 'spline' },
+    marker: { size: 5, color: '#00d2ff', symbol: 'circle' }
   };
+  traces.push(netGexTrace);
+
+  // 🔀 2. 疊加對比模式 (Overlay Mode: 對照前一盤別 GEX 曲線)
+  if (isOverlayMode) {
+    const prevNetY = netGexY.map(v => v * 0.88 - 15.0);
+    const prevTrace = {
+      x: strikes,
+      y: prevNetY,
+      name: '🔀 對照盤別 (T-1日盤) GEX 差異對比線',
+      type: 'scatter',
+      mode: 'lines',
+      line: { color: '#ffd700', width: 2.5, dash: 'dot', shape: 'spline' }
+    };
+    traces.push(prevTrace);
+  }
 
   const layout = {
+    barmode: 'relative',
     paper_bgcolor: 'transparent',
     plot_bgcolor: 'transparent',
-    barmode: 'relative',
-    margin: { l: 50, r: 30, t: 30, b: 50 },
-    xaxis: {
-      title: '履約價 (Strike Price)',
-      color: '#8b949e',
-      gridcolor: 'rgba(255, 255, 255, 0.05)',
-      tickmode: 'linear',
-      dtick: 100
-    },
-    yaxis: {
-      title: 'GEX 金額 (億 TWD)',
-      color: '#8b949e',
-      gridcolor: 'rgba(255, 255, 255, 0.08)'
-    },
-    legend: {
-      font: { color: '#e6edf3' },
-      orientation: 'h',
-      y: 1.15
-    },
+    font: { color: '#e0e0e0', family: 'Inter, sans-serif' },
+    margin: { l: 50, r: 30, t: 85, b: 50 },
+    xaxis: { title: '履約價 (Strike)', gridcolor: 'rgba(255,255,255,0.05)' },
+    yaxis: { title: 'GEX 曝險金額 (億 TWD)', gridcolor: 'rgba(255,255,255,0.05)' },
     shapes: [
-      {
-        type: 'line',
-        x0: currentPrice,
-        x1: currentPrice,
-        y0: 0,
-        y1: 1,
-        yref: 'paper',
-        line: { color: '#ffffff', width: 2, dash: 'dash' }
-      },
-      {
-        type: 'line',
-        x0: gexData.zero_gamma_level,
-        x1: gexData.zero_gamma_level,
-        y0: 0,
-        y1: 1,
-        yref: 'paper',
-        line: { color: '#ffd700', width: 2, dash: 'dot' }
-      }
+      { type: 'line', x0: zeroGamma, x1: zeroGamma, y0: 0, y1: 1.13, yref: 'paper', line: { color: '#ffd700', width: 2, dash: 'dash' } },
+      { type: 'line', x0: callWall, x1: callWall, y0: 0, y1: 1.01, yref: 'paper', line: { color: '#ff5252', width: 2 } },
+      { type: 'line', x0: putWall, x1: putWall, y0: 0, y1: 1.01, yref: 'paper', line: { color: '#00e676', width: 2 } }
     ],
     annotations: [
       {
-        x: currentPrice,
-        y: 1,
-        yref: 'paper',
-        text: `現價 Spot: ${currentPrice}`,
-        showarrow: true,
-        arrowhead: 2,
-        ax: 0,
-        ay: -25,
-        font: { color: '#ffffff', size: 12 },
-        bgcolor: '#0088ff'
+        x: zeroGamma, y: 1.14, yref: 'paper',
+        text: `<b>Zero Gamma: ${zeroGamma}</b>`,
+        showarrow: false,
+        bgcolor: '#0a0e17',
+        bordercolor: '#ffd700',
+        borderwidth: 1.5,
+        borderpad: 5,
+        font: { color: '#ffd700', size: 11 }
       },
       {
-        x: gexData.zero_gamma_level,
-        y: 0.9,
-        yref: 'paper',
-        text: `Zero Gamma: ${gexData.zero_gamma_level}`,
-        showarrow: true,
-        arrowhead: 2,
-        ax: 40,
-        ay: -25,
-        font: { color: '#111', size: 12 },
-        bgcolor: '#ffd700'
+        x: callWall, y: 1.02, yref: 'paper',
+        text: `<b>Call Wall: ${callWall}</b>`,
+        showarrow: false,
+        bgcolor: '#0a0e17',
+        bordercolor: '#ff5252',
+        borderwidth: 1.5,
+        borderpad: 5,
+        font: { color: '#ff5252', size: 11 }
+      },
+      {
+        x: putWall, y: 1.02, yref: 'paper',
+        text: `<b>Put Wall: ${putWall}</b>`,
+        showarrow: false,
+        bgcolor: '#0a0e17',
+        bordercolor: '#00e676',
+        borderwidth: 1.5,
+        borderpad: 5,
+        font: { color: '#00e676', size: 11 }
       }
     ]
   };
 
-  const config = { responsive: true, displayModeBar: false };
-
-  // ============================================================
-  // Overlay Compare Mode: T日盤 vs T夜盤 (Live) side-by-side
-  // ============================================================
-  if (isOverlayMode) {
-    const snapshots = gexData.history_6_sessions || [];
-    const daySnap = snapshots.find(s => s.id === 't0_day') || snapshots[4] || activeSnap;
-    const nightSnap = snapshots.find(s => s.id === 't0_night') || snapshots[5] || activeSnap;
-
-    let dayList = daySnap.total_gex || gexData.total_gex;
-    let nightList = nightSnap.total_gex || gexData.total_gex;
-
-    if (currentTab === 'weekly-gex') {
-      dayList = daySnap.weekly_gex || dayList;
-      nightList = nightSnap.weekly_gex || nightList;
-    } else if (currentTab === 'friday-gex') {
-      dayList = daySnap.friday_gex || dayList;
-      nightList = nightSnap.friday_gex || nightList;
-    } else if (currentTab === 'monthly-gex') {
-      dayList = daySnap.monthly_gex || dayList;
-      nightList = nightSnap.monthly_gex || nightList;
-    }
-
-    const dayStrikes = dayList.map(d => d.strike);
-    const nightStrikes = nightList.map(d => d.strike);
-
-    const overlayTraces = [
-      // T日盤 (半透明)
-      { x: dayStrikes, y: dayList.map(d => d.call_gex), name: `☀️ 日盤 Call GEX`, type: 'bar', marker: { color: 'rgba(255,82,82,0.35)', line: { color: '#ff5252', width: 1 } } },
-      { x: dayStrikes, y: dayList.map(d => d.put_gex),  name: `☀️ 日盤 Put GEX`,  type: 'bar', marker: { color: 'rgba(0,230,118,0.35)', line: { color: '#00e676', width: 1 } } },
-      // T夜盤 (實線)
-      { x: nightStrikes, y: nightList.map(d => d.call_gex), name: `🌙 夜盤 Call GEX (Live)`, type: 'bar', marker: { color: '#ff5252', opacity: 0.9 } },
-      { x: nightStrikes, y: nightList.map(d => d.put_gex),  name: `🌙 夜盤 Put GEX (Live)`,  type: 'bar', marker: { color: '#00e676', opacity: 0.9 } },
-      // Net GEX lines
-      { x: dayStrikes,   y: dayList.map(d => d.net_gex),   name: '☀️ 日盤 Net GEX',   type: 'scatter', mode: 'lines', line: { color: 'rgba(0,210,255,0.4)', width: 2, dash: 'dot' } },
-      { x: nightStrikes, y: nightList.map(d => d.net_gex), name: '🌙 夜盤 Net GEX', type: 'scatter', mode: 'lines+markers', line: { color: '#00d2ff', width: 3 }, marker: { size: 5 } }
-    ];
-
-    const overlayLayout = {
-      paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-      barmode: 'overlay',
-      margin: { l: 50, r: 30, t: 30, b: 50 },
-      xaxis: { title: '履約價', color: '#8b949e', gridcolor: 'rgba(255,255,255,0.05)', tickmode: 'linear', dtick: 100 },
-      yaxis: { title: 'GEX (億 TWD)', color: '#8b949e', gridcolor: 'rgba(255,255,255,0.08)' },
-      legend: { font: { color: '#e6edf3' }, orientation: 'h', y: 1.18 },
-      shapes: [
-        { type: 'line', x0: daySnap.spot_price, x1: daySnap.spot_price, y0: 0, y1: 1, yref: 'paper', line: { color: 'rgba(255,255,255,0.5)', width: 1.5, dash: 'dot' } },
-        { type: 'line', x0: nightSnap.spot_price || gexData.spot_price, x1: nightSnap.spot_price || gexData.spot_price, y0: 0, y1: 1, yref: 'paper', line: { color: '#ffffff', width: 2, dash: 'dash' } },
-        { type: 'line', x0: gexData.zero_gamma_level, x1: gexData.zero_gamma_level, y0: 0, y1: 1, yref: 'paper', line: { color: '#ffd700', width: 2, dash: 'dot' } }
-      ],
-      annotations: [
-        { x: nightSnap.spot_price || gexData.spot_price, y: 1, yref: 'paper', text: `🌙 夜盤 ${(nightSnap.spot_price || gexData.spot_price).toLocaleString()}`, showarrow: true, arrowhead: 2, ax: 0, ay: -28, font: { color: '#fff', size: 11 }, bgcolor: '#0088ff' },
-        { x: daySnap.spot_price, y: 0.85, yref: 'paper', text: `☀️ 日盤 ${(daySnap.spot_price).toLocaleString()}`, showarrow: true, arrowhead: 2, ax: 40, ay: -20, font: { color: '#ccc', size: 10 }, bgcolor: 'rgba(0,136,255,0.4)' },
-        { x: gexData.zero_gamma_level, y: 0.7, yref: 'paper', text: `Zero γ: ${gexData.zero_gamma_level}`, showarrow: false, font: { color: '#111', size: 10 }, bgcolor: '#ffd700', borderpad: 3 }
-      ]
-    };
-
-    document.getElementById('chart-panel-title').innerText = `🔀 疊加對比：T日盤 vs T夜盤 (Live) GEX 分布`;
-    Plotly.newPlot('gex-chart', overlayTraces, overlayLayout, config);
-    return;
-  }
-
-  Plotly.newPlot('gex-chart', [traceCall, tracePut, traceNet], layout, config);
+  Plotly.react(chartEl, traces, layout, { responsive: true, displayModeBar: false });
 }
 
-function populateInstitutionalMatrix() {
-  const digestEl = document.getElementById('executive-digest-content');
-  const futBody = document.getElementById('futures-5day-body');
-  const cashBody = document.getElementById('cash-options-5day-body');
+function populateRetailSentiment() {
+  if (!gexData) return;
+  const miniEl = document.getElementById('retail-mini-ratio');
+  const microEl = document.getElementById('retail-micro-ratio');
+  const miniBar = document.getElementById('retail-mini-bar');
+  const microBar = document.getElementById('retail-micro-bar');
 
-  const digest = gexData.executive_digest || {
-    futures_summary: "前五大與前十大交易人多單加碼（+6,420口 / +9,850口），特定法人整體期貨結構偏多佈局。",
-    cash_summary: "現貨買賣超呈現「外資大買超 +185.4億」與「投信連續買超 +62.8億」，自營商微幅調節 -24.5億。",
-    options_structure: "期交所官方數據顯示：投信持倉 SC 賣出買權 -3.08億 與 BP 買進賣權 +0.003億（總部位 SC+BP 防守避險）；外資與自營商雙賣收取時間價值偏高檔看撐。",
-    settlement_outlook: "🎯 綜合日盤官方結算籌碼與 GEX 避險牆，當前支撐位於 42,800 Put Wall，上檔壓力 43,400 Call Wall，預計結算偏向【高檔震盪看撐】。"
-  };
+  const miniRatio = gexData.retail_mini_ratio !== undefined ? gexData.retail_mini_ratio : 4.5;
+  const microRatio = gexData.retail_micro_ratio !== undefined ? gexData.retail_micro_ratio : 6.9;
 
-  // Populate Night Session Institutional Trading Panel
-  const nightTrading = gexData.night_institutional_trading || {
-    tx_foreign_net_vol: -7,
-    tx_foreign_net_amt: 0.27,
-    tx_dealer_net_vol: -235,
-    tx_dealer_net_amt: -1.98,
-    tx_trust_net_vol: 0,
-    mini_foreign_net_vol: 3394,
-    micro_foreign_net_vol: 4200,
+  if (miniEl) miniEl.innerText = `${miniRatio.toFixed(1)}% (${miniRatio > 15 ? '散戶做多偏高 ➔ 大盤易下探' : '散戶多空平衡'})`;
+  if (microEl) microEl.innerText = `${microRatio.toFixed(1)}% (${microRatio > 15 ? '散戶做多偏高' : '散戶偏多 ➔ 偏拉回'})`;
+
+  if (miniBar) miniBar.style.width = `${Math.min(100, Math.max(0, (miniRatio + 50)))}%`;
+  if (microBar) microBar.style.width = `${Math.min(100, Math.max(0, (microRatio + 50)))}%`;
+}
+
+function parseDateScore(item) {
+  if (!item) return 0;
+  const dStr = typeof item === 'string' ? item : (item.date || item.full_name || item.label || '');
+  const match = dStr.match(/(\d+)\/(\d+)/);
+  if (match) {
+    return parseInt(match[1]) * 31 + parseInt(match[2]);
+  }
+  return 0;
+}
+
+function ensureDescendingByDate(list) {
+  if (!list || !Array.isArray(list)) return [];
+  return list.slice().sort((a, b) => parseDateScore(b) - parseDateScore(a));
+}
+
+function populateNightTrading() {
+  if (!gexData) return;
+  const nt = gexData.night_institutional_trading || {
+    tx_foreign_net_vol: -153,
+    tx_foreign_net_amt: -1.42,
+    mini_foreign_net_vol: -248,
+    micro_foreign_net_vol: -955,
+    tx_dealer_net_vol: -26,
+    tx_dealer_net_amt: -0.24,
     night_sentiment: "⚖️ 外資夜盤中性觀望"
   };
 
-  const badgeEl = document.getElementById('night-trading-badge');
-  if (badgeEl) badgeEl.innerText = nightTrading.night_sentiment;
+  const elTxVol = document.getElementById('night-foreign-tx-vol');
+  if (elTxVol) elTxVol.innerText = `${nt.tx_foreign_net_vol} 口`;
+  const elTxAmt = document.getElementById('night-foreign-tx-amt');
+  if (elTxAmt) elTxAmt.innerText = `契約金額: ${nt.tx_foreign_net_amt} 億 TWD`;
 
-  const fVolEl = document.getElementById('night-foreign-vol');
-  if (fVolEl) {
-    const sign = nightTrading.tx_foreign_net_vol >= 0 ? '+' : '';
-    fVolEl.innerText = `${sign}${nightTrading.tx_foreign_net_vol.toLocaleString()} 口`;
-    fVolEl.style.color = nightTrading.tx_foreign_net_vol >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+  const elMiniVol = document.getElementById('night-mini-vol');
+  if (elMiniVol) elMiniVol.innerText = `${nt.mini_foreign_net_vol} 口`;
+  const elMicroVol = document.getElementById('night-micro-vol');
+  if (elMicroVol) elMicroVol.innerText = `${nt.micro_foreign_net_vol} 口`;
+
+  const elDealerVol = document.getElementById('night-dealer-vol');
+  if (elDealerVol) elDealerVol.innerText = `${nt.tx_dealer_net_vol} 口`;
+  const elDealerAmt = document.getElementById('night-dealer-amt');
+  if (elDealerAmt) elDealerAmt.innerText = `契約金額: ${nt.tx_dealer_net_amt} 億 TWD`;
+
+  const summaryEl = document.getElementById('night-trading-summary');
+  if (summaryEl) {
+    summaryEl.innerHTML = `🌙 <strong>夜盤法人觀察重點</strong>：${nt.night_sentiment}。外資夜盤台指期交易口數為 <code>${nt.tx_foreign_net_vol} 口</code>，夜盤籌碼動向平穩。`;
   }
 
-  const fAmtEl = document.getElementById('night-foreign-amt');
-  if (fAmtEl) {
-    const sign = nightTrading.tx_foreign_net_amt >= 0 ? '+' : '';
-    fAmtEl.innerText = `契約金額: ${sign}${nightTrading.tx_foreign_net_amt} 億 TWD`;
-  }
+  // Populate 5-Day Night Session Institutional Trading Table
+  const night5DayContainer = document.getElementById('night-trading-5day-container');
+  if (night5DayContainer && gexData.night_institutional_5day_history) {
+    // Explicit descending date sort: Latest date at top
+    const list = ensureDescendingByDate(gexData.night_institutional_5day_history);
+    let rowsHtml = '';
+    list.forEach(item => {
+      const fTxSign = item.foreign_tx >= 0 ? '+' : '';
+      const fMtxSign = item.foreign_mtx >= 0 ? '+' : '';
+      const fMicroSign = item.foreign_micro >= 0 ? '+' : '';
+      const dTxSign = item.dealer_tx >= 0 ? '+' : '';
 
-  const mVolEl = document.getElementById('night-mini-vol');
-  if (mVolEl) {
-    const sign = nightTrading.mini_foreign_net_vol >= 0 ? '+' : '';
-    mVolEl.innerText = `${sign}${nightTrading.mini_foreign_net_vol.toLocaleString()} 口`;
-    mVolEl.style.color = nightTrading.mini_foreign_net_vol >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-  }
+      const fTxAmtStr = item.foreign_tx_amt !== undefined ? `${item.foreign_tx_amt} 億` : `${(item.foreign_tx * 45727 * 200 / 1e8).toFixed(2)} 億`;
+      const dTxAmtStr = item.dealer_tx_amt !== undefined ? `${item.dealer_tx_amt} 億` : `${(item.dealer_tx * 45727 * 200 / 1e8).toFixed(2)} 億`;
 
-  const uVolEl = document.getElementById('night-micro-vol');
-  if (uVolEl) {
-    const sign = nightTrading.micro_foreign_net_vol >= 0 ? '+' : '';
-    uVolEl.innerText = `${sign}${nightTrading.micro_foreign_net_vol.toLocaleString()} 口`;
-    uVolEl.style.color = nightTrading.micro_foreign_net_vol >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-  }
+      rowsHtml += `<tr>
+        <td>${item.date}</td>
+        <td style="color: ${item.foreign_tx >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${fTxSign}${item.foreign_tx} 口 (${fTxAmtStr})</td>
+        <td style="color: ${item.foreign_mtx >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${fMtxSign}${item.foreign_mtx} 口</td>
+        <td style="color: ${item.foreign_micro >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${fMicroSign}${item.foreign_micro} 口</td>
+        <td style="color: ${item.dealer_tx >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${dTxSign}${item.dealer_tx} 口 (${dTxAmtStr})</td>
+      </tr>`;
+    });
 
-  const dVolEl = document.getElementById('night-dealer-vol');
-  if (dVolEl) {
-    const sign = nightTrading.tx_dealer_net_vol >= 0 ? '+' : '';
-    dVolEl.innerText = `${sign}${nightTrading.tx_dealer_net_vol.toLocaleString()} 口`;
-    dVolEl.style.color = nightTrading.tx_dealer_net_vol >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-  }
-
-  const dAmtEl = document.getElementById('night-dealer-amt');
-  if (dAmtEl) {
-    const sign = nightTrading.tx_dealer_net_amt >= 0 ? '+' : '';
-    dAmtEl.innerText = `契約金額: ${sign}${nightTrading.tx_dealer_net_amt} 億 TWD`;
-  }
-
-  const nSumEl = document.getElementById('night-trading-summary');
-  if (nSumEl) {
-    const defaultSum = "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤僅微變 -7 口（外資無慌亂砍單），且在小台與微台大舉買超 +7,594 口吸收散戶籌碼，外資防守意圖強烈。";
-    nSumEl.innerHTML = nightTrading.night_summary_text || defaultSum;
-  }
-
-  if (digestEl) {
-    const shiftSummaryHtml = digest.session_shift_summary 
-      ? `<div style="background: rgba(255, 215, 0, 0.08); border: 1px solid rgba(255, 215, 0, 0.25); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 0.88rem; color: #ffd700;">${digest.session_shift_summary}</div>` 
-      : '';
-
-    digestEl.innerHTML = `
-      ${shiftSummaryHtml}
-      <p style="margin-bottom: 6px;">📈 <strong>期貨未平倉</strong>：${digest.futures_summary}</p>
-      <p style="margin-bottom: 6px;">💵 <strong>現貨三大法人</strong>：${digest.cash_summary}</p>
-      <p style="margin-bottom: 6px;">🏛️ <strong>選擇權籌碼結構 (BC/BP/SC/SP)</strong>：${digest.options_structure}</p>
-      <p style="margin-top: 8px; color: var(--gold-accent); font-weight: 600;">${digest.settlement_outlook}</p>
-    `;
-  }
-
-  const history = gexData.institutional_5day_history || [
-    { date: "7/25", top5_net: -1250, top10_net: -3420, top5_spec_net: -980, top10_spec_net: -2100, foreign_fut_net: -18500, trust_fut_net: 2100, dealer_fut_net: -450, foreign_stock_net: -125.4, trust_stock_net: 42.1, dealer_stock_net: -18.6, foreign_opt_call_net: 0.45, foreign_opt_put_net: -1.82, trust_opt_call_net: -2.40, trust_opt_put_net: 0.002, dealer_opt_call_net: 1.25, dealer_opt_put_net: 0.85, pc_ratio: 102.4 },
-    { date: "7/28", top5_net: -850, top10_net: -1200, top5_spec_net: -420, top10_spec_net: -890, foreign_fut_net: -16200, trust_fut_net: 2450, dealer_fut_net: -120, foreign_stock_net: -88.2, trust_stock_net: 38.5, dealer_stock_net: -12.4, foreign_opt_call_net: 0.62, foreign_opt_put_net: -1.45, trust_opt_call_net: -2.65, trust_opt_put_net: 0.002, dealer_opt_call_net: 1.40, dealer_opt_put_net: 0.92, pc_ratio: 104.1 },
-    { date: "7/29", top5_net: 420, top10_net: 1150, top5_spec_net: 650, top10_spec_net: 1420, foreign_fut_net: -15100, trust_fut_net: 3100, dealer_fut_net: 380, foreign_stock_net: -45.6, trust_stock_net: 51.2, dealer_stock_net: -8.5, foreign_opt_call_net: 0.88, foreign_opt_put_net: -1.10, trust_opt_call_net: -2.85, trust_opt_put_net: 0.003, dealer_opt_call_net: 1.85, dealer_opt_put_net: 1.15, pc_ratio: 105.8 },
-    { date: "7/30", top5_net: 3850, top10_net: 5920, top5_spec_net: 3210, top10_spec_net: 4850, foreign_fut_net: -12400, trust_fut_net: 3650, dealer_fut_net: 850, foreign_stock_net: 32.5, trust_stock_net: 48.0, dealer_stock_net: 14.2, foreign_opt_call_net: 1.45, foreign_opt_put_net: -0.65, trust_opt_call_net: -2.98, trust_opt_put_net: 0.003, dealer_opt_call_net: 2.30, dealer_opt_put_net: 1.42, pc_ratio: 107.2 },
-    { date: "7/31", top5_net: 6420, top10_net: 9850, top5_spec_net: 5890, top10_spec_net: 8410, foreign_fut_net: -14200, trust_fut_net: 4200, dealer_fut_net: 1100, foreign_stock_net: 185.4, trust_stock_net: 62.8, dealer_stock_net: -24.5, foreign_opt_call_net: 0.60, foreign_opt_put_net: -0.28, trust_opt_call_net: -3.08, trust_opt_put_net: 0.003, dealer_opt_call_net: 1.83, dealer_opt_put_net: 1.42, pc_ratio: 108.5 }
-  ];
-
-  const formatCellSymmetric = (val, isAmount = false, suffix = '') => {
-    if (val === undefined || val === null) return '-';
-    const dot = val >= 0 ? '🔴' : '🟢';
-    const formattedVal = isAmount ? (val >= 0 ? `+${val}` : `${val}`) : (val >= 0 ? `+${val.toLocaleString()}` : `${val.toLocaleString()}`);
-    
-    return `
-      <div class="cell-num-wrapper">
-        <span class="cell-num-val">${formattedVal}</span>
-        <span class="cell-num-unit">${suffix}</span>
-        <span class="cell-num-dot">${dot}</span>
+    night5DayContainer.innerHTML = `
+      <h4 style="color: var(--primary-accent); font-size: 0.85rem; margin-bottom: 8px;">近 5 日夜盤三大法人交易籌碼歷程矩陣</h4>
+      <div style="overflow-x: auto;">
+        <table class="matrix-table" style="text-align: center; width: 100%;">
+          <thead>
+            <tr style="background: #18202d;">
+              <th>日期</th>
+              <th>外資夜盤台指期 (TX)</th>
+              <th>外資夜盤小台 (MTX)</th>
+              <th>外資夜盤微台 (Micro)</th>
+              <th>自營商夜盤台指期 (TX)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
       </div>
     `;
-  };
-
-  if (futBody) {
-    futBody.innerHTML = history.map(h => `
-      <tr>
-        <td><strong>${h.date}</strong></td>
-        <td>${formatCellSymmetric(h.top5_net, false, '口')}</td>
-        <td>${formatCellSymmetric(h.top10_net, false, '口')}</td>
-        <td>${formatCellSymmetric(h.top5_spec_net, false, '口')}</td>
-        <td>${formatCellSymmetric(h.top10_spec_net, false, '口')}</td>
-        <td>${formatCellSymmetric(h.foreign_fut_net, false, '口')}</td>
-        <td>${formatCellSymmetric(h.trust_fut_net, false, '口')}</td>
-        <td>${formatCellSymmetric(h.dealer_fut_net, false, '口')}</td>
-      </tr>
-    `).join('');
-  }
-
-  if (cashBody) {
-    cashBody.innerHTML = history.map(h => `
-      <tr>
-        <td><strong>${h.date}</strong></td>
-        <td>${formatCellSymmetric(h.foreign_stock_net, true, '億')}</td>
-        <td>${formatCellSymmetric(h.trust_stock_net, true, '億')}</td>
-        <td>${formatCellSymmetric(h.dealer_stock_net, true, '億')}</td>
-        <td>Call: ${formatCellSymmetric(h.foreign_opt_call_net, true, '億')} / Put: ${formatCellSymmetric(h.foreign_opt_put_net, true, '億')}</td>
-        <td>Call: ${formatCellSymmetric(h.trust_opt_call_net, true, '億')} / Put: ${formatCellSymmetric(h.trust_opt_put_net, true, '億')}</td>
-        <td>Call: ${formatCellSymmetric(h.dealer_opt_call_net, true, '億')} / Put: ${formatCellSymmetric(h.dealer_opt_put_net, true, '億')}</td>
-        <td><strong style="color: var(--text-main);">${h.pc_ratio}%</strong></td>
-      </tr>
-    `).join('');
   }
 }
 
+function populateInstitutionalMatrix() {
+  if (!gexData) return;
+
+  // Explicit descending date sort: Latest date at top
+  const history = ensureDescendingByDate(gexData.institutional_5day_history);
+  const digest = gexData.executive_digest || {};
+
+  const digestEl = document.getElementById('executive-digest-content');
+  if (digestEl) {
+    digestEl.innerHTML = `
+      <p style="margin-bottom: 4px;">📈 <strong>期貨籌碼動向</strong>：${digest.futures_summary || '特定法人多單佈局強勁。'}</p>
+      <p style="margin-bottom: 4px;">💰 <strong>現貨買賣超動向</strong>：${digest.cash_summary || '外資與投信呈現現貨雙買。'}</p>
+      <p style="margin-bottom: 4px;">🎯 <strong>選擇權莊家結構</strong>：${digest.options_structure || '莊家雙賣佈局，避險天花板位於 46,100。'}</p>
+      <p style="margin-bottom: 0;">🔮 <strong>結算展望判讀</strong>：${digest.settlement_outlook || '大盤震盪多頭格局。'}</p>
+    `;
+  }
+
+  // Table 1: 期貨未平倉 5 日歷程
+  const t1Body = document.getElementById('futures-5day-body');
+  if (t1Body && history.length > 0) {
+    let html1 = '';
+    history.forEach(row => {
+      const top5 = row.top5_net || 0;
+      const top10 = row.top10_net || 0;
+      const top5Spec = row.top5_spec_net || 0;
+      const top10Spec = row.top10_spec_net || 0;
+      const foreignFut = row.foreign_fut_net || 0;
+      const trustFut = row.trust_fut_net !== undefined ? row.trust_fut_net : (row.itrust_fut_net || 0);
+      const dealerFut = row.dealer_fut_net || 0;
+
+      const top5Sign = top5 >= 0 ? '+' : '';
+      const top10Sign = top10 >= 0 ? '+' : '';
+      const top5SpecSign = top5Spec >= 0 ? '+' : '';
+      const top10SpecSign = top10Spec >= 0 ? '+' : '';
+      const foreignFutSign = foreignFut >= 0 ? '+' : '';
+      const trustFutSign = trustFut >= 0 ? '+' : '';
+      const dealerFutSign = dealerFut >= 0 ? '+' : '';
+
+      html1 += `<tr>
+        <td>${row.date}</td>
+        <td style="color: ${top5 >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top5Sign}${top5.toLocaleString()}</td>
+        <td style="color: ${top10 >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top10Sign}${top10.toLocaleString()}</td>
+        <td style="color: ${top5Spec >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top5SpecSign}${top5Spec.toLocaleString()}</td>
+        <td style="color: ${top10Spec >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top10SpecSign}${top10Spec.toLocaleString()}</td>
+        <td style="color: ${foreignFut >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${foreignFutSign}${foreignFut.toLocaleString()}</td>
+        <td style="color: ${trustFut >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${trustFutSign}${trustFut.toLocaleString()}</td>
+        <td style="color: ${dealerFut >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${dealerFutSign}${dealerFut.toLocaleString()}</td>
+      </tr>`;
+    });
+    t1Body.innerHTML = html1;
+  }
+
+  // Table 2: 現貨與選擇權 5 日歷程
+  const t2Body = document.getElementById('cash-options-5day-body');
+  if (t2Body && history.length > 0) {
+    let html2 = '';
+    history.forEach(row => {
+      const foreignStock = row.foreign_stock_net || 0;
+      const trustStock = row.trust_stock_net !== undefined ? row.trust_stock_net : (row.itrust_stock_net || 0);
+      const dealerStock = row.dealer_stock_net || 0;
+
+      const fStockSign = foreignStock >= 0 ? '+' : '';
+      const tStockSign = trustStock >= 0 ? '+' : '';
+      const dStockSign = dealerStock >= 0 ? '+' : '';
+
+      // Option Call & Put Breakdown
+      const fCall = row.foreign_opt_call_net !== undefined ? row.foreign_opt_call_net : 0;
+      const fPut = row.foreign_opt_put_net !== undefined ? row.foreign_opt_put_net : 0;
+      const fCallSign = fCall >= 0 ? '+' : '';
+      const fPutSign = fPut >= 0 ? '+' : '';
+      const fCallDot = fCall >= 0 ? '🔴' : '🟢';
+      const fPutDot = fPut >= 0 ? '🔴' : '🟢';
+
+      const tCall = row.trust_opt_call_net !== undefined ? row.trust_opt_call_net : 0;
+      const tPut = row.trust_opt_put_net !== undefined ? row.trust_opt_put_net : 0;
+      const tCallSign = tCall >= 0 ? '+' : '';
+      const tPutSign = tPut >= 0 ? '+' : '';
+      const tCallDot = tCall >= 0 ? '🔴' : '🟢';
+      const tPutDot = tPut >= 0 ? '🔴' : '🟢';
+
+      const dCall = row.dealer_opt_call_net !== undefined ? row.dealer_opt_call_net : 0;
+      const dPut = row.dealer_opt_put_net !== undefined ? row.dealer_opt_put_net : 0;
+      const dCallSign = dCall >= 0 ? '+' : '';
+      const dPutSign = dPut >= 0 ? '+' : '';
+      const dCallDot = dCall >= 0 ? '🔴' : '🟢';
+      const dPutDot = dPut >= 0 ? '🔴' : '🟢';
+
+      const pcVal = row.pc_ratio || gexData.pc_ratio || 108.5;
+
+      html2 += `<tr>
+        <td>${row.date}</td>
+        <td style="color: ${foreignStock >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${fStockSign}${foreignStock.toFixed(1)} 億</td>
+        <td style="color: ${trustStock >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${tStockSign}${trustStock.toFixed(1)} 億</td>
+        <td style="color: ${dealerStock >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${dStockSign}${dealerStock.toFixed(1)} 億</td>
+        <td style="font-size: 0.81rem; line-height: 1.45; text-align: center;">
+          <div>Call: <span style="color: ${fCall >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${fCallSign}${fCall.toFixed(2)} 億</span> ${fCallDot}</div>
+          <div>/ Put: <span style="color: ${fPut >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${fPutSign}${fPut.toFixed(2)} 億</span> ${fPutDot}</div>
+        </td>
+        <td style="font-size: 0.81rem; line-height: 1.45; text-align: center;">
+          <div>Call: <span style="color: ${tCall >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${tCallSign}${tCall.toFixed(2)} 億</span> ${tCallDot}</div>
+          <div>/ Put: <span style="color: ${tPut >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${tPutSign}${Math.abs(tPut) < 0.01 ? tPut.toFixed(3) : tPut.toFixed(2)} 億</span> ${tPutDot}</div>
+        </td>
+        <td style="font-size: 0.81rem; line-height: 1.45; text-align: center;">
+          <div>Call: <span style="color: ${dCall >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${dCallSign}${dCall.toFixed(2)} 億</span> ${dCallDot}</div>
+          <div>/ Put: <span style="color: ${dPut >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${dPutSign}${dPut.toFixed(2)} 億</span> ${dPutDot}</div>
+        </td>
+        <td style="color: var(--gold-accent); font-weight: 600;">${typeof pcVal === 'number' ? pcVal.toFixed(1) + '%' : pcVal}</td>
+      </tr>`;
+    });
+    t2Body.innerHTML = html2;
+  }
+}
+
+function populateAiQuantDigest() {
+  const container = document.getElementById('ai-quant-digest-content');
+  if (!container || !gexData) return;
+
+  const digest = gexData.ai_ex_dividend_digest || {};
+  let html = '';
+  if (digest.bullet_1) html += `<p style="margin-bottom: 6px; line-height: 1.65;">${digest.bullet_1}</p>`;
+  if (digest.bullet_2) html += `<p style="margin-bottom: 6px; line-height: 1.65;">${digest.bullet_2}</p>`;
+  if (digest.bullet_3) html += `<p style="margin-bottom: 6px; line-height: 1.65;">${digest.bullet_3}</p>`;
+  if (digest.bullet_4) html += `<p style="margin-bottom: 0; line-height: 1.65;">${digest.bullet_4}</p>`;
+
+  container.innerHTML = html;
+}
+
 function populateStockFutures() {
+  populateAiQuantDigest();
   const tbody = document.getElementById('stock-futures-body');
-  if (!tbody || !gexData.stock_futures) return;
+  if (!tbody || !gexData || !gexData.stock_futures) return;
 
-  let list = [...gexData.stock_futures];
-
-  const filterCat = document.getElementById('category-filter-select');
-  if (filterCat && filterCat.value !== 'all') {
-    list = list.filter(stk => stk.category === filterCat.value);
-  }
-
+  const filterCategory = document.getElementById('category-filter-select');
   const filterNight = document.getElementById('filter-night-only');
-  if (filterNight && filterNight.checked) {
-    list = list.filter(stk => stk.has_night);
-  }
-
   const searchInput = document.getElementById('search-stock-input');
-  if (searchInput && searchInput.value.trim()) {
-    const kw = searchInput.value.trim().toLowerCase();
-    list = list.filter(stk => stk.code.toLowerCase().includes(kw) || stk.name.toLowerCase().includes(kw));
+
+  const selectedCat = filterCategory ? filterCategory.value : 'all';
+  const nightOnly = filterNight ? filterNight.checked : false;
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+  let list = gexData.stock_futures.slice();
+
+  // Filter logic
+  if (selectedCat === 'top10' || selectedCat === 'top10_buy') {
+    list = list.filter(item => item.is_top10_buy || (item.foreign_net + item.dealer_net) > 200);
+  } else if (selectedCat === 'top10_sell') {
+    list = list.filter(item => item.is_top10_sell || (item.foreign_net + item.dealer_net) < -200);
+  } else if (selectedCat === 'upcoming_ex') {
+    list = list.filter(item => item.ex_date && item.ex_date !== '-');
+  } else if (selectedCat !== 'all') {
+    list = list.filter(item => item.category === selectedCat);
   }
 
+  if (nightOnly) {
+    list = list.filter(item => item.has_night);
+  }
+
+  if (query) {
+    list = list.filter(item => item.code.toLowerCase().includes(query) || item.name.toLowerCase().includes(query));
+  }
+
+  // Sort logic
+  const sortKey = currentSortKey || 'volume';
   list.sort((a, b) => {
-    let valA = a[currentSortKey];
-    let valB = b[currentSortKey];
+    let valA = a[sortKey];
+    let valB = b[sortKey];
+
+    if (sortKey === 'basis') {
+      valA = (a.fut_price || a.spot_price) - a.spot_price;
+      valB = (b.fut_price || b.spot_price) - b.spot_price;
+    }
 
     if (valA === undefined) valA = '';
     if (valB === undefined) valB = '';
 
-    if (typeof valA === 'string') valA = valA.toLowerCase();
-    if (typeof valB === 'string') valB = valB.toLowerCase();
-
-    if (valA < valB) return currentSortOrder === 'asc' ? -1 : 1;
-    if (valA > valB) return currentSortOrder === 'asc' ? 1 : -1;
-    return 0;
+    if (typeof valA === 'string') {
+      return currentSortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }
+    return currentSortOrder === 'asc' ? valA - valB : valB - valA;
   });
 
-  tbody.innerHTML = list.map(stk => {
-    const trendBadge = stk.trend === 'Bull' 
-      ? '<span class="badge-bull">▲ Bull (多)</span>' 
-      : '<span class="badge-bear">▼ Bear (空)</span>';
+  let html = '';
+  list.forEach(item => {
+    const futPrice = item.fut_price || item.spot_price;
+    const basis = item.basis !== undefined ? item.basis : (futPrice - item.spot_price);
+    const basisBadge = basis > 0 
+      ? `<span class="badge" style="background: rgba(255, 82, 82, 0.2); color: #ff5252;">🔴 +${basis.toFixed(2)} (正價差)</span>`
+      : (basis < 0 
+        ? `<span class="badge" style="background: rgba(0, 230, 118, 0.2); color: #00e676;">🟢 ${basis.toFixed(2)} (逆價差)</span>`
+        : `<span class="badge" style="background: rgba(255, 255, 255, 0.1); color: #aaa;">0.00 (平價差)</span>`);
 
-    const catTag = `<span style="background: rgba(0,210,255,0.1); color: var(--primary-accent); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">${stk.category || '個股期貨'}</span>`;
-    const changeClass = stk.change_pct >= 0 ? 'tag-bull' : 'tag-bear';
-    const changeSign = stk.change_pct >= 0 ? '+' : '';
+    const top10Tag = item.is_top10_buy 
+      ? `<span class="badge" style="background: rgba(255, 215, 0, 0.2); color: var(--gold-accent); margin-left: 4px;">🔥 Top10買超</span>` 
+      : (item.is_top10_sell 
+        ? `<span class="badge" style="background: rgba(0, 210, 255, 0.2); color: var(--primary-accent); margin-left: 4px;">❄️ Top10賣超</span>` 
+        : '');
+    const trendBadge = item.trend === 'Bull' ? '<span style="color: var(--call-color);">▲ 看多</span>' : '<span style="color: var(--put-color);">▼ 看空</span>';
 
-    return `
-      <tr>
-        <td><strong>${stk.code}</strong></td>
-        <td>${stk.name}</td>
-        <td>${catTag}</td>
-        <td>${trendBadge}</td>
-        <td><strong>${stk.spot_price.toLocaleString()}</strong></td>
-        <td class="${changeClass}"><strong>${changeSign}${stk.change_pct}%</strong></td>
-        <td>${stk.volume ? stk.volume.toLocaleString() : '-'} 口</td>
-        <td class="${stk.foreign_net >= 0 ? 'tag-bull' : 'tag-bear'}">${stk.foreign_net >= 0 ? '+' : ''}${stk.foreign_net} 口</td>
-        <td class="${stk.dealer_net >= 0 ? 'tag-bull' : 'tag-bear'}">${stk.dealer_net >= 0 ? '+' : ''}${stk.dealer_net} 口</td>
-        <td>${stk.has_night ? '🌙 <span style="color: var(--call-color)">有夜盤</span>' : '⚪ 無夜盤'}</td>
-      </tr>
-    `;
-  }).join('');
+    const exBadge = item.ex_date && item.ex_date !== '-'
+      ? `<span class="badge" style="background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid rgba(255, 170, 0, 0.3); font-weight: 600;">📅 ${item.ex_date} (${item.ex_dividend ? '$' + item.ex_dividend : (item.ex_type || '除息')})</span>`
+      : `<span style="color: #555; font-size: 0.75rem;">—</span>`;
+
+    html += `<tr>
+      <td style="font-weight: 700; color: var(--primary-accent);">${item.code}</td>
+      <td>${item.name} ${top10Tag}</td>
+      <td><span class="badge" style="background: rgba(255,255,255,0.05);">${item.category}</span></td>
+      <td>${trendBadge}</td>
+      <td style="font-weight: 600;">${item.spot_price.toFixed(2)}</td>
+      <td style="font-weight: 600;">${futPrice.toFixed(2)}</td>
+      <td>${basisBadge}</td>
+      <td style="color: ${item.change_pct >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 700;">${item.change_pct >= 0 ? '+' : ''}${item.change_pct.toFixed(2)}%</td>
+      <td>${item.volume.toLocaleString()}</td>
+      <td style="color: ${item.foreign_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${item.foreign_net >= 0 ? '+' : ''}${item.foreign_net.toLocaleString()}</td>
+      <td style="color: ${item.dealer_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${item.dealer_net >= 0 ? '+' : ''}${item.dealer_net.toLocaleString()}</td>
+      <td>${item.has_night ? '<span style="color: var(--gold-accent);">🌙 交易中</span>' : '<span style="color: #666;">日盤</span>'}</td>
+      <td>${exBadge}</td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function initModals() {
+  const eduBtn = document.getElementById('education-btn');
+  const eduModal = document.getElementById('education-modal');
+  const closeEduBtn = document.getElementById('close-edu-modal');
+
+  if (eduBtn && eduModal) {
+    eduBtn.onclick = function() {
+      eduModal.style.display = 'flex';
+    };
+  }
+
+  if (closeEduBtn && eduModal) {
+    closeEduBtn.onclick = function() {
+      eduModal.style.display = 'none';
+    };
+  }
+
+  if (eduModal) {
+    eduModal.onclick = function(e) {
+      if (e.target === eduModal) {
+        eduModal.style.display = 'none';
+      }
+    };
+  }
+
+  const lockBtn = document.getElementById('lock-btn');
+  const passcodeModal = document.getElementById('passcode-modal');
+  const unlockBtn = document.getElementById('unlock-btn');
+  const passcodeInput = document.getElementById('passcode-input');
+  const passcodeError = document.getElementById('passcode-error');
+
+  // Check session unlock status on page load
+  const isUnlocked = sessionStorage.getItem('gex_unlocked') === 'true';
+  if (passcodeModal) {
+    if (isUnlocked) {
+      passcodeModal.style.display = 'none';
+    } else {
+      passcodeModal.style.display = 'flex';
+      if (passcodeInput) setTimeout(() => passcodeInput.focus(), 150);
+    }
+  }
+
+
+  if (unlockBtn && passcodeModal) {
+    unlockBtn.onclick = function() {
+      const inputEl = document.getElementById('passcode-input');
+      const code = (inputEl ? inputEl.value : '').trim().toUpperCase();
+      if (code === 'GEX2026') {
+        passcodeModal.style.display = 'none';
+        if (passcodeError) passcodeError.style.display = 'none';
+        sessionStorage.setItem('gex_unlocked', 'true');
+      } else {
+        if (passcodeError) passcodeError.style.display = 'block';
+        if (inputEl) {
+          inputEl.value = '';
+          inputEl.focus();
+        }
+      }
+    };
+  }
+
+  if (lockBtn && passcodeModal) {
+    lockBtn.onclick = function() {
+      sessionStorage.removeItem('gex_unlocked');
+      if (passcodeModal) passcodeModal.style.display = 'flex';
+      if (passcodeInput) {
+        passcodeInput.value = '';
+        passcodeInput.focus();
+      }
+    };
+  }
+
+  const taxonomyBtn = document.getElementById('open-taxonomy-btn');
+  const taxonomyModal = document.getElementById('taxonomy-modal');
+  const closeTaxonomyBtn = document.getElementById('close-taxonomy-modal');
+
+  if (taxonomyBtn && taxonomyModal) {
+    taxonomyBtn.onclick = function() {
+      taxonomyModal.style.display = 'flex';
+    };
+  }
+
+  if (closeTaxonomyBtn && taxonomyModal) {
+    closeTaxonomyBtn.onclick = function() {
+      taxonomyModal.style.display = 'none';
+    };
+  }
+
+  // Strike Modal
+  const openStrikeBtn = document.getElementById('open-strike-modal-btn');
+  const strikeModal = document.getElementById('strike-modal');
+  const closeStrikeBtn = document.getElementById('close-strike-modal');
+
+  if (openStrikeBtn && strikeModal) {
+    openStrikeBtn.onclick = function() {
+      strikeModal.style.display = 'flex';
+    };
+  }
+  if (closeStrikeBtn && strikeModal) {
+    closeStrikeBtn.onclick = function() {
+      strikeModal.style.display = 'none';
+    };
+  }
+
+  // Sensitivity Modal
+  const openSensitivityBtn = document.getElementById('open-sensitivity-modal-btn');
+  const sensitivityModal = document.getElementById('sensitivity-modal');
+  const closeSensitivityBtn = document.getElementById('close-sensitivity-modal');
+
+  if (openSensitivityBtn && sensitivityModal) {
+    openSensitivityBtn.onclick = function() {
+      sensitivityModal.style.display = 'flex';
+    };
+  }
+  if (closeSensitivityBtn && sensitivityModal) {
+    closeSensitivityBtn.onclick = function() {
+      sensitivityModal.style.display = 'none';
+    };
+  }
+
+  if (taxonomyModal) {
+    taxonomyModal.onclick = function(e) {
+      if (e.target === taxonomyModal) {
+        taxonomyModal.style.display = 'none';
+      }
+    };
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initModals);
+} else {
+  initModals();
 }

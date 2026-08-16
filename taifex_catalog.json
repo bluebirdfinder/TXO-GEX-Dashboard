@@ -1618,5 +1618,107 @@
     "name": "華城期",
     "category": "個股期貨",
     "has_night": false
+  },
+  {
+    "code": "2330F",
+    "name": "小型台積電期",
+    "category": "小型個股期貨",
+    "has_night": true
+  },
+  {
+    "code": "2303F",
+    "name": "小型聯電期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2317F",
+    "name": "小型鴻海期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2454F",
+    "name": "小型聯發科期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2382F",
+    "name": "小型廣達期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3231F",
+    "name": "小型緯創期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3008F",
+    "name": "小型大立光期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3661F",
+    "name": "小型世芯-KY期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "6669F",
+    "name": "小型緯穎期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3017F",
+    "name": "小型奇鋐期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "3037F",
+    "name": "小型欣興期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2603F",
+    "name": "小型長榮期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2881F",
+    "name": "小型富邦金期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "2882F",
+    "name": "小型國泰金期",
+    "category": "小型個股期貨",
+    "has_night": false
+  },
+  {
+    "code": "0050F",
+    "name": "小型元大台灣50ETF期",
+    "category": "小型ETF期貨",
+    "has_night": true
+  },
+  {
+    "code": "0056F",
+    "name": "小型元大高股息ETF期",
+    "category": "小型ETF期貨",
+    "has_night": false
+  },
+  {
+    "code": "00878F",
+    "name": "小型國泰永續高股息ETF期",
+    "category": "小型ETF期貨",
+    "has_night": false
   }
 ]

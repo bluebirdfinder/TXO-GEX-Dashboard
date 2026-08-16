@@ -1,21 +1,31 @@
-# 🚀 TXO GEX Dashboard - v9.1.0 Release Status (Fubon Neo SDK Live & Precision Sync)
+# 📊 TXO GEX Dashboard Project Status (v37.0)
 
-## 📌 Status Summary
-- **Current Version**: v9.1.0 (Engine v31.0)
-- **Fubon Neo API SDK**: 🟢 **100% Authenticated & Active (`fubon_neo` v2.2.8)** - Direct WebSocket Live Streaming API with Zero-Trust Security.
-- **Data Integrity**: Direct integration with Fubon Neo SDK, TWSE MIS & OpenAPI (`FMTQIK`), TPEx OpenAPI, and TAIFEX (`taifex.com.tw` / `futContractsDateAh` / `optDailyMarketReport`).
-- **Session Timing & Date Annotations**: 3-Day Table features explicit timing badges for Day Session (`📅 M/DD 13:45`) and Next-Day Night Close (`🌙 M/DD 05:00收盤`).
-- **Real Open Interest GEX Matrix**: Direct parsing of TAIFEX Options Daily Market Report for strike-by-strike Real Call/Put OI.
-- **Data Freshness LED**: Real-time LED indicator (🟢 Fresh <4h / 🟡 Aging 4-12h / 🔴 Expired >12h) in header.
-- **LocalStorage Resilience**: Automatic offline/network fallback caching with warning banner.
-- **Overlay Compare Mode**: Interactive side-by-side comparison of T-Day vs T-Night (Live) GEX distributions.
-- **3-Day 6-Session Snapshots**: Full historical trajectory for T-2 Day, T-2 Night, T-1 Day, T-1 Night, T Day, T Night (Live).
+**Current Version**: `v37.0`  
+**Data Engine**: `scripts/fetch_and_calc_vision.py` (Playwright + Gemini 3.6 Vision Dual-Engine)  
+**Status**: `100% OPERATIONAL & VERIFIED`  
+**Passcode Protection**: `GEX2026` (Case-Insensitive with Eye Toggle 👁️)
 
-## 🎯 Completed Milestones (v9.1.0)
-- [x] Successfully authenticated Fubon Neo SDK (`v2.2.8`) with `apikey_login` and local Zero-Trust `.env` configuration.
-- [x] Restored `app.js` syntax integrity and all stat card rendering pipelines.
-- [x] Added dynamic TWSE FMTQIK and TPEx API historical query modules in `fetch_and_calc.py`.
-- [x] Integrated real TAIFEX TXO Option Open Interest parser (`fetch_official_taifex_txo_oi`) for GEX calculations.
-- [x] Annotated 3-day table headers and rows with explicit day session and next-day night close dates.
-- [x] Re-encrypted & synchronized raw JSON payloads (`gex_data.json`, `encrypted_gex.json`).
-- [x] Updated all repository documentation (`README.md`, `PROJECT_HANDOVER.md`, `STATUS.md`).
+---
+
+## 🎯 v37.0 Updates (Current Sprint Highlights)
+
+1. **🎨 5 大結算天期動態到期日標註 (DTE Expiration Annotations)**:
+   - Plotly 直方圖圖例自動標註各合約精確結算日期（如 `🟨 近週選 W1 (08/19三結算)`、`🟩 次週選 W2 (08/26三結算)`、`🟦 當月月選 M1 (09/16三結算)`、`🟪 雙週五選 (08/21五結算)`）。
+
+2. **📈 Net GEX 淨動態曲線與「🔀 疊加對比」模式**:
+   - 繪製高對比白藍平滑曲線跨越履約價，於 **Zero Gamma (45,820.2)** 點位穿過 0 軸。
+   - `Zero Gamma` (`y: 1.14`) 與 `Put Wall / Call Wall` (`y: 1.02`) 階梯式錯開，解決水平標籤重疊。
+   - 按下 `🔀 疊加對比` 即可顯示黃色對照盤別 (T-1日盤/夜盤) 差異對比線與高亮動態按鈕。
+
+3. **📊 三大法人選擇權 Call / Put 買賣超金額獨立雙行拆解**:
+   - 復刻經典雙行排版，同時顯示外資、投信、自營商選擇權的 `Call` 與 `Put` 獨立買賣超金額與 `🔴/🟢` 多空燈號。
+
+4. **🤖 Gemini AI 全市場籌碼與除權息 4 大焦點掃描**:
+   - 結構化分為 4 大項目：大盤 GEX 位階判讀、莊家牆結算磁吸、Top 10 法人籌碼聚焦個股期、近期 TWSE 官方除權息扣點校正。
+
+5. **📅 TWSE 除權息動態預警與過期自動隱藏**:
+   - 過期除權息事件自動清除標註；僅針對未來的即將/當日除權息進行黃標預警。
+   - 自動區分「除息 (現金)」、「除權 (配股)」與「除權息 (同天)」。
+
+6. **⚡ 自動數據初始化與隱密安全性密碼解鎖**:
+   - 網頁加載時立刻初始化預載籌碼數據，不留明碼提示，原生 `👁️ / 🙈` 顯示/隱藏密碼。

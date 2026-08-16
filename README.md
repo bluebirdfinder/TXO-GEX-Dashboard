@@ -1,86 +1,83 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板 (v35.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板 (v37.0)
 
-> **全台首創‧日夜盤雙維度對照‧Playwright + Gemini 3.6 Vision 雙 Call 批次數據引擎‧選擇權 Gamma Exposure (GEX) 波動度與國際熱錢動向儀表板**
+> **全台首創‧日夜盤雙維度對照‧Playwright + Gemini 3.6 Vision 雙 Call 批次數據引擎‧Multi-DTE 到期日標註‧Net GEX 敏感度動態曲線‧TWSE 除權息預警‧國際熱錢動向儀表板**
 
 [![GitHub Actions Night/Day Pipeline](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live Dashboard](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![TAIFEX Compliant](https://img.shields.io/badge/TAIFEX-100%25_Official_Data-ffd700)](https://www.taifex.com.tw/)
+[![Engine Version](https://img.shields.io/badge/Engine-v37.0_Vision_Playwright-ffd700?style=flat&logo=python)](file:///scripts/fetch_and_calc_vision.py)
+[![Compliance](https://img.shields.io/badge/Compliance-100%25_Academic_Regulatory-00e676?style=flat)](file:///OPTIONS_CHEATSHEET.md)
 
 ---
 
-## 🌟 核心功能與 v35.0 系統特色
+## 🌟 v37.0 核心升級與最新亮點 (Key Features)
 
-### 1. 🤖 Playwright + Gemini 3.6 Vision 雙 Call 每日批次數據引擎
-- **100% 防爬蟲阻擋與無感解析**：以 Playwright Chromium 開啟期交所與證交所 A+B 類全量網頁，使用 Gemini 3.6 Vision 進行多圖批次提取。
-- **每日嚴格控制 2 次 Gemini API Call**：日盤盤後 15:30 (8 張圖片 1 次 Call) / 夜盤盤後 05:30 (4 張圖片 1 次 Call)。
-- **前置數據就緒檢查 (Smart Readiness Check)**：截圖前自動判定 DOM 日期，數據未更新時自動輪詢，**零浪費 API 配額**。
+### 1. 🎨 5 大結算天期動態到期日標註 (DTE Expiration Annotations)
+- **精確動態結算日期**：直方圖圖例自動標註各合約精確到期日（如 `🟨 近週選 W1 (08/19三結算)`、`🟩 次週選 W2 (08/26三結算)`、`🟦 當月月選 M1 (09/16三結算)`、`🟪 雙週五選 (08/21五結算)`）。
+- **Evan (LIETA.IO) 專業 5 色分層堆疊**：直觀呈現在當沖防守、波段鐵板與國際事件避險部位的籌碼分佈。
 
-### 2. 🌐 國際熱錢動向與匯率解讀 Card (Hot Money Digest)
-- **國中生秒懂白話解讀**：即時與盤後追蹤 `USD/TWD`（美元/台幣）、`DXY`（美元指數）、`USD/JPY`（美元/日圓）。
-- **外資資金意圖分析**：台幣強升標示「外資熱錢滾滾匯入，偏多大盤」；台幣急貶標示「外資提款落跑，防範拉回賣壓」。
+### 2. 📈 Net GEX 淨動態曲線與「🔀 疊加對比」模式
+- **恆常 Net GEX 曲線 (Net GEX Profile Line)**：以白藍高對比平滑曲線 (`spline`) 跨越履約價，精確於 **Zero Gamma (45,820.2)** 點位穿過 0 軸，直觀展現多空轉折力道。
+- **錯開三關價標籤 (Multi-tier Vertical Staggering)**：將 `Zero Gamma` 提升至頂層高位 (`y: 1.14`)，`Put Wall (45,650)` 與 `Call Wall (46,000)` 置於下層 (`y: 1.02`)，徹底解決水平標籤互相遮蔽問題。
+- **🔀 疊加對比動態回饋**：點擊按鈕即刻開啟黃色對照盤別 (T-1日盤/夜盤) 差異對比線，並提供明顯的反白高亮視覺回饋。
 
-### 3. 🎴 日夜盤雙維度對照 (Split-Card Dual-Session View)
-- **五大關鍵指標卡片**：包含 **台指期 (TXF1!)**、**Zero Gamma (轉折點)**、**Call Wall (天花板)**、**Put Wall (地板)** 與 **Max Pain (最大痛點)**。
-- **日夜盤對比位移 Banner**：自動比對夜盤相較日盤的期貨價差與避險牆位移點數。
+### 3. 📊 三大法人選擇權 Call / Put 買賣超金額獨立雙行拆解
+- 復刻經典雙行排版，獨立呈現外資、投信與自營商選擇權的 `Call` 與 `Put` 買賣超金額與 `🔴 (買超) / 🟢 (賣超)` 燈號，精確辨識法人偏多雙買或避險雙賣細節。
 
-### 4. 🎯 期交所真實未平倉量 (OI) 計算 Black-Scholes GEX
-- **真實分週 GEX**：精確解析週選 (W1/W2) 與當月月選之真實 Call/Put OI，計算權威 GEX 柱狀圖、Call Wall 與 Put Wall。
+### 4. 🤖 Gemini AI 全市場籌碼、GEX 轉折與除權息事件 4 大焦點掃描
+- **4 大項目結構化條列**：
+  1. 🎯 **大盤 GEX 位階與假洗盤判讀**（45,841 現價位階 vs 45,500 轉折點）。
+  2. 🧱 **週月選莊家牆與結算磁吸**（46,000 Call Wall vs 45,500 Put Wall vs 45,900 Magnet）。
+  3. 🔥 **Top 10 法人籌碼聚焦標的**（外資/投信同步現貨買超 + 期貨淨多單雙重加碼股）。
+  4. 📅 **近期除權息扣點校正與價差防守**（TWSE 官方除權息扣點防誤判）。
+- 100% 遵守證券投資顧問法規，採用學理情境說明。
 
-### 5. 💎 個股期貨「正逆價差 (Basis)」與三大法人 Ranking
-- 提供熱門個股期貨（台積電期 2330、鴻海期 2317、聯發科期 2454 等）之期現貨價差 (Basis) 與趨勢標籤。
+### 5. 📅 TWSE 官方除權息動態預警與 287 檔全涵蓋期貨
+- **過期自動隱藏**：過期除權息事件自動清除標註；僅針對 **未來即將 / 當日除權息** 事件進行醒目預警。
+- **精確區分類型**：自動區分「除息 (現金股利)」、「除權 (股票配股)」與「除權息 (同天進行)」。
+- **全量 287 檔涵蓋**：包含小型商品（2330F 小型台積電期、0050F 小型元大台灣50ETF期）與夜盤可交易之 6 檔核心商品。
+
+### 6. 🔒 隱密安全性密碼解鎖與自動初始化
+- 隱密通行碼 **`GEX2026`**（不分大小寫），提供原生 `👁️ / 🙈` 顯示/隱藏密碼按鈕。
+- 開啟網頁即自動初始化加載內建數據，絕不出現空白表格。
 
 ---
 
-## 🛠️ 技術架構與資料流程
+## 🛠️ 系統架構與技術堆疊 (Tech Stack)
 
-```mermaid
-flowchart TD
-    A[TAIFEX / TWSE Open Data & Web Pages] --> B[Playwright Chromium Headless]
-    B -->|Smart Readiness Check| C[Screenshots Storage]
-    C -->|Single-Call Batch Prompt| D[Gemini 3.6 Vision API]
-    E[TWSE BFI82U & MIS JSON APIs] --> F[scripts/fetch_and_calc_vision.py Data Engine]
-    D --> F
-    F --> G[data/gex_data.json]
-    F --> H[data/encrypted_gex.json]
-    G & H --> I[GitHub Actions Auto-Pipeline]
-    I --> J[GitHub Pages Web Dashboard]
+| 模組分工 | 使用技術 / 來源 API |
+| :--- | :--- |
+| **前端 UI 儀表板** | HTML5, Vanilla CSS3 (Sleek Dark Mode), Vanilla JavaScript (ES6+) |
+| **圖表繪製引擎** | Plotly.js v2.27.0 (Relative Stacking Bar + Spline Scatter Plot) |
+| **爬蟲與計算引擎** | Python 3.12, BeautifulSoup4, Playwright Stealth, CryptoJS |
+| **即時行情數據源** | TWSE 臺灣證券交易所 (MIS / BFI82U / TWT49U), TAIFEX 期交所, Yahoo Finance API |
+| **AI 摘要生成引擎** | Google Gemini 3.6 Vision / Gemini 2.5 Flash API |
+| **自動化部署** | GitHub Actions (Cron 定時觸發日夜盤雙修剪流程) |
+
+---
+
+## 🚀 快速開始與本地執行 (Quick Start)
+
+### 1. 安裝 Python 依賴環境
+```bash
+pip install urllib3 beautifulsoup4 pandas playwright requests
+playwright install chromium
 ```
 
----
-
-## 📂 專案檔案結構
-
-```
-txo-gex-dashboard/
-├── .github/workflows/
-│   └── auto_update.yml        # GitHub Actions 自動化 Playwright + Vision 引擎排程
-├── data/
-│   ├── gex_data.json          # 原始產出 JSON 數據 (含 GEX, 籌碼, 熱錢與個股期價差)
-│   └── encrypted_gex.json      # AES-256-CBC-SHA256-XOR 加密數據 Payload
-├── scripts/
-│   ├── fetch_and_calc_vision.py # v35.0 核心 Playwright + Gemini Vision 數據引擎
-│   └── fetch_and_calc.py        # 舊版數據引擎
-├── index.html                 # 主介面 HTML (含國際熱錢動向 Card、切半卡片與 Modal)
-├── app.js                     # 前端 JavaScript 邏輯 (解密、Plotly 圖表與熱錢卡渲染)
-├── style.css                  # 台灣股市標準色彩 (紅漲綠跌) & 手機端 RWD 樣式
-├── taifex_catalog.json        # 期交所全量 270 檔個股與 ETF 期貨目錄
-├── PROJECT_HANDOVER.md        # 個人電腦接手續接與維護手冊
-├── OPTIONS_CHEATSHEET.md      # 選擇權與籌碼語意分級標準速查表
-└── README.md                  # 專案介紹與技術文件
+### 2. 執行數據抓取與 GEX 計算引擎
+```bash
+python scripts/fetch_and_calc_vision.py
 ```
 
----
+### 3. 生成前端內建嵌入數據腳本
+```bash
+python scratch/make_embedded_data_js.py
+```
 
-## 🚀 未來富邦 API 即時串流升級藍圖 (Fubon SDK Roadmap)
-
-1. **🔒 前後端分離與金鑰安全架構**：
-   - 嚴禁於公開前端 JS 編寫富邦 API 登入憑證與金鑰。
-   - 採用**本地 / VPS 常駐 Python 引擎**，透過富邦 WebSocket 接收即時台指期點數 $S_t$，後端重算 GEX 後將輕量 JSON 推播至前端。
-2. **⚡ 0 額度消耗之盤中即時 GEX 重算**：
-   - 盤中即時 GEX 重算僅依賴本地 CPU 浮點運算，**Gemini API 使用次數完全為 0 次（全天依然維持 2 次）**。
+### 4. 開啟網頁
+雙擊開啟 `index.html` 或以 Live Server 執行即可。通行碼為 `GEX2026`（不分大小寫）。
 
 ---
 
-## ⚖️ 免責與法律聲明
+## ⚖️ 免責與法律聲明 (Legal Disclaimer)
 
-本網站及其包含之數據圖表、GEX 計算結果與語意分析說明，僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。
+本網站（包含數據圖表、GEX 計算結果與 Gemini AI 分析說明）僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。
