@@ -221,47 +221,37 @@
             <h1 style="background: linear-gradient(135deg, #00d2ff 0%, #ffd700 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-size: 1.6rem; letter-spacing: 1px;">尋鳥 Bluebird Finder</h1>
             <span style="font-size: 0.75rem; background: rgba(0,210,255,0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); padding: 2px 8px; border-radius: 12px; font-weight: 600;">TXO GEX 量化系統</span>
           </div>
-          <div class="tagline">台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼分析（公開頁面僅提供盤後快照）</div>
+          <div class="tagline">台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼分析</div>
         </div>
       </div>
       <div class="nav-controls">
         <button id="mode-badge" class="btn" style="border-color: var(--gold-accent); color: var(--gold-accent);">
-          🏛️ 公開版：日盤 / 夜盤盤後快照
+          🏛️ 官方日盤結算定案版
         </button>
         <!-- Data Freshness Indicator LED -->
         <div id="freshness-indicator" title="資料更新時效" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid var(--panel-border);background:rgba(255,255,255,0.04);cursor:default;">
           <span id="freshness-dot" style="width:10px;height:10px;border-radius:50%;background:#00e676;display:inline-block;box-shadow:0 0 6px #00e676;animation:freshPulse 2s infinite;"></span>
           <span id="freshness-text" style="font-size:0.78rem;color:var(--text-muted);">資料更新中...</span>
         </div>
-        <!-- Compliance-safe note: public page only shows post-close snapshot data -->
-        <div id="live-polling-badge" title="公開頁面僅提供盤後快照，不提供盤中即時行情" style="display:none;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1px solid rgba(0,230,118,0.35);background:rgba(0,230,118,0.06);cursor:default;">
-          <!-- Populated by JavaScript -->
-        </div>
         <button id="open-guide-btn" class="btn">❓ 判讀教學</button>
         <button id="relock-btn" class="btn">🔒 鎖定</button>
       </div>
     </header>
-
-    <div class="panel" style="margin-bottom: 12px; border: 1px solid rgba(0,210,255,0.24); background: rgba(0,210,255,0.05);">
-      <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
-        本公開頁僅呈現期交所與 TWSE 已定案之日盤 / 夜盤盤後快照資料，供歷史與籌碼對照分析之用，不提供盤中即時行情。
-      </div>
-    </div>
 
     <!-- Top Summary Stat Cards (6 Cards in Row 1) -->
     <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 12px;">
       <!-- 加權指數 -->
       <div class="stat-card">
         <div class="stat-label">加權指數 (IX0001)</div>
-        <div id="stat-spot" class="stat-value" style="font-size: 1.5rem;">43,386.41</div>
-        <div id="stat-taiex-change" class="stat-sub tag-bull">+266.66 (+0.62%)</div>
+        <div id="stat-spot" class="stat-value" style="font-size: 1.5rem;">43,119.75</div>
+        <div id="stat-taiex-change" class="stat-sub tag-bull">+3,186.45 (+7.98%)</div>
       </div>
 
       <!-- 櫃買指數 -->
       <div class="stat-card">
         <div class="stat-label">櫃買指數 (IX0043)</div>
-        <div id="stat-two-price" class="stat-value" style="font-size: 1.5rem;">362.89</div>
-        <div id="stat-two-change" class="stat-sub tag-bull">+1.85 (+0.51%)</div>
+        <div id="stat-two-price" class="stat-value" style="font-size: 1.5rem;">347.85</div>
+        <div id="stat-two-change" class="stat-sub tag-bull">+21.62 (+6.63%)</div>
       </div>
 
       <!-- 1. 台指期 (切一半: 上日盤 / 下夜盤) -->
@@ -270,12 +260,12 @@
         <div class="split-box" style="margin-top: 4px;">
           <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
             <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
-            <span id="stat-txf-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,230</span>
+            <span id="stat-txf-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,305</span>
           </div>
           <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
           <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,210,255,0.1); padding: 3px 6px; border-radius: 4px;">
             <span style="font-size: 0.72rem; color: var(--primary-accent);">🌙 夜盤 (05:00)</span>
-            <span id="stat-txf-night" style="font-size: 1.05rem; font-weight: 700; color: var(--primary-accent);">42,505 <span id="stat-txf-shift" style="font-size: 0.7rem; color: var(--put-color);">(-725)</span></span>
+            <span id="stat-txf-night" style="font-size: 1.05rem; font-weight: 700; color: var(--primary-accent);">42,650 <span id="stat-txf-shift" style="font-size: 0.7rem; color: var(--put-color);">(-655)</span></span>
           </div>
         </div>
       </div>
@@ -355,37 +345,6 @@
       </div>
     </div>
 
-    <!-- 近三日綜合市場行情與 Gamma 關鍵位對照表 -->
-    <div id="recent-3days-panel" class="panel" style="margin-bottom: 20px; border: 1px solid var(--panel-border); background: var(--panel-bg); border-radius: 12px; padding: 16px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-        <h3 style="font-size: 1.05rem; margin: 0; color: var(--primary-accent); display: flex; align-items: center; gap: 8px;">
-          <span>📊 近三日市場籌碼與 Gamma 關鍵位對照表</span>
-        </h3>
-        <span style="font-size: 0.78rem; color: var(--text-muted);">近 3 個交易日盤後定案快照：現貨、期貨、Zero Gamma、Call/Put Wall 及 Max Pain 多空動態對照</span>
-      </div>
-      <div style="overflow-x: auto;">
-        <table class="sortable-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 980px;">
-          <thead>
-            <tr style="background: rgba(255,255,255,0.06); text-align: left; border-bottom: 2px solid var(--panel-border);">
-              <th style="padding: 10px 10px; color: var(--gold-accent);">交易日 (盤別)</th>
-              <th style="padding: 10px 10px; color: var(--text-main);">加權指數 (IX0001)</th>
-              <th style="padding: 10px 10px; color: var(--text-main);">櫃買指數 (IX0043)</th>
-              <th style="padding: 10px 10px; color: var(--gold-accent);">☀️ 台指日盤 (13:45結算)</th>
-              <th style="padding: 10px 10px; color: var(--primary-accent);">🌙 台指夜盤 (接續次日05:00)</th>
-              <th style="padding: 10px 10px; color: var(--gold-accent);">Zero Gamma (轉折點)</th>
-              <th style="padding: 10px 10px; color: var(--call-color);">Call Wall (天花板)</th>
-              <th style="padding: 10px 10px; color: var(--put-color);">Put Wall (地板)</th>
-              <th style="padding: 10px 10px; color: var(--primary-accent);">Max Pain (最大痛點)</th>
-              <th style="padding: 10px 10px; color: var(--text-muted);">市場說明與註解</th>
-            </tr>
-          </thead>
-          <tbody id="recent-3days-tbody">
-            <!-- Populated dynamically by JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
     <!-- Row 3: 📌 日夜盤微觀結構速報 (Microstructure Express Digest) Card -->
     <div id="microstructure-express-panel" class="panel" style="margin-bottom: 20px; border: 2px solid var(--primary-accent); background: rgba(0, 210, 255, 0.04); transition: all 0.3s ease;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -398,6 +357,11 @@
       <div id="microstructure-express-content" style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
         <!-- Populated dynamically by JavaScript -->
       </div>
+    </div>
+
+    <!-- Row 4: 🌐 國際熱錢動向與匯率解讀 (International Hot Money Digest) Card -->
+    <div id="hot-money-express-panel" class="panel" style="margin-bottom: 20px; border: 1px solid var(--gold-accent); background: rgba(255, 215, 0, 0.03); border-radius: 12px;">
+      <!-- Populated dynamically by JavaScript -->
     </div>
 
     <!-- Tabs Container -->
@@ -434,7 +398,7 @@
 
       <!-- Overlay mode legend -->
       <div id="overlay-legend" style="display:none;margin-bottom:8px;padding:8px 14px;background:rgba(0,210,255,0.06);border:1px solid rgba(0,210,255,0.2);border-radius:8px;font-size:0.82rem;color:var(--text-muted);">
-        🔀 <strong style="color:var(--primary-accent);">疊加對比模式</strong>：半透明 = T日盤，實線 = T夜盤盤後快照。點擊「疊加對比」再次關閉。
+        🔀 <strong style="color:var(--primary-accent);">疊加對比模式</strong>：半透明 = T日盤，實線 = T夜盤 (Live)。點擊「疊加對比」再次關閉。
       </div>
 
       <!-- Plotly Container -->

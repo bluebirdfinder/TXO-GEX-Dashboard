@@ -1,6 +1,6 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板 (v35.0)
 
-> **全台首創‧日夜盤雙維度對照‧選擇權 Gamma Exposure (GEX) 波動度與三大法人期權籌碼量化平台**
+> **全台首創‧日夜盤雙維度對照‧Playwright + Gemini 3.6 Vision 雙 Call 批次數據引擎‧選擇權 Gamma Exposure (GEX) 波動度與國際熱錢動向儀表板**
 
 [![GitHub Actions Night/Day Pipeline](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live Dashboard](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
@@ -8,69 +8,43 @@
 
 ---
 
-## 🌟 核心功能與系統特色
+## 🌟 核心功能與 v35.0 系統特色
 
-### 1. 🎴 日夜盤雙維度對照 (Split-Card Dual-Session View) & 3日對照表
-- **五大關鍵指標卡片切一半**：包含 **台指期 (TXF1!)**、**Zero Gamma (轉折點)**、**Call Wall (天花板)**、**Put Wall (地板)** 與 **Max Pain (最大痛點)**。
-- **上半部 `☀️ 日盤 (13:45)`**：展示每日 13:45 官方定案結算數值。
-- **下半部 `🌙 夜盤校正 (05:00 Close)`**：同步演算每日 05:00 收盤價重算之 GEX 避險牆與動態位移點數（如 `Call Wall: 43,500 (-100點)`）。
-- **近三日市場籌碼與 Gamma 關鍵位對照表**：
-  - 表頭明確標示 `☀️ 台指日盤 (13:45結算)` 與 `🌙 台指夜盤 (接續次日05:00)`。
-  - 儲存格自動標示日盤結算時間 (`📅 M/DD 13:45`) 與接續次日凌晨收盤時間 (`🌙 M/DD 05:00收盤`)，時序邏輯清晰不混淆。
+### 1. 🤖 Playwright + Gemini 3.6 Vision 雙 Call 每日批次數據引擎
+- **100% 防爬蟲阻擋與無感解析**：以 Playwright Chromium 開啟期交所與證交所 A+B 類全量網頁，使用 Gemini 3.6 Vision 進行多圖批次提取。
+- **每日嚴格控制 2 次 Gemini API Call**：日盤盤後 15:30 (8 張圖片 1 次 Call) / 夜盤盤後 05:30 (4 張圖片 1 次 Call)。
+- **前置數據就緒檢查 (Smart Readiness Check)**：截圖前自動判定 DOM 日期，數據未更新時自動輪詢，**零浪費 API 配額**。
 
-### 2. 🌉 藍框日夜盤避險牆位移對比摘要 (Session Shift Banner)
-- 精確跨越於第二排 Max Pain 右側廣闊藍框區域，自動對比夜盤相較日盤的期貨價差與天花板/地板防守牆位移點數，第一時間指引開盤防守力道。
+### 2. 🌐 國際熱錢動向與匯率解讀 Card (Hot Money Digest)
+- **國中生秒懂白話解讀**：即時與盤後追蹤 `USD/TWD`（美元/台幣）、`DXY`（美元指數）、`USD/JPY`（美元/日圓）。
+- **外資資金意圖分析**：台幣強升標示「外資熱錢滾滾匯入，偏多大盤」；台幣急貶標示「外資提款落跑，防範拉回賣壓」。
 
-### 3. 🏛️ TWSE/TPEx 官方歷史 API 直連 & 選擇權真實未平倉量 (TAIFEX TXO Real OI)
-- **歷史數據零偏差 (TWSE FMTQIK)**：擺脫手動與估算數值，透過後端 Python 動態直連臺灣證券交易所 (TWSE) 與櫃買中心 (TPEx) OpenAPI，自動擷取近三日權威點數與精算漲跌百分比。
-- **真實未平倉量 GEX (TAIFEX Options Report)**：新增 `fetch_official_taifex_txo_oi()` 直連期交所每日選擇權行情，取得各履約價 Real Call/Put Open Interest，帶入 Black-Scholes 模型重算權威 Gamma 矩陣。
+### 3. 🎴 日夜盤雙維度對照 (Split-Card Dual-Session View)
+- **五大關鍵指標卡片**：包含 **台指期 (TXF1!)**、**Zero Gamma (轉折點)**、**Call Wall (天花板)**、**Put Wall (地板)** 與 **Max Pain (最大痛點)**。
+- **日夜盤對比位移 Banner**：自動比對夜盤相較日盤的期貨價差與避險牆位移點數。
 
-### 4. 🌙 三大法人夜盤盤後交易籌碼專區 (futContractsDateAh)
-- **100% 官方資料源**：自動於每日 07:00 爬取台灣期交所夜盤（15:00 ~ 05:00）官方盤後數據 (`futContractsDateAh`)。
-- **四大夜盤指標**：
-  1. 外資夜盤臺指期 (TX) 淨交易口數 & 契約金額 (億 TWD)
-  2. 外資夜盤小台 (MTX) 淨交易口數
-  3. 外資夜盤微台 (Micro) 淨交易口數
-  4. 自營商夜盤臺指期 (TX) 淨交易口數 & 契約金額 (億 TWD)
-- **自動白話解讀摘要**：自動編譯外資夜盤大台與小微台吸收散戶籌碼之多空白話文字總結。
+### 4. 🎯 期交所真實未平倉量 (OI) 計算 Black-Scholes GEX
+- **真實分週 GEX**：精確解析週選 (W1/W2) 與當月月選之真實 Call/Put OI，計算權威 GEX 柱狀圖、Call Wall 與 Put Wall。
 
-### 4. 📊 外資與大戶單日變化量 ($\Delta$ Net OI) 分級 taxonomy 與契約金額精算
-- **契約金額精算**：自動將口數換算為契約金額（億 TWD）：
-  $$\text{契約金額 (億 TWD)} = \frac{|\Delta \text{Net OI}| \times \text{台指期價格} \times 200}{10^8}$$
-- **5 大語意形容詞標籤**：
-  - `🔥 高檔大舉回補` ($+6,000$ 口以上 / $+600$ 億 TWD)
-  - `📈 顯著回補偏多` ($+2,500 \sim +5,999$ 口)
-  - `⚖️ 中性觀望` ($-2,499 \sim +2,499$ 口)
-  - `📉 顯著加碼加空` ($-2,500 \sim -5,999$ 口)
-  - `⚠️ 暴增高檔避險` ($-6,000$ 口以上 / $-600$ 億 TWD)
-
-### 5. 💡 選擇權 P/C Ratio 與 Max Pain (最大痛點) 判讀指南
-- **P/C Ratio (108.5%) 台灣色彩標籤**：
-  - $\ge 100\%$ ➔ **🔴 偏多看撐** (台灣股市紅漲，莊家 Put 防守牆厚)。
-  - $< 100\%$ ➔ **🟢 偏空看壓** (台灣股市綠跌，莊家 Call 賣壓牆厚)。
-- **Max Pain (最大痛點)**：解說結算前夕散戶痛苦、莊家獲利與黑手磁鐵拉回效應。
-
-### 6. 📱 手機端極致 2x2 雙欄 RWD 響應式排版
-- 手機直立閱讀時自動轉為 2x2 俐落雙欄卡片，頁籤列支援平滑橫向滑動。
-- 個人大頭貼縮圖強制保護為 **1:1 完美正圓形 (Perfect Circle)**，全站字體統一為 FinTech 質感微軟正黑體/蘋果系統字。
+### 5. 💎 個股期貨「正逆價差 (Basis)」與三大法人 Ranking
+- 提供熱門個股期貨（台積電期 2330、鴻海期 2317、聯發科期 2454 等）之期現貨價差 (Basis) 與趨勢標籤。
 
 ---
 
-## 🛠️ 技術架構與自動化更新
+## 🛠️ 技術架構與資料流程
 
 ```mermaid
 flowchart TD
-    A[TAIFEX / TWSE Open Data API] --> B[scripts/fetch_and_calc.py Data Engine]
-    B --> C[data/gex_data.json]
-    B --> D[data/encrypted_gex.json]
-    C & D --> E[GitHub Actions Auto-Pipeline]
-    E --> F[GitHub Pages Web Dashboard]
+    A[TAIFEX / TWSE Open Data & Web Pages] --> B[Playwright Chromium Headless]
+    B -->|Smart Readiness Check| C[Screenshots Storage]
+    C -->|Single-Call Batch Prompt| D[Gemini 3.6 Vision API]
+    E[TWSE BFI82U & MIS JSON APIs] --> F[scripts/fetch_and_calc_vision.py Data Engine]
+    D --> F
+    F --> G[data/gex_data.json]
+    F --> H[data/encrypted_gex.json]
+    G & H --> I[GitHub Actions Auto-Pipeline]
+    I --> J[GitHub Pages Web Dashboard]
 ```
-
-- **自動化備援排程 (`auto_update.yml`)**：
-  - 🌙 夜盤 Failover：05:30, 06:00, 06:30 TWD (每日 05:00 收盤後自動執行)
-  - ☀️ 日盤 Failover：15:30, 16:00, 16:30 TWD (每日 13:45 收盤後自動執行)
-  - **Permissions 403 已修復**：內建 `permissions: contents: write` 確保 Actions Bot 自動 commit/push 無阻礙。
 
 ---
 
@@ -79,14 +53,15 @@ flowchart TD
 ```
 txo-gex-dashboard/
 ├── .github/workflows/
-│   └── auto_update.yml        # GitHub Actions 自動化抓取與推播腳本
+│   └── auto_update.yml        # GitHub Actions 自動化 Playwright + Vision 引擎排程
 ├── data/
-│   ├── gex_data.json          # 原始產出 JSON 數據 (含日夜盤對照與夜盤盤後籌碼)
-│   └── encrypted_gex.json      # AES/SHA256 加密數據 Payload
+│   ├── gex_data.json          # 原始產出 JSON 數據 (含 GEX, 籌碼, 熱錢與個股期價差)
+│   └── encrypted_gex.json      # AES-256-CBC-SHA256-XOR 加密數據 Payload
 ├── scripts/
-│   └── fetch_and_calc.py      # Python 核心演算與 TAIFEX/TWSE 爬蟲引擎
-├── index.html                 # 主介面 HTML (含切半卡片、藍框 Banner、夜盤專區與 Modal)
-├── app.js                     # 前端 JavaScript 邏輯 (包含加密解密、Plotly 圖表與表格渲染)
+│   ├── fetch_and_calc_vision.py # v35.0 核心 Playwright + Gemini Vision 數據引擎
+│   └── fetch_and_calc.py        # 舊版數據引擎
+├── index.html                 # 主介面 HTML (含國際熱錢動向 Card、切半卡片與 Modal)
+├── app.js                     # 前端 JavaScript 邏輯 (解密、Plotly 圖表與熱錢卡渲染)
 ├── style.css                  # 台灣股市標準色彩 (紅漲綠跌) & 手機端 RWD 樣式
 ├── taifex_catalog.json        # 期交所全量 270 檔個股與 ETF 期貨目錄
 ├── PROJECT_HANDOVER.md        # 個人電腦接手續接與維護手冊
@@ -96,16 +71,13 @@ txo-gex-dashboard/
 
 ---
 
-## 🚀 未來展望與富邦 API 即時串流升級藍圖 (Fubon SDK Roadmap)
+## 🚀 未來富邦 API 即時串流升級藍圖 (Fubon SDK Roadmap)
 
 1. **🔒 前後端分離與金鑰安全架構**：
    - 嚴禁於公開前端 JS 編寫富邦 API 登入憑證與金鑰。
-   - 採用**本地 / VPS 常駐 Python 引擎**，透過富邦 WebSocket 接收即時台指期點數 $S_t$，後端完成 GEX 重算後再將 JSON 輕量推播至前端。
-2. **⚡ Dynamic GEX 盤中實時對沖追蹤**：
-   - 結合日盤 Static OI 與盤中即時 $S_t$ / IV，動態刷新各履約價 $\Gamma_t$ 與買賣權牆 (Call/Put Wall) 位移。
-3. **📈 成交量加權 GEX (vGEX / Volume-Weighted GEX)**：
-   - 算式：$$\text{vGEX}_K = \Gamma_K \times \text{Volume}_K \times 50 \times S_t^2 \times 0.01$$
-   - 當特定履約價 vGEX 突然爆量增加，代表大資金正進行盤中建倉，為盤中價格突破或轉折的強烈信號。
+   - 採用**本地 / VPS 常駐 Python 引擎**，透過富邦 WebSocket 接收即時台指期點數 $S_t$，後端重算 GEX 後將輕量 JSON 推播至前端。
+2. **⚡ 0 額度消耗之盤中即時 GEX 重算**：
+   - 盤中即時 GEX 重算僅依賴本地 CPU 浮點運算，**Gemini API 使用次數完全為 0 次（全天依然維持 2 次）**。
 
 ---
 

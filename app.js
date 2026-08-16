@@ -1,7 +1,7 @@
 /**
- * TXO GEX Dashboard Application Logic v31.0
+ * TXO GEX Dashboard Application Logic v30.0
  * 尋鳥 Bluebird Finder | Official TAIFEX Daytime Close Positioning Engine
- * v31.0: +Live Quote Polling Engine, +Session Pending Logic, +Tick Animation
+ * v30.0: +Freshness Indicator, +LocalStorage Cache, +Overlay Compare Mode
  */
 
 let gexData = null;
@@ -9,13 +9,9 @@ let currentTab = 'total-gex';
 let currentSortKey = 'volume';
 let currentSortOrder = 'desc';
 let isOverlayMode = false;  // Overlay Compare Mode: T-Day vs T-Night
-let livePollingTimer = null; // Live Quote Polling Timer
-let lastLiveSpot = null;     // Track last known live spot for change detection
 
 const VALID_PASSCODE = 'GEX2026';
 const CACHE_KEY = 'txo_gex_cache_v1';
-const IS_PUBLIC_GITHUB_PAGES = typeof window !== 'undefined' && window.location.hostname.includes('github.io');
-const LIVE_QUOTE_PROXY_URL = IS_PUBLIC_GITHUB_PAGES ? null : 'https://taifex-gex-proxy.<your-subdomain>.workers.dev/quote';
 
 document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
@@ -175,14 +171,9 @@ async function attemptDecrypt(passcode) {
     try {
       const cached = localStorage.getItem(CACHE_KEY);
       if (cached) {
-        const parsed = JSON.parse(cached);
-        if (isCacheDataFresh(parsed)) {
-          gexData = parsed;
-          console.log('[Cache] Loaded GEX data from localStorage cache.');
-          showCacheNotice();
-        } else {
-          console.warn('[Cache] Ignored stale localStorage cache entry.');
-        }
+        gexData = JSON.parse(cached);
+        console.log('[Cache] Loaded GEX data from localStorage cache.');
+        showCacheNotice();
       }
     } catch (cacheErr) {
       console.warn('[Cache] Failed to load from localStorage:', cacheErr);
@@ -211,9 +202,6 @@ async function attemptDecrypt(passcode) {
   } catch (renderErr) {
     console.error('Error during renderDashboard:', renderErr);
   }
-
-  // Start live intraday polling after dashboard loads
-  startLiveQuotePolling();
 }
 
 // Show a banner when data is loaded from cache (not live network)
@@ -223,20 +211,12 @@ function showCacheNotice() {
   const header = container.querySelector('header');
   const notice = document.createElement('div');
   notice.id = 'cache-notice-banner';
-  notice.innerHTML = '⚠️ 網路資料載入失敗，目前顯示最近一次成功快取的盤後快照。';
+  notice.innerHTML = '⚠️ 網路資料載入失敗，目前顯示上次緩存的資料。請執行 Python 腳本更新後重新載入。';
   if (header && header.nextSibling) {
     container.insertBefore(notice, header.nextSibling);
   } else if (header) {
     container.appendChild(notice);
   }
-}
-
-function isCacheDataFresh(data) {
-  if (!data || !data.last_updated_time) return false;
-  const stamp = new Date(data.last_updated_time.replace(' ', 'T'));
-  const now = new Date();
-  const diffHours = Math.abs(now - stamp) / 36e5;
-  return diffHours < 48;
 }
 
 // Data Freshness Indicator LED
@@ -284,185 +264,6 @@ function updateFreshnessIndicator(data) {
   }
 }
 
-// ============================================================
-// LIVE QUOTE POLLING ENGINE (盤中即時報價引擎)
-// Polls TWSE MIS API every 12 seconds during trading hours
-// to update 加權指數, 櫃買指數, and 台指期 in real-time
-// ============================================================
-function isMarketOpen() {
-  const now = new Date();
-  const h = now.getHours();
-  const m = now.getMinutes();
-  const totalMin = h * 60 + m;
-  const day = now.getDay(); // 0=Sun, 6=Sat
-  if (day === 0 || day === 6) return false; // Weekend
-  // Day Session: 08:45 ~ 13:45
-  if (totalMin >= 525 && totalMin <= 825) return true;
-  // Night Session: 15:00 ~ 23:59
-  if (totalMin >= 900) return true;
-  // Night Session continued: 00:00 ~ 05:00
-  if (totalMin <= 300) return true;
-  return false;
-}
-
-function isNightSession() {
-  const now = new Date();
-  const h = now.getHours();
-  const m = now.getMinutes();
-  const totalMin = h * 60 + m;
-  return (totalMin >= 900 || totalMin <= 300); // 15:00~23:59 or 00:00~05:00
-}
-
-async function fetchLiveQuotes() {
-  // Compliance-safe mode: do not attempt public live quote polling on GitHub Pages.
-  if (IS_PUBLIC_GITHUB_PAGES || !LIVE_QUOTE_PROXY_URL) {
-    console.log('[LiveQuote] Public GitHub Pages mode is snapshot-only. Live quote polling disabled for compliance-safe display.');
-    return null;
-  }
-
-  // Prefer your secure Cloudflare Worker proxy so the browser never sees Fubon API keys.
-  try {
-    const res = await fetch(LIVE_QUOTE_PROXY_URL, {
-      headers: { 'Accept': 'application/json' }
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      const spot = parseFloat(data.spot_price);
-      const txf = parseFloat(data.txf_price);
-      const otc = parseFloat(data.otc_price || data.two_price || 0);
-      if (spot) return { spot, otc: otc || null, source: 'Cloudflare Worker Proxy' };
-      if (txf) return { spot: txf, otc: otc || null, source: 'Cloudflare Worker Proxy' };
-    }
-  } catch (e) {
-    console.warn('[LiveQuote] Cloudflare Worker proxy unavailable, live quote disabled for safe mode:', e.message);
-  }
-
-  return null;
-}
-
-function applyLiveQuoteTick(spot, otc) {
-  if (!gexData) return;
-
-  const spotChanged = lastLiveSpot !== null && Math.abs(spot - lastLiveSpot) > 0.001;
-  lastLiveSpot = spot;
-
-  // Update gexData in memory
-  if (spot) {
-    gexData.spot_price = spot;
-    gexData.txf_price = spot;
-  }
-  if (otc)  gexData.two_price  = otc;
-
-  // Update stat card: 加權指數
-  const spotEl = document.getElementById('stat-spot');
-  if (spotEl && spot) {
-    spotEl.innerText = spot.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    if (spotChanged) {
-      spotEl.classList.remove('live-tick-flash');
-      void spotEl.offsetWidth; // trigger reflow
-      spotEl.classList.add('live-tick-flash');
-    }
-  }
-
-  // Update stat card: 櫃買指數
-  if (otc) {
-    const twoEl = document.getElementById('stat-two-price');
-    if (twoEl) {
-      twoEl.innerText = otc.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      if (spotChanged) {
-        twoEl.classList.remove('live-tick-flash');
-        void twoEl.offsetWidth;
-        twoEl.classList.add('live-tick-flash');
-      }
-    }
-  }
-
-  // Update the TAIFEX/night card so the visible 台指期 price moves in real time.
-  const txfNightEl = document.getElementById('stat-txf-night');
-  if (txfNightEl && spot) {
-    const shift = gexData.session_shift || { txf_shift: 0 };
-    const txfSign = shift.txf_shift >= 0 ? '+' : '';
-    txfNightEl.innerHTML = `${spot.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span style="font-size: 0.7rem; color: ${shift.txf_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">(${txfSign}${shift.txf_shift})</span>`;
-  }
-
-  // Update Gamma status (positive / negative regime)
-  const zg = gexData.zero_gamma_level || 0;
-  const statusEl = document.getElementById('stat-gamma-status');
-  if (statusEl && spot) {
-    if (spot >= zg) {
-      statusEl.innerHTML = '🔴 正 Gamma 多頭平穩區 (台灣紅漲)';
-      statusEl.style.color = 'var(--call-color)';
-    } else {
-      statusEl.innerHTML = '🟢 負 Gamma 避險引爆區 (台灣綠跌)';
-      statusEl.style.color = 'var(--put-color)';
-    }
-  }
-
-  // ── 同步更新 Plotly GEX 圖表現價線 ──────────────────────────────────────
-  // Moves the white dashed vertical line and spot annotation to the live price.
-  // No GEX recalculation needed — only the reference line moves.
-  if (spot) {
-    try {
-      const chartEl = document.getElementById('gex-chart');
-      if (chartEl && chartEl._fullLayout) {
-        Plotly.relayout('gex-chart', {
-          'shapes[0].x0':       spot,
-          'shapes[0].x1':       spot,
-          'annotations[0].x':   spot,
-          'annotations[0].text': `現價 Spot: ${spot.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
-        });
-      }
-    } catch (chartErr) {
-      // Plotly not ready yet — ignore silently
-    }
-  }
-
-  // Update live status indicator
-  updateLiveStatusIndicator(true);
-}
-
-
-function updateLiveStatusIndicator(isLive) {
-  const liveEl = document.getElementById('live-polling-badge');
-  if (!liveEl) return;
-  if (isLive) {
-    liveEl.style.display = 'flex';
-    liveEl.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:#00e676;display:inline-block;box-shadow:0 0 5px #00e676;animation:freshPulse 1.5s infinite;margin-right:5px;"></span><span style="font-size:0.75rem;color:#00e676;">公開頁面僅顯示盤後快照</span>`;
-  } else {
-    liveEl.style.display = 'none';
-  }
-}
-
-function startLiveQuotePolling() {
-  // Compliance-safe mode: public GitHub Pages should stay snapshot-only.
-  if (IS_PUBLIC_GITHUB_PAGES || !LIVE_QUOTE_PROXY_URL) {
-    updateLiveStatusIndicator(false);
-    console.log('[LiveQuote] Public GitHub Pages mode disabled live polling for compliance-safe operation.');
-    return;
-  }
-
-  // Clear any existing timer
-  if (livePollingTimer) clearInterval(livePollingTimer);
-
-  const poll = async () => {
-    if (!isMarketOpen()) {
-      updateLiveStatusIndicator(false);
-      return;
-    }
-    const quotes = await fetchLiveQuotes();
-    if (quotes && quotes.spot) {
-      console.log(`[LiveQuote] ${quotes.source} → 加權: ${quotes.spot}${quotes.otc ? ', 櫃買: ' + quotes.otc : ''}`);
-      applyLiveQuoteTick(quotes.spot, quotes.otc);
-    }
-  };
-
-  // Poll immediately on start, then every 12 seconds
-  poll();
-  livePollingTimer = setInterval(poll, 12000);
-  console.log('[LiveQuote] Live polling engine started (12s interval).');
-}
-
 function decryptPayload(b64Str, passcode) {
   try {
     const cipherWords = CryptoJS.enc.Base64.parse(b64Str);
@@ -488,8 +289,8 @@ function decryptPayload(b64Str, passcode) {
 
 function getFallbackData() {
   const spot = 43386.41;
-  const txf = 42505.0;
-  const strikes = [41800, 41900, 42000, 42100, 42200, 42300, 42400, 42500, 42600, 42700, 42800, 42900, 43000, 43100, 43200, 43300, 43400, 43500, 43600, 43700, 43800];
+  const txf = 42650.0;
+  const strikes = [42500, 42600, 42700, 42800, 42900, 43000, 43100, 43200, 43300, 43400, 43500, 43600, 43700, 43800];
 
   const total_gex = strikes.map(k => ({
     strike: k,
@@ -502,30 +303,14 @@ function getFallbackData() {
     date: "2026-08-03",
     session_type: "NIGHT",
     session_name: "🌙 夜盤收盤價校正 (05:00 Close)",
-    session_shift: {
-      day_txf_price: 43230.0,
-      day_zero_gamma: 43080.0,
-      day_call_wall: 43500,
-      day_put_wall: 42900,
-      day_max_pain: 43200,
-      txf_shift: -725.0,
-      zero_gamma_shift: -725.0,
-      call_wall_shift: -700,
-      put_wall_shift: -700,
-      max_pain_shift: -700
-    },
-    last_updated_time: "2026-08-03 23:50",
+    last_updated_time: "2026-08-03 18:45",
     spot_price: 43386.41,
-    spot_change_val: 266.66,
-    spot_change_pct: 0.62,
     two_price: 362.89,
-    two_change_val: 1.85,
-    two_change_pct: 0.51,
     txf_price: txf,
-    zero_gamma_level: 42355.0,
-    call_wall_strike: 42800,
-    put_wall_strike: 42200,
-    max_pain_strike: 42500,
+    zero_gamma_level: 43236.4,
+    call_wall_strike: 43600,
+    put_wall_strike: 43000,
+    max_pain_strike: 43300,
     pc_ratio: 108.5,
     total_gex: total_gex,
     weekly_gex: total_gex,
@@ -537,21 +322,21 @@ function getFallbackData() {
       regime_label: "🔴 正 Gamma 波動度抑制區 (平穩震盪)",
       theme_color: "bull",
       flip_dist: 150.0,
-      full_html: "<p style='margin-bottom:6px;'><strong>🔴 正 Gamma 波動度抑制區 (平穩震盪)</strong> — 標的物處於正 Gamma 區間，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。</p><p style='margin-bottom:6px;'>📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (<code>42,355.0</code>) 尚有 <strong>150.0 點</strong>緩衝防守區。</p><p style='margin-bottom:0;'>🛑 <strong>Call Wall 賣壓牆</strong>：天花板固守於 <code>42,800</code>。 🛡️ <strong>Put Wall 支撐牆</strong>：地板固守於 <code>42,200</code>。</p>"
+      full_html: "<p style='margin-bottom:6px;'><strong>🔴 正 Gamma 波動度抑制區 (平穩震盪)</strong> — 標的物處於正 Gamma 區間，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。</p><p style='margin-bottom:6px;'>📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (<code>43,236.4</code>) 尚有 <strong>150.0 點</strong>緩衝防守區。</p><p style='margin-bottom:0;'>🛑 <strong>Call Wall 賣壓牆</strong>：天花板固守於 <code>43,600</code>。 🛡️ <strong>Put Wall 支撐牆</strong>：地板固守於 <code>43,000</code>。</p>"
     },
     institutional_5day_history: [
-      { date: "8/05", top5_net: 6420, top10_net: 9850, foreign_fut_net: -14200, foreign_stock_net: 185.4, pc_ratio: 108.5 },
-      { date: "8/04", top5_net: 3850, top10_net: 5920, foreign_fut_net: -12400, foreign_stock_net: 32.5, pc_ratio: 107.2 },
-      { date: "8/03", top5_net: 420, top10_net: 1150, foreign_fut_net: -15100, foreign_stock_net: -45.6, pc_ratio: 105.8 },
-      { date: "7/31", top5_net: -850, top10_net: -1200, foreign_fut_net: -16200, foreign_stock_net: -88.2, pc_ratio: 104.1 },
-      { date: "7/30", top5_net: -1250, top10_net: -3420, foreign_fut_net: -18500, foreign_stock_net: -125.4, pc_ratio: 102.4 }
+      { date: "7/28", top5_net: -850, top10_net: -1200, foreign_fut_net: -16200, foreign_stock_net: -88.2, pc_ratio: 104.1 },
+      { date: "7/29", top5_net: 420, top10_net: 1150, foreign_fut_net: -15100, foreign_stock_net: -45.6, pc_ratio: 105.8 },
+      { date: "7/30", top5_net: 3850, top10_net: 5920, foreign_fut_net: -12400, foreign_stock_net: 32.5, pc_ratio: 107.2 },
+      { date: "7/31", top5_net: 6420, top10_net: 9850, foreign_fut_net: -14200, foreign_stock_net: 185.4, pc_ratio: 108.5 },
+      { date: "8/03", top5_net: 6420, top10_net: 9850, foreign_fut_net: -14200, foreign_stock_net: 185.4, pc_ratio: 108.5 }
     ],
     executive_digest: {
       date: "2026-08-03",
       futures_summary: "前五大與前十大交易人多單加碼，特定法人整體期貨結構偏多佈局。",
       cash_summary: "現貨買賣超呈現外資大買超 +185.4億。",
       options_structure: "外資與自營商雙賣收取時間價值偏高檔看撐。",
-      settlement_outlook: "夜盤近月台指期收盤價 42505.0 (變動 -725 點)。"
+      settlement_outlook: "夜盤近月台指期收盤價 42650.0。"
     },
     history_6_sessions: [
       { id: "t2_day", label: "T-2 日盤", date_display: "7/30 ☀️", full_name: "7/30 T-2 日盤", spot_price: 42580.0, txf_price: 42580.0, zero_gamma_level: 42430.0, call_wall_strike: 42800, put_wall_strike: 42200, max_pain_strike: 42500, shift_vs_prev: 0, total_gex: total_gex },
@@ -559,7 +344,7 @@ function getFallbackData() {
       { id: "t1_day", label: "T-1 日盤", date_display: "7/31 ☀️", full_name: "7/31 T-1 日盤", spot_price: 43050.0, txf_price: 43050.0, zero_gamma_level: 42900.0, call_wall_strike: 43300, put_wall_strike: 42700, max_pain_strike: 43000, shift_vs_prev: 240, total_gex: total_gex },
       { id: "t1_night", label: "T-1 夜盤", date_display: "7/31 🌙", full_name: "7/31 T-1 夜盤", spot_price: 43350.0, txf_price: 43350.0, zero_gamma_level: 43200.0, call_wall_strike: 43600, put_wall_strike: 43000, max_pain_strike: 43300, shift_vs_prev: 300, total_gex: total_gex },
       { id: "t0_day", label: "T日盤", date_display: "8/03 ☀️", full_name: "8/03 T日盤", spot_price: 43386.41, txf_price: 43230.0, zero_gamma_level: 43080.0, call_wall_strike: 43500, put_wall_strike: 42900, max_pain_strike: 43200, shift_vs_prev: -120, total_gex: total_gex },
-      { id: "t0_night", label: "🔥 T夜盤盤後快照", date_display: "8/03 🌙", full_name: "8/03 T夜盤盤後快照", spot_price: 43386.41, txf_price: 42505.0, zero_gamma_level: 42355.0, call_wall_strike: 42800, put_wall_strike: 42200, max_pain_strike: 42500, shift_vs_prev: -725, total_gex: total_gex }
+      { id: "t0_night", label: "🔥 T夜盤 (Live)", date_display: "8/03 🌙", full_name: "8/03 T夜盤 (Live)", spot_price: 42466.61, txf_price: 42650.0, zero_gamma_level: 42316.6, call_wall_strike: 42800, put_wall_strike: 42200, max_pain_strike: 42500, shift_vs_prev: -580, total_gex: total_gex }
     ],
     stock_futures: [{"code": "1303", "name": "南亞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2002", "name": "中鋼期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2303", "name": "聯電期", "category": "個股期貨", "has_night": true, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2330", "name": "台積電期", "category": "個股期貨", "has_night": true, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2881", "name": "富邦金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1301", "name": "台塑期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2324", "name": "仁寶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2409", "name": "友達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2880", "name": "華南金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2882", "name": "國泰金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2886", "name": "兆豐金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2887", "name": "台新新光金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2891", "name": "中信金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1216", "name": "統一期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1402", "name": "遠東新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1605", "name": "華新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2323", "name": "中環期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2352", "name": "佳世達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2371", "name": "大同期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2408", "name": "南亞科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2603", "name": "長榮期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2609", "name": "陽明期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2610", "name": "華航期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2801", "name": "彰銀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2890", "name": "永豐金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1101", "name": "台泥期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1326", "name": "台化期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2317", "name": "鴻海期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2337", "name": "旺宏期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2357", "name": "華碩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2382", "name": "廣達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2412", "name": "中華電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2884", "name": "玉山金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2885", "name": "元大金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2892", "name": "第一金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3481", "name": "群創期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2353", "name": "宏碁期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2454", "name": "聯發科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2915", "name": "潤泰全期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3231", "name": "緯創期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1102", "name": "亞泥期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1210", "name": "大成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1312", "name": "國喬期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1314", "name": "中石化期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1319", "name": "東陽期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1440", "name": "南紡期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1504", "name": "東元期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1560", "name": "中砂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1590", "name": "亞德客-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1718", "name": "中纖期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1722", "name": "台肥期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2006", "name": "東和鋼鐵期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2027", "name": "大成鋼期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2049", "name": "上銀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2059", "name": "川湖期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2105", "name": "正新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2201", "name": "裕隆期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2301", "name": "光寶科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2308", "name": "台達電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2312", "name": "金寶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2313", "name": "華通期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2331", "name": "精英期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2332", "name": "友訊期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2340", "name": "台亞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2344", "name": "華邦電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2347", "name": "聯強期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2354", "name": "鴻準期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2376", "name": "技嘉期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2377", "name": "微星期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2379", "name": "瑞昱期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2385", "name": "群光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2392", "name": "正崴期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2393", "name": "億光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2401", "name": "凌陽期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2404", "name": "漢唐期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2449", "name": "京元電子期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2455", "name": "全新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2457", "name": "飛宏期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2458", "name": "義隆期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2474", "name": "可成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2481", "name": "強茂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2485", "name": "兆赫期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2489", "name": "瑞軒期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2492", "name": "華新科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2498", "name": "宏達電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2515", "name": "中工期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2520", "name": "冠德期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2542", "name": "興富發期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2548", "name": "華固期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2605", "name": "新興期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2618", "name": "長榮航期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2834", "name": "臺企銀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2913", "name": "農林期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3006", "name": "晶豪科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3008", "name": "大立光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3019", "name": "亞光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3034", "name": "聯詠期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3035", "name": "智原期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3036", "name": "文曄期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3037", "name": "欣興期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3042", "name": "晶技期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3189", "name": "景碩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3376", "name": "新日興期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3380", "name": "明泰期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3443", "name": "創意期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3533", "name": "嘉澤期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3653", "name": "健策期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3673", "name": "TPK-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3702", "name": "大聯大期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4938", "name": "和碩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5534", "name": "長虹期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6005", "name": "群益證期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6153", "name": "嘉聯益期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6176", "name": "瑞儀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6213", "name": "聯茂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6239", "name": "力成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6271", "name": "同欣電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6278", "name": "台表科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6282", "name": "康舒期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6285", "name": "啟碁期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8039", "name": "台虹期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8163", "name": "達方期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9904", "name": "寶成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9939", "name": "宏全期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9945", "name": "潤泰新期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1477", "name": "聚陽期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1802", "name": "台玻期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2328", "name": "廣宇期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3044", "name": "健鼎期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3045", "name": "台灣大期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3406", "name": "玉晶光期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6269", "name": "台郡期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9914", "name": "美利達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5880", "name": "合庫金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2356", "name": "英業達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2883", "name": "凱基金期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4904", "name": "遠傳期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4958", "name": "臻鼎-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5871", "name": "中租-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1476", "name": "儒鴻期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2327", "name": "國巨*期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8046", "name": "南電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2355", "name": "敬鵬期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2360", "name": "致茂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2439", "name": "美律期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6257", "name": "矽格期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9938", "name": "百和期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1565", "name": "精華期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3105", "name": "穩懋期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3152", "name": "璟德期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3211", "name": "順達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3260", "name": "威剛期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3264", "name": "欣銓期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3691", "name": "碩禾期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4123", "name": "晟德期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5009", "name": "榮剛期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5347", "name": "世界期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5371", "name": "中光電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5483", "name": "中美晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6121", "name": "新普期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6147", "name": "頎邦期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8044", "name": "網家期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8069", "name": "元太期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8299", "name": "群聯期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "0050", "name": "元大台灣50ETF期", "category": "ETF期貨", "has_night": true, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "006205", "name": "富邦上証ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "006206", "name": "元大上證50ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2231", "name": "為升期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6116", "name": "彩晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6279", "name": "胡連期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00636", "name": "國泰中國A50ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00639", "name": "富邦深100ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00643", "name": "群益深証中小ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2345", "name": "智邦期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6414", "name": "樺漢期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1536", "name": "和大期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1909", "name": "榮成期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3081", "name": "聯亞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3552", "name": "同致期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6274", "name": "台燿期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6488", "name": "環球晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6510", "name": "精測期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3711", "name": "日月光投控期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3227", "name": "原相期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4162", "name": "智擎期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4736", "name": "泰博期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5425", "name": "台半期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "0056", "name": "元大高股息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2633", "name": "台灣高鐵期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5269", "name": "祥碩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3529", "name": "力旺期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2383", "name": "台光電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6173", "name": "信昌電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6182", "name": "合晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8436", "name": "大江期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5457", "name": "宣德期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8358", "name": "金居期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8086", "name": "宏捷科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3706", "name": "神達期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3324", "name": "雙鴻期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6669", "name": "緯穎期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3293", "name": "鈊象期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5274", "name": "信驊期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3714", "name": "富采期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2606", "name": "裕民期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3532", "name": "台勝科期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1907", "name": "永豐餘期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3374", "name": "精材期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1717", "name": "長興期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1904", "name": "正隆期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3078", "name": "僑威期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2441", "name": "超豐期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8150", "name": "南茂期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2338", "name": "光罩期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2388", "name": "威盛期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2615", "name": "萬海期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6547", "name": "高端疫苗期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6770", "name": "力積電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3017", "name": "奇鋐期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5388", "name": "中磊期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2634", "name": "漢翔期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4128", "name": "中天期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4919", "name": "新唐期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00878", "name": "國泰永續高股息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1609", "name": "大亞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2368", "name": "金像電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6443", "name": "元晶期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "4743", "name": "合一期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6245", "name": "立端期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5904", "name": "寶雅期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "9958", "name": "世紀鋼期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00885", "name": "富邦越南ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00923", "name": "群益台ESG低碳50ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00679B", "name": "元大美債20年ETF期", "category": "ETF期貨", "has_night": true, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1795", "name": "美時期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1905", "name": "華紙期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1513", "name": "中興電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00893", "name": "國泰智能電動車ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00719B", "name": "元大美債1-3ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3005", "name": "神基期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8112", "name": "至上期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00919", "name": "群益台灣精選高息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00929", "name": "復華台灣科技優息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00772B", "name": "中信高評級公司債ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00940", "name": "元大台灣價值高息ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3680", "name": "家登期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1503", "name": "士電期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6139", "name": "亞翔期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6188", "name": "廣明期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "5876", "name": "上海商銀期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6505", "name": "台塑化期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6526", "name": "達發期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00937B", "name": "群益ESG投等債20+ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00687B", "name": "國泰20年美債ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3661", "name": "世芯-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6472", "name": "保瑞期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "00757", "name": "統一FANG+ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2486", "name": "一詮期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6757", "name": "台灣虎航期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6223", "name": "旺矽期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2329", "name": "華泰期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "6290", "name": "良維期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1608", "name": "華榮期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2367", "name": "燿華期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2421", "name": "建準期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "3665", "name": "貿聯-KY期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "0052", "name": "富邦科技ETF期", "category": "ETF期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "2395", "name": "研華期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "8932", "name": "智通*期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}, {"code": "1519", "name": "華城期", "category": "個股期貨", "has_night": false, "liquidity": "中", "spot_price": 100.0, "change_pct": 0.0, "volume": 1000, "foreign_net": 0, "dealer_net": 0, "trend": "Bull"}]
   };
@@ -579,7 +364,7 @@ function renderDashboard() {
       { id: "t1_day", label: "T-1 日盤", date_display: "7/31 ☀️", full_name: "7/31 T-1 日盤", spot_price: 43050.0, txf_price: 43050.0, zero_gamma_level: 42900.0, call_wall_strike: 43300, put_wall_strike: 42700, max_pain_strike: 43000, shift_vs_prev: 240, total_gex: gList },
       { id: "t1_night", label: "T-1 夜盤", date_display: "7/31 🌙", full_name: "7/31 T-1 夜盤", spot_price: 43350.0, txf_price: 43350.0, zero_gamma_level: 43200.0, call_wall_strike: 43600, put_wall_strike: 43000, max_pain_strike: 43300, shift_vs_prev: 300, total_gex: gList },
       { id: "t0_day", label: "T日盤", date_display: "8/03 ☀️", full_name: "8/03 T日盤", spot_price: 43386.41, txf_price: 43230.0, zero_gamma_level: 43080.0, call_wall_strike: 43500, put_wall_strike: 42900, max_pain_strike: 43200, shift_vs_prev: -120, total_gex: gList },
-      { id: "t0_night", label: "🔥 T夜盤盤後快照", date_display: "8/03 🌙", full_name: "8/03 T夜盤盤後快照", spot_price: spot, txf_price: txf, zero_gamma_level: gexData.zero_gamma_level || 43236.4, call_wall_strike: gexData.call_wall_strike || 43600, put_wall_strike: gexData.put_wall_strike || 43000, max_pain_strike: gexData.max_pain_strike || 43300, shift_vs_prev: -580, total_gex: gList }
+      { id: "t0_night", label: "🔥 T夜盤 (Live)", date_display: "8/03 🌙", full_name: "8/03 T夜盤 (Live)", spot_price: spot, txf_price: txf, zero_gamma_level: gexData.zero_gamma_level || 43236.4, call_wall_strike: gexData.call_wall_strike || 43600, put_wall_strike: gexData.put_wall_strike || 43000, max_pain_strike: gexData.max_pain_strike || 43300, shift_vs_prev: -580, total_gex: gList }
     ];
   }
 
@@ -610,26 +395,8 @@ function renderDashboard() {
   const spotEl = document.getElementById('stat-spot');
   if (spotEl) spotEl.innerText = spot.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-  const taiexChgEl = document.getElementById('stat-taiex-change');
-  if (taiexChgEl) {
-    const val = gexData.spot_change_val !== undefined ? gexData.spot_change_val : 266.66;
-    const pct = gexData.spot_change_pct !== undefined ? gexData.spot_change_pct : 0.62;
-    const sign = val >= 0 ? '+' : '';
-    taiexChgEl.className = `stat-sub ${val >= 0 ? 'tag-bull' : 'tag-bear'}`;
-    taiexChgEl.innerText = `${sign}${val.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
-  }
-
   const twoEl = document.getElementById('stat-two-price');
   if (twoEl) twoEl.innerText = (gexData.two_price || 362.89).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
-  const twoChgEl = document.getElementById('stat-two-change');
-  if (twoChgEl) {
-    const val = gexData.two_change_val !== undefined ? gexData.two_change_val : 1.85;
-    const pct = gexData.two_change_pct !== undefined ? gexData.two_change_pct : 0.51;
-    const sign = val >= 0 ? '+' : '';
-    twoChgEl.className = `stat-sub ${val >= 0 ? 'tag-bull' : 'tag-bear'}`;
-    twoChgEl.innerText = `${sign}${val.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
-  }
 
   const dateEl = document.getElementById('data-date');
   if (dateEl) dateEl.innerText = gexData.date || '2026-08-03';
@@ -737,12 +504,21 @@ function renderDashboard() {
     console.error('Express panel error:', expressErr);
   }
 
+  // Hot Money Digest Panel
+  try {
+    const hotMoneyPanelEl = document.getElementById('hot-money-express-panel');
+    if (hotMoneyPanelEl && gexData.hot_money_digest && gexData.hot_money_digest.hot_money_summary_html) {
+      hotMoneyPanelEl.innerHTML = gexData.hot_money_digest.hot_money_summary_html;
+    }
+  } catch (hotMoneyErr) {
+    console.error('Hot money panel error:', hotMoneyErr);
+  }
+
   try { renderGEXChart(); } catch (chartErr) { console.error('GEX Chart error:', chartErr); }
   try { populateInstitutionalMatrix(); } catch (matrixErr) { console.error('Matrix error:', matrixErr); }
   try { populateStockFutures(); } catch (stockErr) { console.error('Stock futures error:', stockErr); }
-  try { renderRecent3DaysTable(); } catch (tblErr) { console.error('3-Day Table error:', tblErr); }
 }
-let currentSessionIndex = 5; // Default to the current T-night snapshot session (Index 5)
+let currentSessionIndex = 5; // Default to Live T-Night Session (Index 5)
 
 function renderHistorySessionSelector() {
   const container = document.getElementById('history-session-selector');
@@ -900,7 +676,7 @@ function renderGEXChart() {
   const config = { responsive: true, displayModeBar: false };
 
   // ============================================================
-  // Overlay Compare Mode: T日盤 vs T夜盤盤後快照 side-by-side
+  // Overlay Compare Mode: T日盤 vs T夜盤 (Live) side-by-side
   // ============================================================
   if (isOverlayMode) {
     const snapshots = gexData.history_6_sessions || [];
@@ -929,8 +705,8 @@ function renderGEXChart() {
       { x: dayStrikes, y: dayList.map(d => d.call_gex), name: `☀️ 日盤 Call GEX`, type: 'bar', marker: { color: 'rgba(255,82,82,0.35)', line: { color: '#ff5252', width: 1 } } },
       { x: dayStrikes, y: dayList.map(d => d.put_gex),  name: `☀️ 日盤 Put GEX`,  type: 'bar', marker: { color: 'rgba(0,230,118,0.35)', line: { color: '#00e676', width: 1 } } },
       // T夜盤 (實線)
-      { x: nightStrikes, y: nightList.map(d => d.call_gex), name: `🌙 夜盤 Call GEX（盤後快照）`, type: 'bar', marker: { color: '#ff5252', opacity: 0.9 } },
-      { x: nightStrikes, y: nightList.map(d => d.put_gex),  name: `🌙 夜盤 Put GEX（盤後快照）`,  type: 'bar', marker: { color: '#00e676', opacity: 0.9 } },
+      { x: nightStrikes, y: nightList.map(d => d.call_gex), name: `🌙 夜盤 Call GEX (Live)`, type: 'bar', marker: { color: '#ff5252', opacity: 0.9 } },
+      { x: nightStrikes, y: nightList.map(d => d.put_gex),  name: `🌙 夜盤 Put GEX (Live)`,  type: 'bar', marker: { color: '#00e676', opacity: 0.9 } },
       // Net GEX lines
       { x: dayStrikes,   y: dayList.map(d => d.net_gex),   name: '☀️ 日盤 Net GEX',   type: 'scatter', mode: 'lines', line: { color: 'rgba(0,210,255,0.4)', width: 2, dash: 'dot' } },
       { x: nightStrikes, y: nightList.map(d => d.net_gex), name: '🌙 夜盤 Net GEX', type: 'scatter', mode: 'lines+markers', line: { color: '#00d2ff', width: 3 }, marker: { size: 5 } }
@@ -955,7 +731,7 @@ function renderGEXChart() {
       ]
     };
 
-    document.getElementById('chart-panel-title').innerText = `🔀 疊加對比：T日盤 vs T夜盤盤後快照 GEX 分布`;
+    document.getElementById('chart-panel-title').innerText = `🔀 疊加對比：T日盤 vs T夜盤 (Live) GEX 分布`;
     Plotly.newPlot('gex-chart', overlayTraces, overlayLayout, config);
     return;
   }
@@ -1050,13 +826,13 @@ function populateInstitutionalMatrix() {
     `;
   }
 
-  const history = Array.isArray(gexData.institutional_5day_history)
-    ? [...gexData.institutional_5day_history].sort((a, b) => {
-        const aDate = a && a.date ? new Date(`2026 ${a.date}`) : new Date(0);
-        const bDate = b && b.date ? new Date(`2026 ${b.date}`) : new Date(0);
-        return bDate - aDate;
-      })
-    : [];
+  const history = gexData.institutional_5day_history || [
+    { date: "7/25", top5_net: -1250, top10_net: -3420, top5_spec_net: -980, top10_spec_net: -2100, foreign_fut_net: -18500, trust_fut_net: 2100, dealer_fut_net: -450, foreign_stock_net: -125.4, trust_stock_net: 42.1, dealer_stock_net: -18.6, foreign_opt_call_net: 0.45, foreign_opt_put_net: -1.82, trust_opt_call_net: -2.40, trust_opt_put_net: 0.002, dealer_opt_call_net: 1.25, dealer_opt_put_net: 0.85, pc_ratio: 102.4 },
+    { date: "7/28", top5_net: -850, top10_net: -1200, top5_spec_net: -420, top10_spec_net: -890, foreign_fut_net: -16200, trust_fut_net: 2450, dealer_fut_net: -120, foreign_stock_net: -88.2, trust_stock_net: 38.5, dealer_stock_net: -12.4, foreign_opt_call_net: 0.62, foreign_opt_put_net: -1.45, trust_opt_call_net: -2.65, trust_opt_put_net: 0.002, dealer_opt_call_net: 1.40, dealer_opt_put_net: 0.92, pc_ratio: 104.1 },
+    { date: "7/29", top5_net: 420, top10_net: 1150, top5_spec_net: 650, top10_spec_net: 1420, foreign_fut_net: -15100, trust_fut_net: 3100, dealer_fut_net: 380, foreign_stock_net: -45.6, trust_stock_net: 51.2, dealer_stock_net: -8.5, foreign_opt_call_net: 0.88, foreign_opt_put_net: -1.10, trust_opt_call_net: -2.85, trust_opt_put_net: 0.003, dealer_opt_call_net: 1.85, dealer_opt_put_net: 1.15, pc_ratio: 105.8 },
+    { date: "7/30", top5_net: 3850, top10_net: 5920, top5_spec_net: 3210, top10_spec_net: 4850, foreign_fut_net: -12400, trust_fut_net: 3650, dealer_fut_net: 850, foreign_stock_net: 32.5, trust_stock_net: 48.0, dealer_stock_net: 14.2, foreign_opt_call_net: 1.45, foreign_opt_put_net: -0.65, trust_opt_call_net: -2.98, trust_opt_put_net: 0.003, dealer_opt_call_net: 2.30, dealer_opt_put_net: 1.42, pc_ratio: 107.2 },
+    { date: "7/31", top5_net: 6420, top10_net: 9850, top5_spec_net: 5890, top10_spec_net: 8410, foreign_fut_net: -14200, trust_fut_net: 4200, dealer_fut_net: 1100, foreign_stock_net: 185.4, trust_stock_net: 62.8, dealer_stock_net: -24.5, foreign_opt_call_net: 0.60, foreign_opt_put_net: -0.28, trust_opt_call_net: -3.08, trust_opt_put_net: 0.003, dealer_opt_call_net: 1.83, dealer_opt_put_net: 1.42, pc_ratio: 108.5 }
+  ];
 
   const formatCellSymmetric = (val, isAmount = false, suffix = '') => {
     if (val === undefined || val === null) return '-';
@@ -1161,92 +937,6 @@ function populateStockFutures() {
         <td class="${stk.foreign_net >= 0 ? 'tag-bull' : 'tag-bear'}">${stk.foreign_net >= 0 ? '+' : ''}${stk.foreign_net} 口</td>
         <td class="${stk.dealer_net >= 0 ? 'tag-bull' : 'tag-bear'}">${stk.dealer_net >= 0 ? '+' : ''}${stk.dealer_net} 口</td>
         <td>${stk.has_night ? '🌙 <span style="color: var(--call-color)">有夜盤</span>' : '⚪ 無夜盤'}</td>
-      </tr>
-    `;
-  }).join('');
-}
-
-function renderRecent3DaysTable() {
-  const tbody = document.getElementById('recent-3days-tbody');
-  if (!tbody || !gexData) return;
-
-  const list = Array.isArray(gexData.recent_3_days_summary) ? gexData.recent_3_days_summary : [];
-
-  tbody.innerHTML = list.map((item, idx) => {
-    // ---- Session Pending (未開盤) Logic ----
-    // For T日 (idx=0): check is_opened / is_night_opened flags from backend
-    const isDayOpened   = item.is_opened   !== false;  // true for T-1, T-2; conditional for T日
-    const isNightOpened = item.is_night_opened !== false;
-
-    // Spot & OTC cells
-    let spotStr, twoStr;
-    if (!isDayOpened) {
-      // Day not yet open — show pending badge
-      spotStr = `<span style="color:var(--text-muted);font-size:0.82rem;">⏳ 未開盤</span><br/><span style="font-size:0.7rem;color:#555;">08:45 日盤開盤</span>`;
-      twoStr  = `<span style="color:var(--text-muted);font-size:0.82rem;">⏳ 未開盤</span>`;
-    } else {
-      const spotSign  = item.spot_change_val >= 0 ? '+' : '';
-      const spotClass = item.spot_change_val >= 0 ? 'tag-bull' : 'tag-bear';
-      spotStr = `${item.spot_price.toLocaleString()} <span class="${spotClass}" style="font-size:0.75rem;">(${spotSign}${item.spot_change_val.toFixed(2)} / ${spotSign}${item.spot_change_pct.toFixed(2)}%)</span>`;
-      const twoSign  = item.two_change_val >= 0 ? '+' : '';
-      const twoClass = item.two_change_val >= 0 ? 'tag-bull' : 'tag-bear';
-      twoStr = `${item.two_price.toLocaleString()} <span class="${twoClass}" style="font-size:0.75rem;">(${twoSign}${item.two_change_val.toFixed(2)} / ${twoSign}${item.two_change_pct.toFixed(2)}%)</span>`;
-    }
-
-    // Day TXF cell
-    const dayNote = item.day_date_note ? item.day_date_note : '日盤 13:45';
-    let dayStr;
-    if (!isDayOpened) {
-      dayStr = `<span style="color:var(--text-muted);font-size:0.82rem;">⏳ 未開盤</span><br/><span style="font-size:0.7rem;color:#555;">📅 ${dayNote}</span>`;
-    } else {
-      dayStr = `${item.day_txf_price.toLocaleString()}<br/><span style="font-size:0.7rem; color:var(--text-muted); font-weight:500;">📅 ${dayNote}</span>`;
-    }
-
-    // Night TXF cell
-    const nightNote = item.night_date_note ? item.night_date_note : '次日 05:00收盤';
-    let nightStr;
-    if (!isNightOpened || item.night_txf_price == null) {
-      nightStr = `<span style="color:var(--text-muted);font-size:0.82rem;">⏳ 15:00 夜盤開盤</span><br/><span style="font-size:0.7rem;color:var(--gold-accent);">🌙 ${nightNote}</span>`;
-    } else {
-      const nShiftSign  = item.night_txf_shift >= 0 ? '+' : '';
-      const nShiftColor = item.night_txf_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-      nightStr = `${item.night_txf_price.toLocaleString()} <span style="font-size:0.75rem; color:${nShiftColor}; font-weight:700;">(${nShiftSign}${item.night_txf_shift})</span><br/><span style="font-size:0.7rem; color:var(--gold-accent); font-weight:600;">🌙 ${nightNote}</span>`;
-    }
-
-    // GEX / Wall cells (always shown based on backend data)
-    const zgSign  = item.zero_gamma_shift >= 0 ? '+' : '';
-    const zgColor = item.zero_gamma_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-    const zgStr   = `${item.zero_gamma_level.toLocaleString()} <span style="font-size:0.75rem; color:${zgColor}; font-weight:700;">(${zgSign}${item.zero_gamma_shift})</span><br/><span style="font-size:0.72rem; color:var(--gold-accent); font-weight:600;">${item.zero_gamma_regime}</span>`;
-
-    const cwSign  = item.call_wall_shift >= 0 ? '+' : '';
-    const cwColor = item.call_wall_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-    const cwStr   = `${item.call_wall_strike.toLocaleString()} <span style="font-size:0.75rem; color:${cwColor}; font-weight:700;">(${cwSign}${item.call_wall_shift}點)</span>`;
-
-    const pwSign  = item.put_wall_shift >= 0 ? '+' : '';
-    const pwColor = item.put_wall_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-    const pwStr   = `${item.put_wall_strike.toLocaleString()} <span style="font-size:0.75rem; color:${pwColor}; font-weight:700;">(${pwSign}${item.put_wall_shift}點)</span>`;
-
-    const mpSign  = item.max_pain_shift >= 0 ? '+' : '';
-    const mpColor = item.max_pain_shift >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-    const pcDesc  = item.pc_ratio_desc || (item.pc_ratio >= 100 ? '🔴 偏多看撐' : '🟢 偏空避險');
-    const mpStr   = `${item.max_pain_strike.toLocaleString()} <span style="font-size:0.75rem; color:${mpColor}; font-weight:700;">(${mpSign}${item.max_pain_shift}點)</span><br/><span style="font-size:0.72rem; color:var(--primary-accent); font-weight:600;">P/C Ratio: ${item.pc_ratio}% (${pcDesc})</span>`;
-
-    const isLatest    = idx === 0;
-    const rowBg       = isLatest ? 'rgba(0, 210, 255, 0.05)' : 'transparent';
-    const borderStyle = isLatest ? 'border-left: 3px solid var(--primary-accent);' : '';
-
-    return `
-      <tr style="background: ${rowBg}; ${borderStyle} border-bottom: 1px solid rgba(255,255,255,0.06);">
-        <td style="padding: 10px 10px; font-weight: 700; color: var(--gold-accent);">${item.date_label}</td>
-        <td style="padding: 10px 10px;">${spotStr}</td>
-        <td style="padding: 10px 10px;">${twoStr}</td>
-        <td style="padding: 10px 10px; font-weight: 600; color: var(--text-main);">${dayStr}</td>
-        <td style="padding: 10px 10px;">${nightStr}</td>
-        <td style="padding: 10px 10px;">${zgStr}</td>
-        <td style="padding: 10px 10px;">${cwStr}</td>
-        <td style="padding: 10px 10px;">${pwStr}</td>
-        <td style="padding: 10px 10px;">${mpStr}</td>
-        <td style="padding: 10px 10px; color: var(--text-muted); font-size: 0.78rem;">${item.notes}</td>
       </tr>
     `;
   }).join('');
