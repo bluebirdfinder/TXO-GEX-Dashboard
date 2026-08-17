@@ -14,7 +14,7 @@
     "day_zero_gamma": 45707.3,
     "day_max_pain": 45900
   },
-  "last_updated_time": "2026-08-17 08:40",
+  "last_updated_time": "2026-08-17 09:07",
   "spot_price": 45857.27,
   "two_price": 398.32,
   "day_txf_price": 45888.0,
@@ -1307,21 +1307,21 @@
     "current_fx": {
       "usdtwd": {
         "date": "08/17 (一)",
-        "price": 31.75,
-        "change": -0.37,
-        "pct": -1.15
+        "price": 31.78,
+        "change": -0.34,
+        "pct": -1.06
       },
       "dxy": {
         "date": "08/17 (一)",
-        "price": 99.29,
+        "price": 99.43,
         "change": 0.0,
         "pct": 0.0
       },
       "usdjpy": {
         "date": "08/17 (一)",
-        "price": 159.05,
-        "change": -0.38,
-        "pct": -0.24
+        "price": 159.14,
+        "change": -0.29,
+        "pct": -0.18
       }
     },
     "fx_5day_history": {
@@ -1352,9 +1352,9 @@
         },
         {
           "date": "08/17 (一)",
-          "price": 31.75,
-          "change": -0.37,
-          "pct": -1.15
+          "price": 31.78,
+          "change": -0.34,
+          "pct": -1.06
         }
       ],
       "dxy": [
@@ -1384,7 +1384,7 @@
         },
         {
           "date": "08/17 (一)",
-          "price": 99.29,
+          "price": 99.43,
           "change": 0.0,
           "pct": 0.0
         }
@@ -1416,13 +1416,13 @@
         },
         {
           "date": "08/17 (一)",
-          "price": 159.05,
-          "change": -0.38,
-          "pct": -0.24
+          "price": 159.14,
+          "change": -0.29,
+          "pct": -0.18
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card bull\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem;\"><strong>🔥 台幣呈現升值（熱錢強勢匯入）</strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.6; color: var(--text-sub); margin-bottom: 12px;\">美元/台幣目前為 <code>31.75</code>（單日升值 <code>0.37</code> 元）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.29</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.05</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bull\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem;\"><strong>🔥 台幣呈現升值（熱錢強勢匯入）</strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.6; color: var(--text-sub); margin-bottom: 12px;\">美元/台幣目前為 <code>31.78</code>（單日升值 <code>0.34</code> 元）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.43</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.14</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
