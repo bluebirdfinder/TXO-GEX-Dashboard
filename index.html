@@ -178,6 +178,75 @@
     </div>
   </div>
 
+  <!-- Retail Sentiment Education Modal -->
+  <div id="retail-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="modal-content" style="max-width: 640px; max-height: 85vh; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--primary-accent); border-radius: 14px; padding: 22px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="margin: 0; color: var(--primary-accent); font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+          <span>📉 散戶多空比與籌碼指標判讀教學</span>
+        </h3>
+        <button id="close-retail-modal" style="background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">1. 散戶多空比權威計算公式 (期交所官方公開數據)</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: #fff;">散戶多單 (口)</strong> = 全市場未平倉量 (Total OI) - 三大法人多單總合</li>
+          <li><strong style="color: #fff;">散戶空單 (口)</strong> = 全市場未平倉量 (Total OI) - 三大法人空單總合</li>
+          <li><strong style="color: var(--primary-accent);">散戶多空比 (%)</strong> = (散戶多單 - 散戶空單) / 全市場未平倉量 × 100%</li>
+        </ul>
+
+        <h4 style="color: var(--primary-accent); margin: 12px 0 6px 0;">2. 歷史臨界值與反向指標實戰判讀</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: var(--call-color);">當多空比率 > +15% (散戶極度做多)</strong>：代表市場散戶多單嚴重積壓，歷史經驗顯示大盤常面臨高檔洗盤拉回、清理浮多。</li>
+          <li><strong style="color: var(--put-color);">當多空比率 < -15% (散戶極度做空)</strong>：代表市場散戶空單遭套牢，歷史經驗顯示大盤易發動強烈反彈嘎空行情。</li>
+          <li><strong style="color: var(--gold-accent);">多空比率在 -10% ~ +10% 之間</strong>：代表散戶多空情緒相對平衡，盤勢回歸三大法人現貨資金買賣超與 GEX 轉折點導向。</li>
+        </ul>
+
+        <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">3. 台指期籌碼與 VIX 恐慌指標聯動</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: #fff;">外資台指期淨未平倉</strong>：<-1.5萬口屬常態期現貨避險；若是外資期貨大舉回補，有利多頭反攻。</li>
+          <li><strong style="color: #fff;">台指 VIX 波動率指數</strong>：VIX 指數下滑代表恐慌情緒收斂，市場趨於平穩。</li>
+        </ul>
+
+        <div style="background: rgba(0, 210, 255, 0.05); border-left: 3px solid var(--primary-accent); padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); border-radius: 4px;">
+          ⚖️ <strong>合規聲明</strong>：本模組所有數據均基於台灣期貨交易所 (TAIFEX) 每日公開盤後數據計算，僅提供量化統計與客觀學理參考，非任何個股或衍生性商品買賣建議。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌐 FX & Hot Money Education Modal Overlay -->
+  <div id="fx-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="modal-content" style="max-width: 640px; max-height: 85vh; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--gold-accent); border-radius: 14px; padding: 22px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="color: var(--gold-accent); margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+          <span>🌐 國際熱錢與三大外幣指標判讀教學</span>
+        </h3>
+        <button id="close-fx-modal" style="background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <p style="margin-bottom: 14px;"><strong>【熱錢動向與匯率如何影響台股？】</strong><br>外資占台股每日交易量約 3 ~ 4 成，國際熱錢的進出直接決定台股大型權值股（如台積電、聯發科）與大盤指數的趨勢方向。</p>
+        
+        <div style="background: rgba(255, 215, 0, 0.05); border-left: 3px solid var(--gold-accent); padding: 12px; border-radius: 6px; margin-bottom: 14px;">
+          <h4 style="color: var(--gold-accent); margin: 0 0 6px 0; font-size: 0.95rem;">1. 美金 / 台幣 (USD/TWD) — 外資資金進出風向球</h4>
+          <p style="margin: 0;">• <strong>台幣升值 (USD/TWD 下跌/綠字)</strong>：代表外資將美元換成台幣匯入台灣，台股資金動能強勁，大盤看多。<br>• <strong>台幣貶值 (USD/TWD 上漲/紅字)</strong>：外資賣台股換美金匯出，台股遭遇賣壓風險，大盤偏空。</p>
+        </div>
+
+        <div style="background: rgba(0, 210, 255, 0.05); border-left: 3px solid var(--primary-accent); padding: 12px; border-radius: 6px; margin-bottom: 14px;">
+          <h4 style="color: var(--primary-accent); margin: 0 0 6px 0; font-size: 0.95rem;">2. 美元指數 (DXY) — 全球資金吸鐵石</h4>
+          <p style="margin: 0;">• 衡量美元相對於全球 6 大主要貨幣的強弱。當 DXY 強勢大漲時，全球資金傾向回流美元資產避險，新興市場（含台股）資金易遭抽離。</p>
+        </div>
+
+        <div style="background: rgba(255, 82, 82, 0.05); border-left: 3px solid var(--put-color); padding: 12px; border-radius: 6px;">
+          <h4 style="color: var(--put-color); margin: 0 0 6px 0; font-size: 0.95rem;">3. 美元 / 日圓 (USD/JPY) — 日圓套利交易 (Carry Trade) 風險</h4>
+          <p style="margin: 0;">• 日圓是全球最大的避險與低利借貸貨幣。若日圓大幅急升（USD/JPY 大跌），易引發全球「日圓套利平倉潮」，全球股市與台股短線流動性受阻。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 🔒 Passcode Protection Modal Overlay (網頁開啟密碼防護) -->
   <div id="passcode-modal" class="modal-overlay" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.96); backdrop-filter: blur(14px); z-index: 99999; justify-content: center; align-items: center;">
     <div style="background: #121824; border: 2px solid var(--primary-accent); border-radius: 16px; padding: 36px 28px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 12px 48px rgba(0, 210, 255, 0.3);">
@@ -191,7 +260,7 @@
       </div>
       <div id="passcode-error" style="color: #ff5252; font-size: 0.82rem; margin-bottom: 12px; display: none; font-weight: 600;">⚠️ 通行碼錯誤，請重新輸入</div>
       
-      <button id="unlock-btn" class="btn btn-primary" onclick="const input = document.getElementById('passcode-input'); const modal = document.getElementById('passcode-modal'); const err = document.getElementById('passcode-error'); if((input ? input.value : '').trim().toUpperCase() === 'GEX2026') { modal.style.display = 'none'; if(err) err.style.display = 'none'; sessionStorage.setItem('gex_unlocked', 'true'); } else { if(err) err.style.display = 'block'; if(input) { input.value = ''; input.focus(); } }" style="width: 100%; padding: 12px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer;">解鎖系統 🔓</button>
+      <button id="unlock-btn" class="btn btn-primary" onclick="const input = document.getElementById('passcode-input'); const modal = document.getElementById('passcode-modal'); const err = document.getElementById('passcode-error'); const pass = (input ? input.value : '').trim().toUpperCase(); if(pass === 'GEX2026') { modal.style.display = 'none'; if(err) err.style.display = 'none'; sessionStorage.setItem('gex_unlocked', 'true'); if(window.attemptDecrypt) window.attemptDecrypt(pass); } else { if(err) err.style.display = 'block'; if(input) { input.value = ''; input.focus(); } }" style="width: 100%; padding: 12px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer;">解鎖系統 🔓</button>
     </div>
   </div>
 
@@ -375,7 +444,7 @@
         <span>📈 近 5 日關鍵市場指數與 GEX 結構歷程矩陣</span>
         <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">(包含加權、櫃買、台指期日夜盤、Zero Gamma、Call/Put Wall、Max Pain)</span>
       </h3>
-      <div style="overflow-x: auto;">
+      <div class="table-scroll-container" style="max-height: 380px;">
         <table class="matrix-table" style="text-align: center; width: 100%;">
           <thead>
             <tr style="background: #18202d;">
@@ -433,6 +502,9 @@
           📊 全市場 TXO GEX 履約價分布圖 (億 TWD)
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <button id="toggle-legend-btn" class="btn" style="font-size:0.75rem;padding:4px 10px;border-radius:14px;border-color:var(--text-muted);color:var(--text-muted);" title="顯示/隱藏圖例">
+            👁️ 隱藏圖例
+          </button>
           <button id="open-strike-modal-btn" class="btn" style="font-size:0.75rem;padding:4px 10px;border-radius:14px;border-color:var(--gold-accent);color:var(--gold-accent);" title="查看履約價直方圖與莊家防守牆實戰判讀教學">
             ℹ️ 履約價直方圖教學
           </button>
@@ -458,21 +530,23 @@
       <div id="gex-chart" style="width: 100%; height: 480px;"></div>
     </div>
 
-    <!-- Retail Sentiment Panel -->
-    <div id="sentiment-panel" class="panel">
-      <div class="panel-title">📉 微台 (TMF1!) 與 小台 (MXF1!) 散戶多空比 (Retail Sentiment Index)</div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
-        傳統反向指標：當散戶做多比率偏高 (> +15%) 大盤易下探；當散戶做空比率偏高 (< -15%) 大盤易嘎空。
+    <!-- Retail Sentiment & Market Positioning Panel -->
+    <div id="sentiment-panel" class="panel" style="border: 1px solid var(--primary-accent); background: rgba(0, 210, 255, 0.02);">
+      <div class="panel-title" style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span>📉 微台 (TMF1!) 與 小台 (MXF1!) 散戶籌碼與台指快訊 (Retail Sentiment & Market Snapshot)</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button id="open-retail-modal-btn" class="btn" style="font-size:0.75rem;padding:4px 10px;border-radius:14px;border-color:var(--primary-accent);color:var(--primary-accent);" title="查看散戶多空比與籌碼指標判讀教學">
+            ℹ️ 散戶多空比判讀教學
+          </button>
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">期交所官方公開數據計算</span>
+        </div>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+        傳統市場反向指標：當散戶做多比率偏高 (> +15%) 大盤易壓回洗盤；當散戶做空比率偏高 (< -15%) 大盤易嘎空反彈。
       </p>
 
-      <div class="sentiment-bar-container">
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
-          <span>微台散戶多空比 (TMF1!): <strong id="micro-ratio-val" style="color: var(--call-color);">6.9% (散戶做多 ➔ 偏拉回)</strong></span>
-          <span>小台散戶多空比 (MXF1!): <strong id="mini-ratio-val" style="color: var(--call-color);">4.5% (散戶做多)</strong></span>
-        </div>
-        <div class="sentiment-meter">
-          <div id="sentiment-fill" class="sentiment-fill" style="width: 55%;"></div>
-        </div>
+      <div id="retail-sentiment-container">
+        <!-- Populated dynamically by JavaScript -->
       </div>
     </div>
 
