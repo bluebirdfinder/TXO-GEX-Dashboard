@@ -1,8 +1,8 @@
 {
   "date": "2026-08-18",
   "engine_version": "v36.0",
-  "session_type": "NIGHT",
-  "session_name": "🌙 夜盤收盤價校正 (05:00 Close)",
+  "session_type": "DAY",
+  "session_name": "☀️ 日盤結算籌碼 (13:45 Close)",
   "session_shift": {
     "txf_shift": 726.0,
     "call_wall_shift": -150,
@@ -14,12 +14,12 @@
     "day_zero_gamma": 45158.7,
     "day_max_pain": 45300
   },
-  "last_updated_time": "2026-08-18 08:33",
+  "last_updated_time": "2026-08-18 16:27",
   "spot_price": 45308.68,
   "two_price": 390.83,
   "day_txf_price": 45085.0,
   "night_txf_price": 45811.0,
-  "txf_price": 45811.0,
+  "txf_price": 45085.0,
   "zero_gamma_level": 45320.3,
   "call_wall_strike": 45450,
   "put_wall_strike": 45150,
@@ -1025,62 +1025,126 @@
       "net_gex": 108.19
     }
   ],
-  "history_6_sessions": [
+  "history_10_sessions": [
+    {
+      "id": "t4_day",
+      "label": "T-4 日盤",
+      "date_display": "8/12 (三) ☀️",
+      "full_name": "8/12 (三) T-4 日盤",
+      "spot_price": 44688.68,
+      "two_price": 383.33,
+      "txf_price": 44505.0,
+      "zero_gamma_level": 44770.3,
+      "call_wall_strike": 44950,
+      "put_wall_strike": 44650,
+      "max_pain_strike": 44250,
+      "shift_vs_prev": 0,
+      "pc_ratio": 104.2
+    },
+    {
+      "id": "t4_night",
+      "label": "T-4 夜盤",
+      "date_display": "8/12 (三) 🌙",
+      "full_name": "8/12 (三) T-4 夜盤",
+      "spot_price": 44798.68,
+      "two_price": 384.63,
+      "txf_price": 44605.0,
+      "zero_gamma_level": 44870.3,
+      "call_wall_strike": 45050,
+      "put_wall_strike": 44750,
+      "max_pain_strike": 44350,
+      "shift_vs_prev": 100,
+      "pc_ratio": 105.1
+    },
+    {
+      "id": "t3_day",
+      "label": "T-3 日盤",
+      "date_display": "8/13 (四) ☀️",
+      "full_name": "8/13 (四) T-3 日盤",
+      "spot_price": 44858.68,
+      "two_price": 385.33,
+      "txf_price": 44665.0,
+      "zero_gamma_level": 44920.3,
+      "call_wall_strike": 45050,
+      "put_wall_strike": 44750,
+      "max_pain_strike": 44350,
+      "shift_vs_prev": 60,
+      "pc_ratio": 105.8
+    },
+    {
+      "id": "t3_night",
+      "label": "T-3 夜盤",
+      "date_display": "8/13 (四) 🌙",
+      "full_name": "8/13 (四) T-3 夜盤",
+      "spot_price": 44918.68,
+      "two_price": 386.03,
+      "txf_price": 44725.0,
+      "zero_gamma_level": 44980.3,
+      "call_wall_strike": 45150,
+      "put_wall_strike": 44850,
+      "max_pain_strike": 44450,
+      "shift_vs_prev": 60,
+      "pc_ratio": 106.7
+    },
     {
       "id": "t2_day",
       "label": "T-2 日盤",
       "date_display": "8/14 (五) ☀️",
       "full_name": "8/14 (五) T-2 日盤",
-      "spot_price": 44928.68,
+      "spot_price": 44974.68,
       "two_price": 386.33,
-      "txf_price": 44735.0,
+      "txf_price": 44782.0,
       "zero_gamma_level": 45000.3,
       "call_wall_strike": 45150,
       "put_wall_strike": 44850,
       "max_pain_strike": 44450,
-      "shift_vs_prev": 0
+      "shift_vs_prev": 57,
+      "pc_ratio": 107.5
     },
     {
       "id": "t2_night",
       "label": "T-2 夜盤",
       "date_display": "8/14 (五) 🌙",
       "full_name": "8/14 (五) T-2 夜盤",
-      "spot_price": 45058.68,
+      "spot_price": 45104.68,
       "two_price": 387.63,
-      "txf_price": 44865.0,
+      "txf_price": 44912.0,
       "zero_gamma_level": 45120.3,
       "call_wall_strike": 45250,
       "put_wall_strike": 44950,
       "max_pain_strike": 44550,
-      "shift_vs_prev": 130
+      "shift_vs_prev": 130,
+      "pc_ratio": 108.3
     },
     {
       "id": "t1_day",
       "label": "T-1 日盤",
       "date_display": "8/17 (一) ☀️",
       "full_name": "8/17 (一) T-1 日盤",
-      "spot_price": 45188.68,
+      "spot_price": 45234.68,
       "two_price": 389.03,
-      "txf_price": 44985.0,
+      "txf_price": 45032.0,
       "zero_gamma_level": 45240.3,
       "call_wall_strike": 45350,
       "put_wall_strike": 45050,
       "max_pain_strike": 44650,
-      "shift_vs_prev": 120
+      "shift_vs_prev": 120,
+      "pc_ratio": 109.1
     },
     {
       "id": "t1_night",
       "label": "T-1 夜盤",
       "date_display": "8/17 (一) 🌙",
       "full_name": "8/17 (一) T-1 夜盤",
-      "spot_price": 45388.68,
+      "spot_price": 45434.68,
       "two_price": 391.73,
-      "txf_price": 45195.0,
+      "txf_price": 45242.0,
       "zero_gamma_level": 45410.3,
       "call_wall_strike": 45450,
       "put_wall_strike": 45150,
       "max_pain_strike": 44750,
-      "shift_vs_prev": 210
+      "shift_vs_prev": 210,
+      "pc_ratio": 110.4
     },
     {
       "id": "t0_day",
@@ -1094,7 +1158,8 @@
       "call_wall_strike": 45600,
       "put_wall_strike": 45000,
       "max_pain_strike": 45300,
-      "shift_vs_prev": -110
+      "shift_vs_prev": -110,
+      "pc_ratio": 111.8
     },
     {
       "id": "t0_night",
@@ -1108,34 +1173,127 @@
       "call_wall_strike": 45450,
       "put_wall_strike": 45150,
       "max_pain_strike": 44750,
-      "shift_vs_prev": 726.0
+      "shift_vs_prev": 726.0,
+      "pc_ratio": 112.93
+    }
+  ],
+  "history_6_sessions": [
+    {
+      "id": "t2_day",
+      "label": "T-2 日盤",
+      "date_display": "8/14 (五) ☀️",
+      "full_name": "8/14 (五) T-2 日盤",
+      "spot_price": 44974.68,
+      "two_price": 386.33,
+      "txf_price": 44782.0,
+      "zero_gamma_level": 45000.3,
+      "call_wall_strike": 45150,
+      "put_wall_strike": 44850,
+      "max_pain_strike": 44450,
+      "shift_vs_prev": 57,
+      "pc_ratio": 107.5
+    },
+    {
+      "id": "t2_night",
+      "label": "T-2 夜盤",
+      "date_display": "8/14 (五) 🌙",
+      "full_name": "8/14 (五) T-2 夜盤",
+      "spot_price": 45104.68,
+      "two_price": 387.63,
+      "txf_price": 44912.0,
+      "zero_gamma_level": 45120.3,
+      "call_wall_strike": 45250,
+      "put_wall_strike": 44950,
+      "max_pain_strike": 44550,
+      "shift_vs_prev": 130,
+      "pc_ratio": 108.3
+    },
+    {
+      "id": "t1_day",
+      "label": "T-1 日盤",
+      "date_display": "8/17 (一) ☀️",
+      "full_name": "8/17 (一) T-1 日盤",
+      "spot_price": 45234.68,
+      "two_price": 389.03,
+      "txf_price": 45032.0,
+      "zero_gamma_level": 45240.3,
+      "call_wall_strike": 45350,
+      "put_wall_strike": 45050,
+      "max_pain_strike": 44650,
+      "shift_vs_prev": 120,
+      "pc_ratio": 109.1
+    },
+    {
+      "id": "t1_night",
+      "label": "T-1 夜盤",
+      "date_display": "8/17 (一) 🌙",
+      "full_name": "8/17 (一) T-1 夜盤",
+      "spot_price": 45434.68,
+      "two_price": 391.73,
+      "txf_price": 45242.0,
+      "zero_gamma_level": 45410.3,
+      "call_wall_strike": 45450,
+      "put_wall_strike": 45150,
+      "max_pain_strike": 44750,
+      "shift_vs_prev": 210,
+      "pc_ratio": 110.4
+    },
+    {
+      "id": "t0_day",
+      "label": "T日盤",
+      "date_display": "8/18 (二) ☀️",
+      "full_name": "8/18 (二) T日盤",
+      "spot_price": 45308.68,
+      "two_price": 390.83,
+      "txf_price": 45085.0,
+      "zero_gamma_level": 45158.7,
+      "call_wall_strike": 45600,
+      "put_wall_strike": 45000,
+      "max_pain_strike": 45300,
+      "shift_vs_prev": -110,
+      "pc_ratio": 111.8
+    },
+    {
+      "id": "t0_night",
+      "label": "🔥 T夜盤 (Live)",
+      "date_display": "8/18 (二) 🌙",
+      "full_name": "8/18 (二) T夜盤 (Live)",
+      "spot_price": 45308.68,
+      "two_price": 390.83,
+      "txf_price": 45811.0,
+      "zero_gamma_level": 45320.3,
+      "call_wall_strike": 45450,
+      "put_wall_strike": 45150,
+      "max_pain_strike": 44750,
+      "shift_vs_prev": 726.0,
+      "pc_ratio": 112.93
     }
   ],
   "institutional_5day_history": [
     {
       "date": "8/18 (二)",
-      "top5_net": 988,
-      "top10_net": 1464,
-      "top5_spec_net": 1034,
-      "top10_spec_net": -85179,
-      "foreign_fut_net": -85179,
+      "top5_net": -11018,
+      "top10_net": -22685,
+      "top5_spec_net": -9043,
+      "top10_spec_net": -22685,
+      "foreign_fut_net": -153,
       "trust_fut_net": 80335,
       "itrust_fut_net": 80335,
       "dealer_fut_net": 1464,
-      "foreign_stock_net": 158.4,
+      "foreign_stock_net": -119.86,
       "trust_stock_net": 56.63,
       "itrust_stock_net": 56.63,
       "dealer_stock_net": -176.07,
-      "foreign_opt_net": 0.88,
-      "trust_opt_net": -3.08,
-      "itrust_opt_net": -3.08,
-      "dealer_opt_net": 3.25,
-      "foreign_opt_call_net": 0.6,
-      "foreign_opt_put_net": -0.28,
-      "trust_opt_call_net": -3.08,
-      "trust_opt_put_net": 0.003,
-      "dealer_opt_call_net": 1.83,
-      "dealer_opt_put_net": 1.42,
+      "foreign_opt_net": 0.09,
+      "trust_opt_net": -0.03,
+      "itrust_opt_net": -0.03,
+      "dealer_opt_net": 2.2,
+      "foreign_opt_call_net": 0.03,
+      "foreign_opt_put_net": 0.06,
+      "trust_opt_call_net": -0.03,
+      "trust_opt_put_net": 0.0,
+      "dealer_opt_call_net": 2.1,
+      "dealer_opt_put_net": 0.1,
       "pc_ratio": 112.93
     },
     {
@@ -1291,23 +1449,23 @@
     }
   ],
   "institutional_sentiment": {
-    "tag": "⚠️ 暴增高檔避險 / 重手加空",
-    "foreign_net_oi": -85179,
-    "daily_change": -72779,
-    "notional_billion": 6668.2,
-    "description": "外資單日重手加空 -72,779 口（約 -6668.2 億 TWD 契約金額），高檔下檔避險風險飆升。"
+    "tag": "🔥 高檔大舉回補 / 追擊多單",
+    "foreign_net_oi": -153,
+    "daily_change": 12247,
+    "notional_billion": 1104.3,
+    "description": "外資單日大幅回補 +12,247 口（約 +1104.3 億 TWD 契約金額），強烈防範嘎空追多。"
   },
   "microstructure_summary": {
     "regime_label": "🟢 負 Gamma 波動度放大區 (避險引爆)",
     "theme_color": "bear",
     "flip_dist": 11.6,
-    "full_html": "\n        <p style=\"margin-bottom: 6px;\"><strong>🟢 負 Gamma 波動度放大區 (避險引爆)</strong> — ⚠️ 警告！價格低於 Zero Gamma 轉折點，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！</p>\n        <p style=\"margin-bottom: 6px;\">⚡ <strong>轉折臨界告急</strong>：價格距離 Gamma 轉折點 (`45320.3`) 僅 <strong>11.6 點</strong>，處於變盤邊緣。</p>\n        <p style=\"margin-bottom: 0;\">🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <code>45450</code> (-150點)。 🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <code>45150</code> (+150點)。</p>\n        "
+    "full_html": "\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\"><strong>🟢 負 Gamma 波動度放大區 (避險引爆)</strong> — <span style=\"color: var(--put-color); font-weight: 700;\">⚠️ 警告！價格低於 Zero Gamma 轉折點</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！</p>\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\">⚡ <strong>轉折臨界告急</strong>：價格距離 Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">45320.3 點</span>) 僅 <span style=\"color: var(--gold-accent); font-weight:700;\">11.6 點</span>，處於變盤邊緣。</p>\n        <p style=\"margin-bottom: 0; line-height: 1.7; font-size: 0.88rem;\">🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <span style=\"color: var(--gold-accent); font-weight: 700;\">45450 點</span> (<span style=\"color: var(--gold-accent); font-weight:600;\">-150點</span>)。 &nbsp; 🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style=\"color: var(--primary-accent); font-weight: 700;\">45150 點</span> (<span style=\"color: var(--primary-accent); font-weight:600;\">+150點</span>)。</p>\n        "
   },
   "hot_money_digest": {
     "current_fx": {
       "usdtwd": {
         "date": "08/18 (二)",
-        "price": 31.89,
+        "price": 31.9,
         "change": 0.0,
         "pct": 0.0
       },
@@ -1319,7 +1477,7 @@
       },
       "usdjpy": {
         "date": "08/18 (二)",
-        "price": 159.72,
+        "price": 159.73,
         "change": 0.0,
         "pct": 0.0
       }
@@ -1327,32 +1485,32 @@
     "fx_5day_history": {
       "usdtwd": [
         {
-          "date": "08/11 (二)",
+          "date": "08/12 (三)",
           "price": 32.21,
           "change": -0.02,
           "pct": -0.06
         },
         {
-          "date": "08/12 (三)",
+          "date": "08/13 (四)",
           "price": 32.2,
           "change": -0.01,
           "pct": -0.03
         },
         {
-          "date": "08/13 (四)",
+          "date": "08/14 (五)",
           "price": 32.12,
           "change": -0.08,
           "pct": -0.25
         },
         {
-          "date": "08/16 (日)",
+          "date": "08/17 (一)",
           "price": 31.99,
           "change": -0.13,
           "pct": -0.4
         },
         {
           "date": "08/18 (二)",
-          "price": 31.89,
+          "price": 31.9,
           "change": 0.0,
           "pct": 0.0
         }
@@ -1391,38 +1549,38 @@
       ],
       "usdjpy": [
         {
-          "date": "08/11 (二)",
+          "date": "08/12 (三)",
           "price": 159.26,
           "change": 0.1,
           "pct": 0.06
         },
         {
-          "date": "08/12 (三)",
+          "date": "08/13 (四)",
           "price": 159.33,
           "change": 0.07,
           "pct": 0.04
         },
         {
-          "date": "08/13 (四)",
+          "date": "08/14 (五)",
           "price": 159.43,
           "change": 0.1,
           "pct": 0.06
         },
         {
-          "date": "08/16 (日)",
+          "date": "08/17 (一)",
           "price": 159.22,
           "change": -0.21,
           "pct": -0.13
         },
         {
           "date": "08/18 (二)",
-          "price": 159.72,
+          "price": 159.73,
           "change": 0.0,
           "pct": 0.0
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem;\"><strong>⚖️ 台幣狹幅平穩（資金平靜）</strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.6; color: var(--text-sub); margin-bottom: 12px;\">美元/台幣游移於 <code>31.89</code> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.67</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.72</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.9</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.67</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.73</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
@@ -1433,6 +1591,44 @@
     "micro_foreign_net_vol": -955,
     "night_sentiment": "⚖️ 外資夜盤中性觀望",
     "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤變動 -153 口（約 -1.42 億 TWD），且在小台與微台變動 -1,203 口，籌碼結構維繫中性姿態。"
+  },
+  "retail_mini_ratio": 4.2,
+  "retail_micro_ratio": 6.31,
+  "retail_sentiment_details": {
+    "mini_mtx": {
+      "title": "小台散戶籌碼 (MXF)",
+      "long_oi": 218486,
+      "short_oi": 208990,
+      "net_oi": 9496,
+      "daily_change": 136,
+      "total_oi": 225960,
+      "ratio": 4.2,
+      "prev_ratio": 4.1,
+      "sentiment_tag": "⚖️ 散戶多空平衡"
+    },
+    "micro_tmf": {
+      "title": "微台散戶籌碼 (TMF)",
+      "long_oi": 383182,
+      "short_oi": 358250,
+      "net_oi": 24932,
+      "daily_change": -8539,
+      "total_oi": 395375,
+      "ratio": 6.31,
+      "prev_ratio": 6.81,
+      "sentiment_tag": "🟠 散戶微幅做多"
+    },
+    "broker_snapshot": {
+      "foreign_tx_net": -83474,
+      "foreign_tx_change": 1705,
+      "foreign_call_net": 1549,
+      "foreign_call_change": -275,
+      "foreign_put_net": 3721,
+      "foreign_put_change": 2448,
+      "vix_index": 30.46,
+      "vix_change": 1.38,
+      "market_turnover": 9794
+    },
+    "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">💡 <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+4.20%</span>（淨部位 +9,496 口），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+6.31%</span>（淨部位 +24,932 口）。散戶籌碼結構整體維持偏多觀望。</p>\n    <p style=\"margin-bottom: 0;\">⚖️ <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">30.46</span> (+1.38)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
   },
   "stock_futures": [
     {
@@ -7464,11 +7660,11 @@
     }
   ],
   "ai_ex_dividend_digest": {
-    "title": "🤖 Gemini AI 全市場籌碼、GEX 轉折與除權息事件量化焦點掃描",
-    "compliance_note": "⚖️ 本模組提供數據客觀分析與學理對照，非個別證券投資建議。",
-    "bullet_1": "🎯 <strong>台指大盤 GEX 位階與假拉回判讀 (45,841點)</strong>：台指現價 45,841 點，高於 Gamma Flip 轉折點 (45,500 點) 約 341 點，總 GEX 處於正 GEX 護盤區 (+8.5 億)。若夜盤跌至 45,600 點，因未破 45,500 轉折點，做市商對沖買盤尚在，屬常態洗盤；但若跌破 45,500 點則切入負 GEX 區，防範做市商追殺賣盤。",
-    "bullet_2": "🧱 <strong>週月選莊家牆與結算磁吸 (46,000 / 45,500)</strong>：週選天花板集中於 46,000 點 (Call Wall 超長黃色週選柱)，當沖多單衝高宜停利；月選主力波段防守鐵板位於 45,500 點 (Put Wall 超長藍色月選柱)；週三結算前夕需留意 45,900 點磁吸歸零效應。",
-    "bullet_3": "🔥 <strong>Top 10 法人籌碼聚焦標的</strong>：聯電期 (2303) 與國泰金期 (2882) 呈三大法人現貨買超 + 期貨淨多單雙重加碼，資金集中度高，展現法人才情與波段量能。",
-    "bullet_4": "📅 <strong>近期除權息扣點校正與價差防守</strong>：台積電期 (2330) 09/18 季除息 $4.0 元，期價逆價差源自常態配息扣點而非看空避險；除息前夕宜對照 TWSE 官方扣點日程防範誤判。"
+    "title": "🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描",
+    "compliance_note": "⚖️ 合規量化學理分析 (非個別證券建議)",
+    "bullet_1": "🎯 <strong>台指大盤 GEX 位階與假拉回判讀 (<span style=\"color: var(--gold-accent); font-weight:700;\">45,857 點</span>)</strong>：台指現價 <span style=\"color: var(--gold-accent); font-weight:700;\">45,857 點</span>，高於 Zero Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">45,920.5 點</span>) 附近，總 GEX 處於 <span style=\"color: var(--call-color); font-weight:700;\">正 GEX 護盤區 (+8.5 億)</span>。若夜盤跌至 <span style=\"color: var(--gold-accent); font-weight:700;\">45,750 點</span>，因未破 <span style=\"color: var(--primary-accent); font-weight:700;\">Put Wall 轉折點</span>，做市商對沖買盤尚在，屬常態洗盤；但若跌破 <span style=\"color: var(--primary-accent); font-weight:700;\">45,700 點</span> 則切入 <span style=\"color: var(--put-color); font-weight:700;\">負 GEX 追殺賣盤區</span>。",
+    "bullet_2": "🧱 <strong>週月選莊家牆與結算磁吸 (<span style=\"color: var(--gold-accent); font-weight:700;\">46,050 / 45,750</span>)</strong>：週選天花板集中於 <span style=\"color: var(--gold-accent); font-weight:700;\">46,050 點</span> (Call Wall 超長黃色週選柱)，當沖多單衝高宜停利；月選主力波段防守鐵板位於 <span style=\"color: var(--primary-accent); font-weight:700;\">45,750 點</span> (Put Wall 超長藍色月選柱)；週三結算前夕需留意 <span style=\"color: var(--gold-accent); font-weight:700;\">45,900 點</span> 磁吸歸零效應。",
+    "bullet_3": "🔥 <strong>Top 10 法人籌碼聚焦標的</strong>：聯電期 (2303) 與國泰金期 (2882) 呈三大法人 <span style=\"color: var(--call-color); font-weight:700;\">現貨買超 + 期貨淨多單雙重加碼</span>，資金集中度高，展現法人才情與波段量能。",
+    "bullet_4": "📅 <strong>近期除權息扣點校正與價差防守</strong>：台積電期 (2330) 09/18 季除息 <span style=\"color: var(--gold-accent); font-weight:700;\">$4.0 元</span>，期價逆價差源自常態配息扣點而非看空避險；除息前夕宜對照 TWSE 官方扣點日程防範誤判。"
   }
 }
