@@ -1,15 +1,16 @@
 # 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板 (v39.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板 (v40.0)
 
 > **全台首創‧日夜盤雙維度對照‧GEX 圖直方圖手機版三階梯防遮擋標籤‧籌碼快訊手機版 2x2 雙欄卡片‧5日全欄位 session-to-session 增減差額標註‧散戶與國際熱錢對話式教學 Modal‧Net GEX 敏感度動態曲線‧TWSE 除權息預警**
 
 [![GitHub Actions Night/Day Pipeline](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live Dashboard](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![Engine Version](https://img.shields.io/badge/Engine-v39.0_Vision_Playwright-ffd700?style=flat&logo=python)](file:///scripts/fetch_and_calc_vision.py)
+[![Engine Version](https://img.shields.io/badge/Engine-v40.0_Vision_Playwright-ffd700?style=flat&logo=python)](file:///scripts/fetch_and_calc_vision.py)
 [![Compliance](https://img.shields.io/badge/Compliance-100%25_Academic_Regulatory-00e676?style=flat)](file:///OPTIONS_CHEATSHEET.md)
 
 ---
 
-## 🌟 v39.0 核心升級與最新亮點 (Key Features)
+## 🌟 v40.0 核心升級與最新亮點 (Key Features)
 
 ### 1. 📱 GEX 直方圖手機版三階梯防遮擋標籤 (GEX Chart Staggered Badges)
 - **三階梯垂直分層**：解決手機螢幕寬度較窄導致 Put Wall、Zero Gamma 與 Call Wall 標籤重疊覆蓋的問題，全面採用 `y: 1.02` (PW), `y: 1.14` (ZG), `y: 1.26` (CW) 3 階梯垂直高度分層。

@@ -56,18 +56,13 @@ cd TXO-GEX-Dashboard
 git pull origin main
 ```
 
-- 用 **Antigravity IDE** 或 **VS Code** 打開目錄。
-- **執行測試與資料引擎**：
-  ```bash
-  python scripts/fetch_and_calc_vision.py
-  python scratch/make_embedded_data_js.py
-  ```
-- **富邦 API 盤中即時 GEX 串接**（回到個人筆電後隨時可開始）：
-  - 富邦 SDK Python 腳本放於本地後端。
-  - 盤中接收 Tick 價格 $S_t$，本地重算 GEX 後推播至 JSON，**Gemini API 使用次數依然保持 0 增加（每日 2 次）**。
+## 🎯 四、 v40.0 核心更新與 Self-Audit 總結
+
+- **7 大區塊 Self-Audit & 期交所/證交所 API 全直連**：分區核對散戶多空比、VIX、選擇權金額、大額交易人、現貨買賣超與個股期貨期現價差，修正硬編碼備用檔問題，全站 100% 動態直連期交所/證交所官方 API。
+- **SOP 7 大步驟 100% 驗證通過**：Check-Syntax 標籤平衡檢測、Playwright 0 Console Error DOM 檢測與全頁實體畫面截圖驗證。
 
 ---
 
-## 🎯 四、 總結
+## 🎯 五、 總結
 
 所有功能、Gemini AI 行情解讀、除權息日程標註、287 檔契約涵蓋、真實 OI GEX 引擎、自動化排程與交接手冊全數 100% 完成！您可以安心推送到 GitHub！
