@@ -873,7 +873,7 @@ function renderGEXChart() {
     margin: {
       l: isMobile ? 38 : 50,
       r: isMobile ? 16 : 30,
-      t: isMobile ? 65 : 85,
+      t: isMobile ? 95 : 85,
       b: isLegendVisible ? (isMobile ? 145 : 115) : 45
     },
     showlegend: isLegendVisible,
@@ -891,40 +891,40 @@ function renderGEXChart() {
     xaxis: { title: { text: '履約價 (Strike)', standoff: 8 }, gridcolor: 'rgba(255,255,255,0.05)' },
     yaxis: { title: 'GEX 曝險金額 (億 TWD)', gridcolor: 'rgba(255,255,255,0.05)' },
     shapes: [
+      { type: 'line', x0: putWall, x1: putWall, y0: 0, y1: 1.01, yref: 'paper', line: { color: '#00e676', width: 2 } },
       { type: 'line', x0: zeroGamma, x1: zeroGamma, y0: 0, y1: 1.13, yref: 'paper', line: { color: '#ffd700', width: 2, dash: 'dash' } },
-      { type: 'line', x0: callWall, x1: callWall, y0: 0, y1: 1.01, yref: 'paper', line: { color: '#ff5252', width: 2 } },
-      { type: 'line', x0: putWall, x1: putWall, y0: 0, y1: 1.01, yref: 'paper', line: { color: '#00e676', width: 2 } }
+      { type: 'line', x0: callWall, x1: callWall, y0: 0, y1: 1.25, yref: 'paper', line: { color: '#ff5252', width: 2 } }
     ],
     annotations: [
       {
-        x: zeroGamma, y: 1.14, yref: 'paper',
-        text: `<b>Zero Gamma: ${zeroGamma}</b>`,
-        showarrow: false,
-        bgcolor: '#0a0e17',
-        bordercolor: '#ffd700',
-        borderwidth: 1.5,
-        borderpad: 5,
-        font: { color: '#ffd700', size: 11 }
-      },
-      {
-        x: callWall, y: 1.02, yref: 'paper',
-        text: `<b>Call Wall: ${callWall}</b>`,
-        showarrow: false,
-        bgcolor: '#0a0e17',
-        bordercolor: '#ff5252',
-        borderwidth: 1.5,
-        borderpad: 5,
-        font: { color: '#ff5252', size: 11 }
-      },
-      {
         x: putWall, y: 1.02, yref: 'paper',
-        text: `<b>Put Wall: ${putWall}</b>`,
+        text: `<b>${isMobile ? 'PW' : 'Put Wall'}: ${putWall}</b>`,
         showarrow: false,
         bgcolor: '#0a0e17',
         bordercolor: '#00e676',
         borderwidth: 1.5,
-        borderpad: 5,
-        font: { color: '#00e676', size: 11 }
+        borderpad: isMobile ? 3 : 5,
+        font: { color: '#00e676', size: isMobile ? 10 : 11 }
+      },
+      {
+        x: zeroGamma, y: 1.14, yref: 'paper',
+        text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${zeroGamma}</b>`,
+        showarrow: false,
+        bgcolor: '#0a0e17',
+        bordercolor: '#ffd700',
+        borderwidth: 1.5,
+        borderpad: isMobile ? 3 : 5,
+        font: { color: '#ffd700', size: isMobile ? 10 : 11 }
+      },
+      {
+        x: callWall, y: 1.26, yref: 'paper',
+        text: `<b>${isMobile ? 'CW' : 'Call Wall'}: ${callWall}</b>`,
+        showarrow: false,
+        bgcolor: '#0a0e17',
+        bordercolor: '#ff5252',
+        borderwidth: 1.5,
+        borderpad: isMobile ? 3 : 5,
+        font: { color: '#ff5252', size: isMobile ? 10 : 11 }
       }
     ]
   };
@@ -970,7 +970,7 @@ function populateRetailSentiment() {
         <span style="font-size: 0.75rem; color: var(--text-muted);">期交所與證交所 100% 官方盤後定案數據</span>
       </div>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; text-align: center;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; text-align: center;">
         <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px;">
           <div style="font-size: 0.75rem; color: var(--text-muted);">外資台指期淨未平倉</div>
           <div style="font-weight: 700; color: ${snap.foreign_tx_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-size: 1.05rem;">${snap.foreign_tx_net.toLocaleString()} 口</div>

@@ -568,6 +568,12 @@ footer p {
     padding: 16px !important;
     max-width: 95% !important;
   }
+
+  /* Smooth Inertia Scrolling & Touch Table Adjustments */
+  .table-scroll-container, div[style*="overflow-x: auto"] {
+    -webkit-overflow-scrolling: touch;
+    border-radius: 6px;
+  }
 }
 
 /* ============================================================
