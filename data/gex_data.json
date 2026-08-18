@@ -1,8 +1,8 @@
 {
   "date": "2026-08-18",
-  "engine_version": "v36.0",
-  "session_type": "NIGHT",
-  "session_name": "🌙 夜盤收盤價校正 (05:00 Close)",
+  "engine_version": "v42.0",
+  "session_type": "DAY",
+  "session_name": "☀️ 日盤結算籌碼 (13:45 Close)",
   "session_shift": {
     "txf_shift": 726.0,
     "call_wall_shift": -150,
@@ -14,12 +14,12 @@
     "day_zero_gamma": 45158.7,
     "day_max_pain": 45300
   },
-  "last_updated_time": "2026-08-18 09:02",
+  "last_updated_time": "2026-08-18 18:06",
   "spot_price": 45308.68,
   "two_price": 390.83,
   "day_txf_price": 45085.0,
   "night_txf_price": 45811.0,
-  "txf_price": 45811.0,
+  "txf_price": 45085.0,
   "zero_gamma_level": 45320.3,
   "call_wall_strike": 45450,
   "put_wall_strike": 45150,
@@ -1276,10 +1276,28 @@
       "top10_net": -22685,
       "top5_spec_net": -9043,
       "top10_spec_net": -22685,
+      "lt_near": {
+        "top5_net": -2832,
+        "top10_net": -4414,
+        "top5_spec_net": -1712,
+        "top10_spec_net": -3884
+      },
+      "lt_far": {
+        "top5_net": -8186,
+        "top10_net": -18271,
+        "top5_spec_net": -7331,
+        "top10_spec_net": -18801
+      },
+      "lt_total": {
+        "top5_net": -11018,
+        "top10_net": -22685,
+        "top5_spec_net": -9043,
+        "top10_spec_net": -22685
+      },
       "foreign_fut_net": -153,
-      "trust_fut_net": 80335,
-      "itrust_fut_net": 80335,
-      "dealer_fut_net": 1464,
+      "trust_fut_net": 76112,
+      "itrust_fut_net": 76112,
+      "dealer_fut_net": 2566,
       "foreign_stock_net": -119.86,
       "trust_stock_net": 56.63,
       "itrust_stock_net": 56.63,
@@ -1452,8 +1470,8 @@
     "tag": "🔥 高檔大舉回補 / 追擊多單",
     "foreign_net_oi": -153,
     "daily_change": 12247,
-    "notional_billion": 1122.1,
-    "description": "外資單日大幅回補 +12,247 口（約 +1122.1 億 TWD 契約金額），強烈防範嘎空追多。"
+    "notional_billion": 1104.3,
+    "description": "外資單日大幅回補 +12,247 口（約 +1104.3 億 TWD 契約金額），強烈防範嘎空追多。"
   },
   "microstructure_summary": {
     "regime_label": "🟢 負 Gamma 波動度放大區 (避險引爆)",
@@ -1471,13 +1489,13 @@
       },
       "dxy": {
         "date": "08/18 (二)",
-        "price": 99.64,
+        "price": 99.61,
         "change": 0.0,
         "pct": 0.0
       },
       "usdjpy": {
         "date": "08/18 (二)",
-        "price": 159.67,
+        "price": 159.61,
         "change": 0.0,
         "pct": 0.0
       }
@@ -1485,25 +1503,25 @@
     "fx_5day_history": {
       "usdtwd": [
         {
-          "date": "08/11 (二)",
+          "date": "08/12 (三)",
           "price": 32.21,
           "change": -0.02,
           "pct": -0.06
         },
         {
-          "date": "08/12 (三)",
+          "date": "08/13 (四)",
           "price": 32.2,
           "change": -0.01,
           "pct": -0.03
         },
         {
-          "date": "08/13 (四)",
+          "date": "08/14 (五)",
           "price": 32.12,
           "change": -0.08,
           "pct": -0.25
         },
         {
-          "date": "08/16 (日)",
+          "date": "08/17 (一)",
           "price": 31.99,
           "change": -0.13,
           "pct": -0.4
@@ -1542,45 +1560,45 @@
         },
         {
           "date": "08/18 (二)",
-          "price": 99.64,
+          "price": 99.61,
           "change": 0.0,
           "pct": 0.0
         }
       ],
       "usdjpy": [
         {
-          "date": "08/11 (二)",
+          "date": "08/12 (三)",
           "price": 159.26,
           "change": 0.1,
           "pct": 0.06
         },
         {
-          "date": "08/12 (三)",
+          "date": "08/13 (四)",
           "price": 159.33,
           "change": 0.07,
           "pct": 0.04
         },
         {
-          "date": "08/13 (四)",
+          "date": "08/14 (五)",
           "price": 159.43,
           "change": 0.1,
           "pct": 0.06
         },
         {
-          "date": "08/16 (日)",
+          "date": "08/17 (一)",
           "price": 159.22,
           "change": -0.21,
           "pct": -0.13
         },
         {
           "date": "08/18 (二)",
-          "price": 159.67,
+          "price": 159.61,
           "change": 0.0,
           "pct": 0.0
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.88</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.64</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.67</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.88</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.61</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.61</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
@@ -1592,43 +1610,47 @@
     "night_sentiment": "⚖️ 外資夜盤中性觀望",
     "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤變動 -153 口（約 -1.42 億 TWD），且在小台與微台變動 -1,203 口，籌碼結構維繫中性姿態。"
   },
-  "retail_mini_ratio": 4.2,
-  "retail_micro_ratio": 6.31,
+  "retail_mini_ratio": 26.04,
+  "retail_micro_ratio": 34.92,
   "retail_sentiment_details": {
     "mini_mtx": {
       "title": "小台散戶籌碼 (MXF)",
-      "long_oi": 218486,
-      "short_oi": 208990,
+      "long_oi": 28988,
+      "short_oi": 19492,
       "net_oi": 9496,
-      "daily_change": 136,
+      "daily_change": 2380,
       "total_oi": 225960,
-      "ratio": 4.2,
-      "prev_ratio": 4.1,
-      "sentiment_tag": "⚖️ 散戶多空平衡"
+      "near_oi": 36462,
+      "ratio": 26.04,
+      "total_ratio": 4.2,
+      "prev_ratio": 19.97,
+      "sentiment_tag": "🔴 散戶極度做多 (軋空看壓)"
     },
     "micro_tmf": {
       "title": "微台散戶籌碼 (TMF)",
-      "long_oi": 383182,
-      "short_oi": 358250,
+      "long_oi": 59197,
+      "short_oi": 34265,
       "net_oi": 24932,
-      "daily_change": -8539,
+      "daily_change": 17451,
       "total_oi": 395375,
-      "ratio": 6.31,
-      "prev_ratio": 6.81,
-      "sentiment_tag": "🟠 散戶微幅做多"
+      "near_oi": 71390,
+      "ratio": 34.92,
+      "total_ratio": 6.31,
+      "prev_ratio": 9.63,
+      "sentiment_tag": "🔴 散戶極度做多 (軋空看壓)"
     },
     "broker_snapshot": {
-      "foreign_tx_net": -83474,
-      "foreign_tx_change": 1705,
-      "foreign_call_net": 1549,
-      "foreign_call_change": -275,
-      "foreign_put_net": 3721,
-      "foreign_put_change": 2448,
+      "foreign_tx_net": -83078,
+      "foreign_tx_change": 396,
+      "foreign_call_net": 2543,
+      "foreign_call_change": 994,
+      "foreign_put_net": 5613,
+      "foreign_put_change": 1892,
       "vix_index": 30.46,
       "vix_change": 1.38,
-      "market_turnover": 9794
+      "market_turnover": 9976
     },
-    "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">💡 <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+4.20%</span>（淨部位 +9,496 口），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+6.31%</span>（淨部位 +24,932 口）。散戶籌碼結構整體維持偏多觀望。</p>\n    <p style=\"margin-bottom: 0;\">⚖️ <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">30.46</span> (+1.38)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
+    "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">💡 <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+26.04%</span>（永豐/台新近月算式，淨部位 +9,496 口／全月基準 +4.20%），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+34.92%</span>（淨部位 +24,932 口／全月基準 +6.31%）。散戶部位維持強烈偏多姿態。</p>\n    <p style=\"margin-bottom: 0;\">⚖️ <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">30.46</span> (+1.38)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
   },
   "stock_futures": [
     {
