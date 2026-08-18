@@ -1,11 +1,10 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板 (v39.0)
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板 (v40.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板 (v42.0)
 
-> **全台首創‧日夜盤雙維度對照‧GEX 圖直方圖手機版三階梯防遮擋標籤‧籌碼快訊手機版 2x2 雙欄卡片‧5日全欄位 session-to-session 增減差額標註‧散戶與國際熱錢對話式教學 Modal‧Net GEX 敏感度動態曲線‧TWSE 除權息預警**
+> **全台首創‧日夜盤雙維度對照‧近遠全月籌碼三維度對照‧券商近月與全月雙視角散戶多空比‧GEX 直方圖手機版三階梯防遮擋標籤‧籌碼快訊手機版 2x2 雙欄卡片‧5日全欄位 session-to-session 增減差額標註‧散戶與國際熱錢對話式教學 Modal‧Net GEX 敏感度動態曲線‧TWSE 除權息預警**
 
 [![GitHub Actions Night/Day Pipeline](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live Dashboard](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![Engine Version](https://img.shields.io/badge/Engine-v40.0_Vision_Playwright-ffd700?style=flat&logo=python)](file:///scripts/fetch_and_calc_vision.py)
+[![Engine Version](https://img.shields.io/badge/Engine-v42.0_Vision_Playwright-ffd700?style=flat&logo=python)](file:///scripts/fetch_and_calc_vision.py)
 [![Compliance](https://img.shields.io/badge/Compliance-100%25_Academic_Regulatory-00e676?style=flat)](file:///OPTIONS_CHEATSHEET.md)
 
 ---
@@ -39,10 +38,11 @@
 
 1. **功能開發 (Development)**
 2. **語法與 HTML `<div...</div>` 標籤閉合 Check-Syntax**
-3. **數據雙重保險核對 (Data Audit Protocol)**：
+3. **數據與手機排版雙重保險核對 (Data & Mobile UX Audit Protocol)**：
    - 官網 API / Raw Data 匯入核對（期交所、證交所、Yahoo Finance）。
    - 網頁 Playwright 實體截圖數據與視覺呈現比對。
-4. **Playwright 全站 Console Zero-Error & 7 大板塊 100% Population 審查**
+   - **手機排版與可讀性驗證 (Mobile Responsive Audit)**：Playwright 390x844 移動端模擬測試，確保 Put Wall / Zero Gamma / Call Wall 標籤採用三階梯垂直分層 (`y: 1.02/1.14/1.26`) 0 遮擋、籌碼快訊 2x2 雙欄卡片、字體高對比可讀性與表格 `-webkit-overflow-scrolling: touch` 原生慣性滑動。
+4. **Playwright 全站 Console Zero-Error & Desktop/Mobile 雙端 7 大板塊 100% Population 審核**
 5. **數據引擎與嵌入檔同步 (`fetch_and_calc_vision.py` & `make_embedded_data_js.py`)**
 6. **專案文件同步 (`README.md`, `PROJECT_HANDOVER.md`, `STATUS.md`)**
 7. **交付使用者 Commit & Push 至 GitHub**

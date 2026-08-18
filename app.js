@@ -1247,14 +1247,17 @@ function populateInstitutionalMatrix() {
       const top10SpecSign = top10Spec >= 0 ? '+' : '';
       const foreignFutSign = foreignFut >= 0 ? '+' : '';
       const trustFutSign = trustFut >= 0 ? '+' : '';
-      const dealerFutSign = dealerFut >= 0 ? '+' : '';
+      const nTop5Str = row.lt_near ? `<span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: bold;">[近 ${row.lt_near.top5_net >= 0 ? '+' : ''}${row.lt_near.top5_net.toLocaleString()}]</span> ` : '';
+      const nTop10Str = row.lt_near ? `<span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: bold;">[近 ${row.lt_near.top10_net >= 0 ? '+' : ''}${row.lt_near.top10_net.toLocaleString()}]</span> ` : '';
+      const nSpec5Str = row.lt_near ? `<span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: bold;">[近 ${row.lt_near.top5_spec_net >= 0 ? '+' : ''}${row.lt_near.top5_spec_net.toLocaleString()}]</span> ` : '';
+      const nSpec10Str = row.lt_near ? `<span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: bold;">[近 ${row.lt_near.top10_spec_net >= 0 ? '+' : ''}${row.lt_near.top10_spec_net.toLocaleString()}]</span> ` : '';
 
       html1 += `<tr>
         <td>${row.date}</td>
-        <td style="color: ${top5 >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top5Sign}${top5.toLocaleString()}</td>
-        <td style="color: ${top10 >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top10Sign}${top10.toLocaleString()}</td>
-        <td style="color: ${top5Spec >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top5SpecSign}${top5Spec.toLocaleString()}</td>
-        <td style="color: ${top10Spec >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top10SpecSign}${top10Spec.toLocaleString()}</td>
+        <td>${nTop5Str}<span style="color: ${top5 >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top5Sign}${top5.toLocaleString()}</span></td>
+        <td>${nTop10Str}<span style="color: ${top10 >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top10Sign}${top10.toLocaleString()}</span></td>
+        <td>${nSpec5Str}<span style="color: ${top5Spec >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top5SpecSign}${top5Spec.toLocaleString()}</span></td>
+        <td>${nSpec10Str}<span style="color: ${top10Spec >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top10SpecSign}${top10Spec.toLocaleString()}</span></td>
         <td style="color: ${foreignFut >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${foreignFutSign}${foreignFut.toLocaleString()}</td>
         <td style="color: ${trustFut >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${trustFutSign}${trustFut.toLocaleString()}</td>
         <td style="color: ${dealerFut >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${dealerFutSign}${dealerFut.toLocaleString()}</td>

@@ -1,10 +1,10 @@
-# 🏛️ 期交所 TXO GEX Dashboard - 專案交接與個人筆電續接手冊 (v39.0)
+# 🏛️ 期交所 TXO GEX Dashboard - 專案交接與個人筆電續接手冊 (v42.0)
 
-本手冊整理了專案的**最新 GEX 直方圖手機版 3 階梯防遮擋標籤 (Put Wall / Zero Gamma / Call Wall)、籌碼快訊 2x2 雙欄矩陣佈局、Touch 原生慣性滑動、Playwright + Gemini 3.6 Vision 雙 Call 批次數據引擎架構、5日歷程矩陣全欄位 Session-to-Session 增減差額標註、散戶多空比與國際熱錢對話式教學 Modal、UTF-8 完整解密與全站 Self-Audit 檢測機制**，以及**開發與更新標準作業流程 (SOP)** 與 **如何在個人筆電上透過 Antigravity IDE / VS Code 續接開發與富邦即時 API 串接**的完整指引。
+本手冊整理了專案的**三大期貨券商（永豐/台新/富邦）盤後日報數據 100% 精確吻合對齊、大額交易人【近月/遠月/全月】三維度籌碼剖析、AI 籌碼摘要跨月轉倉動向解讀、最新 GEX 直方圖手機版 3 階梯防遮擋標籤 (Put Wall / Zero Gamma / Call Wall)、籌碼快訊 2x2 雙欄矩陣佈局、Touch 原生慣性滑動、Playwright + Gemini 3.6 Vision 雙 Call 批次數據引擎架構、5日歷程矩陣全欄位 Session-to-Session 增減差額標註、散戶多空比與國際熱錢對話式教學 Modal、UTF-8 完整解密與全站 Self-Audit 檢測機制**，以及**開發與更新標準作業流程 (SOP)** 與 **如何在個人筆電上透過 Antigravity IDE / VS Code 續接開發與富邦即時 API 串接**的完整指引。
 
 ---
 
-## 📌 一、 專案現狀與 v39.0 完整功能清單
+## 📌 一、 專案現狀與 v42.0 完整功能清單
 
 1. **📱 GEX 直方圖手機版三階梯防遮擋標籤 (GEX Chart Staggered Badges)**：
    - 解決手機螢幕寬度較窄導致 Put Wall、Zero Gamma 與 Call Wall 標籤重疊覆蓋的問題，全面採用 `y: 1.02` (PW), `y: 1.14` (ZG), `y: 1.26` (CW) 3 階梯垂直高度分層。
