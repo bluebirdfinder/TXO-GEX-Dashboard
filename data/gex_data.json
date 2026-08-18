@@ -1,8 +1,8 @@
 {
   "date": "2026-08-18",
   "engine_version": "v42.0",
-  "session_type": "DAY",
-  "session_name": "☀️ 日盤結算籌碼 (13:45 Close)",
+  "session_type": "NIGHT",
+  "session_name": "🌙 夜盤收盤價校正 (05:00 Close)",
   "session_shift": {
     "txf_shift": 726.0,
     "call_wall_shift": -150,
@@ -14,12 +14,12 @@
     "day_zero_gamma": 45158.7,
     "day_max_pain": 45300
   },
-  "last_updated_time": "2026-08-18 18:06",
+  "last_updated_time": "2026-08-18 10:39",
   "spot_price": 45308.68,
   "two_price": 390.83,
   "day_txf_price": 45085.0,
   "night_txf_price": 45811.0,
-  "txf_price": 45085.0,
+  "txf_price": 45811.0,
   "zero_gamma_level": 45320.3,
   "call_wall_strike": 45450,
   "put_wall_strike": 45150,
@@ -1470,8 +1470,8 @@
     "tag": "🔥 高檔大舉回補 / 追擊多單",
     "foreign_net_oi": -153,
     "daily_change": 12247,
-    "notional_billion": 1104.3,
-    "description": "外資單日大幅回補 +12,247 口（約 +1104.3 億 TWD 契約金額），強烈防範嘎空追多。"
+    "notional_billion": 1122.1,
+    "description": "外資單日大幅回補 +12,247 口（約 +1122.1 億 TWD 契約金額），強烈防範嘎空追多。"
   },
   "microstructure_summary": {
     "regime_label": "🟢 負 Gamma 波動度放大區 (避險引爆)",
@@ -1483,19 +1483,19 @@
     "current_fx": {
       "usdtwd": {
         "date": "08/18 (二)",
-        "price": 31.88,
+        "price": 31.87,
         "change": 0.0,
         "pct": 0.0
       },
       "dxy": {
         "date": "08/18 (二)",
-        "price": 99.61,
+        "price": 99.63,
         "change": 0.0,
         "pct": 0.0
       },
       "usdjpy": {
         "date": "08/18 (二)",
-        "price": 159.61,
+        "price": 159.65,
         "change": 0.0,
         "pct": 0.0
       }
@@ -1503,32 +1503,32 @@
     "fx_5day_history": {
       "usdtwd": [
         {
-          "date": "08/12 (三)",
+          "date": "08/11 (二)",
           "price": 32.21,
           "change": -0.02,
           "pct": -0.06
         },
         {
-          "date": "08/13 (四)",
+          "date": "08/12 (三)",
           "price": 32.2,
           "change": -0.01,
           "pct": -0.03
         },
         {
-          "date": "08/14 (五)",
+          "date": "08/13 (四)",
           "price": 32.12,
           "change": -0.08,
           "pct": -0.25
         },
         {
-          "date": "08/17 (一)",
+          "date": "08/16 (日)",
           "price": 31.99,
           "change": -0.13,
           "pct": -0.4
         },
         {
           "date": "08/18 (二)",
-          "price": 31.88,
+          "price": 31.87,
           "change": 0.0,
           "pct": 0.0
         }
@@ -1560,45 +1560,45 @@
         },
         {
           "date": "08/18 (二)",
-          "price": 99.61,
+          "price": 99.63,
           "change": 0.0,
           "pct": 0.0
         }
       ],
       "usdjpy": [
         {
-          "date": "08/12 (三)",
+          "date": "08/11 (二)",
           "price": 159.26,
           "change": 0.1,
           "pct": 0.06
         },
         {
-          "date": "08/13 (四)",
+          "date": "08/12 (三)",
           "price": 159.33,
           "change": 0.07,
           "pct": 0.04
         },
         {
-          "date": "08/14 (五)",
+          "date": "08/13 (四)",
           "price": 159.43,
           "change": 0.1,
           "pct": 0.06
         },
         {
-          "date": "08/17 (一)",
+          "date": "08/16 (日)",
           "price": 159.22,
           "change": -0.21,
           "pct": -0.13
         },
         {
           "date": "08/18 (二)",
-          "price": 159.61,
+          "price": 159.65,
           "change": 0.0,
           "pct": 0.0
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.88</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.61</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.61</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.87</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.63</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.65</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
