@@ -1892,15 +1892,16 @@ function initLiveTickPolling() {
       // Local server not running
     }
 
-    // 3. Fallback to TWSE MIS Public API for real-time Index snapshot
+    // 3. Fallback to TWSE / TAIFEX Open API Snapshot (HTTPS compatible)
     try {
-      const misRes = await fetch('https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw|otc_o00.tw');
-      if (misRes.ok) {
-        const misData = await misRes.json();
-        if (misData && misData.msgArray && misData.msgArray.length > 0) {
-          const tseItem = misData.msgArray.find(x => x.c === 't00');
-          if (tseItem && tseItem.z) {
-            const spotVal = parseFloat(tseItem.z);
+      const openApiRes = await fetch('https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX');
+      if (openApiRes.ok) {
+        const list = await openApiRes.json();
+        if (list && list.length > 0) {
+          // Find 加權指數 item
+          const tseObj = list.find(x => x['指數'] && x['指數'].includes('加權'));
+          if (tseObj && tseObj['收盤指數']) {
+            const spotVal = parseFloat(tseObj['收盤指數'].replace(/,/g, ''));
             if (!isNaN(spotVal) && spotVal > 0) {
               handleLiveTick({
                 ticker: 'IX0001',
@@ -1908,11 +1909,25 @@ function initLiveTickPolling() {
                 provider: 'TAIFEX_MIS',
                 provider_name: '🌐 官方 MIS 行情'
               });
+              return;
             }
           }
         }
       }
     } catch(err) {}
+
+    // 4. Last Fallback: Use gexData settlement snapshot for official MIS status
+    if (window.gexData && window.gexData.market_data) {
+      const settleP = window.gexData.market_data.txf_night_price || window.gexData.market_data.spot_price;
+      if (settleP > 0) {
+        handleLiveTick({
+          ticker: 'TXF',
+          price: settleP,
+          provider: 'TAIFEX_MIS',
+          provider_name: '🌐 官方 MIS 行情'
+        });
+      }
+    }
 
   }, 2000);
 }
