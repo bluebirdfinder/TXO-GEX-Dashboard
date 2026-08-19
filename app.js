@@ -1855,18 +1855,65 @@ function initModals() {
 let lastLivePrice = null;
 
 function initLiveTickPolling() {
+  // Listen for storage events (same-origin tab communication)
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'GEX_LIVE_TICK' && e.newValue) {
+      try {
+        const data = JSON.parse(e.newValue);
+        if (data && data.price > 0) handleLiveTick(data);
+      } catch(err){}
+    }
+  });
+
   setInterval(async () => {
+    // 1. Check local storage cache (from TV Bookmarklet or tab sync)
+    try {
+      const cachedStr = localStorage.getItem('GEX_LIVE_TICK');
+      if (cachedStr) {
+        const cached = JSON.parse(cachedStr);
+        if (cached && cached.price > 0 && (Date.now() - (cached.time || cached.timestamp || 0) < 10000)) {
+          handleLiveTick(cached);
+          return;
+        }
+      }
+    } catch(err){}
+
+    // 2. Try Local Python Gateway (Fubon WS / TV Bridge)
     try {
       const res = await fetch('http://localhost:8000/api/live_tick');
       if (res.ok) {
         const data = await res.json();
         if (data && data.price > 0) {
           handleLiveTick(data);
+          return;
         }
       }
     } catch (e) {
-      // Gateway offline or polling skipped
+      // Local server not running
     }
+
+    // 3. Fallback to TWSE MIS Public API for real-time Index snapshot
+    try {
+      const misRes = await fetch('https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw|otc_o00.tw');
+      if (misRes.ok) {
+        const misData = await misRes.json();
+        if (misData && misData.msgArray && misData.msgArray.length > 0) {
+          const tseItem = misData.msgArray.find(x => x.c === 't00');
+          if (tseItem && tseItem.z) {
+            const spotVal = parseFloat(tseItem.z);
+            if (!isNaN(spotVal) && spotVal > 0) {
+              handleLiveTick({
+                ticker: 'IX0001',
+                price: spotVal,
+                provider: 'TAIFEX_MIS',
+                provider_name: '🌐 官方 MIS 行情'
+              });
+            }
+          }
+        }
+      }
+    } catch(err) {}
+
   }, 2000);
 }
 
