@@ -3,383 +3,471 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <title>尋鳥 Bluebird Finder | TXO GEX 量化儀表板</title>
+  <title>尋鳥 Bluebird Finder — TXO GEX 量化系統與三大法人期權籌碼分析儀表板</title>
   
-  <!-- Modern Google Fonts -->
+  <!-- Modern FinTech Font (Outfit & Microsoft JhengHei) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-  <!-- Plotly.js for Interactive Charts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Plotly.js for Financial Charts -->
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
-  <!-- CryptoJS for AES Decryption -->
+  <!-- Passcode AES Verification Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
-  <link rel="stylesheet" href="style.css">
+  <!-- Embedded Standalone Data Fallback -->
+  <script src="data/embedded_data.js"></script>
 </head>
 <body>
 
-  <!-- Passcode Protection Lock Modal -->
-  <div id="passcode-modal" class="modal-overlay">
-    <div class="modal-content">
-      <h2>🔒 請輸入解密通行碼 (Passcode)</h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">
-        本系統數據經端到端加密保護，請輸入專屬通行碼進行本機解密與存取。
-      </p>
-      
-      <div style="position: relative; margin: 16px 0 8px 0;">
-        <input type="password" id="passcode-field" class="passcode-input" placeholder="請輸入通行碼..." autocomplete="off">
-      </div>
-
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 0.85rem; color: var(--text-muted);">
-        <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
-          <input type="checkbox" id="toggle-show-pass" onchange="document.getElementById('passcode-field').type = this.checked ? 'text' : 'password'"> 👁️ 顯示輸入的密碼
-        </label>
-        <span style="font-size: 0.75rem; color: #888;">(大小寫不限)</span>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <button id="unlock-btn" class="btn btn-primary" style="width: 100%;" onclick="attemptDecrypt(document.getElementById('passcode-field').value)">驗證並解密儀表板</button>
-      </div>
-
-      <p id="passcode-error" style="color: var(--put-color); font-size: 0.8rem; margin-top: 10px; display: none;">
-        ❌ 通行碼錯誤或數據讀取失敗，請確認密碼後重試。
-      </p>
-    </div>
-  </div>
-
-  <!-- Options & GEX Education Guide Modal -->
-  <div id="guide-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content" style="max-width: 750px; max-height: 85vh; overflow-y: auto;">
+  <!-- Educational Guide Modal -->
+  <div id="education-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 580px; max-height: 85vh; overflow-y: auto;">
       <div class="modal-header">
-        <h2>💡 選擇權口訣與 GEX 指南</h2>
-        <button class="close-btn" id="close-guide-btn">&times;</button>
+        <h3 style="margin: 0; font-size: 1.15rem; color: var(--gold-accent);">💡 判讀教學與 Gamma Exposure 指南</h3>
+        <button id="close-edu-modal" class="close-btn">&times;</button>
       </div>
+      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <h4 style="color: var(--primary-accent); margin: 12px 0 6px 0;">1. 甚麼是 Gamma Exposure (GEX)？</h4>
+        <p style="color: var(--text-muted);">
+          GEX 是衡量選擇權做市商（Market Maker）在特定履約價位，因標的物價格變動而必須進行動態避險（Delta Hedge）的金額規模。當 GEX 為正，做市商採「低買高賣」穩定市場；當 GEX 為負，做市商採「順風追跌殺跌」放大市場波動！
+        </p>
+
+        <h4 style="color: var(--call-color); margin: 12px 0 6px 0;">2. 關鍵指標解讀</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted);">
+          <li><strong style="color: var(--gold-accent);">Zero Gamma (轉折點)</strong>：正/負 Gamma 的分水嶺。高於此點市場平穩；低於此點易引爆連續殺盤。</li>
+          <li><strong style="color: var(--call-color);">Call Wall (天花板)</strong>：Call 做市商避險買單最多的履約價，通常為上檔強烈壓力區。</li>
+          <li><strong style="color: var(--put-color);">Put Wall (地板)</strong>：Put 做市商避險賣單最多的履約價，通常為下檔強烈支撐區。</li>
+          <li><strong style="color: var(--primary-accent);">Max Pain (最大痛點)</strong>：讓市場選擇權買方總獲利最小、賣方（莊家）獲利最大的結算價格。</li>
+        </ul>
+
+        <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">3. 日夜盤切換與校正</h4>
+        <p style="color: var(--text-muted);">
+          本系統上半部卡片預設顯示 <code>13:45 日盤官方定案數據</code>，下半部顯示 <code>05:00 夜盤收盤價校正數據</code>，協助您精確判斷隔日開盤前的防守位移與價差。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ℹ️ 籌碼分級標準說明 Modal Overlay -->
+  <div id="taxonomy-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #121824; border: 1px solid var(--primary-accent); border-radius: 16px; padding: 28px; max-width: 680px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(0, 210, 255, 0.25);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="color: var(--primary-accent); margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
+          <span>ℹ️ 三大法人與大戶籌碼分級標準說明</span>
+        </h3>
+        <button id="close-taxonomy-modal" style="background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">1. 大戶與特定法人分類 (Major Trader Definitions)</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 16px;">
+          <li><strong style="color: #fff;">前五大 / 前十大交易人</strong>：台指期市場中部位規模前 5 與前 10 大機構法人總和（含公募、壽險、外資與自營）。</li>
+          <li><strong style="color: var(--gold-accent);">特定法人</strong>：剔除單純避險需求，專注於投機與方向性趨勢操作之主力機構。特定法人多單增加通常代表波段強烈多頭動能。</li>
+        </ul>
+
+        <h4 style="color: var(--primary-accent); margin: 12px 0 6px 0;">2. 三大法人權重與判讀指標 (Big Three Institutional Investors)</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 16px;">
+          <li><strong style="color: var(--call-color);">外資 (Foreign Investors)</strong>：權值股與台指期主力靈魂。未平倉淨空單 <code>> -15,000 口</code> 屬正常避險；降至 <code>< -10,000 口</code> 或轉多代表大幅回補；若破 <code>-30,000 口</code> 則為極端防守。</li>
+          <li><strong style="color: var(--gold-accent);">投信 (Investment Trust)</strong>：本土公募基金，主力於現貨買賣超與波段中小型股。</li>
+          <li><strong style="color: var(--primary-accent);">自營商 (Dealers)</strong>：短線交易與做市商（Market Maker），選擇權 Call/Put 淨金額與夜盤期貨變動最敏銳。</li>
+        </ul>
+
+        <h4 style="color: var(--call-color); margin: 12px 0 6px 0;">3. 籌碼體質與結算分級判定標準</h4>
+        <div style="overflow-x: auto; margin-top: 8px;">
+          <table class="matrix-table" style="font-size: 0.82rem; text-align: center; width: 100%;">
+            <thead>
+              <tr style="background: #18202d;">
+                <th>籌碼體質</th>
+                <th>外資期貨部位</th>
+                <th>特定法人部位</th>
+                <th>P/C Ratio</th>
+                <th>市場意涵白話解讀</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: var(--call-color); font-weight: 700;">🔴 強多看漲</td>
+                <td>空單顯著回補 (< -1.0萬口)</td>
+                <td>淨多單持續增加 (> +3,000口)</td>
+                <td>> 115%</td>
+                <td>莊家下檔支撐強勁，拉回即為買點</td>
+              </tr>
+              <tr>
+                <td style="color: var(--gold-accent); font-weight: 700;">🟡 溫和偏多</td>
+                <td>空單小幅增減 (-1.5萬~-2萬口)</td>
+                <td>淨多單偏正 (-500~+2,000口)</td>
+                <td>105% ~ 115%</td>
+                <td>區間偏多震盪，波段緩步墊高</td>
+              </tr>
+              <tr>
+                <td style="color: var(--put-color); font-weight: 700;">🟢 強空防守</td>
+                <td>空單大幅加碼 (> -2.5萬口)</td>
+                <td>特定法人大幅轉空</td>
+                <td>< 95%</td>
+                <td>上檔天花板沉重，防範下探爆發</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ℹ️ 履約價雙色直方圖教學 Modal Overlay -->
+  <div id="strike-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #121824; border: 1px solid var(--gold-accent); border-radius: 16px; padding: 28px; max-width: 680px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(255, 215, 0, 0.25);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="color: var(--gold-accent); margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
+          <span>ℹ️ 履約價雙色直方圖與莊家防守牆實戰判讀教學</span>
+        </h3>
+        <button id="close-strike-modal" style="background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <h4 style="color: var(--primary-accent); margin: 12px 0 6px 0;">1. 圖表多重結算天期色彩分層解讀 (T型報價視角 / 多 DTE 分層)</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: #ffaa00;">🟨 金黃色 (近週選 W1)</strong>：當週三最即時結算合約。代表當沖極限天花板/地板防守。</li>
+          <li><strong style="color: #00e676;">🟩 翡翠綠 (次週選 W2)</strong>：下週三結算合約。代表短線波段防守與避險次牆。</li>
+          <li><strong style="color: #00d2ff;">🟦 霓虹藍 (當月月選 M1)</strong>：第 3 週三結算主合約。代表法人大戶波段重鎮堡壘。</li>
+          <li><strong style="color: #d500f9;">🟪 電光紫 (遠週/雙週五 Fri/W4/W5)</strong>：週五雙週合約與遠期避險盤。代表國際重大事件避險牆。</li>
+        </ul>
+
+        <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">2. 關鍵實戰應用判讀 (Trading Applications)</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: #fff;">Call Wall (結算天花板)</strong>：全場最大根 Call GEX 履約價（例如 46,000 點）。接近此區間當沖多單宜停利入袋。</li>
+          <li><strong style="color: #fff;">Put Wall (下檔鐵板)</strong>：全場最大根 Put GEX 履約價（例如 45,500 點）。波段多頭極強防守堡壘。</li>
+          <li><strong style="color: var(--primary-accent);">Gamma 磁吸效應 (Magnet Effect)</strong>：週三結算日中午前，股價易被拉往全場最大正 GEX 履約價靠攏。</li>
+        </ul>
+
+        <div style="background: rgba(255, 215, 0, 0.05); border-left: 3px solid var(--gold-accent); padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); border-radius: 4px;">
+          ⚖️ <strong>合規聲明</strong>：本教學為衍生性商品學理機制說明，非對個別證券或期貨部位之買賣建議。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ℹ️ 敏感度模擬曲線教學 Modal Overlay -->
+  <div id="sensitivity-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #121824; border: 1px solid var(--primary-accent); border-radius: 16px; padding: 28px; max-width: 680px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(0, 210, 255, 0.25);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="color: var(--primary-accent); margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
+          <span>ℹ️ 台指價位位移 vs GEX 敏感度模擬曲線實戰教學</span>
+        </h3>
+        <button id="close-sensitivity-modal" style="background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">1. 0 軸分水嶺與二階對沖機制</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: var(--call-color);">曲線在 0 軸上方 (正 GEX 護盤區)</strong>：做市商為逆勢避險者。指數下跌時買進期貨對沖護盤；指數上漲時賣出期貨壓制，市場維持震盪平穩。</li>
+          <li><strong style="color: var(--put-color);">曲線跌破 0 軸 (負 GEX 追殺區)</strong>：做市商轉為順勢避險者。指數下跌時被迫加碼賣出期貨，易引發多殺多暴衝行情。</li>
+        </ul>
+
+        <h4 style="color: var(--primary-accent); margin: 12px 0 6px 0;">2. 判別「假恐慌洗盤」與「真崩跌追殺」</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: #fff;">假恐慌低接點</strong>：當指數急跌 200~300 點，但模擬曲線顯示價格依然高於 Gamma Flip (例如 45,500 點) 且處於正 GEX 區，代表做市商護盤買盤即將進場，屬洗盤格局。</li>
+          <li><strong style="color: #fff;">真崩跌停損警報</strong>：若指數跌破 Gamma Flip 切入負 GEX 區，做市商對沖轉為賣盤追殺，多單應果斷執行風險控管。</li>
+        </ul>
+
+        <div style="background: rgba(0, 210, 255, 0.05); border-left: 3px solid var(--primary-accent); padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); border-radius: 4px;">
+          ⚖️ <strong>合規聲明</strong>：本模擬模型基於黑傑克-休斯 (Black-Scholes) Gamma 二階導函數運算，僅供學理說明與風險防範參考。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Retail Sentiment Education Modal -->
+  <div id="retail-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="modal-content" style="max-width: 640px; max-height: 85vh; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--primary-accent); border-radius: 14px; padding: 22px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="margin: 0; color: var(--primary-accent); font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+          <span>📉 散戶多空比與籌碼指標判讀教學</span>
+        </h3>
+        <button id="close-retail-modal" style="background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">1. 散戶多空比權威計算公式 (期交所官方公開數據)</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: #fff;">散戶多單 (口)</strong> = 全市場未平倉量 (Total OI) - 三大法人多單總合</li>
+          <li><strong style="color: #fff;">散戶空單 (口)</strong> = 全市場未平倉量 (Total OI) - 三大法人空單總合</li>
+          <li><strong style="color: var(--primary-accent);">散戶多空比 (%)</strong> = (散戶多單 - 散戶空單) / 全市場未平倉量 × 100%</li>
+        </ul>
+
+        <h4 style="color: var(--primary-accent); margin: 12px 0 6px 0;">2. 歷史臨界值與反向指標實戰判讀</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: var(--call-color);">當多空比率 > +15% (散戶極度做多)</strong>：代表市場散戶多單嚴重積壓，歷史經驗顯示大盤常面臨高檔洗盤拉回、清理浮多。</li>
+          <li><strong style="color: var(--put-color);">當多空比率 < -15% (散戶極度做空)</strong>：代表市場散戶空單遭套牢，歷史經驗顯示大盤易發動強烈反彈嘎空行情。</li>
+          <li><strong style="color: var(--gold-accent);">多空比率在 -10% ~ +10% 之間</strong>：代表散戶多空情緒相對平衡，盤勢回歸三大法人現貨資金買賣超與 GEX 轉折點導向。</li>
+        </ul>
+
+        <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">3. 台指期籌碼與 VIX 恐慌指標聯動</h4>
+        <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
+          <li><strong style="color: #fff;">外資台指期淨未平倉</strong>：<-1.5萬口屬常態期現貨避險；若是外資期貨大舉回補，有利多頭反攻。</li>
+          <li><strong style="color: #fff;">台指 VIX 波動率指數</strong>：VIX 指數下滑代表恐慌情緒收斂，市場趨於平穩。</li>
+        </ul>
+
+        <div style="background: rgba(0, 210, 255, 0.05); border-left: 3px solid var(--primary-accent); padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); border-radius: 4px;">
+          ⚖️ <strong>合規聲明</strong>：本模組所有數據均基於台灣期貨交易所 (TAIFEX) 每日公開盤後數據計算，僅提供量化統計與客觀學理參考，非任何個股或衍生性商品買賣建議。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌐 FX & Hot Money Education Modal Overlay -->
+  <div id="fx-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="modal-content" style="max-width: 640px; max-height: 85vh; overflow-y: auto; background: var(--panel-bg); border: 1px solid var(--gold-accent); border-radius: 14px; padding: 22px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="color: var(--gold-accent); margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+          <span>🌐 國際熱錢與三大外幣指標判讀教學</span>
+        </h3>
+        <button id="close-fx-modal" style="background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <p style="margin-bottom: 14px;"><strong>【熱錢動向與匯率如何影響台股？】</strong><br>外資占台股每日交易量約 3 ~ 4 成，國際熱錢的進出直接決定台股大型權值股（如台積電、聯發科）與大盤指數的趨勢方向。</p>
+        
+        <div style="background: rgba(255, 215, 0, 0.05); border-left: 3px solid var(--gold-accent); padding: 12px; border-radius: 6px; margin-bottom: 14px;">
+          <h4 style="color: var(--gold-accent); margin: 0 0 6px 0; font-size: 0.95rem;">1. 美金 / 台幣 (USD/TWD) — 外資資金進出風向球</h4>
+          <p style="margin: 0;">• <strong>台幣升值 (USD/TWD 下跌/綠字)</strong>：代表外資將美元換成台幣匯入台灣，台股資金動能強勁，大盤看多。<br>• <strong>台幣貶值 (USD/TWD 上漲/紅字)</strong>：外資賣台股換美金匯出，台股遭遇賣壓風險，大盤偏空。</p>
+        </div>
+
+        <div style="background: rgba(0, 210, 255, 0.05); border-left: 3px solid var(--primary-accent); padding: 12px; border-radius: 6px; margin-bottom: 14px;">
+          <h4 style="color: var(--primary-accent); margin: 0 0 6px 0; font-size: 0.95rem;">2. 美元指數 (DXY) — 全球資金吸鐵石</h4>
+          <p style="margin: 0;">• 衡量美元相對於全球 6 大主要貨幣的強弱。當 DXY 強勢大漲時，全球資金傾向回流美元資產避險，新興市場（含台股）資金易遭抽離。</p>
+        </div>
+
+        <div style="background: rgba(255, 82, 82, 0.05); border-left: 3px solid var(--put-color); padding: 12px; border-radius: 6px;">
+          <h4 style="color: var(--put-color); margin: 0 0 6px 0; font-size: 0.95rem;">3. 美元 / 日圓 (USD/JPY) — 日圓套利交易 (Carry Trade) 風險</h4>
+          <p style="margin: 0;">• 日圓是全球最大的避險與低利借貸貨幣。若日圓大幅急升（USD/JPY 大跌），易引發全球「日圓套利平倉潮」，全球股市與台股短線流動性受阻。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔒 Passcode Protection Modal Overlay (網頁開啟密碼防護) -->
+  <div id="passcode-modal" class="modal-overlay" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.96); backdrop-filter: blur(14px); z-index: 99999; justify-content: center; align-items: center;">
+    <div style="background: #121824; border: 2px solid var(--primary-accent); border-radius: 16px; padding: 36px 28px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 12px 48px rgba(0, 210, 255, 0.3);">
+      <div style="font-size: 2.8rem; margin-bottom: 12px; filter: drop-shadow(0 0 12px rgba(0,210,255,0.5));">🔒</div>
+      <h3 style="color: #fff; margin-bottom: 8px; font-size: 1.3rem;">尋鳥 Bluebird Finder 系統防護</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 22px;">本系統涉及高階量化籌碼與 GEX 機密數據<br>請輸入授權通行碼解鎖</p>
       
-      <h3 style="color: var(--primary-accent); margin-bottom: 8px;">1. 選擇權基本動作速記口訣</h3>
-      <table class="matrix-table" style="margin-bottom: 20px;">
-        <thead>
-          <tr>
-            <th>代號</th>
-            <th>中文名稱</th>
-            <th>英文</th>
-            <th>簡單口訣與立場</th>
-            <th>台灣色彩</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong style="color: var(--call-color);">BC</strong></td>
-            <td>買進買權</td>
-            <td>Buy Call</td>
-            <td>🚀 <strong>看大漲 (大買)</strong> - 賺取無限漲幅</td>
-            <td>🔴 亮紅漲</td>
-          </tr>
-          <tr>
-            <td><strong style="color: var(--call-color);">SC</strong></td>
-            <td>賣出買權</td>
-            <td>Sell Call</td>
-            <td>🛑 <strong>看壓低 (做莊看不漲)</strong> - 賺取權利金，漲破會虧</td>
-            <td>🔴 亮紅漲</td>
-          </tr>
-          <tr>
-            <td><strong style="color: var(--put-color);">BP</strong></td>
-            <td>買進賣權</td>
-            <td>Buy Put</td>
-            <td>📉 <strong>看大跌 (避險/大賣)</strong> - 賺取跌幅價差</td>
-            <td>🟢 翡翠綠跌</td>
-          </tr>
-          <tr>
-            <td><strong style="color: var(--put-color);">SP</strong></td>
-            <td>賣出賣權</td>
-            <td>Sell Put</td>
-            <td>🛡️ <strong>看撐住 (做莊看不跌)</strong> - 賺取權利金，跌破會虧</td>
-            <td>🟢 翡翠綠跌</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3 style="color: var(--gold-accent); margin: 16px 0 8px 0;">2. P/C Ratio (Put/Call 未平倉比率) 判讀速查表</h3>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">
-        公式：$\text{Put/Call Ratio} = (\text{Put 總未平倉} / \text{Call 總未平倉}) \times 100\%$。比較莊家「地板防守牆」與「天花板壓頂牆」的厚度。
-      </p>
-      <table class="matrix-table" style="margin-bottom: 16px; font-size: 0.85rem;">
-        <thead>
-          <tr style="background: #18202d;">
-            <th>P/C Ratio 數值</th>
-            <th>台灣標準色彩</th>
-            <th>莊家佈局意圖</th>
-            <th>實戰判讀指南</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>＞ 100%</strong> (例如 108.5%)</td>
-            <td>🔴 <strong>紅球 (台灣紅漲)</strong></td>
-            <td>莊家 Put 地板防守牆蓋得比較厚</td>
-            <td><strong style="color: var(--call-color);">🔴 偏多看撐</strong>。下檔有較強防守支撐。</td>
-          </tr>
-          <tr>
-            <td><strong>＝ 100%</strong></td>
-            <td>⚖️ <strong>中性球</strong></td>
-            <td>多空防守牆力道相當</td>
-            <td>⚖️ <strong>中性震盪</strong>。</td>
-          </tr>
-          <tr>
-            <td><strong>＜ 100%</strong> (例如 85.0%)</td>
-            <td>🟢 <strong>綠球 (台灣綠跌)</strong></td>
-            <td>莊家 Call 天花板賣壓牆蓋得比較厚</td>
-            <td><strong style="color: var(--put-color);">🟢 偏空看壓</strong>。上檔賣壓偏重，不易大漲。</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3 style="color: var(--primary-accent); margin: 16px 0 8px 0;">3. Max Pain (最大痛點) 黑手磁鐵原理</h3>
-      <ul style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; padding-left: 20px; margin-bottom: 16px;">
-        <li><strong>什麼是最大痛點？</strong> 讓買彩券的散戶（買方）虧最多錢、賣權利金的莊家（賣方）賺最多錢的履約價。</li>
-        <li><strong>黑手磁鐵效應</strong>：每週三結算前夕，台指期價格極易像被磁鐵吸住一樣，朝 Max Pain 數字靠攏，使買方權利金雙歸零。</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Institutional Sentiment Taxonomy Modal -->
-  <div id="taxonomy-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content" style="max-width: 750px; max-height: 85vh; overflow-y: auto;">
-      <div class="modal-header">
-        <h2>🏛️ 外資與十大特人期貨【單日變化量 ($\Delta$ Net OI)】分級標準說明</h2>
-        <button class="close-btn" id="close-taxonomy-btn">&times;</button>
+      <div style="position: relative; width: 100%; margin-bottom: 12px;">
+        <input type="password" id="passcode-input" placeholder="請輸入授權通行碼" style="width: 100%; padding: 12px 42px 12px 16px; border-radius: 8px; border: 1px solid var(--panel-border); background: #0a0e17; color: #fff; font-size: 1.05rem; text-align: center; box-sizing: border-box; outline: none;" onkeypress="if(event.key === 'Enter') document.getElementById('unlock-btn').click();">
+        <button type="button" id="toggle-pass-vis-btn" onclick="const input = document.getElementById('passcode-input'); if(input.type === 'password') { input.type = 'text'; this.innerText = '🙈'; } else { input.type = 'password'; this.innerText = '👁️'; }" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gold-accent); cursor: pointer; font-size: 1.2rem; z-index: 99;" title="顯示/隱藏密碼">👁️</button>
       </div>
-
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
-        本系統採用「動態指數校正演算法」，依據當前台指期指數動態計算門檻與契約金額（億 TWD），精準判讀法人態度。
-      </p>
-
-      <table class="matrix-table" style="margin-bottom: 16px; font-size: 0.85rem;">
-        <thead>
-          <tr style="background: #18202d;">
-            <th>單日變化量 ($\Delta$ Net OI)</th>
-            <th>對應契約金額 (以指數為基準)</th>
-            <th>語意形容詞標籤</th>
-            <th>市場實戰含義</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong style="color: var(--call-color);">$+6,000$ 口以上</strong></td>
-            <td>$+600$ 億 TWD 以上</td>
-            <td>🔥 <strong>高檔大舉回補 / 追擊多單</strong></td>
-            <td>空單大幅獲利平倉或強勢追多，極易觸發嘎空行情。</td>
-          </tr>
-          <tr>
-            <td><strong style="color: var(--call-color);">$+2,500 \sim +5,999$ 口</strong></td>
-            <td>$+250 \sim +600$ 億 TWD</td>
-            <td>📈 <strong>顯著回補偏多</strong></td>
-            <td>避險空單順利回補，高檔壓回壓力顯著減輕。</td>
-          </tr>
-          <tr>
-            <td><strong style="color: var(--text-main);">$-2,499 \sim +2,499$ 口</strong></td>
-            <td>$-250 \sim +250$ 億 TWD</td>
-            <td>⚖️ <strong>中性觀望 / 微幅調整</strong></td>
-            <td>法人維持既有防守架構，由內資與個股主導。</td>
-          </tr>
-          <tr>
-            <td><strong style="color: var(--put-color);">$-2,500 \sim -5,999$ 口</strong></td>
-            <td>$-250 \sim -600$ 億 TWD</td>
-            <td>📉 <strong>顯著加碼加空</strong></td>
-            <td>高檔避險需求上升，法人開始佈局防守性空單。</td>
-          </tr>
-          <tr>
-            <td><strong style="color: var(--put-color);">$-6,000$ 口以上</strong></td>
-            <td>$-600$ 億 TWD 以上</td>
-            <td>⚠️ <strong>暴增高檔避險 / 重手加空</strong></td>
-            <td>法人急抓避險或重手加碼空單，高檔拉回風險飆升。</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h4 style="color: var(--gold-accent); font-size: 0.9rem; margin: 12px 0 6px 0;">💡 複合智慧標籤與共振規則</h4>
-      <ul style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; padding-left: 20px;">
-        <li><strong>🔥【高檔雙雄共振偏多】</strong>：外資顯著回補 ＋ 十大特人多單大加碼。</li>
-        <li><strong>⚠️【高檔避險共振重空】</strong>：外資重手加空 ＋ 十大特人空單大加碼。</li>
-        <li><strong>⚔️【土洋對作 / 主力逢低吸籌】</strong>：外資加空但十大特人大加多。</li>
-      </ul>
+      <div id="passcode-error" style="color: #ff5252; font-size: 0.82rem; margin-bottom: 12px; display: none; font-weight: 600;">⚠️ 通行碼錯誤，請重新輸入</div>
+      
+      <button id="unlock-btn" class="btn btn-primary" onclick="const input = document.getElementById('passcode-input'); const modal = document.getElementById('passcode-modal'); const err = document.getElementById('passcode-error'); const pass = (input ? input.value : '').trim().toUpperCase(); if(pass === 'GEX2026') { modal.style.display = 'none'; if(err) err.style.display = 'none'; sessionStorage.setItem('gex_unlocked', 'true'); if(window.attemptDecrypt) window.attemptDecrypt(pass); } else { if(err) err.style.display = 'block'; if(input) { input.value = ''; input.focus(); } }" style="width: 100%; padding: 12px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer;">解鎖系統 🔓</button>
     </div>
   </div>
 
+  <!-- Main Application Layout Container -->
   <div class="container">
-    <!-- Header with 尋鳥 Bluebird Finder Branding -->
+    
+    <!-- Top Bar Header -->
     <header>
-      <div class="logo-area" style="display: flex; align-items: center; gap: 16px;">
-        <div id="user-avatar-container" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--primary-accent); overflow: hidden; background: #1a2234; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 14px rgba(0,210,255,0.4);">
-          <img id="user-avatar-img" src="assets/avatar.png" alt="尋鳥 Bluebird Finder" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; document.getElementById('avatar-fallback').style.display='block';">
-          <span id="avatar-fallback" style="display: none; font-size: 1.5rem;">🐦</span>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <!-- User Avatar with Perfect Circle Protection -->
+        <div id="user-avatar-container" style="border: 2px solid var(--primary-accent);">
+          <img src="assets/avatar.png" alt="Bluebird Finder Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'48\' height=\'48\'><circle cx=\'24\' cy=\'24\' r=\'24\' fill=\'%2300d2ff\'/></svg>'">
         </div>
-        <div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <h1 style="background: linear-gradient(135deg, #00d2ff 0%, #ffd700 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-size: 1.6rem; letter-spacing: 1px;">尋鳥 Bluebird Finder</h1>
-            <span style="font-size: 0.75rem; background: rgba(0,210,255,0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); padding: 2px 8px; border-radius: 12px; font-weight: 600;">TXO GEX 量化系統</span>
-          </div>
-          <div class="tagline">台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼分析（公開頁面僅提供盤後快照）</div>
+        <div class="logo-area">
+          <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span>尋鳥 Bluebird Finder</span>
+            <span style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v44.0</span>
+          </h1>
+          <div class="tagline">台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
       </div>
+
+      <!-- Navigation & Auth Controls -->
       <div class="nav-controls">
-        <button id="mode-badge" class="btn" style="border-color: var(--gold-accent); color: var(--gold-accent);">
-          🏛️ 公開版：日盤 / 夜盤盤後快照
+        <button id="session-badge" class="btn" style="border-color: var(--gold-accent); color: var(--gold-accent); cursor: default;">
+          🏛️ 官方日盤結算定案版
         </button>
-        <!-- Data Freshness Indicator LED -->
-        <div id="freshness-indicator" title="資料更新時效" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid var(--panel-border);background:rgba(255,255,255,0.04);cursor:default;">
-          <span id="freshness-dot" style="width:10px;height:10px;border-radius:50%;background:#00e676;display:inline-block;box-shadow:0 0 6px #00e676;animation:freshPulse 2s infinite;"></span>
-          <span id="freshness-text" style="font-size:0.78rem;color:var(--text-muted);">資料更新中...</span>
+        <!-- Data Freshness Indicator -->
+        <div id="freshness-indicator" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; padding: 4px 10px; border-radius: 12px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.3); color: #00e676;">
+          <span id="freshness-dot" style="width: 7px; height: 7px; border-radius: 50%; background: #00e676; box-shadow: 0 0 6px #00e676; display: inline-block; animation: freshPulse 2s infinite;"></span>
+          <span id="freshness-text">資料新鮮 (即時同步)</span>
         </div>
-        <!-- Compliance-safe note: public page only shows post-close snapshot data -->
-        <div id="live-polling-badge" title="公開頁面僅提供盤後快照，不提供盤中即時行情" style="display:none;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1px solid rgba(0,230,118,0.35);background:rgba(0,230,118,0.06);cursor:default;">
-          <!-- Populated by JavaScript -->
+        <!-- 3-Tier Live Feed Status Indicator Pill -->
+        <div id="live-feed-pill" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; padding: 4px 12px; border-radius: 12px; background: rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.3); color: var(--primary-accent); font-weight: 600;">
+          <span id="live-feed-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #a855f7; box-shadow: 0 0 6px #a855f7; display: inline-block;"></span>
+          <span id="live-feed-text">⚪ 官方盤後定案 (靜態分析)</span>
         </div>
-        <button id="open-guide-btn" class="btn">❓ 判讀教學</button>
-        <button id="relock-btn" class="btn">🔒 鎖定</button>
+        <button id="education-btn" class="btn">❓ 判讀教學</button>
+        <button id="lock-btn" class="btn" style="border-color: var(--panel-border);">🔒 鎖定</button>
       </div>
     </header>
 
-    <div class="panel" style="margin-bottom: 12px; border: 1px solid rgba(0,210,255,0.24); background: rgba(0,210,255,0.05);">
-      <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
-        本公開頁僅呈現期交所與 TWSE 已定案之日盤 / 夜盤盤後快照資料，供歷史與籌碼對照分析之用，不提供盤中即時行情。
-      </div>
-    </div>
-
-    <!-- Top Summary Stat Cards (6 Cards in Row 1) -->
-    <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 12px;">
-      <!-- 加權指數 -->
+    <!-- Row 1 & 2: Top Summary Cards (Split-Card Dual-Session View) -->
+    <div class="summary-grid">
+      
+      <!-- Card 1: 加權指數 (IX0001) -->
       <div class="stat-card">
         <div class="stat-label">加權指數 (IX0001)</div>
-        <div id="stat-spot" class="stat-value" style="font-size: 1.5rem;">43,386.41</div>
-        <div id="stat-taiex-change" class="stat-sub tag-bull">+266.66 (+0.62%)</div>
+        <div id="stat-spot" class="stat-value" style="color: var(--primary-accent);">45,811.01</div>
+        <div id="stat-spot-sub" class="stat-sub" style="color: var(--call-color);">+3,186.45 (+7.98%)</div>
       </div>
 
-      <!-- 櫃買指數 -->
+      <!-- Card 2: 櫃買指數 (IX0043) -->
       <div class="stat-card">
         <div class="stat-label">櫃買指數 (IX0043)</div>
-        <div id="stat-two-price" class="stat-value" style="font-size: 1.5rem;">362.89</div>
-        <div id="stat-two-change" class="stat-sub tag-bull">+1.85 (+0.51%)</div>
+        <div id="stat-two-price" class="stat-value" style="color: var(--text-main);">400.95</div>
+        <div id="stat-otc-sub" class="stat-sub" style="color: var(--call-color);">+21.62 (+6.63%)</div>
       </div>
 
-      <!-- 1. 台指期 (切一半: 上日盤 / 下夜盤) -->
-      <div class="stat-card" style="border-left: 4px solid var(--primary-accent); padding: 10px 12px;">
-        <div class="stat-label" style="font-weight: 700; color: var(--primary-accent);">台指期 (TXF1!)</div>
-        <div class="split-box" style="margin-top: 4px;">
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
-            <span id="stat-txf-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,230</span>
+      <!-- Card 3: 台指期 (TXF1!) Dual Session Card -->
+      <div class="stat-card" style="border-left: 4px solid var(--primary-accent);">
+        <div class="stat-label" style="display: flex; justify-content: space-between;">
+          <span>台指期 (TXF1!)</span>
+        </div>
+        
+        <!-- Day Session Part -->
+        <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
+          <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
+            <span>☀️ 日盤 (13:45)</span>
+            <strong id="stat-txf-day" style="font-size: 0.95rem; color: #fff;">45,841</strong>
           </div>
-          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,210,255,0.1); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--primary-accent);">🌙 夜盤 (05:00)</span>
-            <span id="stat-txf-night" style="font-size: 1.05rem; font-weight: 700; color: var(--primary-accent);">42,505 <span id="stat-txf-shift" style="font-size: 0.7rem; color: var(--put-color);">(-725)</span></span>
+        </div>
+
+        <!-- Night Session Part -->
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.72rem; color: var(--primary-accent); display: flex; justify-content: space-between;">
+            <span>🌙 夜盤 (05:00)</span>
+            <strong id="stat-txf-night" style="font-size: 0.95rem; color: var(--primary-accent);">45,727</strong>
+          </div>
+          <div id="stat-txf-shift" class="stat-sub" style="text-align: right; color: var(--put-color); font-weight: bold; margin-top: 2px;">
+            (-114 點)
           </div>
         </div>
       </div>
 
-      <!-- 2. Zero Gamma (切一半: 上日盤 / 下夜盤) -->
-      <div class="stat-card zero-gamma" style="padding: 10px 12px;">
-        <div class="stat-label" style="font-weight: 700; color: var(--gold-accent);">Zero Gamma (轉折點)</div>
-        <div class="split-box" style="margin-top: 4px;">
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
-            <span id="stat-zg-day" style="font-size: 1rem; font-weight: 700; color: #fff;">42,970</span>
-          </div>
-          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,215,0,0.1); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--gold-accent);">🌙 夜盤校正</span>
-            <span id="stat-zg-night" style="font-size: 1.05rem; font-weight: 700; color: var(--gold-accent);">42,316.6 <span id="stat-zg-shift" style="font-size: 0.7rem; color: #aaa;">(-653.4)</span></span>
+      <!-- Card 4: ZERO GAMMA (轉折點) Dual Session Card -->
+      <div class="stat-card zero-gamma">
+        <div class="stat-label">ZERO GAMMA (轉折點)</div>
+        
+        <!-- Day Session Part -->
+        <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
+          <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
+            <span>☀️ 日盤 (13:45)</span>
+            <strong id="stat-zg-day" style="font-size: 0.95rem; color: #fff;">45,661.0</strong>
           </div>
         </div>
-        <div id="stat-gamma-status" class="stat-sub" style="margin-top: 4px; font-weight: 600; font-size: 0.76rem;">🔴 正 Gamma 多頭平穩區</div>
-      </div>
 
-      <!-- 3. Call Wall (切一半: 上日盤 / 下夜盤) -->
-      <div class="stat-card call-wall" style="padding: 10px 12px;">
-        <div class="stat-label" style="font-weight: 700; color: var(--call-color);">Call Wall (天花板)</div>
-        <div class="split-box" style="margin-top: 4px;">
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
-            <span id="stat-call-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,400</span>
+        <!-- Night Session Part -->
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.72rem; color: var(--primary-accent); display: flex; justify-content: space-between;">
+            <span>🌙 夜盤校正</span>
+            <strong id="stat-zg-night" style="font-size: 0.95rem; color: var(--gold-accent);">45,661.0</strong>
           </div>
-          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,82,82,0.1); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--call-color);">🌙 夜盤校正</span>
-            <span id="stat-call-night" style="font-size: 1.05rem; font-weight: 700; color: var(--call-color);">42,800 <span id="stat-call-shift" style="font-size: 0.7rem; color: #aaa;">(-600點)</span></span>
+          <div id="stat-zg-shift" class="stat-sub" style="text-align: right; color: var(--text-muted); margin-top: 2px;">
+            (0.0 點)
           </div>
         </div>
       </div>
 
-      <!-- 4. Put Wall (切一半: 上日盤 / 下夜盤) -->
-      <div class="stat-card put-wall" style="padding: 10px 12px;">
-        <div class="stat-label" style="font-weight: 700; color: var(--put-color);">Put Wall (地板)</div>
-        <div class="split-box" style="margin-top: 4px;">
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
-            <span id="stat-put-day" style="font-size: 1rem; font-weight: 700; color: #fff;">42,800</span>
+      <!-- Card 5: CALL WALL (天花板) Dual Session Card -->
+      <div class="stat-card call-wall">
+        <div class="stat-label">CALL WALL (天花板)</div>
+        
+        <!-- Day Session Part -->
+        <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
+          <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
+            <span>☀️ 日盤 (13:45)</span>
+            <strong id="stat-cw-day" style="font-size: 0.95rem; color: #fff;">46,100</strong>
           </div>
-          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,230,118,0.1); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--put-color);">🌙 夜盤校正</span>
-            <span id="stat-put-night" style="font-size: 1.05rem; font-weight: 700; color: var(--put-color);">42,200 <span id="stat-put-shift" style="font-size: 0.7rem; color: #aaa;">(-600點)</span></span>
+        </div>
+
+        <!-- Night Session Part -->
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.72rem; color: var(--call-color); display: flex; justify-content: space-between;">
+            <span>🌙 夜盤校正</span>
+            <strong id="stat-cw-night" style="font-size: 0.95rem; color: var(--call-color);">46,100</strong>
+          </div>
+          <div id="stat-cw-shift" class="stat-sub" style="text-align: right; color: var(--text-muted); margin-top: 2px;">
+            (0 點)
           </div>
         </div>
       </div>
+
+      <!-- Card 6: PUT WALL (地板) Dual Session Card -->
+      <div class="stat-card put-wall">
+        <div class="stat-label">PUT WALL (地板)</div>
+        
+        <!-- Day Session Part -->
+        <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
+          <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
+            <span>☀️ 日盤 (13:45)</span>
+            <strong id="stat-pw-day" style="font-size: 0.95rem; color: #fff;">45,500</strong>
+          </div>
+        </div>
+
+        <!-- Night Session Part -->
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.72rem; color: var(--put-color); display: flex; justify-content: space-between;">
+            <span>🌙 夜盤校正</span>
+            <strong id="stat-pw-night" style="font-size: 0.95rem; color: var(--put-color);">45,500</strong>
+          </div>
+          <div id="stat-pw-shift" class="stat-sub" style="text-align: right; color: var(--text-muted); margin-top: 2px;">
+            (0 點)
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 7: MAX PAIN (最大痛點) Dual Session Card -->
+      <div class="stat-card" style="border-left: 4px solid #a855f7;">
+        <div class="stat-label">MAX PAIN (最大痛點)</div>
+        <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
+          <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
+            <span>☀️ 日盤 (13:45)</span>
+            <strong id="stat-mp-day" style="font-size: 0.95rem; color: #fff;">45,800</strong>
+          </div>
+        </div>
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.72rem; color: #a855f7; display: flex; justify-content: space-between;">
+            <span>🌙 夜盤校正</span>
+            <strong id="stat-mp-night" style="font-size: 0.95rem; color: #a855f7;">45,800</strong>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+            P/C Ratio: <strong id="stat-pc-ratio" style="color: var(--call-color);">108.5% (🔴 偏多看撐)</strong>
+          </div>
+        </div>
+      </div>
+    </div> <!-- Close .summary-grid -->
+
+    <!-- Session Shift Banner (Full Width) -->
+    <div id="session-shift-banner" class="panel" style="margin-bottom: 20px; padding: 12px 18px; border: 1px dashed var(--primary-accent); background: rgba(0, 210, 255, 0.03);">
+      <!-- Populated by JavaScript -->
     </div>
-
-    <!-- Row 2: 5. Max Pain (Left) + Blue Box Shift Summary Banner (Right) -->
-    <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: stretch; flex-wrap: wrap;">
-      <!-- 5. Max Pain (切一半: 上日盤 / 下夜盤) -->
-      <div class="stat-card" style="width: 220px; flex-shrink: 0; padding: 10px 12px; background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px;">
-        <div class="stat-label" style="font-weight: 700;">Max Pain (最大痛點)</div>
-        <div class="split-box" style="margin-top: 4px;">
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--gold-accent);">☀️ 日盤 (13:45)</span>
-            <span id="stat-mp-day" style="font-size: 1rem; font-weight: 700; color: #fff;">43,100</span>
-          </div>
-          <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
-          <div class="split-row" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 3px 6px; border-radius: 4px;">
-            <span style="font-size: 0.72rem; color: var(--primary-accent);">🌙 夜盤校正</span>
-            <span id="stat-mp-night" style="font-size: 1.05rem; font-weight: 700; color: var(--primary-accent);">42,500 <span id="stat-mp-shift" style="font-size: 0.7rem; color: #aaa;">(-600點)</span></span>
-          </div>
-        </div>
-        <div id="stat-pc-ratio" class="stat-sub" style="color: var(--primary-accent); margin-top: 6px; font-font-weight: 600; font-size: 0.78rem;">P/C Ratio: 108.5%</div>
-      </div>
-
-      <!-- 藍框區域：放置日夜盤避險牆位移對比摘要 -->
-      <div id="session-shift-banner" style="flex: 1; display: flex; align-items: center;">
-        <!-- Populated by JavaScript -->
-      </div>
-    </div>
-
-    <!-- 近三日綜合市場行情與 Gamma 關鍵位對照表 -->
-    <div id="recent-3days-panel" class="panel" style="margin-bottom: 20px; border: 1px solid var(--panel-border); background: var(--panel-bg); border-radius: 12px; padding: 16px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-        <h3 style="font-size: 1.05rem; margin: 0; color: var(--primary-accent); display: flex; align-items: center; gap: 8px;">
-          <span>📊 近三日市場籌碼與 Gamma 關鍵位對照表</span>
-        </h3>
-        <span style="font-size: 0.78rem; color: var(--text-muted);">近 3 個交易日盤後定案快照：現貨、期貨、Zero Gamma、Call/Put Wall 及 Max Pain 多空動態對照</span>
-      </div>
-      <div style="overflow-x: auto;">
-        <table class="sortable-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 980px;">
+    <!-- Row 2.5: 📈 近 5 日關鍵市場與 GEX 結構歷程矩陣 (最前面的 5 日歷史表格) -->
+    <div id="key-metrics-5day-panel" class="panel watermark-panel" style="margin-bottom: 20px; border: 1px solid var(--primary-accent); background: rgba(0, 210, 255, 0.02);">
+      <h3 style="color: var(--gold-accent); margin-bottom: 12px; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center;">
+        <span>📈 近 5 日關鍵市場指數與 GEX 結構歷程矩陣</span>
+        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">(包含加權、櫃買、台指期日夜盤、Zero Gamma、Call/Put Wall、Max Pain)</span>
+      </h3>
+      <div class="table-scroll-container" style="max-height: none;">
+        <table class="matrix-table" style="text-align: center; width: 100%;">
           <thead>
-            <tr style="background: rgba(255,255,255,0.06); text-align: left; border-bottom: 2px solid var(--panel-border);">
-              <th style="padding: 10px 10px; color: var(--gold-accent);">交易日 (盤別)</th>
-              <th style="padding: 10px 10px; color: var(--text-main);">加權指數 (IX0001)</th>
-              <th style="padding: 10px 10px; color: var(--text-main);">櫃買指數 (IX0043)</th>
-              <th style="padding: 10px 10px; color: var(--gold-accent);">☀️ 台指日盤 (13:45結算)</th>
-              <th style="padding: 10px 10px; color: var(--primary-accent);">🌙 台指夜盤 (接續次日05:00)</th>
-              <th style="padding: 10px 10px; color: var(--gold-accent);">Zero Gamma (轉折點)</th>
-              <th style="padding: 10px 10px; color: var(--call-color);">Call Wall (天花板)</th>
-              <th style="padding: 10px 10px; color: var(--put-color);">Put Wall (地板)</th>
-              <th style="padding: 10px 10px; color: var(--primary-accent);">Max Pain (最大痛點)</th>
-              <th style="padding: 10px 10px; color: var(--text-muted);">市場說明與註解</th>
+            <tr style="background: #18202d;">
+              <th>日期/盤別</th>
+              <th>加權指數 (IX0001)</th>
+              <th>櫃買指數 (IX0043)</th>
+              <th>台指期 (TXF)</th>
+              <th>Zero Gamma (轉折點)</th>
+              <th>Call Wall (天花板)</th>
+              <th>Put Wall (地板)</th>
+              <th>Max Pain (最大痛點)</th>
+              <th>P/C Ratio</th>
             </tr>
           </thead>
-          <tbody id="recent-3days-tbody">
+          <tbody id="key-metrics-5day-body">
             <!-- Populated dynamically by JavaScript -->
           </tbody>
         </table>
@@ -387,7 +475,7 @@
     </div>
 
     <!-- Row 3: 📌 日夜盤微觀結構速報 (Microstructure Express Digest) Card -->
-    <div id="microstructure-express-panel" class="panel" style="margin-bottom: 20px; border: 2px solid var(--primary-accent); background: rgba(0, 210, 255, 0.04); transition: all 0.3s ease;">
+    <div id="microstructure-express-panel" class="panel watermark-panel" style="margin-bottom: 20px; border: 2px solid var(--primary-accent); background: rgba(0, 210, 255, 0.04); transition: all 0.3s ease;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <h3 style="font-size: 0.95rem; margin: 0; color: var(--primary-accent); display: flex; align-items: center; gap: 6px;">
           <span>📌 日夜盤微觀結構速報</span>
@@ -398,6 +486,11 @@
       <div id="microstructure-express-content" style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
         <!-- Populated dynamically by JavaScript -->
       </div>
+    </div>
+
+    <!-- Row 4: 🌐 國際熱錢動向與 5 日匯率歷程 (International Hot Money Digest) Card -->
+    <div id="hot-money-express-panel" class="panel watermark-panel" style="margin-bottom: 20px; border: 1px solid var(--gold-accent); background: rgba(255, 215, 0, 0.03); border-radius: 12px;">
+      <!-- Populated dynamically by JavaScript -->
     </div>
 
     <!-- Tabs Container -->
@@ -416,51 +509,84 @@
         <div id="chart-panel-title" class="panel-title">
           📊 全市場 TXO GEX 履約價分布圖 (億 TWD)
         </div>
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <button id="toggle-legend-btn" class="btn" style="font-size:0.75rem;padding:4px 10px;border-radius:14px;border-color:var(--text-muted);color:var(--text-muted);" title="顯示/隱藏圖例">
+            👁️ 隱藏圖例
+          </button>
+          <button id="open-strike-modal-btn" class="btn" style="font-size:0.75rem;padding:4px 10px;border-radius:14px;border-color:var(--gold-accent);color:var(--gold-accent);" title="查看履約價直方圖與莊家防守牆實戰判讀教學">
+            ℹ️ 履約價直方圖教學
+          </button>
+          <button id="open-sensitivity-modal-btn" class="btn" style="font-size:0.75rem;padding:4px 10px;border-radius:14px;border-color:var(--primary-accent);color:var(--primary-accent);" title="查看價位位移 vs GEX 敏感度模擬曲線教學">
+            ℹ️ 敏感度模擬曲線教學
+          </button>
+          <!-- Orientation View Toggle Button (T-Option Chain vs Classic Vertical) -->
+          <button id="orientation-toggle-btn" class="btn" style="font-size:0.78rem;padding:4px 12px;border-radius:16px;border-color:var(--gold-accent);color:var(--gold-accent);" title="切換 T型報價視角 (Y軸履約價 / T型報價視角) ⇄ 經典橫軸視角">
+            ↔️ T型報價視角
+          </button>
           <!-- Overlay Compare Toggle -->
           <button id="overlay-compare-btn" class="btn" style="font-size:0.78rem;padding:4px 12px;border-radius:16px;border-color:var(--primary-accent);color:var(--primary-accent);" title="疊加顯示 T日盤 vs T夜盤 GEX 差異">
             🔀 疊加對比
           </button>
           <div style="font-size: 0.8rem; color: var(--text-muted);">
-            期交所籌碼基準日期: <span id="data-date">2026-08-03</span>
+            期交所籌碼基準日期: <span id="data-date">2026-08-14</span>
           </div>
         </div>
       </div>
 
-      <!-- 3-Day / 6-Session History Snapshot Selector Bar -->
-      <div id="history-session-selector" style="display: flex; gap: 6px; margin: 8px 0 14px 0; overflow-x: auto; padding-bottom: 4px; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;">
+      <!-- 10-Session History Snapshot Selector Bar & Satellite Player -->
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: rgba(18, 24, 38, 0.8); border: 1px solid var(--panel-border); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button id="player-play-btn" class="btn" style="font-size: 0.82rem; padding: 6px 14px; background: var(--primary-accent); color: #0a0e17; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+            <span id="player-play-icon">▶️</span> <span id="player-play-text">播放 10 盤動態演變</span>
+          </button>
+          <button id="player-prev-btn" class="btn" style="font-size: 0.8rem; padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--panel-border); cursor: pointer;">
+            ⏪ 上一盤
+          </button>
+          <button id="player-next-btn" class="btn" style="font-size: 0.8rem; padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--panel-border); cursor: pointer;">
+            下一盤 ⏩
+          </button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px; max-width: 400px;">
+          <span style="font-size: 0.75rem; color: var(--gold-accent); font-weight: 600; white-space: nowrap;">📊 籌碼動態演變進度:</span>
+          <input type="range" id="player-slider" min="0" max="9" value="9" style="width: 100%; accent-color: var(--primary-accent); cursor: pointer;" />
+        </div>
+        <div id="player-current-label" style="font-size: 0.82rem; font-weight: 700; color: var(--primary-accent); background: rgba(0,210,255,0.1); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(0,210,255,0.3);">
+          🌙 T夜盤 (最新定案)
+        </div>
+      </div>
+
+      <!-- 10-Session Snapshot Buttons Container -->
+      <div id="history-sessions-bar" style="display: flex; gap: 6px; margin: 0 0 14px 0; overflow-x: auto; padding-bottom: 4px; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;">
         <!-- Populated dynamically by JavaScript -->
       </div>
 
-      <!-- Overlay mode legend -->
-      <div id="overlay-legend" style="display:none;margin-bottom:8px;padding:8px 14px;background:rgba(0,210,255,0.06);border:1px solid rgba(0,210,255,0.2);border-radius:8px;font-size:0.82rem;color:var(--text-muted);">
-        🔀 <strong style="color:var(--primary-accent);">疊加對比模式</strong>：半透明 = T日盤，實線 = T夜盤盤後快照。點擊「疊加對比」再次關閉。
-      </div>
 
       <!-- Plotly Container -->
       <div id="gex-chart" style="width: 100%; height: 480px;"></div>
     </div>
 
-    <!-- Sentiment Meter Panel -->
-    <div id="sentiment-panel" class="panel">
-      <div class="panel-title">📉 微台 (TMF1!) 與 小台 (MXF1!) 散戶多空比 (Retail Sentiment Index)</div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
-        傳統反向指標：當散戶做多比率偏高 (> +15%) 大盤易下探；當散戶做空比率偏高 (< -15%) 大盤易嘎空。
+    <!-- Retail Sentiment & Market Positioning Panel -->
+    <div id="sentiment-panel" class="panel watermark-panel" style="border: 1px solid var(--primary-accent); background: rgba(0, 210, 255, 0.02);">
+      <div class="panel-title" style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span>📉 微台 (TMF1!) 與 小台 (MXF1!) 散戶籌碼與台指快訊 (Retail Sentiment & Market Snapshot)</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button id="open-retail-modal-btn" class="btn" style="font-size:0.75rem;padding:4px 10px;border-radius:14px;border-color:var(--primary-accent);color:var(--primary-accent);" title="查看散戶多空比與籌碼指標判讀教學">
+            ℹ️ 散戶多空比判讀教學
+          </button>
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">期交所官方公開數據計算</span>
+        </div>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+        傳統市場反向指標：當散戶做多比率偏高 (> +15%) 大盤易壓回洗盤；當散戶做空比率偏高 (< -15%) 大盤易嘎空反彈。
       </p>
 
-      <div class="sentiment-bar-container">
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
-          <span>微台散戶多空比 (TMF1!): <strong id="micro-ratio-val" style="color: var(--call-color);">6.9% (散戶做多 ➔ 偏拉回)</strong></span>
-          <span>小台散戶多空比 (MXF1!): <strong id="mini-ratio-val" style="color: var(--call-color);">4.5% (散戶做多)</strong></span>
-        </div>
-        <div class="sentiment-meter">
-          <div id="sentiment-fill" class="sentiment-fill" style="width: 55%;"></div>
-        </div>
+      <div id="retail-sentiment-container">
+        <!-- Populated dynamically by JavaScript -->
       </div>
     </div>
 
-    <!-- Night Session Institutional Trading Panel -->
-    <div id="night-trading-panel" class="panel" style="border: 1px solid rgba(0, 210, 255, 0.3); background: rgba(10, 20, 35, 0.6); margin-bottom: 24px;">
+    <!-- Night Session Institutional Trading Panel & 5-Day Night History -->
+    <div id="night-trading-panel" class="panel watermark-panel" style="border: 1px solid rgba(0, 210, 255, 0.3); background: rgba(10, 20, 35, 0.6); margin-bottom: 24px;">
       <div class="panel-header" style="margin-bottom: 12px;">
         <div class="panel-title" style="color: var(--primary-accent); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
           <span>🌙 三大法人夜盤盤後交易籌碼專區 (15:00 ~ 05:00)</span>
@@ -475,42 +601,47 @@
         <!-- 外資夜盤台指期 -->
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--panel-border); padding: 12px; border-radius: 8px;">
           <div style="font-size: 0.8rem; color: var(--text-muted);">外資夜盤 TX 淨交易口數</div>
-          <div id="night-foreign-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0;">-7 口</div>
-          <div id="night-foreign-amt" style="font-size: 0.75rem; color: var(--gold-accent);">契約金額: +0.27 億 TWD</div>
+          <div id="night-foreign-tx-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0;">-153 口</div>
+          <div id="night-foreign-tx-amt" style="font-size: 0.75rem; color: var(--gold-accent);">契約金額: -1.42 億 TWD</div>
         </div>
 
         <!-- 外資小台夜盤 -->
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--panel-border); padding: 12px; border-radius: 8px;">
           <div style="font-size: 0.8rem; color: var(--text-muted);">外資夜盤小台 (MTX)</div>
-          <div id="night-mini-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0; color: var(--call-color);">+3,394 口</div>
+          <div id="night-mini-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0; color: var(--put-color);">-248 口</div>
           <div style="font-size: 0.75rem; color: var(--text-muted);">小台指夜盤動態</div>
         </div>
 
         <!-- 外資微台夜盤 -->
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--panel-border); padding: 12px; border-radius: 8px;">
           <div style="font-size: 0.8rem; color: var(--text-muted);">外資夜盤微台 (Micro)</div>
-          <div id="night-micro-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0; color: var(--call-color);">+4,200 口</div>
+          <div id="night-micro-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0; color: var(--put-color);">-955 口</div>
           <div style="font-size: 0.75rem; color: var(--text-muted);">微型台指夜盤動態</div>
         </div>
 
         <!-- 自營商夜盤期貨 -->
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--panel-border); padding: 12px; border-radius: 8px;">
           <div style="font-size: 0.8rem; color: var(--text-muted);">自營商夜盤 TX 淨交易</div>
-          <div id="night-dealer-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0; color: var(--put-color);">-235 口</div>
-          <div id="night-dealer-amt" style="font-size: 0.75rem; color: var(--text-muted);">契約金額: -1.98 億 TWD</div>
+          <div id="night-dealer-vol" style="font-size: 1.25rem; font-weight: 700; margin: 4px 0; color: var(--put-color);">-26 口</div>
+          <div id="night-dealer-amt" style="font-size: 0.75rem; color: var(--text-muted);">契約金額: -0.24 億 TWD</div>
         </div>
       </div>
+
       <div id="night-trading-summary" style="margin-top: 12px; font-size: 0.85rem; color: var(--gold-accent); background: rgba(255, 215, 0, 0.06); padding: 10px 14px; border-radius: 8px; border-left: 3px solid var(--gold-accent); line-height: 1.6;">
         <!-- Populated by JavaScript -->
       </div>
+
+      <!-- Container for 5-Day Night Session Institutional Trading Table -->
+      <div id="night-trading-5day-container" style="margin-top: 16px;"></div>
+      
     </div>
 
-    <!-- 100% Official 5-Day Numerical History & Clean Digest Card -->
-    <div class="panel">
+    <!-- 100% Official 5-Day Numerical History Matrix -->
+    <div class="panel watermark-panel">
       <div class="panel-title" style="margin-bottom: 16px;">📋 三大法人與大戶 5 日期權與籌碼歷程矩陣</div>
 
       <!-- Executive Digest Card -->
-      <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+      <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 10px; padding: 16px; margin-bottom: 20px; position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <h4 style="color: var(--primary-accent); font-size: 0.95rem; margin: 0;">
             💡 本日籌碼體質與選擇權結構解讀
@@ -522,19 +653,20 @@
         <div id="executive-digest-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-main);">
           <!-- Populated by JavaScript -->
         </div>
+        <div style="text-align: right; margin-top: 6px; font-size: 11px; color: rgba(255, 255, 255, 0.28); user-select: none;">© 尋鳥 Bluebird Finder</div>
       </div>
 
       <!-- Table 1: 期貨未平倉 5 日淨部位歷程 (單位：口) -->
       <h4 style="color: var(--primary-accent); font-size: 0.9rem; margin-bottom: 8px;">1. 期貨未平倉 5 日淨部位歷程 (單位：口)</h4>
-      <div style="overflow-x: auto; margin-bottom: 24px;">
+      <div style="overflow-x: auto; margin-bottom: 12px;">
         <table class="matrix-table" style="text-align: center;">
           <thead>
             <tr style="background: #18202d;">
               <th style="width: 70px; text-align: center;">日期</th>
-              <th style="text-align: center;">前五大淨部位</th>
-              <th style="text-align: center;">前十大淨部位</th>
-              <th style="text-align: center;">前五特法淨部位</th>
-              <th style="text-align: center;">前十特法淨部位</th>
+              <th style="text-align: center;">前五大淨部位 <span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: normal;">(近月 / 全月)</span></th>
+              <th style="text-align: center;">前十大淨部位 <span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: normal;">(近月 / 全月)</span></th>
+              <th style="text-align: center;">前五特法淨部位 <span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: normal;">(近月 / 全月)</span></th>
+              <th style="text-align: center;">前十特法淨部位 <span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: normal;">(近月 / 全月)</span></th>
               <th style="text-align: center;">外資期貨淨口數</th>
               <th style="text-align: center;">投信期貨淨口數</th>
               <th style="text-align: center;">自營商期貨淨口數</th>
@@ -545,6 +677,7 @@
           </tbody>
         </table>
       </div>
+      <div style="text-align: right; margin-top: 4px; margin-bottom: 20px; font-size: 11px; color: rgba(255, 255, 255, 0.28); user-select: none;">© 尋鳥 Bluebird Finder</div>
 
       <!-- Table 2: 現貨買賣超與選擇權籌碼 5 日歷程 -->
       <h4 style="color: var(--gold-accent); font-size: 0.9rem; margin-bottom: 8px;">2. 現貨買賣超金額與選擇權金額 5 日歷程 (單位：億 TWD)</h4>
@@ -571,20 +704,38 @@
           </tbody>
         </table>
       </div>
+      
+    </div>
+
+    <!-- 🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描 Panel -->
+    <div id="ai-quant-digest-panel" class="panel watermark-panel" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(18, 24, 36, 0.95), rgba(10, 14, 23, 0.95)); border: 1px solid var(--primary-accent); border-radius: 14px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 210, 255, 0.12);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; margin-bottom: 14px;">
+        <h3 style="color: var(--primary-accent); margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+          <span>🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描</span>
+        </h3>
+        <span style="font-size: 0.72rem; color: var(--text-muted); padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.05);">⚖️ 合規量化學理分析 (非個別證券建議)</span>
+      </div>
+      <div id="ai-quant-digest-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-main);">
+        <!-- Populated by JavaScript -->
+      </div>
+      
     </div>
 
     <!-- Stock Futures Interactive Screener Panel -->
-    <div id="stock-futures-panel" class="panel">
+    <div id="stock-futures-panel" class="panel watermark-panel">
       <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 12px;">
         <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-          <div class="panel-title">💎 期交所全量 270 檔個股與 ETF 期貨篩選明細</div>
+          <div class="panel-title">💎 期交所全量 287 檔個股與 ETF 期貨篩選明細</div>
           <input type="text" id="search-stock-input" placeholder="🔍 搜尋代號/名稱..." style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.8rem;">
         </div>
 
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; width: 100%;">
           <span style="font-size: 0.85rem; color: var(--text-muted);">契約類別切換：</span>
           <select id="category-filter-select" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--primary-accent); background: #121721; color: var(--primary-accent); font-weight: 600; font-size: 0.85rem;">
-            <option value="all">🌐 全部 270 檔契約 (All Categories)</option>
+            <option value="all">🌐 全部 287 檔契約 (All Categories)</option>
+            <option value="top10_buy">🔥 法人買超 Top 10 熱門標的</option>
+            <option value="top10_sell">❄️ 法人賣超 Top 10 避險標的</option>
+            <option value="upcoming_ex">📅 即將/近期除權息標的 (Ex-Div Scheduled)</option>
             <option value="個股期貨">🏢 個股期貨 (標準 2000股)</option>
             <option value="小型個股期貨">🔹 小型個股期貨 (100股)</option>
             <option value="ETF期貨">📈 ETF 期貨 (10000份)</option>
@@ -614,11 +765,14 @@
               <th data-sort="category" style="cursor: pointer;">契約類別 ⇕</th>
               <th data-sort="trend" style="cursor: pointer;">趨勢 ⇕</th>
               <th data-sort="spot_price" style="cursor: pointer;">現價 (TWD) ⇕</th>
+              <th data-sort="fut_price" style="cursor: pointer;">期貨價 (TWD) ⇕</th>
+              <th data-sort="basis" style="cursor: pointer; color: var(--gold-accent);">期現價差 (Basis) ⇕</th>
               <th data-sort="change_pct" style="cursor: pointer;">漲跌幅 % ⇕</th>
               <th data-sort="volume" style="cursor: pointer;">成交量 (口) ⇕</th>
               <th data-sort="foreign_net" style="cursor: pointer;">外資期貨淨部位 ⇕</th>
               <th data-sort="dealer_net" style="cursor: pointer;">自營商期貨淨部位 ⇕</th>
               <th>夜盤標籤</th>
+              <th data-sort="ex_date" style="cursor: pointer; color: var(--gold-accent);">📅 除權息日程 ⇕</th>
             </tr>
           </thead>
           <tbody id="stock-futures-body">
@@ -626,16 +780,28 @@
           </tbody>
         </table>
       </div>
+      
     </div>
 
     <!-- Footer Disclaimer -->
     <footer>
-      <p>⚖️ <strong>尋鳥 Bluebird Finder 免責與法律聲明</strong></p>
-      <p>本網站（包含數據圖表、GEX 計算結果與分析說明）僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。</p>
-      <p>衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。</p>
+      <p style="font-weight: 700; color: var(--primary-accent); margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <img src="assets/avatar.png" alt="Bluebird Finder Avatar" style="width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--primary-accent); vertical-align: middle;">
+        <span>尋鳥 Bluebird Finder • TXO GEX 量化分析系統 v44.0</span>
+      </p>
+      <p style="opacity: 0.85; margin-bottom: 6px; font-size: 0.8rem;">
+        © 2026 尋鳥 Bluebird Finder Quant Labs. 版權所有，未經授權請勿商業重製與無償轉載。
+      </p>
+      <p style="font-size: 0.75rem; color: var(--text-muted); max-width: 900px; margin: 0 auto; line-height: 1.5;">
+        ⚖️ <strong>免責與法律聲明</strong>：本網站（包含數據圖表、GEX 計算結果與分析說明）僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。
+      </p>
     </footer>
   </div>
 
+  <script src="data/embedded_data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
+
+
+

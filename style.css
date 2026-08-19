@@ -61,6 +61,8 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--panel-border);
@@ -82,6 +84,8 @@ header {
 .nav-controls {
   display: flex;
   gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .btn {
@@ -117,6 +121,8 @@ header {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .stat-card {
@@ -126,6 +132,7 @@ header {
   padding: 16px;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .stat-card.call-wall {
@@ -167,6 +174,8 @@ header {
   border-bottom: 1px solid var(--panel-border);
   padding-bottom: 8px;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .tab-btn {
@@ -199,6 +208,9 @@ header {
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .panel-header {
@@ -222,6 +234,29 @@ header {
   border-radius: 8px;
   position: relative;
   display: block;
+}
+
+#stock-futures-panel .table-scroll-container {
+  max-height: 690px;
+}
+
+/* Watermark Panel */
+.watermark-panel {
+  position: relative;
+  padding-bottom: 28px !important;
+}
+
+.watermark-panel::after {
+  content: '© 尋鳥 Bluebird Finder';
+  position: absolute;
+  right: 16px;
+  bottom: 8px;
+  font-size: 11px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgba(255, 255, 255, 0.28);
+  letter-spacing: 0.3px;
+  pointer-events: none;
+  user-select: none;
 }
 
 /* Standard Normal UI Scrollbar (Slate Gray) */
@@ -367,14 +402,20 @@ header {
   transition: width 0.3s ease;
 }
 
+/* Panel Watermark: inline style approach used in HTML
+   Ref: display:flex; justify-content:flex-end; + span with
+   font-size:11px; color:rgba(255,255,255,0.28); font-family:'Inter',sans-serif
+   Matches GEX Plotly chart watermark (x:0.99,y:0.015,rgba(255,255,255,0.28),size:11) */
+
 /* Footer */
 footer {
   text-align: center;
-  padding: 20px 0;
+  padding: 24px 0;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   border-top: 1px solid var(--panel-border);
   margin-top: 40px;
+  background: rgba(10, 14, 23, 0.4);
 }
 
 footer p {
@@ -561,6 +602,12 @@ footer p {
     padding: 16px !important;
     max-width: 95% !important;
   }
+
+  /* Smooth Inertia Scrolling & Touch Table Adjustments */
+  .table-scroll-container, div[style*="overflow-x: auto"] {
+    -webkit-overflow-scrolling: touch;
+    border-radius: 6px;
+  }
 }
 
 /* ============================================================
@@ -578,31 +625,7 @@ footer p {
   50%       { opacity: 0.6; }
 }
 
-/* Live Tick Flash Animation (for intraday real-time price updates) */
-@keyframes liveTickFlash {
-  0%   { color: inherit; text-shadow: none; }
-  20%  { color: #00e676; text-shadow: 0 0 8px rgba(0, 230, 118, 0.8); }
-  60%  { color: #00e676; text-shadow: 0 0 4px rgba(0, 230, 118, 0.4); }
-  100% { color: inherit; text-shadow: none; }
-}
-
-.live-tick-flash {
-  animation: liveTickFlash 0.8s ease-out;
-}
-
 #freshness-indicator { user-select: none; }
-
-/* Live Polling Badge */
-#live-polling-badge {
-  display: none;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 230, 118, 0.35);
-  background: rgba(0, 230, 118, 0.06);
-  cursor: default;
-}
 
 /* Overlay Compare Button Active State */
 #overlay-compare-btn.active {
@@ -638,3 +661,25 @@ footer p {
   #freshness-text { display: none !important; }
   #overlay-compare-btn { font-size: 0.72rem !important; padding: 3px 8px !important; }
 }
+
+/* Live Tick Flash Keyframe Animations */
+@keyframes tickFlashUp {
+  0%   { background-color: rgba(255, 82, 82, 0.4); color: #fff; }
+  100% { background-color: transparent; }
+}
+
+@keyframes tickFlashDown {
+  0%   { background-color: rgba(0, 230, 118, 0.4); color: #fff; }
+  100% { background-color: transparent; }
+}
+
+.live-tick-flash-up {
+  animation: tickFlashUp 1s ease-out;
+  border-radius: 4px;
+}
+
+.live-tick-flash-down {
+  animation: tickFlashDown 1s ease-out;
+  border-radius: 4px;
+}
+

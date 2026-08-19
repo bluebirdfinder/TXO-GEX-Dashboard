@@ -57,5 +57,6 @@ Desktop.ini
 # Application Logs & Temporary Scratch Files
 # ==========================================
 logs/
+log/
 *.log
 scratch/

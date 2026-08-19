@@ -1,21 +1,30 @@
-# 🚀 TXO GEX Dashboard - v9.1.0 Release Status (Fubon Neo SDK Live & Precision Sync)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v44.0)
 
-## 📌 Status Summary
-- **Current Version**: v9.1.0 (Engine v31.0)
-- **Fubon Neo API SDK**: 🟢 **100% Authenticated & Active (`fubon_neo` v2.2.8)** - Direct WebSocket Live Streaming API with Zero-Trust Security.
-- **Data Integrity**: Direct integration with Fubon Neo SDK, TWSE MIS & OpenAPI (`FMTQIK`), TPEx OpenAPI, and TAIFEX (`taifex.com.tw` / `futContractsDateAh` / `optDailyMarketReport`).
-- **Session Timing & Date Annotations**: 3-Day Table features explicit timing badges for Day Session (`📅 M/DD 13:45`) and Next-Day Night Close (`🌙 M/DD 05:00收盤`).
-- **Real Open Interest GEX Matrix**: Direct parsing of TAIFEX Options Daily Market Report for strike-by-strike Real Call/Put OI.
-- **Data Freshness LED**: Real-time LED indicator (🟢 Fresh <4h / 🟡 Aging 4-12h / 🔴 Expired >12h) in header.
-- **LocalStorage Resilience**: Automatic offline/network fallback caching with warning banner.
-- **Overlay Compare Mode**: Interactive side-by-side comparison of T-Day vs T-Night (Live) GEX distributions.
-- **3-Day 6-Session Snapshots**: Full historical trajectory for T-2 Day, T-2 Night, T-1 Day, T-1 Night, T Day, T Night (Live).
+**當前版本**：`v44.0` (2026-08-20 最新穩定版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes 真實 OI GEX 視覺引擎 v44.0)
+**系統狀態**：`✅ 100% 運作正常`
+**網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
 
-## 🎯 Completed Milestones (v9.1.0)
-- [x] Successfully authenticated Fubon Neo SDK (`v2.2.8`) with `apikey_login` and local Zero-Trust `.env` configuration.
-- [x] Restored `app.js` syntax integrity and all stat card rendering pipelines.
-- [x] Added dynamic TWSE FMTQIK and TPEx API historical query modules in `fetch_and_calc.py`.
-- [x] Integrated real TAIFEX TXO Option Open Interest parser (`fetch_official_taifex_txo_oi`) for GEX calculations.
-- [x] Annotated 3-day table headers and rows with explicit day session and next-day night close dates.
-- [x] Re-encrypted & synchronized raw JSON payloads (`gex_data.json`, `encrypted_gex.json`).
-- [x] Updated all repository documentation (`README.md`, `PROJECT_HANDOVER.md`, `STATUS.md`).
+---
+
+## 🎯 v44.0 核心更新亮點（Major UX & Architecture Release）
+
+### 1. 🛡️ 單層獨立面板架構 (Clean 1-Layer DOM Architecture)
+- 徹底修正 HTML 閉合標籤，所有 `.panel` 均為 100% 獨立平級單層盒子，消除所有疊加嵌套邊框。
+
+### 2. 📸 社群防盜角落水印與子區塊版權標註
+- **核心面板右下角**：透過 `.watermark-panel` 統一烙印半透明版權標示 `© 尋鳥 Bluebird Finder` (`rgba(255, 255, 255, 0.28)` Low-Opacity)。
+- **子區塊獨立防偽**：特別在《籌碼體質解讀卡》與《期貨 5 日歷程表》右下角單獨加入版權標籤，滿足使用者隨手「局部裁切截圖發文」時的品牌防偽需求。
+
+### 3. 🛡️ 雙視角雙軌標籤防碰撞機制
+- **經典橫軸模式**：`Put Wall / Call Wall` 於下層軌道 (`ay: -24`)，`Zero Gamma (ZG)` 升至上層軌道 (`ay: -56`)，履約價接近時永不安重疊。
+- **T型報價視角 (DEFAULT)**：`Call Wall / Put Wall` 位於最右欄 (`x: 0.98`)，`Zero Gamma (ZG)` 置於內側虛線軌 (`x: 0.82`)，解決 Y 軸重疊問題。
+
+### 4. 💎 個股/ETF 期貨 Top 10 一頁 100% 完整呈現
+- 篩選器表格容器最大高度調升至 `690px`，切換「🔥 法人買超 Top 10」時，10 行標的一頁直觀呈現不裁切。
+- 5 日關鍵矩陣移除 `max-height` 滾動限制，完整呈現 5 行數據。
+
+---
+
+*最後更新：2026-08-20 最新穩定版 | 尋鳥 Bluebird Finder | v44.0*
+
