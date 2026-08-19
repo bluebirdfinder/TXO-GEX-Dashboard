@@ -721,6 +721,19 @@
       
     </div>
 
+    <!-- 🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描 Panel -->
+    <div id="ai-quant-digest-panel" class="panel" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(18, 24, 36, 0.95), rgba(10, 14, 23, 0.95)); border: 1px solid var(--primary-accent); border-radius: 14px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 210, 255, 0.12);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; margin-bottom: 14px;">
+        <h3 style="color: var(--primary-accent); margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+          <span>🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描</span>
+        </h3>
+        <span style="font-size: 0.72rem; color: var(--text-muted); padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.05);">⚖️ 合規量化學理分析 (非個別證券建議)</span>
+      </div>
+      <div id="ai-quant-digest-content" style="font-size: 0.85rem; line-height: 1.7; color: var(--text-main);">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
     <!-- Stock Futures Interactive Screener Panel -->
     <div id="stock-futures-panel" class="panel watermark-panel">
       <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 12px;">
@@ -748,11 +761,45 @@
         </div>
       </div>
 
-      <div style="font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 6px; margin: 8px 0 12px 0; border-left: 3px solid var(--primary-accent);">
-        💡 <strong>趨勢標籤判定與色彩說明：</strong>
-        <span style="color: var(--call-color); font-weight: 600; margin-left: 6px;">🔴 ▲ Bull (多頭)</span>：代表當日股價上漲且法人期貨淨多單。
-        <span style="color: var(--put-color); font-weight: 600; margin-left: 8px;">🟢 ▼ Bear (空頭)</span>：代表當日股價下跌且法人期貨淨空單。
-        <span style="margin-left: 8px; color: #888;">(色彩全面遵循台灣股市「紅漲綠跌」習慣；表單固定高度配置質感深灰捲軸與固定表頭)</span>
+      <!-- 💡 篩選與專業指標註解說明 Box -->
+      <div style="font-size: 0.82rem; color: var(--text-main); background: rgba(0, 210, 255, 0.04); padding: 16px 20px; border-radius: 12px; margin: 10px 0 16px 0; border: 1px solid rgba(0, 210, 255, 0.25); line-height: 1.7;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(0, 210, 255, 0.2); padding-bottom: 8px; margin-bottom: 12px;">
+          <h4 style="color: var(--gold-accent); margin: 0; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+            <span>💡 期貨篩選、正逆價差與除權息日程權威說明</span>
+          </h4>
+          <span style="font-size: 0.72rem; color: var(--text-muted); padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.05);">⚖️ 客觀量化學理說明 (非投資建議)</span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
+          <!-- Column 1: Top 10 Buy & Sell & Dividend Schedule -->
+          <div style="background: rgba(10, 14, 23, 0.5); padding: 12px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <div style="font-weight: 700; color: var(--primary-accent); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <span>🔥 ❄️ 📅 篩選類別與除權息指標判讀：</span>
+            </div>
+            <ul style="margin: 0; padding-left: 16px; color: var(--text-muted); font-size: 0.8rem; line-height: 1.65;">
+              <li><strong style="color: var(--gold-accent);">🔥 Top 10 買超 / 賣超</strong>：三大法人（外資+自營）期貨未平倉淨加碼與避險減碼前 10 大標的。</li>
+              <li><strong style="color: #ffaa00;">📅 除權息日程與現金股利</strong>：串接 TWSE 官方除權息日程。個股期貨在除息前夕會預扣現金股利（假性逆價差）。標註除息日程有助於第一時間區分「除息常態扣點」與「實質空頭逆價差」，避免誤判！</li>
+            </ul>
+          </div>
+
+          <!-- Column 2: Contango (正價差) vs Backwardation (逆價差) -->
+          <div style="background: rgba(10, 14, 23, 0.5); padding: 12px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <div style="font-weight: 700; color: var(--gold-accent); margin-bottom: 6px;">📈 📉 期現價差 (Basis) 學理機制與高級機構操作策略：</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.65;">
+              <code>期現價差 (Basis) = 期貨價格 - 現貨價格</code>
+              <ul style="margin: 6px 0 0 0; padding-left: 16px;">
+                <li><strong style="color: var(--call-color);">🔴 正價差 (Contango - 期貨 > 現貨)</strong>：
+                  <br>• <strong>市場意涵</strong>：期貨溢價押寶。
+                  <br>• <strong>高手/機構操作</strong>：當正價差大幅擴大（高於持有成本）時，機構程式進行「買現貨 + 賣期貨」期現套利 (Cash & Carry Arbitrage)，等待結算收斂獲利。
+                </li>
+                <li style="margin-top: 6px;"><strong style="color: var(--put-color);">🟢 逆價差 (Backwardation - 期貨 < 現貨)</strong>：
+                  <br>• <strong>市場意涵</strong>：期貨折價，源自法人避險或預扣除息點數。
+                  <br>• <strong>高手/機構操作</strong>：扣除預估除息點數後若仍為深幅實質逆價差，機構進行反向套利或佈局過度恐慌後的均值回歸。
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Scrollable Container with Sticky Table Header -->
