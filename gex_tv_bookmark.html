@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>GEX TradingView 報價同步書籤產生器</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      color: #00d2ff;
+      font-size: 1.4rem;
+      margin-top: 0;
+    }
+    p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .bookmark-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #00d2ff, #0072ff);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+      margin: 20px 0;
+      cursor: grab;
+      border: 2px dashed #ffffff;
+    }
+    .bookmark-btn:active {
+      cursor: grabbing;
+    }
+    .steps {
+      text-align: left;
+      background: #0f172a;
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.8;
+      border: 1px solid #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>🐦 尋鳥 GEX — TradingView 即時同步書籤</h1>
+    <p>用滑鼠左鍵按住下方藍色按鈕，直接「拖曳」到您的 Chrome / Edge 瀏覽器書籤列即可完成設定！</p>
+
+    <!-- Drag and drop bookmarklet link -->
+    <a class="bookmark-btn" href="javascript:(function(){let lastP=0;setInterval(()=>{let priceEl=document.querySelector('div[class*=&quot;js-symbol-last&quot;], span[class*=&quot;last-&quot;]');if(priceEl){let p=parseFloat(priceEl.innerText.replace(/,/g,''));if(p>1000&&p!==lastP){lastP=p;console.log('[GEX Sync]',p);window.localStorage.setItem('GEX_LIVE_TICK',JSON.stringify({price:p,time:Date.now(),provider:'TRADINGVIEW'}));}}},1500);alert('✅ TradingView 即時同步已啟動！');})();">
+      📌 ⚡ GEX TV報價同步 (拖我到書籤欄)
+    </a>
+
+    <div class="steps">
+      <strong>📖 使用說明：</strong><br>
+      1. 確定瀏覽器已開啟「書籤列」（快速鍵：<code>Ctrl + Shift + B</code>）。<br>
+      2. 按住上面的藍色按鈕，<strong>拉到瀏覽器最頂部的書籤列</strong>放開。<br>
+      3. 在公司筆電開啟 TradingView 網頁版，點一下該書籤即可開啟同步！
+    </div>
+  </div>
+
+</body>
+</html>
