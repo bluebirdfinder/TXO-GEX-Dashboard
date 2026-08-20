@@ -1909,6 +1909,19 @@ function initLiveTickPolling() {
       // Local server not running
     }
 
+    // 2.5 Try Cloudflare Worker Cloud Relay (24/7 Global HTTPS Relay)
+    try {
+      const cfUrl = window.CF_WORKER_URL || 'https://txo-gex-relay.bluebirdfinder.workers.dev/api/live_tick';
+      const cfRes = await fetch(cfUrl);
+      if (cfRes.ok) {
+        const cfData = await cfRes.json();
+        if (cfData && cfData.price > 0 && (Date.now() - (cfData.timestamp || cfData.time || 0) < 45000)) {
+          handleLiveTick(cfData);
+          return;
+        }
+      }
+    } catch(err){}
+
     // 3. Fallback to TAIFEX MIS Live API (Night Session MarketType '1', Day Session MarketType '0')
     try {
       const nowH = (new Date()).getHours();
