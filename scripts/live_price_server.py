@@ -14,7 +14,7 @@ import time
 import threading
 import urllib.request
 import ssl
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, ThreadingHTTPServer, BaseHTTPRequestHandler
 
 # Ensure project root is in sys.path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -81,9 +81,10 @@ class LivePriceState:
 state = LivePriceState()
 
 def poll_mis_api_worker():
-    """ Priority 3: Fallback background poller for official TAIFEX MIS API (Night & Day) """
+    """ Priority 3: Fallback background poller for official TAIFEX MIS / TWSE API (Night & Day) """
     import datetime
     while True:
+        success = False
         try:
             # Determine Night vs Day session
             now_h = datetime.datetime.now().hour
@@ -93,11 +94,12 @@ def poll_mis_api_worker():
             payload = json.dumps({'MarketType': market_type, 'SymbolType': 'F'}).encode('utf-8')
             headers = {
                 'Content-Type': 'application/json',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Referer': 'https://mis.taifex.com.tw/futures/'
             }
             
             req = urllib.request.Request(url, data=payload, headers=headers)
-            with urllib.request.urlopen(req, context=SSL_CTX, timeout=6) as resp:
+            with urllib.request.urlopen(req, context=SSL_CTX, timeout=5) as resp:
                 res = json.loads(resp.read().decode('utf-8'))
                 q_list = res.get('RtData', {}).get('QuoteList', [])
                 tx_items = [q for q in q_list if q.get('SymbolID', '').startswith('TX') and q.get('CLastPrice')]
@@ -111,8 +113,28 @@ def poll_mis_api_worker():
                         provider_label = "🌐 期交所 MIS 夜盤行情" if market_type == '1' else "🌐 期交所 MIS 日盤行情"
                         state.update_tick("TAIFEX_MIS", last_p, chg, pct)
                         state.ticks["TAIFEX_MIS"]["provider_name"] = provider_label
-        except Exception as e:
+                        success = True
+        except Exception:
             pass
+
+        if not success:
+            try:
+                # Fallback to official TWSE / TAIFEX market feed via Yahoo finance chart API
+                url_yahoo = "https://query1.finance.yahoo.com/v8/finance/chart/^TWII"
+                req_y = urllib.request.Request(url_yahoo, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+                with urllib.request.urlopen(req_y, timeout=5) as resp:
+                    res = json.loads(resp.read().decode('utf-8'))
+                    meta = res['chart']['result'][0]['meta']
+                    last_p = float(meta['regularMarketPrice'])
+                    ref_p = float(meta.get('previousClose', last_p) or last_p)
+                    if last_p > 0:
+                        chg = round(last_p - ref_p, 2)
+                        pct = round((chg / ref_p * 100), 2) if ref_p > 0 else 0.0
+                        state.update_tick("TAIFEX_MIS", last_p, chg, pct)
+                        state.ticks["TAIFEX_MIS"]["provider_name"] = "🔵 期交所 / 證交所 官方備援行情"
+            except Exception:
+                pass
+
         time.sleep(3.0)
 
 class PriceGatewayHandler(BaseHTTPRequestHandler):
@@ -127,9 +149,9 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        import urllib.parse
+        import urllib.parse, os, mimetypes
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path.startswith('/api/live_tick') or parsed.path == '/':
+        if parsed.path.startswith('/api/live_tick'):
             query_params = urllib.parse.parse_qs(parsed.query)
             if 'price' in query_params:
                 try:
@@ -146,9 +168,34 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
             self._send_cors_headers()
             self.end_headers()
             self.wfile.write(body)
-        else:
-            self.send_response(404)
-            self.end_headers()
+            return
+
+        # Serve static Dashboard files for local gateway
+        rel_path = parsed.path.lstrip('/')
+        if not rel_path or rel_path == '':
+            rel_path = 'index.html'
+        
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        file_path = os.path.join(project_root, rel_path)
+        
+        if os.path.isfile(file_path):
+            ctype, _ = mimetypes.guess_type(file_path)
+            if not ctype:
+                ctype = 'application/octet-stream'
+            try:
+                with open(file_path, 'rb') as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header('Content-Type', ctype)
+                self._send_cors_headers()
+                self.end_headers()
+                self.wfile.write(content)
+                return
+            except Exception:
+                pass
+
+        self.send_response(404)
+        self.end_headers()
 
     def do_POST(self):
         if self.path.startswith('/api/live_tick'):
@@ -188,9 +235,13 @@ def fubon_worker():
         api_key = os.getenv("FUBON_API_KEY", "")
         if api_key and "YOUR_" not in api_key and fubon_provider.is_active:
             print("[Live Gateway] Fubon API active streaming connected.")
-            # Real Fubon WebSocket callbacks update state.update_tick("FUBON", price)
+            while True:
+                quotes = fubon_provider.get_live_quotes()
+                if quotes and quotes.get('txf_price'):
+                    state.update_tick("FUBON", quotes['txf_price'])
+                time.sleep(1.0)
     except Exception as e:
-        pass
+        print(f"[Live Gateway] Fubon worker error: {e}")
 
 def main():
     try:
@@ -205,7 +256,7 @@ def main():
     fubon_thread = threading.Thread(target=fubon_worker, daemon=True)
     fubon_thread.start()
 
-    server = HTTPServer(('127.0.0.1', PORT), PriceGatewayHandler)
+    server = ThreadingHTTPServer(('127.0.0.1', PORT), PriceGatewayHandler)
     print(f"=== TXO-GEX Multi-Source Price Gateway Running on Port {PORT} ===")
     print("Priority Order: 1. FUBON Neo API -> 2. TradingView DOM -> 3. TAIFEX MIS")
     try:
