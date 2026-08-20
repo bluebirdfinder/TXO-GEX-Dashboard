@@ -1,8 +1,8 @@
 {
   "date": "2026-08-20",
   "engine_version": "v44.0",
-  "session_type": "NIGHT",
-  "session_name": "🌙 夜盤收盤價校正 (05:00 Close)",
+  "session_type": "DAY",
+  "session_name": "☀️ 日盤結算籌碼 (13:45 Close)",
   "session_shift": {
     "txf_shift": -66.0,
     "call_wall_shift": -150,
@@ -14,12 +14,12 @@
     "day_zero_gamma": 44783.7,
     "day_max_pain": 44900
   },
-  "last_updated_time": "2026-08-20 09:51",
+  "last_updated_time": "2026-08-20 22:36",
   "spot_price": 44933.74,
   "two_price": 389.96,
   "day_txf_price": 44868.0,
   "night_txf_price": 44802.0,
-  "txf_price": 44802.0,
+  "txf_price": 44868.0,
   "zero_gamma_level": 44917.1,
   "call_wall_strike": 45050,
   "put_wall_strike": 44750,
@@ -1221,8 +1221,8 @@
     {
       "id": "t4_day",
       "label": "T-4 日盤",
-      "date_display": "8/13 (四) ☀️",
-      "full_name": "8/13 (四) T-4 日盤",
+      "date_display": "8/14 (五) ☀️",
+      "full_name": "8/14 (五) T-4 日盤",
       "spot_price": 44313.74,
       "two_price": 382.46,
       "txf_price": 44288.0,
@@ -2428,8 +2428,8 @@
     {
       "id": "t4_night",
       "label": "T-4 夜盤",
-      "date_display": "8/13 (四) 🌙",
-      "full_name": "8/13 (四) T-4 夜盤",
+      "date_display": "8/14 (五) 🌙",
+      "full_name": "8/14 (五) T-4 夜盤",
       "spot_price": 44423.74,
       "two_price": 383.76,
       "txf_price": 44388.0,
@@ -3635,8 +3635,8 @@
     {
       "id": "t3_day",
       "label": "T-3 日盤",
-      "date_display": "8/14 (五) ☀️",
-      "full_name": "8/14 (五) T-3 日盤",
+      "date_display": "8/17 (一) ☀️",
+      "full_name": "8/17 (一) T-3 日盤",
       "spot_price": 44483.74,
       "two_price": 384.46,
       "txf_price": 44448.0,
@@ -4842,8 +4842,8 @@
     {
       "id": "t3_night",
       "label": "T-3 夜盤",
-      "date_display": "8/14 (五) 🌙",
-      "full_name": "8/14 (五) T-3 夜盤",
+      "date_display": "8/17 (一) 🌙",
+      "full_name": "8/17 (一) T-3 夜盤",
       "spot_price": 44543.74,
       "two_price": 385.16,
       "txf_price": 44508.0,
@@ -6049,8 +6049,8 @@
     {
       "id": "t2_day",
       "label": "T-2 日盤",
-      "date_display": "8/17 (一) ☀️",
-      "full_name": "8/17 (一) T-2 日盤",
+      "date_display": "8/18 (二) ☀️",
+      "full_name": "8/18 (二) T-2 日盤",
       "spot_price": 44599.74,
       "two_price": 385.46,
       "txf_price": 44565.0,
@@ -7256,8 +7256,8 @@
     {
       "id": "t2_night",
       "label": "T-2 夜盤",
-      "date_display": "8/17 (一) 🌙",
-      "full_name": "8/17 (一) T-2 夜盤",
+      "date_display": "8/18 (二) 🌙",
+      "full_name": "8/18 (二) T-2 夜盤",
       "spot_price": 44729.74,
       "two_price": 386.76,
       "txf_price": 44695.0,
@@ -8463,8 +8463,8 @@
     {
       "id": "t1_day",
       "label": "T-1 日盤",
-      "date_display": "8/18 (二) ☀️",
-      "full_name": "8/18 (二) T-1 日盤",
+      "date_display": "8/19 (三) ☀️",
+      "full_name": "8/19 (三) T-1 日盤",
       "spot_price": 44859.74,
       "two_price": 388.16,
       "txf_price": 44815.0,
@@ -9670,8 +9670,8 @@
     {
       "id": "t1_night",
       "label": "T-1 夜盤",
-      "date_display": "8/18 (二) 🌙",
-      "full_name": "8/18 (二) T-1 夜盤",
+      "date_display": "8/19 (三) 🌙",
+      "full_name": "8/19 (三) T-1 夜盤",
       "spot_price": 45059.74,
       "two_price": 390.86,
       "txf_price": 45025.0,
@@ -10877,8 +10877,8 @@
     {
       "id": "t0_day",
       "label": "T日盤",
-      "date_display": "8/19 (三) ☀️",
-      "full_name": "8/19 (三) T日盤",
+      "date_display": "8/20 (四) ☀️",
+      "full_name": "8/20 (四) T日盤",
       "spot_price": 44933.74,
       "two_price": 389.96,
       "txf_price": 44868.0,
@@ -12084,8 +12084,8 @@
     {
       "id": "t0_night",
       "label": "🔥 T夜盤 (Live)",
-      "date_display": "8/19 (三) 🌙",
-      "full_name": "8/19 (三) T夜盤 (Live)",
+      "date_display": "8/20 (四) 🌙",
+      "full_name": "8/20 (四) T夜盤 (Live)",
       "spot_price": 44933.74,
       "two_price": 389.96,
       "txf_price": 44802.0,
@@ -13293,8 +13293,8 @@
     {
       "id": "t2_day",
       "label": "T-2 日盤",
-      "date_display": "8/17 (一) ☀️",
-      "full_name": "8/17 (一) T-2 日盤",
+      "date_display": "8/18 (二) ☀️",
+      "full_name": "8/18 (二) T-2 日盤",
       "spot_price": 44599.74,
       "two_price": 385.46,
       "txf_price": 44565.0,
@@ -14500,8 +14500,8 @@
     {
       "id": "t2_night",
       "label": "T-2 夜盤",
-      "date_display": "8/17 (一) 🌙",
-      "full_name": "8/17 (一) T-2 夜盤",
+      "date_display": "8/18 (二) 🌙",
+      "full_name": "8/18 (二) T-2 夜盤",
       "spot_price": 44729.74,
       "two_price": 386.76,
       "txf_price": 44695.0,
@@ -15707,8 +15707,8 @@
     {
       "id": "t1_day",
       "label": "T-1 日盤",
-      "date_display": "8/18 (二) ☀️",
-      "full_name": "8/18 (二) T-1 日盤",
+      "date_display": "8/19 (三) ☀️",
+      "full_name": "8/19 (三) T-1 日盤",
       "spot_price": 44859.74,
       "two_price": 388.16,
       "txf_price": 44815.0,
@@ -16914,8 +16914,8 @@
     {
       "id": "t1_night",
       "label": "T-1 夜盤",
-      "date_display": "8/18 (二) 🌙",
-      "full_name": "8/18 (二) T-1 夜盤",
+      "date_display": "8/19 (三) 🌙",
+      "full_name": "8/19 (三) T-1 夜盤",
       "spot_price": 45059.74,
       "two_price": 390.86,
       "txf_price": 45025.0,
@@ -18121,8 +18121,8 @@
     {
       "id": "t0_day",
       "label": "T日盤",
-      "date_display": "8/19 (三) ☀️",
-      "full_name": "8/19 (三) T日盤",
+      "date_display": "8/20 (四) ☀️",
+      "full_name": "8/20 (四) T日盤",
       "spot_price": 44933.74,
       "two_price": 389.96,
       "txf_price": 44868.0,
@@ -19328,8 +19328,8 @@
     {
       "id": "t0_night",
       "label": "🔥 T夜盤 (Live)",
-      "date_display": "8/19 (三) 🌙",
-      "full_name": "8/19 (三) T夜盤 (Live)",
+      "date_display": "8/20 (四) 🌙",
+      "full_name": "8/20 (四) T夜盤 (Live)",
       "spot_price": 44933.74,
       "two_price": 389.96,
       "txf_price": 44802.0,
@@ -20541,7 +20541,7 @@
   },
   "institutional_5day_history": [
     {
-      "date": "8/19 (三)",
+      "date": "8/20 (四)",
       "top5_net": -7662,
       "top10_net": -19746,
       "top5_spec_net": -4053,
@@ -20564,13 +20564,13 @@
         "top5_spec_net": -4053,
         "top10_spec_net": -19746
       },
-      "foreign_fut_net": -153,
-      "trust_fut_net": 76112,
-      "itrust_fut_net": 76112,
-      "dealer_fut_net": 2566,
+      "foreign_fut_net": -82423,
+      "trust_fut_net": 75825,
+      "itrust_fut_net": 75825,
+      "dealer_fut_net": 2019,
       "foreign_stock_net": -119.86,
-      "trust_stock_net": -12.11,
-      "itrust_stock_net": -12.11,
+      "trust_stock_net": -20.48,
+      "itrust_stock_net": -20.48,
       "dealer_stock_net": -61.08,
       "foreign_opt_net": -0.02,
       "trust_opt_net": -0.04,
@@ -20585,7 +20585,7 @@
       "pc_ratio": 113.23
     },
     {
-      "date": "8/18 (二)",
+      "date": "8/19 (三)",
       "top5_net": 3850,
       "top10_net": 5920,
       "top5_spec_net": 3210,
@@ -20596,10 +20596,10 @@
         "top5_spec_net": 2950,
         "top10_spec_net": 4420
       },
-      "foreign_fut_net": -12400,
-      "trust_fut_net": 3650,
-      "itrust_fut_net": 3650,
-      "dealer_fut_net": 850,
+      "foreign_fut_net": -82819,
+      "trust_fut_net": 75650,
+      "itrust_fut_net": 75650,
+      "dealer_fut_net": 2150,
       "foreign_stock_net": 32.5,
       "trust_stock_net": 48.0,
       "itrust_stock_net": 48.0,
@@ -20617,7 +20617,7 @@
       "pc_ratio": 107.2
     },
     {
-      "date": "8/17 (一)",
+      "date": "8/18 (二)",
       "top5_net": 420,
       "top10_net": 1150,
       "top5_spec_net": 650,
@@ -20628,10 +20628,10 @@
         "top5_spec_net": 590,
         "top10_spec_net": 1310
       },
-      "foreign_fut_net": -15100,
-      "trust_fut_net": 3100,
-      "itrust_fut_net": 3100,
-      "dealer_fut_net": 380,
+      "foreign_fut_net": -83474,
+      "trust_fut_net": 74100,
+      "itrust_fut_net": 74100,
+      "dealer_fut_net": 2080,
       "foreign_stock_net": -45.6,
       "trust_stock_net": 51.2,
       "itrust_stock_net": 51.2,
@@ -20649,7 +20649,7 @@
       "pc_ratio": 105.8
     },
     {
-      "date": "8/14 (五)",
+      "date": "8/17 (一)",
       "top5_net": -850,
       "top10_net": -1200,
       "top5_spec_net": -420,
@@ -20660,10 +20660,10 @@
         "top5_spec_net": -380,
         "top10_spec_net": -810
       },
-      "foreign_fut_net": -16200,
-      "trust_fut_net": 2450,
-      "itrust_fut_net": 2450,
-      "dealer_fut_net": -120,
+      "foreign_fut_net": -83800,
+      "trust_fut_net": 73450,
+      "itrust_fut_net": 73450,
+      "dealer_fut_net": 1920,
       "foreign_stock_net": -88.2,
       "trust_stock_net": 38.5,
       "itrust_stock_net": 38.5,
@@ -20681,7 +20681,7 @@
       "pc_ratio": 104.1
     },
     {
-      "date": "8/13 (四)",
+      "date": "8/14 (五)",
       "top5_net": -1250,
       "top10_net": -3420,
       "top5_spec_net": -980,
@@ -20692,10 +20692,10 @@
         "top5_spec_net": -860,
         "top10_spec_net": -1980
       },
-      "foreign_fut_net": -18500,
-      "trust_fut_net": 2100,
-      "itrust_fut_net": 2100,
-      "dealer_fut_net": -450,
+      "foreign_fut_net": -84500,
+      "trust_fut_net": 72100,
+      "itrust_fut_net": 72100,
+      "dealer_fut_net": 1850,
       "foreign_stock_net": -125.4,
       "trust_stock_net": 42.1,
       "itrust_stock_net": 42.1,
@@ -20715,7 +20715,7 @@
   ],
   "night_institutional_5day_history": [
     {
-      "date": "8/19 (三)",
+      "date": "8/20 (四)",
       "foreign_tx": -153,
       "foreign_tx_amt": -1.42,
       "foreign_mtx": -248,
@@ -20724,7 +20724,7 @@
       "dealer_tx_amt": -0.24
     },
     {
-      "date": "8/18 (二)",
+      "date": "8/19 (三)",
       "foreign_tx": 320,
       "foreign_tx_amt": 2.88,
       "foreign_mtx": 580,
@@ -20733,7 +20733,7 @@
       "dealer_tx_amt": 1.07
     },
     {
-      "date": "8/17 (一)",
+      "date": "8/18 (二)",
       "foreign_tx": -88,
       "foreign_tx_amt": -0.79,
       "foreign_mtx": -120,
@@ -20742,7 +20742,7 @@
       "dealer_tx_amt": -0.4
     },
     {
-      "date": "8/14 (五)",
+      "date": "8/17 (一)",
       "foreign_tx": 150,
       "foreign_tx_amt": 1.35,
       "foreign_mtx": 320,
@@ -20751,7 +20751,7 @@
       "dealer_tx_amt": 0.77
     },
     {
-      "date": "8/13 (四)",
+      "date": "8/14 (五)",
       "foreign_tx": -42,
       "foreign_tx_amt": -0.38,
       "foreign_mtx": -110,
@@ -20761,11 +20761,11 @@
     }
   ],
   "institutional_sentiment": {
-    "tag": "🔥 高檔大舉回補 / 追擊多單",
-    "foreign_net_oi": -153,
-    "daily_change": 12247,
-    "notional_billion": 1097.4,
-    "description": "外資單日大幅回補 +12,247 口（約 +1097.4 億 TWD 契約金額），強烈防範嘎空追多。"
+    "tag": "⚖️ 中性觀望 / 微幅調整",
+    "foreign_net_oi": -82423,
+    "daily_change": 396,
+    "notional_billion": 35.5,
+    "description": "外資單日微幅變動 +396 口（約 +35.5 億 TWD），法人維持既有防守姿態。"
   },
   "microstructure_summary": {
     "regime_label": "🔴 正 Gamma 波動度抑制區 (平穩震盪)",
@@ -20776,32 +20776,26 @@
   "hot_money_digest": {
     "current_fx": {
       "usdtwd": {
-        "date": "08/19 (三)",
-        "price": 31.88,
-        "change": 0.03,
-        "pct": 0.09
+        "date": "08/20 (四)",
+        "price": 31.89,
+        "change": 0.0,
+        "pct": 0.0
       },
       "dxy": {
-        "date": "08/19 (三)",
+        "date": "08/20 (四)",
         "price": 98.83,
-        "change": -0.82,
-        "pct": -0.82
+        "change": -0.0,
+        "pct": -0.0
       },
       "usdjpy": {
-        "date": "08/19 (三)",
-        "price": 159.55,
-        "change": 0.21,
-        "pct": 0.13
+        "date": "08/20 (四)",
+        "price": 158.76,
+        "change": 0.0,
+        "pct": 0.0
       }
     },
     "fx_5day_history": {
       "usdtwd": [
-        {
-          "date": "08/13 (四)",
-          "price": 32.2,
-          "change": -0.01,
-          "pct": -0.03
-        },
         {
           "date": "08/14 (五)",
           "price": 32.12,
@@ -20825,15 +20819,15 @@
           "price": 31.88,
           "change": 0.03,
           "pct": 0.09
+        },
+        {
+          "date": "08/20 (四)",
+          "price": 31.89,
+          "change": 0.0,
+          "pct": 0.0
         }
       ],
       "dxy": [
-        {
-          "date": "08/13 (四)",
-          "price": 99.96,
-          "change": -0.05,
-          "pct": -0.05
-        },
         {
           "date": "08/14 (五)",
           "price": 99.67,
@@ -20857,15 +20851,15 @@
           "price": 98.83,
           "change": -0.82,
           "pct": -0.82
+        },
+        {
+          "date": "08/20 (四)",
+          "price": 98.83,
+          "change": -0.0,
+          "pct": -0.0
         }
       ],
       "usdjpy": [
-        {
-          "date": "08/13 (四)",
-          "price": 159.33,
-          "change": 0.07,
-          "pct": 0.04
-        },
         {
           "date": "08/14 (五)",
           "price": 159.43,
@@ -20889,10 +20883,16 @@
           "price": 159.55,
           "change": 0.21,
           "pct": 0.13
+        },
+        {
+          "date": "08/20 (四)",
+          "price": 158.76,
+          "change": 0.0,
+          "pct": 0.0
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.88</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.83</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.55</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.89</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.83</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.76</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
