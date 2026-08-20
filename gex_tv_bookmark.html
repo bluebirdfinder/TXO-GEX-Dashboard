@@ -67,19 +67,32 @@
 <body>
 
   <div class="card">
-    <h1>🐦 尋鳥 GEX — TradingView 即時同步書籤</h1>
-    <p>用滑鼠左鍵按住下方藍色按鈕，直接「拖曳」到您的 Chrome / Edge 瀏覽器書籤列即可完成設定！</p>
+    <h1>🐦 尋鳥 GEX — TradingView 即時同步</h1>
+    <p>若瀏覽器安全性限制導致書籤無法點擊，建議直接使用 <strong>【方式 1：一鍵複製貼上】</strong>，100% 成功啟動！</p>
+
+    <!-- One click copy text box -->
+    <div style="margin: 15px 0;">
+      <textarea id="code-box" style="width: 100%; height: 90px; background: #0f172a; color: #38bdf8; border: 1px solid #334155; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.8rem; resize: none;" readonly>
+javascript:(function(){if(window._gexTvSync)clearInterval(window._gexTvSync);let lastP=0;window._gexTvSync=setInterval(()=>{let el=document.querySelector('[data-name="legend-source-title"], [class*="last-"], [class*="price-"]');if(!el){const els=Array.from(document.querySelectorAll('div, span, button'));el=els.find(x=>x.children.length===0&&/^\d{5}(\.\d+)?$/.test(x.innerText.trim()));}if(el){let p=parseFloat(el.innerText.replace(/,/g,''));if(p>1000&&p!==lastP){lastP=p;(new Image()).src='http://127.0.0.1:8000/api/live_tick?provider=TRADINGVIEW&price='+p+'&_t='+Date.now();console.log('✅ [GEX TV Sync Active] Price:',p);}}},1000);console.log('✅ GEX Sync Loaded!');alert('✅ TradingView 即時同步已成功啟動！');})();
+      </textarea>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('code-box').value);alert('📋 腳本已複製！請切到 TradingView 按 F12 貼上即可！');" style="background: #38bdf8; color: #0f172a; font-weight: bold; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 8px;">
+        📋 點我一鍵複製同步腳本
+      </button>
+    </div>
 
     <!-- Drag and drop bookmarklet link -->
-    <a class="bookmark-btn" href="javascript:(function(){let lastP=0;setInterval(()=>{let priceEl=document.querySelector('[data-name=&quot;legend-source-title&quot;], div[class*=&quot;js-symbol-last&quot;], span[class*=&quot;last-&quot;], [class*=&quot;price-&quot;], [class*=&quot;quote-&quot;]');if(!priceEl){const allEls=Array.from(document.querySelectorAll('div, span, button'));priceEl=allEls.find(el=>el.children.length===0&&/^\d{5}(\.\d+)?$/.test(el.innerText.trim()));}if(priceEl){let p=parseFloat(priceEl.innerText.replace(/,/g,''));if(p>1000&&p!==lastP){lastP=p;console.log('[GEX TV Sync]',p);(new Image()).src='http://127.0.0.1:8000/api/live_tick?provider=TRADINGVIEW&price='+p+'&_t='+Date.now();try{localStorage.setItem('GEX_LIVE_TICK',JSON.stringify({ticker:'TXF1!',price:p,provider:'TRADINGVIEW',provider_name:'🟡 TradingView 實時網關',time:Date.now()}));}catch(e){}}},1000);alert('✅ TradingView 即時同步已成功啟動！');})();">
+    <a class="bookmark-btn" href="javascript:(function(){if(window._gexTvSync)clearInterval(window._gexTvSync);let lastP=0;window._gexTvSync=setInterval(()=>{let el=document.querySelector('[data-name=&quot;legend-source-title&quot;], [class*=&quot;last-&quot;], [class*=&quot;price-&quot;]');if(!el){const els=Array.from(document.querySelectorAll('div, span, button'));el=els.find(x=>x.children.length===0&amp;&amp;/^\d{5}(\.\d+)?$/.test(x.innerText.trim()));}if(el){let p=parseFloat(el.innerText.replace(/,/g,''));if(p>1000&amp;&amp;p!==lastP){lastP=p;(new Image()).src='http://127.0.0.1:8000/api/live_tick?provider=TRADINGVIEW&amp;price='+p+'&amp;_t='+Date.now();console.log('✅ [GEX TV Sync Active] Price:',p);}}},1000);alert('✅ TradingView 即時同步已成功啟動！');})();">
       📌 ⚡ GEX TV報價同步 (拖我到書籤欄)
     </a>
 
     <div class="steps">
-      <strong>📖 使用說明：</strong><br>
-      1. 確定瀏覽器已開啟「書籤列」（快速鍵：<code>Ctrl + Shift + B</code>）。<br>
-      2. 按住上面的藍色按鈕，<strong>拉到瀏覽器最頂部的書籤列</strong>放開。<br>
-      3. 在公司筆電開啟 TradingView 網頁版，點一下該書籤即可開啟同步！
+      <strong>📖 最快使用說明（二選一）：</strong><br>
+      <strong>【方式 1：貼到 F12 Console (推薦 100% 成功)】</strong><br>
+      1. 點擊上面的「📋 點我一鍵複製同步腳本」。<br>
+      2. 開啟 TradingView 圖表頁面，按下鍵盤 <code>F12</code>（開啟控制台）。<br>
+      3. 切到 <code>Console</code> 頁籤，按 <code>Ctrl + V</code> 貼上並按 Enter 即可！<br><br>
+      <strong>【方式 2：拖曳書籤】</strong><br>
+      按住上面的藍色按鈕，拉到瀏覽器最頂部的書籤列放開。
     </div>
   </div>
 
