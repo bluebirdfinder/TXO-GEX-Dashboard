@@ -1909,13 +1909,43 @@ function initLiveTickPolling() {
       // Local server not running
     }
 
-    // 3. Fallback to TWSE / TAIFEX Open API Snapshot (HTTPS compatible)
+    // 3. Fallback to TAIFEX MIS Live API (Night Session MarketType '1', Day Session MarketType '0')
+    try {
+      const nowH = (new Date()).getHours();
+      const isNightSession = (nowH >= 15 || nowH < 5);
+      const mType = isNightSession ? '1' : '0';
+      
+      const taifexRes = await fetch('https://mis.taifex.com.tw/futures/api/getQuoteList', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ MarketType: mType, SymbolType: 'F' })
+      });
+
+      if (taifexRes.ok) {
+        const misData = await taifexRes.json();
+        const quoteList = (misData.RtData && misData.RtData.QuoteList) ? misData.RtData.QuoteList : [];
+        const txItems = quoteList.filter(q => q.SymbolID && q.SymbolID.startsWith('TX') && q.CLastPrice && parseFloat(q.CLastPrice) > 0);
+        if (txItems.length > 0) {
+          const livePrice = parseFloat(txItems[0].CLastPrice);
+          if (!isNaN(livePrice) && livePrice > 0) {
+            handleLiveTick({
+              ticker: 'TXF',
+              price: livePrice,
+              provider: 'TAIFEX_MIS',
+              provider_name: isNightSession ? '🌐 期交所 MIS 夜盤行情' : '🌐 期交所 MIS 日盤行情'
+            });
+            return;
+          }
+        }
+      }
+    } catch(err) {}
+
+    // 4. Last Fallback: TWSE OpenAPI Snapshot
     try {
       const openApiRes = await fetch('https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX');
       if (openApiRes.ok) {
         const list = await openApiRes.json();
         if (list && list.length > 0) {
-          // Find 加權指數 item
           const tseObj = list.find(x => x['指數'] && x['指數'].includes('加權'));
           if (tseObj && tseObj['收盤指數']) {
             const spotVal = parseFloat(tseObj['收盤指數'].replace(/,/g, ''));
@@ -1924,7 +1954,7 @@ function initLiveTickPolling() {
                 ticker: 'IX0001',
                 price: spotVal,
                 provider: 'TAIFEX_MIS',
-                provider_name: '🌐 官方 MIS 行情'
+                provider_name: '🌐 證交所 MIS 日盤快照'
               });
               return;
             }
@@ -1932,19 +1962,6 @@ function initLiveTickPolling() {
         }
       }
     } catch(err) {}
-
-    // 4. Last Fallback: Use gexData settlement snapshot for official MIS status
-    if (window.gexData && window.gexData.market_data) {
-      const settleP = window.gexData.market_data.txf_night_price || window.gexData.market_data.spot_price;
-      if (settleP > 0) {
-        handleLiveTick({
-          ticker: 'TXF',
-          price: settleP,
-          provider: 'TAIFEX_MIS',
-          provider_name: '🌐 官方 MIS 行情'
-        });
-      }
-    }
 
   }, 2000);
 }

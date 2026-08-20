@@ -81,25 +81,37 @@ class LivePriceState:
 state = LivePriceState()
 
 def poll_mis_api_worker():
-    """ Priority 3: Fallback background poller for TWSE/TAIFEX MIS API """
+    """ Priority 3: Fallback background poller for official TAIFEX MIS API (Night & Day) """
+    import datetime
     while True:
         try:
-            # Poll TAIFEX / TWSE MIS indices
-            url = f"https://mis.twse.com.tw/stock/api/getFuturesInfo.jsp?ex=tse&ch=txf&_={int(time.time()*1000)}"
-            req = urllib.request.Request(url, headers=HEADERS)
-            with urllib.request.urlopen(req, context=SSL_CTX, timeout=5) as resp:
-                data = json.loads(resp.read().decode('utf-8'))
-                msg_list = data.get('msgArray', [])
-                if msg_list:
-                    item = msg_list[0]
-                    # 'z' is last price, 'y' is yesterday close
-                    last_price = float(item.get('z', item.get('pz', 0) or 0))
-                    ref_price = float(item.get('y', 0) or last_price)
-                    if last_price > 0:
-                        chg = round(last_price - ref_price, 2)
-                        pct = round((chg / ref_price * 100), 2) if ref_price > 0 else 0.0
-                        state.update_tick("TAIFEX_MIS", last_price, chg, pct)
-        except Exception:
+            # Determine Night vs Day session
+            now_h = datetime.datetime.now().hour
+            market_type = '1' if (now_h >= 15 or now_h < 5) else '0'
+            
+            url = "https://mis.taifex.com.tw/futures/api/getQuoteList"
+            payload = json.dumps({'MarketType': market_type, 'SymbolType': 'F'}).encode('utf-8')
+            headers = {
+                'Content-Type': 'application/json',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+            
+            req = urllib.request.Request(url, data=payload, headers=headers)
+            with urllib.request.urlopen(req, context=SSL_CTX, timeout=6) as resp:
+                res = json.loads(resp.read().decode('utf-8'))
+                q_list = res.get('RtData', {}).get('QuoteList', [])
+                tx_items = [q for q in q_list if q.get('SymbolID', '').startswith('TX') and q.get('CLastPrice')]
+                if tx_items:
+                    main_tx = tx_items[0]
+                    last_p = float(main_tx.get('CLastPrice', 0))
+                    ref_p = float(main_tx.get('CRefPrice', last_p) or last_p)
+                    if last_p > 0:
+                        chg = round(last_p - ref_p, 2)
+                        pct = round((chg / ref_p * 100), 2) if ref_p > 0 else 0.0
+                        provider_label = "🌐 期交所 MIS 夜盤行情" if market_type == '1' else "🌐 期交所 MIS 日盤行情"
+                        state.update_tick("TAIFEX_MIS", last_p, chg, pct)
+                        state.ticks["TAIFEX_MIS"]["provider_name"] = provider_label
+        except Exception as e:
             pass
         time.sleep(3.0)
 
