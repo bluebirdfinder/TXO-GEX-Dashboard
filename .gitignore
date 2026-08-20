@@ -13,6 +13,8 @@
 *.crt
 config.json
 secrets.json
+GEX_MONETIZATION_STRATEGY_GUIDE.md
+
 
 # ==========================================
 # Python Runtime & Dependencies
