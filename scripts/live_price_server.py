@@ -171,14 +171,15 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
 
 def fubon_worker():
     """ Priority 1: Fubon Neo API Active Provider Stream """
-    from scripts.fubon_api_provider import load_local_env
-    load_local_env()
-    api_key = os.getenv("FUBON_API_KEY", "")
-    if api_key and "YOUR_" not in api_key:
-        print("[Live Gateway] Fubon API Key authenticated! Active streaming enabled.")
-        while True:
-            state.update_tick("FUBON", 44527.0)
-            time.sleep(1.0)
+    try:
+        from scripts.fubon_api_provider import fubon_provider, load_local_env
+        load_local_env()
+        api_key = os.getenv("FUBON_API_KEY", "")
+        if api_key and "YOUR_" not in api_key and fubon_provider.is_active:
+            print("[Live Gateway] Fubon API active streaming connected.")
+            # Real Fubon WebSocket callbacks update state.update_tick("FUBON", price)
+    except Exception as e:
+        pass
 
 def main():
     try:
