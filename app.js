@@ -1883,14 +1883,14 @@ function initLiveTickPolling() {
   });
 
   setInterval(async () => {
-    // 1. Check local storage cache (from TV Bookmarklet or tab sync)
+    // 1. Priority: Check local storage cache (from TV Bookmarklet)
     try {
       const cachedStr = localStorage.getItem('GEX_LIVE_TICK');
       if (cachedStr) {
         const cached = JSON.parse(cachedStr);
-        if (cached && cached.price > 0 && (Date.now() - (cached.time || cached.timestamp || 0) < 10000)) {
+        if (cached && cached.price > 0 && (Date.now() - (cached.time || cached.timestamp || 0) < 15000)) {
           handleLiveTick(cached);
-          return;
+          if (cached.provider === 'TRADINGVIEW') return; // High priority override
         }
       }
     } catch(err){}
