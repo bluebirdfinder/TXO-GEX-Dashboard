@@ -127,7 +127,18 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        if self.path.startswith('/api/live_tick') or self.path == '/':
+        import urllib.parse
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path.startswith('/api/live_tick') or parsed.path == '/':
+            query_params = urllib.parse.parse_qs(parsed.query)
+            if 'price' in query_params:
+                try:
+                    p = float(query_params['price'][0])
+                    prov = query_params.get('provider', ['TRADINGVIEW'])[0].upper()
+                    if p > 0:
+                        state.update_tick(prov, p)
+                except ValueError:
+                    pass
             tick_data = state.get_best_tick()
             body = json.dumps(tick_data, ensure_ascii=False).encode('utf-8')
             self.send_response(200)
