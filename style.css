@@ -683,3 +683,92 @@ footer p {
   border-radius: 4px;
 }
 
+/* ============================================================
+   10-Session Carousel Buttons & High-Contrast Badges (v44.1)
+   ============================================================ */
+.session-btn {
+  background: rgba(18, 26, 44, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 0 3px;
+  color: #d1d5db;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 86px;
+}
+
+.session-btn:hover {
+  background: rgba(30, 42, 68, 0.9);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.session-btn.active {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.35);
+  background: rgba(0, 210, 255, 0.12);
+}
+
+/* 🟢 Settled Official Badge */
+.session-btn.btn-settled {
+  border-color: rgba(0, 210, 255, 0.3);
+}
+.session-btn.btn-settled .state-badge {
+  background: rgba(0, 210, 255, 0.18);
+  color: #00d2ff;
+  border: 1px solid rgba(0, 210, 255, 0.4);
+}
+
+/* 🟡 Post-Market Snapshot Badge */
+.session-btn.btn-snapshot {
+  border-color: rgba(255, 202, 40, 0.55);
+  background: rgba(255, 202, 40, 0.12);
+}
+.session-btn.btn-snapshot .state-badge {
+  background: rgba(255, 202, 40, 0.25);
+  color: #ffca28;
+  border: 1px solid rgba(255, 202, 40, 0.6);
+}
+
+/* 🔥 Live Intraday Badge with Red Pulsing Glow Animation */
+.session-btn.btn-live {
+  border: 1px solid #ff5252 !important;
+  background: rgba(255, 82, 82, 0.18) !important;
+  box-shadow: 0 0 14px rgba(255, 82, 82, 0.45) !important;
+  animation: livePulseGlow 1.8s infinite alternate !important;
+}
+.session-btn.btn-live .state-badge {
+  background: #ff5252 !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 8px rgba(255, 82, 82, 0.9) !important;
+  padding: 2px 6px !important;
+}
+
+@keyframes livePulseGlow {
+  0% {
+    box-shadow: 0 0 6px rgba(255, 82, 82, 0.3);
+    border-color: rgba(255, 82, 82, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 18px rgba(255, 82, 82, 0.85);
+    border-color: #ff5252;
+  }
+}
+
+.state-badge {
+  font-size: 0.62rem;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+

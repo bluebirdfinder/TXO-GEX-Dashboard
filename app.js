@@ -674,21 +674,26 @@ function renderHistorySessionSelector() {
     const activeClass = idx === currentSessionIndex ? 'active' : '';
     const shiftText = s.shift_vs_prev >= 0 ? `+${s.shift_vs_prev}` : `${s.shift_vs_prev}`;
     
-    // Session state badge styling
-    let labelStyle = 'font-weight: 700;';
-    let extraBadge = '';
+    // Explicit Badging Class & Pill Tag
+    let btnExtraClass = 'btn-settled';
+    let badgePill = '<span class="state-badge">🟣 定案</span>';
+    
     if (s.label.includes('Live')) {
-      labelStyle += ' color: #ff5252; text-shadow: 0 0 6px rgba(255, 82, 82, 0.4);';
+      btnExtraClass = 'btn-live';
+      badgePill = '<span class="state-badge">🔥 LIVE 即時</span>';
     } else if (s.label.includes('快照')) {
-      labelStyle += ' color: var(--gold-accent);';
+      btnExtraClass = 'btn-snapshot';
+      badgePill = '<span class="state-badge">🟡 盤後快照</span>';
     } else if (s.label.includes('定案')) {
-      labelStyle += ' color: var(--primary-accent);';
+      btnExtraClass = 'btn-settled';
+      badgePill = '<span class="state-badge">🟣 官方定案</span>';
     }
 
-    html += `<button class="session-btn ${activeClass}" onclick="switchSession(${idx})" style="position: relative;">
-      <div style="${labelStyle}">${s.label}</div>
-      <div style="font-size: 0.7rem; color: #aaa;">${s.date_display}</div>
-      <div style="font-size: 0.65rem; color: ${s.shift_vs_prev >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">(${shiftText})</div>
+    html += `<button class="session-btn ${btnExtraClass} ${activeClass}" onclick="switchSession(${idx})">
+      ${badgePill}
+      <div style="font-weight: 700; font-size: 0.82rem;">${s.label}</div>
+      <div style="font-size: 0.7rem; color: #b0bec5; margin-top: 1px;">${s.date_display}</div>
+      <div style="font-size: 0.65rem; color: ${s.shift_vs_prev >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">(${shiftText})</div>
     </button>`;
   });
   container.innerHTML = html;
