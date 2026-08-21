@@ -1,15 +1,54 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v44.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.0)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ 雙視角雙軌防碰撞標籤 ✦ 獨立單層面板架構 ✦ 10 盤演變播放器 ✦ 三級即時報價網關 ✦ 社群防盜標籤角落水印
+> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 台灣標準紅綠色彩 ✦ 10 盤演變播放器 ✦ 社群防盜標籤角落水印
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v44.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v45.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
-## 🌟 v44.0 核心功能亮點
+## 🎓 GEX / VEX 全指標國中生白話懶人包
+
+| 指標名稱 | 國中生白話比喻 | 它在看什麼？ | 實戰應用與操作指引 |
+| :--- | :--- | :--- | :--- |
+| **現價 (Spot)** | 👦 小明目前位置 | 大盤當前即時成交點位 | 作為一切防守距離的基準點 |
+| **Call Wall** | 🧱 玻璃天花板 | 做市商賣壓最大牆位 | 大盤上漲貼近時容易漲不動 (可做 Sell Call 價差或多單停利) |
+| **Put Wall** | 🛋️ 超大彈簧軟墊 | 做市商護盤最大支撐牆 | 大盤回檔跌至附近容易踩墊反彈 (可建立當沖多單或 Sell Put 價差) |
+| **Zero Gamma** | ⚖️ 園區安檢紅外線 | 波動度壓抑 vs 暴跌助跌臨界點 | 站上走慢速安定區；跌破進入做市商追殺避險區 |
+| **Max Pain** | 🎯 週三抽獎箱 | 散戶權利金賠最多、莊家賺最多的結算點 | 週二/週三結算前夕，指數常被主力壓回附近讓買方雙歸零 |
+| **VEX (NEW)** | 😱 恐慌狂暴開關 | 當恐慌指數 (IV) 飆高時，做市商會護盤還是火上加油 | **負值時**代表盤中一旦急殺，做市商會無腦賣期貨火上加油！ |
+| **GEX+ (NEW)** | 🛡️ 總安全指數 | 價格變動 (Gamma) + 恐慌情緒 (Vanna) 的合成總指數 | 正值代表全場做市商整體淨結構仍具備一定安定力道 |
+| **GEX+ Flip (NEW)** | 🚨 早鳥提早警報線 | 結合恐慌感後，做市商真正的防守底線 | 比傳統 Zero Gamma 更靈敏發出早鳥大跌預警 |
+
+---
+
+## 🚨 早鳥警報線 (GEX+ Flip) 高低雙情境實戰口訣
+
+### 🔴 情境一：當 VEX 為負值時 (恐慌氣氛重，最常見)
+- **關係**：GEX+ Flip 會比 Zero Gamma **高**！（範例：`44,848 > 44,778`）
+- **原因**：因為市場恐慌賣壓大，大盤往下掉時不需要等到跌破 `44,778`，在更高的 `44,848` 做市商就已經被恐慌嚇到提前拋售期貨。
+- **實戰效果**：早鳥線在上方，給您「提早 70 點逃命 / 試空」的預警！
+
+### 🟢 情境二：當 VEX 為正值時 (市場氣氛樂觀、買盤護盤厚實)
+- **關係**：GEX+ Flip 會比 Zero Gamma **低**！（範例：`44,710 < 44,778`）
+- **原因**：因為市場非常安定，做市商手裡緩衝很夠。就算大盤跌破 `44,778`，做市商也不會立刻慌張砍單，真正的防守底線可以退守到更低位置 (`44,710`)。
+- **實戰效果**：早鳥線在下方，告訴您「大盤抗跌性極強，不要輕易被假跌破騙掉多單」！
+
+💡 **一秒口訣記憶法**：
+- 🔴 **VEX 為負 (恐慌強)** ➔ 早鳥線在 **上方**（提早發警報，提醒快跑/試空）。
+- 🟢 **VEX 為正 (護盤厚)** ➔ 早鳥線在 **下方**（延後防守線，代表大盤很沉穩抗跌）。
+
+---
+
+## 🌟 v45.0 核心功能亮點
+
+### 1. 🇹🇼 台灣標準金融色彩 (紅漲看多 / 綠跌看空)
+- 全站與 Modal 彈窗貫徹台灣交易員認知：🔴 紅色代表買盤/看多/護盤，🟢 綠色代表賣盤/看空/恐慌追殺。
+
+### 2. ☀️ 日盤 Live 動態路由與日期校正
+- 自動偵測 08:45~13:45 日盤時間並高亮導向 `☀️ 日盤 (Live)`，並嚴格修正未開盤之夜盤顯示。
 
 ### 1. ↔️ 預設 T型報價視角 & 雙軌標籤防碰撞
 - **T型報價視角（預設 DEFAULT）**：
