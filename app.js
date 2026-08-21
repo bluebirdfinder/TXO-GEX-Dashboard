@@ -388,6 +388,16 @@ function getFallbackData() {
 function renderDashboard() {
   if (!gexData) return;
 
+  const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
+  if (sessions && (currentSessionIndex === null || currentSessionIndex === undefined || currentSessionIndex === 9)) {
+    const liveIdx = sessions.findIndex(s => s.label && s.label.includes('Live'));
+    if (liveIdx !== -1) {
+      currentSessionIndex = liveIdx;
+    } else {
+      currentSessionIndex = sessions.length - 1;
+    }
+  }
+
   const spot = gexData.spot_price || 45811.01;
   const txf = gexData.night_txf_price || gexData.txf_price || 45727.0;
   const dayTxf = gexData.day_txf_price || 45841.0;
@@ -508,12 +518,12 @@ function renderDashboard() {
   if (elVex) {
     const vexSign = totalVex >= 0 ? '+' : '';
     elVex.innerText = `${vexSign}${totalVex.toFixed(1)} 億`;
-    elVex.style.color = totalVex >= 0 ? '#00e676' : '#ff5252';
+    elVex.style.color = totalVex >= 0 ? 'var(--call-color)' : 'var(--put-color)';
   }
   const elVexBadge = document.getElementById('stat-vex-badge');
   if (elVexBadge) {
-    elVexBadge.innerText = totalVex < 0 ? '🔴 恐慌時火上加油' : '🟢 恐慌情緒緩衝';
-    elVexBadge.style.color = totalVex < 0 ? '#ff5252' : '#00e676';
+    elVexBadge.innerText = totalVex < 0 ? '🟢 恐慌時做市商助跌' : '🔴 恐慌時做市商護盤';
+    elVexBadge.style.color = totalVex < 0 ? 'var(--put-color)' : 'var(--call-color)';
   }
 
   // Session Shift Banner

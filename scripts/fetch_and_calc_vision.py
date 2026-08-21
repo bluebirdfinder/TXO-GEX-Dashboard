@@ -1102,7 +1102,7 @@ def generate_gex_payload():
     def get_recent_5_trading_days(base_dt):
         weekdays = ["(一)", "(二)", "(三)", "(四)", "(五)", "(六)", "(日)"]
         days = []
-        curr = get_last_trading_dt(base_dt)  # 從最後結算日往回推
+        curr = base_dt
         while len(days) < 5:
             if curr.weekday() < 5:
                 days.append(f"{curr.month}/{curr.day} {weekdays[curr.weekday()]}")
@@ -1378,9 +1378,9 @@ def generate_gex_payload():
         },
         {
             "id": "t0_day", 
-            "label": "☀️ T日盤 (收盤快照)" if (13 <= now_hour < 16) else ("☀️ T日盤 (定案)" if is_night_session else "T日盤"), 
+            "label": "🔥 T日盤 (Live)" if (8 <= now_hour < 14) else ("☀️ T日盤 (收盤快照)" if (14 <= now_hour < 15) else "☀️ T日盤 (定案)"), 
             "date_display": f"{t_days[4]} ☀️", 
-            "full_name": f"{t_days[4]} T日盤" + (" (收盤快照/待16:00清算)" if (13 <= now_hour < 16) else ""),
+            "full_name": f"{t_days[4]} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (收盤快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)")),
             "spot_price": spot_price, "two_price": otc_price, "txf_price": day_txf_price,
             "zero_gamma_level": day_zero_gamma, "call_wall_strike": day_call_wall,
             "put_wall_strike": day_put_wall, "max_pain_strike": day_max_pain, "shift_vs_prev": -110,
@@ -1388,9 +1388,9 @@ def generate_gex_payload():
         },
         {
             "id": "t0_night", 
-            "label": "🌙 T夜盤 (05:00 定案)" if is_night_session else "🔥 T夜盤 (Live)", 
+            "label": "🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 8) else "🌙 T夜盤 (05:00 定案)", 
             "date_display": f"{t_days[4]} 🌙", 
-            "full_name": f"{t_days[4]} T夜盤" + (" (05:00 定案版)" if is_night_session else " (Live 即時動態)"),
+            "full_name": f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 8) else " (05:00 定案版)"),
             "spot_price": spot_price, "two_price": otc_price, "txf_price": night_txf_price,
             "zero_gamma_level": gex_profile['zero_gamma_level'], "call_wall_strike": gex_profile['call_wall_strike'],
             "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": txf_shift,

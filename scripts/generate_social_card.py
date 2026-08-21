@@ -77,11 +77,12 @@ def generate_bluebird_social_card(gex_data_path=None, output_path=None):
 
     # Grid 1: GEX Profile (Top Left)
     ax1 = fig.add_subplot(2, 2, 1, facecolor='#111827')
-    colors1 = ['#00e676' if v >= 0 else '#ff5252' for v in sub_gex]
+    # Taiwan Standard Color Palette: Red (#ff4d4f) for positive, Green (#26a69a) for negative
+    colors1 = ['#ff4d4f' if v >= 0 else '#26a69a' for v in sub_gex]
     ax1.bar(sub_strikes, sub_gex, width=35, color=colors1, alpha=0.85, edgecolor='none')
     ax1.axvline(spot_p, color='#00d2ff', linestyle='--', linewidth=1.8, label=f'現貨 {spot_p:,.0f}')
     ax1.axvline(zero_gamma, color='#ffd700', linestyle=':', linewidth=1.8, label=f'Zero Gamma {zero_gamma:,.0f}')
-    ax1.set_title("台指 GEX 各履約價 (正=壓抑波動 / 負=助跌助漲)", fontsize=11, color='#e2e8f0', pad=10)
+    ax1.set_title("台指 GEX 各履約價 (🔴正=護盤平穩 / 🟢負=助跌爆發)", fontsize=11, color='#e2e8f0', pad=10)
     ax1.set_xlabel("履約價", fontsize=9, color='#94a3b8')
     ax1.set_ylabel("GEX (億NT$/1%)", fontsize=9, color='#94a3b8')
     ax1.tick_params(colors='#94a3b8', labelsize=8)
@@ -90,10 +91,11 @@ def generate_bluebird_social_card(gex_data_path=None, output_path=None):
 
     # Grid 2: VEX Profile (Top Right)
     ax2 = fig.add_subplot(2, 2, 2, facecolor='#111827')
-    colors2 = ['#38bdf8' if v >= 0 else '#f43f5e' for v in sub_vex]
+    # Taiwan Standard Color Palette: Red (#ff4d4f) for positive VEX, Green (#26a69a) for negative VEX
+    colors2 = ['#ff4d4f' if v >= 0 else '#26a69a' for v in sub_vex]
     ax2.bar(sub_strikes, sub_vex, width=35, color=colors2, alpha=0.85, edgecolor='none')
     ax2.axvline(spot_p, color='#00d2ff', linestyle='--', linewidth=1.8, label=f'現貨 {spot_p:,.0f}')
-    ax2.set_title("台指 VEX 恐慌曝險 (負值=大跌時恐慌火上加油)", fontsize=11, color='#e2e8f0', pad=10)
+    ax2.set_title("台指 VEX 恐慌曝險 (🟢負值=恐慌助跌 / 🔴正值=護盤支撐)", fontsize=11, color='#e2e8f0', pad=10)
     ax2.set_xlabel("履約價", fontsize=9, color='#94a3b8')
     ax2.set_ylabel("VEX (億NT$/vol點)", fontsize=9, color='#94a3b8')
     ax2.tick_params(colors='#94a3b8', labelsize=8)
@@ -126,7 +128,7 @@ def generate_bluebird_social_card(gex_data_path=None, output_path=None):
                                 fc='#1e293b', ec='#3b82f6', lw=1.5, alpha=0.9)
     ax4.add_patch(rect)
 
-    vex_status = "負➔恐慌時火上加油 (注意急殺踩踏)" if total_vex < 0 else "正➔恐慌情緒緩衝 (抗跌穩定)"
+    vex_status = "🟢 負➔恐慌時做市商助跌 (注意急殺)" if total_vex < 0 else "🔴 正➔恐慌時做市商護盤 (買盤支撐)"
     diff_flip = round(gex_plus_flip - zero_gamma, 1)
     early_bird_str = f"提前 {abs(diff_flip)} 點預警" if diff_flip > 0 else f"延後 {abs(diff_flip)} 點防守"
 
