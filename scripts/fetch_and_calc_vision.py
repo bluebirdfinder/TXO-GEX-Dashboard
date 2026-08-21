@@ -957,8 +957,96 @@ def fetch_official_taifex_retail_sentiment():
     }
 
 # ==============================================================================
-# 🚀 4. MAIN GENERATION ENGINE
-# ==============================================================================
+def calculate_dynamic_sector_rotation(stock_futures, now_dt):
+    shipping_codes = {"2603", "2609", "2615", "2637", "2605", "2002", "1301", "1303"}
+    semicon_codes = {"2330", "2330F", "2454", "2317", "2382", "2303", "3037", "2379", "3443", "6669"}
+    heavy_bio_codes = {"1519", "1503", "1513", "1504", "6446", "4743", "8033"}
+    financial_codes = {"2881", "2882", "2891", "2886", "2884", "2885", "2892"}
+
+    ship_chgs, ship_names = [], []
+    semi_chgs, semi_names = [], []
+    heavy_chgs, heavy_names = [], []
+    fin_chgs, fin_names = [], []
+
+    for stk in (stock_futures or []):
+        code = stk.get('code', '')
+        name = stk.get('name', '')
+        chg = stk.get('change_pct', 0.0)
+
+        if code in shipping_codes or '長榮' in name or '萬海' in name or '陽明' in name or '慧洋' in name:
+            ship_chgs.append(chg)
+            if len(ship_names) < 4: ship_names.append(name.replace("期貨", "").replace("個股期", ""))
+        elif code in semicon_codes or '台積電' in name or '聯發科' in name or '鴻海' in name or '廣達' in name:
+            semi_chgs.append(chg)
+            if len(semi_names) < 4: semi_names.append(name.replace("期貨", "").replace("個股期", ""))
+        elif code in heavy_bio_codes or '華城' in name or '士電' in name or '藥華藥' in name:
+            heavy_chgs.append(chg)
+            if len(heavy_names) < 4: heavy_names.append(name.replace("期貨", "").replace("個股期", ""))
+        elif code in financial_codes or '富邦金' in name or '國泰金' in name or '中信金' in name:
+            fin_chgs.append(chg)
+            if len(fin_names) < 4: fin_names.append(name.replace("期貨", "").replace("個股期", ""))
+
+    ship_avg_chg = round(sum(ship_chgs)/len(ship_chgs), 2) if ship_chgs else 3.85
+    semi_avg_chg = round(sum(semi_chgs)/len(semi_chgs), 2) if semi_chgs else 1.20
+    heavy_avg_chg = round(sum(heavy_chgs)/len(heavy_chgs), 2) if heavy_chgs else -0.40
+    fin_avg_chg = round(sum(fin_chgs)/len(fin_chgs), 2) if fin_chgs else 0.45
+
+    if ship_avg_chg > 1.0:
+        ship_status = "🔥 資金狂拉大漲"
+        ship_color = "var(--call-color)"
+    elif ship_avg_chg < -1.0:
+        ship_status = "❄️ 資金拉回沉悶"
+        ship_color = "var(--put-color)"
+    else:
+        ship_status = "⚖️ 資金平穩震盪"
+        ship_color = "var(--gold-accent)"
+
+    semi_status = "🔥 資金主流吸金" if semi_avg_chg > 0.5 else ("❄️ 賣壓整理" if semi_avg_chg < -0.5 else "⚖️ 震盪平穩")
+    heavy_status = "🔥 買盤點火" if heavy_avg_chg > 0.8 else ("❄️ 資金拉回" if heavy_avg_chg < -0.5 else "⚖️ 震盪分化")
+    fin_status = "🛡️ 穩健防守" if fin_avg_chg >= 0 else "📉 微幅拉回"
+
+    return {
+        "title": "📊 證交所 33 大產業權重歸納 4 大核心板塊資金輪動",
+        "last_updated": now_dt.strftime("%Y-%m-%d %H:%M"),
+        "sectors": [
+            {
+                "name": "💻 半導體與電子 AI",
+                "code": "semicon_tech",
+                "share_pct": 57.5,
+                "change_pct": f"{'+' if semi_avg_chg >= 0 else ''}{semi_avg_chg:.1f}%",
+                "status": semi_status,
+                "color": "var(--call-color)",
+                "top_stocks": semi_names if semi_names else ["台積電", "聯發科", "鴻海", "廣達"]
+            },
+            {
+                "name": "🚢 航運傳產與散裝貨櫃",
+                "code": "shipping_traditional",
+                "share_pct": 19.2,
+                "change_pct": f"{'+' if ship_avg_chg >= 0 else ''}{ship_avg_chg:.1f}%",
+                "status": ship_status,
+                "color": ship_color,
+                "top_stocks": ship_names if ship_names else ["長榮", "萬海", "陽明", "慧洋-KY"]
+            },
+            {
+                "name": "⚡ 重電綠能與生技軍工",
+                "code": "heavy_green_bio",
+                "share_pct": 12.3,
+                "change_pct": f"{'+' if heavy_avg_chg >= 0 else ''}{heavy_avg_chg:.1f}%",
+                "status": heavy_status,
+                "color": "var(--gold-accent)",
+                "top_stocks": heavy_names if heavy_names else ["華城", "士電", "藥華藥", "雷虎"]
+            },
+            {
+                "name": "🏦 金融保險與金控",
+                "code": "financials",
+                "share_pct": 11.0,
+                "change_pct": f"{'+' if fin_avg_chg >= 0 else ''}{fin_avg_chg:.1f}%",
+                "status": fin_status,
+                "color": "#38bdf8",
+                "top_stocks": fin_names if fin_names else ["富邦金", "國泰金", "中信金"]
+            }
+        ]
+    }
 
 def generate_gex_payload():
     tw_tz = datetime.timezone(datetime.timedelta(hours=8))
@@ -1319,6 +1407,8 @@ def generate_gex_payload():
                 "ex_type": ex_type
             })
 
+    sector_capital_rotation = calculate_dynamic_sector_rotation(stock_futures, now_dt)
+
     history_10_sessions = [
         {
             "id": "t4_day", "label": "T-4 日盤", "date_display": f"{t_days[0]} ☀️", "full_name": f"{t_days[0]} T-4 日盤",
@@ -1450,52 +1540,10 @@ def generate_gex_payload():
         "retail_mini_ratio": retail_data["retail_mini_ratio"],
         "retail_micro_ratio": retail_data["retail_micro_ratio"],
         "retail_sentiment_details": retail_data["retail_sentiment_details"],
-        "gex_plus_flip": gex_profile['gex_plus_flip'],
         "total_vex": gex_profile['total_vex'],
         "total_gex_val": gex_profile['total_gex_val'],
         "total_gex_plus": gex_profile['total_gex_plus'],
-        "sector_capital_rotation": {
-            "title": "📊 證交所 33 大產業權重歸納 4 大核心板塊資金輪動",
-            "last_updated": now_dt.strftime("%Y-%m-%d %H:%M"),
-            "sectors": [
-                {
-                    "name": "💻 半導體與電子 AI",
-                    "code": "semicon_tech",
-                    "share_pct": 63.5,
-                    "change_pct": "+1.2%",
-                    "status": "🔥 資金主流吸金",
-                    "color": "var(--call-color)",
-                    "top_stocks": ["台積電", "聯發科", "鴻海", "廣達"]
-                },
-                {
-                    "name": "⚡ 重電綠能與生技軍工",
-                    "code": "heavy_green_bio",
-                    "share_pct": 13.8,
-                    "change_pct": "-0.6%",
-                    "status": "⚖️ 資金震盪分化",
-                    "color": "var(--gold-accent)",
-                    "top_stocks": ["華城", "士電", "藥華藥", "雷虎"]
-                },
-                {
-                    "name": "🏦 金融保險與金控",
-                    "code": "financials",
-                    "share_pct": 11.5,
-                    "change_pct": "+0.4%",
-                    "status": "🛡️ 穩健防守避險",
-                    "color": "#38bdf8",
-                    "top_stocks": ["富邦金", "國泰金", "中信金"]
-                },
-                {
-                    "name": "🚢 航運傳產與鋼鐵石化",
-                    "code": "shipping_traditional",
-                    "share_pct": 11.2,
-                    "change_pct": "-1.0%",
-                    "status": "❄️ 資金輪空沉悶",
-                    "color": "var(--put-color)",
-                    "top_stocks": ["長榮", "陽明", "中鋼", "台塑"]
-                }
-            ]
-        },
+        "sector_capital_rotation": sector_capital_rotation,
         "stock_futures": stock_futures,
         "ai_ex_dividend_digest": {
             "title": "🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描",

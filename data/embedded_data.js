@@ -14,7 +14,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_zero_gamma": 45010.7,
     "day_max_pain": 45200
   },
-  "last_updated_time": "2026-08-21 13:26",
+  "last_updated_time": "2026-08-21 13:32",
   "spot_price": 45160.72,
   "two_price": 386.86,
   "day_txf_price": 44868.0,
@@ -20760,13 +20760,13 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "08/21 (五)",
-        "price": 98.75,
-        "change": -0.15,
-        "pct": -0.15
+        "price": 98.76,
+        "change": -0.14,
+        "pct": -0.14
       },
       "usdjpy": {
         "date": "08/21 (五)",
-        "price": 159.01,
+        "price": 159.0,
         "change": 0.0,
         "pct": 0.0
       }
@@ -20831,9 +20831,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "08/21 (五)",
-          "price": 98.75,
-          "change": -0.15,
-          "pct": -0.15
+          "price": 98.76,
+          "change": -0.14,
+          "pct": -0.14
         }
       ],
       "usdjpy": [
@@ -20863,13 +20863,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "08/21 (五)",
-          "price": 159.01,
+          "price": 159.0,
           "change": 0.0,
           "pct": 0.0
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.85</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.75</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.01</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.85</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.76</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.0</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
@@ -20923,67 +20923,67 @@ window.GEX_EMBEDDED_DATA = {
     },
     "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">💡 <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+10.60%</span>（市場近月標準算式，淨部位 +9,496 口／全月基準 +4.20%），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+27.83%</span>（淨部位 +24,932 口／全月基準 +6.31%）。散戶部位維持強烈偏多姿態。</p>\n    <p style=\"margin-bottom: 0;\">⚖️ <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">30.02</span> (-0.81)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
   },
-  "gex_plus_flip": 45217.5,
   "total_vex": 2224.22,
   "total_gex_val": -8391.74,
   "total_gex_plus": -6167.53,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業權重歸納 4 大核心板塊資金輪動",
-    "last_updated": "2026-08-21 13:26",
+    "last_updated": "2026-08-21 13:32",
     "sectors": [
       {
         "name": "💻 半導體與電子 AI",
         "code": "semicon_tech",
-        "share_pct": 63.5,
-        "change_pct": "+1.2%",
-        "status": "🔥 資金主流吸金",
+        "share_pct": 57.5,
+        "change_pct": "-0.1%",
+        "status": "⚖️ 震盪平穩",
         "color": "var(--call-color)",
         "top_stocks": [
-          "台積電",
-          "聯發科",
-          "鴻海",
-          "廣達"
+          "聯電期",
+          "台積電期",
+          "鴻海期",
+          "廣達期"
+        ]
+      },
+      {
+        "name": "🚢 航運傳產與散裝貨櫃",
+        "code": "shipping_traditional",
+        "share_pct": 19.2,
+        "change_pct": "+1.6%",
+        "status": "🔥 資金狂拉大漲",
+        "color": "var(--call-color)",
+        "top_stocks": [
+          "南亞期",
+          "中鋼期",
+          "台塑期",
+          "長榮期"
         ]
       },
       {
         "name": "⚡ 重電綠能與生技軍工",
         "code": "heavy_green_bio",
-        "share_pct": 13.8,
-        "change_pct": "-0.6%",
-        "status": "⚖️ 資金震盪分化",
+        "share_pct": 12.3,
+        "change_pct": "+1.3%",
+        "status": "🔥 買盤點火",
         "color": "var(--gold-accent)",
         "top_stocks": [
-          "華城",
-          "士電",
-          "藥華藥",
-          "雷虎"
+          "東元期",
+          "合一期",
+          "中興電期",
+          "士電期"
         ]
       },
       {
         "name": "🏦 金融保險與金控",
         "code": "financials",
-        "share_pct": 11.5,
-        "change_pct": "+0.4%",
-        "status": "🛡️ 穩健防守避險",
+        "share_pct": 11.0,
+        "change_pct": "-0.8%",
+        "status": "📉 微幅拉回",
         "color": "#38bdf8",
         "top_stocks": [
-          "富邦金",
-          "國泰金",
-          "中信金"
-        ]
-      },
-      {
-        "name": "🚢 航運傳產與鋼鐵石化",
-        "code": "shipping_traditional",
-        "share_pct": 11.2,
-        "change_pct": "-1.0%",
-        "status": "❄️ 資金輪空沉悶",
-        "color": "var(--put-color)",
-        "top_stocks": [
-          "長榮",
-          "陽明",
-          "中鋼",
-          "台塑"
+          "富邦金期",
+          "國泰金期",
+          "兆豐金期",
+          "中信金期"
         ]
       }
     ]
