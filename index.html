@@ -280,9 +280,9 @@
         <div class="logo-area">
           <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>尋鳥 Bluebird Finder</span>
-            <span style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v44.1</span>
+            <span style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v45.0</span>
           </h1>
-          <div class="tagline">台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化平台</div>
+          <div class="tagline">台指選擇權 Gamma / Vanna Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
       </div>
 
@@ -301,6 +301,7 @@
           <span id="live-feed-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #a855f7; box-shadow: 0 0 6px #a855f7; display: inline-block;"></span>
           <span id="live-feed-text">⚪ 官方盤後定案 (靜態分析)</span>
         </div>
+        <button id="download-social-card-btn" class="btn" style="border-color: #00d2ff; color: #00d2ff; background: rgba(0, 210, 255, 0.1);">📸 下載 IG/Threads 社群圖卡</button>
         <button id="education-btn" class="btn">❓ 判讀教學</button>
         <button id="lock-btn" class="btn" style="border-color: var(--panel-border);">🔒 鎖定</button>
       </div>
@@ -437,6 +438,26 @@
           </div>
           <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
             P/C Ratio: <strong id="stat-pc-ratio" style="color: var(--call-color);">108.5% (🔴 偏多看撐)</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 8: VEX 恐慌曝險 & GEX+ Flip (早鳥警報線) Dual Session Card -->
+      <div class="stat-card" style="border-left: 4px solid #ff5252;">
+        <div class="stat-label">VEX 恐慌曝險 & GEX+ FLIP</div>
+        <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
+          <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
+            <span>🚨 早鳥轉折 (GEX+ Flip)</span>
+            <strong id="stat-gex-plus-flip" style="font-size: 0.95rem; color: #ffd700;">44,848.0</strong>
+          </div>
+        </div>
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.72rem; color: #ff5252; display: flex; justify-content: space-between;">
+            <span>😱 總 VEX 恐慌曝險</span>
+            <strong id="stat-total-vex" style="font-size: 0.95rem; color: #ff5252;">-8.7 億</strong>
+          </div>
+          <div id="stat-vex-status" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+            恐慌開關: <strong id="stat-vex-badge" style="color: #ff5252;">🔴 恐慌時火上加油</strong>
           </div>
         </div>
       </div>
@@ -822,7 +843,7 @@
     <footer>
       <p style="font-weight: 700; color: var(--primary-accent); margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
         <img src="assets/avatar.png" alt="Bluebird Finder Avatar" style="width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--primary-accent); vertical-align: middle;">
-        <span>尋鳥 Bluebird Finder • TXO GEX 量化分析系統 v44.1</span>
+        <span>尋鳥 Bluebird Finder • TXO GEX 量化分析系統 v45.0</span>
       </p>
       <p style="opacity: 0.85; margin-bottom: 6px; font-size: 0.8rem;">
         © 2026 尋鳥 Bluebird Finder Quant Labs. 版權所有，未經授權請勿商業重製與無償轉載。
@@ -831,6 +852,121 @@
         ⚖️ <strong>免責與法律聲明</strong>：本網站（包含數據圖表、GEX 計算結果與分析說明）僅供學術研究與衍生性商品數據可視化參考，非屬證券期貨投資顧問行為，亦不構成任何買賣投資建議。衍生性商品交易具高度風險，投資人應獨立思考、審慎評估，並自負投資風險與盈虧責任。
       </p>
     </footer>
+  </div>
+
+  <!-- ❓ 判讀教學與指標全系列說明 Modal -->
+  <div id="education-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+    <div style="background: #0f172a; border: 1px solid var(--primary-accent); border-radius: 16px; width: 100%; max-width: 920px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 20px 50px rgba(0, 210, 255, 0.25); color: #f8fafc; font-family: sans-serif;">
+      
+      <!-- Modal Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px; margin-bottom: 18px;">
+        <h2 style="margin: 0; color: var(--gold-accent); font-size: 1.25rem; display: flex; align-items: center; gap: 8px;">
+          <span>🎓 尋鳥台指期權 GEX / VEX / Max Pain 完全量化教學指南</span>
+        </h2>
+        <button id="close-edu-modal" style="background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; padding: 0 8px;">✕</button>
+      </div>
+
+      <!-- Analogy Story Section -->
+      <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 20px; line-height: 1.7; font-size: 0.88rem;">
+        <h3 style="color: var(--primary-accent); margin-top: 0; font-size: 1.05rem;">🏰 故事白話比喻：【遊樂園防守大作戰】</h3>
+        <p style="margin-bottom: 6px;">• <strong>主角小明 (現價 Spot)</strong>：在遊樂園跑來跑去的遊客（如站在 45,000 點）。</p>
+        <p style="margin-bottom: 0;">• <strong>營運團隊 (做市商/莊家)</strong>：手裡拿著各種防守道具維護秩序的大戶。</p>
+      </div>
+
+      <!-- Full Comparison Table -->
+      <h3 style="color: var(--gold-accent); font-size: 1.05rem; margin-bottom: 12px;">📊 台指選擇權全指標對照與實戰價位總覽</h3>
+      <div style="overflow-x: auto; margin-bottom: 20px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left; background: #1e293b; border-radius: 8px; overflow: hidden;">
+          <thead>
+            <tr style="background: #334155; color: #f8fafc;">
+              <th style="padding: 10px; border: 1px solid #475569;">指標名稱</th>
+              <th style="padding: 10px; border: 1px solid #475569;">實戰範例價位</th>
+              <th style="padding: 10px; border: 1px solid #475569;">白話比喻</th>
+              <th style="padding: 10px; border: 1px solid #475569;">核心任務（它在看什麼？）</th>
+              <th style="padding: 10px; border: 1px solid #475569;">實戰操作指引</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #38bdf8;">現價 (Spot)</td>
+              <td style="padding: 10px; border: 1px solid #475569;">45,045 點</td>
+              <td style="padding: 10px; border: 1px solid #475569;">👦 小明目前位置</td>
+              <td style="padding: 10px; border: 1px solid #475569;">大盤當前即時成交價格</td>
+              <td style="padding: 10px; border: 1px solid #475569;">對照所有牆位與防守線的距離點</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #ffaa00;">Call Wall</td>
+              <td style="padding: 10px; border: 1px solid #475569;">46,100 點</td>
+              <td style="padding: 10px; border: 1px solid #475569;">🧱 玻璃天花板</td>
+              <td style="padding: 10px; border: 1px solid #475569;">做市商賣壓最大牆位</td>
+              <td style="padding: 10px; border: 1px solid #475569;">衝高易受阻，當沖多單宜停利，可做 Sell Call 價差</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #38bdf8;">Put Wall</td>
+              <td style="padding: 10px; border: 1px solid #475569;">44,500 點</td>
+              <td style="padding: 10px; border: 1px solid #475569;">🛋️ 超大彈簧軟墊</td>
+              <td style="padding: 10px; border: 1px solid #475569;">做市商護盤最大支撐牆</td>
+              <td style="padding: 10px; border: 1px solid #475569;">急殺至此易踩墊反彈，可建立多單或 Sell Put 價差</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #ffd700;">Zero Gamma</td>
+              <td style="padding: 10px; border: 1px solid #475569;">44,778 點</td>
+              <td style="padding: 10px; border: 1px solid #475569;">⚖️ 園區安檢紅外線</td>
+              <td style="padding: 10px; border: 1px solid #475569;">波動度壓抑 vs 助跌臨界點</td>
+              <td style="padding: 10px; border: 1px solid #475569;">站上走慢速安定區；跌破進入做市商追殺賣盤區</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #a855f7;">Max Pain</td>
+              <td style="padding: 10px; border: 1px solid #475569;">44,900 點</td>
+              <td style="padding: 10px; border: 1px solid #475569;">🎯 週三抽獎箱</td>
+              <td style="padding: 10px; border: 1px solid #475569;">散戶賠最多、莊家賺最多的結算點</td>
+              <td style="padding: 10px; border: 1px solid #475569;">週三結算前夕，指數常被主力磁吸壓回此點位附近</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #ff5252;">VEX (恐慌)</td>
+              <td style="padding: 10px; border: 1px solid #475569;">-8.7 億</td>
+              <td style="padding: 10px; border: 1px solid #475569;">😱 恐慌狂暴開關</td>
+              <td style="padding: 10px; border: 1px solid #475569;">恐慌飆高時，莊家會護盤還是火上加油</td>
+              <td style="padding: 10px; border: 1px solid #475569;">負值越深，盤中急殺時做市商越會砍期貨引發踩踏暴跌</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #a855f7;">GEX+ (合成)</td>
+              <td style="padding: 10px; border: 1px solid #475569;">+10.7 億</td>
+              <td style="padding: 10px; border: 1px solid #475569;">🛡️ 總安全指數</td>
+              <td style="padding: 10px; border: 1px solid #475569;">價格 (Gamma) + 恐慌 (Vanna) 合成總曝險</td>
+              <td style="padding: 10px; border: 1px solid #475569;">評估做市商全場整體防守力道是強還是弱</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #ffd700;">GEX+ Flip</td>
+              <td style="padding: 10px; border: 1px solid #475569;">44,848 點</td>
+              <td style="padding: 10px; border: 1px solid #475569;">🚨 早鳥提早警報線</td>
+              <td style="padding: 10px; border: 1px solid #475569;">結合恐慌感後，做市商真正的防守底線</td>
+              <td style="padding: 10px; border: 1px solid #475569;">靈敏預警！跌破此線代表做市商已提前轉空避險</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Max Pain vs VEX Distinction Box -->
+      <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px; line-height: 1.7; font-size: 0.85rem;">
+        <h4 style="color: #a855f7; margin-top: 0; font-size: 0.95rem;">💡 核心實戰區隔：Max Pain (最大痛點) vs VEX / GEX+ Flip 有何不同？</h4>
+        <ul style="margin: 0; padding-left: 18px; color: #cbd5e1;">
+          <li><strong style="color: #a855f7;">Max Pain (最大痛點)</strong>：專門針對 <strong>「週三選擇權結算日」</strong>，回答「結算那天指數收在哪裡，散戶權利金歸零最多、莊家賺最多？」。它的時間點是<strong>到期結算點</strong>。</li>
+          <li><strong style="color: #ff5252;">VEX (恐慌曝險)</strong>：專門針對 <strong>「盤中急殺 / 暴漲」</strong>，回答「盤中波動率 (IV) 突然暴飆時，做市商會幫忙拉回還是落井下石？」。它的時間點是<strong>盤中動態恐慌</strong>。</li>
+          <li><strong style="color: #ffd700;">GEX+ Flip (早鳥警報線)</strong>：結合「價格下跌 + 恐慌暴飆」後，做市商真正開始停損的防守底線，比傳統 Zero Gamma 更靈敏。</li>
+        </ul>
+      </div>
+
+      <!-- Early Bird Line Higher/Lower Explanation Box -->
+      <div style="background: rgba(0, 230, 118, 0.08); border: 1px solid rgba(0, 230, 118, 0.3); border-radius: 12px; padding: 16px; line-height: 1.7; font-size: 0.85rem;">
+        <h4 style="color: #00e676; margin-top: 0; font-size: 0.95rem;">🚨 為什麼早鳥警報線 (GEX+ Flip) 有時候比 Zero Gamma 高，有時候低？</h4>
+        <ul style="margin: 0; padding-left: 18px; color: #cbd5e1;">
+          <li style="margin-bottom: 8px;"><strong style="color: #ff5252;">🔴 當 VEX 為負值時 (恐慌賣壓強，最常見)</strong>：<br><strong>GEX+ Flip 會比 Zero Gamma 高！</strong>（例如 44,848 > 44,778）。因為市場恐慌賣壓大，不用跌到 44,778，大盤在更高的 44,848 點做市商就提前恐慌避險了。<strong>提供您「提早防範大暴跌」的早鳥警報！</strong></li>
+          <li><strong style="color: #00e676;">🟢 當 VEX 為正值時 (市場氣氛樂觀、買盤護盤厚)</strong>：<br><strong>GEX+ Flip 會比 Zero Gamma 低！</strong>（例如 44,710 < 44,778）。因為市場安定，就算跌破 44,778，做市商手裡緩衝夠，防守線可以退守到更低。<strong>告訴您大盤抗跌性極強，不要輕易被假跌破騙掉多單！</strong></li>
+        </ul>
+      </div>
+
+    </div>
   </div>
 
   <script src="data/embedded_data.js"></script>

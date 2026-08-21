@@ -1,9 +1,28 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v44.1)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.0)
 
-**當前版本**：`v44.1` (2026-08-21 最新修復版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes 真實 OI GEX 視覺引擎 v44.1)
+**當前版本**：`v45.0` (2026-08-21 VEX/GEX+ 雙軌量化與社群懶人圖卡升級版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v45.0)
+**社群懶人圖卡生成器**：`scripts/generate_social_card.py` (4K 尋鳥品牌原創風格圖卡)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v45.0 核心更新亮點（Major Quant & Social Automation Release）
+
+### 1. 🌀 高階 VEX (Vanna Exposure 恐慌曝險) & GEX+ 計算引擎
+- **Black-Scholes Vanna 算式**：計算各履約價與全場做市商 Vanna 恐慌曝險。
+- **GEX+ Flip (合成轉折點)**：導出結合「價格波動 (Gamma)」與「恐慌指數 (Vanna)」的靈敏轉折線，提供盤中更早的大跌早鳥預警。
+
+### 2. 📸 尋鳥 Bluebird Finder 專屬風格 4K 社群懶人圖卡生成器 (`generate_social_card.py`)
+- 每日自動產生 2000x2000 超高畫質黑金藍風格 4 格懶人圖卡 (`data/social_card_latest.png`)。
+- 專為 IG 與 Threads 手動發文設計，網頁頂部提供 **`📸 下載 IG/Threads 社群圖卡`** 一鍵快捷下載按鈕。
+- 烙印 `© 尋鳥 Bluebird Finder Quant Labs` 官方標章，100% 原創品牌防偽，無任何第三方 IP 字眼。
+
+### 3. 🎓 國中生秒懂白話文教學說明與 Modal 彈窗
+- 前端新增卡片 Card 8 (VEX & GEX+ Flip) 與 `❓ 判讀教學` 手冊彈窗。
+- 清楚對照區隔 **Max Pain (最大痛點結算日壓制)** vs **VEX (盤中恐慌急殺)** vs **GEX+ Flip (早鳥警報線)**。
+- 新增「早鳥警報線高於/低於 Zero Gamma」的一秒口訣。
 
 ---
 

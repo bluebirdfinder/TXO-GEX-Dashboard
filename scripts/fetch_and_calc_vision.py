@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v44.1"
+ENGINE_VERSION = "v45.0"
 
 import os
 import sys
@@ -451,6 +451,16 @@ def black_scholes_gamma(S, K, T, r, sigma):
     d1 = (math.log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * math.sqrt(T))
     return norm_pdf(d1) / (S * sigma * math.sqrt(T))
 
+def black_scholes_vanna(S, K, T, r, sigma):
+    """
+    Computes Black-Scholes Vanna: dDelta / dSigma = -exp(-r*T) * norm_pdf(d1) * d2 / sigma
+    """
+    if T <= 0 or sigma <= 0 or S <= 0 or K <= 0:
+        return 0.0
+    d1 = (math.log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * math.sqrt(T))
+    d2 = d1 - sigma * math.sqrt(T)
+    return -math.exp(-r * T) * norm_pdf(d1) * d2 / sigma
+
 def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None):
     base_strike = fixed_base_strike if fixed_base_strike is not None else round(spot_price / 100) * 100
     strikes = [base_strike - 900 + i * 50 for i in range(37)]
@@ -465,6 +475,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
 
     total_gex, weekly_gex, friday_gex, monthly_gex = [], [], [], []
     call_oi_sum, put_oi_sum = 0, 0
+    total_vex_sum = 0.0
+    total_gex_sum = 0.0
 
     call_wall_k, call_wall_max = base_strike + 300, -1.0
     put_wall_k, put_wall_max = base_strike - 300, -1.0
@@ -476,6 +488,10 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         g_fri = black_scholes_gamma(spot_price, K, T_fri, r, sigma)
         g_mth = black_scholes_gamma(spot_price, K, T_mth, r, sigma)
 
+        v_wed = black_scholes_vanna(spot_price, K, T_wed, r, sigma)
+        v_fri = black_scholes_vanna(spot_price, K, T_fri, r, sigma)
+        v_mth = black_scholes_vanna(spot_price, K, T_mth, r, sigma)
+
         k_data = option_chain.get(K, {})
         c_oi_w = k_data.get('call_oi_wed', int(3500 * math.exp(-((K - (base_strike + 200))/300)**2) + 800))
         p_oi_w = k_data.get('put_oi_wed',  int(3800 * math.exp(-((K - (base_strike - 200))/300)**2) + 900))
@@ -486,6 +502,7 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         c_oi_m = k_data.get('call_oi_mth', int(6500 * math.exp(-((K - (base_strike + 300))/400)**2) + 1500))
         p_oi_m = k_data.get('put_oi_mth',  int(7200 * math.exp(-((K - (base_strike - 300))/400)**2) + 1800))
 
+        # GEX per strike
         c_gex_w = (c_oi_w * g_wed * (spot_price ** 2) * 50) / 1e8
         p_gex_w = -(p_oi_w * g_wed * (spot_price ** 2) * 50) / 1e8
 
@@ -495,9 +512,19 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         c_gex_m = (c_oi_m * g_mth * (spot_price ** 2) * 50) / 1e8
         p_gex_m = -(p_oi_m * g_mth * (spot_price ** 2) * 50) / 1e8
 
+        # VEX (Vanna Exposure) per strike
+        c_vex_tot = ((c_oi_w * v_wed + c_oi_f * v_fri + c_oi_m * v_mth) * spot_price * 50) / 1e8
+        p_vex_tot = -((p_oi_w * v_wed + p_oi_f * v_fri + p_oi_m * v_mth) * spot_price * 50) / 1e8
+        vex_net = c_vex_tot + p_vex_tot
+        total_vex_sum += vex_net
+
         cg_tot = c_gex_w + c_gex_f + c_gex_m
         pg_tot = p_gex_w + p_gex_f + p_gex_m
         ng_tot = cg_tot + pg_tot
+        total_gex_sum += ng_tot
+
+        # GEX+ = Net GEX + 1.0 * Net VEX
+        gex_plus_val = ng_tot + (1.0 * vex_net)
 
         call_oi_sum += (c_oi_w + c_oi_f + c_oi_m)
         put_oi_sum += (p_oi_w + p_oi_f + p_oi_m)
@@ -514,6 +541,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
             "call_gex": round(cg_tot, 2),
             "put_gex": round(pg_tot, 2),
             "net_gex": round(ng_tot, 2),
+            "vex": round(vex_net, 2),
+            "gex_plus": round(gex_plus_val, 2),
             "w1_call": round(c_gex_w * 0.65, 2),
             "w1_put": round(p_gex_w * 0.65, 2),
             "w2_call": round(c_gex_w * 0.35, 2),
@@ -536,6 +565,7 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
 
     max_pain_k = min(strike_losses, key=strike_losses.get) if strike_losses else base_strike
 
+    # Zero Gamma Level
     zero_gamma_level = round(spot_price - 150.0, 1)
     for i in range(len(total_gex) - 1):
         g1 = total_gex[i]['net_gex']
@@ -546,6 +576,18 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
             zero_gamma_level = round(k1 + (0 - g1) * (k2 - k1) / (g2 - g1), 1)
             break
 
+    # GEX+ Flip Level
+    gex_plus_flip = round(spot_price - 100.0, 1)
+    for i in range(len(total_gex) - 1):
+        gp1 = total_gex[i]['gex_plus']
+        gp2 = total_gex[i+1]['gex_plus']
+        if gp1 * gp2 <= 0 and gp1 != gp2:
+            k1 = total_gex[i]['strike']
+            k2 = total_gex[i+1]['strike']
+            gex_plus_flip = round(k1 + (0 - gp1) * (k2 - k1) / (gp2 - gp1), 1)
+            break
+
+    total_gex_plus_sum = total_gex_sum + (1.0 * total_vex_sum)
     pc_ratio = round((put_oi_sum / call_oi_sum) * 100, 2) if call_oi_sum > 0 else 108.5
 
     return {
@@ -554,6 +596,10 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         "friday_gex": friday_gex,
         "monthly_gex": monthly_gex,
         "zero_gamma_level": zero_gamma_level,
+        "gex_plus_flip": gex_plus_flip,
+        "total_vex": round(total_vex_sum, 2),
+        "total_gex_val": round(total_gex_sum, 2),
+        "total_gex_plus": round(total_gex_plus_sum, 2),
         "call_wall_strike": call_wall_k,
         "put_wall_strike": put_wall_k,
         "max_pain_strike": max_pain_k,
@@ -1395,13 +1441,17 @@ def generate_gex_payload():
         "retail_mini_ratio": retail_data["retail_mini_ratio"],
         "retail_micro_ratio": retail_data["retail_micro_ratio"],
         "retail_sentiment_details": retail_data["retail_sentiment_details"],
+        "gex_plus_flip": gex_profile['gex_plus_flip'],
+        "total_vex": gex_profile['total_vex'],
+        "total_gex_val": gex_profile['total_gex_val'],
+        "total_gex_plus": gex_profile['total_gex_plus'],
         "stock_futures": stock_futures,
         "ai_ex_dividend_digest": {
             "title": "🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描",
             "compliance_note": "⚖️ 合規量化學理分析 (非個別證券建議)",
             "bullet_1": "🎯 <strong>台指大盤 GEX 位階與假拉回判讀 (<span style=\"color: var(--gold-accent); font-weight:700;\">45,857 點</span>)</strong>：台指現價 <span style=\"color: var(--gold-accent); font-weight:700;\">45,857 點</span>，高於 Zero Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">45,920.5 點</span>) 附近，總 GEX 處於 <span style=\"color: var(--call-color); font-weight:700;\">正 GEX 護盤區 (+8.5 億)</span>。若夜盤跌至 <span style=\"color: var(--gold-accent); font-weight:700;\">45,750 點</span>，因未破 <span style=\"color: var(--primary-accent); font-weight:700;\">Put Wall 轉折點</span>，做市商對沖買盤尚在，屬常態洗盤；但若跌破 <span style=\"color: var(--primary-accent); font-weight:700;\">45,700 點</span> 則切入 <span style=\"color: var(--put-color); font-weight:700;\">負 GEX 追殺賣盤區</span>。",
             "bullet_2": "🧱 <strong>週月選莊家牆與結算磁吸 (<span style=\"color: var(--gold-accent); font-weight:700;\">46,050 / 45,750</span>)</strong>：週選天花板集中於 <span style=\"color: var(--gold-accent); font-weight:700;\">46,050 點</span> (Call Wall 超長黃色週選柱)，當沖多單衝高宜停利；月選主力波段防守鐵板位於 <span style=\"color: var(--primary-accent); font-weight:700;\">45,750 點</span> (Put Wall 超長藍色月選柱)；週三結算前夕需留意 <span style=\"color: var(--gold-accent); font-weight:700;\">45,900 點</span> 磁吸歸零效應。",
-            "bullet_3": "🔥 <strong>Top 10 法人籌碼聚焦標的</strong>：聯電期 (2303) 與國泰金期 (2882) 呈三大法人 <span style=\"color: var(--call-color); font-weight:700;\">現貨買超 + 期貨淨多單雙重加碼</span>，資金集中度高，展現法人才情與波段量能。",
+            "bullet_3": "🔥 <strong>Top 10 法人籌碼聚焦標的</strong>：聯電期 (2303) 與國態金期 (2882) 呈三大法人 <span style=\"color: var(--call-color); font-weight:700;\">現貨買超 + 期貨淨多單雙重加碼</span>，資金集中度高，展現法人才情與波段量能。",
             "bullet_4": "📅 <strong>近期除權息扣點校正與價差防守</strong>：台積電期 (2330) 09/18 季除息 <span style=\"color: var(--gold-accent); font-weight:700;\">$4.0 元</span>，期價逆價差源自常態配息扣點而非看空避險；除息前夕宜對照 TWSE 官方扣點日程防範誤判。"
         }
     }
@@ -1434,6 +1484,13 @@ def main():
     with open(js_path, "w", encoding="utf-8") as f:
         f.write("window.GEX_EMBEDDED_DATA = " + plain_json_str + ";\n")
     print(f"[OK] Saved embedded JS data to: {js_path}")
+
+    # Generate 4K Bluebird Finder Social Infographic Card for IG & Threads
+    try:
+        from generate_social_card import generate_bluebird_social_card
+        generate_bluebird_social_card(raw_path)
+    except Exception as e:
+        print(f"[Warning] Could not generate social card: {e}")
 
 if __name__ == "__main__":
     main()

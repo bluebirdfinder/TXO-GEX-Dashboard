@@ -499,6 +499,23 @@ function renderDashboard() {
     pcEl.innerText = `${pcVal.toFixed(1)}% (${pcBadge})`;
   }
 
+  // 6. VEX & GEX+ Flip Card
+  const gexPlusFlip = gexData.gex_plus_flip || (gexData.zero_gamma_level || 44778.0);
+  const totalVex = gexData.total_vex !== undefined ? gexData.total_vex : -8.7;
+  const elFlip = document.getElementById('stat-gex-plus-flip');
+  if (elFlip) elFlip.innerText = gexPlusFlip.toLocaleString();
+  const elVex = document.getElementById('stat-total-vex');
+  if (elVex) {
+    const vexSign = totalVex >= 0 ? '+' : '';
+    elVex.innerText = `${vexSign}${totalVex.toFixed(1)} 億`;
+    elVex.style.color = totalVex >= 0 ? '#00e676' : '#ff5252';
+  }
+  const elVexBadge = document.getElementById('stat-vex-badge');
+  if (elVexBadge) {
+    elVexBadge.innerText = totalVex < 0 ? '🔴 恐慌時火上加油' : '🟢 恐慌情緒緩衝';
+    elVexBadge.style.color = totalVex < 0 ? '#ff5252' : '#00e676';
+  }
+
   // Session Shift Banner
   const bannerEl = document.getElementById('session-shift-banner');
   if (bannerEl) {
@@ -1738,6 +1755,18 @@ function populateStockFutures() {
 }
 
 function initModals() {
+  const downloadBtn = document.getElementById('download-social-card-btn');
+  if (downloadBtn) {
+    downloadBtn.onclick = function() {
+      const link = document.createElement('a');
+      link.href = 'data/social_card_latest.png';
+      link.download = 'Bluebird_Finder_GEX_Social_Card.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+  }
+
   const eduBtn = document.getElementById('education-btn');
   const eduModal = document.getElementById('education-modal');
   const closeEduBtn = document.getElementById('close-edu-modal');
