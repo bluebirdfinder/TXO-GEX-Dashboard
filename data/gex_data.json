@@ -14,7 +14,7 @@
     "day_zero_gamma": 45074.3,
     "day_max_pain": 45200
   },
-  "last_updated_time": "2026-08-21 16:04",
+  "last_updated_time": "2026-08-21 16:37",
   "spot_price": 45224.29,
   "two_price": 387.27,
   "day_txf_price": 45148.0,
@@ -22035,19 +22035,19 @@
     "current_fx": {
       "usdtwd": {
         "date": "08/21 (五)",
-        "price": 31.82,
+        "price": 31.79,
         "change": 0.0,
         "pct": 0.0
       },
       "dxy": {
         "date": "08/21 (五)",
-        "price": 98.76,
-        "change": -0.14,
-        "pct": -0.14
+        "price": 98.72,
+        "change": -0.18,
+        "pct": -0.18
       },
       "usdjpy": {
         "date": "08/21 (五)",
-        "price": 158.78,
+        "price": 158.63,
         "change": 0.0,
         "pct": 0.0
       }
@@ -22080,7 +22080,7 @@
         },
         {
           "date": "08/21 (五)",
-          "price": 31.82,
+          "price": 31.79,
           "change": 0.0,
           "pct": 0.0
         }
@@ -22112,9 +22112,9 @@
         },
         {
           "date": "08/21 (五)",
-          "price": 98.76,
-          "change": -0.14,
-          "pct": -0.14
+          "price": 98.72,
+          "change": -0.18,
+          "pct": -0.18
         }
       ],
       "usdjpy": [
@@ -22144,13 +22144,13 @@
         },
         {
           "date": "08/21 (五)",
-          "price": 158.78,
+          "price": 158.63,
           "change": 0.0,
           "pct": 0.0
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.82</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.76</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.78</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.79</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.72</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.63</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
@@ -22209,7 +22209,7 @@
   "total_gex_plus": -5440.43,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-21 16:04",
+    "last_updated": "2026-08-21 16:37",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
