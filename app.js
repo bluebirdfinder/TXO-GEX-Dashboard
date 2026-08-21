@@ -1911,7 +1911,7 @@ function initLiveTickPolling() {
 
     // 2.5 Try Cloudflare Worker Cloud Relay (24/7 Global HTTPS Relay)
     try {
-      const cfUrl = window.CF_WORKER_URL || 'https://txo-gex-relay.bluebirdfinder.workers.dev/api/live_tick';
+      const cfUrl = window.CF_WORKER_URL || 'https://txo-gex-relay.bluebird-finder-tw.workers.dev/';
       const cfRes = await fetch(cfUrl);
       if (cfRes.ok) {
         const cfData = await cfRes.json();
@@ -1949,6 +1949,26 @@ function initLiveTickPolling() {
             });
             return;
           }
+        }
+      }
+    } catch(err) {}
+
+    // 3.5 Global Fallback: Yahoo Finance Index (^TWII) (Ultra-fast CORS-friendly HTTPS feed)
+    try {
+      const yRes = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII');
+      if (yRes.ok) {
+        const yData = await yRes.json();
+        const price = yData?.chart?.result?.[0]?.meta?.regularMarketPrice;
+        if (price && price > 0) {
+          const nowH = (new Date()).getHours();
+          const isNightSession = (nowH >= 15 || nowH < 5);
+          handleLiveTick({
+            ticker: 'IX0001',
+            price: price,
+            provider: 'TAIFEX_MIS',
+            provider_name: isNightSession ? '🌐 雅虎全球/期交所 夜盤行情' : '🌐 證交所/雅虎 日盤即時行情'
+          });
+          return;
         }
       }
     } catch(err) {}

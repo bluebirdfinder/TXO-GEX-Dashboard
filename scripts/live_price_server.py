@@ -238,7 +238,22 @@ def fubon_worker():
             while True:
                 quotes = fubon_provider.get_live_quotes()
                 if quotes and quotes.get('txf_price'):
-                    state.update_tick("FUBON", quotes['txf_price'])
+                    price_val = float(quotes['txf_price'])
+                    state.update_tick("FUBON", price_val)
+                    # Broadcast to Cloudflare Cloud Relay for global sharing (GitHub Pages & Friends)
+                    try:
+                        cf_url = "https://txo-gex-relay.bluebird-finder-tw.workers.dev/"
+                        payload = json.dumps({
+                            "ticker": "TXF1!",
+                            "price": price_val,
+                            "provider": "FUBON",
+                            "provider_name": "🟢 極速專線網關 (WebSocket)",
+                            "timestamp": int(time.time() * 1000)
+                        }).encode('utf-8')
+                        req = urllib.request.Request(cf_url, data=payload, headers={'Content-Type': 'application/json'})
+                        urllib.request.urlopen(req, context=SSL_CTX, timeout=2)
+                    except Exception:
+                        pass
                 time.sleep(1.0)
     except Exception as e:
         print(f"[Live Gateway] Fubon worker error: {e}")
