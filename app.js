@@ -1111,7 +1111,21 @@ function renderGEXChart() {
   }
 
   const rawGexPlus = activeSession ? (activeSession.gex_plus_flip || gexData.gex_plus_flip) : (gexData.gex_plus_flip || null);
-  const gexPlusFlip = (rawGexPlus !== null && rawGexPlus !== undefined && !isNaN(rawGexPlus)) ? Number(rawGexPlus) : null;
+  let gexPlusFlip = (rawGexPlus !== null && rawGexPlus !== undefined && !isNaN(rawGexPlus)) ? Number(rawGexPlus) : null;
+
+  // 🐣 If gex_plus_flip is missing in JSON, calculate it dynamically on the fly using linear interpolation!
+  if (gexPlusFlip === null && dataset && dataset.length > 1) {
+    for (let i = 0; i < dataset.length - 1; i++) {
+      const gp1 = (dataset[i].gex_plus !== undefined) ? dataset[i].gex_plus : dataset[i].net_gex;
+      const gp2 = (dataset[i+1].gex_plus !== undefined) ? dataset[i+1].gex_plus : dataset[i+1].net_gex;
+      if (gp1 !== undefined && gp2 !== undefined && gp1 * gp2 <= 0 && gp1 !== gp2) {
+        const k1 = dataset[i].strike;
+        const k2 = dataset[i+1].strike;
+        gexPlusFlip = Number((k1 + (0 - gp1) * (k2 - k1) / (gp2 - gp1)).toFixed(1));
+        break;
+      }
+    }
+  }
 
   const chartShapes = [];
   if (putWall) chartShapes.push({ type: 'line', [isHoriz ? 'y0' : 'x0']: putWall, [isHoriz ? 'y1' : 'x1']: putWall, [isHoriz ? 'x0' : 'y0']: 0, [isHoriz ? 'x1' : 'y1']: 1, xref: 'paper', yref: 'paper', line: { color: '#00e676', width: 2 } });
