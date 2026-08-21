@@ -1,4 +1,4 @@
-// TXO-GEX Cloud Relay Worker (Public Open Source Relay Version)
+// TXO-GEX Cloud Relay Worker (Public Open Source Serverless Relay Version)
 // Serves as an ultra-fast HTTPS cloud bridge for TradingView & Multi-source Live Ticks
 
 let inMemoryTick = {
@@ -59,8 +59,10 @@ export default {
         }
       }
 
-      // Check staleness (> 45 seconds -> fallback to TAIFEX MIS Serverless Polling)
+      // Check staleness (> 45 seconds -> fallback to Multi-source Serverless Polling)
       if (!currentTick || currentTick.price === 0 || (Date.now() - (currentTick.timestamp || currentTick.time || 0) > 45000)) {
+        
+        // Stage 1: TAIFEX MIS Futures API
         try {
           const dateUtc8 = new Date(Date.now() + 8 * 3600 * 1000);
           const h8 = dateUtc8.getUTCHours();
@@ -97,6 +99,63 @@ export default {
                 time: Date.now()
               };
               return new Response(JSON.stringify(currentTick), { headers: corsHeaders });
+            }
+          }
+        } catch(e){}
+
+        // Stage 2: Yahoo Finance Global Feed (^TWII)
+        try {
+          const yRes = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII', {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+          });
+          if (yRes.ok) {
+            const yData = await yRes.json();
+            const liveP = yData?.chart?.result?.[0]?.meta?.regularMarketPrice;
+            const refP = yData?.chart?.result?.[0]?.meta?.chartPreviousClose || liveP;
+            if (liveP && liveP > 0) {
+              const dateUtc8 = new Date(Date.now() + 8 * 3600 * 1000);
+              const h8 = dateUtc8.getUTCHours();
+              const isNightSession = (h8 >= 15 || h8 < 5);
+              const chg = Math.round((liveP - refP) * 100) / 100;
+              const pct = refP > 0 ? Math.round((chg / refP * 10000)) / 100 : 0;
+              currentTick = {
+                ticker: "IX0001",
+                price: liveP,
+                change: chg,
+                pct: pct,
+                provider: "TAIFEX_MIS",
+                provider_name: isNightSession ? "🌐 雅虎全球/期交所 夜盤行情" : "🌐 證交所/雅虎 日盤即時行情",
+                timestamp: Date.now(),
+                time: Date.now()
+              };
+              return new Response(JSON.stringify(currentTick), { headers: corsHeaders });
+            }
+          }
+        } catch(e){}
+
+        // Stage 3: TWSE OpenAPI Snapshot
+        try {
+          const openApiRes = await fetch('https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX');
+          if (openApiRes.ok) {
+            const list = await openApiRes.json();
+            if (list && list.length > 0) {
+              const tseObj = list.find(x => x['指數'] && x['指數'].includes('加權'));
+              if (tseObj && tseObj['收盤指數']) {
+                const spotVal = parseFloat(tseObj['收盤指數'].replace(/,/g, ''));
+                if (!isNaN(spotVal) && spotVal > 0) {
+                  currentTick = {
+                    ticker: "IX0001",
+                    price: spotVal,
+                    change: 0,
+                    pct: 0,
+                    provider: "TAIFEX_MIS",
+                    provider_name: "🌐 證交所 MIS 日盤快照",
+                    timestamp: Date.now(),
+                    time: Date.now()
+                  };
+                  return new Response(JSON.stringify(currentTick), { headers: corsHeaders });
+                }
+              }
             }
           }
         } catch(e){}
