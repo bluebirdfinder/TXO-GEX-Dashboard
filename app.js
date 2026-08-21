@@ -1110,6 +1110,8 @@ function renderGEXChart() {
     chartEl.style.height = isMobile ? '680px' : '820px';
   }
 
+  const gexPlusFlip = activeSession ? (activeSession.gex_plus_flip || gexData.gex_plus_flip) : (gexData.gex_plus_flip || 45217.5);
+
   const layout = {
     barmode: 'relative',
     paper_bgcolor: 'transparent',
@@ -1151,51 +1153,49 @@ function renderGEXChart() {
       gridcolor: 'rgba(255,255,255,0.05)',
       range: [-gexLimit, gexLimit]
     },
-  const gexPlusFlip = activeSession ? (activeSession.gex_plus_flip || gexData.gex_plus_flip) : (gexData.gex_plus_flip || 45217.5);
-
-  shapes: isHoriz ? [
-    { type: 'line', y0: putWall, y1: putWall, x0: 0, x1: 1, xref: 'paper', line: { color: '#00e676', width: 2 } },
-    { type: 'line', y0: zeroGamma, y1: zeroGamma, x0: 0, x1: 1, xref: 'paper', line: { color: '#ffd700', width: 2, dash: 'dash' } },
-    { type: 'line', y0: callWall, y1: callWall, x0: 0, x1: 1, xref: 'paper', line: { color: '#ff5252', width: 2 } },
-    { type: 'line', y0: spot, y1: spot, x0: 0, x1: 1, xref: 'paper', line: { color: '#ffffff', width: 1.5, dash: 'dot' } },
-    { type: 'line', y0: gexPlusFlip, y1: gexPlusFlip, x0: 0, x1: 1, xref: 'paper', line: { color: '#d500f9', width: 2, dash: 'dashdot' } }
-  ] : [
-    { type: 'line', x0: putWall, x1: putWall, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#00e676', width: 2 } },
-    { type: 'line', x0: zeroGamma, x1: zeroGamma, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ffd700', width: 2, dash: 'dash' } },
-    { type: 'line', x0: callWall, x1: callWall, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ff5252', width: 2 } },
-    { type: 'line', x0: gexPlusFlip, x1: gexPlusFlip, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#d500f9', width: 2, dash: 'dashdot' } }
-  ],
-  annotations: isHoriz ? [
-    {
-      y: putWall, x: 0.98, xref: 'paper', yanchor: 'bottom', xanchor: 'right',
-      text: `<b>${isMobile ? 'PW' : 'Put Wall'}: ${putWall}</b>`, showarrow: false,
-      bgcolor: '#0a0e17', bordercolor: '#00e676', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
-      font: { color: '#00e676', size: isMobile ? 10 : 11 }
-    },
-    {
-      y: zeroGamma, x: 0.82, xref: 'paper', yanchor: 'bottom', xanchor: 'right',
-      text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${zeroGamma}</b>`, showarrow: false,
-      bgcolor: '#0a0e17', bordercolor: '#ffd700', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
-      font: { color: '#ffd700', size: isMobile ? 10 : 11 }
-    },
-    {
-      y: callWall, x: 0.98, xref: 'paper', yanchor: 'bottom', xanchor: 'right',
-      text: `<b>${isMobile ? 'CW' : 'Call Wall'}: ${callWall}</b>`, showarrow: false,
-      bgcolor: '#0a0e17', bordercolor: '#ff5252', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
-      font: { color: '#ff5252', size: isMobile ? 10 : 11 }
-    },
-    {
-      y: spot, x: 0.02, xref: 'paper', yanchor: 'bottom', xanchor: 'left',
-      text: `<b>${isMobile ? '現價' : '標的現價'}: ${spot}</b>`, showarrow: false,
-      bgcolor: '#0a0e17', bordercolor: '#ffffff', borderwidth: 1, borderpad: isMobile ? 2 : 4,
-      font: { color: '#ffffff', size: isMobile ? 9 : 10 }
-    },
-    {
-      y: gexPlusFlip, x: 0.5, xref: 'paper', yanchor: 'bottom', xanchor: 'center',
-      text: `<b>${isMobile ? '早鳥' : '🐣 GEX+ 早鳥轉折'}: ${typeof gexPlusFlip === 'number' ? gexPlusFlip.toFixed(1) : gexPlusFlip}</b>`, showarrow: false,
-      bgcolor: '#0a0e17', bordercolor: '#d500f9', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
-      font: { color: '#d500f9', size: isMobile ? 10 : 11 }
-    },
+    shapes: isHoriz ? [
+      { type: 'line', y0: putWall, y1: putWall, x0: 0, x1: 1, xref: 'paper', line: { color: '#00e676', width: 2 } },
+      { type: 'line', y0: zeroGamma, y1: zeroGamma, x0: 0, x1: 1, xref: 'paper', line: { color: '#ffd700', width: 2, dash: 'dash' } },
+      { type: 'line', y0: callWall, y1: callWall, x0: 0, x1: 1, xref: 'paper', line: { color: '#ff5252', width: 2 } },
+      { type: 'line', y0: spot, y1: spot, x0: 0, x1: 1, xref: 'paper', line: { color: '#ffffff', width: 1.5, dash: 'dot' } },
+      { type: 'line', y0: gexPlusFlip, y1: gexPlusFlip, x0: 0, x1: 1, xref: 'paper', line: { color: '#d500f9', width: 2, dash: 'dashdot' } }
+    ] : [
+      { type: 'line', x0: putWall, x1: putWall, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#00e676', width: 2 } },
+      { type: 'line', x0: zeroGamma, x1: zeroGamma, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ffd700', width: 2, dash: 'dash' } },
+      { type: 'line', x0: callWall, x1: callWall, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ff5252', width: 2 } },
+      { type: 'line', x0: gexPlusFlip, x1: gexPlusFlip, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#d500f9', width: 2, dash: 'dashdot' } }
+    ],
+    annotations: isHoriz ? [
+      {
+        y: putWall, x: 0.98, xref: 'paper', yanchor: 'bottom', xanchor: 'right',
+        text: `<b>${isMobile ? 'PW' : 'Put Wall'}: ${putWall}</b>`, showarrow: false,
+        bgcolor: '#0a0e17', bordercolor: '#00e676', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
+        font: { color: '#00e676', size: isMobile ? 10 : 11 }
+      },
+      {
+        y: zeroGamma, x: 0.82, xref: 'paper', yanchor: 'bottom', xanchor: 'right',
+        text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${zeroGamma}</b>`, showarrow: false,
+        bgcolor: '#0a0e17', bordercolor: '#ffd700', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
+        font: { color: '#ffd700', size: isMobile ? 10 : 11 }
+      },
+      {
+        y: callWall, x: 0.98, xref: 'paper', yanchor: 'bottom', xanchor: 'right',
+        text: `<b>${isMobile ? 'CW' : 'Call Wall'}: ${callWall}</b>`, showarrow: false,
+        bgcolor: '#0a0e17', bordercolor: '#ff5252', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
+        font: { color: '#ff5252', size: isMobile ? 10 : 11 }
+      },
+      {
+        y: spot, x: 0.02, xref: 'paper', yanchor: 'bottom', xanchor: 'left',
+        text: `<b>${isMobile ? '現價' : '標的現價'}: ${spot}</b>`, showarrow: false,
+        bgcolor: '#0a0e17', bordercolor: '#ffffff', borderwidth: 1, borderpad: isMobile ? 2 : 4,
+        font: { color: '#ffffff', size: isMobile ? 9 : 10 }
+      },
+      {
+        y: gexPlusFlip, x: 0.5, xref: 'paper', yanchor: 'bottom', xanchor: 'center',
+        text: `<b>${isMobile ? '早鳥' : '🐣 GEX+ 早鳥轉折'}: ${typeof gexPlusFlip === 'number' ? gexPlusFlip.toFixed(1) : gexPlusFlip}</b>`, showarrow: false,
+        bgcolor: '#0a0e17', bordercolor: '#d500f9', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
+        font: { color: '#d500f9', size: isMobile ? 10 : 11 }
+      },
       // 🛡️ Brand Watermark Annotations
       {
         x: 0.5, y: 0.5, xref: 'paper', yref: 'paper',
