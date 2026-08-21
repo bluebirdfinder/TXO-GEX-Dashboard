@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (passcodeInput) setTimeout(() => passcodeInput.focus(), 150);
     }
   }
+  initLiveTickPolling();
 });
 
 function initEventListeners() {
