@@ -2000,7 +2000,6 @@ function initLiveTickPolling() {
 }
 
 function handleLiveTick(data) {
-  const txfNightEl = document.getElementById('stat-txf-night');
   const freshnessText = document.getElementById('freshness-text');
   const feedDot = document.getElementById('live-feed-dot');
   const feedText = document.getElementById('live-feed-text');
@@ -2027,22 +2026,43 @@ function handleLiveTick(data) {
     freshnessText.innerText = `實時同步`;
   }
 
-  if (txfNightEl && data.price > 0) {
-    const formattedPrice = data.price.toLocaleString();
-    if (txfNightEl.innerText !== formattedPrice) {
-      txfNightEl.innerText = formattedPrice;
+  if (data.price > 0) {
+    const nowH = (new Date()).getHours();
+    const isNightSession = (nowH >= 15 || nowH < 5);
+    const targetEl = document.getElementById(isNightSession ? 'stat-txf-night' : 'stat-txf-day');
 
-      // Add visual flash animation
-      txfNightEl.classList.remove('live-tick-flash-up', 'live-tick-flash-down');
-      void txfNightEl.offsetWidth; // Trigger reflow
-      if (lastLivePrice !== null) {
-        if (data.price > lastLivePrice) {
-          txfNightEl.classList.add('live-tick-flash-up');
-        } else if (data.price < lastLivePrice) {
-          txfNightEl.classList.add('live-tick-flash-down');
+    if (targetEl) {
+      const formattedPrice = data.price.toLocaleString();
+      if (targetEl.innerText !== formattedPrice) {
+        targetEl.innerText = formattedPrice;
+
+        // Add visual flash animation
+        targetEl.classList.remove('live-tick-flash-up', 'live-tick-flash-down');
+        void targetEl.offsetWidth; // Trigger reflow
+        if (lastLivePrice !== null) {
+          if (data.price > lastLivePrice) {
+            targetEl.classList.add('live-tick-flash-up');
+          } else if (data.price < lastLivePrice) {
+            targetEl.classList.add('live-tick-flash-down');
+          }
         }
+        lastLivePrice = data.price;
       }
-      lastLivePrice = data.price;
+    }
+
+    // Recalculate and update txf shift display
+    const dayEl = document.getElementById('stat-txf-day');
+    const nightEl = document.getElementById('stat-txf-night');
+    const shiftEl = document.getElementById('stat-txf-shift');
+    if (dayEl && nightEl && shiftEl) {
+      const dayP = parseFloat(dayEl.innerText.replace(/,/g, ''));
+      const nightP = parseFloat(nightEl.innerText.replace(/,/g, ''));
+      if (!isNaN(dayP) && !isNaN(nightP)) {
+        const diff = Math.round(nightP - dayP);
+        const sign = diff >= 0 ? '+' : '';
+        shiftEl.innerText = `(${sign}${diff} 點)`;
+        shiftEl.style.color = diff >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+      }
     }
   }
 }

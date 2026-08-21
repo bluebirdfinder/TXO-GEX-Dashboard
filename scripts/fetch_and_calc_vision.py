@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v44.0"
+ENGINE_VERSION = "v44.1"
 
 import os
 import sys
