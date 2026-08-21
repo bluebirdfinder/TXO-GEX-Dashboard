@@ -1,10 +1,13 @@
 """
-Bluebird Finder Social Infographic Generator v52.0 (Compact Layout & Native GEX Chart Edition)
-================================================================================================
-Fixed User Feedback:
-1. Eliminated excess vertical white space on Card 1 & Card 2 to fill 4:5 vertical mobile screen comfortably.
-2. Moved watermark '© 尋鳥 Bluebird Finder' away from top header down to bottom right of summary panel.
-3. Enhanced Card 2 GEX Chart with explicit contract scope ('【全市場所有期權總合 (月選+周選總籌碼)】') and web dashboard native styling.
+Bluebird Finder Social Infographic Generator v53.0 (Web-Identical Multi-Color Stacked Bar Edition)
+===================================================================================================
+100% Replication of Website GEX Plotly Stacked Bar Chart & Scaled Font Heights.
+- Card 1, 2, 3: Increased font sizes & padding to eliminate remaining vertical whitespace.
+- Card 2: Implemented exact web dashboard multi-color stacked bar chart:
+  🟨 W1 近週選 (Call: #ffaa00, Put: #ffd54f)
+  🟩 W2 次週選 (Call: #00e676, Put: #69f0ae)
+  🟦 M1 當月月選 (Call: #00d2ff, Put: #80d8ff)
+  🟪 雙週五選 (Call: #d500f9, Put: #ea80fc)
 """
 
 import os
@@ -37,7 +40,7 @@ def get_common_css():
     background: #0b0f19;
     font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
     color: #f8fafc;
-    padding: 32px 36px;
+    padding: 32px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -56,57 +59,43 @@ def get_common_css():
     background: rgba(15, 23, 42, 0.85);
     border: 1.5px solid #00f2fe;
     border-radius: 16px;
-    padding: 18px 24px;
+    padding: 20px 24px;
     display: flex;
     align-items: center;
     gap: 18px;
     box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
   }
   .avatar-img {
-    width: 62px;
-    height: 62px;
+    width: 66px;
+    height: 66px;
     border-radius: 50%;
     border: 2px solid #ffd700;
     box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
     object-fit: cover;
   }
   .header-text { display: flex; flex-direction: column; }
-  .brand-title { font-size: 27px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }
-  .brand-sub { font-size: 15px; color: #00f2fe; font-weight: 600; margin-top: 2px; }
-
-  /* Web Dashboard Exact Watermark Style (.watermark-panel::after) */
-  .web-watermark {
-    position: absolute;
-    right: 18px;
-    bottom: 12px;
-    font-size: 13.5px;
-    font-family: 'Inter', sans-serif;
-    color: rgba(255, 255, 255, 0.38);
-    letter-spacing: 0.5px;
-    font-weight: 600;
-    pointer-events: none;
-    user-select: none;
-  }
+  .brand-title { font-size: 28px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }
+  .brand-sub { font-size: 16px; color: #00f2fe; font-weight: 600; margin-top: 2px; }
 
   .disclaimer-panel {
     background: rgba(15, 23, 42, 0.9);
     border: 1.5px solid rgba(239, 68, 68, 0.5);
     border-radius: 14px;
-    padding: 16px 22px;
+    padding: 18px 24px;
     position: relative;
   }
   .disc-title {
-    font-size: 15.5px;
+    font-size: 16px;
     font-weight: 800;
     color: #ef4444;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     display: flex;
     justify-content: space-between;
   }
   .disc-body {
-    font-size: 13px;
+    font-size: 13.5px;
     color: #94a3b8;
-    line-height: 1.45;
+    line-height: 1.48;
   }
 """
 
@@ -124,7 +113,7 @@ def build_card1_html(data, avatar_url):
     gex_plus_flip = data.get("gex_plus_flip") or 45217.5
     total_vex = data.get("total_vex") or 2281.1
 
-    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:62px;height:62px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
+    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:66px;height:66px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
     return f"""<!DOCTYPE html>
 <html lang="zh-TW">
@@ -135,36 +124,34 @@ def build_card1_html(data, avatar_url):
   .summary-grid {{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
-    margin: 18px 0;
+    gap: 20px;
+    margin: 20px 0;
     flex: 1;
     align-content: space-between;
-    position: relative;
   }}
   .stat-card {{
     background: rgba(15, 23, 42, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 14px;
-    padding: 22px 24px;
+    padding: 24px 26px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: relative;
   }}
   .stat-label {{
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     color: #94a3b8;
     margin-bottom: 8px;
   }}
   .stat-value {{
-    font-size: 36px;
+    font-size: 38px;
     font-weight: 900;
     line-height: 1.1;
   }}
   .stat-sub {{
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
     margin-top: 6px;
   }}
@@ -172,7 +159,7 @@ def build_card1_html(data, avatar_url):
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 15px;
+    font-size: 16px;
     margin-top: 6px;
   }}
   .divider {{
@@ -191,7 +178,7 @@ def build_card1_html(data, avatar_url):
       </div>
     </div>
 
-    <!-- 8 Summary Cards Grid (Exact Dashboard Replication - Compact Height Balance) -->
+    <!-- 8 Summary Cards Grid (Exact Dashboard Replication - Large Font Scaling) -->
     <div class="summary-grid">
       
       <!-- Card 1: 加權指數 -->
@@ -213,12 +200,12 @@ def build_card1_html(data, avatar_url):
         <div class="stat-label">台指期 (TXF1!)</div>
         <div class="session-row">
           <span style="color: #ffd700;">☀️ 日盤 (13:45)</span>
-          <strong style="color: #fff; font-size: 19px;">44,868</strong>
+          <strong style="color: #fff; font-size: 20px;">44,868</strong>
         </div>
         <div class="divider"></div>
         <div class="session-row">
           <span style="color: #38bdf8;">🌙 夜盤 (05:00)</span>
-          <strong style="color: #38bdf8; font-size: 19px;">44,804</strong>
+          <strong style="color: #38bdf8; font-size: 20px;">44,804</strong>
         </div>
         <div style="text-align: right; color: #26a69a; font-weight: bold; font-size: 14px; margin-top: 2px;">(-64 點)</div>
       </div>
@@ -228,12 +215,12 @@ def build_card1_html(data, avatar_url):
         <div class="stat-label" style="color: #ffd700;">ZERO GAMMA (轉折點)</div>
         <div class="session-row">
           <span style="color: #ffd700;">☀️ 日盤 (13:45)</span>
-          <strong style="color: #fff; font-size: 19px;">{zero_gamma_day:,.1f}</strong>
+          <strong style="color: #fff; font-size: 20px;">{zero_gamma_day:,.1f}</strong>
         </div>
         <div class="divider"></div>
         <div class="session-row">
           <span style="color: #ffd700;">🌙 夜盤校正</span>
-          <strong style="color: #ffd700; font-size: 19px;">{zero_gamma:,.1f}</strong>
+          <strong style="color: #ffd700; font-size: 20px;">{zero_gamma:,.1f}</strong>
         </div>
         <div style="text-align: right; color: #ff4d4f; font-weight: bold; font-size: 14px; margin-top: 2px;">(+143.2 點)</div>
       </div>
@@ -243,12 +230,12 @@ def build_card1_html(data, avatar_url):
         <div class="stat-label" style="color: #ff4d4f;">CALL WALL (天花板)</div>
         <div class="session-row">
           <span style="color: #ffd700;">☀️ 日盤 (13:45)</span>
-          <strong style="color: #fff; font-size: 19px;">{call_wall_day:,.0f}</strong>
+          <strong style="color: #fff; font-size: 20px;">{call_wall_day:,.0f}</strong>
         </div>
         <div class="divider"></div>
         <div class="session-row">
           <span style="color: #ff4d4f;">🌙 夜盤校正</span>
-          <strong style="color: #ff4d4f; font-size: 19px;">{call_wall:,.0f}</strong>
+          <strong style="color: #ff4d4f; font-size: 20px;">{call_wall:,.0f}</strong>
         </div>
         <div style="text-align: right; color: #26a69a; font-weight: bold; font-size: 14px; margin-top: 2px;">(-100 點)</div>
       </div>
@@ -258,12 +245,12 @@ def build_card1_html(data, avatar_url):
         <div class="stat-label" style="color: #26a69a;">PUT WALL (地板)</div>
         <div class="session-row">
           <span style="color: #ffd700;">☀️ 日盤 (13:45)</span>
-          <strong style="color: #fff; font-size: 19px;">{put_wall_day:,.0f}</strong>
+          <strong style="color: #fff; font-size: 20px;">{put_wall_day:,.0f}</strong>
         </div>
         <div class="divider"></div>
         <div class="session-row">
           <span style="color: #26a69a;">🌙 夜盤校正</span>
-          <strong style="color: #26a69a; font-size: 19px;">{put_wall:,.0f}</strong>
+          <strong style="color: #26a69a; font-size: 20px;">{put_wall:,.0f}</strong>
         </div>
         <div style="text-align: right; color: #ff4d4f; font-weight: bold; font-size: 14px; margin-top: 2px;">(+100 點)</div>
       </div>
@@ -273,31 +260,31 @@ def build_card1_html(data, avatar_url):
         <div class="stat-label" style="color: #a855f7;">MAX PAIN (最大痛點)</div>
         <div class="session-row">
           <span style="color: #ffd700;">☀️ 日盤 (13:45)</span>
-          <strong style="color: #fff; font-size: 19px;">45,200</strong>
+          <strong style="color: #fff; font-size: 20px;">45,200</strong>
         </div>
         <div class="divider"></div>
         <div class="session-row">
           <span style="color: #a855f7;">🌙 夜盤校正</span>
-          <strong style="color: #a855f7; font-size: 19px;">44,600</strong>
+          <strong style="color: #a855f7; font-size: 20px;">44,600</strong>
         </div>
-        <div style="font-size: 13px; color: #ffd700; margin-top: 4px; font-weight: bold;">P/C Ratio: 113.2% (偏多看撐)</div>
+        <div style="font-size: 14px; color: #ffd700; margin-top: 4px; font-weight: bold;">P/C Ratio: 113.2% (偏多看撐)</div>
       </div>
 
       <!-- Card 8: VEX 恐慌曝險 & GEX+ FLIP -->
       <div class="stat-card" style="border-left: 4px solid #ef4444;">
         <div class="stat-label" style="color: #ef4444;">VEX 恐慌曝險 & GEX+ FLIP</div>
-        <div style="font-size: 14px; color: #ffd700; font-weight: 700; margin-bottom: 2px;">
-          🐣 早鳥轉折 (GEX+ Flip): <span style="color: #fff; font-size: 17px;">${gex_plus_flip:,.1f}</span>
+        <div style="font-size: 15px; color: #ffd700; font-weight: 700; margin-bottom: 2px;">
+          🐣 早鳥轉折 (GEX+ Flip): <span style="color: #fff; font-size: 18px;">${gex_plus_flip:,.1f}</span>
         </div>
-        <div style="font-size: 14px; color: #ff4d4f; font-weight: 700; margin-bottom: 4px;">
-          😱 總 VEX 恐慌曝險: <span style="color: #ff4d4f; font-size: 17px;">+{total_vex:,.1f}億</span>
+        <div style="font-size: 15px; color: #ff4d4f; font-weight: 700; margin-bottom: 4px;">
+          😱 總 VEX 恐慌曝險: <span style="color: #ff4d4f; font-size: 18px;">+{total_vex:,.1f}億</span>
         </div>
-        <div style="font-size: 13px; color: #94a3b8;">恐慌開關: 🔴 恐慌時做市商護盤</div>
+        <div style="font-size: 13.5px; color: #94a3b8;">恐慌開關: 🔴 恐慌時做市商護盤</div>
       </div>
 
     </div>
 
-    <!-- Watermark moved to bottom right area above disclaimer as requested -->
+    <!-- Bottom Watermark Right Above Disclaimer -->
     <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
       <span style="font-size: 14px; color: rgba(255, 255, 255, 0.45); font-weight: 600;">© 尋鳥 Bluebird Finder</span>
     </div>
@@ -324,34 +311,76 @@ def build_card2_strikes_html(data, avatar_url):
     
     gex_list = data.get("total_gex") or []
 
-    # Filter strikes within spot +- 1500 for compact balanced display
+    # Sub items around spot
     sub_items = [item for item in gex_list if abs(item["strike"] - spot_p) <= 1500]
-    if not sub_items: sub_items = gex_list[:22]
+    if not sub_items: sub_items = gex_list[:20]
 
-    max_val = max([abs(item.get("net_gex", 0)) for item in sub_items] + [10.0])
+    # Calculate max total absolute GEX across multi-tier contracts for stacked scaling
+    max_val = 1.0
+    for item in sub_items:
+        w1_c = abs(item.get("w1_call", 0))
+        w1_p = abs(item.get("w1_put", 0))
+        w2_c = abs(item.get("w2_call", 0))
+        w2_p = abs(item.get("w2_put", 0))
+        mth_c = abs(item.get("mth_call", 0))
+        mth_p = abs(item.get("mth_put", 0))
+        fri_c = abs(item.get("fri_call", 0))
+        fri_p = abs(item.get("fri_put", 0))
+        tot = max(w1_c + w2_c + mth_c + fri_c, w1_p + w2_p + mth_p + fri_p, abs(item.get("net_gex", 0)))
+        if tot > max_val: max_val = tot
 
-    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:62px;height:62px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
+    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:66px;height:66px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
     bars_html = ""
     for item in sub_items:
         stk = item["strike"]
-        val = item.get("net_gex", 0)
-        pct = min(100, int(abs(val) / max_val * 100))
-        color = "#ff4d4f" if val >= 0 else "#26a69a"
-        
+        net_val = item.get("net_gex", 0)
+
+        # Web Dashboard Multi-Color Tier Breakdown
+        w1_c = abs(item.get("w1_call", 0))
+        w1_p = abs(item.get("w1_put", 0))
+        w2_c = abs(item.get("w2_call", 0))
+        w2_p = abs(item.get("w2_put", 0))
+        mth_c = abs(item.get("mth_call", 0))
+        mth_p = abs(item.get("mth_put", 0))
+        fri_c = abs(item.get("fri_call", 0))
+        fri_p = abs(item.get("fri_put", 0))
+
+        # Percentages relative to max_val
+        p_w1_c = (w1_c / max_val * 100)
+        p_w2_c = (w2_c / max_val * 100)
+        p_mth_c = (mth_c / max_val * 100)
+        p_fri_c = (fri_c / max_val * 100)
+
+        p_w1_p = (w1_p / max_val * 100)
+        p_w2_p = (w2_p / max_val * 100)
+        p_mth_p = (mth_p / max_val * 100)
+        p_fri_p = (fri_p / max_val * 100)
+
         badge = ""
-        if stk == call_wall: badge = '<span style="background: #ff4d4f; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">Call Wall (天花板)</span>'
-        elif stk == put_wall: badge = '<span style="background: #26a69a; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">Put Wall (地板)</span>'
+        if stk == call_wall: badge = '<span style="background: #ff4d4f; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">Call Wall</span>'
+        elif stk == put_wall: badge = '<span style="background: #00e676; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">Put Wall</span>'
         elif abs(stk - spot_p) <= 25: badge = '<span style="background: #38bdf8; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">現貨價位</span>'
-        elif abs(stk - zero_gamma) <= 25: badge = '<span style="background: #a855f7; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">Zero Gamma</span>'
+        elif abs(stk - zero_gamma) <= 25: badge = '<span style="background: #ffd700; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">Zero Gamma</span>'
+
+        net_color = "#ff4d4f" if net_val >= 0 else "#00e676"
 
         bars_html += f"""
-        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 10px;">
-          <div style="width: 160px; font-size: 17px; font-weight: 800; color: #f8fafc; text-align: right;">{stk} {badge}</div>
-          <div style="flex: 1; height: 22px; background: rgba(255,255,255,0.06); border-radius: 11px; overflow: hidden; display: flex; align-items: center;">
-            <div style="width: {pct}%; background: {color}; height: 100%; border-radius: 11px;"></div>
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 9px;">
+          <div style="width: 150px; font-size: 16.5px; font-weight: 800; color: #f8fafc; text-align: right;">{stk} {badge}</div>
+          
+          <!-- Stacked Bar Representation (Web Dashboard Replicated) -->
+          <div style="flex: 1; height: 22px; background: rgba(255,255,255,0.05); border-radius: 11px; overflow: hidden; display: flex; align-items: center;">
+            <div style="width: {p_w1_c:.1f}%; background: #ffaa00; height: 100%;" title="W1 Call"></div>
+            <div style="width: {p_w1_p:.1f}%; background: #ffd54f; height: 100%;" title="W1 Put"></div>
+            <div style="width: {p_w2_c:.1f}%; background: #00e676; height: 100%;" title="W2 Call"></div>
+            <div style="width: {p_w2_p:.1f}%; background: #69f0ae; height: 100%;" title="W2 Put"></div>
+            <div style="width: {p_mth_c:.1f}%; background: #00d2ff; height: 100%;" title="Mth Call"></div>
+            <div style="width: {p_mth_p:.1f}%; background: #80d8ff; height: 100%;" title="Mth Put"></div>
+            <div style="width: {p_fri_c:.1f}%; background: #d500f9; height: 100%;" title="Fri Call"></div>
+            <div style="width: {p_fri_p:.1f}%; background: #ea80fc; height: 100%;" title="Fri Put"></div>
           </div>
-          <div style="width: 90px; font-size: 16px; font-weight: 900; color: {color}; text-align: left;">{val:+.1f} 億</div>
+          <div style="width: 95px; font-size: 15.5px; font-weight: 900; color: {net_color}; text-align: left;">{net_val:+.1f} 億</div>
         </div>
         """
 
@@ -365,24 +394,37 @@ def build_card2_strikes_html(data, avatar_url):
     background: rgba(15, 23, 42, 0.85);
     border: 1.5px solid rgba(255, 255, 255, 0.12);
     border-radius: 16px;
-    padding: 26px 30px;
+    padding: 24px 28px;
     box-shadow: 0 4px 25px rgba(0,0,0,0.3);
     margin: 18px 0;
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
   }}
-  .scope-badge {{
-    background: rgba(0, 210, 255, 0.12);
-    border: 1px solid #00d2ff;
-    color: #00d2ff;
-    font-size: 14px;
+  .legend-grid {{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }}
+  .leg-item {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
     font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 8px;
+    color: #cbd5e1;
+  }}
+  .leg-dot {{
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
     display: inline-block;
-    margin-bottom: 12px;
   }}
 </style>
 </head>
@@ -392,23 +434,28 @@ def build_card2_strikes_html(data, avatar_url):
       {avatar_html}
       <div class="header-text">
         <div class="brand-title">做市商 GEX 各履約價動態防守牆 [2/3]</div>
-        <div class="brand-sub">全市場月選 + 周選總籌碼曝險  |  {date_str} 日盤定案</div>
+        <div class="brand-sub">網頁 100% 同款全合約彩色疊加分布圖 | {date_str}</div>
       </div>
     </div>
 
     <div class="chart-box">
-      <div>
-        <span class="scope-badge">📌 合規標示：【全市場台指期權所有履約價總合 GEX (月選 + W1/W2 周選對沖籌碼)】</span>
-        <div style="font-size: 14px; color: #94a3b8; margin-bottom: 14px;">
-          🔴 紅柱 = 正 GEX (做市商逆勢護盤買盤) &nbsp;|&nbsp; 🟢 綠柱 = 負 GEX (做市商順勢追殺賣盤)
-        </div>
+      <!-- Web Dashboard Identical 4-Tier Color Legend -->
+      <div class="legend-grid">
+        <div class="leg-item"><span class="leg-dot" style="background:#ffaa00;"></span> 🟨 W1近週 Call</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#ffd54f;"></span> 🟨 W1近週 Put</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#00e676;"></span> 🟩 W2次週 Call</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#69f0ae;"></span> 🟩 W2次週 Put</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#00d2ff;"></span> 🟦 M1月選 Call</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#80d8ff;"></span> 🟦 M1月選 Put</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#d500f9;"></span> 🟪 週五選 Call</div>
+        <div class="leg-item"><span class="leg-dot" style="background:#ea80fc;"></span> 🟪 週五選 Put</div>
       </div>
 
       <div>
         {bars_html}
       </div>
 
-      <div style="text-align: right; color: rgba(255,255,255,0.45); font-size: 14px; font-weight: 600; margin-top: 10px;">
+      <div style="text-align: right; color: rgba(255,255,255,0.45); font-size: 14px; font-weight: 600; margin-top: 6px;">
         © 尋鳥 Bluebird Finder
       </div>
     </div>
@@ -418,7 +465,7 @@ def build_card2_strikes_html(data, avatar_url):
         <span>⚠️【免責與 AI 數據生成聲明】</span>
       </div>
       <div class="disc-body">
-        本報告係由「尋鳥 Bluebird Finder Quant Labs」AI 量化數據模組自動生成，做市商對沖數據包含全市場月選與周選合約，可能因計算誤差與傳輸延遲而有缺失，<strong>請交易人務必自行複查與獨立判定風險</strong>。
+        本報告係由「尋鳥 Bluebird Finder Quant Labs」AI 量化數據模組自動生成。做市商 GEX 採網頁同款多合約 (W1/W2/M1/Fri) 疊加運算，數據可能因傳輸延遲而有誤差，<strong>請交易人獨立判斷風險</strong>。
       </div>
     </div>
   </div>
@@ -431,7 +478,7 @@ def build_card3_sector_html(data, avatar_url):
     sector_data = data.get("sector_capital_rotation") or {}
     sectors = sector_data.get("sectors") or []
 
-    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:62px;height:62px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
+    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:66px;height:66px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
     progress_bars_html = ""
     for s in sectors:
@@ -455,14 +502,14 @@ def build_card3_sector_html(data, avatar_url):
         stocks = "、".join(s.get('top_stocks', [])[:3])
 
         sector_cards_html += f"""
-        <div style="background: rgba(30, 41, 59, 0.75); border-radius: 14px; border-left: 5px solid {col}; border-top: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 22px 24px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="background: rgba(30, 41, 59, 0.75); border-radius: 14px; border-left: 5px solid {col}; border-top: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 24px 26px; display: flex; flex-direction: column; justify-content: space-between;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 21px; font-weight: 800; color: #ffffff;">{name}</span>
-            <span style="font-size: 24px; font-weight: 900; color: {col};">{chg}</span>
+            <span style="font-size: 22px; font-weight: 800; color: #ffffff;">{name}</span>
+            <span style="font-size: 25px; font-weight: 900; color: {col};">{chg}</span>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-            <span style="font-size: 15px; color: #cbd5e1; font-weight: 600;">{stat} (占{pct}%)</span>
-            <span style="font-size: 15px; color: #94a3b8;">🎯 {stocks}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+            <span style="font-size: 16px; color: #cbd5e1; font-weight: 600;">{stat} (占{pct}%)</span>
+            <span style="font-size: 15.5px; color: #94a3b8;">🎯 {stocks}</span>
           </div>
         </div>
         """
@@ -474,23 +521,23 @@ def build_card3_sector_html(data, avatar_url):
 <style>
   {get_common_css()}
   .sector-container {{
-    margin: 18px 0;
+    margin: 20px 0;
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }}
   .progress-bar-box {{
-    height: 22px;
-    border-radius: 11px;
+    height: 24px;
+    border-radius: 12px;
     overflow: hidden;
     display: flex;
     background: #0f172a;
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
-    margin-bottom: 18px;
+    margin-bottom: 20px;
   }}
-  .sector-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }}
+  .sector-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }}
 </style>
 </head>
 <body>
@@ -590,7 +637,7 @@ def generate_bluebird_social_card(gex_data_path=None, output_dir=None):
         for fpath in [tmp_h1, tmp_h2, tmp_h3]:
             if os.path.exists(fpath): os.remove(fpath)
 
-        print(f"[OK] Successfully generated Compact & Clear Scope IG Cards:")
+        print(f"[OK] Successfully generated Web-Identical Stacked GEX & Scaled Font Cards:")
         print(f"  - Card 1: {card1_path}")
         print(f"  - Card 2: {card2_path}")
         print(f"  - Card 3: {card3_path}")
