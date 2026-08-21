@@ -960,8 +960,8 @@ def fetch_official_taifex_retail_sentiment():
 def calculate_dynamic_sector_rotation(stock_futures, now_dt):
     shipping_codes = {"2603", "2609", "2615", "2637", "2605", "2618", "2610", "2606"}
     semicon_codes = {"2330", "2330F", "2454", "2317", "2382", "2303", "3037", "2379", "3443", "6669"}
-    heavy_bio_codes = {"1519", "1503", "1513", "1504", "6446", "4743", "8033"}
-    financial_codes = {"2881", "2882", "2891", "2886", "2884", "2885", "2892", "2002", "1301", "1303"}
+    heavy_green_codes = {"1519", "1503", "1513", "1514", "9958", "1504"}
+    financial_trad_codes = {"2881", "2882", "2891", "2886", "2884", "2885", "2892", "2002", "1301", "1303"}
 
     ship_chgs, ship_names = [], []
     semi_chgs, semi_names = [], []
@@ -979,17 +979,17 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
         elif code in semicon_codes or '台積電' in name or '聯發科' in name or '鴻海' in name or '廣達' in name:
             semi_chgs.append(chg)
             if len(semi_names) < 4: semi_names.append(name.replace("期貨", "").replace("個股期", ""))
-        elif code in heavy_bio_codes or '華城' in name or '士電' in name or '藥華藥' in name:
+        elif code in heavy_green_codes or '華城' in name or '士電' in name or '中興電' in name or '世紀鋼' in name:
             heavy_chgs.append(chg)
             if len(heavy_names) < 4: heavy_names.append(name.replace("期貨", "").replace("個股期", ""))
-        elif code in financial_codes or '富邦金' in name or '國泰金' in name or '中信金' in name:
+        elif code in financial_trad_codes or '富邦金' in name or '國泰金' in name or '中信金' in name or '中鋼' in name:
             fin_chgs.append(chg)
             if len(fin_names) < 4: fin_names.append(name.replace("期貨", "").replace("個股期", ""))
 
-    ship_avg_chg = round(sum(ship_chgs)/len(ship_chgs), 2) if ship_chgs else 3.85
+    ship_avg_chg = round(sum(ship_chgs)/len(ship_chgs), 2) if ship_chgs else 1.60
     semi_avg_chg = round(sum(semi_chgs)/len(semi_chgs), 2) if semi_chgs else 1.20
     heavy_avg_chg = round(sum(heavy_chgs)/len(heavy_chgs), 2) if heavy_chgs else -0.40
-    fin_avg_chg = round(sum(fin_chgs)/len(fin_chgs), 2) if fin_chgs else 0.45
+    fin_avg_chg = round(sum(fin_chgs)/len(fin_chgs), 2) if fin_chgs else -0.40
 
     if ship_avg_chg > 1.0:
         ship_status = "🔥 資金狂拉大漲"
@@ -1019,7 +1019,7 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
                 "top_stocks": semi_names if semi_names else ["台積電", "聯發科", "鴻海", "廣達"]
             },
             {
-                "name": "🚢 航運傳產與散裝貨櫃",
+                "name": "🚢 航運物流與水路運輸",
                 "code": "shipping_traditional",
                 "share_pct": 19.2,
                 "change_pct": f"{'+' if ship_avg_chg >= 0 else ''}{ship_avg_chg:.1f}%",
@@ -1028,22 +1028,22 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
                 "top_stocks": ship_names if ship_names else ["長榮", "萬海", "陽明", "慧洋-KY"]
             },
             {
-                "name": "⚡ 重電綠能與生技軍工",
+                "name": "⚡ 重電綠能與基建設施",
                 "code": "heavy_green_bio",
                 "share_pct": 12.3,
                 "change_pct": f"{'+' if heavy_avg_chg >= 0 else ''}{heavy_avg_chg:.1f}%",
                 "status": heavy_status,
                 "color": "var(--gold-accent)",
-                "top_stocks": heavy_names if heavy_names else ["華城", "士電", "藥華藥", "雷虎"]
+                "top_stocks": heavy_names if heavy_names else ["華城", "士電", "中興電", "亞力"]
             },
             {
-                "name": "🏦 金融保險與金控",
+                "name": "🏦 金融保險與傳產原物料",
                 "code": "financials",
                 "share_pct": 11.0,
                 "change_pct": f"{'+' if fin_avg_chg >= 0 else ''}{fin_avg_chg:.1f}%",
                 "status": fin_status,
                 "color": "#38bdf8",
-                "top_stocks": fin_names if fin_names else ["富邦金", "國泰金", "中信金"]
+                "top_stocks": fin_names if fin_names else ["富邦金", "國泰金", "中信金", "中鋼"]
             }
         ]
     }

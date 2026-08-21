@@ -14,7 +14,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_zero_gamma": 45074.3,
     "day_max_pain": 45200
   },
-  "last_updated_time": "2026-08-21 13:35",
+  "last_updated_time": "2026-08-21 13:37",
   "spot_price": 45224.29,
   "two_price": 387.27,
   "day_txf_price": 44868.0,
@@ -20754,19 +20754,19 @@ window.GEX_EMBEDDED_DATA = {
     "current_fx": {
       "usdtwd": {
         "date": "08/21 (五)",
-        "price": 31.85,
+        "price": 31.84,
         "change": 0.0,
         "pct": 0.0
       },
       "dxy": {
         "date": "08/21 (五)",
-        "price": 98.76,
-        "change": -0.14,
-        "pct": -0.14
+        "price": 98.77,
+        "change": -0.13,
+        "pct": -0.13
       },
       "usdjpy": {
         "date": "08/21 (五)",
-        "price": 158.96,
+        "price": 158.93,
         "change": 0.0,
         "pct": 0.0
       }
@@ -20799,7 +20799,7 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "08/21 (五)",
-          "price": 31.85,
+          "price": 31.84,
           "change": 0.0,
           "pct": 0.0
         }
@@ -20831,9 +20831,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "08/21 (五)",
-          "price": 98.76,
-          "change": -0.14,
-          "pct": -0.14
+          "price": 98.77,
+          "change": -0.13,
+          "pct": -0.13
         }
       ],
       "usdjpy": [
@@ -20863,13 +20863,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "08/21 (五)",
-          "price": 158.96,
+          "price": 158.93,
           "change": 0.0,
           "pct": 0.0
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.85</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.76</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.96</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.84</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.77</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.93</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
@@ -20928,7 +20928,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -5440.43,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業權重歸納 4 大核心板塊資金輪動",
-    "last_updated": "2026-08-21 13:35",
+    "last_updated": "2026-08-21 13:37",
     "sectors": [
       {
         "name": "💻 半導體與電子 AI",
@@ -20945,7 +20945,7 @@ window.GEX_EMBEDDED_DATA = {
         ]
       },
       {
-        "name": "🚢 航運傳產與散裝貨櫃",
+        "name": "🚢 航運物流與水路運輸",
         "code": "shipping_traditional",
         "share_pct": 19.2,
         "change_pct": "+1.6%",
@@ -20959,21 +20959,21 @@ window.GEX_EMBEDDED_DATA = {
         ]
       },
       {
-        "name": "⚡ 重電綠能與生技軍工",
+        "name": "⚡ 重電綠能與基建設施",
         "code": "heavy_green_bio",
         "share_pct": 12.3,
-        "change_pct": "+1.3%",
+        "change_pct": "+1.6%",
         "status": "🔥 買盤點火",
         "color": "var(--gold-accent)",
         "top_stocks": [
           "東元期",
-          "合一期",
+          "世紀鋼期",
           "中興電期",
           "士電期"
         ]
       },
       {
-        "name": "🏦 金融保險與金控",
+        "name": "🏦 金融保險與傳產原物料",
         "code": "financials",
         "share_pct": 11.0,
         "change_pct": "-0.4%",
