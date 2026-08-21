@@ -1,13 +1,12 @@
 """
-Bluebird Finder Social Infographic Generator v53.0 (Web-Identical Multi-Color Stacked Bar Edition)
-===================================================================================================
-100% Replication of Website GEX Plotly Stacked Bar Chart & Scaled Font Heights.
-- Card 1, 2, 3: Increased font sizes & padding to eliminate remaining vertical whitespace.
-- Card 2: Implemented exact web dashboard multi-color stacked bar chart:
-  🟨 W1 近週選 (Call: #ffaa00, Put: #ffd54f)
-  🟩 W2 次週選 (Call: #00e676, Put: #69f0ae)
-  🟦 M1 當月月選 (Call: #00d2ff, Put: #80d8ff)
-  🟪 雙週五選 (Call: #d500f9, Put: #ea80fc)
+Bluebird Finder Social Infographic Generator v54.0 (Plotly T-Option Horizontal Chart Edition)
+=============================================================================================
+100% Replication of Web Dashboard Plotly GEX Chart (T-Option View: Left=Put, Right=Call, Y=Strike)
+Includes:
+- Multi-tier stacked bars (W1, W2, M1, Fri)
+- White Net GEX S-Curve
+- 5 Reference Lines: Call Wall (Red), Put Wall (Green), Zero Gamma (Yellow), Spot Price (White), GEX+ Flip 早鳥轉折 (Purple)
+- Aspect Ratio: 1:1 (1080x1080) or 4:5 (1080x1350)
 """
 
 import os
@@ -30,73 +29,73 @@ def get_avatar_base64(root_dir):
             print(f"[Warning] Failed to read avatar image: {e}")
     return ""
 
-def get_common_css():
-    return """
+def get_common_css(viewport_height=1350):
+    return f"""
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;600;700;900&display=swap');
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
     width: 1080px;
-    height: 1350px;
+    height: {viewport_height}px;
     background: #0b0f19;
     font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
     color: #f8fafc;
-    padding: 32px;
+    padding: 28px 32px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
     overflow: hidden;
-  }
-  .content-layer {
+  }}
+  .content-layer {{
     position: relative;
     z-index: 10;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-  }
-  .brand-header {
+  }}
+  .brand-header {{
     background: rgba(15, 23, 42, 0.85);
     border: 1.5px solid #00f2fe;
     border-radius: 16px;
-    padding: 20px 24px;
+    padding: 16px 22px;
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
-  }
-  .avatar-img {
-    width: 66px;
-    height: 66px;
+  }}
+  .avatar-img {{
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     border: 2px solid #ffd700;
     box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
     object-fit: cover;
-  }
-  .header-text { display: flex; flex-direction: column; }
-  .brand-title { font-size: 28px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }
-  .brand-sub { font-size: 16px; color: #00f2fe; font-weight: 600; margin-top: 2px; }
+  }}
+  .header-text {{ display: flex; flex-direction: column; }}
+  .brand-title {{ font-size: 26px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }}
+  .brand-sub {{ font-size: 15px; color: #00f2fe; font-weight: 600; margin-top: 2px; }}
 
-  .disclaimer-panel {
+  .disclaimer-panel {{
     background: rgba(15, 23, 42, 0.9);
     border: 1.5px solid rgba(239, 68, 68, 0.5);
     border-radius: 14px;
-    padding: 18px 24px;
+    padding: 14px 20px;
     position: relative;
-  }
-  .disc-title {
-    font-size: 16px;
+  }}
+  .disc-title {{
+    font-size: 15px;
     font-weight: 800;
     color: #ef4444;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     display: flex;
     justify-content: space-between;
-  }
-  .disc-body {
-    font-size: 13.5px;
+  }}
+  .disc-body {{
+    font-size: 13px;
     color: #94a3b8;
-    line-height: 1.48;
-  }
+    line-height: 1.42;
+  }}
 """
 
 def build_card1_html(data, avatar_url):
@@ -113,19 +112,19 @@ def build_card1_html(data, avatar_url):
     gex_plus_flip = data.get("gex_plus_flip") or 45217.5
     total_vex = data.get("total_vex") or 2281.1
 
-    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:66px;height:66px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
+    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:60px;height:60px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
     return f"""<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <style>
-  {get_common_css()}
+  {get_common_css(1350)}
   .summary-grid {{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin: 20px 0;
+    gap: 18px;
+    margin: 18px 0;
     flex: 1;
     align-content: space-between;
   }}
@@ -133,17 +132,17 @@ def build_card1_html(data, avatar_url):
     background: rgba(15, 23, 42, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 14px;
-    padding: 24px 26px;
+    padding: 22px 24px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }}
   .stat-label {{
-    font-size: 17px;
+    font-size: 16.5px;
     font-weight: 700;
     color: #94a3b8;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }}
   .stat-value {{
     font-size: 38px;
@@ -153,18 +152,18 @@ def build_card1_html(data, avatar_url):
   .stat-sub {{
     font-size: 16px;
     font-weight: 700;
-    margin-top: 6px;
+    margin-top: 4px;
   }}
   .session-row {{
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 16px;
-    margin-top: 6px;
+    margin-top: 4px;
   }}
   .divider {{
     border-bottom: 1px dashed rgba(255,255,255,0.15);
-    margin: 8px 0;
+    margin: 6px 0;
   }}
 </style>
 </head>
@@ -178,7 +177,6 @@ def build_card1_html(data, avatar_url):
       </div>
     </div>
 
-    <!-- 8 Summary Cards Grid (Exact Dashboard Replication - Large Font Scaling) -->
     <div class="summary-grid">
       
       <!-- Card 1: 加權指數 -->
@@ -284,8 +282,7 @@ def build_card1_html(data, avatar_url):
 
     </div>
 
-    <!-- Bottom Watermark Right Above Disclaimer -->
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 6px;">
       <span style="font-size: 14px; color: rgba(255, 255, 255, 0.45); font-weight: 600;">© 尋鳥 Bluebird Finder</span>
     </div>
 
@@ -302,129 +299,65 @@ def build_card1_html(data, avatar_url):
 </html>
 """
 
-def build_card2_strikes_html(data, avatar_url):
-    spot_p = data.get("spot_price") or data.get("txf_price") or 45160.0
-    zero_gamma = data.get("zero_gamma_level") or 45217.0
-    call_wall = data.get("call_wall_strike") or 45400
-    put_wall = data.get("put_wall_strike") or 45000
+def build_card2_plotly_html(data, avatar_url):
+    """
+    Renders 100% Exact Web Dashboard Plotly GEX Chart in T-Option Horizontal View
+    (Y-axis = Strike, Left = Put, Right = Call, Stacked Multi-Tier Colors, Net S-Curve, 5 Ref Lines)
+    """
     date_str = data.get("date") or data.get("last_updated") or "2026-08-21"
-    
+    spot_p = data.get("spot_price") or 45224.29
+    zero_gamma = data.get("zero_gamma_level") or 45074.3
+    call_wall = data.get("call_wall_strike") or 45500
+    put_wall = data.get("put_wall_strike") or 44900
+    gex_plus_flip = data.get("gex_plus_flip") or 45217.5
+
     gex_list = data.get("total_gex") or []
+    sub_items = [item for item in gex_list if abs(item["strike"] - spot_p) <= 1200]
+    if not sub_items: sub_items = gex_list[:25]
 
-    # Sub items around spot
-    sub_items = [item for item in gex_list if abs(item["strike"] - spot_p) <= 1500]
-    if not sub_items: sub_items = gex_list[:20]
+    strikes = [item["strike"] for item in sub_items]
+    w1_call = [abs(item.get("w1_call", 0)) for item in sub_items]
+    w1_put = [-abs(item.get("w1_put", 0)) for item in sub_items]
+    w2_call = [abs(item.get("w2_call", 0)) for item in sub_items]
+    w2_put = [-abs(item.get("w2_put", 0)) for item in sub_items]
+    mth_call = [abs(item.get("mth_call", 0)) for item in sub_items]
+    mth_put = [-abs(item.get("mth_put", 0)) for item in sub_items]
+    fri_call = [abs(item.get("fri_call", 0)) for item in sub_items]
+    fri_put = [-abs(item.get("fri_put", 0)) for item in sub_items]
+    net_gex = [item.get("net_gex", 0) for item in sub_items]
 
-    # Calculate max total absolute GEX across multi-tier contracts for stacked scaling
-    max_val = 1.0
-    for item in sub_items:
-        w1_c = abs(item.get("w1_call", 0))
-        w1_p = abs(item.get("w1_put", 0))
-        w2_c = abs(item.get("w2_call", 0))
-        w2_p = abs(item.get("w2_put", 0))
-        mth_c = abs(item.get("mth_call", 0))
-        mth_p = abs(item.get("mth_put", 0))
-        fri_c = abs(item.get("fri_call", 0))
-        fri_p = abs(item.get("fri_put", 0))
-        tot = max(w1_c + w2_c + mth_c + fri_c, w1_p + w2_p + mth_p + fri_p, abs(item.get("net_gex", 0)))
-        if tot > max_val: max_val = tot
+    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:60px;height:60px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
-    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:66px;height:66px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
-
-    bars_html = ""
-    for item in sub_items:
-        stk = item["strike"]
-        net_val = item.get("net_gex", 0)
-
-        # Web Dashboard Multi-Color Tier Breakdown
-        w1_c = abs(item.get("w1_call", 0))
-        w1_p = abs(item.get("w1_put", 0))
-        w2_c = abs(item.get("w2_call", 0))
-        w2_p = abs(item.get("w2_put", 0))
-        mth_c = abs(item.get("mth_call", 0))
-        mth_p = abs(item.get("mth_put", 0))
-        fri_c = abs(item.get("fri_call", 0))
-        fri_p = abs(item.get("fri_put", 0))
-
-        # Percentages relative to max_val
-        p_w1_c = (w1_c / max_val * 100)
-        p_w2_c = (w2_c / max_val * 100)
-        p_mth_c = (mth_c / max_val * 100)
-        p_fri_c = (fri_c / max_val * 100)
-
-        p_w1_p = (w1_p / max_val * 100)
-        p_w2_p = (w2_p / max_val * 100)
-        p_mth_p = (mth_p / max_val * 100)
-        p_fri_p = (fri_p / max_val * 100)
-
-        badge = ""
-        if stk == call_wall: badge = '<span style="background: #ff4d4f; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">Call Wall</span>'
-        elif stk == put_wall: badge = '<span style="background: #00e676; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">Put Wall</span>'
-        elif abs(stk - spot_p) <= 25: badge = '<span style="background: #38bdf8; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">現貨價位</span>'
-        elif abs(stk - zero_gamma) <= 25: badge = '<span style="background: #ffd700; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px; font-weight: bold;">Zero Gamma</span>'
-
-        net_color = "#ff4d4f" if net_val >= 0 else "#00e676"
-
-        bars_html += f"""
-        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 9px;">
-          <div style="width: 150px; font-size: 16.5px; font-weight: 800; color: #f8fafc; text-align: right;">{stk} {badge}</div>
-          
-          <!-- Stacked Bar Representation (Web Dashboard Replicated) -->
-          <div style="flex: 1; height: 22px; background: rgba(255,255,255,0.05); border-radius: 11px; overflow: hidden; display: flex; align-items: center;">
-            <div style="width: {p_w1_c:.1f}%; background: #ffaa00; height: 100%;" title="W1 Call"></div>
-            <div style="width: {p_w1_p:.1f}%; background: #ffd54f; height: 100%;" title="W1 Put"></div>
-            <div style="width: {p_w2_c:.1f}%; background: #00e676; height: 100%;" title="W2 Call"></div>
-            <div style="width: {p_w2_p:.1f}%; background: #69f0ae; height: 100%;" title="W2 Put"></div>
-            <div style="width: {p_mth_c:.1f}%; background: #00d2ff; height: 100%;" title="Mth Call"></div>
-            <div style="width: {p_mth_p:.1f}%; background: #80d8ff; height: 100%;" title="Mth Put"></div>
-            <div style="width: {p_fri_c:.1f}%; background: #d500f9; height: 100%;" title="Fri Call"></div>
-            <div style="width: {p_fri_p:.1f}%; background: #ea80fc; height: 100%;" title="Fri Put"></div>
-          </div>
-          <div style="width: 95px; font-size: 15.5px; font-weight: 900; color: {net_color}; text-align: left;">{net_val:+.1f} 億</div>
-        </div>
-        """
+    plotly_data_json = json.dumps({
+        "strikes": strikes,
+        "w1_call": w1_call, "w1_put": w1_put,
+        "w2_call": w2_call, "w2_put": w2_put,
+        "mth_call": mth_call, "mth_put": mth_put,
+        "fri_call": fri_call, "fri_put": fri_put,
+        "net_gex": net_gex,
+        "spot": spot_p,
+        "zero_gamma": zero_gamma,
+        "call_wall": call_wall,
+        "put_wall": put_wall,
+        "gex_plus_flip": gex_plus_flip
+    })
 
     return f"""<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 <style>
-  {get_common_css()}
-  .chart-box {{
+  {get_common_css(1350)}
+  #plotly-gex-container {{
+    width: 100%;
+    height: 960px;
     background: rgba(15, 23, 42, 0.85);
     border: 1.5px solid rgba(255, 255, 255, 0.12);
     border-radius: 16px;
-    padding: 24px 28px;
     box-shadow: 0 4px 25px rgba(0,0,0,0.3);
-    margin: 18px 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }}
-  .legend-grid {{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 14px;
-    background: rgba(0, 0, 0, 0.25);
-    padding: 10px 14px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }}
-  .leg-item {{
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    font-weight: 700;
-    color: #cbd5e1;
-  }}
-  .leg-dot {{
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    display: inline-block;
+    margin: 14px 0;
+    position: relative;
   }}
 </style>
 </head>
@@ -433,31 +366,15 @@ def build_card2_strikes_html(data, avatar_url):
     <div class="brand-header" style="border-color: #38bdf8;">
       {avatar_html}
       <div class="header-text">
-        <div class="brand-title">做市商 GEX 各履約價動態防守牆 [2/3]</div>
-        <div class="brand-sub">網頁 100% 同款全合約彩色疊加分布圖 | {date_str}</div>
+        <div class="brand-title">做市商 GEX 履約價雙向對稱對沖牆 [2/3]</div>
+        <div class="brand-sub">T型報價視角: 左Put防守 / 右Call壓力 | 5大關鍵位階 | {date_str}</div>
       </div>
     </div>
 
-    <div class="chart-box">
-      <!-- Web Dashboard Identical 4-Tier Color Legend -->
-      <div class="legend-grid">
-        <div class="leg-item"><span class="leg-dot" style="background:#ffaa00;"></span> 🟨 W1近週 Call</div>
-        <div class="leg-item"><span class="leg-dot" style="background:#ffd54f;"></span> 🟨 W1近週 Put</div>
-        <div class="leg-item"><span class="leg-dot" style="background:#00e676;"></span> 🟩 W2次週 Call</div>
-        <div class="leg-item"><span class="leg-dot" style="background:#69f0ae;"></span> 🟩 W2次週 Put</div>
-        <div class="leg-item"><span class="leg-dot" style="background:#00d2ff;"></span> 🟦 M1月選 Call</div>
-        <div class="leg-item"><span class="leg-dot" style="background:#80d8ff;"></span> 🟦 M1月選 Put</div>
-        <div class="leg-item"><span class="leg-dot" style="background:#d500f9;"></span> 🟪 週五選 Call</div>
-        <div class="leg-item"><span class="leg-dot" style="background:#ea80fc;"></span> 🟪 週五選 Put</div>
-      </div>
+    <div id="plotly-gex-container"></div>
 
-      <div>
-        {bars_html}
-      </div>
-
-      <div style="text-align: right; color: rgba(255,255,255,0.45); font-size: 14px; font-weight: 600; margin-top: 6px;">
-        © 尋鳥 Bluebird Finder
-      </div>
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 4px;">
+      <span style="font-size: 14px; color: rgba(255, 255, 255, 0.45); font-weight: 600;">© 尋鳥 Bluebird Finder</span>
     </div>
 
     <div class="disclaimer-panel">
@@ -465,10 +382,83 @@ def build_card2_strikes_html(data, avatar_url):
         <span>⚠️【免責與 AI 數據生成聲明】</span>
       </div>
       <div class="disc-body">
-        本報告係由「尋鳥 Bluebird Finder Quant Labs」AI 量化數據模組自動生成。做市商 GEX 採網頁同款多合約 (W1/W2/M1/Fri) 疊加運算，數據可能因傳輸延遲而有誤差，<strong>請交易人獨立判斷風險</strong>。
+        本報告由 AI 量化數據模組自動編譯生成，包含 Call Wall, Put Wall, Zero Gamma 與 VEX 早鳥轉折位。交易人應自行獨立查證與評估風險。
       </div>
     </div>
   </div>
+
+<script>
+const rawData = {plotly_data_json};
+
+const traces = [
+  {{ y: rawData.strikes, x: rawData.w1_call, name: '🟨 W1近週 Call 壓力', type: 'bar', orientation: 'h', marker: {{ color: '#ffaa00' }} }},
+  {{ y: rawData.strikes, x: rawData.w1_put, name: '🟨 W1近週 Put 防守', type: 'bar', orientation: 'h', marker: {{ color: '#ffd54f' }} }},
+  {{ y: rawData.strikes, x: rawData.w2_call, name: '🟩 W2次週 Call 壓力', type: 'bar', orientation: 'h', marker: {{ color: '#00e676' }} }},
+  {{ y: rawData.strikes, x: rawData.w2_put, name: '🟩 W2次週 Put 防守', type: 'bar', orientation: 'h', marker: {{ color: '#69f0ae' }} }},
+  {{ y: rawData.strikes, x: rawData.mth_call, name: '🟦 M1月選 Call 壓力', type: 'bar', orientation: 'h', marker: {{ color: '#00d2ff' }} }},
+  {{ y: rawData.strikes, x: rawData.mth_put, name: '🟦 M1月選 Put 防守', type: 'bar', orientation: 'h', marker: {{ color: '#80d8ff' }} }},
+  {{ y: rawData.strikes, x: rawData.fri_call, name: '🟪 雙週五 Call 避險', type: 'bar', orientation: 'h', marker: {{ color: '#d500f9' }} }},
+  {{ y: rawData.strikes, x: rawData.fri_put, name: '🟪 雙週五 Put 避險', type: 'bar', orientation: 'h', marker: {{ color: '#ea80fc' }} }},
+  {{
+    y: rawData.strikes,
+    x: rawData.net_gex,
+    name: '📈 Net GEX 淨動態 S 曲線',
+    type: 'scatter',
+    mode: 'lines+markers',
+    line: {{ color: '#ffffff', width: 3.5, shape: 'spline' }},
+    marker: {{ size: 6, color: '#00d2ff', symbol: 'circle' }}
+  }}
+];
+
+const shapes = [
+  // Call Wall (Red)
+  {{ type: 'line', y0: rawData.call_wall, y1: rawData.call_wall, x0: -6000, x1: 6000, line: {{ color: '#ff4d4f', width: 2.5 }} }},
+  // Put Wall (Green)
+  {{ type: 'line', y0: rawData.put_wall, y1: rawData.put_wall, x0: -6000, x1: 6000, line: {{ color: '#00e676', width: 2.5 }} }},
+  // Zero Gamma (Yellow Dashed)
+  {{ type: 'line', y0: rawData.zero_gamma, y1: rawData.zero_gamma, x0: -6000, x1: 6000, line: {{ color: '#ffd700', width: 2.5, dash: 'dash' }} }},
+  // Spot Price (White Dotted)
+  {{ type: 'line', y0: rawData.spot, y1: rawData.spot, x0: -6000, x1: 6000, line: {{ color: '#ffffff', width: 2, dash: 'dot' }} }},
+  // GEX+ Flip / VEX Early Bird (Purple Dotted)
+  {{ type: 'line', y0: rawData.gex_plus_flip, y1: rawData.gex_plus_flip, x0: -6000, x1: 6000, line: {{ color: '#d500f9', width: 2.5, dash: 'dashdot' }} }}
+];
+
+const annotations = [
+  {{ y: rawData.call_wall, x: 4200, text: 'Call Wall: ' + rawData.call_wall, showarrow: false, font: {{ color: '#ffffff', size: 14, weight: 800 }}, bgcolor: '#ff4d4f', bordercolor: '#ff4d4f', borderpadding: 4 }},
+  {{ y: rawData.put_wall, x: 4200, text: 'Put Wall: ' + rawData.put_wall, showarrow: false, font: {{ color: '#000000', size: 14, weight: 800 }}, bgcolor: '#00e676', bordercolor: '#00e676', borderpadding: 4 }},
+  {{ y: rawData.zero_gamma, x: -3800, text: 'Zero Gamma: ' + rawData.zero_gamma.toFixed(1), showarrow: false, font: {{ color: '#000000', size: 14, weight: 800 }}, bgcolor: '#ffd700', bordercolor: '#ffd700', borderpadding: 4 }},
+  {{ y: rawData.spot, x: -3800, text: '標的現價: ' + rawData.spot.toFixed(2), showarrow: false, font: {{ color: '#ffffff', size: 14, weight: 800 }}, bgcolor: '#1e293b', bordercolor: '#ffffff', borderpadding: 4 }},
+  {{ y: rawData.gex_plus_flip, x: 0, text: '🐣 GEX+ 早鳥轉折: ' + rawData.gex_plus_flip.toFixed(1), showarrow: false, font: {{ color: '#ffffff', size: 13, weight: 800 }}, bgcolor: '#d500f9', bordercolor: '#d500f9', borderpadding: 4 }}
+];
+
+const layout = {{
+  barmode: 'relative',
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: 'rgba(0,0,0,0)',
+  margin: {{ l: 80, r: 80, t: 60, b: 60 }},
+  xaxis: {{
+    title: {{ text: 'GEX 曝險金額 (億 TWD - 左 Put 防守 / 右 Call 壓力)', font: {{ color: '#94a3b8', size: 15 }} }},
+    tickfont: {{ color: '#94a3b8', size: 13 }},
+    gridcolor: 'rgba(255,255,255,0.06)',
+    zerolinecolor: 'rgba(255,255,255,0.2)'
+  }},
+  yaxis: {{
+    title: {{ text: '履約價 (Strike)', font: {{ color: '#94a3b8', size: 15 }} }},
+    tickfont: {{ color: '#ffffff', size: 14, weight: 700 }},
+    gridcolor: 'rgba(255,255,255,0.06)'
+  }},
+  legend: {{
+    orientation: 'h',
+    x: 0,
+    y: 1.08,
+    font: {{ color: '#e2e8f0', size: 13 }}
+  }},
+  shapes: shapes,
+  annotations: annotations
+}};
+
+Plotly.newPlot('plotly-gex-container', traces, layout, {{ responsive: true, displayModeBar: false }});
+</script>
 </body>
 </html>
 """
@@ -478,7 +468,7 @@ def build_card3_sector_html(data, avatar_url):
     sector_data = data.get("sector_capital_rotation") or {}
     sectors = sector_data.get("sectors") or []
 
-    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:66px;height:66px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
+    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:60px;height:60px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
     progress_bars_html = ""
     for s in sectors:
@@ -519,7 +509,7 @@ def build_card3_sector_html(data, avatar_url):
 <head>
 <meta charset="UTF-8">
 <style>
-  {get_common_css()}
+  {get_common_css(1350)}
   .sector-container {{
     margin: 20px 0;
     flex: 1;
@@ -596,7 +586,7 @@ def generate_bluebird_social_card(gex_data_path=None, output_dir=None):
     os.makedirs(output_dir, exist_ok=True)
 
     html1 = build_card1_html(data, avatar_url)
-    html2 = build_card2_strikes_html(data, avatar_url)
+    html2 = build_card2_plotly_html(data, avatar_url)
     html3 = build_card3_sector_html(data, avatar_url)
 
     tmp_h1 = os.path.join(output_dir, "card1_temp.html")
@@ -621,6 +611,7 @@ def generate_bluebird_social_card(gex_data_path=None, output_dir=None):
             page.screenshot(path=card1_path)
 
             page.goto(f"file:///{tmp_h2.replace('\\', '/')}")
+            page.wait_for_timeout(1500)  # Wait for Plotly animation/rendering
             page.screenshot(path=card2_path)
 
             page.goto(f"file:///{tmp_h3.replace('\\', '/')}")
@@ -637,7 +628,7 @@ def generate_bluebird_social_card(gex_data_path=None, output_dir=None):
         for fpath in [tmp_h1, tmp_h2, tmp_h3]:
             if os.path.exists(fpath): os.remove(fpath)
 
-        print(f"[OK] Successfully generated Web-Identical Stacked GEX & Scaled Font Cards:")
+        print(f"[OK] Successfully generated Plotly T-Option Horizontal GEX & Scaled Cards:")
         print(f"  - Card 1: {card1_path}")
         print(f"  - Card 2: {card2_path}")
         print(f"  - Card 3: {card3_path}")
