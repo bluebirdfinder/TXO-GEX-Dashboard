@@ -1167,14 +1167,14 @@ function renderGEXChart() {
     ],
     annotations: isHoriz ? [
       {
-        y: putWall, x: 0.98, xref: 'paper', yanchor: 'bottom', xanchor: 'right',
+        y: putWall, x: 0.98, xref: 'paper', yanchor: 'top', xanchor: 'right',
         text: `<b>${isMobile ? 'PW' : 'Put Wall'}: ${putWall}</b>`, showarrow: false,
         bgcolor: '#0a0e17', bordercolor: '#00e676', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
         font: { color: '#00e676', size: isMobile ? 10 : 11 }
       },
       {
-        y: zeroGamma, x: 0.82, xref: 'paper', yanchor: 'bottom', xanchor: 'right',
-        text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${zeroGamma}</b>`, showarrow: false,
+        y: zeroGamma, x: 0.68, xref: 'paper', yanchor: 'bottom', xanchor: 'center',
+        text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${typeof zeroGamma === 'number' ? zeroGamma.toFixed(1) : zeroGamma}</b>`, showarrow: false,
         bgcolor: '#0a0e17', bordercolor: '#ffd700', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
         font: { color: '#ffd700', size: isMobile ? 10 : 11 }
       },
@@ -1186,12 +1186,12 @@ function renderGEXChart() {
       },
       {
         y: spot, x: 0.02, xref: 'paper', yanchor: 'bottom', xanchor: 'left',
-        text: `<b>${isMobile ? '現價' : '標的現價'}: ${spot}</b>`, showarrow: false,
-        bgcolor: '#0a0e17', bordercolor: '#ffffff', borderwidth: 1, borderpad: isMobile ? 2 : 4,
-        font: { color: '#ffffff', size: isMobile ? 9 : 10 }
+        text: `<b>${isMobile ? '現價' : '標的現價'}: ${typeof spot === 'number' ? spot.toFixed(1) : spot}</b>`, showarrow: false,
+        bgcolor: '#0a0e17', bordercolor: '#ffffff', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
+        font: { color: '#ffffff', size: isMobile ? 10 : 11 }
       },
       {
-        y: gexPlusFlip, x: 0.5, xref: 'paper', yanchor: 'bottom', xanchor: 'center',
+        y: gexPlusFlip, x: 0.35, xref: 'paper', yanchor: 'top', xanchor: 'center',
         text: `<b>${isMobile ? '早鳥' : '🐣 GEX+ 早鳥轉折'}: ${typeof gexPlusFlip === 'number' ? gexPlusFlip.toFixed(1) : gexPlusFlip}</b>`, showarrow: false,
         bgcolor: '#0a0e17', bordercolor: '#d500f9', borderwidth: 1.5, borderpad: isMobile ? 3 : 5,
         font: { color: '#d500f9', size: isMobile ? 10 : 11 }
@@ -1214,21 +1214,33 @@ function renderGEXChart() {
     ] : [
       {
         x: putWall, y: 1.05, yref: 'paper', xanchor: 'center',
-        text: `<b>Put Wall: ${putWall}</b>`, showarrow: true, ax: 0, ay: -24,
+        text: `<b>${isMobile ? 'PW' : 'Put Wall'}: ${putWall}</b>`, showarrow: true, ax: 0, ay: -24,
         bgcolor: '#0a0e17', bordercolor: '#00e676', borderwidth: 1.5, borderpad: isMobile ? 3 : 4,
         font: { color: '#00e676', size: isMobile ? 9 : 10 }
       },
       {
         x: zeroGamma, y: 1.05, yref: 'paper', xanchor: 'center',
-        text: `<b>ZG: ${zeroGamma}</b>`, showarrow: true, ax: 0, ay: -56,
+        text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${typeof zeroGamma === 'number' ? zeroGamma.toFixed(1) : zeroGamma}</b>`, showarrow: true, ax: 0, ay: -52,
         bgcolor: '#0a0e17', bordercolor: '#ffd700', borderwidth: 1.5, borderpad: isMobile ? 3 : 4,
         font: { color: '#ffd700', size: isMobile ? 9 : 10 }
       },
       {
         x: callWall, y: 1.05, yref: 'paper', xanchor: 'center',
-        text: `<b>Call Wall: ${callWall}</b>`, showarrow: true, ax: 0, ay: -24,
+        text: `<b>${isMobile ? 'CW' : 'Call Wall'}: ${callWall}</b>`, showarrow: true, ax: 0, ay: -80,
         bgcolor: '#0a0e17', bordercolor: '#ff5252', borderwidth: 1.5, borderpad: isMobile ? 3 : 4,
         font: { color: '#ff5252', size: isMobile ? 9 : 10 }
+      },
+      {
+        x: gexPlusFlip, y: 1.05, yref: 'paper', xanchor: 'center',
+        text: `<b>${isMobile ? '早鳥' : '🐣 GEX+'}: ${typeof gexPlusFlip === 'number' ? gexPlusFlip.toFixed(1) : gexPlusFlip}</b>`, showarrow: true, ax: 0, ay: -108,
+        bgcolor: '#0a0e17', bordercolor: '#d500f9', borderwidth: 1.5, borderpad: isMobile ? 3 : 4,
+        font: { color: '#d500f9', size: isMobile ? 9 : 10 }
+      },
+      {
+        x: spot, y: 1.05, yref: 'paper', xanchor: 'center',
+        text: `<b>${isMobile ? '現價' : '標的現價'}: ${typeof spot === 'number' ? spot.toFixed(1) : spot}</b>`, showarrow: true, ax: 0, ay: -136,
+        bgcolor: '#0a0e17', bordercolor: '#ffffff', borderwidth: 1.5, borderpad: isMobile ? 3 : 4,
+        font: { color: '#ffffff', size: isMobile ? 9 : 10 }
       },
       // 🛡️ Brand Watermark Annotations
       {
