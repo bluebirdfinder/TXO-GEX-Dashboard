@@ -963,8 +963,8 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
     leo_sat_codes = {"3491", "6285", "2312", "2313", "3596", "5388"}
     green_solar_codes = {"1519", "1503", "1513", "1514", "9958", "6443", "3576", "2406"}
     shipping_codes = {"2603", "2609", "2615", "2637", "2605", "2618", "2610", "2606"}
-    military_codes = {"8033", "2634", "6753", "8222", "4541", "2630"}
-    biotech_codes = {"6446", "1795", "6472", "4743", "1789", "4147"}
+    construction_codes = {"2542", "2522", "2548", "2501", "2545", "2524", "2511", "2535"}
+    military_bio_codes = {"8033", "2634", "6753", "6446", "1795", "6472", "4743"}
     financial_trad_codes = {"2881", "2882", "2891", "2886", "2884", "2885", "2892", "2002", "1301", "1303"}
 
     semi_chgs, semi_names = [], []
@@ -972,8 +972,8 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
     leo_chgs, leo_names = [], []
     green_chgs, green_names = [], []
     ship_chgs, ship_names = [], []
-    mili_chgs, mili_names = [], []
-    bio_chgs, bio_names = [], []
+    const_chgs, const_names = [], []
+    mili_bio_chgs, mili_bio_names = [], []
     fin_chgs, fin_names = [], []
 
     for stk in (stock_futures or []):
@@ -997,12 +997,12 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
         elif code in shipping_codes or '長榮' in clean_name or '萬海' in clean_name or '陽明' in clean_name or '慧洋' in clean_name:
             ship_chgs.append(chg)
             if len(ship_names) < 3: ship_names.append(clean_name)
-        elif code in military_codes or '雷虎' in clean_name or '漢翔' in clean_name or '龍德' in clean_name:
-            mili_chgs.append(chg)
-            if len(mili_names) < 3: mili_names.append(clean_name)
-        elif code in biotech_codes or '藥華藥' in clean_name or '美時' in clean_name or '保瑞' in clean_name:
-            bio_chgs.append(chg)
-            if len(bio_names) < 3: bio_names.append(clean_name)
+        elif code in construction_codes or '興富發' in clean_name or '遠雄' in clean_name or '國建' in clean_name or '華固' in clean_name or '長虹' in clean_name:
+            const_chgs.append(chg)
+            if len(const_names) < 3: const_names.append(clean_name)
+        elif code in military_bio_codes or '雷虎' in clean_name or '漢翔' in clean_name or '藥華藥' in clean_name or '美時' in clean_name:
+            mili_bio_chgs.append(chg)
+            if len(mili_bio_names) < 3: mili_bio_names.append(clean_name)
         elif code in financial_trad_codes or '富邦金' in clean_name or '國泰金' in clean_name or '中信金' in clean_name:
             fin_chgs.append(chg)
             if len(fin_names) < 3: fin_names.append(clean_name)
@@ -1026,8 +1026,8 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
     leo_chg_str, leo_status, leo_color = calc_stat(leo_chgs, 1.45)
     green_chg_str, green_status, green_color = calc_stat(green_chgs, -0.40)
     ship_chg_str, ship_status, ship_color = calc_stat(ship_chgs, 1.60)
-    mili_chg_str, mili_status, mili_color = calc_stat(mili_chgs, 0.90)
-    bio_chg_str, bio_status, bio_color = calc_stat(bio_chgs, -0.20)
+    const_chg_str, const_status, const_color = calc_stat(const_chgs, 0.75)
+    mili_bio_chg_str, mili_bio_status, mili_bio_color = calc_stat(mili_bio_chgs, 3.20)
     fin_chg_str, fin_status, fin_color = calc_stat(fin_chgs, -0.40)
 
     return {
@@ -1037,7 +1037,7 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
             {
                 "name": "💻 半導體與晶圓代工",
                 "code": "semicon_tech",
-                "share_pct": 40.0,
+                "share_pct": 38.0,
                 "change_pct": semi_chg_str,
                 "status": semi_status,
                 "color": semi_color,
@@ -1080,27 +1080,27 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
                 "top_stocks": ship_names if ship_names else ["長榮", "萬海", "陽明", "慧洋-KY"]
             },
             {
-                "name": "🪖 軍工防衛與無人機",
-                "code": "defense_aerospace",
-                "share_pct": 4.5,
-                "change_pct": mili_chg_str,
-                "status": mili_status,
-                "color": mili_color,
-                "top_stocks": mili_names if mili_names else ["雷虎", "漢翔", "龍德造船"]
+                "name": "🏢 營建資產與房產建商",
+                "code": "construction_realty",
+                "share_pct": 6.5,
+                "change_pct": const_chg_str,
+                "status": const_status,
+                "color": const_color,
+                "top_stocks": const_names if const_names else ["興富發", "遠雄", "國建", "華固"]
             },
             {
-                "name": "🧬 生技新藥與醫療器材",
-                "code": "biotech_pharma",
-                "share_pct": 5.0,
-                "change_pct": bio_chg_str,
-                "status": bio_status,
-                "color": bio_color,
-                "top_stocks": bio_names if bio_names else ["藥華藥", "美時", "保瑞"]
+                "name": "🧬 生技醫療與軍工防衛",
+                "code": "biotech_defense",
+                "share_pct": 5.5,
+                "change_pct": mili_bio_chg_str,
+                "status": mili_bio_status,
+                "color": mili_bio_color,
+                "top_stocks": mili_bio_names if mili_bio_names else ["藥華藥", "美時", "雷虎", "漢翔"]
             },
             {
                 "name": "🏦 金融金控與傳產原物料",
                 "code": "financials_trad",
-                "share_pct": 11.0,
+                "share_pct": 10.5,
                 "change_pct": fin_chg_str,
                 "status": fin_status,
                 "color": fin_color,
