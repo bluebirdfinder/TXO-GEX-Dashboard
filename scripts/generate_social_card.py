@@ -1,27 +1,461 @@
 """
-Bluebird Finder Social Infographic Generator v47.0 (IG 4:5 Carousel Edition)
-===================================================================================
-100% Emoji-Safe, High-Precision Vector Design for Bluebird Finder Quant Labs
-Eliminates Matplotlib font emoji missing glyph errors completely.
-Includes explicit legal disclaimers, sleek card layouts, and crisp typography.
+Bluebird Finder Social Infographic Generator v48.0 (Playwright Web-Native 4:5 IG Edition)
+===========================================================================================
+100% Web Dashboard Design System Sync.
+Renders HTML/CSS matching the exact front-end UI of TXO GEX Dashboard using Playwright.
+Generates 3 high-resolution 4:5 vertical IG carousel cards (1080x1350 px) with native emojis,
+glassmorphism cards, and explicit legal disclaimers.
 """
 
 import os
 import sys
 import json
-import math
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+import time
 
 # Enable UTF-8 encoding
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
-# Font setup for Traditional Chinese (Microsoft JhengHei / Arial)
-plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei', 'DFKai-SB', 'SimHei', 'DejaVu Sans', 'Arial']
-plt.rcParams['axes.unicode_minus'] = False
+def build_card1_html(data):
+    spot_p = data.get("spot_price") or data.get("txf_price") or 45160.0
+    zero_gamma = data.get("zero_gamma_level") or 45217.0
+    gex_plus_flip = data.get("gex_plus_flip") or (zero_gamma - 50)
+    total_gex = data.get("total_gex_val") or 8.5
+    total_vex = data.get("total_vex") or -6.2
+    total_gex_plus = data.get("total_gex_plus") or 2.3
+    call_wall = data.get("call_wall_strike") or 45400
+    put_wall = data.get("put_wall_strike") or 45000
+    date_str = data.get("date") or data.get("last_updated") or "2026-08-21"
+    session_name = data.get("session_name") or "☀️ 日盤結算籌碼"
+
+    gex_tag = "🔴 正 GEX 護盤區 (波動壓縮)" if total_gex >= 0 else "🟢 負 GEX 追殺區 (波動放大)"
+    vex_tag = "🟢 負 VEX (恐慌做市商助跌)" if total_vex < 0 else "🔴 正 VEX (做市商買盤護盤)"
+
+    return f"""<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;600;700;900&display=swap');
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
+    width: 1080px;
+    height: 1350px;
+    background: #090d16;
+    font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
+    color: #f8fafc;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }}
+  .brand-header {{
+    background: rgba(15, 23, 42, 0.85);
+    border: 1.5px solid #00f2fe;
+    border-radius: 16px;
+    padding: 24px 32px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
+  }}
+  .brand-title {{
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #ffffff;
+    margin-bottom: 6px;
+  }}
+  .brand-sub {{
+    font-size: 18px;
+    color: #00f2fe;
+    font-weight: 600;
+  }}
+  .metrics-grid {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }}
+  .metric-card {{
+    background: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  }}
+  .metric-label {{
+    font-size: 18px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }}
+  .metric-value {{
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffd700;
+  }}
+  .wall-panel {{
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid #ffd700;
+    border-radius: 16px;
+    padding: 26px 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }}
+  .wall-box {{
+    display: flex;
+    flex-direction: column;
+  }}
+  .wall-title {{
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }}
+  .wall-val {{
+    font-size: 34px;
+    font-weight: 900;
+    color: #ffffff;
+  }}
+  .exposure-panel {{
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+  }}
+  .exp-title {{
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffd700;
+    margin-bottom: 16px;
+    border-bottom: 1px dashed rgba(255,255,255,0.15);
+    padding-bottom: 10px;
+  }}
+  .exp-row {{
+    font-size: 20px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+    color: #e2e8f0;
+  }}
+  .disclaimer-panel {{
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    border-radius: 14px;
+    padding: 20px 24px;
+  }}
+  .disc-title {{
+    font-size: 17px;
+    font-weight: 800;
+    color: #ef4444;
+    margin-bottom: 6px;
+  }}
+  .disc-body {{
+    font-size: 14.5px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }}
+</style>
+</head>
+<body>
+  <div class="brand-header">
+    <div class="brand-title">🦅 尋鳥 BLUEBIRD FINDER • 期權量化快報</div>
+    <div class="brand-sub">{session_name} &nbsp;|&nbsp; 更新時間: {date_str}</div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card" style="border-left: 5px solid #38bdf8;">
+      <div class="metric-label">🎯 台指現貨結算價</div>
+      <div class="metric-value" style="color: #ffd700;">${spot_p:,.1f}</div>
+    </div>
+    <div class="metric-card" style="border-left: 5px solid #a855f7;">
+      <div class="metric-label">⚖️ Zero Gamma 轉折點</div>
+      <div class="metric-value" style="color: #a855f7;">${zero_gamma:,.1f}</div>
+    </div>
+  </div>
+
+  <div class="wall-panel">
+    <div class="wall-box">
+      <div class="wall-title" style="color: #ff4d4f;">🧱 莊家天花板 (Call Wall)</div>
+      <div class="wall-val">${call_wall:,.0f} <span style="font-size: 17px; color: #ff4d4f; font-weight: 600;">(壓力強固)</span></div>
+    </div>
+    <div class="wall-box">
+      <div class="wall-title" style="color: #26a69a;">🛋️ 莊家地板牆 (Put Wall)</div>
+      <div class="wall-val">${put_wall:,.0f} <span style="font-size: 17px; color: #26a69a; font-weight: 600;">(防守鐵板)</span></div>
+    </div>
+  </div>
+
+  <div class="exposure-panel">
+    <div class="exp-title">📊 做市商三大動態曝光指標 (GEX / VEX / GEX+)</div>
+    <div class="exp-row">• 淨 Gamma 曝險 (Total GEX): &nbsp;<strong style="color:#00f2fe;">{total_gex:+.1f} 億</strong> &nbsp;<span style="font-size: 17px; color: #94a3b8;">({gex_tag})</span></div>
+    <div class="exp-row">• 恐慌敏感曝險 (Total VEX): &nbsp;<strong style="color:#26a69a;">{total_vex:+.1f} 億</strong> &nbsp;<span style="font-size: 17px; color: #94a3b8;">({vex_tag})</span></div>
+    <div class="exp-row">• 恐慌加權總合 (Total GEX+): &nbsp;<strong style="color:#ffd700;">{total_gex_plus:+.1f} 億</strong></div>
+    <div class="exp-row">• GEX+ 提前轉折臨界點: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong style="color:#a855f7;">${gex_plus_flip:,.0f} 點</strong></div>
+  </div>
+
+  <div class="disclaimer-panel">
+    <div class="disc-title">⚠️【免責聲明  LEGAL DISCLAIMER】</div>
+    <div class="disc-body">
+      本報告由「尋鳥 Bluebird Finder Quant Labs」量化引擎自動繪製，所提供之台指期權做市商曝險與動態數據僅供學術研究與個人盯盤紀錄，絕不構成任何形式之投資建議、邀約或操作依據。期貨與選擇權交易具高風險，投資人應獨立思考並自負盈虧。
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+def build_card3_sector_html(data):
+    date_str = data.get("date") or data.get("last_updated") or "2026-08-21"
+    sector_data = data.get("sector_capital_rotation") or {}
+    sectors = sector_data.get("sectors") or []
+
+    progress_bars_html = ""
+    for s in sectors:
+        col = s.get('color', '#38bdf8')
+        if 'call-color' in col or '#ff' in col: col = '#ff4d4f'
+        elif 'put-color' in col or '#26' in col: col = '#26a69a'
+        elif 'gold' in col: col = '#ffd700'
+        progress_bars_html += f'<div style="width: {s.get("share_pct", 10)}%; background: {col}; height: 100%;"></div>'
+
+    sector_cards_html = ""
+    for s in sectors[:8]:
+        col = s.get('color', '#38bdf8')
+        if 'call-color' in col or '#ff' in col: col = '#ff4d4f'
+        elif 'put-color' in col or '#26' in col: col = '#26a69a'
+        elif 'gold' in col: col = '#ffd700'
+        
+        name = s.get('name', '')
+        chg = s.get('change_pct', '0.0%')
+        pct = s.get('share_pct', 0)
+        stat = s.get('status', '')
+        stocks = "、".join(s.get('top_stocks', [])[:3])
+
+        sector_cards_html += f"""
+        <div style="background: rgba(30, 41, 59, 0.75); border-radius: 12px; border-left: 5px solid {col}; border-top: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 20px; font-weight: 800; color: #ffffff;">{name}</span>
+            <span style="font-size: 22px; font-weight: 900; color: {col};">{chg}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+            <span style="font-size: 15px; color: #cbd5e1; font-weight: 600;">{stat} (占{pct}%)</span>
+            <span style="font-size: 14.5px; color: #94a3b8;">🎯 {stocks}</span>
+          </div>
+        </div>
+        """
+
+    return f"""<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;600;700;900&display=swap');
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
+    width: 1080px;
+    height: 1350px;
+    background: #090d16;
+    font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
+    color: #f8fafc;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }}
+  .brand-header {{
+    background: rgba(15, 23, 42, 0.85);
+    border: 1.5px solid #ffd700;
+    border-radius: 16px;
+    padding: 24px 32px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+  }}
+  .brand-title {{
+    font-size: 30px;
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 6px;
+  }}
+  .brand-sub {{
+    font-size: 17px;
+    color: #ffd700;
+    font-weight: 600;
+  }}
+  .progress-bar-box {{
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
+  }}
+  .sector-grid {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }}
+  .disclaimer-panel {{
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    border-radius: 14px;
+    padding: 18px 24px;
+  }}
+  .disc-title {{
+    font-size: 16px;
+    font-weight: 800;
+    color: #ef4444;
+    margin-bottom: 4px;
+  }}
+  .disc-body {{
+    font-size: 14px;
+    color: #94a3b8;
+    line-height: 1.45;
+  }}
+</style>
+</head>
+<body>
+  <div class="brand-header">
+    <div class="brand-title">📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣</div>
+    <div class="brand-sub">即時板塊資金熱度與代表性個股期  |  更新時間: {date_str}</div>
+  </div>
+
+  <div class="progress-bar-box">
+    {progress_bars_html}
+  </div>
+
+  <div class="sector-grid">
+    {sector_cards_html}
+  </div>
+
+  <div class="disclaimer-panel">
+    <div class="disc-title">⚠️【免責聲明  LEGAL DISCLAIMER】</div>
+    <div class="disc-body">
+      本報告由「尋鳥 Bluebird Finder Quant Labs」量化引擎自動繪製，所提供之產業板塊資金輪動數據僅供學術研究與個人盯盤紀錄，絕不構成任何形式之投資建議。交易請獨立思考並自負風險。
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+def build_card2_strikes_html(data):
+    spot_p = data.get("spot_price") or data.get("txf_price") or 45160.0
+    zero_gamma = data.get("zero_gamma_level") or 45217.0
+    call_wall = data.get("call_wall_strike") or 45400
+    put_wall = data.get("put_wall_strike") or 45000
+    date_str = data.get("date") or data.get("last_updated") or "2026-08-21"
+    
+    gex_list = data.get("total_gex") or []
+    strikes = [item["strike"] for item in gex_list]
+    net_gex = [item.get("net_gex", 0) for item in gex_list]
+
+    # Filter strikes within spot +- 1500
+    sub_items = [item for item in gex_list if abs(item["strike"] - spot_p) <= 1500]
+    if not sub_items: sub_items = gex_list[:20]
+
+    max_val = max([abs(item.get("net_gex", 0)) for item in sub_items] + [10.0])
+
+    bars_html = ""
+    for item in sub_items:
+        stk = item["strike"]
+        val = item.get("net_gex", 0)
+        pct = min(100, int(abs(val) / max_val * 100))
+        color = "#ff4d4f" if val >= 0 else "#26a69a"
+        
+        badge = ""
+        if stk == call_wall: badge = '<span style="background: #ff4d4f; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px;">Call Wall</span>'
+        elif stk == put_wall: badge = '<span style="background: #26a69a; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px;">Put Wall</span>'
+        elif abs(stk - spot_p) <= 25: badge = '<span style="background: #38bdf8; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px;">現貨位階</span>'
+        elif abs(stk - zero_gamma) <= 25: badge = '<span style="background: #a855f7; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 6px;">Zero Gamma</span>'
+
+        bars_html += f"""
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 8px;">
+          <div style="width: 130px; font-size: 16px; font-weight: 700; color: #f8fafc; text-align: right;">{stk} {badge}</div>
+          <div style="flex: 1; height: 18px; background: rgba(255,255,255,0.05); border-radius: 9px; overflow: hidden; display: flex; align-items: center;">
+            <div style="width: {pct}%; background: {color}; height: 100%; border-radius: 9px;"></div>
+          </div>
+          <div style="width: 80px; font-size: 15px; fontweight: 800; color: {color}; text-align: left;">{val:+.1f} 億</div>
+        </div>
+        """
+
+    return f"""<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;600;700;900&display=swap');
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
+    width: 1080px;
+    height: 1350px;
+    background: #090d16;
+    font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
+    color: #f8fafc;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }}
+  .brand-header {{
+    background: rgba(15, 23, 42, 0.85);
+    border: 1.5px solid #38bdf8;
+    border-radius: 16px;
+    padding: 24px 32px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+  }}
+  .brand-title {{
+    font-size: 30px;
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 6px;
+  }}
+  .brand-sub {{
+    font-size: 17px;
+    color: #38bdf8;
+    font-weight: 600;
+  }}
+  .chart-box {{
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+  }}
+  .disclaimer-panel {{
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    border-radius: 14px;
+    padding: 18px 24px;
+  }}
+  .disc-title {{
+    font-size: 16px;
+    font-weight: 800;
+    color: #ef4444;
+    margin-bottom: 4px;
+  }}
+  .disc-body {{
+    font-size: 14px;
+    color: #94a3b8;
+    line-height: 1.45;
+  }}
+</style>
+</head>
+<body>
+  <div class="brand-header">
+    <div class="brand-title">📈 台指做市商 GEX 各履約價動態防守牆</div>
+    <div class="brand-sub">紅柱 = 正 GEX (莊家護盤防守)  |  綠柱 = 負 GEX (做市商助跌)  |  {date_str}</div>
+  </div>
+
+  <div class="chart-box">
+    {bars_html}
+  </div>
+
+  <div class="disclaimer-panel">
+    <div class="disc-title">⚠️【免責聲明  LEGAL DISCLAIMER】</div>
+    <div class="disc-body">
+      本報告由「尋鳥 Bluebird Finder Quant Labs」量化引擎自動繪製，所提供之台指期權做市商曝險與數據僅供學術研究與個人紀錄，絕不構成任何投資建議。交易請自負風險。
+    </div>
+  </div>
+</body>
+</html>
+"""
 
 def generate_bluebird_social_card(gex_data_path=None, output_dir=None):
     if gex_data_path is None:
@@ -36,216 +470,58 @@ def generate_bluebird_social_card(gex_data_path=None, output_dir=None):
     with open(gex_data_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    spot_p = data.get("spot_price") or data.get("txf_price") or 45160.0
-    zero_gamma = data.get("zero_gamma_level") or 45217.0
-    gex_plus_flip = data.get("gex_plus_flip") or (zero_gamma - 50)
-    total_gex = data.get("total_gex_val") or 8.5
-    total_vex = data.get("total_vex") or -6.2
-    total_gex_plus = data.get("total_gex_plus") or 2.3
-    call_wall = data.get("call_wall_strike") or 45400
-    put_wall = data.get("put_wall_strike") or 45000
-    date_str = data.get("date") or data.get("last_updated") or "2026-08-21"
-    session_name = (data.get("session_name") or "日盤結算籌碼").replace('☀️', '').replace('🌙', '').strip()
-    
-    gex_list = data.get("total_gex") or []
-    sector_data = data.get("sector_capital_rotation") or {}
-    sectors = sector_data.get("sectors") or []
-
-    strikes = [item["strike"] for item in gex_list]
-    net_gex = [item.get("net_gex", 0) for item in gex_list]
-    vex_vals = [item.get("vex", 0) for item in gex_list]
-
-    # Filter strikes around spot +- 2000
-    sub_indices = [i for i, k in enumerate(strikes) if abs(k - spot_p) <= 2000]
-    if sub_indices:
-        sub_strikes = [strikes[i] for i in sub_indices]
-        sub_gex = [net_gex[i] for i in sub_indices]
-        sub_vex = [vex_vals[i] for i in sub_indices]
-    else:
-        sub_strikes = strikes[:30]
-        sub_gex = net_gex[:30]
-        sub_vex = vex_vals[:30]
-
     os.makedirs(output_dir, exist_ok=True)
 
-    # -------------------------------------------------------------------------
-    # CARD 1: 4:5 Overview Digest (Clean Vector Design, NO Emoji Glyphs)
-    # -------------------------------------------------------------------------
-    fig1 = plt.figure(figsize=(9, 11.25), dpi=120, facecolor='#090d16') # 1080x1350 px
-    ax1 = fig1.add_axes([0, 0, 1, 1], facecolor='#090d16')
-    ax1.axis('off')
+    html1 = build_card1_html(data)
+    html2 = build_card2_strikes_html(data)
+    html3 = build_card3_sector_html(data)
 
-    # Top Brand Header Box
-    header_rect = patches.FancyBboxPatch((0.05, 0.89), 0.90, 0.07, boxstyle="round,pad=0.01",
-                                         fc='#111827', ec='#00d2ff', lw=1.5)
-    ax1.add_patch(header_rect)
-    ax1.text(0.5, 0.938, "尋鳥 BLUEBIRD FINDER  |  台指期權量化導航", fontsize=16, fontweight='bold', color='#ffffff', ha='center', va='center')
-    ax1.text(0.5, 0.906, f"* {session_name}  |  更新時間: {date_str}", fontsize=11, color='#00d2ff', ha='center', va='center')
+    tmp_h1 = os.path.join(output_dir, "card1_temp.html")
+    tmp_h2 = os.path.join(output_dir, "card2_temp.html")
+    tmp_h3 = os.path.join(output_dir, "card3_temp.html")
 
-    # Metric Box 1: Spot Price
-    box1 = patches.FancyBboxPatch((0.05, 0.74), 0.43, 0.13, boxstyle="round,pad=0.01", fc='#162032', ec='#38bdf8', lw=1.2)
-    ax1.add_patch(box1)
-    ax1.text(0.08, 0.835, "◆ 台指現貨結算價", fontsize=11, color='#94a3b8', va='center')
-    ax1.text(0.08, 0.78, f"${spot_p:,.1f}", fontsize=22, fontweight='bold', color='#ffd700', va='center')
-
-    # Metric Box 2: Zero Gamma
-    box2 = patches.FancyBboxPatch((0.52, 0.74), 0.43, 0.13, boxstyle="round,pad=0.01", fc='#162032', ec='#a855f7', lw=1.2)
-    ax1.add_patch(box2)
-    ax1.text(0.55, 0.835, "◆ Zero Gamma 轉折點", fontsize=11, color='#94a3b8', va='center')
-    ax1.text(0.55, 0.78, f"${zero_gamma:,.1f}", fontsize=22, fontweight='bold', color='#a855f7', va='center')
-
-    # Call Wall & Put Wall Banners
-    wall_rect = patches.FancyBboxPatch((0.05, 0.60), 0.90, 0.12, boxstyle="round,pad=0.01", fc='#0f172a', ec='#ffd700', lw=1.2)
-    ax1.add_patch(wall_rect)
-    ax1.text(0.08, 0.68, "▲ 莊家天花板牆 (Call Wall)", fontsize=11, color='#ff4d4f', va='center', fontweight='bold')
-    ax1.text(0.08, 0.63, f"${call_wall:,.0f} 點 (頂部強力阻力)", fontsize=15, color='#ffffff', va='center', fontweight='bold')
-
-    ax1.text(0.55, 0.68, "▼ 莊家地板牆 (Put Wall)", fontsize=11, color='#26a69a', va='center', fontweight='bold')
-    ax1.text(0.55, 0.63, f"${put_wall:,.0f} 點 (底部防守鐵板)", fontsize=15, color='#ffffff', va='center', fontweight='bold')
-
-    # Exposure Analysis Box
-    exp_rect = patches.FancyBboxPatch((0.05, 0.28), 0.90, 0.30, boxstyle="round,pad=0.01", fc='#111827', ec='#334155', lw=1.2)
-    ax1.add_patch(exp_rect)
-
-    gex_tag = "[正 GEX 護盤區 - 波動壓縮]" if total_gex >= 0 else "[負 GEX 追殺區 - 波動放大]"
-    vex_tag = "[負 VEX - 恐慌做市商助跌]" if total_vex < 0 else "[正 VEX - 做市商買盤護盤]"
-
-    exp_text = (
-        f"【做市商三維對沖曝險指標】\n"
-        f"─────────────────────────────────────\n"
-        f"● 淨 Gamma 曝險 (Total GEX):   {total_gex:+.1f} 億  {gex_tag}\n"
-        f"● 恐慌敏感曝險 (Total VEX):   {total_vex:+.1f} 億  {vex_tag}\n"
-        f"● 恐慌加權總合 (Total GEX+):  {total_gex_plus:+.1f} 億\n"
-        f"● GEX+ 提前轉折臨界線:         ${gex_plus_flip:,.0f} 點\n\n"
-        f"-> 盤勢觀點: 現價高於 Zero Gamma，多頭防守對沖買盤尚存；\n"
-        f"   若下破 ${put_wall:,.0f} 則宜防範 Gamma/Vanna 追殺賣盤加劇。"
-    )
-    ax1.text(0.08, 0.54, exp_text, fontsize=10.5, color='#f8fafc', va='top', ha='left', linespacing=1.45)
-
-    # Legal Disclaimer Box (Required by User)
-    disc_rect = patches.FancyBboxPatch((0.05, 0.04), 0.90, 0.21, boxstyle="round,pad=0.01", fc='#0f172a', ec='#ef4444', lw=1.0)
-    ax1.add_patch(disc_rect)
-
-    disc_text = (
-        f"【免責聲明  LEGAL DISCLAIMER】\n"
-        f"─────────────────────────────────────\n"
-        f"本報告由「尋鳥 Bluebird Finder Quant Labs」量化引擎自動繪製，\n"
-        f"所提供之台指期權做市商曝險、Zero Gamma 及板塊數據僅供學術研究與個人盯盤紀錄，\n"
-        f"絕不構成任何形式之個股/期權投資建議、邀約或操作依據。\n"
-        f"期貨與選擇權交易具高槓桿風險，投資人應獨立思考並自負盈虧責任。"
-    )
-    ax1.text(0.08, 0.22, disc_text, fontsize=9.2, color='#94a3b8', va='top', ha='left', linespacing=1.35)
+    with open(tmp_h1, "w", encoding="utf-8") as f: f.write(html1)
+    with open(tmp_h2, "w", encoding="utf-8") as f: f.write(html2)
+    with open(tmp_h3, "w", encoding="utf-8") as f: f.write(html3)
 
     card1_path = os.path.join(output_dir, "social_card_p1_overview.png")
-    fig1.savefig(card1_path, facecolor=fig1.get_facecolor(), edgecolor='none', bbox_inches='tight')
-    plt.close(fig1)
-
-    # -------------------------------------------------------------------------
-    # CARD 2: GEX & VEX Strike Profile Chart (Clean No-Emoji Design)
-    # -------------------------------------------------------------------------
-    fig2 = plt.figure(figsize=(9, 11.25), dpi=120, facecolor='#090d16')
-
-    # Subplot 1: GEX Profile
-    ax2_1 = fig2.add_subplot(2, 1, 1, facecolor='#111827')
-    colors1 = ['#ff4d4f' if v >= 0 else '#26a69a' for v in sub_gex]
-    ax2_1.bar(sub_strikes, sub_gex, width=35, color=colors1, alpha=0.85, edgecolor='none')
-    ax2_1.axvline(spot_p, color='#00d2ff', linestyle='--', linewidth=2.0, label=f'現貨 ${spot_p:,.0f}')
-    ax2_1.axvline(zero_gamma, color='#a855f7', linestyle=':', linewidth=2.0, label=f'Zero Gamma ${zero_gamma:,.0f}')
-    ax2_1.axvline(call_wall, color='#ff4d4f', linestyle='-', linewidth=1.5, label=f'Call Wall ${call_wall:,.0f}')
-    ax2_1.axvline(put_wall, color='#26a69a', linestyle='-', linewidth=1.5, label=f'Put Wall ${put_wall:,.0f}')
-    ax2_1.set_title("台指做市商 GEX 各履約價佈局 (紅柱=正GEX護盤 / 綠柱=負GEX助跌)", fontsize=11.5, color='#ffffff', pad=10, fontweight='bold')
-    ax2_1.set_xlabel("履約價 (Strike Price)", fontsize=9.5, color='#94a3b8')
-    ax2_1.set_ylabel("Net GEX (億NT$/1%)", fontsize=9.5, color='#94a3b8')
-    ax2_1.tick_params(colors='#94a3b8', labelsize=8.5)
-    ax2_1.grid(True, linestyle=':', alpha=0.25, color='#475569')
-    ax2_1.legend(loc='upper left', fontsize=8.5, facecolor='#1e293b', edgecolor='#334155', labelcolor='#ffffff')
-
-    # Subplot 2: VEX Profile
-    ax2_2 = fig2.add_subplot(2, 1, 2, facecolor='#111827')
-    colors2 = ['#ff4d4f' if v >= 0 else '#26a69a' for v in sub_vex]
-    ax2_2.bar(sub_strikes, sub_vex, width=35, color=colors2, alpha=0.85, edgecolor='none')
-    ax2_2.axvline(spot_p, color='#00d2ff', linestyle='--', linewidth=2.0, label=f'現貨 ${spot_p:,.0f}')
-    ax2_2.set_title("台指做市商 VEX 恐慌波動曝險 (綠柱負值=恐慌急殺做市商助跌)", fontsize=11.5, color='#ffffff', pad=10, fontweight='bold')
-    ax2_2.set_xlabel("履約價 (Strike Price)", fontsize=9.5, color='#94a3b8')
-    ax2_2.set_ylabel("VEX (億NT$/vol)", fontsize=9.5, color='#94a3b8')
-    ax2_2.tick_params(colors='#94a3b8', labelsize=8.5)
-    ax2_2.grid(True, linestyle=':', alpha=0.25, color='#475569')
-    ax2_2.legend(loc='upper right', fontsize=8.5, facecolor='#1e293b', edgecolor='#334155', labelcolor='#ffffff')
-
-    plt.tight_layout(pad=3.0)
     card2_path = os.path.join(output_dir, "social_card_p2_gex_profile.png")
-    fig2.savefig(card2_path, facecolor=fig2.get_facecolor(), edgecolor='none', bbox_inches='tight')
-    plt.close(fig2)
-
-    # -------------------------------------------------------------------------
-    # CARD 3: 8-Sector Capital Rotation Matrix (Clean Vector Badge Design)
-    # -------------------------------------------------------------------------
-    fig3 = plt.figure(figsize=(9, 11.25), dpi=120, facecolor='#090d16')
-    ax3 = fig3.add_axes([0, 0, 1, 1], facecolor='#090d16')
-    ax3.axis('off')
-
-    # Card 3 Header
-    sec_header = patches.FancyBboxPatch((0.05, 0.89), 0.90, 0.07, boxstyle="round,pad=0.01",
-                                         fc='#111827', ec='#ffd700', lw=1.5)
-    ax3.add_patch(sec_header)
-    ax3.text(0.5, 0.938, "證交所 33 大產業歸納 8 大精準主題資金輪動矩陣", fontsize=15, fontweight='bold', color='#ffffff', ha='center', va='center')
-    ax3.text(0.5, 0.906, f"● 即時板塊資金熱度與代表性個股期標的  •  {date_str}", fontsize=10.5, color='#ffd700', ha='center', va='center')
-
-    # Render 8 Sector Cards in 2 Columns x 4 Rows
-    card_w = 0.43
-    card_h = 0.165
-    
-    for idx, s in enumerate(sectors[:8]):
-        r = idx // 2
-        c = idx % 2
-        
-        x = 0.05 + c * 0.47
-        y = 0.69 - r * 0.18
-        
-        sec_color = s.get('color', '#38bdf8')
-        if 'call-color' in sec_color or '#ff' in sec_color: sec_color = '#ff4d4f'
-        elif 'put-color' in sec_color or '#26' in sec_color: sec_color = '#26a69a'
-        elif 'gold' in sec_color: sec_color = '#ffd700'
-
-        card_box = patches.FancyBboxPatch((x, y), card_w, card_h, boxstyle="round,pad=0.01",
-                                           fc='#162032', ec=sec_color, lw=1.5)
-        ax3.add_patch(card_box)
-
-        # Sector Text without Emoji Glyphs
-        raw_name = s.get('name', '板塊')
-        clean_sname = raw_name.replace('💻', '').replace('🤖', '').replace('📡', '').replace('⚡', '').replace('🚢', '').replace('🏢', '').replace('🧬', '').replace('🏦', '').strip()
-        
-        s_chg = s.get('change_pct', '0.0%')
-        raw_stat = s.get('status', '平穩')
-        clean_stat = raw_stat.replace('🔥', '[大漲]').replace('📈', '[買盤]').replace('❄️', '[拉回]').replace('📉', '[微拉]').replace('⚖️', '[觀望]').strip()
-        s_stocks = "、".join(s.get('top_stocks', [])[:3])
-
-        ax3.text(x + 0.03, y + card_h - 0.035, f"■ {clean_sname}", fontsize=11, fontweight='bold', color='#ffffff', va='center')
-        ax3.text(x + card_w - 0.03, y + card_h - 0.035, f"{s_chg}", fontsize=12, fontweight='bold', color=sec_color, ha='right', va='center')
-        
-        ax3.text(x + 0.03, y + 0.07, f"* 狀態: {clean_stat}", fontsize=9.5, color='#cbd5e1', va='center')
-        ax3.text(x + 0.03, y + 0.03, f"◆ 標的: {s_stocks}", fontsize=9.0, color='#94a3b8', va='center')
-
-    # Card 3 Disclaimer Footer
-    c3_footer = patches.FancyBboxPatch((0.05, 0.04), 0.90, 0.08, boxstyle="round,pad=0.01", fc='#0f172a', ec='#ef4444', lw=1.0)
-    ax3.add_patch(c3_footer)
-    ax3.text(0.5, 0.09, "【免責聲明】本報告僅供學術量化研究與個人紀錄，不構成投資建議，交易請自負風險。", fontsize=9.5, color='#94a3b8', ha='center', va='center')
-    ax3.text(0.5, 0.06, "© 尋鳥 Bluebird Finder Quant Labs  •  獨立量化品牌", fontsize=9.0, color='#64748b', ha='center', va='center')
-
     card3_path = os.path.join(output_dir, "social_card_p3_sector_rotation.png")
-    fig3.savefig(card3_path, facecolor=fig3.get_facecolor(), edgecolor='none', bbox_inches='tight')
-    plt.close(fig3)
 
-    # Save default card1 as social_card_latest.png for backward compatibility
-    latest_path = os.path.join(output_dir, "social_card_latest.png")
-    import shutil
-    shutil.copyfile(card1_path, latest_path)
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1080, "height": 1350}, device_scale_factor=2)
 
-    print(f"[OK] Generated Clean Emoji-Safe IG 4:5 Carousel Cards:")
-    print(f"  - Card 1: {card1_path}")
-    print(f"  - Card 2: {card2_path}")
-    print(f"  - Card 3: {card3_path}")
-    return True
+            page.goto(f"file:///{tmp_h1.replace('\\', '/')}")
+            page.screenshot(path=card1_path)
+
+            page.goto(f"file:///{tmp_h2.replace('\\', '/')}")
+            page.screenshot(path=card2_path)
+
+            page.goto(f"file:///{tmp_h3.replace('\\', '/')}")
+            page.screenshot(path=card3_path)
+
+            browser.close()
+
+        # Copy card1 to social_card_latest.png
+        import shutil
+        latest_path = os.path.join(output_dir, "social_card_latest.png")
+        shutil.copyfile(card1_path, latest_path)
+
+        # Cleanup temp HTML
+        for fpath in [tmp_h1, tmp_h2, tmp_h3]:
+            if os.path.exists(fpath): os.remove(fpath)
+
+        print(f"[OK] Successfully rendered 3 Web-Native IG 4:5 Cards via Playwright:")
+        print(f"  - Card 1 (Overview): {card1_path}")
+        print(f"  - Card 2 (GEX Strike Wall): {card2_path}")
+        print(f"  - Card 3 (8-Sector Rotation): {card3_path}")
+        return True
+    except Exception as e:
+        print(f"[Warning] Playwright capture error: {e}.")
+        return False
 
 if __name__ == "__main__":
     generate_bluebird_social_card()
