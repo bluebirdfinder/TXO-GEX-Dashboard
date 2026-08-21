@@ -14,9 +14,12 @@
 - **Black-Scholes Vanna 算式**：計算各履約價與全場做市商 Vanna 恐慌曝險。
 - **GEX+ Flip (合成轉折點)**：導出結合「價格波動 (Gamma)」與「恐慌指數 (Vanna)」的靈敏轉折線，提供盤中更早的大跌早鳥預警。
 
-### 2. 📸 尋鳥 Bluebird Finder 專屬風格 4K 社群懶人圖卡生成器 (`generate_social_card.py`)
-- 每日自動產生 2000x2000 超高畫質黑金藍風格 4 格懶人圖卡 (`data/social_card_latest.png`)。
-- 專為 IG 與 Threads 手動發文設計，網頁頂部提供 **`📸 下載 IG/Threads 社群圖卡`** 一鍵快捷下載按鈕。
+### 2. 📸 尋鳥 Bluebird Finder 專屬風格 1:1 正方形社群懶人圖卡生成器 (`generate_social_card.py`)
+- **1:1 正方形標準規格**：每日自動產生 1080x1080 像素、1:1 正方形黃金比例圖卡，擺脫橫向扁平感與上下過度留白。
+- **5 大位階多通道標籤防碰撞 (Anti-Collision Engine)**：
+  - `現價 Spot` (x: 0.02, left middle) | `GEX+ Flip` (x: 0.32, center top) | `Zero Gamma` (x: 0.65, center bottom) | `Call/Put Wall` (x: 0.98, right top/bottom)。
+  - 保障即使現價與轉折位階重疊（如 45,217 vs 45,224），標籤亦 100% 獨立無遮擋。
+- 專為 IG、Telegram 與 Threads 發文設計，網頁頂部提供 **`📸 下載 IG/Threads 社群圖卡`** 一鍵快捷下載按鈕。
 - 烙印 `© 尋鳥 Bluebird Finder Quant Labs` 官方標章，100% 原創品牌防偽，無任何第三方 IP 字眼。
 
 ### 3. 🎓 國中生秒懂白話文教學說明與 Modal 彈窗
