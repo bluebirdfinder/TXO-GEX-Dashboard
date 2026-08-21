@@ -1,10 +1,20 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.1)
 
-**當前版本**：`v45.0` (2026-08-21 VEX/GEX+ 雙軌量化與社群懶人圖卡升級版)
+**當前版本**：`v45.1` (2026-08-22 全套社群圖卡批次下載與 Modal 預覽增強版)
 **資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v45.0)
 **社群懶人圖卡生成器**：`scripts/generate_social_card.py` (4K 尋鳥品牌原創風格圖卡)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v45.1 核心更新亮點（Multi-Card Download & Social Modal Release）
+
+### 📸 全套 3 張 IG/Threads 社群圖卡一鍵批次下載與 Modal 彈窗
+- **全套 3 張完整支援**：同時提供 P1 盤後籌碼總覽、P2 GEX 雙向對沖牆、P3 板塊資金輪動全套 1080x1080 黃金比例社群圖卡。
+- **🚀 一鍵下載全部 3 張 PNG**：徹底解決原先僅能下載第一張圖卡之限制，順序觸發全套圖片下載。
+- **📦 打包下載 ZIP 壓縮包**：整合 `JSZip` 引擎打包產出 `Bluebird_Finder_GEX_Social_Cards.zip`，完美避開瀏覽器多圖下載攔截機制。
+- **🖼️ 1:1 縮圖即時預覽與單圖獨立下載**：專屬 Modal 視窗提供 3 張圖卡高畫質縮圖與個別獨立下載按鈕。
 
 ---
 

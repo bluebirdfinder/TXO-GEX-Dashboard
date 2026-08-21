@@ -1,11 +1,11 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.1)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 台灣標準紅綠色彩 ✦ 10 盤演變播放器 ✦ 社群防盜標籤角落水印
+> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 全套 3 張社群圖卡批次與 ZIP 下載 ✦ 10 盤演變播放器
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v45.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v45.1-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
@@ -80,6 +80,9 @@
     - `x: 0.65 (中右)`：`⚡ Zero Gamma` (`yanchor: bottom`)
     - `x: 0.98 (最右)`：`Call Wall` (紅色上浮) / `Put Wall` (綠色下掛)
   - 確保所有位階標籤在任何行情動態下 100% 獨立不相重疊。
+- **全套 3 張社群圖卡一鍵批次與 ZIP 下載 Modal 彈窗**：
+  - 點擊頂部「📸 下載 IG/Threads 社群圖卡」即刻開啟全套圖卡 Modal 視窗。
+  - 支援「🚀 一鍵下載全部 3 張 PNG」、「📦 打包下載 ZIP 壓縮包」與各圖卡單獨下載按鈕。
 
 ### 6. ⚡ 三級優先級即時報價網關
 - 三級降級容錯：**優先 1**：極速專線網關 → **優先 2**：網頁行情網關 → **優先 3**：期交所 MIS 官方報價。

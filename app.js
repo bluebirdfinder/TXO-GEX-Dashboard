@@ -1731,18 +1731,103 @@ function populateStockFutures() {
   tbody.innerHTML = html;
 }
 
-function initModals() {
-  const downloadBtn = document.getElementById('download-social-card-btn');
-  if (downloadBtn) {
-    downloadBtn.onclick = function() {
+function downloadSingleCard(fileUrl, fileName) {
+  const link = document.createElement('a');
+  link.href = fileUrl;
+  link.download = fileName;
+  link.target = '_blank';
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => {
+    if (link.parentNode) link.parentNode.removeChild(link);
+  }, 1000);
+}
+
+function downloadAllCards() {
+  const cards = [
+    { url: 'data/social_card_p1_overview.png', name: 'Bluebird_Finder_GEX_P1_Overview.png' },
+    { url: 'data/social_card_p2_gex_profile.png', name: 'Bluebird_Finder_GEX_P2_Profile.png' },
+    { url: 'data/social_card_p3_sector_rotation.png', name: 'Bluebird_Finder_GEX_P3_Sector.png' }
+  ];
+
+  cards.forEach((card, index) => {
+    setTimeout(() => {
+      downloadSingleCard(card.url, card.name);
+    }, index * 350);
+  });
+}
+
+async function downloadCardsZip() {
+  const cards = [
+    { url: 'data/social_card_p1_overview.png', name: 'Bluebird_Finder_GEX_P1_Overview.png' },
+    { url: 'data/social_card_p2_gex_profile.png', name: 'Bluebird_Finder_GEX_P2_Profile.png' },
+    { url: 'data/social_card_p3_sector_rotation.png', name: 'Bluebird_Finder_GEX_P3_Sector.png' }
+  ];
+
+  if (typeof JSZip !== 'undefined') {
+    try {
+      const zip = new JSZip();
+      for (const card of cards) {
+        const resp = await fetch(card.url);
+        const blob = await resp.blob();
+        zip.file(card.name, blob);
+      }
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const blobUrl = URL.createObjectURL(zipBlob);
       const link = document.createElement('a');
-      link.href = 'data/social_card_latest.png';
-      link.download = 'Bluebird_Finder_GEX_Social_Card.png';
+      link.href = blobUrl;
+      link.download = 'Bluebird_Finder_GEX_Social_Cards.zip';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+      return;
+    } catch (err) {
+      console.warn('Zip creation failed, fallback to sequential download:', err);
+    }
+  }
+  downloadAllCards();
+}
+
+function initModals() {
+  const downloadBtn = document.getElementById('download-social-card-btn');
+  const socialModal = document.getElementById('social-card-modal');
+  const closeSocialModalBtn = document.getElementById('close-social-card-modal');
+  const downloadAllPngBtn = document.getElementById('download-all-png-btn');
+  const downloadZipBtn = document.getElementById('download-zip-btn');
+  const downloadCard1Btn = document.getElementById('download-card1-btn');
+  const downloadCard2Btn = document.getElementById('download-card2-btn');
+  const downloadCard3Btn = document.getElementById('download-card3-btn');
+
+  if (downloadBtn) {
+    downloadBtn.onclick = function(e) {
+      if (e) e.preventDefault();
+      if (socialModal) {
+        socialModal.style.display = 'flex';
+      }
     };
   }
+
+  if (closeSocialModalBtn && socialModal) {
+    closeSocialModalBtn.onclick = function() {
+      socialModal.style.display = 'none';
+    };
+  }
+
+  if (socialModal) {
+    socialModal.onclick = function(e) {
+      if (e.target === socialModal) {
+        socialModal.style.display = 'none';
+      }
+    };
+  }
+
+  if (downloadAllPngBtn) downloadAllPngBtn.onclick = () => downloadAllCards();
+  if (downloadZipBtn) downloadZipBtn.onclick = () => downloadCardsZip();
+
+  if (downloadCard1Btn) downloadCard1Btn.onclick = () => downloadSingleCard('data/social_card_p1_overview.png', 'Bluebird_Finder_GEX_P1_Overview.png');
+  if (downloadCard2Btn) downloadCard2Btn.onclick = () => downloadSingleCard('data/social_card_p2_gex_profile.png', 'Bluebird_Finder_GEX_P2_Profile.png');
+  if (downloadCard3Btn) downloadCard3Btn.onclick = () => downloadSingleCard('data/social_card_p3_sector_rotation.png', 'Bluebird_Finder_GEX_P3_Sector.png');
 
   const eduBtn = document.getElementById('education-btn');
   const eduModal = document.getElementById('education-modal');
