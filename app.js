@@ -9,7 +9,7 @@ let currentSortKey = 'volume';
 let currentSortOrder = 'desc';
 let isOverlayMode = false;
 let showChartLegend = true;
-let currentSessionIndex = 9; // Default to T夜盤 (Live)
+let currentSessionIndex = null; // Auto-select Live session on load
 let chartOrientation = 'horizontal'; // Default: T-Option Mode (T型報價視角 / Y軸履約價)
 
 const VALID_PASSCODE = 'GEX2026';
@@ -389,12 +389,10 @@ function renderDashboard() {
   if (!gexData) return;
 
   const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
-  if (sessions && (currentSessionIndex === null || currentSessionIndex === undefined || currentSessionIndex === 9)) {
-    const liveIdx = sessions.findIndex(s => s.label && s.label.includes('Live'));
-    if (liveIdx !== -1) {
-      currentSessionIndex = liveIdx;
-    } else {
-      currentSessionIndex = sessions.length - 1;
+  if (sessions && sessions.length > 0) {
+    if (currentSessionIndex === null || currentSessionIndex === undefined || currentSessionIndex >= sessions.length) {
+      const liveIdx = sessions.findIndex(s => s.label && s.label.includes('Live'));
+      currentSessionIndex = liveIdx !== -1 ? liveIdx : sessions.length - 1;
     }
   }
 

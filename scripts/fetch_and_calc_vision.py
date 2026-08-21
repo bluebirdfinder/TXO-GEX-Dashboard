@@ -1375,28 +1375,37 @@ def generate_gex_payload():
             "zero_gamma_level": round(gex_profile['zero_gamma_level'] + 90, 1), "call_wall_strike": gex_profile['call_wall_strike'],
             "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": 210,
             "pc_ratio": 110.4
-        },
-        {
-            "id": "t0_day", 
-            "label": "🔥 T日盤 (Live)" if (8 <= now_hour < 14) else ("☀️ T日盤 (收盤快照)" if (14 <= now_hour < 15) else "☀️ T日盤 (定案)"), 
-            "date_display": f"{t_days[4]} ☀️", 
-            "full_name": f"{t_days[4]} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (收盤快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)")),
-            "spot_price": spot_price, "two_price": otc_price, "txf_price": day_txf_price,
-            "zero_gamma_level": day_zero_gamma, "call_wall_strike": day_call_wall,
-            "put_wall_strike": day_put_wall, "max_pain_strike": day_max_pain, "shift_vs_prev": -110,
-            "pc_ratio": 111.8
-        },
-        {
-            "id": "t0_night", 
-            "label": "🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 8) else "🌙 T夜盤 (05:00 定案)", 
-            "date_display": f"{t_days[4]} 🌙", 
-            "full_name": f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 8) else " (05:00 定案版)"),
-            "spot_price": spot_price, "two_price": otc_price, "txf_price": night_txf_price,
-            "zero_gamma_level": gex_profile['zero_gamma_level'], "call_wall_strike": gex_profile['call_wall_strike'],
-            "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": txf_shift,
-            "pc_ratio": gex_profile['pc_ratio']
         }
     ]
+
+    t0_day_item = {
+        "id": "t0_day", 
+        "label": "🔥 T日盤 (Live)" if (8 <= now_hour < 14) else ("☀️ T日盤 (盤後快照)" if (14 <= now_hour < 15) else "☀️ T日盤 (定案)"), 
+        "date_display": f"{t_days[4]} ☀️", 
+        "full_name": f"{t_days[4]} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (盤後快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)")),
+        "spot_price": spot_price, "two_price": otc_price, "txf_price": day_txf_price,
+        "zero_gamma_level": day_zero_gamma, "call_wall_strike": day_call_wall,
+        "put_wall_strike": day_put_wall, "max_pain_strike": day_max_pain, "shift_vs_prev": -110,
+        "pc_ratio": 111.8
+    }
+
+    t0_night_item = {
+        "id": "t0_night", 
+        "label": "🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 5) else "🌙 T夜盤 (05:00 定案)", 
+        "date_display": f"{t_days[4]} 🌙", 
+        "full_name": f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)"),
+        "spot_price": spot_price, "two_price": otc_price, "txf_price": night_txf_price,
+        "zero_gamma_level": gex_profile['zero_gamma_level'], "call_wall_strike": gex_profile['call_wall_strike'],
+        "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": txf_shift,
+        "pc_ratio": gex_profile['pc_ratio']
+    }
+
+    # Add today's day session
+    history_10_sessions.append(t0_day_item)
+
+    # Only append today's night session if night trading is actually active or completed (15:00 PM ~ 08:00 AM)
+    if now_hour >= 15 or now_hour < 8:
+        history_10_sessions.append(t0_night_item)
 
     # Compute exact GEX bar distribution for each historical session on a fixed global strike grid
     global_base_strike = round(spot_price / 100) * 100
