@@ -1,9 +1,9 @@
 """
-Bluebird Finder Social Infographic Generator v50.0 (Dashboard 8-Summary Card Edition)
+Bluebird Finder Social Infographic Generator v51.0 (Web-Identical Watermark Edition)
 =======================================================================================
 100% Replication of Dashboard Top 8 Summary Metric Cards for Card 1 (Cover).
-Renders using Playwright with native CSS glassmorphism, avatar thumbnail, diagonal watermarks,
-and strict AI legal disclaimers.
+Renders using Playwright with native CSS glassmorphism, avatar thumbnail,
+web-identical watermark ('© 尋鳥 Bluebird Finder'), and strict AI legal disclaimers.
 """
 
 import os
@@ -43,26 +43,6 @@ def get_common_css():
     position: relative;
     overflow: hidden;
   }
-  .watermark-overlay {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.045;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: space-around;
-    justify-content: space-around;
-    transform: rotate(-25deg) scale(1.2);
-  }
-  .wm-item {
-    font-size: 26px;
-    font-weight: 900;
-    color: #ffffff;
-    letter-spacing: 4px;
-    margin: 40px 30px;
-    text-transform: uppercase;
-  }
   .content-layer {
     position: relative;
     z-index: 10;
@@ -80,6 +60,7 @@ def get_common_css():
     align-items: center;
     gap: 18px;
     box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
+    position: relative;
   }
   .avatar-img {
     width: 60px;
@@ -93,11 +74,26 @@ def get_common_css():
   .brand-title { font-size: 27px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }
   .brand-sub { font-size: 15px; color: #00f2fe; font-weight: 600; margin-top: 2px; }
 
+  /* Web Dashboard Exact Watermark Rule (.watermark-panel::after) */
+  .web-watermark {
+    position: absolute;
+    right: 18px;
+    bottom: 12px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    pointer-events: none;
+    user-select: none;
+  }
+
   .disclaimer-panel {
     background: rgba(15, 23, 42, 0.9);
     border: 1.5px solid rgba(239, 68, 68, 0.5);
     border-radius: 14px;
     padding: 16px 22px;
+    position: relative;
   }
   .disc-title {
     font-size: 15.5px;
@@ -113,11 +109,6 @@ def get_common_css():
     line-height: 1.45;
   }
 """
-
-def get_watermark_html():
-    wm_text = "BLUEBIRD FINDER QUANT LABS • 尋鳥專屬"
-    items = "".join([f'<div class="wm-item">{wm_text}</div>' for _ in range(16)])
-    return f'<div class="watermark-overlay">{items}</div>'
 
 def build_card1_html(data, avatar_url):
     date_str = data.get("date") or data.get("last_updated") or "2026-08-21"
@@ -156,6 +147,7 @@ def build_card1_html(data, avatar_url):
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
   }}
   .stat-label {{
     font-size: 15px;
@@ -187,7 +179,6 @@ def build_card1_html(data, avatar_url):
 </style>
 </head>
 <body>
-  {get_watermark_html()}
   <div class="content-layer">
     <div class="brand-header">
       {avatar_html}
@@ -195,6 +186,7 @@ def build_card1_html(data, avatar_url):
         <div class="brand-title">尋鳥 BLUEBIRD FINDER • 核心籌碼看板 [1/3]</div>
         <div class="brand-sub">{session_name} &nbsp;|&nbsp; 更新時間: {date_str} &nbsp;|&nbsp; 網頁儀表板同步</div>
       </div>
+      <div class="web-watermark">© 尋鳥 Bluebird Finder</div>
     </div>
 
     <!-- 8 Summary Cards Grid (Exact Dashboard Replication) -->
@@ -306,11 +298,11 @@ def build_card1_html(data, avatar_url):
     <div class="disclaimer-panel">
       <div class="disc-title">
         <span>⚠️【免責與 AI 數據生成聲明】</span>
-        <span style="font-size: 13px; color: #64748b; font-weight: 600;">© BLUEBIRD FINDER QUANT LABS</span>
       </div>
       <div class="disc-body">
         本報告係由「尋鳥 Bluebird Finder Quant Labs」AI 量化數據模組自動編譯生成。內容包含台指期權做市商曝險與動態產業統計，可能因交易所傳輸延遲或演算模型誤差而有錯誤或不完備之處，<strong>使用者應獨立思考並自行對市場數據進行二次查證</strong>。本報告絕不構成任何形式之投資建議，交易人應自負全盤盈虧責任。
       </div>
+      <div class="web-watermark">© 尋鳥 Bluebird Finder</div>
     </div>
   </div>
 </body>
@@ -362,11 +354,10 @@ def build_card2_strikes_html(data, avatar_url):
 <meta charset="UTF-8">
 <style>
   {get_common_css()}
-  .chart-box {{ background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 24px; box-shadow: 0 4px 25px rgba(0,0,0,0.3); }}
+  .chart-box {{ background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 24px; box-shadow: 0 4px 25px rgba(0,0,0,0.3); position: relative; }}
 </style>
 </head>
 <body>
-  {get_watermark_html()}
   <div class="content-layer">
     <div class="brand-header" style="border-color: #38bdf8;">
       {avatar_html}
@@ -374,20 +365,22 @@ def build_card2_strikes_html(data, avatar_url):
         <div class="brand-title">做市商 GEX 各履約價動態防守牆 [2/3]</div>
         <div class="brand-sub">紅柱=正 GEX (莊家護盤) | 綠柱=負 GEX (做市商助跌) | {date_str}</div>
       </div>
+      <div class="web-watermark">© 尋鳥 Bluebird Finder</div>
     </div>
 
     <div class="chart-box">
       {bars_html}
+      <div class="web-watermark" style="bottom: 12px; right: 16px;">© 尋鳥 Bluebird Finder</div>
     </div>
 
     <div class="disclaimer-panel">
       <div class="disc-title">
         <span>⚠️【免責與 AI 數據生成聲明】</span>
-        <span style="font-size: 13px; color: #64748b; font-weight: 600;">© BLUEBIRD FINDER QUANT LABS</span>
       </div>
       <div class="disc-body">
         本報告係由「尋鳥 Bluebird Finder Quant Labs」AI 量化數據模組自動生成，做市商對沖數據可能因計算誤差與傳輸延遲而有缺失，<strong>請交易人務必自行複查與獨立判定風險</strong>，本報告不構成投資依據。
       </div>
+      <div class="web-watermark">© 尋鳥 Bluebird Finder</div>
     </div>
   </div>
 </body>
@@ -446,7 +439,6 @@ def build_card3_sector_html(data, avatar_url):
 </style>
 </head>
 <body>
-  {get_watermark_html()}
   <div class="content-layer">
     <div class="brand-header" style="border-color: #ffd700;">
       {avatar_html}
@@ -454,6 +446,7 @@ def build_card3_sector_html(data, avatar_url):
         <div class="brand-title">證交所 33 大產業 8 大主題輪動矩陣 [3/3]</div>
         <div class="brand-sub">即時板塊資金熱度與個股期焦點 | {date_str}</div>
       </div>
+      <div class="web-watermark">© 尋鳥 Bluebird Finder</div>
     </div>
 
     <div class="progress-bar-box">
@@ -467,11 +460,11 @@ def build_card3_sector_html(data, avatar_url):
     <div class="disclaimer-panel">
       <div class="disc-title">
         <span>⚠️【免責與 AI 數據生成聲明】</span>
-        <span style="font-size: 13px; color: #64748b; font-weight: 600;">© BLUEBIRD FINDER QUANT LABS</span>
       </div>
       <div class="disc-body">
         本報告由「尋鳥 Bluebird Finder Quant Labs」AI 量化模組自動運算編譯，可能含有計算誤植，<strong>請自行複查確認並自負風險</strong>，不構成投資操作建議。
       </div>
+      <div class="web-watermark">© 尋鳥 Bluebird Finder</div>
     </div>
   </div>
 </body>
@@ -538,7 +531,7 @@ def generate_bluebird_social_card(gex_data_path=None, output_dir=None):
         for fpath in [tmp_h1, tmp_h2, tmp_h3]:
             if os.path.exists(fpath): os.remove(fpath)
 
-        print(f"[OK] Successfully generated Dashboard 8-Summary Card IG Cards:")
+        print(f"[OK] Successfully generated Web-Identical Watermark IG Cards:")
         print(f"  - Card 1: {card1_path}")
         print(f"  - Card 2: {card2_path}")
         print(f"  - Card 3: {card3_path}")
