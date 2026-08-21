@@ -14,7 +14,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_zero_gamma": 45074.3,
     "day_max_pain": 45200
   },
-  "last_updated_time": "2026-08-21 13:37",
+  "last_updated_time": "2026-08-21 13:40",
   "spot_price": 45224.29,
   "two_price": 387.27,
   "day_txf_price": 44868.0,
@@ -20754,7 +20754,7 @@ window.GEX_EMBEDDED_DATA = {
     "current_fx": {
       "usdtwd": {
         "date": "08/21 (五)",
-        "price": 31.84,
+        "price": 31.85,
         "change": 0.0,
         "pct": 0.0
       },
@@ -20766,7 +20766,7 @@ window.GEX_EMBEDDED_DATA = {
       },
       "usdjpy": {
         "date": "08/21 (五)",
-        "price": 158.93,
+        "price": 158.92,
         "change": 0.0,
         "pct": 0.0
       }
@@ -20799,7 +20799,7 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "08/21 (五)",
-          "price": 31.84,
+          "price": 31.85,
           "change": 0.0,
           "pct": 0.0
         }
@@ -20863,13 +20863,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "08/21 (五)",
-          "price": 158.93,
+          "price": 158.92,
           "change": 0.0,
           "pct": 0.0
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.84</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.77</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.93</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.85</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.77</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.92</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
@@ -20927,63 +20927,109 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_val": -7721.54,
   "total_gex_plus": -5440.43,
   "sector_capital_rotation": {
-    "title": "📊 證交所 33 大產業權重歸納 4 大核心板塊資金輪動",
-    "last_updated": "2026-08-21 13:37",
+    "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
+    "last_updated": "2026-08-21 13:40",
     "sectors": [
       {
-        "name": "💻 半導體與電子 AI",
+        "name": "💻 半導體與晶圓代工",
         "code": "semicon_tech",
-        "share_pct": 57.5,
+        "share_pct": 40.0,
         "change_pct": "-0.1%",
-        "status": "⚖️ 震盪平穩",
-        "color": "var(--call-color)",
+        "status": "⚖️ 資金平穩觀望",
+        "color": "var(--gold-accent)",
         "top_stocks": [
           "聯電期",
           "台積電期",
+          "聯發科期"
+        ]
+      },
+      {
+        "name": "🤖 AI 伺服器與組裝代工",
+        "code": "ai_servers",
+        "share_pct": 16.0,
+        "change_pct": "-1.0%",
+        "status": "📉 震盪小幅拉回",
+        "color": "var(--put-color)",
+        "top_stocks": [
           "鴻海期",
-          "廣達期"
+          "廣達期",
+          "緯創期"
+        ]
+      },
+      {
+        "name": "📡 低軌衛星與網通航太",
+        "code": "leo_satellites",
+        "share_pct": 6.5,
+        "change_pct": "+0.4%",
+        "status": "📈 買盤點火吸金",
+        "color": "var(--call-color)",
+        "top_stocks": [
+          "金寶期",
+          "華通期",
+          "啟碁期"
+        ]
+      },
+      {
+        "name": "⚡ 重電綠能與儲能太陽能",
+        "code": "green_power",
+        "share_pct": 7.5,
+        "change_pct": "+1.3%",
+        "status": "🔥 資金狂拉大漲",
+        "color": "var(--call-color)",
+        "top_stocks": [
+          "元晶期",
+          "世紀鋼期",
+          "中興電期"
         ]
       },
       {
         "name": "🚢 航運物流與水路運輸",
-        "code": "shipping_traditional",
-        "share_pct": 19.2,
+        "code": "maritime_shipping",
+        "share_pct": 9.5,
         "change_pct": "+1.6%",
         "status": "🔥 資金狂拉大漲",
         "color": "var(--call-color)",
         "top_stocks": [
           "長榮期",
           "陽明期",
-          "華航期",
-          "新興期"
+          "華航期"
         ]
       },
       {
-        "name": "⚡ 重電綠能與基建設施",
-        "code": "heavy_green_bio",
-        "share_pct": 12.3,
-        "change_pct": "+1.6%",
-        "status": "🔥 買盤點火",
-        "color": "var(--gold-accent)",
+        "name": "🪖 軍工防衛與無人機",
+        "code": "defense_aerospace",
+        "share_pct": 4.5,
+        "change_pct": "+5.4%",
+        "status": "🔥 資金狂拉大漲",
+        "color": "var(--call-color)",
         "top_stocks": [
-          "東元期",
-          "世紀鋼期",
-          "中興電期",
-          "士電期"
+          "漢翔期"
         ]
       },
       {
-        "name": "🏦 金融保險與傳產原物料",
-        "code": "financials",
+        "name": "🧬 生技新藥與醫療器材",
+        "code": "biotech_pharma",
+        "share_pct": 5.0,
+        "change_pct": "+4.8%",
+        "status": "🔥 資金狂拉大漲",
+        "color": "var(--call-color)",
+        "top_stocks": [
+          "合一期",
+          "美時期",
+          "保瑞期"
+        ]
+      },
+      {
+        "name": "🏦 金融金控與傳產原物料",
+        "code": "financials_trad",
         "share_pct": 11.0,
         "change_pct": "-0.4%",
-        "status": "📉 微幅拉回",
-        "color": "#38bdf8",
+        "status": "📉 震盪小幅拉回",
+        "color": "var(--put-color)",
         "top_stocks": [
           "南亞期",
           "中鋼期",
-          "富邦金期",
-          "台塑期"
+          "富邦金期"
         ]
       }
     ]
@@ -22723,9 +22769,9 @@ window.GEX_EMBEDDED_DATA = {
       "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bull",
-      "ex_date": "08/21",
-      "ex_dividend": 4.426,
-      "ex_type": "除息"
+      "ex_date": "-",
+      "ex_dividend": 0.0,
+      "ex_type": ""
     },
     {
       "code": "2474",
@@ -26067,9 +26113,9 @@ window.GEX_EMBEDDED_DATA = {
       "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bull",
-      "ex_date": "-",
-      "ex_dividend": 0.0,
-      "ex_type": ""
+      "ex_date": "08/24",
+      "ex_dividend": 1.423772,
+      "ex_type": "除息"
     },
     {
       "code": "00885",

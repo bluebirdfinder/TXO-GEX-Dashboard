@@ -958,91 +958,152 @@ def fetch_official_taifex_retail_sentiment():
 
 # ==============================================================================
 def calculate_dynamic_sector_rotation(stock_futures, now_dt):
+    semicon_codes = {"2330", "2330F", "2454", "2303", "3711", "3037", "2379", "3443", "6669"}
+    ai_server_codes = {"2317", "2382", "3231", "2356", "6669", "2301", "3017", "2376"}
+    leo_sat_codes = {"3491", "6285", "2312", "2313", "3596", "5388"}
+    green_solar_codes = {"1519", "1503", "1513", "1514", "9958", "6443", "3576", "2406"}
     shipping_codes = {"2603", "2609", "2615", "2637", "2605", "2618", "2610", "2606"}
-    semicon_codes = {"2330", "2330F", "2454", "2317", "2382", "2303", "3037", "2379", "3443", "6669"}
-    heavy_green_codes = {"1519", "1503", "1513", "1514", "9958", "1504"}
+    military_codes = {"8033", "2634", "6753", "8222", "4541", "2630"}
+    biotech_codes = {"6446", "1795", "6472", "4743", "1789", "4147"}
     financial_trad_codes = {"2881", "2882", "2891", "2886", "2884", "2885", "2892", "2002", "1301", "1303"}
 
-    ship_chgs, ship_names = [], []
     semi_chgs, semi_names = [], []
-    heavy_chgs, heavy_names = [], []
+    ai_chgs, ai_names = [], []
+    leo_chgs, leo_names = [], []
+    green_chgs, green_names = [], []
+    ship_chgs, ship_names = [], []
+    mili_chgs, mili_names = [], []
+    bio_chgs, bio_names = [], []
     fin_chgs, fin_names = [], []
 
     for stk in (stock_futures or []):
         code = stk.get('code', '')
         name = stk.get('name', '')
         chg = stk.get('change_pct', 0.0)
+        clean_name = name.replace("期貨", "").replace("個股期", "")
 
-        if code in shipping_codes or '長榮' in name or '萬海' in name or '陽明' in name or '慧洋' in name:
-            ship_chgs.append(chg)
-            if len(ship_names) < 4: ship_names.append(name.replace("期貨", "").replace("個股期", ""))
-        elif code in semicon_codes or '台積電' in name or '聯發科' in name or '鴻海' in name or '廣達' in name:
+        if code in semicon_codes or '台積電' in clean_name or '聯發科' in clean_name or '聯電' in clean_name:
             semi_chgs.append(chg)
-            if len(semi_names) < 4: semi_names.append(name.replace("期貨", "").replace("個股期", ""))
-        elif code in heavy_green_codes or '華城' in name or '士電' in name or '中興電' in name or '世紀鋼' in name:
-            heavy_chgs.append(chg)
-            if len(heavy_names) < 4: heavy_names.append(name.replace("期貨", "").replace("個股期", ""))
-        elif code in financial_trad_codes or '富邦金' in name or '國泰金' in name or '中信金' in name or '中鋼' in name:
+            if len(semi_names) < 3: semi_names.append(clean_name)
+        elif code in ai_server_codes or '鴻海' in clean_name or '廣達' in clean_name or '緯創' in clean_name:
+            ai_chgs.append(chg)
+            if len(ai_names) < 3: ai_names.append(clean_name)
+        elif code in leo_sat_codes or '昇達科' in clean_name or '啟碁' in clean_name or '華通' in clean_name:
+            leo_chgs.append(chg)
+            if len(leo_names) < 3: leo_names.append(clean_name)
+        elif code in green_solar_codes or '華城' in clean_name or '士電' in clean_name or '中興電' in clean_name or '元晶' in clean_name:
+            green_chgs.append(chg)
+            if len(green_names) < 3: green_names.append(clean_name)
+        elif code in shipping_codes or '長榮' in clean_name or '萬海' in clean_name or '陽明' in clean_name or '慧洋' in clean_name:
+            ship_chgs.append(chg)
+            if len(ship_names) < 3: ship_names.append(clean_name)
+        elif code in military_codes or '雷虎' in clean_name or '漢翔' in clean_name or '龍德' in clean_name:
+            mili_chgs.append(chg)
+            if len(mili_names) < 3: mili_names.append(clean_name)
+        elif code in biotech_codes or '藥華藥' in clean_name or '美時' in clean_name or '保瑞' in clean_name:
+            bio_chgs.append(chg)
+            if len(bio_names) < 3: bio_names.append(clean_name)
+        elif code in financial_trad_codes or '富邦金' in clean_name or '國泰金' in clean_name or '中信金' in clean_name:
             fin_chgs.append(chg)
-            if len(fin_names) < 4: fin_names.append(name.replace("期貨", "").replace("個股期", ""))
+            if len(fin_names) < 3: fin_names.append(clean_name)
 
-    ship_avg_chg = round(sum(ship_chgs)/len(ship_chgs), 2) if ship_chgs else 1.60
-    semi_avg_chg = round(sum(semi_chgs)/len(semi_chgs), 2) if semi_chgs else 1.20
-    heavy_avg_chg = round(sum(heavy_chgs)/len(heavy_chgs), 2) if heavy_chgs else -0.40
-    fin_avg_chg = round(sum(fin_chgs)/len(fin_chgs), 2) if fin_chgs else -0.40
+    def calc_stat(arr, default_chg):
+        avg = round(sum(arr)/len(arr), 2) if arr else default_chg
+        if avg > 1.0:
+            status, color = "🔥 資金狂拉大漲", "var(--call-color)"
+        elif avg > 0.2:
+            status, color = "📈 買盤點火吸金", "var(--call-color)"
+        elif avg < -1.0:
+            status, color = "❄️ 賣壓顯著拉回", "var(--put-color)"
+        elif avg < -0.2:
+            status, color = "📉 震盪小幅拉回", "var(--put-color)"
+        else:
+            status, color = "⚖️ 資金平穩觀望", "var(--gold-accent)"
+        return f"{'+' if avg >= 0 else ''}{avg:.1f}%", status, color
 
-    if ship_avg_chg > 1.0:
-        ship_status = "🔥 資金狂拉大漲"
-        ship_color = "var(--call-color)"
-    elif ship_avg_chg < -1.0:
-        ship_status = "❄️ 資金拉回沉悶"
-        ship_color = "var(--put-color)"
-    else:
-        ship_status = "⚖️ 資金平穩震盪"
-        ship_color = "var(--gold-accent)"
-
-    semi_status = "🔥 資金主流吸金" if semi_avg_chg > 0.5 else ("❄️ 賣壓整理" if semi_avg_chg < -0.5 else "⚖️ 震盪平穩")
-    heavy_status = "🔥 買盤點火" if heavy_avg_chg > 0.8 else ("❄️ 資金拉回" if heavy_avg_chg < -0.5 else "⚖️ 震盪分化")
-    fin_status = "🛡️ 穩健防守" if fin_avg_chg >= 0 else "📉 微幅拉回"
+    semi_chg_str, semi_status, semi_color = calc_stat(semi_chgs, 1.20)
+    ai_chg_str, ai_status, ai_color = calc_stat(ai_chgs, 0.85)
+    leo_chg_str, leo_status, leo_color = calc_stat(leo_chgs, 1.45)
+    green_chg_str, green_status, green_color = calc_stat(green_chgs, -0.40)
+    ship_chg_str, ship_status, ship_color = calc_stat(ship_chgs, 1.60)
+    mili_chg_str, mili_status, mili_color = calc_stat(mili_chgs, 0.90)
+    bio_chg_str, bio_status, bio_color = calc_stat(bio_chgs, -0.20)
+    fin_chg_str, fin_status, fin_color = calc_stat(fin_chgs, -0.40)
 
     return {
-        "title": "📊 證交所 33 大產業權重歸納 4 大核心板塊資金輪動",
+        "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
         "last_updated": now_dt.strftime("%Y-%m-%d %H:%M"),
         "sectors": [
             {
-                "name": "💻 半導體與電子 AI",
+                "name": "💻 半導體與晶圓代工",
                 "code": "semicon_tech",
-                "share_pct": 57.5,
-                "change_pct": f"{'+' if semi_avg_chg >= 0 else ''}{semi_avg_chg:.1f}%",
+                "share_pct": 40.0,
+                "change_pct": semi_chg_str,
                 "status": semi_status,
-                "color": "var(--call-color)",
-                "top_stocks": semi_names if semi_names else ["台積電", "聯發科", "鴻海", "廣達"]
+                "color": semi_color,
+                "top_stocks": semi_names if semi_names else ["台積電", "聯發科", "聯電"]
+            },
+            {
+                "name": "🤖 AI 伺服器與組裝代工",
+                "code": "ai_servers",
+                "share_pct": 16.0,
+                "change_pct": ai_chg_str,
+                "status": ai_status,
+                "color": ai_color,
+                "top_stocks": ai_names if ai_names else ["鴻海", "廣達", "緯創"]
+            },
+            {
+                "name": "📡 低軌衛星與網通航太",
+                "code": "leo_satellites",
+                "share_pct": 6.5,
+                "change_pct": leo_chg_str,
+                "status": leo_status,
+                "color": leo_color,
+                "top_stocks": leo_names if leo_names else ["昇達科", "啟碁", "華通"]
+            },
+            {
+                "name": "⚡ 重電綠能與儲能太陽能",
+                "code": "green_power",
+                "share_pct": 7.5,
+                "change_pct": green_chg_str,
+                "status": green_status,
+                "color": green_color,
+                "top_stocks": green_names if green_names else ["華城", "士電", "中興電", "元晶"]
             },
             {
                 "name": "🚢 航運物流與水路運輸",
-                "code": "shipping_traditional",
-                "share_pct": 19.2,
-                "change_pct": f"{'+' if ship_avg_chg >= 0 else ''}{ship_avg_chg:.1f}%",
+                "code": "maritime_shipping",
+                "share_pct": 9.5,
+                "change_pct": ship_chg_str,
                 "status": ship_status,
                 "color": ship_color,
                 "top_stocks": ship_names if ship_names else ["長榮", "萬海", "陽明", "慧洋-KY"]
             },
             {
-                "name": "⚡ 重電綠能與基建設施",
-                "code": "heavy_green_bio",
-                "share_pct": 12.3,
-                "change_pct": f"{'+' if heavy_avg_chg >= 0 else ''}{heavy_avg_chg:.1f}%",
-                "status": heavy_status,
-                "color": "var(--gold-accent)",
-                "top_stocks": heavy_names if heavy_names else ["華城", "士電", "中興電", "亞力"]
+                "name": "🪖 軍工防衛與無人機",
+                "code": "defense_aerospace",
+                "share_pct": 4.5,
+                "change_pct": mili_chg_str,
+                "status": mili_status,
+                "color": mili_color,
+                "top_stocks": mili_names if mili_names else ["雷虎", "漢翔", "龍德造船"]
             },
             {
-                "name": "🏦 金融保險與傳產原物料",
-                "code": "financials",
+                "name": "🧬 生技新藥與醫療器材",
+                "code": "biotech_pharma",
+                "share_pct": 5.0,
+                "change_pct": bio_chg_str,
+                "status": bio_status,
+                "color": bio_color,
+                "top_stocks": bio_names if bio_names else ["藥華藥", "美時", "保瑞"]
+            },
+            {
+                "name": "🏦 金融金控與傳產原物料",
+                "code": "financials_trad",
                 "share_pct": 11.0,
-                "change_pct": f"{'+' if fin_avg_chg >= 0 else ''}{fin_avg_chg:.1f}%",
+                "change_pct": fin_chg_str,
                 "status": fin_status,
-                "color": "#38bdf8",
+                "color": fin_color,
                 "top_stocks": fin_names if fin_names else ["富邦金", "國泰金", "中信金", "中鋼"]
             }
         ]
