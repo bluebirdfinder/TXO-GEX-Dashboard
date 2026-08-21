@@ -546,6 +546,7 @@ function renderDashboard() {
   try { populateRetailSentiment(); } catch (e) { console.error('Retail Error:', e); }
   try { populateNightTrading(); } catch (e) { console.error('Night Trading Error:', e); }
   try { populateInstitutionalMatrix(); } catch (e) { console.error('Institutional Matrix Error:', e); }
+  try { renderSectorCapitalFlow(); } catch (e) { console.error('Sector Capital Flow Error:', e); }
   try { populateStockFutures(); } catch (e) { console.error('Stock Futures Error:', e); }
 }
 
@@ -2108,6 +2109,54 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initModals);
 } else {
   initModals();
+}
+
+function renderSectorCapitalFlow() {
+  const container = document.getElementById('sector-capital-flow-container');
+  if (!container || !gexData || !gexData.sector_capital_rotation) return;
+
+  const data = gexData.sector_capital_rotation;
+  const sectors = data.sectors || [];
+
+  let html = `
+    <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid var(--panel-border); border-radius: 12px; padding: 14px 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.12); padding-bottom: 8px;">
+        <span style="font-weight: 700; font-size: 0.92rem; color: var(--gold-accent); display: flex; align-items: center; gap: 8px;">
+          <span>${data.title || '📊 證交所 33 大產業權重歸納 4 大核心板塊資金輪動'}</span>
+        </span>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">🕒 即時資料: ${data.last_updated || ''}</span>
+      </div>
+      
+      <!-- Multi-segment visual bar -->
+      <div style="height: 14px; border-radius: 7px; overflow: hidden; display: flex; background: #0f172a; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1);">
+  `;
+
+  sectors.forEach(s => {
+    html += `<div style="width: ${s.share_pct}%; background: ${s.color}; height: 100%; transition: width 0.5s ease;" title="${s.name}: ${s.share_pct}% (${s.status})"></div>`;
+  });
+
+  html += `</div>
+      <!-- Sector details grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px;">
+  `;
+
+  sectors.forEach(s => {
+    html += `
+      <div style="background: rgba(30, 41, 59, 0.6); padding: 10px 12px; border-radius: 8px; border-left: 4px solid ${s.color}; font-size: 0.82rem;">
+        <div style="display: flex; justify-content: space-between; font-weight: 700; color: #f8fafc; margin-bottom: 4px;">
+          <span>${s.name}</span>
+          <span style="color: ${s.color}; font-weight: 700;">${s.share_pct}% <span style="font-size: 0.75rem;">(${s.change_pct})</span></span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+          <span>${s.status}</span>
+          <span style="color: #cbd5e1;">🎯 ${(s.top_stocks || []).join('、')}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div></div>`;
+  container.innerHTML = html;
 }
 
 

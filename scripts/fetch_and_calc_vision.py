@@ -1454,6 +1454,48 @@ def generate_gex_payload():
         "total_vex": gex_profile['total_vex'],
         "total_gex_val": gex_profile['total_gex_val'],
         "total_gex_plus": gex_profile['total_gex_plus'],
+        "sector_capital_rotation": {
+            "title": "📊 證交所 33 大產業權重歸納 4 大核心板塊資金輪動",
+            "last_updated": now_dt.strftime("%Y-%m-%d %H:%M"),
+            "sectors": [
+                {
+                    "name": "💻 半導體與電子 AI",
+                    "code": "semicon_tech",
+                    "share_pct": 63.5,
+                    "change_pct": "+1.2%",
+                    "status": "🔥 資金主流吸金",
+                    "color": "var(--call-color)",
+                    "top_stocks": ["台積電", "聯發科", "鴻海", "廣達"]
+                },
+                {
+                    "name": "⚡ 重電綠能與生技軍工",
+                    "code": "heavy_green_bio",
+                    "share_pct": 13.8,
+                    "change_pct": "-0.6%",
+                    "status": "⚖️ 資金震盪分化",
+                    "color": "var(--gold-accent)",
+                    "top_stocks": ["華城", "士電", "藥華藥", "雷虎"]
+                },
+                {
+                    "name": "🏦 金融保險與金控",
+                    "code": "financials",
+                    "share_pct": 11.5,
+                    "change_pct": "+0.4%",
+                    "status": "🛡️ 穩健防守避險",
+                    "color": "#38bdf8",
+                    "top_stocks": ["富邦金", "國泰金", "中信金"]
+                },
+                {
+                    "name": "🚢 航運傳產與鋼鐵石化",
+                    "code": "shipping_traditional",
+                    "share_pct": 11.2,
+                    "change_pct": "-1.0%",
+                    "status": "❄️ 資金輪空沉悶",
+                    "color": "var(--put-color)",
+                    "top_stocks": ["長榮", "陽明", "中鋼", "台塑"]
+                }
+            ]
+        },
         "stock_futures": stock_futures,
         "ai_ex_dividend_digest": {
             "title": "🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描",
