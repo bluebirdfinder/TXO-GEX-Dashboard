@@ -1,6 +1,6 @@
 {
   "date": "2026-08-23",
-  "engine_version": "v45.0",
+  "engine_version": "v45.2",
   "session_type": "DAY",
   "session_name": "☀️ 日盤結算籌碼 (13:45 Close)",
   "session_shift": {
@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 45117.1,
     "day_total_vex": 2550.09
   },
-  "last_updated_time": "2026-08-23 02:18",
+  "last_updated_time": "2026-08-23 02:56",
   "spot_price": 45224.29,
   "two_price": 387.27,
   "day_txf_price": 45148.0,
@@ -22214,7 +22214,7 @@
   "total_gex_plus": -5941.48,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-23 02:18",
+    "last_updated": "2026-08-23 02:56",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",

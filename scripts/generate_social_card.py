@@ -122,6 +122,9 @@ def build_card1_html(data, avatar_url):
     put_wall_day = data.get("put_wall_day") or 44900
     gex_plus_flip = data.get("gex_plus_flip") or 45217.5
     total_vex = data.get("total_vex") or 2281.1
+    vex_badge = "🔴 恐慌時做市商護盤" if total_vex >= 0 else "🟢 恐慌時做市商助跌"
+    vex_color = "#ff4d4f" if total_vex >= 0 else "#26a69a"
+    vex_sign = "+" if total_vex >= 0 else ""
 
     avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:56px;height:56px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
@@ -281,12 +284,12 @@ def build_card1_html(data, avatar_url):
       <div class="stat-card" style="border-left: 4px solid #ef4444;">
         <div class="stat-label" style="color: #ef4444;">VEX 恐慌曝險 & GEX+ FLIP</div>
         <div style="font-size: 14.5px; color: #ffd700; font-weight: 700; margin-bottom: 2px;">
-          🐣 早鳥轉折 (GEX+ Flip): <span style="color: #fff; font-size: 17px;">${gex_plus_flip:,.1f}</span>
+          🐣 早鳥轉折 (GEX+ Flip): <span style="color: #fff; font-size: 17px;">{gex_plus_flip:,.1f}</span>
         </div>
-        <div style="font-size: 14.5px; color: #ff4d4f; font-weight: 700; margin-bottom: 3px;">
-          😱 總 VEX 恐慌曝險: <span style="color: #ff4d4f; font-size: 17px;">+{total_vex:,.1f}億</span>
+        <div style="font-size: 14.5px; color: {vex_color}; font-weight: 700; margin-bottom: 3px;">
+          😱 總 VEX 恐慌曝險: <span style="color: {vex_color}; font-size: 17px;">{vex_sign}{total_vex:,.1f}億</span>
         </div>
-        <div style="font-size: 13px; color: #94a3b8;">恐慌開關: 🔴 恐慌時做市商護盤</div>
+        <div style="font-size: 13px; color: #94a3b8;">恐慌開關: <strong style="color: {vex_color};">{vex_badge}</strong></div>
       </div>
 
     </div>
