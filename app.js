@@ -508,21 +508,45 @@ function renderDashboard() {
     pcEl.innerText = `${pcVal.toFixed(1)}% (${pcBadge})`;
   }
 
-  // 6. VEX & GEX+ Flip Card
-  const gexPlusFlip = gexData.gex_plus_flip || (gexData.zero_gamma_level || 44778.0);
-  const totalVex = gexData.total_vex !== undefined ? gexData.total_vex : -8.7;
-  const elFlip = document.getElementById('stat-gex-plus-flip');
-  if (elFlip) elFlip.innerText = gexPlusFlip.toLocaleString();
-  const elVex = document.getElementById('stat-total-vex');
-  if (elVex) {
-    const vexSign = totalVex >= 0 ? '+' : '';
-    elVex.innerText = `${vexSign}${totalVex.toFixed(1)} 億`;
-    elVex.style.color = totalVex >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+  // 6. VEX & GEX+ Flip Card (Dual Session Split View)
+  const flipDay = shift.day_gex_plus_flip || (gexData.gex_plus_flip || 44848.0);
+  const flipNight = gexData.gex_plus_flip || flipDay;
+
+  const vexDay = shift.day_total_vex !== undefined ? shift.day_total_vex : (gexData.total_vex !== undefined ? gexData.total_vex : -8.7);
+  const vexNight = gexData.total_vex !== undefined ? gexData.total_vex : vexDay;
+
+  // Day Session
+  const elFlipDay = document.getElementById('stat-gex-plus-flip-day');
+  if (elFlipDay) elFlipDay.innerText = flipDay.toLocaleString();
+
+  const elVexDay = document.getElementById('stat-total-vex-day');
+  if (elVexDay) {
+    const sign = vexDay >= 0 ? '+' : '';
+    elVexDay.innerText = `${sign}${vexDay.toFixed(1)} 億`;
+    elVexDay.style.color = vexDay >= 0 ? 'var(--call-color)' : 'var(--put-color)';
   }
-  const elVexBadge = document.getElementById('stat-vex-badge');
-  if (elVexBadge) {
-    elVexBadge.innerText = totalVex < 0 ? '🟢 恐慌時做市商助跌' : '🔴 恐慌時做市商護盤';
-    elVexBadge.style.color = totalVex < 0 ? 'var(--put-color)' : 'var(--call-color)';
+
+  const elVexBadgeDay = document.getElementById('stat-vex-badge-day');
+  if (elVexBadgeDay) {
+    elVexBadgeDay.innerText = vexDay < 0 ? '🟢 恐慌時做市商助跌' : '🔴 恐慌時做市商護盤';
+    elVexBadgeDay.style.color = vexDay < 0 ? 'var(--put-color)' : 'var(--call-color)';
+  }
+
+  // Night Session Calibration
+  const elFlipNight = document.getElementById('stat-gex-plus-flip-night');
+  if (elFlipNight) elFlipNight.innerText = flipNight.toLocaleString();
+
+  const elVexNight = document.getElementById('stat-total-vex-night');
+  if (elVexNight) {
+    const sign = vexNight >= 0 ? '+' : '';
+    elVexNight.innerText = `${sign}${vexNight.toFixed(1)} 億`;
+    elVexNight.style.color = vexNight >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+  }
+
+  const elVexBadgeNight = document.getElementById('stat-vex-badge-night');
+  if (elVexBadgeNight) {
+    elVexBadgeNight.innerText = vexNight < 0 ? '🟢 恐慌時做市商助跌' : '🔴 恐慌時做市商護盤';
+    elVexBadgeNight.style.color = vexNight < 0 ? 'var(--put-color)' : 'var(--call-color)';
   }
 
   // Session Shift Banner

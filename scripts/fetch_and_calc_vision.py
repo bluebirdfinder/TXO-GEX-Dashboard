@@ -1181,26 +1181,35 @@ def generate_gex_payload():
     gex_profile["dte_dates"] = dte_dates
 
     # Day vs Night Session Shift Metrics
-    day_zero_gamma = round(spot_price - 150.0, 1)
-    day_call_wall = round(spot_price / 100) * 100 + 300
-    day_put_wall = round(spot_price / 100) * 100 - 300
-    day_max_pain = round(spot_price / 100) * 100
+    day_profile = calculate_true_gex_profile(day_txf_price, {}, raw_days_wed, raw_days_fri, raw_days_mth)
+    day_zero_gamma = day_profile['zero_gamma_level']
+    day_call_wall = day_profile['call_wall_strike']
+    day_put_wall = day_profile['put_wall_strike']
+    day_max_pain = day_profile['max_pain_strike']
+    day_gex_plus_flip = day_profile['gex_plus_flip']
+    day_total_vex = day_profile['total_vex']
 
     txf_shift = round(night_txf_price - day_txf_price, 1)
     call_wall_shift = gex_profile['call_wall_strike'] - day_call_wall
     put_wall_shift = gex_profile['put_wall_strike'] - day_put_wall
     zero_gamma_shift = round(gex_profile['zero_gamma_level'] - day_zero_gamma, 1)
+    gex_plus_flip_shift = round(gex_profile['gex_plus_flip'] - day_gex_plus_flip, 1)
+    vex_shift = round(gex_profile['total_vex'] - day_total_vex, 2)
 
     session_shift = {
         "txf_shift": txf_shift,
         "call_wall_shift": call_wall_shift,
         "put_wall_shift": put_wall_shift,
         "zero_gamma_shift": zero_gamma_shift,
+        "gex_plus_flip_shift": gex_plus_flip_shift,
+        "vex_shift": vex_shift,
         "day_txf_price": day_txf_price,
         "day_call_wall": day_call_wall,
         "day_put_wall": day_put_wall,
         "day_zero_gamma": day_zero_gamma,
-        "day_max_pain": day_max_pain
+        "day_max_pain": day_max_pain,
+        "day_gex_plus_flip": day_gex_plus_flip,
+        "day_total_vex": day_total_vex
     }
 
     # Microstructure Digest
@@ -1581,6 +1590,7 @@ def generate_gex_payload():
         "night_txf_price": night_txf_price,
         "txf_price": txf_price,
         "zero_gamma_level": gex_profile['zero_gamma_level'],
+        "gex_plus_flip": gex_profile['gex_plus_flip'],
         "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'],
         "max_pain_strike": gex_profile['max_pain_strike'],

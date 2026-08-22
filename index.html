@@ -512,19 +512,28 @@
       <!-- Card 8: VEX 恐慌曝險 & GEX+ Flip (早鳥警報線) Dual Session Card -->
       <div class="stat-card" style="border-left: 4px solid #ff5252;">
         <div class="stat-label">VEX 恐慌曝險 & GEX+ FLIP</div>
+        
+        <!-- Day Session Part -->
         <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
-          <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
-            <span>🚨 早鳥轉折 (GEX+ Flip)</span>
-            <strong id="stat-gex-plus-flip" style="font-size: 0.95rem; color: #ffd700;">44,848.0</strong>
+          <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between; align-items: center;">
+            <span>☀️ 日盤 (13:45)</span>
+            <strong id="stat-gex-plus-flip-day" style="font-size: 0.95rem; color: #ffd700;">44,848.0</strong>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-top: 2px; align-items: center;">
+            <span>VEX: <strong id="stat-total-vex-day" style="color: #ff5252;">+2550.1 億</strong></span>
+            <strong id="stat-vex-badge-day" style="color: #ff5252; font-size: 0.7rem;">🔴 恐慌時做市商護盤</strong>
           </div>
         </div>
+
+        <!-- Night Session Part -->
         <div style="margin-top: 6px;">
-          <div style="font-size: 0.72rem; color: #ff5252; display: flex; justify-content: space-between;">
-            <span>😱 總 VEX 恐慌曝險</span>
-            <strong id="stat-total-vex" style="font-size: 0.95rem; color: #ff5252;">-8.7 億</strong>
+          <div style="font-size: 0.72rem; color: #ff5252; display: flex; justify-content: space-between; align-items: center;">
+            <span>🌙 夜盤校正</span>
+            <strong id="stat-gex-plus-flip-night" style="font-size: 0.95rem; color: #ffd700;">45,117.1</strong>
           </div>
-          <div id="stat-vex-status" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
-            恐慌開關: <strong id="stat-vex-badge" style="color: #ff5252;">🔴 恐慌時火上加油</strong>
+          <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-top: 2px; align-items: center;">
+            <span>VEX: <strong id="stat-total-vex-night" style="color: #ff5252;">+2534.9 億</strong></span>
+            <strong id="stat-vex-badge-night" style="color: #ff5252; font-size: 0.7rem;">🔴 恐慌時做市商護盤</strong>
           </div>
         </div>
       </div>
