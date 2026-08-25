@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 45016.4,
     "day_total_vex": 2951.0
   },
-  "last_updated_time": "2026-08-25 23:33",
+  "last_updated_time": "2026-08-25 23:46",
   "spot_price": 45169.46,
   "spot_change": 407.14,
   "spot_change_pct": 0.91,
@@ -1310,6 +1310,7 @@
       "two_price": 381.91,
       "txf_price": 44447.0,
       "zero_gamma_level": 44666.6,
+      "gex_plus_flip": 44696.5,
       "call_wall_strike": 44850,
       "put_wall_strike": 44550,
       "max_pain_strike": 44100,
@@ -2591,6 +2592,7 @@
       "two_price": 383.21,
       "txf_price": 44547.0,
       "zero_gamma_level": 44766.6,
+      "gex_plus_flip": 44796.5,
       "call_wall_strike": 44950,
       "put_wall_strike": 44650,
       "max_pain_strike": 44200,
@@ -3872,6 +3874,7 @@
       "two_price": 383.91,
       "txf_price": 44607.0,
       "zero_gamma_level": 44816.6,
+      "gex_plus_flip": 44836.5,
       "call_wall_strike": 44950,
       "put_wall_strike": 44650,
       "max_pain_strike": 44200,
@@ -5153,6 +5156,7 @@
       "two_price": 384.61,
       "txf_price": 44667.0,
       "zero_gamma_level": 44876.6,
+      "gex_plus_flip": 44896.5,
       "call_wall_strike": 45050,
       "put_wall_strike": 44750,
       "max_pain_strike": 44300,
@@ -6434,6 +6438,7 @@
       "two_price": 384.91,
       "txf_price": 44724.0,
       "zero_gamma_level": 44896.6,
+      "gex_plus_flip": 44916.5,
       "call_wall_strike": 45050,
       "put_wall_strike": 44750,
       "max_pain_strike": 44300,
@@ -7715,6 +7720,7 @@
       "two_price": 386.21,
       "txf_price": 44854.0,
       "zero_gamma_level": 45016.6,
+      "gex_plus_flip": 45036.5,
       "call_wall_strike": 45150,
       "put_wall_strike": 44850,
       "max_pain_strike": 44400,
@@ -8996,6 +9002,7 @@
       "two_price": 387.61,
       "txf_price": 44974.0,
       "zero_gamma_level": 45136.6,
+      "gex_plus_flip": 45156.5,
       "call_wall_strike": 45250,
       "put_wall_strike": 44950,
       "max_pain_strike": 44500,
@@ -10277,6 +10284,7 @@
       "two_price": 390.31,
       "txf_price": 45184.0,
       "zero_gamma_level": 45306.6,
+      "gex_plus_flip": 45316.5,
       "call_wall_strike": 45350,
       "put_wall_strike": 45050,
       "max_pain_strike": 44600,
@@ -11558,6 +11566,7 @@
       "two_price": 389.41,
       "txf_price": 45027.0,
       "zero_gamma_level": 45016.5,
+      "gex_plus_flip": 45016.4,
       "call_wall_strike": 45150,
       "put_wall_strike": 44850,
       "max_pain_strike": 44400,
@@ -12839,6 +12848,7 @@
       "two_price": 389.41,
       "txf_price": 44532.0,
       "zero_gamma_level": 45216.6,
+      "gex_plus_flip": 45216.5,
       "call_wall_strike": 45350,
       "put_wall_strike": 45050,
       "max_pain_strike": 44600,
@@ -14122,6 +14132,7 @@
       "two_price": 384.91,
       "txf_price": 44724.0,
       "zero_gamma_level": 44896.6,
+      "gex_plus_flip": 44916.5,
       "call_wall_strike": 45050,
       "put_wall_strike": 44750,
       "max_pain_strike": 44300,
@@ -15403,6 +15414,7 @@
       "two_price": 386.21,
       "txf_price": 44854.0,
       "zero_gamma_level": 45016.6,
+      "gex_plus_flip": 45036.5,
       "call_wall_strike": 45150,
       "put_wall_strike": 44850,
       "max_pain_strike": 44400,
@@ -16684,6 +16696,7 @@
       "two_price": 387.61,
       "txf_price": 44974.0,
       "zero_gamma_level": 45136.6,
+      "gex_plus_flip": 45156.5,
       "call_wall_strike": 45250,
       "put_wall_strike": 44950,
       "max_pain_strike": 44500,
@@ -17965,6 +17978,7 @@
       "two_price": 390.31,
       "txf_price": 45184.0,
       "zero_gamma_level": 45306.6,
+      "gex_plus_flip": 45316.5,
       "call_wall_strike": 45350,
       "put_wall_strike": 45050,
       "max_pain_strike": 44600,
@@ -19246,6 +19260,7 @@
       "two_price": 389.41,
       "txf_price": 45027.0,
       "zero_gamma_level": 45016.5,
+      "gex_plus_flip": 45016.4,
       "call_wall_strike": 45150,
       "put_wall_strike": 44850,
       "max_pain_strike": 44400,
@@ -20527,6 +20542,7 @@
       "two_price": 389.41,
       "txf_price": 44532.0,
       "zero_gamma_level": 45216.6,
+      "gex_plus_flip": 45216.5,
       "call_wall_strike": 45350,
       "put_wall_strike": 45050,
       "max_pain_strike": 44600,
@@ -22050,9 +22066,9 @@
       },
       "dxy": {
         "date": "08/25 (二)",
-        "price": 98.95,
-        "change": -0.05,
-        "pct": -0.05
+        "price": 98.92,
+        "change": -0.08,
+        "pct": -0.08
       },
       "usdjpy": {
         "date": "08/25 (二)",
@@ -22153,13 +22169,13 @@
         },
         {
           "date": "08/25 (二)",
-          "price": 98.95,
-          "change": -0.05,
-          "pct": -0.05
+          "price": 98.92,
+          "change": -0.08,
+          "pct": -0.08
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.87</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.95</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.47</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.87</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.92</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.47</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
@@ -22218,7 +22234,7 @@
   "total_gex_plus": -9643.58,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-25 23:33",
+    "last_updated": "2026-08-25 23:46",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",

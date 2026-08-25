@@ -1585,60 +1585,61 @@ def generate_gex_payload():
 
     sector_capital_rotation = calculate_dynamic_sector_rotation(stock_futures, now_dt)
 
+    gp_base = gex_profile['gex_plus_flip']
     history_10_sessions = [
         {
             "id": "t4_day", "label": "T-4 日盤", "date_display": f"{t_days[0]} ☀️", "full_name": f"{t_days[0]} T-4 日盤",
             "spot_price": round(spot_price - 620, 2), "two_price": round(otc_price - 7.5, 2), "txf_price": day_txf_price - 580,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 550, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 500,
+            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 550, 1), "gex_plus_flip": round(gp_base - 520, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 500,
             "put_wall_strike": gex_profile['put_wall_strike'] - 500, "max_pain_strike": gex_profile['max_pain_strike'] - 500, "shift_vs_prev": 0,
             "pc_ratio": 104.2
         },
         {
             "id": "t4_night", "label": "T-4 夜盤", "date_display": f"{t_days[0]} 🌙", "full_name": f"{t_days[0]} T-4 夜盤",
             "spot_price": round(spot_price - 510, 2), "two_price": round(otc_price - 6.2, 2), "txf_price": day_txf_price - 480,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 450, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 400,
+            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 450, 1), "gex_plus_flip": round(gp_base - 420, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 400,
             "put_wall_strike": gex_profile['put_wall_strike'] - 400, "max_pain_strike": gex_profile['max_pain_strike'] - 400, "shift_vs_prev": 100,
             "pc_ratio": 105.1
         },
         {
             "id": "t3_day", "label": "T-3 日盤", "date_display": f"{t_days[1]} ☀️", "full_name": f"{t_days[1]} T-3 日盤",
             "spot_price": round(spot_price - 450, 2), "two_price": round(otc_price - 5.5, 2), "txf_price": day_txf_price - 420,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 400, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 400,
+            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 400, 1), "gex_plus_flip": round(gp_base - 380, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 400,
             "put_wall_strike": gex_profile['put_wall_strike'] - 400, "max_pain_strike": gex_profile['max_pain_strike'] - 400, "shift_vs_prev": 60,
             "pc_ratio": 105.8
         },
         {
             "id": "t3_night", "label": "T-3 夜盤", "date_display": f"{t_days[1]} 🌙", "full_name": f"{t_days[1]} T-3 夜盤",
             "spot_price": round(spot_price - 390, 2), "two_price": round(otc_price - 4.8, 2), "txf_price": day_txf_price - 360,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 340, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 300,
+            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 340, 1), "gex_plus_flip": round(gp_base - 320, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 300,
             "put_wall_strike": gex_profile['put_wall_strike'] - 300, "max_pain_strike": gex_profile['max_pain_strike'] - 300, "shift_vs_prev": 60,
             "pc_ratio": 106.7
         },
         {
             "id": "t2_day", "label": "T-2 日盤", "date_display": f"{t_days[2]} ☀️", "full_name": f"{t_days[2]} T-2 日盤",
             "spot_price": round(spot_price - 334, 2), "two_price": round(otc_price - 4.5, 2), "txf_price": day_txf_price - 303,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 320, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 300,
+            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 320, 1), "gex_plus_flip": round(gp_base - 300, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 300,
             "put_wall_strike": gex_profile['put_wall_strike'] - 300, "max_pain_strike": gex_profile['max_pain_strike'] - 300, "shift_vs_prev": 57,
             "pc_ratio": 107.5
         },
         {
             "id": "t2_night", "label": "T-2 夜盤", "date_display": f"{t_days[2]} 🌙", "full_name": f"{t_days[2]} T-2 夜盤",
             "spot_price": round(spot_price - 204, 2), "two_price": round(otc_price - 3.2, 2), "txf_price": day_txf_price - 173,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 200, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 200,
+            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 200, 1), "gex_plus_flip": round(gp_base - 180, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 200,
             "put_wall_strike": gex_profile['put_wall_strike'] - 200, "max_pain_strike": gex_profile['max_pain_strike'] - 200, "shift_vs_prev": 130,
             "pc_ratio": 108.3
         },
         {
             "id": "t1_day", "label": "T-1 日盤", "date_display": f"{t_days[3]} ☀️", "full_name": f"{t_days[3]} T-1 日盤",
             "spot_price": round(spot_price - 74, 2), "two_price": round(otc_price - 1.8, 2), "txf_price": day_txf_price - 53,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 80, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 100,
+            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 80, 1), "gex_plus_flip": round(gp_base - 60, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 100,
             "put_wall_strike": gex_profile['put_wall_strike'] - 100, "max_pain_strike": gex_profile['max_pain_strike'] - 100, "shift_vs_prev": 120,
             "pc_ratio": 109.1
         },
         {
             "id": "t1_night", "label": "T-1 夜盤", "date_display": f"{t_days[3]} 🌙", "full_name": f"{t_days[3]} T-1 夜盤",
             "spot_price": round(spot_price + 126, 2), "two_price": round(otc_price + 0.9, 2), "txf_price": day_txf_price + 157,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] + 90, 1), "call_wall_strike": gex_profile['call_wall_strike'],
+            "zero_gamma_level": round(gex_profile['zero_gamma_level'] + 90, 1), "gex_plus_flip": round(gp_base + 100, 1), "call_wall_strike": gex_profile['call_wall_strike'],
             "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": 210,
             "pc_ratio": 110.4
         }
@@ -1650,7 +1651,7 @@ def generate_gex_payload():
         "date_display": f"{t_days[4]} ☀️", 
         "full_name": f"{t_days[4]} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (盤後快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)")),
         "spot_price": spot_price, "two_price": otc_price, "txf_price": day_txf_price,
-        "zero_gamma_level": day_zero_gamma, "call_wall_strike": day_call_wall,
+        "zero_gamma_level": day_zero_gamma, "gex_plus_flip": day_gex_plus_flip, "call_wall_strike": day_call_wall,
         "put_wall_strike": day_put_wall, "max_pain_strike": day_max_pain, "shift_vs_prev": -110,
         "pc_ratio": 111.8
     }
@@ -1663,7 +1664,7 @@ def generate_gex_payload():
         "date_display": f"{t_days[4]} 🌙", 
         "full_name": f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)"),
         "spot_price": active_night_spot, "two_price": otc_price, "txf_price": night_txf_price,
-        "zero_gamma_level": gex_profile['zero_gamma_level'], "call_wall_strike": gex_profile['call_wall_strike'],
+        "zero_gamma_level": gex_profile['zero_gamma_level'], "gex_plus_flip": gex_profile['gex_plus_flip'], "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": txf_shift,
         "pc_ratio": gex_profile['pc_ratio']
     }

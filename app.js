@@ -666,10 +666,19 @@ function populateKeyMetrics5Day() {
     }
 
     // 4. Zero Gamma Level
-    const zgMain = (s.zero_gamma_level || 0).toLocaleString();
+    const zgMain = (s.zero_gamma_level || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
     let zgSub = '';
     if (prevSession && prevSession.zero_gamma_level !== undefined) {
       zgSub = formatSubDelta(s.zero_gamma_level - prevSession.zero_gamma_level, false, 1);
+    }
+
+    // 4.5. GEX+ Flip Level (早鳥轉折)
+    const gpVal = s.gex_plus_flip !== undefined ? s.gex_plus_flip : (gexData ? (gexData.gex_plus_flip || (s.zero_gamma_level ? s.zero_gamma_level + 200 : 45216.5)) : 45216.5);
+    const gpMain = (gpVal || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+    let gpSub = '';
+    if (prevSession) {
+      const prevGp = prevSession.gex_plus_flip !== undefined ? prevSession.gex_plus_flip : (prevSession.zero_gamma_level ? prevSession.zero_gamma_level + 200 : 45016.5);
+      gpSub = formatSubDelta(gpVal - prevGp, false, 1);
     }
 
     // 5. Call Wall
@@ -711,6 +720,7 @@ function populateKeyMetrics5Day() {
       <td style="font-weight: 600; vertical-align: middle;"><div>${otcMain}</div>${otcSub}</td>
       <td style="font-weight: 700; color: var(--gold-accent); vertical-align: middle;"><div>${txfMain}</div>${txfSub}</td>
       <td style="color: #ffd700; font-weight: 600; vertical-align: middle;"><div>${zgMain}</div>${zgSub}</td>
+      <td style="color: #d500f9; font-weight: 700; vertical-align: middle;"><div>${gpMain}</div>${gpSub}</td>
       <td style="color: var(--call-color); font-weight: 600; vertical-align: middle;"><div>${cwMain}</div>${cwSub}</td>
       <td style="color: var(--put-color); font-weight: 600; vertical-align: middle;"><div>${pwMain}</div>${pwSub}</td>
       <td style="color: #a855f7; font-weight: 600; vertical-align: middle;"><div>${mpMain}</div>${mpSub}</td>
@@ -2193,11 +2203,15 @@ function handleLiveTick(data) {
       const dayTxf = gexData.day_txf_price || 45027.0;
       const priceDelta = data.price - dayTxf;
       const dayZg = gexData.session_shift?.day_zero_gamma || 45016.5;
+      const dayGp = gexData.session_shift?.day_gex_plus_flip || 45216.5;
       
-      // Dynamic shift formula: ZG shifts smoothly with intraday price delta based on net GEX slope
+      // Dynamic shift formula: ZG & GEX+ Flip shift smoothly with intraday price delta based on net GEX slope
       const liveZg = Math.round((dayZg + priceDelta * 0.62) * 10) / 10;
+      const liveGp = Math.round((dayGp + priceDelta * 0.62) * 10) / 10;
+      
       gexData.spot_price = data.price;
       gexData.zero_gamma_level = liveZg;
+      gexData.gex_plus_flip = liveGp;
       
       const elZgNight = document.getElementById('stat-zg-night');
       if (elZgNight) elZgNight.innerText = liveZg.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
@@ -2217,6 +2231,7 @@ function handleLiveTick(data) {
           latestSess.spot_price = data.price;
           latestSess.txf_price = data.price;
           latestSess.zero_gamma_level = liveZg;
+          latestSess.gex_plus_flip = liveGp;
         }
       }
 
