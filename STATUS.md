@@ -1,10 +1,28 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.3)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.4)
 
-**當前版本**：`v45.3` (2026-08-25 全套 3 張社群圖卡動態數據與 TWSE 即時現貨漲跌計算對齊版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v45.3)
-**社群懶人圖卡生成器**：`scripts/generate_social_card.py` (4K 尋鳥品牌原創風格全動態渲染圖卡)
+**當前版本**：`v45.4` (2026-08-25 富邦 API 實時 WebSocket 行情網關與 Zero Gamma 雙圖動態同步連動版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v45.4)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v45.4)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v45.4 核心更新亮點（Fubon API Live Gateway & Dynamic Zero Gamma Sync）
+
+### ⚡ 富邦 Neo API 實時行情串流與合規網關 (`fubon_api_provider.py`)
+- **Fubon MarketData WebSocket 原生串接**：完成本機行情網關對富邦 Neo API SDK 的全功能實接，實現台指期近月合約 Tick 價位、漲跌點數與漲跌幅極速推播。
+- **智慧時段與合約轉換**：自動依時間判斷 `REGULAR` (日盤) 與 `AFTERHOURS` (夜盤) 合約碼。
+- **合規性確保**：資訊安全嚴格控管，`.env` 私鑰離線防護，本機獨享即時數據。
+
+### 📊 Live Tick 動態跳動與 Zero Gamma 雙圖 100% 實時同步連動 (`app.js`)
+- **即時視覺特效**：實時點位更新觸發 `.live-tick-flash-up` / `.live-tick-flash-down` 紅綠閃爍動畫。
+- **Zero Gamma 盤中動態位移**：現價跳動時，Zero Gamma 依 Gamma/Vanna 曲線即時推演最新防守臨界點。
+- **圖 1 與 圖 2 雙表實時連動**：Card 4 與表 2《近 5 日關鍵市場指數矩陣》頂列 `🌙 T夜盤 (Live 即時動態)` 數字動態同步跳動。
+
+### 🔍 日夜盤微觀結構速報動態校正引擎 (`updateMicrostructureExpress()`)
+- **消除靜態文案矛盾**：依據實時現價與 Zero Gamma 關係動態開關，確保現價在 Zero Gamma 之上時 100% 呈現 `🔴 正 Gamma 區 (護盤中)`。
+- **Call Wall 突破告警**：現價超越 Call Wall 天花板時自動輸出 `🚀 Call Wall 已突破` 之 Gamma Squeeze 軋空告警。
 
 ---
 

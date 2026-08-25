@@ -1,10 +1,10 @@
-# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v44.0)
+# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v45.4)
 
 本手冊記錄專案現狀、核心功能清單、開發 SOP 與個人筆電續接步驟。
 
 ---
 
-## 📌 一、v44.0 完整功能清單
+## 📌 一、v45.4 完整功能清單
 
 ### 核心分析與視覺化模組
 
@@ -20,13 +20,16 @@
 | 8 | **多色 DTE 多到期日直方圖** | W1🟨 / W2🟩 / M1🟦 / 雙週五🟪 四段到期日分色 |
 | 9 | **🔀 疊加對比模式** | 動態比對當前 vs 前一盤別 GEX 曲線差異 |
 | 10 | **Net GEX 敏感度曲線** | 白藍樣條曲線精確標示 Zero Gamma 轉折點 |
+| 11 | **⚡ 富邦 API WebSocket 實時網關** | 富邦 Neo API MarketData 實時串流，日夜盤合約自動切換與點位閃爍 |
+| 12 | **📊 Zero Gamma 雙圖動態連動** | Live Tick 驅動 Zero Gamma 動態位移，圖 1 卡片與圖 2 矩陣頂列 100% 實時同步跳動 |
+| 13 | **🔍 微觀結構速報動態引擎** | 動態開關正/負 Gamma 護盤說明與 Call Wall 已突破動態告警 |
 
 ### 三級即時報價網關模組
 
 | # | 功能 | 說明 |
 |---|---|---|
-| 11 | **三級容錯報價網關** | 優先 1: WebSocket 專線 ➔ 優先 2: DOM 網關 ➔ 優先 3: 期交所 MIS API |
-| 12 | **即時 Tick 閃爍特效** | 頂部膠囊即時顯示報價源狀態，價格跳動觸發亮綠閃爍特效 |
+| 14 | **三級容錯報價網關** | 優先 1: Fubon WebSocket 專線 ➔ 優先 2: DOM 網關 ➔ 優先 3: 期交所 MIS API |
+| 15 | **即時 Tick 閃爍特效** | 頂部膠囊即時顯示報價源狀態，價格跳動觸發亮紅/亮綠閃爍特效 (`.live-tick-flash-up/down`) |
 
 ---
 
@@ -52,10 +55,10 @@ python -c "import json; d=json.load(open('data/gex_data.json',encoding='utf-8'))
 **步驟 7**：Git 推送
 ```bash
 git add -A
-git commit -m "feat: v44.0 - [本次修改說明]"
+git commit -m "feat: v45.4 - [本次修改說明]"
 git push origin main
 ```
 
 ---
 
-*最後更新：2026-08-20 推送版 | 尋鳥 Bluebird Finder | v44.0*
+*最後更新：2026-08-25 推送版 | 尋鳥 Bluebird Finder | v45.4*

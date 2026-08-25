@@ -1,11 +1,11 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.3)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.4)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器
+> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 富邦 Neo API 實時行情與 Zero Gamma 動態連動
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v45.3-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v45.4-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
@@ -39,6 +39,24 @@
 💡 **一秒口訣記憶法**：
 - 🔴 **VEX 為負 (恐慌強)** ➔ 早鳥線在 **上方**（提早發警報，提醒快跑/試空）。
 - 🟢 **VEX 為正 (護盤厚)** ➔ 早鳥線在 **下方**（延後防守線，代表大盤很沉穩抗跌）。
+
+---
+
+## 🌟 v45.4 核心功能與修復亮點
+
+### ⚡ 1. 富邦 Neo API 實時行情串流與合規網關 (`fubon_api_provider.py` & `live_price_server.py`)
+- **WebSocket 原生串接**：重構本機行情網關，串接富邦 Neo API MarketData WebSocket，實現近月台指期實時 Tick 價格、漲跌點數與漲跌幅極速推送。
+- **日夜盤自動切換**：自動根據當前時段智慧判斷 `REGULAR` (日盤) 或 `AFTERHOURS` (夜盤) 並自動替換近月合約程式碼。
+- **私有合法、公開合規**：遵守券商 API 報價散佈合規原則，`start_live.bat` 本機獨享實時 WebSocket 報價，雲端公開散佈防護機制完備。
+
+### 📊 2. Live Tick 動態跳動與 Zero Gamma 雙圖 100% 實時同步連動
+- **即時閃爍動畫**：網頁點位更新時自動觸發 `.live-tick-flash-up` (紅光上揚) 與 `.live-tick-flash-down` (綠光下跌) 視覺反饋。
+- **Zero Gamma 盤中位移**：現價跳動時，Zero Gamma 依據做市商網絡 Gamma/Vanna 敏感度曲線動態推算當前實時防守臨界點。
+- **圖 1 與 圖 2 雙表連動**：頂部 Card 4 與表 2《近 5 日關鍵市場指數矩陣》第一列 `🌙 T夜盤 (Live 即時動態)` 的台指期與 Zero Gamma 數字同步動態跳動與閃爍。
+
+### 🔍 3. 微觀結構速報動態校正引擎 (`updateMicrostructureExpress()`)
+- **告別靜態文案矛盾**：前端 `app.js` 與後端算式升級為實時動態評估，當標的價格 $> ZG$ 時，速報自動呈現 `🔴 正 Gamma 區 (護盤中)` 與護盤說明，消除歷史靜態數據產生的文案衝突。
+- **Call Wall 突破動態告警**：當現價突破 Call Wall 天花板時，速報自動觸發 `🚀 Call Wall 已突破` 之 Gamma Squeeze 強勢軋空告警。
 
 ---
 
