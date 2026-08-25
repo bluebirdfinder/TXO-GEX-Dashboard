@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 45017.5,
     "day_total_vex": 2498.59
   },
-  "last_updated_time": "2026-08-26 02:28",
+  "last_updated_time": "2026-08-26 02:32",
   "spot_price": 45169.46,
   "spot_change": 407.14,
   "spot_change_pct": 0.91,
@@ -22082,6 +22082,13 @@
     "notional_billion": 256.7,
     "description": "外資單日加碼空單 -2,851 口（約 -256.7 億 TWD 契約金額），防守避險需求上升。"
   },
+  "executive_digest": {
+    "futures_summary": "📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：前五大淨部位 <code>-7,463 口</code>、前十大 <code>-20,574 口</code>，特定法人淨部位 <code>-4,081 口</code>。外資台指期未平倉空單 <code>-85,380 口</code>（單日變動 <code>-2,851 口</code>，約合 <code>256.7 億 TWD</code> 契約金額）。📉 顯著加碼加空。",
+    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>-39.24 億 TWD</code>！其中「外資 <code>+0.00 億</code>」、「投信 <code>-39.84 億</code>」與「自營商 <code>+0.60 億</code>」。",
+    "options_structure": "🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>-2.15 億</code> 與 Put 賣權 <code>+0.35 億</code>；投信買權 <code>-2.33 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>45,400 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>45,000 點</code>。",
+    "sentiment_audit": "📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>113.2%</code> (🔴 偏多看撐)，莊家下檔防守支撐力道尚存。",
+    "settlement_outlook": "🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：現價 (<code>45,169.46</code>) 處於 Zero Gamma (<code>45,217.6 點</code>) 上方之「負 Gamma 避險助跌警示區」。若指數守穩 <code>45,000 點</code> Put Wall，做市商對沖買盤護盤持續，拉回尋求支撐；衝高接近 <code>45,400 點</code> Call Wall 壓力區宜逢高分批停利。"
+  },
   "microstructure_summary": {
     "regime_label": "🟢 負 Gamma 波動度放大區 (避險引爆)",
     "theme_color": "bear",
@@ -22266,7 +22273,7 @@
   "total_gex_plus": -7162.72,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-26 02:28",
+    "last_updated": "2026-08-26 02:32",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",

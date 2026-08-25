@@ -1585,6 +1585,78 @@ def generate_gex_payload():
         "description": sentiment_desc
     }
 
+    # Dynamic Executive Digest for Section 3 Top Digest Card
+    f_change_str = f"{foreign_change:+,d}"
+    f_net_str = f"{last_foreign_net:,d}"
+    f_amt_str = f"{contract_notional_billion:.1f}"
+
+    regime_str = "正 Gamma 波動度抑制區" if spot_price >= gex_profile['zero_gamma_level'] else "負 Gamma 避險助跌警示區"
+    top5_val = lt_inst.get('top5_net', -11018)
+    top10_val = lt_inst.get('top10_net', -22685)
+    spec_val = lt_inst.get('top5_spec_net', -9043)
+    top5_str = f"{top5_val:+,d}"
+    top10_str = f"{top10_val:+,d}"
+    spec_str = f"{spec_val:+,d}"
+
+    futures_summary = (
+        f"📈 <strong>期貨籌碼動向 (Futures Audit)</strong>："
+        f"前五大淨部位 <code>{top5_str} 口</code>、前十大 <code>{top10_str} 口</code>，"
+        f"特定法人淨部位 <code>{spec_str} 口</code>。外資台指期未平倉空單 <code>{f_net_str} 口</code>"
+        f"（單日變動 <code>{f_change_str} 口</code>，約合 <code>{f_amt_str} 億 TWD</code> 契約金額）。{sentiment_tag}。"
+    )
+
+    f_cash = stock_inst['foreign_stock_net']
+    t_cash = stock_inst['trust_stock_net']
+    d_cash = stock_inst['dealer_stock_net']
+    cash_tot = round(f_cash + t_cash + d_cash, 2)
+    cash_tot_sign = "+" if cash_tot >= 0 else ""
+    f_cash_sign = "+" if f_cash >= 0 else ""
+    t_cash_sign = "+" if t_cash >= 0 else ""
+    d_cash_sign = "+" if d_cash >= 0 else ""
+
+    cash_summary = (
+        f"💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>："
+        f"三大法人現貨合計買賣超 <code>{cash_tot_sign}{cash_tot:.2f} 億 TWD</code>！"
+        f"其中「外資 <code>{f_cash_sign}{f_cash:.2f} 億</code>」、"
+        f"「投信 <code>{t_cash_sign}{t_cash:.2f} 億</code>」與「自營商 <code>{d_cash_sign}{d_cash:.2f} 億</code>」。"
+    )
+
+    f_opt_call = opt_inst['foreign']['call_net_amt']
+    f_opt_put = opt_inst['foreign']['put_net_amt']
+    f_opt_call_sign = "+" if f_opt_call >= 0 else ""
+    f_opt_put_sign = "+" if f_opt_put >= 0 else ""
+    t_opt_call = opt_inst['trust']['call_net_amt']
+    t_opt_call_sign = "+" if t_opt_call >= 0 else ""
+
+    options_structure = (
+        f"🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>："
+        f"外資 Call 買權 <code>{f_opt_call_sign}{f_opt_call:.2f} 億</code> 與 Put 賣權 <code>{f_opt_put_sign}{f_opt_put:.2f} 億</code>；"
+        f"投信買權 <code>{t_opt_call_sign}{t_opt_call:.2f} 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>{gex_profile['call_wall_strike']:,} 點</code>，"
+        f"<strong>Put Wall 地板</strong> 固守於 <code>{gex_profile['put_wall_strike']:,} 點</code>。"
+    )
+
+    pc_badge = '🔴 偏多看撐' if gex_profile['pc_ratio'] > 105 else '🟢 偏空看壓'
+
+    sentiment_audit = (
+        f"📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>："
+        f"小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>{gex_profile['pc_ratio']:.1f}%</code> ({pc_badge})，莊家下檔防守支撐力道尚存。"
+    )
+
+    settlement_outlook = (
+        f"🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>："
+        f"現價 (<code>{spot_price:,.2f}</code>) 處於 Zero Gamma (<code>{gex_profile['zero_gamma_level']:,} 點</code>) 上方之「{regime_str}」。"
+        f"若指數守穩 <code>{gex_profile['put_wall_strike']:,} 點</code> Put Wall，做市商對沖買盤護盤持續，拉回尋求支撐；"
+        f"衝高接近 <code>{gex_profile['call_wall_strike']:,} 點</code> Call Wall 壓力區宜逢高分批停利。"
+    )
+
+    executive_digest = {
+        "futures_summary": futures_summary,
+        "cash_summary": cash_summary,
+        "options_structure": options_structure,
+        "sentiment_audit": sentiment_audit,
+        "settlement_outlook": settlement_outlook
+    }
+
     # Build All Stock Futures from TAIFEX Official Market Data + Catalog + TWSE Spot Prices + Ex-Dividend Schedule
     stock_spot_dict = fetch_twse_stock_spot_prices()
     catalog_270 = load_taifex_270_catalog()
@@ -1815,6 +1887,7 @@ def generate_gex_payload():
         "institutional_5day_history": institutional_5day_history,
         "night_institutional_5day_history": night_institutional_5day_history,
         "institutional_sentiment": institutional_sentiment,
+        "executive_digest": executive_digest,
         "microstructure_summary": microstructure_summary,
         "hot_money_digest": hot_money_data,
         "night_institutional_trading": night_inst_trading,

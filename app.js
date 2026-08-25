@@ -1556,11 +1556,24 @@ function populateInstitutionalMatrix() {
 
   const digestEl = document.getElementById('executive-digest-content');
   if (digestEl) {
-    const fSum = highlightDigestText(digest.futures_summary || '📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：前五大淨部位 <code>+988 口</code>、前十大 <code>+1,464 口</code>，特定法人偏多增碼 +1,034 口。外資台指期未平倉空單 <code>-85,179 口</code> (單日回補 <code>+1,705 口</code>，約合 <code>+15.6 億 TWD</code> 契約金額)，空頭避險賣壓呈現階段性收斂。');
-    const cSum = highlightDigestText(digest.cash_summary || '💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買超 <code>+291.06 億 TWD</code>！其中「外資強勢買超 <code>+158.4 億</code>」與「自營商買超 <code>+14.0 億</code>」，投信高檔調節 <code>-177.5 億</code>。權值股資金面支撐強勁。');
-    const oSum = highlightDigestText(digest.options_structure || '🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>+0.60 億</code> (+1,549口) 與 Put 賣權 <code>-0.28 億</code> (+3,721口)；投信持倉 SC 賣出買權 <code>-3.08 億</code> 防守避險；自營商雙賣收取時間價值。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>46,050 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>45,750 點</code>。');
-    const sSum = highlightDigestText(digest.sentiment_audit || '📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台散戶多空比為 <code>+19.97%</code> (淨多單 7,116口)，微台散戶多空比降至 <code>+9.63%</code> (淨多單 7,481口，單日大幅平倉 -8,539口)。全市場 P/C Ratio 上升至 <code>117.16%</code> (🔴 偏多看撐)，莊家下檔支撐鐵板紮實。');
-    const tSum = highlightDigestText(digest.settlement_outlook || '🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：現價處於 Zero Gamma (<code>45,920.5 點</code>) 上方之「正 Gamma 波動度抑制區」。若指數守穩 <code>45,750 點</code> Put Wall，做市商對沖買盤護盤持續，拉回尋求支撐；衝高接近 <code>46,050 點</code> Call Wall 壓力區宜逢高分批停利。');
+    const spotP = gexData.spot_price || 45169.46;
+    const cwP = gexData.call_wall_strike || 45200;
+    const pwP = gexData.put_wall_strike || 44800;
+    const zgP = gexData.zero_gamma_level || 45017.6;
+    const pcP = gexData.pc_ratio || 111.8;
+    const regStr = spotP >= zgP ? '正 Gamma 波動度抑制區' : '負 Gamma 避險助跌警示區';
+
+    const defaultFSum = `📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：外資台指期未平倉空單 <code>-85,380 口</code>（單日回補 <code>+1,705 口</code>，約合 <code>+15.6 億 TWD</code> 契約金額），空頭避險賣壓呈現階段性收斂。`;
+    const defaultCSum = `💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>-39.24 億 TWD</code>！其中外資 <code>+0.00 億</code>、投信 <code>-39.84 億</code>、自營商 <code>+0.60 億</code>。`;
+    const defaultOSum = `🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>-2.15 億</code> (-2,744口) 與 Put 賣權 <code>+0.35 億</code> (+946口)。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>${cwP.toLocaleString()} 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>${pwP.toLocaleString()} 點</code>。`;
+    const defaultSSum = `📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台散戶多空比為 <code>+19.97%</code> (淨多單 7,116口)，微台散戶多空比降至 <code>+9.63%</code> (淨多單 7,481口)。全市場 P/C Ratio 站在 <code>${pcP.toFixed(1)}%</code> (🔴 偏多看撐)，莊家下檔支撐鐵板紮實。`;
+    const defaultTSum = `🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：現價 (<code>${spotP.toLocaleString()}</code>) 處於 Zero Gamma (<code>${zgP.toLocaleString()} 點</code>) 上方之「${regStr}」。若指數守穩 <code>${pwP.toLocaleString()} 點</code> Put Wall，做市商對沖買盤護盤持續，拉回尋求支撐；衝高接近 <code>${cwP.toLocaleString()} 點</code> Call Wall 壓力區宜逢高分批停利。`;
+
+    const fSum = highlightDigestText(digest.futures_summary || defaultFSum);
+    const cSum = highlightDigestText(digest.cash_summary || defaultCSum);
+    const oSum = highlightDigestText(digest.options_structure || defaultOSum);
+    const sSum = highlightDigestText(digest.sentiment_audit || defaultSSum);
+    const tSum = highlightDigestText(digest.settlement_outlook || defaultTSum);
 
     digestEl.innerHTML = `
       <div style="background: rgba(10, 14, 23, 0.4); border-radius: 8px; padding: 14px 16px; border: 1px solid rgba(0, 210, 255, 0.15);">
