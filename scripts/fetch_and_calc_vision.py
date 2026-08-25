@@ -755,9 +755,9 @@ def fetch_official_taifex_options_matrix():
     Parses TAIFEX callsAndPutsDate for TXO Options Institutional Trading (Call & Put Net Amounts and Net Volumes).
     """
     opt_inst = {
-        'foreign': {'call_net_amt': -1.99, 'put_net_amt': 0.39, 'call_net_vol': 3548, 'put_net_vol': 5613},
-        'trust': {'call_net_amt': -1.33, 'put_net_amt': 0.00, 'call_net_vol': -2925, 'put_net_vol': 85},
-        'dealer': {'call_net_amt': 2.10, 'put_net_amt': 0.10, 'call_net_vol': 2543, 'put_net_vol': 2489}
+        'foreign': {'call_net_amt': -2.15, 'put_net_amt': 0.35, 'call_net_vol': -2744, 'put_net_vol': 946},
+        'trust': {'call_net_amt': -2.33, 'put_net_amt': 0.01, 'call_net_vol': -4029, 'put_net_vol': 166},
+        'dealer': {'call_net_amt': 2.43, 'put_net_amt': 0.78, 'call_net_vol': 1402, 'put_net_vol': 1654}
     }
     try:
         url_opt = "https://www.taifex.com.tw/cht/3/callsAndPutsDate"
@@ -781,23 +781,25 @@ def fetch_official_taifex_options_matrix():
                         except: return 0
 
                     if idx + 5 < len(rows):
-                        opt_inst['dealer']['call_net_amt'] = parse_amt(rows[idx][15]) if len(rows[idx]) >= 16 else 2.10
-                        opt_inst['dealer']['call_net_vol'] = parse_vol(rows[idx][14]) if len(rows[idx]) >= 15 else 2543
+                        opt_inst['dealer']['call_net_amt'] = parse_amt(rows[idx][-1])
+                        opt_inst['dealer']['call_net_vol'] = parse_vol(rows[idx][-2])
                         
-                        opt_inst['trust']['call_net_amt']  = parse_amt(rows[idx+1][11]) if len(rows[idx+1]) >= 12 else -1.33
-                        opt_inst['trust']['call_net_vol']  = parse_vol(rows[idx+1][10]) if len(rows[idx+1]) >= 11 else -2925
+                        opt_inst['trust']['call_net_amt']  = parse_amt(rows[idx+1][-1])
+                        opt_inst['trust']['call_net_vol']  = parse_vol(rows[idx+1][-2])
                         
-                        opt_inst['foreign']['call_net_amt'] = parse_amt(rows[idx+2][11]) if len(rows[idx+2]) >= 12 else -1.99
-                        opt_inst['foreign']['call_net_vol'] = parse_vol(rows[idx+2][10]) if len(rows[idx+2]) >= 11 else 3548
+                        opt_inst['foreign']['call_net_amt'] = parse_amt(rows[idx+2][-1])
+                        opt_inst['foreign']['call_net_vol'] = parse_vol(rows[idx+2][-2])
                         
-                        opt_inst['dealer']['put_net_amt']  = parse_amt(rows[idx+3][15]) if len(rows[idx+3]) >= 16 else 0.10
-                        opt_inst['dealer']['put_net_vol']  = parse_vol(rows[idx+3][14]) if len(rows[idx+3]) >= 15 else 2489
+                        opt_inst['dealer']['put_net_amt']  = parse_amt(rows[idx+3][-1])
+                        opt_inst['dealer']['put_net_vol']  = parse_vol(rows[idx+3][-2])
 
-                        opt_inst['trust']['put_net_amt']   = parse_amt(rows[idx+4][11]) if len(rows[idx+4]) >= 12 else 0.0
-                        opt_inst['trust']['put_net_vol']   = parse_vol(rows[idx+4][10]) if len(rows[idx+4]) >= 11 else 85
+                        opt_inst['trust']['put_net_amt']   = parse_amt(rows[idx+4][-1])
+                        opt_inst['trust']['put_net_vol']   = parse_vol(rows[idx+4][-2])
 
-                        opt_inst['foreign']['put_net_amt'] = parse_amt(rows[idx+5][11]) if len(rows[idx+5]) >= 12 else 0.39
-                        opt_inst['foreign']['put_net_vol'] = parse_vol(rows[idx+5][10]) if len(rows[idx+5]) >= 11 else 5613
+                        opt_inst['foreign']['put_net_amt'] = parse_amt(rows[idx+5][-1])
+                        opt_inst['foreign']['put_net_vol'] = parse_vol(rows[idx+5][-2])
+                        print(f"[OK] Official TAIFEX TXO Options Inst Net OI: Foreign Call={opt_inst['foreign']['call_net_vol']} ({opt_inst['foreign']['call_net_amt']}億), Put={opt_inst['foreign']['put_net_vol']} ({opt_inst['foreign']['put_net_amt']}億)")
+                        break
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Options Trading: {e}")
     return opt_inst
