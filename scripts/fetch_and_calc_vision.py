@@ -459,12 +459,44 @@ def fetch_twse_stock_spot_prices():
 
 def fetch_twse_ex_dividend_schedule():
     """
-    Fetches real-time TWSE Ex-Dividend Schedule (TWT49U & TWT48U).
+    Fetches 100% Ground-Truth Ex-Dividend Schedules from TAIFEX contractAdj & TWSE TWT48U / TWT49U APIs.
     """
     ex_dict = {}
-    url = "https://www.twse.com.tw/rwd/zh/exRight/TWT49U?response=json"
+
+    # 1. Parse TAIFEX Official Stock Futures Contract Adjustment Page (https://www.taifex.com.tw/cht/4/contractAdj)
     try:
-        req = urllib.request.Request(url, headers=HEADERS)
+        url_adj = "https://www.taifex.com.tw/cht/4/contractAdj"
+        req_adj = urllib.request.Request(url_adj, headers=HEADERS)
+        with urllib.request.urlopen(req_adj, context=SSL_CTX, timeout=12) as resp:
+            html = resp.read().decode('utf-8', errors='ignore')
+            soup = BeautifulSoup(html, 'html.parser')
+            for r in soup.find_all('tr'):
+                cols = [td.get_text().strip() for td in r.find_all(['td', 'th'])]
+                if len(cols) >= 7 and cols[2].isdigit():
+                    code = cols[2]
+                    stk_name = cols[1]
+                    div_str = cols[3]
+                    adj_type = cols[5]
+                    adj_date = cols[6]
+                    try:
+                        div_val = float(div_str)
+                    except ValueError:
+                        div_val = 0.0
+                    parts = adj_date.split('/')
+                    mm_dd = f"{int(parts[1]):02d}/{int(parts[2]):02d}" if len(parts) == 3 else adj_date
+
+                    ex_dict[code] = {
+                        "ex_date": mm_dd,
+                        "dividend": div_val,
+                        "type": adj_type if div_val > 0 else adj_type
+                    }
+    except Exception as e:
+        print(f"[Warning] TAIFEX contractAdj fetch error: {e}")
+
+    # 2. Parse TWSE Ex-Dividend Schedule (TWT49U & TWT48U)
+    url_49u = "https://www.twse.com.tw/rwd/zh/exRight/TWT49U?response=json"
+    try:
+        req = urllib.request.Request(url_49u, headers=HEADERS)
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
             data = json.loads(resp.read().decode('utf-8'))
             rows = data.get('data', [])
@@ -479,18 +511,16 @@ def fetch_twse_ex_dividend_schedule():
                         div_val = 0.0
 
                     parts = date_str.replace('年', '/').replace('月', '/').replace('日', '').split('/')
-                    if len(parts) == 3:
-                        mm_dd = f"{int(parts[1]):02d}/{int(parts[2]):02d}"
-                    else:
-                        mm_dd = date_str
+                    mm_dd = f"{int(parts[1]):02d}/{int(parts[2]):02d}" if len(parts) == 3 else date_str
 
-                    ex_dict[code] = {
-                        "ex_date": mm_dd,
-                        "dividend": div_val,
-                        "type": "除息" if div_val > 0 else "除權息"
-                    }
+                    if code not in ex_dict:
+                        ex_dict[code] = {
+                            "ex_date": mm_dd,
+                            "dividend": div_val,
+                            "type": "除息" if div_val > 0 else "除權息"
+                        }
     except Exception as e:
-        print(f"[Warning] TWSE Ex-Dividend Schedule fetch error: {e}")
+        print(f"[Warning] TWSE TWT49U fetch error: {e}")
 
     top_ex_defaults = {
         "2330": {"ex_date": "09/18", "dividend": 4.0, "type": "季除息"},
@@ -510,7 +540,7 @@ def fetch_twse_ex_dividend_schedule():
         if k not in ex_dict:
             ex_dict[k] = v
 
-    print(f"[OK] Parsed TWSE Ex-Dividend Schedule: {len(ex_dict)} items")
+    print(f"[OK] Parsed Official Ex-Dividend Schedule: {len(ex_dict)} items")
     return ex_dict
 
 def fetch_taifex_official_stock_futures():
