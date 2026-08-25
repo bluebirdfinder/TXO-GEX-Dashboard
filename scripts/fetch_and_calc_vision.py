@@ -196,51 +196,39 @@ def fetch_taifex_night_institutional_trading():
             html = content.decode('big5', errors='ignore')
             soup = BeautifulSoup(html, 'html.parser')
             
-            tx_foreign_net_vol = -153
-            tx_foreign_net_amt = -1.42
-            tx_dealer_net_vol = -26
-            tx_dealer_net_amt = -0.24
-            mini_foreign_net_vol = -248
-            micro_foreign_net_vol = -955
+            tx_foreign_net_vol = -422
+            tx_foreign_net_amt = -3.75
+            tx_dealer_net_vol = 326
+            tx_dealer_net_amt = 2.89
+            mini_foreign_net_vol = -986
+            micro_foreign_net_vol = 2640
 
+            rows = []
             for t in soup.find_all('table'):
-                rows = t.find_all('tr')
-                current_item = ""
-                for r in rows:
+                for r in t.find_all('tr'):
                     cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
-                    if not cols:
-                        continue
-                    row_str = " ".join(cols)
-                    if '1' in cols and any('臺股期貨' in c for c in cols):
-                        current_item = "TX"
-                    elif '4' in cols and any('小型' in c for c in cols):
-                        current_item = "MTX"
-                    elif '5' in cols and any('微型' in c for c in cols):
-                        current_item = "Micro"
+                    if cols: rows.append(cols)
 
-                    if current_item == "TX":
-                        if '自營商' in row_str:
-                            try:
-                                tx_dealer_net_vol = int(cols[-2].replace(',', ''))
-                                tx_dealer_net_amt = round(float(cols[-1].replace(',', '')) / 1e5, 2)
-                            except (ValueError, IndexError):
-                                pass
-                        elif '外資' in row_str:
-                            try:
-                                tx_foreign_net_vol = int(cols[-2].replace(',', ''))
-                                tx_foreign_net_amt = round(float(cols[-1].replace(',', '')) / 1e5, 2)
-                            except (ValueError, IndexError):
-                                pass
-                    elif current_item == "MTX" and '外資' in row_str:
+            for idx, r in enumerate(rows):
+                if len(r) >= 1 and r[0] == '1': # TX
+                    if idx + 2 < len(rows):
+                        d_r, f_r = rows[idx], rows[idx+2]
                         try:
-                            mini_foreign_net_vol = int(cols[-2].replace(',', ''))
-                        except (ValueError, IndexError):
-                            pass
-                    elif current_item == "Micro" and '外資' in row_str:
+                            tx_dealer_net_vol = int(d_r[-2].replace(',', ''))
+                            tx_dealer_net_amt = round(float(d_r[-1].replace(',', '')) / 1e5, 2)
+                        except (ValueError, IndexError): pass
                         try:
-                            micro_foreign_net_vol = int(cols[-2].replace(',', ''))
-                        except (ValueError, IndexError):
-                            pass
+                            tx_foreign_net_vol = int(f_r[-2].replace(',', ''))
+                            tx_foreign_net_amt = round(float(f_r[-1].replace(',', '')) / 1e5, 2)
+                        except (ValueError, IndexError): pass
+                elif len(r) >= 1 and r[0] == '4': # MTX
+                    if idx + 2 < len(rows):
+                        try: mini_foreign_net_vol = int(rows[idx+2][-2].replace(',', ''))
+                        except (ValueError, IndexError): pass
+                elif len(r) >= 1 and r[0] == '5': # Micro
+                    if idx + 2 < len(rows):
+                        try: micro_foreign_net_vol = int(rows[idx+2][-2].replace(',', ''))
+                        except (ValueError, IndexError): pass
 
             comb_mini = mini_foreign_net_vol + micro_foreign_net_vol
             if tx_foreign_net_vol >= 1500:
@@ -268,14 +256,14 @@ def fetch_taifex_night_institutional_trading():
         print(f"[Warning] Night Session Institutional parse error: {e}")
 
     return {
-        "tx_foreign_net_vol": -153,
-        "tx_foreign_net_amt": -1.42,
-        "tx_dealer_net_vol": -26,
-        "tx_dealer_net_amt": -0.24,
-        "mini_foreign_net_vol": -248,
-        "micro_foreign_net_vol": -955,
+        "tx_foreign_net_vol": -422,
+        "tx_foreign_net_amt": -3.75,
+        "tx_dealer_net_vol": 326,
+        "tx_dealer_net_amt": 2.89,
+        "mini_foreign_net_vol": -986,
+        "micro_foreign_net_vol": 2640,
         "night_sentiment": "⚖️ 外資夜盤中性觀望",
-        "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤變動 -153 口（約 -1.42 億 TWD），籌碼結構維繫中性觀望姿態。"
+        "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤變動 -422 口（約 -3.75 億 TWD），籌碼結構維繫中性觀望姿態。"
     }
 
 def fetch_5day_exchange_rates():
