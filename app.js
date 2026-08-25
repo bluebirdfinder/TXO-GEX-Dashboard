@@ -321,6 +321,13 @@ function showCacheNotice() {
 }
 
 function updateFreshnessIndicator(data) {
+  if (data && data.engine_version) {
+    const headerBadge = document.getElementById('app-header-version-badge');
+    if (headerBadge) headerBadge.textContent = `TXO GEX 量化系統 ${data.engine_version}`;
+    const footerBadge = document.getElementById('app-footer-version-badge');
+    if (footerBadge) footerBadge.textContent = `尋鳥 Bluebird Finder • TXO GEX 量化分析系統 ${data.engine_version}`;
+  }
+
   const dot = document.getElementById('freshness-dot');
   const text = document.getElementById('freshness-text');
   if (!dot || !text) return;

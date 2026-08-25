@@ -1,4 +1,4 @@
-# 💡 TXO 選擇權與 GEX / VEX 量化觀念速查指南 (v45.3)
+# 💡 TXO 選擇權與 GEX / VEX 量化觀念速查指南 (v45.5)
 
 > 整合網頁教學 Modal 與本機功能說明，提供完整的 GEX/VEX 判讀理論基礎、Max Pain 區隔與尋鳥 4K 社群懶人圖卡使用指南。
 
@@ -84,5 +84,5 @@ GEX+ = Net GEX + 1.0 × Net VEX
 
 ---
 
-*最後更新：2026-08-25 v45.3 發行版 | 尋鳥 Bluebird Finder Quant Labs*
+*最後更新：2026-08-25 v45.5 發行版 | 尋鳥 Bluebird Finder Quant Labs*
 
