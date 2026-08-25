@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 45017.5,
     "day_total_vex": 2498.59
   },
-  "last_updated_time": "2026-08-26 00:27",
+  "last_updated_time": "2026-08-26 00:38",
   "spot_price": 45169.46,
   "spot_change": 407.14,
   "spot_change_pct": 0.91,
@@ -21879,10 +21879,10 @@
         "top5_spec_net": 2950,
         "top10_spec_net": 4420
       },
-      "foreign_fut_net": -82819,
+      "foreign_fut_net": -82529,
       "trust_fut_net": 75650,
       "itrust_fut_net": 75650,
-      "dealer_fut_net": 2150,
+      "dealer_fut_net": 2315,
       "foreign_stock_net": 32.5,
       "trust_stock_net": 48.0,
       "itrust_stock_net": 48.0,
@@ -22046,9 +22046,9 @@
   "institutional_sentiment": {
     "tag": "📉 顯著加碼加空",
     "foreign_net_oi": -85380,
-    "daily_change": -2561,
-    "notional_billion": 230.6,
-    "description": "外資單日加碼空單 -2,561 口（約 -230.6 億 TWD 契約金額），防守避險需求上升。"
+    "daily_change": -2851,
+    "notional_billion": 256.7,
+    "description": "外資單日加碼空單 -2,851 口（約 -256.7 億 TWD 契約金額），防守避險需求上升。"
   },
   "microstructure_summary": {
     "regime_label": "🟢 負 Gamma 波動度放大區 (避險引爆)",
@@ -22234,7 +22234,7 @@
   "total_gex_plus": -7162.72,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-26 00:27",
+    "last_updated": "2026-08-26 00:38",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",

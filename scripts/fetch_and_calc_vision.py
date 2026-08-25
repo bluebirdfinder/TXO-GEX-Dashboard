@@ -1411,7 +1411,7 @@ def generate_gex_payload():
             "date": t_days[3],
             "top5_net": 3850, "top10_net": 5920, "top5_spec_net": 3210, "top10_spec_net": 4850,
             "lt_near": {'top5_net': 3520, 'top10_net': 5480, 'top5_spec_net': 2950, 'top10_spec_net': 4420},
-            "foreign_fut_net": -82819, "trust_fut_net": 75650, "itrust_fut_net": 75650, "dealer_fut_net": 2150,
+            "foreign_fut_net": -82529, "trust_fut_net": 75650, "itrust_fut_net": 75650, "dealer_fut_net": 2315,
             "foreign_stock_net": 32.5, "trust_stock_net": 48.0, "itrust_stock_net": 48.0, "dealer_stock_net": 14.2,
             "foreign_opt_net": 2.10, "trust_opt_net": -2.98, "itrust_opt_net": -2.98, "dealer_opt_net": 3.72,
             "foreign_opt_call_net": 1.45, "foreign_opt_put_net": -0.65,
