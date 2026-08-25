@@ -715,21 +715,26 @@ function populateKeyMetrics5Day() {
     const mmStock = s.margin_maint_stock !== undefined ? s.margin_maint_stock : 141.2;
     let mmColor = '#00e676';
     let mmBg = 'rgba(0, 230, 118, 0.15)';
+    let mmBadgeText = '🟢 安定';
     if (mmMarket >= 160) {
-      mmColor = '#00e676'; // 🟢 安定
+      mmColor = '#00e676'; // 🟢 安定 (>=160%)
       mmBg = 'rgba(0, 230, 118, 0.18)';
+      mmBadgeText = '🟢 安定';
     } else if (mmMarket >= 150) {
-      mmColor = '#ffd700'; // 🟡 常態
+      mmColor = '#ffd700'; // 🟡 常態 (150%~160%)
       mmBg = 'rgba(255, 215, 0, 0.18)';
+      mmBadgeText = '🟡 常態';
     } else if (mmMarket >= 140) {
-      mmColor = '#ff9100'; // 🟠 警戒
+      mmColor = '#ff9100'; // 🟠 警戒 (140%~150%)
       mmBg = 'rgba(255, 145, 0, 0.18)';
+      mmBadgeText = '🟠 警戒';
     } else {
-      mmColor = '#ff1744'; // 🔴 斷頭洗盤
+      mmColor = '#ff1744'; // 🔴 斷頭洗盤 (<140%)
       mmBg = 'rgba(255, 23, 68, 0.18)';
+      mmBadgeText = '🔴 斷頭洗盤';
     }
-    const mmMain = `<span style="font-size: 0.82rem; padding: 2px 6px; border-radius: 4px; background: ${mmBg}; color: ${mmColor}; font-weight: 700; border: 1px solid ${mmColor}; display: inline-block;">${mmMarket.toFixed(1)}%</span>`;
-    const mmSub = `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">(${mmStock.toFixed(1)}%)</div>`;
+    const mmMain = `<span style="font-size: 0.82rem; padding: 2px 6px; border-radius: 4px; background: ${mmBg}; color: ${mmColor}; font-weight: 700; border: 1px solid ${mmColor}; display: inline-block; white-space: nowrap;">${mmMarket.toFixed(1)}% <span style="font-size: 0.75rem; margin-left: 2px;">${mmBadgeText}</span></span>`;
+    const mmSub = `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">個股 (${mmStock.toFixed(1)}%)</div>`;
 
     html += `<tr style="${rowBg}">
       <td style="font-weight: 700; color: ${labelColor}; text-align: left; padding-left: 14px;">
