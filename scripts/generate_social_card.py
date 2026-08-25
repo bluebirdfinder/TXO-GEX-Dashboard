@@ -110,17 +110,65 @@ def get_common_css():
 """
 
 def build_card1_html(data, avatar_url):
-    date_str = data.get("date") or data.get("last_updated") or "2026-08-21"
+    date_str = data.get("date") or data.get("last_updated_time") or "2026-08-23"
     session_name = (data.get("session_name") or "日盤結算籌碼").replace('☀️', '').replace('🌙', '').strip()
 
-    spot_p = data.get("spot_price") or data.get("txf_price") or 45224.29
-    zero_gamma = data.get("zero_gamma_level") or 45217.5
-    zero_gamma_day = data.get("zero_gamma_day") or 45074.3
+    session_shift = data.get("session_shift", {})
+
+    # 1. 加權指數 (IX0001)
+    spot_p = data.get("spot_price") or 45224.29
+    spot_chg = data.get("spot_change")
+    spot_chg_pct = data.get("spot_change_pct")
+    if spot_chg is not None and spot_chg_pct is not None and spot_chg != 0:
+        spot_sub_html = f"{spot_chg:+,} ({spot_chg_pct:+.2f}%)"
+        spot_sub_color = "#ff4d4f" if spot_chg >= 0 else "#26a69a"
+    else:
+        spot_sub_html = "即時連線監控"
+        spot_sub_color = "#94a3b8"
+
+    # 2. 櫃買指數 (IX0043)
+    two_p = data.get("two_price") or 387.27
+    two_chg = data.get("two_change")
+    two_chg_pct = data.get("two_change_pct")
+    if two_chg is not None and two_chg_pct is not None and two_chg != 0:
+        two_sub_html = f"{two_chg:+,} ({two_chg_pct:+.2f}%)"
+        two_sub_color = "#ff4d4f" if two_chg >= 0 else "#26a69a"
+    else:
+        two_sub_html = "即時連線監控"
+        two_sub_color = "#94a3b8"
+
+    # 3. 台指期 (TXF1!) Dual Session
+    day_txf = session_shift.get("day_txf_price") or data.get("day_txf_price") or 44868
+    night_txf = data.get("night_txf_price") or data.get("txf_price") or 44804
+    txf_shift = session_shift.get("txf_shift") if session_shift.get("txf_shift") is not None else (night_txf - day_txf)
+    txf_shift_color = "#ff4d4f" if txf_shift >= 0 else "#26a69a"
+
+    # 4. ZERO GAMMA (轉折點) Dual Session
+    zero_gamma_day = session_shift.get("day_zero_gamma") or data.get("day_zero_gamma") or 45074.3
+    zero_gamma = data.get("zero_gamma_level") or 45217.2
+    zg_shift = session_shift.get("zero_gamma_shift") if session_shift.get("zero_gamma_shift") is not None else (zero_gamma - zero_gamma_day)
+    zg_shift_color = "#ff4d4f" if zg_shift >= 0 else "#26a69a"
+
+    # 5. CALL WALL (天花板) Dual Session
+    call_wall_day = session_shift.get("day_call_wall") or data.get("day_call_wall") or 45500
     call_wall = data.get("call_wall_strike") or 45400
-    call_wall_day = data.get("call_wall_day") or 45500
+    cw_shift = session_shift.get("call_wall_shift") if session_shift.get("call_wall_shift") is not None else (call_wall - call_wall_day)
+    cw_shift_color = "#ff4d4f" if cw_shift >= 0 else "#26a69a"
+
+    # 6. PUT WALL (地板) Dual Session
+    put_wall_day = session_shift.get("day_put_wall") or data.get("day_put_wall") or 44900
     put_wall = data.get("put_wall_strike") or 45000
-    put_wall_day = data.get("put_wall_day") or 44900
-    gex_plus_flip = data.get("gex_plus_flip") or 45217.5
+    pw_shift = session_shift.get("put_wall_shift") if session_shift.get("put_wall_shift") is not None else (put_wall - put_wall_day)
+    pw_shift_color = "#ff4d4f" if pw_shift >= 0 else "#26a69a"
+
+    # 7. MAX PAIN (最大痛點) Dual Session
+    max_pain_day = session_shift.get("day_max_pain") or data.get("day_max_pain") or 45200
+    max_pain = data.get("max_pain_strike") or 44600
+    pc_ratio = data.get("pc_ratio") or 113.2
+    pc_badge = '大勝' if pc_ratio > 115 else ('偏多看撐' if pc_ratio > 105 else '偏空看壓')
+
+    # 8. VEX 恐慌曝險 & GEX+ FLIP
+    gex_plus_flip = data.get("gex_plus_flip") or 45217.1
     total_vex = data.get("total_vex") or 2281.1
     vex_badge = "🔴 恐慌時做市商護盤" if total_vex >= 0 else "🟢 恐慌時做市商助跌"
     vex_color = "#ff4d4f" if total_vex >= 0 else "#26a69a"
@@ -194,15 +242,15 @@ def build_card1_html(data, avatar_url):
       <!-- Card 1: 加權指數 -->
       <div class="stat-card" style="border-left: 4px solid #00d2ff;">
         <div class="stat-label">加權指數 (IX0001)</div>
-        <div class="stat-value" style="color: #00d2ff;">45,224.29</div>
-        <div class="stat-sub" style="color: #ff4d4f;">+3,186.45 (+7.98%)</div>
+        <div class="stat-value" style="color: #00d2ff;">{spot_p:,.2f}</div>
+        <div class="stat-sub" style="color: {spot_sub_color};">{spot_sub_html}</div>
       </div>
 
       <!-- Card 2: 櫃買指數 -->
       <div class="stat-card" style="border-left: 4px solid #cbd5e1;">
         <div class="stat-label">櫃買指數 (IX0043)</div>
-        <div class="stat-value" style="color: #ffffff;">387.27</div>
-        <div class="stat-sub" style="color: #ff4d4f;">+21.62 (+6.63%)</div>
+        <div class="stat-value" style="color: #ffffff;">{two_p:,.2f}</div>
+        <div class="stat-sub" style="color: {two_sub_color};">{two_sub_html}</div>
       </div>
 
       <!-- Card 3: 台指期 (TXF1!) Dual Session -->
@@ -210,14 +258,14 @@ def build_card1_html(data, avatar_url):
         <div class="stat-label">台指期 (TXF1!)</div>
         <div class="session-row">
           <span style="color: #ffd700;">☀️ 日盤 (13:45)</span>
-          <strong style="color: #fff; font-size: 19px;">44,868</strong>
+          <strong style="color: #fff; font-size: 19px;">{day_txf:,.0f}</strong>
         </div>
         <div class="divider"></div>
         <div class="session-row">
           <span style="color: #38bdf8;">🌙 夜盤 (05:00)</span>
-          <strong style="color: #38bdf8; font-size: 19px;">44,804</strong>
+          <strong style="color: #38bdf8; font-size: 19px;">{night_txf:,.0f}</strong>
         </div>
-        <div style="text-align: right; color: #26a69a; font-weight: bold; font-size: 13.5px; margin-top: 2px;">(-64 點)</div>
+        <div style="text-align: right; color: {txf_shift_color}; font-weight: bold; font-size: 13.5px; margin-top: 2px;">({txf_shift:+} 點)</div>
       </div>
 
       <!-- Card 4: ZERO GAMMA (轉折點) Dual Session -->
@@ -232,7 +280,7 @@ def build_card1_html(data, avatar_url):
           <span style="color: #ffd700;">🌙 夜盤校正</span>
           <strong style="color: #ffd700; font-size: 19px;">{zero_gamma:,.1f}</strong>
         </div>
-        <div style="text-align: right; color: #ff4d4f; font-weight: bold; font-size: 13.5px; margin-top: 2px;">(+143.2 點)</div>
+        <div style="text-align: right; color: {zg_shift_color}; font-weight: bold; font-size: 13.5px; margin-top: 2px;">({zg_shift:+.1f} 點)</div>
       </div>
 
       <!-- Card 5: CALL WALL (天花板) Dual Session -->
@@ -247,7 +295,7 @@ def build_card1_html(data, avatar_url):
           <span style="color: #ff4d4f;">🌙 夜盤校正</span>
           <strong style="color: #ff4d4f; font-size: 19px;">{call_wall:,.0f}</strong>
         </div>
-        <div style="text-align: right; color: #26a69a; font-weight: bold; font-size: 13.5px; margin-top: 2px;">(-100 點)</div>
+        <div style="text-align: right; color: {cw_shift_color}; font-weight: bold; font-size: 13.5px; margin-top: 2px;">({cw_shift:+} 點)</div>
       </div>
 
       <!-- Card 6: PUT WALL (地板) Dual Session -->
@@ -262,7 +310,7 @@ def build_card1_html(data, avatar_url):
           <span style="color: #26a69a;">🌙 夜盤校正</span>
           <strong style="color: #26a69a; font-size: 19px;">{put_wall:,.0f}</strong>
         </div>
-        <div style="text-align: right; color: #ff4d4f; font-weight: bold; font-size: 13.5px; margin-top: 2px;">(+100 點)</div>
+        <div style="text-align: right; color: {pw_shift_color}; font-weight: bold; font-size: 13.5px; margin-top: 2px;">({pw_shift:+} 點)</div>
       </div>
 
       <!-- Card 7: MAX PAIN (最大痛點) -->
@@ -270,14 +318,14 @@ def build_card1_html(data, avatar_url):
         <div class="stat-label" style="color: #a855f7;">MAX PAIN (最大痛點)</div>
         <div class="session-row">
           <span style="color: #ffd700;">☀️ 日盤 (13:45)</span>
-          <strong style="color: #fff; font-size: 19px;">45,200</strong>
+          <strong style="color: #fff; font-size: 19px;">{max_pain_day:,.0f}</strong>
         </div>
         <div class="divider"></div>
         <div class="session-row">
           <span style="color: #a855f7;">🌙 夜盤校正</span>
-          <strong style="color: #a855f7; font-size: 19px;">44,600</strong>
+          <strong style="color: #a855f7; font-size: 19px;">{max_pain:,.0f}</strong>
         </div>
-        <div style="font-size: 13.5px; color: #ffd700; margin-top: 3px; font-weight: bold;">P/C Ratio: 113.2% (偏多看撐)</div>
+        <div style="font-size: 13.5px; color: #ffd700; margin-top: 3px; font-weight: bold;">P/C Ratio: {pc_ratio:.1f}% ({pc_badge})</div>
       </div>
 
       <!-- Card 8: VEX 恐慌曝險 & GEX+ FLIP -->

@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v45.2"
+ENGINE_VERSION = "v45.3"
 
 import os
 import sys
@@ -106,22 +106,46 @@ def fetch_twse_realtime_indices():
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
             res = json.loads(resp.read().decode('utf-8'))
             msg_array = res.get('msgArray', [])
-            spot_p, otc_p = None, None
+            spot_p, spot_y, otc_p, otc_y = None, None, None, None
             for m in msg_array:
                 if m.get('c') == 't00':
                     val = m.get('z') or m.get('y')
+                    y_val = m.get('y')
                     if val and val != '-':
                         spot_p = float(val.replace(',', ''))
+                    if y_val and y_val != '-':
+                        spot_y = float(y_val.replace(',', ''))
                 elif m.get('c') == 'o00':
                     val = m.get('z') or m.get('y')
+                    y_val = m.get('y')
                     if val and val != '-':
                         otc_p = float(val.replace(',', ''))
+                    if y_val and y_val != '-':
+                        otc_y = float(y_val.replace(',', ''))
             if spot_p and otc_p:
-                print(f"[OK] TWSE MIS Indices: Spot={spot_p}, OTC={otc_p}")
-                return spot_p, otc_p
+                spot_chg = round(spot_p - spot_y, 2) if spot_y else 0.0
+                spot_chg_pct = round((spot_chg / spot_y) * 100, 2) if spot_y else 0.0
+                otc_chg = round(otc_p - otc_y, 2) if otc_y else 0.0
+                otc_chg_pct = round((otc_chg / otc_y) * 100, 2) if otc_y else 0.0
+                print(f"[OK] TWSE MIS Indices: Spot={spot_p} ({spot_chg:+}, {spot_chg_pct:+}%), OTC={otc_p} ({otc_chg:+}, {otc_chg_pct:+}%)")
+                return {
+                    "spot_price": spot_p,
+                    "spot_change": spot_chg,
+                    "spot_change_pct": spot_chg_pct,
+                    "two_price": otc_p,
+                    "two_change": otc_chg,
+                    "two_change_pct": otc_chg_pct
+                }
     except Exception as e:
         print(f"[Warning] Failed to fetch TWSE MIS indices: {e}")
-    return 45811.01, 400.95
+    return {
+        "spot_price": 45811.01,
+        "spot_change": 0.0,
+        "spot_change_pct": 0.0,
+        "two_price": 400.95,
+        "two_change": 0.0,
+        "two_change_pct": 0.0
+    }
 
 def fetch_twse_institutional_stock_trading():
     """Fetches TWSE BFI82U 三大法人現貨買賣超金額 (億 TWD)."""
@@ -1119,7 +1143,13 @@ def generate_gex_payload():
     day_txf_price, night_txf_price = fetch_official_taifex_tx_prices()
 
     # Fetch TWSE Spot Indices & Institutional Stock Trading
-    spot_price, otc_price = fetch_twse_realtime_indices()
+    indices_info = fetch_twse_realtime_indices()
+    spot_price = indices_info["spot_price"]
+    spot_change = indices_info["spot_change"]
+    spot_change_pct = indices_info["spot_change_pct"]
+    otc_price = indices_info["two_price"]
+    otc_change = indices_info["two_change"]
+    otc_change_pct = indices_info["two_change_pct"]
     stock_inst = fetch_twse_institutional_stock_trading()
     hot_money_data = fetch_5day_exchange_rates()
     night_inst_trading = fetch_taifex_night_institutional_trading()
@@ -1585,7 +1615,11 @@ def generate_gex_payload():
         "session_shift": session_shift,
         "last_updated_time": now_dt.strftime("%Y-%m-%d %H:%M"),
         "spot_price": spot_price,
+        "spot_change": spot_change,
+        "spot_change_pct": spot_change_pct,
         "two_price": otc_price,
+        "two_change": otc_change,
+        "two_change_pct": otc_change_pct,
         "day_txf_price": day_txf_price,
         "night_txf_price": night_txf_price,
         "txf_price": txf_price,

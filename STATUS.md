@@ -1,10 +1,22 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.2)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.3)
 
-**當前版本**：`v45.2` (2026-08-23 Card 8 VEX/GEX+ Flip 日夜盤雙層卡片與 payload 數據校正版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v45.2)
-**社群懶人圖卡生成器**：`scripts/generate_social_card.py` (4K 尋鳥品牌原創風格圖卡)
+**當前版本**：`v45.3` (2026-08-25 全套 3 張社群圖卡動態數據與 TWSE 即時現貨漲跌計算對齊版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v45.3)
+**社群懶人圖卡生成器**：`scripts/generate_social_card.py` (4K 尋鳥品牌原創風格全動態渲染圖卡)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v45.3 核心更新亮點（Social Card Dynamic Sync & TWSE Real-time Change Release）
+
+### 📸 社群圖卡數據 100% 全動態對齊與數據一致性 Self-Audit 重構
+- **徹底清除硬編碼 (Hardcoding Removal)**：完全重構 `scripts/generate_social_card.py` 的 P1 核心籌碼看板 HTML 模板。將加權指數、櫃買指數、台指期日/夜盤、Zero Gamma、Call/Put Wall、Max Pain、P/C Ratio、VEX/GEX+ Flip 及其位移點數全面改為動態解構由 `fetch_and_calc_vision.py` 產出的 `gex_data.json` 數據 Payload。
+- **Web 儀表板與下載圖卡數據 100% 絕對同步**：解決過去儀表板顯示即時數據而下載之 IG/Threads 圖卡呈現寫死舊數據的落差問題。
+
+### 📈 TWSE MIS 現貨與櫃買指數動態漲跌點數與趴數引擎升級
+- **即時現貨價差計算 (`fetch_and_calc_vision.py`)**：升級 `fetch_twse_realtime_indices()` 函數，擷取 MIS API 前日收盤價 $y$，即時算出現貨加權指數與櫃買指數的 **漲跌金額 (`spot_change`, `two_change`)** 與 **漲跌幅 (`spot_change_pct`, `two_change_pct`)**。
+- **Payload & 內嵌數據同步注入**：將漲跌資訊完整封裝入 `gex_data.json` 與 `data/embedded_data.js`，供前端 UI 與全套圖卡動態選用與高亮標示。
 
 ---
 

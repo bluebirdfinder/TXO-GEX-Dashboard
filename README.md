@@ -1,11 +1,11 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.1)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.3)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 全套 3 張社群圖卡批次與 ZIP 下載 ✦ 10 盤演變播放器
+> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v45.1-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v45.3-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
@@ -39,6 +39,18 @@
 💡 **一秒口訣記憶法**：
 - 🔴 **VEX 為負 (恐慌強)** ➔ 早鳥線在 **上方**（提早發警報，提醒快跑/試空）。
 - 🟢 **VEX 為正 (護盤厚)** ➔ 早鳥線在 **下方**（延後防守線，代表大盤很沉穩抗跌）。
+
+---
+
+## 🌟 v45.3 核心功能與修復亮點
+
+### 📸 1. 社群圖卡 100% 全動態對齊與數據一致性 Self-Audit 重構 (`generate_social_card.py`)
+- **徹底清除靜態硬編碼**：重構 P1 核心籌碼看板 HTML 模板，剔除所有硬編碼數值，全面動態解構由 `fetch_and_calc_vision.py` 產出的 `gex_data.json` 數據。
+- **動態算式與符號**：加權/櫃買指數、台指期日夜盤、Zero Gamma、Call/Put Wall、Max Pain、VEX/GEX+ Flip 及其差額位移全自動計算並套用色彩標籤，確保 Web 儀表板與下載圖卡數據 100% 精確同步。
+
+### 📈 2. TWSE MIS 即時現貨與櫃買指數動態漲跌點數與趴數引擎 (`fetch_and_calc_vision.py`)
+- 升級 `fetch_twse_realtime_indices()` 函數，擷取 MIS API 前日收盤價 $y$，即時算出現貨加權指數與櫃買指數的 **漲跌金額 (`spot_change`, `two_change`)** 與 **漲跌幅 (`spot_change_pct`, `two_change_pct`)**。
+- 將漲跌金額與趴數封裝入全域 JSON 及 `data/embedded_data.js` 供前台與圖卡使用。
 
 ---
 
