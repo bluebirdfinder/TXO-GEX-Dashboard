@@ -2196,6 +2196,7 @@ function handleLiveTick(data) {
       
       // Dynamic shift formula: ZG shifts smoothly with intraday price delta based on net GEX slope
       const liveZg = Math.round((dayZg + priceDelta * 0.62) * 10) / 10;
+      gexData.spot_price = data.price;
       gexData.zero_gamma_level = liveZg;
       
       const elZgNight = document.getElementById('stat-zg-night');
@@ -2208,11 +2209,12 @@ function handleLiveTick(data) {
         elZgShift.innerText = `(${sign}${shiftVal.toFixed(1)} 點)`;
       }
 
-      // 3. Synchronize Latest Session in 10-Session History Array for Table 2 (Top Row)
+      // 3. Synchronize Latest Session in 10-Session History Array for Table 2 (Top Row) & Left GEX Chart
       const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
       if (sessions && sessions.length > 0) {
         const latestSess = sessions[sessions.length - 1];
         if (latestSess) {
+          latestSess.spot_price = data.price;
           latestSess.txf_price = data.price;
           latestSess.zero_gamma_level = liveZg;
         }
@@ -2223,7 +2225,12 @@ function handleLiveTick(data) {
         populateKeyMetrics5Day();
       } catch (e) {}
 
-      // 5. Update Microstructure Express Digest in real-time
+      // 5. Trigger Left GEX Chart Re-render so Image 1 Spot Line & Zero Gamma update in real-time
+      try {
+        renderGEXChart();
+      } catch (e) {}
+
+      // 6. Update Microstructure Express Digest in real-time
       try {
         updateMicrostructureExpress(data.price);
       } catch (e) {}

@@ -1655,12 +1655,14 @@ def generate_gex_payload():
         "pc_ratio": 111.8
     }
 
+    active_night_spot = night_txf_price if (night_txf_price is not None and night_txf_price > 0 and abs(night_txf_price - day_txf_price) < 600) else spot_price
+
     t0_night_item = {
         "id": "t0_night", 
         "label": "🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 5) else "🌙 T夜盤 (05:00 定案)", 
         "date_display": f"{t_days[4]} 🌙", 
         "full_name": f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)"),
-        "spot_price": spot_price, "two_price": otc_price, "txf_price": night_txf_price,
+        "spot_price": active_night_spot, "two_price": otc_price, "txf_price": night_txf_price,
         "zero_gamma_level": gex_profile['zero_gamma_level'], "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": txf_shift,
         "pc_ratio": gex_profile['pc_ratio']
