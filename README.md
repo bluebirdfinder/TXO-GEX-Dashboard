@@ -1,11 +1,11 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.4)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.5)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 富邦 Neo API 實時行情與 Zero Gamma 動態連動
+> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎 (TAIFEX Official FX) ✦ 富邦 Neo API 實時行情與 Zero Gamma 動態連動
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v45.4-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v45.5-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 

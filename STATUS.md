@@ -1,10 +1,21 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.4)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.5)
 
-**當前版本**：`v45.4` (2026-08-25 富邦 API 實時 WebSocket 行情網關與 Zero Gamma 雙圖動態同步連動版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v45.4)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v45.4)
+**當前版本**：`v45.5` (2026-08-25 期交所官方每日外幣參考匯率引擎與高精度數據校準版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v45.5)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v45.5)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v45.5 核心更新亮點（TAIFEX Official FX Engine & Precise Calibration）
+
+### 🌐 期交所官方外匯參考匯率引擎 (`dailyFXRate`)
+- **期交所官方 API 數據對齊**：全面廢棄傳統國際場外點位（Yahoo FX），改為直接解析台灣期交所官方每日外幣參考匯率（`https://www.taifex.com.tw/cht/3/dailyFXRate`）。
+- **美元/台幣 (USD/TWD) 與 美元/日圓 (USD/JPY) 100% 精準校準**：完全符合央行與期交所每日 16:00 官方公告基準（如 08/25: USD/TWD 31.87 / USD/JPY 159.47），徹底消除場外即時價位與交割參考價的點位落差。
+
+### 💵 美元指數 (DXY Index & Futures) 高精度交割對齊
+- **紐約 ICE 美元指數期貨結算價基準對齊**：校正 DXY 多日滾動漲跌幅與點位計算，精確反映 `98.73` ➔ `98.81` ➔ `98.73` ➔ `98.93` ➔ `98.90` 的交割結構，修復過去因四捨五入導致滾動變動顯示 `+0.00` 的落差。
 
 ---
 

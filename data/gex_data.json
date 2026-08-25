@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 45016.4,
     "day_total_vex": 2951.0
   },
-  "last_updated_time": "2026-08-25 20:49",
+  "last_updated_time": "2026-08-25 22:34",
   "spot_price": 45169.46,
   "spot_change": 407.14,
   "spot_change_pct": 0.91,
@@ -22037,61 +22037,93 @@
   "microstructure_summary": {
     "regime_label": "🟢 負 Gamma 波動度放大區 (避險引爆)",
     "theme_color": "bear",
-    "flip_dist": 47.1,
-    "full_html": "\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\"><strong>🟢 負 Gamma 波動度放大區 (避險引爆)</strong> — <span style=\"color: var(--put-color); font-weight: 700;\">⚠️ 警告！價格低於 Zero Gamma 轉折點</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！</p>\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\">⚡ <strong>轉折臨界告急</strong>：價格距離 Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">45216.6 點</span>) 僅 <span style=\"color: var(--gold-accent); font-weight:700;\">47.1 點</span>，處於變盤邊緣。</p>\n        <p style=\"margin-bottom: 0; line-height: 1.7; font-size: 0.88rem;\">🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <span style=\"color: var(--gold-accent); font-weight: 700;\">45350 點</span> (<span style=\"color: var(--gold-accent); font-weight:600;\">+200點</span>)。 &nbsp; 🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style=\"color: var(--primary-accent); font-weight: 700;\">45050 點</span> (<span style=\"color: var(--primary-accent); font-weight:600;\">+200點</span>)。</p>\n        "
+    "flip_dist": 684.6,
+    "full_html": "\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\"><strong>🟢 負 Gamma 波動度放大區 (避險引爆)</strong> - <span style=\"color: var(--put-color); font-weight: 700;\">⚠️ 警告！標的價格 (44532.0) 低於 Zero Gamma 轉折點 (45216.6)</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！</p>\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\">📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">45216.6 點</span>) 尚有 <span style=\"color: var(--gold-accent); font-weight:700;\">684.6 點</span>緩衝防守區。</p>\n        <p style=\"margin-bottom: 0; line-height: 1.7; font-size: 0.88rem;\">🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <span style=\"color: var(--gold-accent); font-weight: 700;\">45350 點</span> (<span style=\"color: var(--gold-accent); font-weight:600;\">+200點</span>)。 &nbsp; 🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style=\"color: var(--primary-accent); font-weight: 700;\">45050 點</span> (<span style=\"color: var(--primary-accent); font-weight:600;\">+200點</span>)。</p>\n        "
   },
   "hot_money_digest": {
     "current_fx": {
       "usdtwd": {
         "date": "08/25 (二)",
-        "price": 31.88,
-        "change": 0.0,
-        "pct": 0.0
+        "price": 31.87,
+        "change": 0.02,
+        "pct": 0.06
       },
       "dxy": {
         "date": "08/25 (二)",
-        "price": 99.03,
-        "change": 0.03,
-        "pct": 0.03
+        "price": 98.96,
+        "change": -0.04,
+        "pct": -0.04
       },
       "usdjpy": {
         "date": "08/25 (二)",
-        "price": 159.28,
-        "change": 0.0,
-        "pct": 0.0
+        "price": 159.47,
+        "change": 0.23,
+        "pct": 0.14
       }
     },
     "fx_5day_history": {
       "usdtwd": [
         {
           "date": "08/19 (三)",
-          "price": 31.88,
-          "change": 0.03,
-          "pct": 0.09
+          "price": 31.94,
+          "change": -0.01,
+          "pct": -0.03
         },
         {
           "date": "08/20 (四)",
-          "price": 31.82,
-          "change": -0.06,
-          "pct": -0.19
+          "price": 31.93,
+          "change": -0.01,
+          "pct": -0.03
         },
         {
           "date": "08/21 (五)",
-          "price": 31.84,
-          "change": 0.02,
-          "pct": 0.06
+          "price": 31.85,
+          "change": -0.08,
+          "pct": -0.25
         },
         {
           "date": "08/24 (一)",
-          "price": 31.82,
-          "change": -0.02,
-          "pct": -0.06
+          "price": 31.85,
+          "change": 0.0,
+          "pct": 0.0
         },
         {
           "date": "08/25 (二)",
-          "price": 31.88,
-          "change": 0.0,
-          "pct": 0.0
+          "price": 31.87,
+          "change": 0.02,
+          "pct": 0.06
+        }
+      ],
+      "usdjpy": [
+        {
+          "date": "08/19 (三)",
+          "price": 159.1,
+          "change": -0.62,
+          "pct": -0.39
+        },
+        {
+          "date": "08/20 (四)",
+          "price": 158.4,
+          "change": -0.7,
+          "pct": -0.44
+        },
+        {
+          "date": "08/21 (五)",
+          "price": 158.82,
+          "change": 0.42,
+          "pct": 0.27
+        },
+        {
+          "date": "08/24 (一)",
+          "price": 159.24,
+          "change": 0.42,
+          "pct": 0.26
+        },
+        {
+          "date": "08/25 (二)",
+          "price": 159.47,
+          "change": 0.23,
+          "pct": 0.14
         }
       ],
       "dxy": [
@@ -22116,50 +22148,18 @@
         {
           "date": "08/24 (一)",
           "price": 99.0,
-          "change": 0.0,
-          "pct": 0.0
+          "change": 0.2,
+          "pct": 0.2
         },
         {
           "date": "08/25 (二)",
-          "price": 99.03,
-          "change": 0.03,
-          "pct": 0.03
-        }
-      ],
-      "usdjpy": [
-        {
-          "date": "08/19 (三)",
-          "price": 159.55,
-          "change": 0.21,
-          "pct": 0.13
-        },
-        {
-          "date": "08/20 (四)",
-          "price": 158.28,
-          "change": -1.27,
-          "pct": -0.8
-        },
-        {
-          "date": "08/21 (五)",
-          "price": 158.88,
-          "change": 0.6,
-          "pct": 0.38
-        },
-        {
-          "date": "08/24 (一)",
-          "price": 158.9,
-          "change": 0.02,
-          "pct": 0.01
-        },
-        {
-          "date": "08/25 (二)",
-          "price": 159.28,
-          "change": 0.0,
-          "pct": 0.0
+          "price": 98.96,
+          "change": -0.04,
+          "pct": -0.04
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣游移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.88</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.03</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.28</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.87</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.96</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.47</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -153,
@@ -22211,14 +22211,14 @@
       "vix_change": -0.36,
       "market_turnover": 9976
     },
-    "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">💡 <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+16.40%</span>（市場近月標準算式，淨部位 +9,496 口／全月基準 +4.20%），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+18.88%</span>（淨部位 +24,932 口／全月基準 +6.31%）。散戶部位維持強烈偏多姿態。</p>\n    <p style=\"margin-bottom: 0;\">⚖️ <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">29.50</span> (-0.36)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
+    "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">&#128161; <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+16.40%</span>（市場近月標準算式，淨部位 +9,496 口／全月基準 +4.20%），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+18.88%</span>（淨部位 +24,932 口／全月基準 +6.31%）。散戶部位維持強烈偏多姿態。</p>\n    <p style=\"margin-bottom: 0;\">&#9878; <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">29.50</span> (-0.36)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
   },
   "total_vex": 2902.58,
   "total_gex_val": -12546.16,
   "total_gex_plus": -9643.58,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-25 20:49",
+    "last_updated": "2026-08-25 22:34",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
