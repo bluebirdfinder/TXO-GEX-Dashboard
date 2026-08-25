@@ -239,13 +239,17 @@ def fubon_worker():
                 quotes = fubon_provider.get_live_quotes()
                 if quotes and quotes.get('txf_price'):
                     price_val = float(quotes['txf_price'])
-                    state.update_tick("FUBON", price_val)
+                    chg_val = float(quotes.get('change', 0.0) or 0.0)
+                    pct_val = float(quotes.get('pct', 0.0) or 0.0)
+                    state.update_tick("FUBON", price_val, chg_val, pct_val)
                     # Broadcast to Cloudflare Cloud Relay for global sharing (GitHub Pages & Friends)
                     try:
                         cf_url = "https://txo-gex-relay.bluebird-finder-tw.workers.dev/"
                         payload = json.dumps({
                             "ticker": "TXF1!",
                             "price": price_val,
+                            "change": chg_val,
+                            "pct": pct_val,
                             "provider": "FUBON",
                             "provider_name": "🟢 極速專線網關 (WebSocket)",
                             "timestamp": int(time.time() * 1000)
