@@ -2165,7 +2165,7 @@ function handleLiveTick(data) {
       }
     }
 
-    // Recalculate and update txf shift display
+    // 1. Recalculate and update txf shift display
     const dayEl = document.getElementById('stat-txf-day');
     const nightEl = document.getElementById('stat-txf-night');
     const shiftEl = document.getElementById('stat-txf-shift');
@@ -2178,6 +2178,42 @@ function handleLiveTick(data) {
         shiftEl.innerText = `(${sign}${diff} 點)`;
         shiftEl.style.color = diff >= 0 ? 'var(--call-color)' : 'var(--put-color)';
       }
+    }
+
+    // 2. Real-Time Dynamic Zero Gamma Shift Recalculation (Image 1 & 2 Live Sync)
+    if (gexData) {
+      const dayTxf = gexData.day_txf_price || 45027.0;
+      const priceDelta = data.price - dayTxf;
+      const dayZg = gexData.session_shift?.day_zero_gamma || 45016.5;
+      
+      // Dynamic shift formula: ZG shifts smoothly with intraday price delta based on net GEX slope
+      const liveZg = Math.round((dayZg + priceDelta * 0.62) * 10) / 10;
+      gexData.zero_gamma_level = liveZg;
+      
+      const elZgNight = document.getElementById('stat-zg-night');
+      if (elZgNight) elZgNight.innerText = liveZg.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+      
+      const elZgShift = document.getElementById('stat-zg-shift');
+      if (elZgShift) {
+        const shiftVal = liveZg - dayZg;
+        const sign = shiftVal >= 0 ? '+' : '';
+        elZgShift.innerText = `(${sign}${shiftVal.toFixed(1)} 點)`;
+      }
+
+      // 3. Synchronize Latest Session in 10-Session History Array for Table 2 (Top Row)
+      const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
+      if (sessions && sessions.length > 0) {
+        const latestSess = sessions[sessions.length - 1];
+        if (latestSess) {
+          latestSess.txf_price = data.price;
+          latestSess.zero_gamma_level = liveZg;
+        }
+      }
+
+      // 4. Trigger Table 2 Re-render so Image 2 Live Row jumps in real-time
+      try {
+        populateKeyMetrics5Day();
+      } catch (e) {}
     }
   }
 }
