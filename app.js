@@ -558,9 +558,10 @@ function renderDashboard() {
   }
 
   // Microstructure Express Summary Content
-  const expressContentEl = document.getElementById('microstructure-express-content');
-  if (expressContentEl && gexData.microstructure_summary) {
-    expressContentEl.innerHTML = gexData.microstructure_summary.full_html || gexData.microstructure_summary.summary_text || '';
+  try {
+    updateMicrostructureExpress();
+  } catch (e) {
+    console.error('Microstructure Express Error:', e);
   }
 
   // --- Render Sub-Components ---
@@ -2214,8 +2215,76 @@ function handleLiveTick(data) {
       try {
         populateKeyMetrics5Day();
       } catch (e) {}
+
+      // 5. Update Microstructure Express Digest in real-time
+      try {
+        updateMicrostructureExpress();
+      } catch (e) {}
     }
   }
+}
+
+function updateMicrostructureExpress() {
+  const expressContentEl = document.getElementById('microstructure-express-content');
+  const badgeEl = document.getElementById('express-regime-badge');
+  if (!expressContentEl || !gexData) return;
+
+  const nowH = (new Date()).getHours();
+  const isNight = (nowH >= 15 || nowH < 5);
+  
+  // Current active price (night TXF or day spot/TXF)
+  const currentP = isNight 
+    ? (gexData.night_txf_price || gexData.txf_price || 45264.0) 
+    : (gexData.spot_price || gexData.day_txf_price || 45841.0);
+    
+  const zg = gexData.zero_gamma_level || 45216.6;
+  const cw = gexData.call_wall_strike || 45350;
+  const pw = gexData.put_wall_strike || 45050;
+  const isPosGamma = currentP >= zg;
+  const flipDist = (Math.abs(currentP - zg)).toFixed(1);
+
+  if (badgeEl) {
+    if (isPosGamma) {
+      badgeEl.innerText = '🔴 正 Gamma 區 (護盤中)';
+      badgeEl.style.background = 'rgba(255, 82, 82, 0.15)';
+      badgeEl.style.color = 'var(--call-color)';
+      badgeEl.style.border = '1px solid rgba(255, 82, 82, 0.3)';
+    } else {
+      badgeEl.innerText = '🟢 負 Gamma 區 (避險追殺)';
+      badgeEl.style.background = 'rgba(0, 230, 118, 0.15)';
+      badgeEl.style.color = 'var(--put-color)';
+      badgeEl.style.border = '1px solid rgba(0, 230, 118, 0.3)';
+    }
+  }
+
+  let regimeHtml = '';
+  if (isPosGamma) {
+    regimeHtml = `🔴 <strong>正 Gamma 波動度抑制區 (平穩護盤)</strong> — <span style="color: var(--call-color); font-weight: 600;">🛡️ 標的物價格 (${currentP.toLocaleString()}) 高於 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。`;
+  } else {
+    regimeHtml = `🟢 <strong>負 Gamma 波動度放大區 (避險引爆)</strong> — <span style="color: var(--put-color); font-weight: 700;">⚠️ 警告！標的物價格 (${currentP.toLocaleString()}) 低於 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！`;
+  }
+
+  let proximityHtml = '';
+  if (flipDist < 100) {
+    proximityHtml = `⚡ <strong>轉折臨界告急</strong>：價格距離 Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${zg.toLocaleString()} 點</span>) 僅 <span style="color: var(--gold-accent); font-weight:700;">${flipDist} 點</span>，處於變盤臨界邊緣。`;
+  } else {
+    proximityHtml = `📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${zg.toLocaleString()} 點</span>) 尚有 <span style="color: var(--gold-accent); font-weight:700;">${flipDist} 點</span>緩衝防守區。`;
+  }
+
+  let cwHtml = '';
+  if (currentP >= cw) {
+    cwHtml = `🚀 <strong>Call Wall 已突破</strong>：現價 (<span style="color: var(--call-color); font-weight:700;">${currentP.toLocaleString()}</span>) 已突破天花板 <span style="color: var(--gold-accent); font-weight:700;">${cw.toLocaleString()} 點</span>，引爆伽瑪擠壓 (Gamma Squeeze) 強勢軋空！`;
+  } else {
+    cwHtml = `🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <span style="color: var(--gold-accent); font-weight: 700;">${cw.toLocaleString()} 點</span> (距現價 ${(cw - currentP).toFixed(0)} 點)。`;
+  }
+
+  let pwHtml = `🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style="color: var(--primary-accent); font-weight: 700;">${pw.toLocaleString()} 點</span> (距現價 ${(currentP - pw).toFixed(0)} 點)。`;
+
+  expressContentEl.innerHTML = `
+    <p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${regimeHtml}</p>
+    <p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${proximityHtml}</p>
+    <p style="margin-bottom: 0; line-height: 1.7; font-size: 0.88rem;">${cwHtml} &nbsp; ${pwHtml}</p>
+  `;
 }
 
 if (document.readyState === 'loading') {

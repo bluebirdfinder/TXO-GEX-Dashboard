@@ -1243,16 +1243,17 @@ def generate_gex_payload():
     }
 
     # Microstructure Digest
-    is_pos_gamma = spot_price >= gex_profile['zero_gamma_level']
-    flip_dist = round(abs(spot_price - gex_profile['zero_gamma_level']), 1)
+    active_price = night_txf_price if (night_txf_price is not None and night_txf_price > 0) else spot_price
+    is_pos_gamma = active_price >= gex_profile['zero_gamma_level']
+    flip_dist = round(abs(active_price - gex_profile['zero_gamma_level']), 1)
     
     if is_pos_gamma:
         regime_label = "🔴 正 Gamma 波動度抑制區 (平穩震盪)"
-        regime_desc = "<span style=\"color: var(--call-color); font-weight: 600;\">標的物處於正 Gamma 護盤區間</span>，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。"
+        regime_desc = f"<span style=\"color: var(--call-color); font-weight: 600;\">🛡️ 標的物處於正 Gamma 護盤區間</span> (標的價格 {active_price:.1f} > 轉折點 {gex_profile['zero_gamma_level']})，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。"
         theme_color = "bull"
     else:
         regime_label = "🟢 負 Gamma 波動度放大區 (避險引爆)"
-        regime_desc = "<span style=\"color: var(--put-color); font-weight: 700;\">⚠️ 警告！價格低於 Zero Gamma 轉折點</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！"
+        regime_desc = f"<span style=\"color: var(--put-color); font-weight: 700;\">⚠️ 警告！標的價格 ({active_price:.1f}) 低於 Zero Gamma 轉折點 ({gex_profile['zero_gamma_level']})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！"
         theme_color = "bear"
 
     if flip_dist < 100:
