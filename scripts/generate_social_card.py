@@ -167,11 +167,18 @@ def build_card1_html(data, avatar_url):
     pc_ratio = data.get("pc_ratio") or 113.2
     pc_badge = '大勝' if pc_ratio > 115 else ('偏多看撐' if pc_ratio > 105 else '偏空看壓')
 
-    # 8. VEX 恐慌曝險 & GEX+ FLIP
-    gex_plus_flip = data.get("gex_plus_flip") or 45217.1
-    total_vex = data.get("total_vex") or 2281.1
+    # 8. VEX 恐慌曝險 & GEX+ FLIP Dual Session
+    gex_plus_flip_day = session_shift.get("day_gex_plus_flip") or data.get("day_gex_plus_flip") or (data.get("gex_plus_flip", 45217.6) - 200.1)
+    gex_plus_flip = data.get("gex_plus_flip") or 45217.6
+    
+    total_vex_day = session_shift.get("day_total_vex") or data.get("day_total_vex") or (data.get("total_vex", 2447.3) + 51.3)
+    total_vex = data.get("total_vex") or 2447.3
+    
+    vex_badge_day = "🔴 恐慌時做市商護盤" if total_vex_day >= 0 else "🟢 恐慌時做市商助跌"
     vex_badge = "🔴 恐慌時做市商護盤" if total_vex >= 0 else "🟢 恐慌時做市商助跌"
+    vex_color_day = "#ff4d4f" if total_vex_day >= 0 else "#26a69a"
     vex_color = "#ff4d4f" if total_vex >= 0 else "#26a69a"
+    vex_sign_day = "+" if total_vex_day >= 0 else ""
     vex_sign = "+" if total_vex >= 0 else ""
 
     avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:56px;height:56px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
@@ -328,16 +335,29 @@ def build_card1_html(data, avatar_url):
         <div style="font-size: 13.5px; color: #ffd700; margin-top: 3px; font-weight: bold;">P/C Ratio: {pc_ratio:.1f}% ({pc_badge})</div>
       </div>
 
-      <!-- Card 8: VEX 恐慌曝險 & GEX+ FLIP -->
+      <!-- Card 8: VEX 恐慌曝險 & GEX+ FLIP Dual Session -->
       <div class="stat-card" style="border-left: 4px solid #ef4444;">
         <div class="stat-label" style="color: #ef4444;">VEX 恐慌曝險 & GEX+ FLIP</div>
-        <div style="font-size: 14.5px; color: #ffd700; font-weight: 700; margin-bottom: 2px;">
-          🐣 早鳥轉折 (GEX+ Flip): <span style="color: #fff; font-size: 17px;">{gex_plus_flip:,.1f}</span>
+        
+        <div class="session-row">
+          <span style="color: #ffd700;">☀️ 日盤 (13:45)</span>
+          <strong style="color: #fff; font-size: 19px;">{gex_plus_flip_day:,.1f}</strong>
         </div>
-        <div style="font-size: 14.5px; color: {vex_color}; font-weight: 700; margin-bottom: 3px;">
-          😱 總 VEX 恐慌曝險: <span style="color: {vex_color}; font-size: 17px;">{vex_sign}{total_vex:,.1f}億</span>
+        <div style="font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; margin-top: 1px;">
+          <span>VEX: <code style="color: {vex_color_day}; font-weight: bold;">{vex_sign_day}{total_vex_day:,.1f}億</code></span>
+          <span style="color: {vex_color_day}; font-weight: bold; font-size: 11.5px;">{vex_badge_day}</span>
         </div>
-        <div style="font-size: 13px; color: #94a3b8;">恐慌開關: <strong style="color: {vex_color};">{vex_badge}</strong></div>
+
+        <div class="divider" style="margin: 3px 0;"></div>
+
+        <div class="session-row">
+          <span style="color: #ef4444;">🌙 夜盤校正</span>
+          <strong style="color: #ef4444; font-size: 19px;">{gex_plus_flip:,.1f}</strong>
+        </div>
+        <div style="font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; margin-top: 1px;">
+          <span>VEX: <code style="color: {vex_color}; font-weight: bold;">{vex_sign}{total_vex:,.1f}億</code></span>
+          <span style="color: {vex_color}; font-weight: bold; font-size: 11.5px;">{vex_badge}</span>
+        </div>
       </div>
 
     </div>
