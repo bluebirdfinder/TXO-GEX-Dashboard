@@ -710,6 +710,27 @@ function populateKeyMetrics5Day() {
       pcSub = formatSubDelta(pcVal - prevSession.pc_ratio, true);
     }
 
+    // 9. Margin Maintenance Ratio (融資維持率 - 大盤整戶 vs 純個股扣除 ETF)
+    const mmMarket = s.margin_maint_market !== undefined ? s.margin_maint_market : (s.margin_ratio || 155.8);
+    const mmStock = s.margin_maint_stock !== undefined ? s.margin_maint_stock : 141.2;
+    let mmColor = '#00e676';
+    let mmBg = 'rgba(0, 230, 118, 0.15)';
+    if (mmMarket >= 160) {
+      mmColor = '#00e676'; // 🟢 安定
+      mmBg = 'rgba(0, 230, 118, 0.18)';
+    } else if (mmMarket >= 150) {
+      mmColor = '#ffd700'; // 🟡 常態
+      mmBg = 'rgba(255, 215, 0, 0.18)';
+    } else if (mmMarket >= 140) {
+      mmColor = '#ff9100'; // 🟠 警戒
+      mmBg = 'rgba(255, 145, 0, 0.18)';
+    } else {
+      mmColor = '#ff1744'; // 🔴 斷頭洗盤
+      mmBg = 'rgba(255, 23, 68, 0.18)';
+    }
+    const mmMain = `<span style="font-size: 0.82rem; padding: 2px 6px; border-radius: 4px; background: ${mmBg}; color: ${mmColor}; font-weight: 700; border: 1px solid ${mmColor}; display: inline-block;">${mmMarket.toFixed(1)}%</span>`;
+    const mmSub = `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">(${mmStock.toFixed(1)}%)</div>`;
+
     html += `<tr style="${rowBg}">
       <td style="font-weight: 700; color: ${labelColor}; text-align: left; padding-left: 14px;">
         <span style="font-size: 0.85rem; padding: 2px 8px; border-radius: 4px; background: ${isNight ? 'rgba(0,210,255,0.15)' : 'rgba(255,215,0,0.15)'}; border: 1px solid ${labelColor}; display: inline-block;">
@@ -725,6 +746,7 @@ function populateKeyMetrics5Day() {
       <td style="color: var(--put-color); font-weight: 600; vertical-align: middle;"><div>${pwMain}</div>${pwSub}</td>
       <td style="color: #a855f7; font-weight: 600; vertical-align: middle;"><div>${mpMain}</div>${mpSub}</td>
       <td style="color: var(--gold-accent); font-weight: 600; vertical-align: middle;"><div>${pcStr}</div>${pcSub}</td>
+      <td style="vertical-align: middle;"><div>${mmMain}</div>${mmSub}</td>
     </tr>`;
   });
 

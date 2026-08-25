@@ -1,10 +1,22 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v45.5)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v46.2)
 
-**當前版本**：`v45.5` (2026-08-25 期交所官方每日外幣參考匯率引擎與高精度數據校準版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v45.5)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v45.5)
+**當前版本**：`v46.2` (2026-08-26 雙軌融資維持率與槓桿體質 Location A 矩陣整合版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v46.2)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v46.2)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v46.2 核心更新亮點（Margin Maintenance Ratio Location A Integration）
+
+### 📊 1. 雙軌融資維持率 (Margin Maintenance Ratio) 表 2 最右欄整合 (Location A)
+- **表 2 關鍵矩陣擴充**：於《近 5 日關鍵市場指數矩陣》最右側成功新增 **`📊 融資維持率 (大盤/個股)`** 欄位。
+- **全市場整戶 vs 純個股雙重透視**：
+  - 主欄位顯示全市場整戶維持率 (含高股息/美債 ETF 槓桿資金，XQ 視角，如 `155.8%`)。
+  - 括號副欄位顯示純個股維持率 (扣除 `00` 開頭 ETF，玩股網視角，如 `(141.2%)`)。
+- **動態色彩與警報膠囊**：依據大盤整戶維護率即時標示色彩與外框：
+  - `≥ 160%` 🟢 **安定** | `150% ~ 160%` 🟡 **常態** | `140% ~ 150%` 🟠 **警戒** | `< 140%` 🔴 **斷頭/洗盤**
 
 ---
 

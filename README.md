@@ -1,11 +1,11 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v45.5)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v46.2)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎 (TAIFEX Official FX) ✦ 富邦 Neo API 實時行情與 Zero Gamma 動態連動
+> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 雙軌融資維持率 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v45.5-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v46.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
@@ -39,6 +39,14 @@
 💡 **一秒口訣記憶法**：
 - 🔴 **VEX 為負 (恐慌強)** ➔ 早鳥線在 **上方**（提早發警報，提醒快跑/試空）。
 - 🟢 **VEX 為正 (護盤厚)** ➔ 早鳥線在 **下方**（延後防守線，代表大盤很沉穩抗跌）。
+
+## 🌟 v46.2 雙軌融資維持率與槓桿體質 Location A 矩陣
+
+### 📊 1. 全市場整戶 vs 純個股融資維持率 (Location A 最右欄)
+- **表 2 擴充整合**：在《近 5 日關鍵市場指數矩陣》最右側新增 **`📊 融資維持率 (大盤/個股)`**。
+- **全市場整戶維護率 (含 ETF，XQ 視角)**：如 `155.8%`，反映包含高股息/美債 ETF 槓桿資金的整體洗淨程度。
+- **純個股維持率 (扣除 ETF，玩股網視角)**：如 `(141.2%)`，反映中小型股追繳與斷頭波段警報。
+- **動態色彩標籤**：`≥ 160%` 🟢 安定 | `150% ~ 160%` 🟡 常態 | `140% ~ 150%` 🟠 警戒 | `< 140%` 🔴 斷頭洗盤
 
 ---
 
