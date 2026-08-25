@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 45017.5,
     "day_total_vex": 2498.59
   },
-  "last_updated_time": "2026-08-26 02:32",
+  "last_updated_time": "2026-08-26 02:35",
   "spot_price": 45169.46,
   "spot_change": 407.14,
   "spot_change_pct": 0.91,
@@ -22105,9 +22105,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "08/25 (二)",
-        "price": 98.92,
-        "change": -0.08,
-        "pct": -0.08
+        "price": 98.93,
+        "change": -0.07,
+        "pct": -0.07
       },
       "usdjpy": {
         "date": "08/25 (二)",
@@ -22208,13 +22208,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "08/25 (二)",
-          "price": 98.92,
-          "change": -0.08,
-          "pct": -0.08
+          "price": 98.93,
+          "change": -0.07,
+          "pct": -0.07
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.87</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.92</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.47</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.87</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.93</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.47</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -422,
@@ -22273,7 +22273,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -7162.72,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-26 02:32",
+    "last_updated": "2026-08-26 02:35",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -28700,9 +28700,9 @@ window.GEX_EMBEDDED_DATA = {
   "ai_ex_dividend_digest": {
     "title": "🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描",
     "compliance_note": "⚖️ 合規量化學理分析 (非個別證券建議)",
-    "bullet_1": "🎯 <strong>台指大盤 GEX 位階與假拉回判讀 (<span style=\"color: var(--gold-accent); font-weight:700;\">45,857 點</span>)</strong>：台指現價 <span style=\"color: var(--gold-accent); font-weight:700;\">45,857 點</span>，高於 Zero Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">45,920.5 點</span>) 附近，總 GEX 處於 <span style=\"color: var(--call-color); font-weight:700;\">正 GEX 護盤區 (+8.5 億)</span>。若夜盤跌至 <span style=\"color: var(--gold-accent); font-weight:700;\">45,750 點</span>，因未破 <span style=\"color: var(--primary-accent); font-weight:700;\">Put Wall 轉折點</span>，做市商對沖買盤尚在，屬常態洗盤；但若跌破 <span style=\"color: var(--primary-accent); font-weight:700;\">45,700 點</span> 則切入 <span style=\"color: var(--put-color); font-weight:700;\">負 GEX 追殺賣盤區</span>。",
-    "bullet_2": "🧱 <strong>週月選莊家牆與結算磁吸 (<span style=\"color: var(--gold-accent); font-weight:700;\">46,050 / 45,750</span>)</strong>：週選天花板集中於 <span style=\"color: var(--gold-accent); font-weight:700;\">46,050 點</span> (Call Wall 超長黃色週選柱)，當沖多單衝高宜停利；月選主力波段防守鐵板位於 <span style=\"color: var(--primary-accent); font-weight:700;\">45,750 點</span> (Put Wall 超長藍色月選柱)；週三結算前夕需留意 <span style=\"color: var(--gold-accent); font-weight:700;\">45,900 點</span> 磁吸歸零效應。",
-    "bullet_3": "🔥 <strong>Top 10 法人籌碼聚焦標的</strong>：聯電期 (2303) 與國態金期 (2882) 呈三大法人 <span style=\"color: var(--call-color); font-weight:700;\">現貨買超 + 期貨淨多單雙重加碼</span>，資金集中度高，展現法人才情與波段量能。",
-    "bullet_4": "📅 <strong>近期除權息扣點校正與價差防守</strong>：台積電期 (2330) 09/18 季除息 <span style=\"color: var(--gold-accent); font-weight:700;\">$4.0 元</span>，期價逆價差源自常態配息扣點而非看空避險；除息前夕宜對照 TWSE 官方扣點日程防範誤判。"
+    "bullet_1": "🎯 <strong>台指大盤 GEX 位階與動態判讀 (<span style=\"color: var(--gold-accent); font-weight:700;\">45,169.46 點</span>)</strong>：台指現價 <span style=\"color: var(--gold-accent); font-weight:700;\">45,169.46 點</span>，對照 Zero Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">45,217.6 點</span>)，總 GEX 處於 <span style=\"color: var(--put-color); font-weight:700;\">負 GEX 追殺賣盤區</span>。若持續守穩 <span style=\"color: var(--primary-accent); font-weight:700;\">45,000 點 Put Wall 支撐</span>，莊家對沖護盤力道將維繫常態盤整。",
+    "bullet_2": "🧱 <strong>週月選莊家牆與結算位階 (<span style=\"color: var(--gold-accent); font-weight:700;\">45,400 / 45,000</span>)</strong>：週月選主力天花板集中於 <span style=\"color: var(--gold-accent); font-weight:700;\">45,400 點</span> (Call Wall 週月選衝高壓力柱)；波段防守鐵板位於 <span style=\"color: var(--primary-accent); font-weight:700;\">45,000 點</span> (Put Wall 避險防守柱)；結算前夕宜注意轉折點 <span style=\"color: var(--gold-accent); font-weight:700;\">45,217.6 點</span> 之磁吸震盪點位。",
+    "bullet_3": "🔥 <strong>Top 10 期交所真實成交量焦點標的</strong>：聯電期 (2303) 與 群創期 (3481) 為期交所個股期貨成交量前列標的，展現個股期貨交投熱度與動態資金趨勢。",
+    "bullet_4": "📅 <strong>近期除權息扣點校正與價差防守</strong>：台積電期 (2330) 09/18 季除息 <span style=\"color: var(--gold-accent); font-weight:700;\">$4.0 元</span>，期價逆價差源自常態配息扣點而非看空避險；除息前夕宜對照 TWSE 官方扣點日程表防範價差誤判。"
   }
 };

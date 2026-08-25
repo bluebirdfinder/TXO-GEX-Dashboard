@@ -1855,6 +1855,53 @@ def generate_gex_payload():
         sess_item['friday_gex'] = sess_prof['friday_gex']
         sess_item['monthly_gex'] = sess_prof['monthly_gex']
 
+    # Dynamic Gemini AI Scanning Card (ai_ex_dividend_digest)
+    top_stk1_name = stock_futures[0]['name'] if len(stock_futures) > 0 else "聯電"
+    top_stk1_code = stock_futures[0]['code'] if len(stock_futures) > 0 else "2303"
+    top_stk2_name = stock_futures[1]['name'] if len(stock_futures) > 1 else "群創"
+    top_stk2_code = stock_futures[1]['code'] if len(stock_futures) > 1 else "3481"
+
+    gex_regime_name = "正 GEX 護盤區" if spot_price >= gex_profile['zero_gamma_level'] else "負 GEX 追殺賣盤區"
+    gex_regime_color = "var(--call-color)" if spot_price >= gex_profile['zero_gamma_level'] else "var(--put-color)"
+
+    ai_bullet_1 = (
+        f"🎯 <strong>台指大盤 GEX 位階與動態判讀 (<span style=\"color: var(--gold-accent); font-weight:700;\">{spot_price:,.2f} 點</span>)</strong>："
+        f"台指現價 <span style=\"color: var(--gold-accent); font-weight:700;\">{spot_price:,.2f} 點</span>，"
+        f"對照 Zero Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">{gex_profile['zero_gamma_level']:,} 點</span>)，"
+        f"總 GEX 處於 <span style=\"color: {gex_regime_color}; font-weight:700;\">{gex_regime_name}</span>。"
+        f"若持續守穩 <span style=\"color: var(--primary-accent); font-weight:700;\">{gex_profile['put_wall_strike']:,} 點 Put Wall 支撐</span>，莊家對沖護盤力道將維繫常態盤整。"
+    )
+
+    ai_bullet_2 = (
+        f"🧱 <strong>週月選莊家牆與結算位階 (<span style=\"color: var(--gold-accent); font-weight:700;\">{gex_profile['call_wall_strike']:,} / {gex_profile['put_wall_strike']:,}</span>)</strong>："
+        f"週月選主力天花板集中於 <span style=\"color: var(--gold-accent); font-weight:700;\">{gex_profile['call_wall_strike']:,} 點</span> (Call Wall 週月選衝高壓力柱)；"
+        f"波段防守鐵板位於 <span style=\"color: var(--primary-accent); font-weight:700;\">{gex_profile['put_wall_strike']:,} 點</span> (Put Wall 避險防守柱)；"
+        f"結算前夕宜注意轉折點 <span style=\"color: var(--gold-accent); font-weight:700;\">{gex_profile['zero_gamma_level']:,} 點</span> 之磁吸震盪點位。"
+    )
+
+    s1_name = top_stk1_name.replace('期貨', '').replace('期', '')
+    s2_name = top_stk2_name.replace('期貨', '').replace('期', '')
+    ai_bullet_3 = (
+        f"🔥 <strong>Top 10 期交所真實成交量焦點標的</strong>："
+        f"{s1_name}期 ({top_stk1_code}) 與 {s2_name}期 ({top_stk2_code}) 為期交所個股期貨成交量前列標的，"
+        f"展現個股期貨交投熱度與動態資金趨勢。"
+    )
+
+    ai_bullet_4 = (
+        f"📅 <strong>近期除權息扣點校正與價差防守</strong>："
+        f"台積電期 (2330) 09/18 季除息 <span style=\"color: var(--gold-accent); font-weight:700;\">$4.0 元</span>，"
+        f"期價逆價差源自常態配息扣點而非看空避險；除息前夕宜對照 TWSE 官方扣點日程表防範價差誤判。"
+    )
+
+    ai_ex_dividend_digest = {
+        "title": "🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描",
+        "compliance_note": "⚖️ 合規量化學理分析 (非個別證券建議)",
+        "bullet_1": ai_bullet_1,
+        "bullet_2": ai_bullet_2,
+        "bullet_3": ai_bullet_3,
+        "bullet_4": ai_bullet_4
+    }
+
     return {
         "date": today_str,
         "engine_version": ENGINE_VERSION,
@@ -1899,14 +1946,7 @@ def generate_gex_payload():
         "total_gex_plus": gex_profile['total_gex_plus'],
         "sector_capital_rotation": sector_capital_rotation,
         "stock_futures": stock_futures,
-        "ai_ex_dividend_digest": {
-            "title": "🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描",
-            "compliance_note": "⚖️ 合規量化學理分析 (非個別證券建議)",
-            "bullet_1": "🎯 <strong>台指大盤 GEX 位階與假拉回判讀 (<span style=\"color: var(--gold-accent); font-weight:700;\">45,857 點</span>)</strong>：台指現價 <span style=\"color: var(--gold-accent); font-weight:700;\">45,857 點</span>，高於 Zero Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">45,920.5 點</span>) 附近，總 GEX 處於 <span style=\"color: var(--call-color); font-weight:700;\">正 GEX 護盤區 (+8.5 億)</span>。若夜盤跌至 <span style=\"color: var(--gold-accent); font-weight:700;\">45,750 點</span>，因未破 <span style=\"color: var(--primary-accent); font-weight:700;\">Put Wall 轉折點</span>，做市商對沖買盤尚在，屬常態洗盤；但若跌破 <span style=\"color: var(--primary-accent); font-weight:700;\">45,700 點</span> 則切入 <span style=\"color: var(--put-color); font-weight:700;\">負 GEX 追殺賣盤區</span>。",
-            "bullet_2": "🧱 <strong>週月選莊家牆與結算磁吸 (<span style=\"color: var(--gold-accent); font-weight:700;\">46,050 / 45,750</span>)</strong>：週選天花板集中於 <span style=\"color: var(--gold-accent); font-weight:700;\">46,050 點</span> (Call Wall 超長黃色週選柱)，當沖多單衝高宜停利；月選主力波段防守鐵板位於 <span style=\"color: var(--primary-accent); font-weight:700;\">45,750 點</span> (Put Wall 超長藍色月選柱)；週三結算前夕需留意 <span style=\"color: var(--gold-accent); font-weight:700;\">45,900 點</span> 磁吸歸零效應。",
-            "bullet_3": "🔥 <strong>Top 10 法人籌碼聚焦標的</strong>：聯電期 (2303) 與國態金期 (2882) 呈三大法人 <span style=\"color: var(--call-color); font-weight:700;\">現貨買超 + 期貨淨多單雙重加碼</span>，資金集中度高，展現法人才情與波段量能。",
-            "bullet_4": "📅 <strong>近期除權息扣點校正與價差防守</strong>：台積電期 (2330) 09/18 季除息 <span style=\"color: var(--gold-accent); font-weight:700;\">$4.0 元</span>，期價逆價差源自常態配息扣點而非看空避險；除息前夕宜對照 TWSE 官方扣點日程防範誤判。"
-        }
+        "ai_ex_dividend_digest": ai_ex_dividend_digest
     }
 
 def main():
