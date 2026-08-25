@@ -1,4 +1,5 @@
 @echo off
+@chcp 65001 >nul
 title TXO-GEX Multi-Source Live Gateway
 echo ===================================================
 echo ⚡ TXO-GEX 即時行情網關啟動中 (Port 8000)...
