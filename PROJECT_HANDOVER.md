@@ -33,7 +33,24 @@
 
 ---
 
-## 🛡️ 二、標準作業流程 SOP（必須逐步執行）
+## 🌐 三、期交所與證交所 官方權威 Endpoint 網址地圖 (v46.2)
+
+| 資料庫 / 模組名稱 | 官方網址 (URL) | 抓取邏輯與資料用途 |
+|---|---|---|
+| **1. TAIFEX 股票期貨除權息契約調整** | `https://www.taifex.com.tw/cht/4/contractAdj` | 抓取全場 270+ 檔股票期貨現金股利、股票股利、除權息契約調整日 |
+| **2. TWSE 證交所除權息預告表** | `https://www.twse.com.tw/rwd/zh/exRight/TWT48U?response=json` | 預告未來上市公司除權息日期與現金股利 |
+| **3. TWSE 證交所除權息計算結果** | `https://www.twse.com.tw/rwd/zh/exRight/TWT49U?response=json` | 當日除權息參考價、扣除現金價值與加權指數預估扣點數 |
+| **4. TAIFEX 股票期貨交易量熱力圖** | `https://taifex.com.tw/eventTaifexTradingCenter/cht/ssf.do` | 每日前十大股票期貨交易量 (含日盤/含夜盤切換)、真實成交口數與熱力圖 |
+| **5. TAIFEX 股票期貨每日市場總行情** | `https://www.taifex.com.tw/cht/3/futDailyMarketExcel?marketCode=0&commodity_id=STF` | 全場個股期貨成交量、開高低收、結算價與未平倉口數 |
+| **6. TAIFEX 股票期貨保證金公告** | `https://www.taifex.com.tw/cht/5/stockMargining` | 371 檔期交所個股期貨合約代號 (CDF, CAF, CCF) 與股票代號 (2330, 2303) 精準對射 |
+| **7. TAIFEX 臺指選擇權波動率指數 (VIX)** | `https://www.taifex.com.tw/indes/index.aspx` | 期交所官方 30 天期隱含波動率指數，驅動 VEX 做市商避險防守計算 |
+| **8. TWSE 證交所每日價格指數 (MI-INDEX)** | `https://www.twse.com.tw/zh/trading/historical/mi-index.html` | 證交所官方大盤加權指數 (IX0001)、寶島指數及各大主題產業指數收盤與漲跌 |
+| **9. TWSE MIS 類股即時行情** | `https://mis.twse.com.tw/stock/spot-stock?lang=zhHant` | 證交所 33 大產業類股即時價量，歸納至 8 大精準主題資金輪動矩陣 |
+| **10. TAIFEX 每日外幣參考匯率** | `https://www.taifex.com.tw/cht/3/dailyFXRate` | 期交所官方台幣/美元、日圓/美元、美元指數每日參考匯率與歷史歷程 |
+
+---
+
+## 🛡️ 四、標準作業流程 SOP（必須逐步執行）
 
 **步驟 1**：功能開發 (HTML / CSS / JavaScript / Python)
 
@@ -55,10 +72,10 @@ python -c "import json; d=json.load(open('data/gex_data.json',encoding='utf-8'))
 **步驟 7**：Git 推送
 ```bash
 git add -A
-git commit -m "feat: v45.4 - [本次修改說明]"
+git commit -m "feat: v46.2 - [本次修改說明]"
 git push origin main
 ```
 
 ---
 
-*最後更新：2026-08-25 推送版 | 尋鳥 Bluebird Finder | v45.4*
+*最後更新：2026-08-26 推送版 | 尋鳥 Bluebird Finder | v46.2*
