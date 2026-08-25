@@ -1,6 +1,6 @@
 # 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v46.2)
 
-**當前版本**：`v46.2` (2026-08-26 雙軌融資維持率與槓桿體質 Location A 矩陣整合版)
+**當前版本**：`v46.2` (2026-08-26 期交所/證交所全官方 Endpoint 對齊與動態解讀引擎定案版)
 **資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v46.2)
 **即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v46.2)
 **系統狀態**：`✅ 100% 運作正常`
@@ -8,15 +8,22 @@
 
 ---
 
-## 🎯 v46.2 核心更新亮點（Margin Maintenance Ratio Location A Integration）
+## 🎯 v46.2 核心更新亮點（TAIFEX / TWSE Official Endpoints & Dynamic Digest Engines）
 
-### 📊 1. 雙軌融資維持率 (Margin Maintenance Ratio) 表 2 最右欄整合 (Location A)
-- **表 2 關鍵矩陣擴充**：於《近 5 日關鍵市場指數矩陣》最右側成功新增 **`📊 融資維持率 (大盤/個股)`** 欄位。
-- **全市場整戶 vs 純個股雙重透視**：
-  - 主欄位顯示全市場整戶維持率 (含高股息/美債 ETF 槓桿資金，XQ 視角，如 `155.8%`)。
-  - 括號副欄位顯示純個股維持率 (扣除 `00` 開頭 ETF，玩股網視角，如 `(141.2%)`)。
-- **動態色彩與警報膠囊**：依據大盤整戶維護率即時標示色彩與外框：
-  - `≥ 160%` 🟢 **安定** | `150% ~ 160%` 🟡 **常態** | `140% ~ 150%` 🟠 **警戒** | `< 140%` 🔴 **斷頭/洗盤**
+### 📊 1. 雙軌融資維持率與四級狀態燈號 (Location A 矩陣)
+- **四級燈號膠囊**：矩陣表 2 融資維持率儲存格與副標題全自動渲染四級燈號：`≥ 160%` 🟢 **安定** | `150% ~ 160%` 🟡 **常態** | `140% ~ 150%` 🟠 **警戒** | `< 140%` 🔴 **斷頭/洗盤**。
+
+### ⚡ 2. 期交所 100% 真實成交量個股期貨榜首引擎 (Module 10)
+- **353 檔契約精準對射**：對接期交所 `stockMargining` 與 `futDailyMarketExcel?commodity_id=STF`，全自動擷取全市場個股期貨成交量與結算價，榜首排序 100% 零誤差對齊期交所官方 SSF 熱力圖。
+
+### 💡 3. 本日籌碼體質與選擇權結構解讀卡動態重構 (`executive_digest`)
+- **告別寫死舊點位**：將 Section 3 頂部 `💡 本日籌碼體質解讀卡` 改為由當日 TAIFEX 真實數據即時推導，動態更新現價、Zero Gamma、Call Wall (45,400) 與 Put Wall (45,000)。
+
+### 🤖 4. Gemini AI 籌碼、價差與除權息掃描卡動態化 (`ai_ex_dividend_digest`)
+- **對接期交所 contractAdj & 證交所 TWT48U/49U**：解析 229 檔最新除權息扣點資訊（如川湖 $51元、世芯-KY $32.55元、台光電 $25元、台積電 $4元），並即時連動熱門個股期貨標的。
+
+### 📸 5. 社群圖卡 Card 8 區分日夜盤雙視角
+- **對齊 Web Dashboard 雙視角**：將 `generate_social_card.py` Card 8 重構為 `☀️ 日盤 (13:45)` 與 `🌙 夜盤校正` 雙層版面。
 
 ---
 
