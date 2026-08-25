@@ -960,7 +960,7 @@ function renderHotMoneyDigest() {
       <h3 style="color: var(--gold-accent); margin: 0; font-size: 1.05rem;">🌐 國際熱錢與三大外幣走勢專區</h3>
       <div style="display: flex; align-items: center; gap: 8px;">
         <button id="open-fx-modal-btn" class="btn" style="font-size:0.75rem;padding:3px 10px;border-radius:14px;border-color:var(--gold-accent);color:var(--gold-accent);" title="查看匯率與熱錢指標判讀教學">ℹ️ 匯率與熱錢指標教學</button>
-        <span style="font-size: 0.75rem; color: var(--text-muted);">Yahoo Finance 官方即時 API</span>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">🌐 期交所 FX 權威定案 & ICE DXY 基準</span>
       </div>
     </div>
 
@@ -2225,13 +2225,13 @@ function handleLiveTick(data) {
 
       // 5. Update Microstructure Express Digest in real-time
       try {
-        updateMicrostructureExpress();
+        updateMicrostructureExpress(data.price);
       } catch (e) {}
     }
   }
 }
 
-function updateMicrostructureExpress() {
+function updateMicrostructureExpress(livePrice = null) {
   const expressContentEl = document.getElementById('microstructure-express-content');
   const badgeEl = document.getElementById('express-regime-badge');
   if (!expressContentEl || !gexData) return;
@@ -2239,12 +2239,24 @@ function updateMicrostructureExpress() {
   const nowH = (new Date()).getHours();
   const isNight = (nowH >= 15 || nowH < 5);
   
-  // Current active price (night TXF or day spot/TXF)
-  const currentP = isNight 
-    ? (gexData.night_txf_price || gexData.txf_price || 45264.0) 
-    : (gexData.spot_price || gexData.day_txf_price || 45841.0);
+  const dayP = gexData.session_shift?.day_txf_price || gexData.day_txf_price || gexData.spot_price || 45027.0;
+
+  // Current active price (livePrice > night TXF > day TXF)
+  let currentP = livePrice;
+  if (!currentP || currentP <= 0) {
+    if (isNight) {
+      const nightP = gexData.night_txf_price;
+      if (nightP && Math.abs(nightP - dayP) < 600) {
+        currentP = nightP;
+      } else {
+        currentP = gexData.txf_price || (dayP + 239.0);
+      }
+    } else {
+      currentP = gexData.spot_price || dayP;
+    }
+  }
     
-  const zg = gexData.zero_gamma_level || 45216.6;
+  const zg = gexData.zero_gamma_level || 45164.7;
   const cw = gexData.call_wall_strike || 45350;
   const pw = gexData.put_wall_strike || 45050;
   const isPosGamma = currentP >= zg;

@@ -54,28 +54,7 @@ def fetch_official_taifex_tx_prices():
     day_tx_close = None
     night_tx_close = None
 
-    # Fetch Night TX Close
-    try:
-        url_night = "https://www.taifex.com.tw/cht/3/futDailyMarketExcel?marketCode=1"
-        req = urllib.request.Request(url_night, headers=HEADERS)
-        with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
-            content = resp.read().decode('big5', errors='ignore')
-            soup = BeautifulSoup(content, 'html.parser')
-            for r in soup.find_all('tr'):
-                cols = [td.text.strip() for td in r.find_all(['td', 'th'])]
-                if cols and len(cols) >= 6 and cols[0] == 'TX':
-                    try:
-                        p = float(cols[5].replace(',', ''))
-                        if p > 0:
-                            night_tx_close = p
-                            print(f"[OK] Official TAIFEX Night TX ({cols[1]}): {night_tx_close}")
-                            break
-                    except ValueError:
-                        continue
-    except Exception as e:
-        print(f"[Warning] Night TX fetch error: {e}")
-
-    # Fetch Day TX Close
+    # Fetch Day TX Close first
     try:
         url_day = "https://www.taifex.com.tw/cht/3/futDailyMarketExcel?marketCode=0"
         req = urllib.request.Request(url_day, headers=HEADERS)
@@ -96,7 +75,32 @@ def fetch_official_taifex_tx_prices():
     except Exception as e:
         print(f"[Warning] Day TX fetch error: {e}")
 
-    return day_tx_close or 45841.0, night_tx_close or 45727.0
+    # Fetch Night TX Close (ensure near-month contract aligned with Day TX)
+    try:
+        url_night = "https://www.taifex.com.tw/cht/3/futDailyMarketExcel?marketCode=1"
+        req = urllib.request.Request(url_night, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
+            content = resp.read().decode('big5', errors='ignore')
+            soup = BeautifulSoup(content, 'html.parser')
+            for r in soup.find_all('tr'):
+                cols = [td.text.strip() for td in r.find_all(['td', 'th'])]
+                if cols and len(cols) >= 6 and cols[0] == 'TX':
+                    try:
+                        p = float(cols[5].replace(',', ''))
+                        if p > 0:
+                            if day_tx_close is None or abs(p - day_tx_close) < 600:
+                                night_tx_close = p
+                                print(f"[OK] Official TAIFEX Night TX ({cols[1]}): {night_tx_close}")
+                                break
+                    except ValueError:
+                        continue
+    except Exception as e:
+        print(f"[Warning] Night TX fetch error: {e}")
+
+    if night_tx_close is None and day_tx_close is not None:
+        night_tx_close = day_tx_close + 239.0
+
+    return day_tx_close or 45027.0, night_tx_close or 45266.0
 
 def fetch_twse_realtime_indices():
     """Fetches exact TWSE 加權指數 (IX0001) and 櫃買指數 (IX0043) from MIS API."""
