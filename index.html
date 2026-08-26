@@ -347,7 +347,7 @@
         <div class="logo-area">
           <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>尋鳥 Bluebird Finder</span>
-            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v46.2</span>
+            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v47.0</span>
           </h1>
           <div class="tagline">台指選擇權 Gamma / Vanna Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
@@ -491,7 +491,20 @@
 
       <!-- Card 7: MAX PAIN (最大痛點) Dual Session Card -->
       <div class="stat-card" style="border-left: 4px solid #a855f7;">
-        <div class="stat-label">MAX PAIN (最大痛點)</div>
+        <div class="stat-label" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>MAX PAIN (最大痛點)</span>
+          <button id="open-max-pain-modal-btn" class="btn" style="font-size: 0.7rem; padding: 2px 6px; border-radius: 12px; border-color: #a855f7; color: #a855f7; background: rgba(168,85,247,0.1);" title="點擊查看 🧲 Max Pain 空間籌碼結構拓撲診斷教學">
+            🎓 拓撲診斷 ℹ️
+          </button>
+        </div>
+
+        <!-- Dynamic Topology Badge Container -->
+        <div style="margin-top: 4px; margin-bottom: 4px;">
+          <span id="stat-mp-topology-badge" style="font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; font-weight: 700; display: inline-block; cursor: pointer; transition: all 0.2s ease;" title="點擊開啟 Max Pain 籌碼空間拓撲診斷與 2腳/4腳實戰 SOP">
+            🔴 【型態 A：多頭強勢軋空】
+          </span>
+        </div>
+
         <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
           <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
             <span>☀️ 日盤 (13:45)</span>
@@ -924,7 +937,7 @@
     <footer>
       <p style="font-weight: 700; color: var(--primary-accent); margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
         <img src="assets/avatar.png" alt="Bluebird Finder Avatar" style="width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--primary-accent); vertical-align: middle;">
-        <span id="app-footer-version-badge">尋鳥 Bluebird Finder • TXO GEX 量化分析系統 v46.2</span>
+        <span id="app-footer-version-badge">尋鳥 Bluebird Finder • TXO GEX 量化分析系統 v47.0</span>
       </p>
       <p style="opacity: 0.85; margin-bottom: 6px; font-size: 0.8rem;">
         © 2026 尋鳥 Bluebird Finder Quant Labs. 版權所有，未經授權請勿商業重製與無償轉載。
@@ -1036,6 +1049,74 @@
           <li><strong style="color: #ff5252;">VEX (恐慌曝險)</strong>：專門針對 <strong>「盤中急殺 / 暴漲」</strong>，回答「盤中波動率 (IV) 突然暴飆時，做市商會幫忙拉回還是落井下石？」。它的時間點是<strong>盤中動態恐慌</strong>。</li>
           <li><strong style="color: #ffd700;">GEX+ Flip (早鳥警報線)</strong>：結合「價格下跌 + 恐慌暴飆」後，做市商真正開始停損的防守底線，比傳統 Zero Gamma 更靈敏。</li>
         </ul>
+      </div>
+
+      <!-- Max Pain Spatial Topology (空間籌碼結構拓撲) Box -->
+      <div id="max-pain-topology-section" style="background: rgba(168, 85, 247, 0.08); border: 1px solid #a855f7; border-radius: 12px; padding: 18px; margin-bottom: 20px; line-height: 1.7; font-size: 0.85rem; box-shadow: 0 4px 20px rgba(168,85,247,0.15);">
+        <h3 style="color: #a855f7; margin-top: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+          <span>🧲 4. Max Pain 空間籌碼結構拓撲 (Spatial Topology) 實戰診斷矩陣與 2腳 / 4腳 SOP</span>
+        </h3>
+        <p style="margin-bottom: 12px; color: #cbd5e1;">
+          `Max Pain (最大痛點)` 與 `Put Wall / Call Wall` 的相對空間排列（Topology）反映了市場最深層的多空結構（採用<strong>台股紅多綠空標準色彩</strong>）：
+        </p>
+
+        <div style="overflow-x: auto; margin-bottom: 10px;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left; background: #1e293b; border-radius: 8px; overflow: hidden;">
+            <thead>
+              <tr style="background: #334155; color: #f8fafc;">
+                <th style="padding: 10px; border: 1px solid #475569; width: 22%;">型態名稱與條件</th>
+                <th style="padding: 10px; border: 1px solid #475569; width: 22%;">空間相對位置</th>
+                <th style="padding: 10px; border: 1px solid #475569; width: 28%;">市場意涵與籌碼特徵</th>
+                <th style="padding: 10px; border: 1px solid #475569; width: 28%;">實戰最佳處置與 2腳/4腳 SOP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #ef4444;">
+                  🔴 型態 A：多頭強勢軋空
+                </td>
+                <td style="padding: 10px; border: 1px solid #475569; font-family: monospace; color: #ef4444;">
+                  Max Pain &lt; Put Wall &lt; Call Wall
+                </td>
+                <td style="padding: 10px; border: 1px solid #475569; color: #e2e8f0;">
+                  上方大額 Call OI 累積極重，痛點被拖向低位；但機構在近端 Put Wall 建立強烈護盤牆。
+                </td>
+                <td style="padding: 10px; border: 1px solid #475569; color: #e2e8f0;">
+                  • <strong>首要防線</strong>：於 Put Wall 建立 Bull Put Spread。【2腳】Sell Put@Put Wall / Buy Put@Put Wall-200。<br>
+                  • <strong>破牆反應</strong>：若 5K 實體跌破 Put Wall，順勢追空看至下方的 Max Pain。
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #ffd700;">
+                  🟡 型態 B：對稱健康箱體
+                </td>
+                <td style="padding: 10px; border: 1px solid #475569; font-family: monospace; color: #ffd700;">
+                  Put Wall &le; Max Pain &le; Call Wall
+                </td>
+                <td style="padding: 10px; border: 1px solid #475569; color: #e2e8f0;">
+                  Call 與 Put 籌碼分佈對稱，Max Pain 位於箱體正中央，週三結算日具強烈結算引力吸附效應。
+                </td>
+                <td style="padding: 10px; border: 1px solid #475569; color: #e2e8f0;">
+                  • <strong>雙賣首選</strong>：建立 Iron Condor 箱體鐵鷹。【4腳】Sell Call@Call Wall / Buy Call@Call Wall+200 / Sell Put@Put Wall / Buy Put@Put Wall-200。
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #00e676;">
+                  🟢 型態 C：空頭恐慌避險
+                </td>
+                <td style="padding: 10px; border: 1px solid #475569; font-family: monospace; color: #00e676;">
+                  Put Wall &lt;&lt; Max Pain
+                </td>
+                <td style="padding: 10px; border: 1px solid #475569; color: #e2e8f0;">
+                  散戶與機構大量搶購深價外 Put 避險，將 Put Wall 推向遙遠低位，下檔波動率 (IV) 飆升。
+                </td>
+                <td style="padding: 10px; border: 1px solid #475569; color: #e2e8f0;">
+                  • <strong>防禦做空</strong>：建立 Bear Call Spread。【2腳】Sell Call@Call Wall / Buy Call@Call Wall+200；或微台順勢空。
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Early Bird Line Higher/Lower Explanation Box -->

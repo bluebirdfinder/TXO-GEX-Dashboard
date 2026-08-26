@@ -1,11 +1,11 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v46.2)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.0)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 雙軌融資維持率 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> T型報價視角 (DEFAULT) ✦ Max Pain 空間籌碼拓撲 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v46.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v47.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
@@ -18,7 +18,7 @@
 | **Put Wall** | 🛋️ 超大彈簧軟墊 | 做市商護盤最大支撐牆 | 大盤回檔跌至附近容易踩墊反彈 (可建立當沖多單或 Sell Put 價差) |
 | **Zero Gamma** | ⚖️ 園區安檢紅外線 | 波動度壓抑 vs 暴跌助跌臨界點 | 站上走慢速安定區；跌破進入做市商追殺避險區 |
 | **Max Pain** | 🎯 週三抽獎箱 | 散戶權利金賠最多、莊家賺最多的結算點 | 週二/週三結算前夕，指數常被主力壓回附近讓買方雙歸零 |
-| **VEX (NEW)** | 😱 恐慌狂暴開關 | 當恐慌指數 (IV) 飆高時，做市商會護盤還是火上加油 | **負值時**代表盤中一旦急殺，做市商會無腦賣期貨火上加油！ |
+| **VEX (NEW)** | 😱 恐慌狂狂暴開關 | 當恐慌指數 (IV) 飆高時，做市商會護盤還是火上加油 | **負值時**代表盤中一旦急殺，做市商會無腦賣期貨火上加油！ |
 | **GEX+ (NEW)** | 🛡️ 總安全指數 | 價格變動 (Gamma) + 恐慌情緒 (Vanna) 的合成總指數 | 正值代表全場做市商整體淨結構仍具備一定安定力道 |
 | **GEX+ Flip (NEW)** | 🚨 早鳥提早警報線 | 結合恐慌感後，做市商真正的防守底線 | 比傳統 Zero Gamma 更靈敏發出早鳥大跌預警 |
 
@@ -39,6 +39,23 @@
 💡 **一秒口訣記憶法**：
 - 🔴 **VEX 為負 (恐慌強)** ➔ 早鳥線在 **上方**（提早發警報，提醒快跑/試空）。
 - 🟢 **VEX 為正 (護盤厚)** ➔ 早鳥線在 **下方**（延後防守線，代表大盤很沉穩抗跌）。
+
+---
+
+## 🌟 v47.0 Max Pain 空間籌碼結構拓撲 & 融資維持率 21:00 TWSE 清算雙軌分離
+
+### 🧲 1. Max Pain 空間籌碼結構拓撲 (Spatial Topology Matrix)
+- **動態 Badge 診斷與色彩標準 (符合台股紅多綠空)**：
+  - 🔴 **型態 A：多頭強勢軋空** (`Max Pain < Put Wall`): 上方 Call OI 大量累積，近端 Put Wall 護盤，首防 Put Wall 建立 **Bull Put Spread【2腳】** (`Sell Put@Put Wall` / `Buy Put@Put Wall-200`)。
+  - 🟡 **型態 B：對稱健康箱體** (`Put Wall <= Max Pain <= Call Wall`): 多空對稱，Max Pain 居中央，週三結算引力吸附，適合 **Iron Condor 雙賣鐵鷹【4腳】**。
+  - 🟢 **型態 C：空頭恐慌避險** (`Put Wall << Max Pain`): 深價外 Put 避險強烈，下檔波動率升，建議 **Bear Call Spread【2腳】** 防禦或微台順勢空。
+- **UI 互動與 Modal 內建教學指南**：頂部 MAX PAIN KPI 卡片新增動態 Badge 與 `🎓 拓撲診斷 ℹ️` 按鈕，單擊直達【判讀教學指南 Modal】第 4 區塊拓撲診斷對照表與 2腳/4腳精確下單 SOP。
+
+### 📊 2. 融資維持率 21:00 TWSE 清算時序與夜盤雙軌分離
+- **夜盤 Session 嚴謹分離**：個股在夜盤休市無成交價與信用交易變動，標示 `- (非交易時段)` 與 `夜盤休市無數據`。
+- **日盤 Session 21:00 時序清算**：盤後 (如 16:00) 證交所尚未公布當日信用交易時，標示金黃虛線膠囊 `未公布 (21:00更新)`；晚間 21:00 或隔晨 06:00 自動補齊數字與四級燈號 (`155.8% 🟢 安定` / `個股 141.2%`)。
+
+---
 
 ## 🌟 v46.2 期交所/證交所全官方 Endpoint 對齊 & 動態解讀卡
 

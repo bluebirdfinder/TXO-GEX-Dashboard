@@ -1,10 +1,25 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v46.2)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.0)
 
-**當前版本**：`v46.2` (2026-08-26 期交所/證交所全官方 Endpoint 對齊與動態解讀引擎定案版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v46.2)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v46.2)
+**當前版本**：`v47.0` (2026-08-26 Max Pain 空間籌碼結構拓撲與融資維持率 21:00 雙軌清算定案版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.0)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.0)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v47.0 核心更新亮點（Max Pain Spatial Topology & TWSE 21:00 Margin Maintenance Dual Session Split）
+
+### 🧲 1. Max Pain 空間籌碼結構拓撲 (Spatial Topology Matrix)
+- **動態 Badge 診斷與色彩標準 (符合台股紅多綠空)**：
+  - 🔴 **型態 A：多頭強勢軋空** (`Max Pain < Put Wall`): 上方 Call OI 大量累積，近端 Put Wall 護盤，首防 Put Wall 建立 **Bull Put Spread【2腳】** (`Sell Put@Put Wall` / `Buy Put@Put Wall-200`)。
+  - 🟡 **型態 B：對稱健康箱體** (`Put Wall <= Max Pain <= Call Wall`): 多空對稱，Max Pain 居中央，週三結算引力吸附，適合 **Iron Condor 雙賣鐵鷹【4腳】**。
+  - 🟢 **型態 C：空頭恐慌避險** (`Put Wall << Max Pain`): 深價外 Put 避險強烈，下檔波動率升，建議 **Bear Call Spread【2腳】** 防禦或微台順勢空。
+- **UI 動態 Badge 與 Modal 內建教學指南**：頂部 MAX PAIN KPI 卡片整合動態 Badge 與 `🎓 拓撲診斷 ℹ️` 按鈕，單擊直達【判讀教學指南 Modal】第 4 區塊拓撲診斷對照表與 2腳/4腳精確下單 SOP。
+
+### 📊 2. 融資維持率 21:00 TWSE 清算時序與夜盤雙軌分離
+- **夜盤 Session 嚴謹分離**：個股在夜盤休市無成交價與信用交易變動，標示 `- (非交易時段)` 與 `夜盤休市無數據`。
+- **日盤 Session 21:00 時序清算**：盤後 (如 16:00) 證交所尚未公布當日信用交易時，標示金黃虛線膠囊 `未公布 (21:00更新)`；晚間 21:00 或隔晨 06:00 自動補齊數字與四級燈號 (`155.8% 🟢 安定` / `個股 141.2%`)。
 
 ---
 

@@ -501,11 +501,42 @@ function renderDashboard() {
     elPwShift.innerText = `(${pwSign}${pwShift} 點)`;
   }
 
-  // 5. Max Pain (日盤 vs 夜盤)
+  // 5. Max Pain (日盤 vs 夜盤) & 空間籌碼結構拓撲 (Spatial Topology)
+  const mpVal = gexData.max_pain_strike || 44900;
+  const pwVal = gexData.put_wall_strike || 44500;
+  const cwVal = gexData.call_wall_strike || 46100;
+
   const elMpDay = document.getElementById('stat-mp-day');
-  if (elMpDay) elMpDay.innerText = (shift.day_max_pain || 45800).toLocaleString();
+  if (elMpDay) elMpDay.innerText = (shift.day_max_pain || mpVal).toLocaleString();
   const elMpNight = document.getElementById('stat-mp-night');
-  if (elMpNight) elMpNight.innerText = (gexData.max_pain_strike || 45800).toLocaleString();
+  if (elMpNight) elMpNight.innerText = mpVal.toLocaleString();
+
+  // Max Pain 空間拓撲動態計算 (台股紅多綠空標準)
+  const mpBadgeEl = document.getElementById('stat-mp-topology-badge');
+  if (mpBadgeEl) {
+    if (mpVal < pwVal) {
+      // 🔴 型態 A：多頭強勢軋空 (Max Pain < Put Wall)
+      mpBadgeEl.innerText = '🔴 【型態 A：多頭強勢軋空】';
+      mpBadgeEl.style.background = 'rgba(239, 68, 68, 0.18)';
+      mpBadgeEl.style.color = '#ef4444';
+      mpBadgeEl.style.border = '1px solid #ef4444';
+      mpBadgeEl.title = 'Max Pain < Put Wall：大額 Call OI 拖低痛點，近端 Put Wall 為首要護盤牆。勝率最高做法為首防 Put Wall 建立 Bull Put Spread (2腳)';
+    } else if (pwVal <= mpVal && mpVal <= cwVal) {
+      // 🟡 型態 B：對稱健康箱體 (Put Wall <= Max Pain <= Call Wall)
+      mpBadgeEl.innerText = '🟡 【型態 B：對稱健康箱體】';
+      mpBadgeEl.style.background = 'rgba(255, 215, 0, 0.18)';
+      mpBadgeEl.style.color = '#ffd700';
+      mpBadgeEl.style.border = '1px solid #ffd700';
+      mpBadgeEl.title = 'Put Wall <= Max Pain <= Call Wall：多空對稱，Max Pain 居中央，週三結算日具強烈結算引力吸附，適合 Iron Condor 雙賣鐵鷹 (4腳)';
+    } else {
+      // 🟢 型態 C：空頭恐慌避險 (Put Wall << Max Pain)
+      mpBadgeEl.innerText = '🟢 【型態 C：空頭恐慌避險】';
+      mpBadgeEl.style.background = 'rgba(0, 230, 118, 0.18)';
+      mpBadgeEl.style.color = '#00e676';
+      mpBadgeEl.style.border = '1px solid #00e676';
+      mpBadgeEl.title = 'Put Wall << Max Pain：深價外 Put 避險強烈，下檔波動率升，建議 Bear Call Spread 防禦或微台順勢空';
+    }
+  }
 
   // P/C Ratio
   const pcEl = document.getElementById('stat-pc-ratio');
@@ -711,30 +742,47 @@ function populateKeyMetrics5Day() {
     }
 
     // 9. Margin Maintenance Ratio (融資維持率 - 大盤整戶 vs 純個股扣除 ETF)
-    const mmMarket = s.margin_maint_market !== undefined ? s.margin_maint_market : (s.margin_ratio || 155.8);
-    const mmStock = s.margin_maint_stock !== undefined ? s.margin_maint_stock : 141.2;
-    let mmColor = '#00e676';
-    let mmBg = 'rgba(0, 230, 118, 0.15)';
-    let mmBadgeText = '🟢 安定';
-    if (mmMarket >= 160) {
-      mmColor = '#00e676'; // 🟢 安定 (>=160%)
-      mmBg = 'rgba(0, 230, 118, 0.18)';
-      mmBadgeText = '🟢 安定';
-    } else if (mmMarket >= 150) {
-      mmColor = '#ffd700'; // 🟡 常態 (150%~160%)
-      mmBg = 'rgba(255, 215, 0, 0.18)';
-      mmBadgeText = '🟡 常態';
-    } else if (mmMarket >= 140) {
-      mmColor = '#ff9100'; // 🟠 警戒 (140%~150%)
-      mmBg = 'rgba(255, 145, 0, 0.18)';
-      mmBadgeText = '🟠 警戒';
+    let mmMain = '';
+    let mmSub = '';
+
+    if (isNight) {
+      // 夜盤欄位：個股在夜盤休市、無個股成交價與信用交易
+      mmMain = `<span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">- (非交易時段)</span>`;
+      mmSub = `<div style="font-size: 0.70rem; color: rgba(255,255,255,0.3); margin-top: 2px;">夜盤休市無數據</div>`;
     } else {
-      mmColor = '#ff1744'; // 🔴 斷頭洗盤 (<140%)
-      mmBg = 'rgba(255, 23, 68, 0.18)';
-      mmBadgeText = '🔴 斷頭洗盤';
+      // 日盤欄位：檢查信用交易資料是否已公布
+      const isPublished = s.margin_maint_published !== false && s.margin_maint_published !== 'pending';
+      if (!isPublished) {
+        // 下午 16:00 產出圖卡/網頁時證交所尚未公布
+        mmMain = `<span style="font-size: 0.78rem; padding: 2px 6px; border-radius: 4px; background: rgba(255, 215, 0, 0.08); color: #ffd700; font-weight: 600; border: 1px dashed rgba(255, 215, 0, 0.4); display: inline-block; white-space: nowrap;">未公布 <span style="font-size: 0.72rem; opacity: 0.85;">(21:00更新)</span></span>`;
+        mmSub = `<div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 2px;">TWSE 盤後清算中</div>`;
+      } else {
+        const mmMarket = s.margin_maint_market !== undefined ? s.margin_maint_market : (s.margin_ratio || 155.8);
+        const mmStock = s.margin_maint_stock !== undefined ? s.margin_maint_stock : 141.2;
+        let mmColor = '#00e676';
+        let mmBg = 'rgba(0, 230, 118, 0.15)';
+        let mmBadgeText = '🟢 安定';
+        if (mmMarket >= 160) {
+          mmColor = '#00e676'; // 🟢 安定 (>=160%)
+          mmBg = 'rgba(0, 230, 118, 0.18)';
+          mmBadgeText = '🟢 安定';
+        } else if (mmMarket >= 150) {
+          mmColor = '#ffd700'; // 🟡 常態 (150%~160%)
+          mmBg = 'rgba(255, 215, 0, 0.18)';
+          mmBadgeText = '🟡 常態';
+        } else if (mmMarket >= 140) {
+          mmColor = '#ff9100'; // 🟠 警戒 (140%~150%)
+          mmBg = 'rgba(255, 145, 0, 0.18)';
+          mmBadgeText = '🟠 警戒';
+        } else {
+          mmColor = '#ff1744'; // 🔴 斷頭洗盤 (<140%)
+          mmBg = 'rgba(255, 23, 68, 0.18)';
+          mmBadgeText = '🔴 斷頭洗盤';
+        }
+        mmMain = `<span style="font-size: 0.82rem; padding: 2px 6px; border-radius: 4px; background: ${mmBg}; color: ${mmColor}; font-weight: 700; border: 1px solid ${mmColor}; display: inline-block; white-space: nowrap;">${mmMarket.toFixed(1)}% <span style="font-size: 0.75rem; margin-left: 2px;">${mmBadgeText}</span></span>`;
+        mmSub = `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">個股 (${mmStock.toFixed(1)}%)</div>`;
+      }
     }
-    const mmMain = `<span style="font-size: 0.82rem; padding: 2px 6px; border-radius: 4px; background: ${mmBg}; color: ${mmColor}; font-weight: 700; border: 1px solid ${mmColor}; display: inline-block; white-space: nowrap;">${mmMarket.toFixed(1)}% <span style="font-size: 0.75rem; margin-left: 2px;">${mmBadgeText}</span></span>`;
-    const mmSub = `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">個股 (${mmStock.toFixed(1)}%)</div>`;
 
     html += `<tr style="${rowBg}">
       <td style="font-weight: 700; color: ${labelColor}; text-align: left; padding-left: 14px;">
@@ -1914,6 +1962,23 @@ function initModals() {
   const eduBtn = document.getElementById('education-btn');
   const eduModal = document.getElementById('education-modal');
   const closeEduBtn = document.getElementById('close-edu-modal');
+  const openMaxPainBtn = document.getElementById('open-max-pain-modal-btn');
+  const mpBadgeBtn = document.getElementById('stat-mp-topology-badge');
+
+  function openMaxPainTopologyModal() {
+    if (eduModal) {
+      eduModal.style.display = 'flex';
+      const targetSec = document.getElementById('max-pain-topology-section');
+      if (targetSec) {
+        setTimeout(() => {
+          targetSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    }
+  }
+
+  if (openMaxPainBtn) openMaxPainBtn.onclick = openMaxPainTopologyModal;
+  if (mpBadgeBtn) mpBadgeBtn.onclick = openMaxPainTopologyModal;
 
   if (eduBtn && eduModal) {
     eduBtn.onclick = function() {
