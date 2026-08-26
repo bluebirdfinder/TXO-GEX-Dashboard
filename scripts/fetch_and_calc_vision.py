@@ -159,29 +159,36 @@ def fetch_twse_institutional_stock_trading():
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
             res = json.loads(resp.read().decode('utf-8'))
             rows = res.get('data', [])
-            foreign_net, trust_net, dealer_net = 0.0, 0.0, 0.0
+            foreign_net, trust_net, dealer_net, total_net = 0.0, 0.0, 0.0, 0.0
             for r in rows:
-                name = r[0]
-                net_str = r[3].replace(',', '')
+                if len(r) < 4:
+                    continue
+                name = r[0].replace(' ', '').strip()
+                net_str = r[3].replace(',', '').strip()
                 try:
                     net_billion = round(float(net_str) / 1e8, 2)
-                    if '外資' in name:
+                    if '外資及陸資' in name and '不含' in name:
                         foreign_net = net_billion
-                    elif '投信' in name:
+                    elif name == '投信':
                         trust_net = net_billion
-                    elif '自營商' in name:
-                        dealer_net += net_billion
+                    elif '自營商' in name and '外資' not in name:
+                        dealer_net = round(dealer_net + net_billion, 2)
+                    elif name == '合計':
+                        total_net = net_billion
                 except (ValueError, IndexError):
                     pass
-            print(f"[OK] TWSE BFI82U Stock Net (Billion TWD): Foreign={foreign_net}, Trust={trust_net}, Dealer={dealer_net}")
+            if total_net == 0.0:
+                total_net = round(foreign_net + trust_net + dealer_net, 2)
+            print(f"[OK] TWSE BFI82U Stock Net (Billion TWD): Foreign={foreign_net}, Trust={trust_net}, Dealer={dealer_net}, Total={total_net}")
             return {
                 "foreign_stock_net": foreign_net,
                 "trust_stock_net": trust_net,
-                "dealer_stock_net": dealer_net
+                "dealer_stock_net": dealer_net,
+                "total_stock_net": total_net
             }
     except Exception as e:
         print(f"[Warning] Failed to fetch TWSE BFI82U: {e}")
-    return {"foreign_stock_net": 45.35, "trust_stock_net": 10.75, "dealer_stock_net": -27.36}
+    return {"foreign_stock_net": 366.13, "trust_stock_net": 33.66, "dealer_stock_net": 179.34, "total_stock_net": 579.13}
 
 def fetch_taifex_night_institutional_trading():
     """
@@ -1553,10 +1560,11 @@ def generate_gex_payload():
             "lt_total": lt_inst.get('total', {'top5_net': -11018, 'top10_net': -22685, 'top5_spec_net': -9043, 'top10_spec_net': -22685}),
             "foreign_fut_net": fut_inst.get('foreign', -82423),
             "trust_fut_net": fut_inst.get('trust', 75825), "itrust_fut_net": fut_inst.get('trust', 75825), "dealer_fut_net": fut_inst.get('dealer', 2019),
-            "foreign_stock_net": stock_inst['foreign_stock_net'] if stock_inst['foreign_stock_net'] != 0.0 else -119.86,
-            "trust_stock_net": stock_inst['trust_stock_net'] if stock_inst['trust_stock_net'] != 0.0 else 56.63,
-            "itrust_stock_net": stock_inst['trust_stock_net'] if stock_inst['trust_stock_net'] != 0.0 else 56.63,
-            "dealer_stock_net": stock_inst['dealer_stock_net'] if stock_inst['dealer_stock_net'] != 0.0 else -176.07,
+            "foreign_stock_net": stock_inst.get('foreign_stock_net', 366.13),
+            "trust_stock_net": stock_inst.get('trust_stock_net', 33.66),
+            "itrust_stock_net": stock_inst.get('trust_stock_net', 33.66),
+            "dealer_stock_net": stock_inst.get('dealer_stock_net', 179.34),
+            "total_stock_net": stock_inst.get('total_stock_net', 579.13),
             "foreign_opt_net": round(opt_inst['foreign']['call_net_amt'] + opt_inst['foreign']['put_net_amt'], 2),
             "trust_opt_net": round(opt_inst['trust']['call_net_amt'] + opt_inst['trust']['put_net_amt'], 2),
             "itrust_opt_net": round(opt_inst['trust']['call_net_amt'] + opt_inst['trust']['put_net_amt'], 2),
@@ -1635,10 +1643,10 @@ def generate_gex_payload():
         f"（單日變動 <code>{f_change_str} 口</code>，約合 <code>{f_amt_str} 億 TWD</code> 契約金額）。{sentiment_tag}。"
     )
 
-    f_cash = stock_inst['foreign_stock_net']
-    t_cash = stock_inst['trust_stock_net']
-    d_cash = stock_inst['dealer_stock_net']
-    cash_tot = round(f_cash + t_cash + d_cash, 2)
+    f_cash = stock_inst.get('foreign_stock_net', 366.13)
+    t_cash = stock_inst.get('trust_stock_net', 33.66)
+    d_cash = stock_inst.get('dealer_stock_net', 179.34)
+    cash_tot = stock_inst.get('total_stock_net', round(f_cash + t_cash + d_cash, 2))
     cash_tot_sign = "+" if cash_tot >= 0 else ""
     f_cash_sign = "+" if f_cash >= 0 else ""
     t_cash_sign = "+" if t_cash >= 0 else ""

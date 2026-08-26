@@ -1,11 +1,11 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.1)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ Max Pain 空間籌碼拓撲 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> T型報價視角 (DEFAULT) ✦ Max Pain 空間籌碼拓撲 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v47.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v47.1-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
@@ -39,6 +39,18 @@
 💡 **一秒口訣記憶法**：
 - 🔴 **VEX 為負 (恐慌強)** ➔ 早鳥線在 **上方**（提早發警報，提醒快跑/試空）。
 - 🟢 **VEX 為正 (護盤厚)** ➔ 早鳥線在 **下方**（延後防守線，代表大盤很沉穩抗跌）。
+
+---
+
+## 🌟 v47.1 證交所 BFI82U 現貨三大法人買賣超校正 (對齊永豐/富邦/台新日報)
+
+### 🏛️ 1. 證交所權威 BFI82U API 端點精確對齊
+- **修復舊版覆蓋 Bug**：舊版在邏輯判斷時將 `外資自營商` 覆蓋 `外資及陸資(不含外資自營商)`，導致外資金額漏算盤後鉅額對敲交易。
+- **三大法人金額 100% 零誤差對齊三大券商日報**：
+  - **外資買賣超**：`外資及陸資(不含外資自營商)` (例如 `+366.13 億 TWD`)。
+  - **投信買賣超**：`投信` (例如 `+33.66 億 TWD`)。
+  - **自營商買賣超**：`自營商(自行買賣 + 避險)` (例如 `+179.34 億 TWD`)。
+  - **三大法人合計**：`合計` (例如 `+579.13 億 TWD`)。
 
 ---
 

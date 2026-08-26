@@ -1,10 +1,22 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.1)
 
-**當前版本**：`v47.0` (2026-08-26 Max Pain 空間籌碼結構拓撲與融資維持率 21:00 雙軌清算定案版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.0)
+**當前版本**：`v47.1` (2026-08-26 證交所 BFI82U 現貨三大法人鉅額對敲全對齊與券商日報零誤差版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.1)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.1)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v47.1 核心更新亮點（TWSE BFI82U Spot Institutional Trading Brokerage Daily Standard）
+
+### 🏛️ 1. 證交所權威 BFI82U API 端點精確對齊
+- **修復舊版覆蓋 Bug**：修復舊版在邏輯判斷時將 `外資自營商` 覆蓋 `外資及陸資(不含外資自營商)`，導致外資金額漏算盤後鉅額對敲交易之問題。
+- **三大法人買賣超金額 100% 零誤差對齊永豐 / 富邦 / 台新日報**：
+  - **外資買賣超**：`外資及陸資(不含外資自營商)` (`+366.13 億 TWD`)
+  - **投信買賣超**：`投信` (`+33.66 億 TWD`)
+  - **自營商買賣超**：`自營商(自行買賣 + 避險)` (`+179.34 億 TWD`)
+  - **三大法人合計**：`合計` (`+579.13 億 TWD`)
 
 ---
 

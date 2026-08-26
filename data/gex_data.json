@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 46017.5,
     "day_total_vex": 2493.07
   },
-  "last_updated_time": "2026-08-26 17:09",
+  "last_updated_time": "2026-08-26 22:46",
   "spot_price": 45832.62,
   "spot_change": 663.16,
   "spot_change_pct": 1.47,
@@ -1318,6 +1318,7 @@
       "pc_ratio": 104.2,
       "margin_maint_market": 158.4,
       "margin_maint_stock": 144.1,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 44900,
@@ -2602,6 +2603,7 @@
       "pc_ratio": 105.1,
       "margin_maint_market": 158.4,
       "margin_maint_stock": 144.1,
+      "margin_maint_published": false,
       "total_gex": [
         {
           "strike": 44900,
@@ -3886,6 +3888,7 @@
       "pc_ratio": 105.8,
       "margin_maint_market": 157.2,
       "margin_maint_stock": 143.0,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 44900,
@@ -5170,6 +5173,7 @@
       "pc_ratio": 106.7,
       "margin_maint_market": 157.2,
       "margin_maint_stock": 143.0,
+      "margin_maint_published": false,
       "total_gex": [
         {
           "strike": 44900,
@@ -6454,6 +6458,7 @@
       "pc_ratio": 107.5,
       "margin_maint_market": 156.5,
       "margin_maint_stock": 142.1,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 44900,
@@ -7738,6 +7743,7 @@
       "pc_ratio": 108.3,
       "margin_maint_market": 156.5,
       "margin_maint_stock": 142.1,
+      "margin_maint_published": false,
       "total_gex": [
         {
           "strike": 44900,
@@ -9022,6 +9028,7 @@
       "pc_ratio": 109.1,
       "margin_maint_market": 155.8,
       "margin_maint_stock": 141.2,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 44900,
@@ -10306,6 +10313,7 @@
       "pc_ratio": 110.4,
       "margin_maint_market": 155.8,
       "margin_maint_stock": 141.2,
+      "margin_maint_published": false,
       "total_gex": [
         {
           "strike": 44900,
@@ -11590,6 +11598,7 @@
       "pc_ratio": 111.8,
       "margin_maint_market": 155.8,
       "margin_maint_stock": 141.2,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 44900,
@@ -12874,6 +12883,7 @@
       "pc_ratio": 113.23,
       "margin_maint_market": 155.8,
       "margin_maint_stock": 141.2,
+      "margin_maint_published": false,
       "total_gex": [
         {
           "strike": 44900,
@@ -14160,6 +14170,7 @@
       "pc_ratio": 107.5,
       "margin_maint_market": 156.5,
       "margin_maint_stock": 142.1,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 44900,
@@ -15444,6 +15455,7 @@
       "pc_ratio": 108.3,
       "margin_maint_market": 156.5,
       "margin_maint_stock": 142.1,
+      "margin_maint_published": false,
       "total_gex": [
         {
           "strike": 44900,
@@ -16728,6 +16740,7 @@
       "pc_ratio": 109.1,
       "margin_maint_market": 155.8,
       "margin_maint_stock": 141.2,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 44900,
@@ -18012,6 +18025,7 @@
       "pc_ratio": 110.4,
       "margin_maint_market": 155.8,
       "margin_maint_stock": 141.2,
+      "margin_maint_published": false,
       "total_gex": [
         {
           "strike": 44900,
@@ -19296,6 +19310,7 @@
       "pc_ratio": 111.8,
       "margin_maint_market": 155.8,
       "margin_maint_stock": 141.2,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 44900,
@@ -20580,6 +20595,7 @@
       "pc_ratio": 113.23,
       "margin_maint_market": 155.8,
       "margin_maint_stock": 141.2,
+      "margin_maint_published": false,
       "total_gex": [
         {
           "strike": 44900,
@@ -21883,10 +21899,11 @@
       "trust_fut_net": 78043,
       "itrust_fut_net": 78043,
       "dealer_fut_net": -421,
-      "foreign_stock_net": -119.86,
-      "trust_stock_net": 48.55,
-      "itrust_stock_net": 48.55,
-      "dealer_stock_net": 179.33999999999997,
+      "foreign_stock_net": 366.13,
+      "trust_stock_net": 33.66,
+      "itrust_stock_net": 33.66,
+      "dealer_stock_net": 179.34,
+      "total_stock_net": 579.13,
       "foreign_opt_net": -2.53,
       "trust_opt_net": -3.26,
       "itrust_opt_net": -3.26,
@@ -22084,7 +22101,7 @@
   },
   "executive_digest": {
     "futures_summary": "📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：前五大淨部位 <code>-8,393 口</code>、前十大 <code>-21,874 口</code>，特定法人淨部位 <code>-5,371 口</code>。外資台指期未平倉空單 <code>-83,654 口</code>（單日變動 <code>-1,125 口</code>，約合 <code>103.5 億 TWD</code> 契約金額）。⚖️ 中性觀望 / 微幅調整。",
-    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+227.89 億 TWD</code>！其中「外資 <code>+0.00 億</code>」、「投信 <code>+48.55 億</code>」與「自營商 <code>+179.34 億</code>」。",
+    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+579.13 億 TWD</code>！其中「外資 <code>+366.13 億</code>」、「投信 <code>+33.66 億</code>」與「自營商 <code>+179.34 億</code>」。",
     "options_structure": "🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>-2.93 億</code> 與 Put 賣權 <code>+0.40 億</code>；投信買權 <code>-3.27 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>46,000 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>45,600 點</code>。",
     "sentiment_audit": "📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>113.2%</code> (🔴 偏多看撐)，莊家下檔防守支撐力道尚存。",
     "settlement_outlook": "🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：現價 (<code>45,832.62</code>) 處於 Zero Gamma (<code>45,817.6 點</code>) 上方之「正 Gamma 波動度抑制區」。若指數守穩 <code>45,600 點</code> Put Wall，做市商對沖買盤護盤持續，拉回尋求支撐；衝高接近 <code>46,000 點</code> Call Wall 壓力區宜逢高分批停利。"
@@ -22105,9 +22122,9 @@
       },
       "dxy": {
         "date": "08/26 (三)",
-        "price": 98.97,
-        "change": 0.05,
-        "pct": 0.05
+        "price": 99.19,
+        "change": 0.28,
+        "pct": 0.28
       },
       "usdjpy": {
         "date": "08/26 (三)",
@@ -22208,13 +22225,13 @@
         },
         {
           "date": "08/26 (三)",
-          "price": 98.97,
-          "change": 0.05,
-          "pct": 0.05
+          "price": 99.19,
+          "change": 0.28,
+          "pct": 0.28
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.82</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.97</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.97</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.82</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.19</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.97</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": 534,
@@ -22273,7 +22290,7 @@
   "total_gex_plus": -6181.94,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-26 17:09",
+    "last_updated": "2026-08-26 22:46",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
