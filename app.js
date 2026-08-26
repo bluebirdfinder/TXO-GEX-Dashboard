@@ -987,6 +987,7 @@ function switchSession(idx, stopAuto = true) {
   currentSessionIndex = idx;
   renderHistorySessionSelector();
   renderGEXChart();
+  try { updateMicrostructureExpress(); } catch (e) {}
 }
 
 function formatWeekdayBracket(dateStr) {
@@ -2429,29 +2430,40 @@ function updateMicrostructureExpress(livePrice = null) {
   const badgeEl = document.getElementById('express-regime-badge');
   if (!expressContentEl || !gexData) return;
 
-  const nowH = (new Date()).getHours();
-  const isNight = (nowH >= 15 || nowH < 5);
-  
-  const dayP = gexData.session_shift?.day_txf_price || gexData.day_txf_price || gexData.spot_price || 45027.0;
-
-  // Current active price (livePrice > night TXF > day TXF)
-  let currentP = livePrice;
-  if (!currentP || currentP <= 0) {
-    if (isNight) {
-      const nightP = gexData.night_txf_price;
-      if (nightP && Math.abs(nightP - dayP) < 600) {
-        currentP = nightP;
-      } else {
-        currentP = gexData.txf_price || (dayP + 239.0);
-      }
+  const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
+  let activeSession = null;
+  if (sessions && sessions.length > 0) {
+    if (typeof currentSessionIndex === 'number' && sessions[currentSessionIndex]) {
+      activeSession = sessions[currentSessionIndex];
     } else {
-      currentP = gexData.spot_price || dayP;
+      activeSession = sessions[sessions.length - 1];
     }
   }
-    
-  const zg = gexData.zero_gamma_level || 45164.7;
-  const cw = gexData.call_wall_strike || 45350;
-  const pw = gexData.put_wall_strike || 45050;
+
+  // 1. Current active price (livePrice > activeSession TXF/Spot > gexData TXF/Spot)
+  let currentP = livePrice;
+  if (!currentP || currentP <= 0) {
+    if (activeSession) {
+      currentP = activeSession.txf_price || activeSession.spot_price;
+    }
+    if (!currentP || currentP <= 0) {
+      currentP = gexData.txf_price || gexData.spot_price || 45832.62;
+    }
+  }
+
+  // 2. Active Zero Gamma, Call Wall, Put Wall from active session or gexData
+  const zg = (activeSession && activeSession.zero_gamma_level !== undefined) 
+    ? activeSession.zero_gamma_level 
+    : (gexData.zero_gamma_level || 45817.3);
+
+  const cw = (activeSession && activeSession.call_wall_strike !== undefined) 
+    ? activeSession.call_wall_strike 
+    : (gexData.call_wall_strike || 45950);
+
+  const pw = (activeSession && activeSession.put_wall_strike !== undefined) 
+    ? activeSession.put_wall_strike 
+    : (gexData.put_wall_strike || 45650);
+
   const isPosGamma = currentP >= zg;
   const flipDist = (Math.abs(currentP - zg)).toFixed(1);
 
