@@ -1,11 +1,30 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.1)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.2)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ Max Pain 空間籌碼拓撲 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> T型報價視角 (DEFAULT) ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v47.1-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v47.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v47.2 交易時段動態狀態燈號、5 日矩陣日期錨定校正與 Max Pain 拓撲對齊
+
+### ⏰ 1. 5 日歷程矩陣日期錨定校正與結算點數保護 (History Matrix Anchor & Price Protection)
+- **開盤前日期對齊**：修正凌晨 00:00~08:44 日盤開盤前，矩陣將當日（T）尚未開盤之日/夜盤列入展示之錯位問題。開盤前自動錨定至上個交易日（T-1），完美呈現 05:00 AM 定案收盤價與定案期貨點數（如夜盤收盤 45,993 點對齊 TV 4-hour K線）。
+- **定案點數防護**：修正前端 `app.js` 實時跳動邏輯在非交易時段無差別蓋寫定案列點數之 Bug。已定案收盤列鎖定期交所官方結算價，不被現貨加權指數或廣播 Tick 覆蓋。
+
+### 🟢 2. 台灣時間交易時段實時狀態燈號 (Real-Time Taiwan Trading Session Status Pill)
+- 前端 JavaScript 動態依當下台灣時間判定並展示即時狀態：
+  - 🟢 `☀️ 日盤交易中 (08:45-13:45)`
+  - 🟡 `☕ 盤後休市 / 非交易時段 (待 15:00 夜盤開盤)`
+  - 🔵 `🌙 夜盤交易中 (15:00-05:00)`
+  - 🟡 `☕ 早晨休市 / 非交易時段 (待 08:45 日盤開盤)`
+  - ☕ `週五/週末定案版 (週末休市)`
+
+### 📸 3. Max Pain 三大空間型態社群圖卡動態對齊
+- 社群圖卡 P1 卡片 7 加入 Max Pain 空間型態標籤（🟢 多頭強勢軋空型 / 🟡 箱體沉積結算引力型 / 🔴 恐慌避險暴跌型），與網頁版完全對齊。
 
 ---
 

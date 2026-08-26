@@ -2,13 +2,13 @@ name: TAIFEX Data Engine (Day & Night Sessions)
 
 on:
   schedule:
-    # --- 🌙 Night Session 3-Step Failover Window (05:00 Close -> 05:30, 06:00, 06:30 TWD) ---
-    - cron: '30 21 * * 0-4'  # 05:30 TWD (Primary Night Release Window)
+    # --- 🌙 Night Session Settlement Window (05:00 Close -> 05:30, 06:00, 06:30 TWD) ---
+    - cron: '30 21 * * 0-4'  # 05:30 TWD (Primary Night Settlement & Card Generation)
     - cron: '0 22 * * 0-4'   # 06:00 TWD (Failover Retry 1)
     - cron: '30 22 * * 0-4'  # 06:30 TWD (Failover Retry 2)
 
-    # --- ☀️ Day Session 3-Step Failover Window (13:45 Close -> 15:30, 16:00, 16:30 TWD) ---
-    - cron: '30 7 * * 1-5'   # 15:30 TWD (Primary Day Release Window)
+    # --- ☀️ Day Session Settlement & Institutional Chips Window (13:45 Close -> 15:30, 16:00, 16:30 TWD) ---
+    - cron: '30 7 * * 1-5'   # 15:30 TWD (Primary Day Settlement, Chips & Card Generation)
     - cron: '0 8 * * 1-5'    # 16:00 TWD (Failover Retry 1)
     - cron: '30 8 * * 1-5'   # 16:30 TWD (Failover Retry 2)
 

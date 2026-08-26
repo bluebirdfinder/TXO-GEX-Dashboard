@@ -161,11 +161,27 @@ def build_card1_html(data, avatar_url):
     pw_shift = session_shift.get("put_wall_shift") if session_shift.get("put_wall_shift") is not None else (put_wall - put_wall_day)
     pw_shift_color = "#ff4d4f" if pw_shift >= 0 else "#26a69a"
 
-    # 7. MAX PAIN (最大痛點) Dual Session
+    # 7. MAX PAIN (最大痛點) Dual Session & Spatial Topology
     max_pain_day = session_shift.get("day_max_pain") or data.get("day_max_pain") or 45200
     max_pain = data.get("max_pain_strike") or 44600
     pc_ratio = data.get("pc_ratio") or 113.2
     pc_badge = '大勝' if pc_ratio > 115 else ('偏多看撐' if pc_ratio > 105 else '偏空看壓')
+
+    if max_pain < put_wall:
+        mp_topology_text = "🔴 【型態 A：多頭強勢軋空】"
+        mp_topology_bg = "rgba(239, 68, 68, 0.18)"
+        mp_topology_color = "#ef4444"
+        mp_topology_border = "#ef4444"
+    elif put_wall <= max_pain <= call_wall:
+        mp_topology_text = "🟡 【型態 B：對稱健康箱體】"
+        mp_topology_bg = "rgba(255, 215, 0, 0.18)"
+        mp_topology_color = "#ffd700"
+        mp_topology_border = "#ffd700"
+    else:
+        mp_topology_text = "🟢 【型態 C：空頭恐慌避險】"
+        mp_topology_bg = "rgba(0, 230, 118, 0.18)"
+        mp_topology_color = "#00e676"
+        mp_topology_border = "#00e676"
 
     # 8. VEX 恐慌曝險 & GEX+ FLIP Dual Session
     gex_plus_flip_day = session_shift.get("day_gex_plus_flip") or data.get("day_gex_plus_flip") or (data.get("gex_plus_flip", 45217.6) - 200.1)
@@ -322,17 +338,24 @@ def build_card1_html(data, avatar_url):
 
       <!-- Card 7: MAX PAIN (最大痛點) -->
       <div class="stat-card" style="border-left: 4px solid #a855f7;">
-        <div class="stat-label" style="color: #a855f7;">MAX PAIN (最大痛點)</div>
+        <div class="stat-label" style="display: flex; justify-content: space-between; align-items: center; color: #a855f7;">
+          <span>MAX PAIN (最大痛點)</span>
+        </div>
+        <div style="margin-top: 2px; margin-bottom: 2px;">
+          <span style="font-size: 11px; padding: 1.5px 6px; border-radius: 4px; font-weight: bold; background: {mp_topology_bg}; color: {mp_topology_color}; border: 1px solid {mp_topology_border}; display: inline-block;">
+            {mp_topology_text}
+          </span>
+        </div>
         <div class="session-row">
           <span style="color: #ffd700;">☀️ 日盤 (13:45)</span>
-          <strong style="color: #fff; font-size: 19px;">{max_pain_day:,.0f}</strong>
+          <strong style="color: #fff; font-size: 18px;">{max_pain_day:,.0f}</strong>
         </div>
-        <div class="divider"></div>
+        <div class="divider" style="margin: 3px 0;"></div>
         <div class="session-row">
           <span style="color: #a855f7;">🌙 夜盤校正</span>
-          <strong style="color: #a855f7; font-size: 19px;">{max_pain:,.0f}</strong>
+          <strong style="color: #a855f7; font-size: 18px;">{max_pain:,.0f}</strong>
         </div>
-        <div style="font-size: 13.5px; color: #ffd700; margin-top: 3px; font-weight: bold;">P/C Ratio: {pc_ratio:.1f}% ({pc_badge})</div>
+        <div style="font-size: 12.5px; color: #ffd700; margin-top: 2px; font-weight: bold;">P/C Ratio: {pc_ratio:.1f}% ({pc_badge})</div>
       </div>
 
       <!-- Card 8: VEX 恐慌曝險 & GEX+ FLIP Dual Session -->

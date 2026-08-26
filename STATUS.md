@@ -1,10 +1,29 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.1)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.2)
 
-**當前版本**：`v47.1` (2026-08-26 證交所 BFI82U 現貨三大法人鉅額對敲全對齊與券商日報零誤差版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.1)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.1)
+**當前版本**：`v47.2` (2026-08-27 交易時段動態狀態燈號、5 日矩陣日期錨定校正與 Max Pain 拓撲圖卡對齊版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.2)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.2)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v47.2 核心更新亮點（Trading Session Real-Time Status & History Matrix Date Anchor Alignment）
+
+### ⏰ 1. 5 日歷程矩陣日期錨定校正與結算點數保護
+- **開盤前日期對齊**：修正凌晨 00:00~08:44 日盤開盤前，矩陣將當日（T）尚未開盤之日/夜盤列入展示之錯位問題。開盤前自動錨定至上個交易日（T-1），完美呈現 05:00 AM 定案收盤價與定案期貨點數（如夜盤收盤 45,993 點對齊 TV 4-hour K線）。
+- **定案點數防護**：修正前端 `app.js` 實時跳動邏輯在非交易時段無差別蓋寫定案列點數之 Bug。已定案收盤列鎖定期交所官方結算價，不被現貨加權指數或廣播 Tick 覆蓋。
+
+### 🟢 2. 台灣時間交易時段實時狀態燈號
+- 前端 JavaScript 動態依當下台灣時間判定並展示即時狀態：
+  - 🟢 `☀️ 日盤交易中 (08:45-13:45)`
+  - 🟡 `☕ 盤後休市 / 非交易時段 (待 15:00 夜盤開盤)`
+  - 🔵 `🌙 夜盤交易中 (15:00-05:00)`
+  - 🟡 `☕ 早晨休市 / 非交易時段 (待 08:45 日盤開盤)`
+  - ☕ `週五/週末定案版 (週末休市)`
+
+### 📸 3. Max Pain 三大空間型態社群圖卡動態對齊
+- 社群圖卡 P1 卡片 7 加入 Max Pain 空間型態標籤（🟢 多頭強勢軋空型 / 🟡 箱體沉積結算引力型 / 🔴 恐慌避險暴跌型），與網頁版完全對齊。
 
 ---
 

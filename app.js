@@ -320,6 +320,75 @@ function showCacheNotice() {
   }
 }
 
+function updateMarketTradingStatus() {
+  const feedText = document.getElementById('live-feed-text');
+  const feedDot = document.getElementById('live-feed-dot');
+  const feedPill = document.getElementById('live-feed-pill');
+  const sessionBadge = document.getElementById('session-badge');
+
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMinutes();
+  const dow = now.getDay(); // 0=Sun, 6=Sat
+  const timeMins = h * 60 + m;
+
+  let isDayTrading = false;
+  let isNightTrading = false;
+  let isWeekend = (dow === 6 && timeMins >= 5 * 60) || (dow === 0) || (dow === 1 && timeMins < 8 * 60 + 45);
+
+  if (!isWeekend) {
+    if (timeMins >= 8 * 60 + 45 && timeMins < 13 * 60 + 45) {
+      isDayTrading = true;
+    } else if (timeMins >= 15 * 60 || timeMins < 5 * 60) {
+      isNightTrading = true;
+    }
+  }
+
+  let statusText = '';
+  let statusColor = '#ffd700';
+  let badgeHtml = '';
+
+  if (isDayTrading) {
+    statusText = '☀️ 日盤交易中 (Live 即時)';
+    statusColor = '#00e676';
+    badgeHtml = '☀️ 日盤交易中 (08:45-13:45) <span style="background:#00e676;color:#0a0e17;padding:1px 6px;border-radius:4px;font-size:0.7rem;margin-left:4px;font-weight:700;">🟢 即時</span>';
+  } else if (isNightTrading) {
+    statusText = '🌙 夜盤交易中 (Live 即時)';
+    statusColor = '#00d2ff';
+    badgeHtml = '🌙 夜盤交易中 (15:00-05:00) <span style="background:#00d2ff;color:#0a0e17;padding:1px 6px;border-radius:4px;font-size:0.7rem;margin-left:4px;font-weight:700;">🔵 即時</span>';
+  } else if (isWeekend) {
+    statusText = '☕ 週末休市 (待 週一 08:45 開盤)';
+    statusColor = '#a0a0a0';
+    badgeHtml = '🏛️ 週五/週末定案版 <span style="background:#a0a0a0;color:#0a0e17;padding:1px 6px;border-radius:4px;font-size:0.7rem;margin-left:4px;font-weight:700;">☕ 週末休市</span>';
+  } else if (timeMins >= 13 * 60 + 45 && timeMins < 15 * 60) {
+    statusText = '☕ 盤後休市 / 非交易時段 (待 15:00 夜盤開盤)';
+    statusColor = '#ffd700';
+    badgeHtml = '☀️ 官方日盤結算定案版 (13:45) <span style="background:var(--gold-accent);color:#0a0e17;padding:1px 6px;border-radius:4px;font-size:0.7rem;margin-left:4px;font-weight:700;">☕ 盤後休市</span>';
+  } else {
+    // 05:00 ~ 08:45 AM
+    statusText = '☕ 早晨休市 / 非交易時段 (待 08:45 日盤開盤)';
+    statusColor = '#ffd700';
+    badgeHtml = '🌙 官方夜盤結算定案版 (05:00) <span style="background:var(--primary-accent);color:#0a0e17;padding:1px 6px;border-radius:4px;font-size:0.7rem;margin-left:4px;font-weight:700;">☕ 早晨休市</span>';
+  }
+
+  if (feedText && (!feedText.dataset.hasLiveSocket)) {
+    feedText.innerText = statusText;
+  }
+  if (feedDot && (!feedDot.dataset.hasLiveSocket)) {
+    feedDot.style.background = statusColor;
+    feedDot.style.boxShadow = `0 0 8px ${statusColor}`;
+  }
+  if (feedPill && (!feedPill.dataset.hasLiveSocket)) {
+    feedPill.style.borderColor = statusColor;
+    feedPill.style.background = `${statusColor}15`;
+  }
+  if (sessionBadge) {
+    sessionBadge.innerHTML = badgeHtml;
+    sessionBadge.style.borderColor = statusColor;
+    sessionBadge.style.color = statusColor;
+  }
+}
+
 function updateFreshnessIndicator(data) {
   if (data && data.engine_version) {
     const headerBadge = document.getElementById('app-header-version-badge');
@@ -431,17 +500,7 @@ function renderDashboard() {
   if (dateEl) dateEl.innerText = gexData.date || '2026-08-14';
 
   const sessionBadge = document.getElementById('session-badge');
-  if (sessionBadge) {
-    if (gexData.session_mode === 'DAY') {
-      sessionBadge.innerHTML = '☀️ 官方日盤定案版 (13:45) <span style="background:var(--gold-accent);color:#0a0e17;padding:1px 6px;border-radius:4px;font-size:0.7rem;margin-left:4px;font-weight:700;">📌 最新定案</span>';
-      sessionBadge.style.borderColor = 'var(--gold-accent)';
-      sessionBadge.style.color = 'var(--gold-accent)';
-    } else {
-      sessionBadge.innerHTML = '🌙 官方夜盤定案版 (05:00) <span style="background:var(--primary-accent);color:#0a0e17;padding:1px 6px;border-radius:4px;font-size:0.7rem;margin-left:4px;font-weight:700;">📌 最新定案</span>';
-      sessionBadge.style.borderColor = 'var(--primary-accent)';
-      sessionBadge.style.color = 'var(--primary-accent)';
-    }
-  }
+  updateMarketTradingStatus();
 
   // 1. 台指期 (日盤 vs 夜盤)
   const elTxfDay = document.getElementById('stat-txf-day');
@@ -2121,6 +2180,7 @@ function initLiveTickPolling() {
   });
 
   setInterval(async () => {
+    updateMarketTradingStatus();
     // 1. Priority: Check local storage cache (from TV Bookmarklet)
     try {
       const cachedStr = localStorage.getItem('GEX_LIVE_TICK');
@@ -2328,13 +2388,19 @@ function handleLiveTick(data) {
         elZgShift.innerText = `(${sign}${shiftVal.toFixed(1)} 點)`;
       }
 
-      // 3. Synchronize Latest Session in 10-Session History Array for Table 2 (Top Row) & Left GEX Chart
+      // 3. Synchronize Latest Session in 10-Session History Array ONLY IF Session is LIVE
       const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
       if (sessions && sessions.length > 0) {
         const latestSess = sessions[sessions.length - 1];
-        if (latestSess) {
+        const isLive = latestSess && (
+          (latestSess.label && latestSess.label.includes('Live')) || 
+          (latestSess.full_name && latestSess.full_name.includes('Live'))
+        );
+        if (isLive) {
           latestSess.spot_price = data.price;
-          latestSess.txf_price = data.price;
+          if (data.is_futures !== false) {
+            latestSess.txf_price = data.price;
+          }
           latestSess.zero_gamma_level = liveZg;
           latestSess.gex_plus_flip = liveGp;
         }

@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v46.2"
+ENGINE_VERSION = "v47.2"
 
 import os
 import sys
@@ -1470,8 +1470,8 @@ def generate_gex_payload():
     }
 
     # 5-Day Positioning History
-    # 若在盤後資料尚未更新的時段（凌晨 00:00 ~ 12:59），以「前一個交易日」為基準，
-    # 避免把尚未收盤的今天算進 5 日歷史，造成外匯/籌碼日期顯示錯誤。
+    # 若在盤後資料尚未更新的時段（凌晨 00:00 ~ 08:44 AM），以「前一個交易日 (T-1)」為基準，
+    # 避免把尚未開盤的今天算進 5 日歷史，造成矩陣日期與期貨價格顯示錯位。
     def get_last_trading_dt(base_dt):
         """Return the last completed trading day. Before 13:00, step back one day."""
         ref = base_dt
@@ -1492,7 +1492,15 @@ def generate_gex_payload():
             curr -= datetime.timedelta(days=1)
         return list(reversed(days))
 
-    t_days = get_recent_5_trading_days(now_dt)
+    # Before Day market open (08:45 AM), today's trading day hasn't started yet.
+    if now_dt.hour < 8 or (now_dt.hour == 8 and now_dt.minute < 45):
+        ref_matrix_dt = now_dt - datetime.timedelta(days=1)
+    else:
+        ref_matrix_dt = now_dt
+    while ref_matrix_dt.weekday() >= 5:
+        ref_matrix_dt -= datetime.timedelta(days=1)
+
+    t_days = get_recent_5_trading_days(ref_matrix_dt)
 
     opt_inst = fetch_official_taifex_options_matrix()
     lt_inst = fetch_official_taifex_large_trader()
@@ -1852,11 +1860,13 @@ def generate_gex_payload():
         }
     ]
 
+    is_before_open = (now_hour < 8 or (now_hour == 8 and now_minute < 45))
+
     t0_day_item = {
         "id": "t0_day", 
-        "label": "🔥 T日盤 (Live)" if (8 <= now_hour < 14) else ("☀️ T日盤 (盤後快照)" if (14 <= now_hour < 15) else "☀️ T日盤 (定案)"), 
+        "label": "☀️ 日盤 (定案)" if is_before_open else ("🔥 T日盤 (Live)" if (8 <= now_hour < 14) else ("☀️ T日盤 (盤後快照)" if (14 <= now_hour < 15) else "☀️ T日盤 (定案)")), 
         "date_display": f"{t_days[4]} ☀️", 
-        "full_name": f"{t_days[4]} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (盤後快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)")),
+        "full_name": f"{t_days[4]} 日盤 (定案版)" if is_before_open else (f"{t_days[4]} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (盤後快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)"))),
         "spot_price": spot_price, "two_price": otc_price, "txf_price": day_txf_price,
         "zero_gamma_level": day_zero_gamma, "gex_plus_flip": day_gex_plus_flip, "call_wall_strike": day_call_wall,
         "put_wall_strike": day_put_wall, "max_pain_strike": day_max_pain, "shift_vs_prev": -110,
@@ -1868,9 +1878,9 @@ def generate_gex_payload():
 
     t0_night_item = {
         "id": "t0_night", 
-        "label": "🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 5) else "🌙 T夜盤 (05:00 定案)", 
+        "label": "🌙 夜盤 (05:00 定案)" if is_before_open else ("🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 5) else "🌙 T夜盤 (05:00 定案)"), 
         "date_display": f"{t_days[4]} 🌙", 
-        "full_name": f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)"),
+        "full_name": f"{t_days[4]} 夜盤 (05:00 定案版)" if is_before_open else (f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)")),
         "spot_price": active_night_spot, "two_price": otc_price, "txf_price": night_txf_price,
         "zero_gamma_level": gex_profile['zero_gamma_level'], "gex_plus_flip": gex_profile['gex_plus_flip'], "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": txf_shift,
@@ -1878,11 +1888,11 @@ def generate_gex_payload():
         "margin_maint_published": False
     }
 
-    # Add today's day session
+    # Add day session
     history_10_sessions.append(t0_day_item)
 
-    # Only append today's night session if night trading is actually active or completed (15:00 PM ~ 08:00 AM)
-    if now_hour >= 15 or now_hour < 8:
+    # Only append night session if night trading is actually active, completed, or running before morning open
+    if is_before_open or now_hour >= 15 or now_hour < 8:
         history_10_sessions.append(t0_night_item)
 
     # Compute exact GEX bar distribution for each historical session on a fixed global strike grid

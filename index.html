@@ -27,36 +27,7 @@
 </head>
 <body>
 
-  <!-- Educational Guide Modal -->
-  <div id="education-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content" style="max-width: 580px; max-height: 85vh; overflow-y: auto;">
-      <div class="modal-header">
-        <h3 style="margin: 0; font-size: 1.15rem; color: var(--gold-accent);">💡 判讀教學與 Gamma Exposure 指南</h3>
-        <button id="close-edu-modal" class="close-btn">&times;</button>
-      </div>
-      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
-        <h4 style="color: var(--primary-accent); margin: 12px 0 6px 0;">1. 甚麼是 Gamma Exposure (GEX)？</h4>
-        <p style="color: var(--text-muted);">
-          GEX 是衡量選擇權做市商（Market Maker）在特定履約價位，因標的物價格變動而必須進行動態避險（Delta Hedge）的金額規模。當 GEX 為正，做市商採「低買高賣」穩定市場；當 GEX 為負，做市商採「順風追跌殺跌」放大市場波動！
-        </p>
 
-        <h4 style="color: var(--call-color); margin: 12px 0 6px 0;">2. 關鍵指標解讀</h4>
-        <ul style="padding-left: 18px; color: var(--text-muted);">
-          <li><strong style="color: var(--gold-accent);">Zero Gamma (轉折點)</strong>：正/負 Gamma 的分水嶺。高於此點市場平穩；低於此點易引爆做市商追殺盤。</li>
-          <li><strong style="color: var(--call-color);">Call Wall (天花板)</strong>：Call 做市商避險買單最多的履約價，通常為上檔強烈壓力區。</li>
-          <li><strong style="color: var(--put-color);">Put Wall (地板)</strong>：Put 做市商避險賣單最多的履約價，通常為下檔強烈支撐區。</li>
-          <li><strong style="color: var(--primary-accent);">Max Pain (最大痛點)</strong>：週三結算日讓選擇權買方總獲利最小、賣方（莊家）獲利最大的結算價格。</li>
-          <li><strong style="color: var(--put-color);">VEX (恐慌曝險)</strong>：衡量隱含波動率 (VIX) 暴飆對做市商避險買賣盤的放大器。負值越深，盤中急殺時做市商越會追殺砍期貨！</li>
-          <li><strong style="color: var(--gold-accent);">GEX+ Flip (早鳥防守線)</strong>：結合價格與恐慌感後的做市商真實防守底線。在暴跌中會比 Zero Gamma 更早發出避險告警！</li>
-        </ul>
-
-        <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">3. 日夜盤切換與校正</h4>
-        <p style="color: var(--text-muted);">
-          本系統上半部卡片預設顯示 <code>13:45 日盤官方定案數據</code>，下半部顯示 <code>05:00 夜盤收盤價校正數據</code>，協助您精確判斷隔日開盤前的防守位移與價差。
-        </p>
-      </div>
-    </div>
-  </div>
 
   <!-- ℹ️ 籌碼分級標準說明 Modal Overlay -->
   <div id="taxonomy-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
@@ -347,7 +318,7 @@
         <div class="logo-area">
           <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>尋鳥 Bluebird Finder</span>
-            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v47.1</span>
+            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v47.2</span>
           </h1>
           <div class="tagline">台指選擇權 Gamma / Vanna Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
@@ -937,7 +908,7 @@
     <footer>
       <p style="font-weight: 700; color: var(--primary-accent); margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
         <img src="assets/avatar.png" alt="Bluebird Finder Avatar" style="width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--primary-accent); vertical-align: middle;">
-        <span id="app-footer-version-badge">尋鳥 Bluebird Finder • TXO GEX 量化分析系統 v47.1</span>
+        <span id="app-footer-version-badge">尋鳥 Bluebird Finder • TXO GEX 量化分析系統 v47.2</span>
       </p>
       <p style="opacity: 0.85; margin-bottom: 6px; font-size: 0.8rem;">
         © 2026 尋鳥 Bluebird Finder Quant Labs. 版權所有，未經授權請勿商業重製與無償轉載。
@@ -1126,6 +1097,76 @@
           <li style="margin-bottom: 8px;"><strong style="color: #ff5252;">🔴 當 VEX 為負值時 (恐慌賣壓強，最常見)</strong>：<br><strong>GEX+ Flip 會比 Zero Gamma 高！</strong>（例如 44,848 > 44,778）。因為市場恐慌賣壓大，不用跌到 44,778，大盤在更高的 44,848 點做市商就提前恐慌避險了。<strong>提供您「提早防範大暴跌」的早鳥警報！</strong></li>
           <li><strong style="color: #00e676;">🟢 當 VEX 為正值時 (市場氣氛樂觀、買盤護盤厚)</strong>：<br><strong>GEX+ Flip 會比 Zero Gamma 低！</strong>（例如 44,710 < 44,778）。因為市場安定，就算跌破 44,778，做市商手裡緩衝夠，防守線可以退守到更低。<strong>告訴您大盤抗跌性極強，不要輕易被假跌破騙掉多單！</strong></li>
         </ul>
+      </div>
+
+      <!-- 🏰 5. 盤勢四大經典組合情境速查與實戰解析 Box -->
+      <div id="market-scenarios-section" style="background: rgba(0, 210, 255, 0.08); border: 1px solid var(--primary-accent); border-radius: 12px; padding: 18px; margin-top: 20px; line-height: 1.7; font-size: 0.85rem; box-shadow: 0 4px 20px rgba(0,210,255,0.15);">
+        <h3 style="color: var(--primary-accent); margin-top: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+          <span>🏰 5. 盤勢四大經典組合情境速查與實戰解析 (Spatial Scenario Permutations)</span>
+        </h3>
+        <p style="margin-bottom: 14px; color: #cbd5e1;">
+          將現價 (Spot)、Zero Gamma (轉折點)、Max Pain 拓撲型態與 GEX+ Flip (早鳥防守線) / VEX 綜合研判，可將盤勢精準歸類為以下 4 種經典情境：
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          
+          <!-- Scenario 1 -->
+          <div style="background: #1e293b; border-left: 4px solid #ef4444; border-radius: 8px; padding: 12px 16px;">
+            <div style="font-weight: bold; color: #ef4444; font-size: 0.92rem; margin-bottom: 4px;">
+              情境 1：【多頭強勢軋空盤】 (Bullish Squeeze)
+            </div>
+            <div style="font-size: 0.8rem; color: var(--gold-accent); margin-bottom: 6px; font-family: monospace;">
+              • 排列組合: 現價 &gt; Zero Gamma &nbsp;|&nbsp; Max Pain 為 🔴 型態 A (Max Pain &lt; Put Wall) &nbsp;|&nbsp; VEX &ge; 0
+            </div>
+            <div style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.6;">
+              • <strong>盤面意涵</strong>：下檔 Put Wall 護盤極為堅固，大額 Call 累積極重拖低痛點。多頭動能強勁，做市商正 Gamma 穩定護盤。<br>
+              • <strong>實戰策略</strong>：拉回測試 Put Wall 皆為買點或首防 Put Wall 建立 【2腳】 Bull Put Spread 防守；嚴禁盲目摸頂做空。
+            </div>
+          </div>
+
+          <!-- Scenario 2 -->
+          <div style="background: #1e293b; border-left: 4px solid #ffd700; border-radius: 8px; padding: 12px 16px;">
+            <div style="font-weight: bold; color: #ffd700; font-size: 0.92rem; margin-bottom: 4px;">
+              情境 2：【箱體對稱沉積 / 結算引力盤】 (Balanced Magnet Box)
+            </div>
+            <div style="font-size: 0.8rem; color: var(--gold-accent); margin-bottom: 6px; font-family: monospace;">
+              • 排列組合: Put Wall &le; 現價 &le; Call Wall &nbsp;|&nbsp; Max Pain 為 🟡 型態 B (Put Wall &le; Max Pain &le; Call Wall) &nbsp;|&nbsp; Zero Gamma 居中央
+            </div>
+            <div style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.6;">
+              • <strong>盤面意涵</strong>：Call 與 Put 籌碼分佈均衡，盤勢維持箱體震盪。週三結算日前夕，現價具強烈「結算引力」會被吸往 Max Pain 價位歸零買方權利金。<br>
+              • <strong>實戰策略</strong>：建立 【4腳】 Iron Condor 鐵鷹雙賣，賺取雙邊時間價值 (Theta) 衰減。
+            </div>
+          </div>
+
+          <!-- Scenario 3 -->
+          <div style="background: #1e293b; border-left: 4px solid #00e676; border-radius: 8px; padding: 12px 16px;">
+            <div style="font-weight: bold; color: #00e676; font-size: 0.92rem; margin-bottom: 4px;">
+              情境 3：【早鳥恐慌暴跌踩踏盤】 (Panic Sell-off Squeeze)
+            </div>
+            <div style="font-size: 0.8rem; color: var(--gold-accent); margin-bottom: 6px; font-family: monospace;">
+              • 排列組合: 現價 &lt; GEX+ Flip (早鳥防守線) &nbsp;|&nbsp; VEX 負值極深 (&lt; -5億) &nbsp;|&nbsp; Max Pain 為 🟢 型態 C (Put Wall &lt;&lt; Max Pain)
+            </div>
+            <div style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.6;">
+              • <strong>盤面意涵</strong>：做市商 Delta 避險買單不足，恐慌 VIX 暴飆觸發做市商順風追殺砍期貨。避險告警會在跌破 GEX+ Flip 時提前發動（早於跌破 Zero Gamma）。<br>
+              • <strong>實戰策略</strong>：建立 【2腳】 Bear Call Spread 防禦，或微台/買方避險，嚴禁盲目抄底。
+            </div>
+          </div>
+
+          <!-- Scenario 4 -->
+          <div style="background: #1e293b; border-left: 4px solid #38bdf8; border-radius: 8px; padding: 12px 16px;">
+            <div style="font-weight: bold; color: #38bdf8; font-size: 0.92rem; margin-bottom: 4px;">
+              情境 4：【假跌破 / 護盤強防守盤】 (False Breakdown Defense)
+            </div>
+            <div style="font-size: 0.8rem; color: var(--gold-accent); margin-bottom: 6px; font-family: monospace;">
+              • 排列組合: 現價跌破 Zero Gamma 但仍在 GEX+ Flip 之上 (GEX+ Flip &lt; Zero Gamma) &nbsp;|&nbsp; VEX &gt; 0 (護盤)
+            </div>
+            <div style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.6;">
+              • <strong>盤面意涵</strong>：市場氣氛安定，做市商手握護盤緩衝；跌破 Zero Gamma 屬於「假跌破洗盤」，下檔 GEX+ Flip 提供二次強烈抗跌力道。<br>
+              • <strong>實戰策略</strong>：切勿盲目追空，留意 GEX+ Flip 附近的拉回止跌反彈與護盤力道。
+            </div>
+          </div>
+
+        </div>
       </div>
 
     </div>
