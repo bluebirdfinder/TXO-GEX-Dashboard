@@ -1,11 +1,19 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.2)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.3)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> T型報價視角 (DEFAULT) ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v47.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v47.3-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v47.3 日夜盤微觀結構速報當下即時盤態單向強防護鎖定
+
+### 📌 1. 當下即時盤態單向鎖定 (Microstructure Express Current Market Focus Lock)
+- 徹底鎖定 `📌 日夜盤微觀結構速報` 於最新/當下實時盤態與即時 Tick 價位，避免點擊 5 日歷史表格列時干擾當下解讀。
+- 保留 5 日表格與 Satellite GEX 雲圖的歷史切換功能，但速報卡片永遠專注於最新市場情境 (如即時現價與當前 Zero Gamma / Call Wall / Put Wall 距離)。
 
 ---
 

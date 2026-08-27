@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v47.2"
+ENGINE_VERSION = "v47.3"
 
 import os
 import sys
@@ -1860,6 +1860,7 @@ def generate_gex_payload():
         }
     ]
 
+    now_minute = now_dt.minute
     is_before_open = (now_hour < 8 or (now_hour == 8 and now_minute < 45))
 
     t0_day_item = {

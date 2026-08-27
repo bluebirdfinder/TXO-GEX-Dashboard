@@ -1,10 +1,18 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.2)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.3)
 
-**當前版本**：`v47.2` (2026-08-27 交易時段動態狀態燈號、5 日矩陣日期錨定校正與 Max Pain 拓撲圖卡對齊版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.2)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.2)
+**當前版本**：`v47.3` (2026-08-27 日夜盤微觀結構速報當下即時盤態單向強防護鎖定版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.3)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.3)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v47.3 核心更新亮點（Microstructure Express Current Market Focus Lock）
+
+### 📌 1. 當下即時盤態單向鎖定
+- 徹底鎖定 `📌 日夜盤微觀結構速報` 於最新/當下實時盤態與即時 Tick 價位，避免點擊 5 日歷史表格列時干擾當下解讀。
+- 保留 5 日表格與 Satellite GEX 雲圖的歷史切換功能，但速報卡片永遠專注於最新市場情境 (如即時現價與當前 Zero Gamma / Call Wall / Put Wall 距離)。
 
 ---
 
