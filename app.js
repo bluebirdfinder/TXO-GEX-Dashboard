@@ -987,7 +987,6 @@ function switchSession(idx, stopAuto = true) {
   currentSessionIndex = idx;
   renderHistorySessionSelector();
   renderGEXChart();
-  try { updateMicrostructureExpress(); } catch (e) {}
 }
 
 function formatWeekdayBracket(dateStr) {
@@ -2431,14 +2430,8 @@ function updateMicrostructureExpress(livePrice = null) {
   if (!expressContentEl || !gexData) return;
 
   const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
-  let activeSession = null;
-  if (sessions && sessions.length > 0) {
-    if (typeof currentSessionIndex === 'number' && sessions[currentSessionIndex]) {
-      activeSession = sessions[currentSessionIndex];
-    } else {
-      activeSession = sessions[sessions.length - 1];
-    }
-  }
+  // Always lock onto the latest / current active market session
+  const activeSession = (sessions && sessions.length > 0) ? sessions[sessions.length - 1] : null;
 
   // 1. Current active price (livePrice > activeSession TXF/Spot > gexData TXF/Spot)
   let currentP = livePrice;
