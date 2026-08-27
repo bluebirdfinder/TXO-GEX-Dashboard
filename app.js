@@ -1813,9 +1813,30 @@ function populateAiQuantDigest() {
   if (!container || !gexData) return;
 
   const digest = gexData.ai_ex_dividend_digest || {};
+
+  // Derive current active session numbers to align 100% with top KPI cards
+  const sessions = gexData.history_10_sessions || [];
+  const activeSess = (sessions.length > 0) ? sessions[sessions.length - 1] : gexData;
+
+  const curPrice = activeSess.txf_price || activeSess.spot_price || gexData.spot_price || 0;
+  const curZg = activeSess.zero_gamma_level || gexData.zero_gamma_level || 0;
+  const curCw = activeSess.call_wall_strike || gexData.call_wall_strike || 0;
+  const curPw = activeSess.put_wall_strike || gexData.put_wall_strike || 0;
+
+  const gexRegime = (curPrice >= curZg) ? "正 GEX 護盤區" : "負 GEX 追殺賣盤區";
+  const gexColor = (curPrice >= curZg) ? "var(--call-color)" : "var(--put-color)";
+
+  const bullet1Text = (curPrice > 0 && curZg > 0)
+    ? `🎯 <strong>台指大盤 GEX 位階與動態判讀 (<span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>)</strong>：台指現價 <span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>，對照 Zero Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span>)，總 GEX 處於 <span style="color: ${gexColor}; font-weight:700;">${gexRegime}</span>。若持續守穩 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點 Put Wall 支撐</span>，莊家對沖護盤力道將維繫常態盤整。`
+    : (digest.bullet_1 || '');
+
+  const bullet2Text = (curCw > 0 && curPw > 0)
+    ? `🧱 <strong>週月選莊家牆與結算位階 (<span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} / ${curPw.toLocaleString()}</span>)</strong>：週月選主力天花板集中於 <span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} 點</span> (Call Wall 週月選衝高壓力柱)；波段防守鐵板位於 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點</span> (Put Wall 避險防守柱)；結算前夕宜注意轉折點 <span style="color: var(--gold-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span> 之磁吸震盪點位。`
+    : (digest.bullet_2 || '');
+
   let html = '';
-  if (digest.bullet_1) html += `<p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${highlightDigestText(digest.bullet_1)}</p>`;
-  if (digest.bullet_2) html += `<p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${highlightDigestText(digest.bullet_2)}</p>`;
+  if (bullet1Text) html += `<p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${highlightDigestText(bullet1Text)}</p>`;
+  if (bullet2Text) html += `<p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${highlightDigestText(bullet2Text)}</p>`;
   if (digest.bullet_3) html += `<p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${highlightDigestText(digest.bullet_3)}</p>`;
   if (digest.bullet_4) html += `<p style="margin-bottom: 0; line-height: 1.7; font-size: 0.88rem;">${highlightDigestText(digest.bullet_4)}</p>`;
 
