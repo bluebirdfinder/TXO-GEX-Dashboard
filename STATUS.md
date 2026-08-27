@@ -1,10 +1,19 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.6)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.7)
 
-**當前版本**：`v47.6` (2026-08-27 即時社群圖卡重構渲染與 HTTP 快照快取防護強防禦版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.6)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.6)
+**當前版本**：`v47.7` (2026-08-27 iOS Safari 與行動裝置同步觸控手勢下載防護修復版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.7)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.7)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v47.7 核心更新亮點（iOS Safari Synchronous Touch Gesture Fix）
+
+### 📱 1. iOS Safari 同步觸控手勢下載防護 (`app.js`)
+- **徹底消除 `await fetch()` 非同步阻斷**：修復 iOS Safari 在 `link.click()` 之前若存在 `await fetch()` 異步等待會導致「觸控手勢上下文 (User Gesture Stack)」丟失而被 iPhone 默默攔截下載的 Bug。
+- **純同步 `downloadSingleCard()` 觸發**：將單張圖卡下載改為純同步 `<a>` 標籤點擊發起，100% 保留 iPhone/Android 手勢，完美彈出原生下載提示。
+- **行動裝置友善引導**： Modal 內加入『💡 手機用戶小貼士』，引導 iPhone / Android 使用者亦可直接【長按圖片】點選『加入照片』儲存至相簿。
 
 ---
 

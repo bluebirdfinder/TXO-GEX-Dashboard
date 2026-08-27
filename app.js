@@ -1924,40 +1924,21 @@ function isMobileDevice() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 }
 
-async function downloadSingleCard(fileUrl, fileName) {
-  try {
-    const cleanUrl = fileUrl.split('?')[0];
-    const fetchUrl = `${cleanUrl}?t=${Date.now()}`;
-    const response = await fetch(fetchUrl, { cache: 'no-cache' });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    
-    setTimeout(() => {
-      if (link.parentNode) link.parentNode.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
-    }, 15000);
-  } catch (err) {
-    console.warn('Blob download fallback to direct link:', err);
-    const link = document.createElement('a');
-    const cleanUrl = fileUrl.split('?')[0];
-    link.href = `${cleanUrl}?t=${Date.now()}`;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    setTimeout(() => {
-      if (link.parentNode) link.parentNode.removeChild(link);
-    }, 2000);
-  }
+function downloadSingleCard(fileUrl, fileName) {
+  const cleanUrl = fileUrl.split('?')[0];
+  const downloadUrl = `${cleanUrl}?t=${Date.now()}`;
+  
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => {
+    if (link.parentNode) link.parentNode.removeChild(link);
+  }, 2000);
 }
 
-async function downloadAllCards() {
+function downloadAllCards() {
   const t = Date.now();
   const cards = [
     { url: `data/social_card_p1_overview.png?t=${t}`, name: 'Bluebird_Finder_GEX_P1_Overview.png' },
@@ -1965,19 +1946,12 @@ async function downloadAllCards() {
     { url: `data/social_card_p3_sector_rotation.png?t=${t}`, name: 'Bluebird_Finder_GEX_P3_Sector.png' }
   ];
 
-  // Mobile OS (iOS Safari / Android Chrome) drops concurrent download prompts.
-  // ZIP packaging is 100% reliable on mobile as it triggers 1 single download dialog.
-  if (isMobileDevice() && typeof JSZip !== 'undefined') {
-    return downloadCardsZip();
-  }
-
-  const delayMs = isMobileDevice() ? 1500 : 800;
-  for (let i = 0; i < cards.length; i++) {
-    await downloadSingleCard(cards[i].url, cards[i].name);
-    if (i < cards.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, delayMs));
-    }
-  }
+  const delayMs = isMobileDevice() ? 1200 : 600;
+  cards.forEach((card, index) => {
+    setTimeout(() => {
+      downloadSingleCard(card.url, card.name);
+    }, index * delayMs);
+  });
 }
 
 async function downloadCardsZip() {
@@ -2010,7 +1984,7 @@ async function downloadCardsZip() {
       console.warn('Zip creation failed, fallback to sequential download:', err);
     }
   }
-  await downloadAllCards();
+  downloadAllCards();
 }
 
 function initModals() {

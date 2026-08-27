@@ -1,11 +1,20 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.6)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.7)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v47.6-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v47.7-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v47.7 iOS Safari 同步觸控手勢下載防護修復
+
+### 📱 1. iOS Safari 同步觸控手勢下載防護 (iOS Safari Synchronous Touch Gesture Fix)
+- **徹底消除 `await fetch()` 非同步阻斷**：修復 iOS Safari 在 `link.click()` 之前若存在 `await fetch()` 異步等待會導致「觸控手勢上下文 (User Gesture Stack)」丟失而被 iPhone 默默攔截下載的 Bug。
+- **純同步 `downloadSingleCard()` 觸發**：將單張圖卡下載改為純同步 `<a>` 標籤點擊發起，100% 保留 iPhone/Android 手勢，完美彈出原生下載提示。
+- **行動裝置友善引導**： Modal 內加入『💡 手機用戶小貼士』，引導 iPhone / Android 使用者亦可直接【長按圖片】點選『加入照片』儲存至相簿。
 
 ---
 
