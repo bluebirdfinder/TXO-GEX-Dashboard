@@ -1,10 +1,18 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.5)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.6)
 
-**當前版本**：`v47.5` (2026-08-27 手機版行動裝置多圖下載與跨平台 ZIP 智慧自動包裝修復版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.5)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.5)
+**當前版本**：`v47.6` (2026-08-27 即時社群圖卡重構渲染與 HTTP 快照快取防護強防禦版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.6)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.6)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v47.6 核心更新亮點（Fresh Social Card Regeneration & HTTP Cache Buster）
+
+### 📸 1. 社群圖卡即時重新生成與防快取機制 (`app.js`)
+- **本機/伺服器端圖卡即時重新渲染**：執行 `python scripts/fetch_and_calc_vision.py` 重新根據最新市場籌碼資料產出最新 `social_card_p1_overview.png` (P1 盤後總覽)、`social_card_p2_gex_profile.png` (P2 GEX 對沖牆) 與 `social_card_p3_sector_rotation.png` (P3 板塊資金輪動)。
+- **HTTP/CDN Cache-Buster 強制破壞快取**：為所有下載請求（Single PNG、All PNGs、ZIP 打包）與 Modal 預覽圖卡注入動態時間戳記 (`?t=${Date.now()}`) 與 `{ cache: 'no-cache' }` 標頭，徹底解決瀏覽器讀取 08:00 AM 舊圖快取的問題。
 
 ---
 

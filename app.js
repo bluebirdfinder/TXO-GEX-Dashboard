@@ -1926,7 +1926,9 @@ function isMobileDevice() {
 
 async function downloadSingleCard(fileUrl, fileName) {
   try {
-    const response = await fetch(fileUrl);
+    const cleanUrl = fileUrl.split('?')[0];
+    const fetchUrl = `${cleanUrl}?t=${Date.now()}`;
+    const response = await fetch(fetchUrl, { cache: 'no-cache' });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const blob = await response.blob();
     const blobUrl = URL.createObjectURL(blob);
@@ -1944,7 +1946,8 @@ async function downloadSingleCard(fileUrl, fileName) {
   } catch (err) {
     console.warn('Blob download fallback to direct link:', err);
     const link = document.createElement('a');
-    link.href = fileUrl;
+    const cleanUrl = fileUrl.split('?')[0];
+    link.href = `${cleanUrl}?t=${Date.now()}`;
     link.download = fileName;
     document.body.appendChild(link);
     link.click();
@@ -1955,10 +1958,11 @@ async function downloadSingleCard(fileUrl, fileName) {
 }
 
 async function downloadAllCards() {
+  const t = Date.now();
   const cards = [
-    { url: 'data/social_card_p1_overview.png', name: 'Bluebird_Finder_GEX_P1_Overview.png' },
-    { url: 'data/social_card_p2_gex_profile.png', name: 'Bluebird_Finder_GEX_P2_Profile.png' },
-    { url: 'data/social_card_p3_sector_rotation.png', name: 'Bluebird_Finder_GEX_P3_Sector.png' }
+    { url: `data/social_card_p1_overview.png?t=${t}`, name: 'Bluebird_Finder_GEX_P1_Overview.png' },
+    { url: `data/social_card_p2_gex_profile.png?t=${t}`, name: 'Bluebird_Finder_GEX_P2_Profile.png' },
+    { url: `data/social_card_p3_sector_rotation.png?t=${t}`, name: 'Bluebird_Finder_GEX_P3_Sector.png' }
   ];
 
   // Mobile OS (iOS Safari / Android Chrome) drops concurrent download prompts.
@@ -1977,17 +1981,18 @@ async function downloadAllCards() {
 }
 
 async function downloadCardsZip() {
+  const t = Date.now();
   const cards = [
-    { url: 'data/social_card_p1_overview.png', name: 'Bluebird_Finder_GEX_P1_Overview.png' },
-    { url: 'data/social_card_p2_gex_profile.png', name: 'Bluebird_Finder_GEX_P2_Profile.png' },
-    { url: 'data/social_card_p3_sector_rotation.png', name: 'Bluebird_Finder_GEX_P3_Sector.png' }
+    { url: `data/social_card_p1_overview.png?t=${t}`, name: 'Bluebird_Finder_GEX_P1_Overview.png' },
+    { url: `data/social_card_p2_gex_profile.png?t=${t}`, name: 'Bluebird_Finder_GEX_P2_Profile.png' },
+    { url: `data/social_card_p3_sector_rotation.png?t=${t}`, name: 'Bluebird_Finder_GEX_P3_Sector.png' }
   ];
 
   if (typeof JSZip !== 'undefined') {
     try {
       const zip = new JSZip();
       for (const card of cards) {
-        const resp = await fetch(card.url);
+        const resp = await fetch(card.url, { cache: 'no-cache' });
         const blob = await resp.blob();
         zip.file(card.name, blob);
       }
@@ -2023,6 +2028,14 @@ function initModals() {
       if (e) e.preventDefault();
       if (socialModal) {
         socialModal.style.display = 'flex';
+        const imgs = socialModal.querySelectorAll('img');
+        const t = Date.now();
+        imgs.forEach(img => {
+          if (img.src && img.src.includes('data/social_card')) {
+            const baseSrc = img.src.split('?')[0];
+            img.src = `${baseSrc}?t=${t}`;
+          }
+        });
       }
     };
   }
