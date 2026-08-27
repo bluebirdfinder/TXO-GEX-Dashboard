@@ -1,10 +1,19 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.3)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.4)
 
-**當前版本**：`v47.3` (2026-08-27 日夜盤微觀結構速報當下即時盤態單向強防護鎖定版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.3)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.3)
+**當前版本**：`v47.4` (2026-08-27 IG/Threads 社群圖卡一鍵下載與 Blob 零阻檔防護修正版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.4)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.4)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v47.4 核心更新亮點（IG/Threads Social Cards Batch PNG Download Engine Fix）
+
+### 📸 1. 社群圖卡一鍵下載 Blob 零阻檔防護 (`app.js`)
+- **移除 `target="_blank"` 衝突**：重構 `downloadSingleCard()` 絕不添加 `target="_blank"`，解決 Chrome / Edge 彈出式視窗攔截器 (Popup Blocker) 將第一張圖卡 (`P1_Overview.png`) 誤判為腳本彈窗而阻檔下載的問題。
+- **內存 Blob 物件下載**：透過 `fetch()` 將圖卡轉為 `Blob` 物件並綁定 `URL.createObjectURL`，100% 強制瀏覽器發起原生檔案下載。
+- **序列化 Async/Await 佇列下載**：將「🚀 一鍵下載全部 3 張 PNG」改為 `async/await` 順序流觸發（每張間隔 500ms），徹底克服瀏覽器多檔案下載防護機制 (Multiple Download Warning)，保證 P1、P2、P3 全套圖卡 100% 穩定存檔。
 
 ---
 

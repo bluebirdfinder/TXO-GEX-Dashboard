@@ -1920,30 +1920,49 @@ function populateStockFutures() {
   tbody.innerHTML = html;
 }
 
-function downloadSingleCard(fileUrl, fileName) {
-  const link = document.createElement('a');
-  link.href = fileUrl;
-  link.download = fileName;
-  link.target = '_blank';
-  document.body.appendChild(link);
-  link.click();
-  setTimeout(() => {
-    if (link.parentNode) link.parentNode.removeChild(link);
-  }, 1000);
+async function downloadSingleCard(fileUrl, fileName) {
+  try {
+    const response = await fetch(fileUrl);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    
+    setTimeout(() => {
+      if (link.parentNode) link.parentNode.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    }, 2000);
+  } catch (err) {
+    console.warn('Blob download fallback to direct link:', err);
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      if (link.parentNode) link.parentNode.removeChild(link);
+    }, 1000);
+  }
 }
 
-function downloadAllCards() {
+async function downloadAllCards() {
   const cards = [
     { url: 'data/social_card_p1_overview.png', name: 'Bluebird_Finder_GEX_P1_Overview.png' },
     { url: 'data/social_card_p2_gex_profile.png', name: 'Bluebird_Finder_GEX_P2_Profile.png' },
     { url: 'data/social_card_p3_sector_rotation.png', name: 'Bluebird_Finder_GEX_P3_Sector.png' }
   ];
 
-  cards.forEach((card, index) => {
-    setTimeout(() => {
-      downloadSingleCard(card.url, card.name);
-    }, index * 350);
-  });
+  for (let i = 0; i < cards.length; i++) {
+    await downloadSingleCard(cards[i].url, cards[i].name);
+    if (i < cards.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
 }
 
 async function downloadCardsZip() {
@@ -1975,7 +1994,7 @@ async function downloadCardsZip() {
       console.warn('Zip creation failed, fallback to sequential download:', err);
     }
   }
-  downloadAllCards();
+  await downloadAllCards();
 }
 
 function initModals() {

@@ -1,11 +1,20 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.3)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.4)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> T型報價視角 (DEFAULT) ✦ 社群圖卡 Blob 零阻檔下載 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v47.3-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v47.4-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v47.4 IG/Threads 社群圖卡一鍵下載與 Blob 零阻檔防護修正
+
+### 📸 1. 社群圖卡一鍵下載 Blob 零阻檔防護 (Social Cards Batch PNG Download Engine Fix)
+- **移除 `target="_blank"` 衝突**：重構 `downloadSingleCard()` 絕不添加 `target="_blank"`，解決 Chrome / Edge 彈出式視窗攔截器 (Popup Blocker) 將第一張圖卡 (`P1_Overview.png`) 誤判為腳本彈窗而阻檔下載的問題。
+- **內存 Blob 物件下載**：透過 `fetch()` 將圖卡轉為 `Blob` 物件並綁定 `URL.createObjectURL`，100% 強制瀏覽器發起原生檔案下載。
+- **序列化 Async/Await 佇列下載**：將「🚀 一鍵下載全部 3 張 PNG」改為 `async/await` 順序流觸發（每張間隔 500ms），徹底克服瀏覽器多檔案下載防護機制 (Multiple Download Warning)，保證 P1、P2、P3 全套圖卡 100% 穩定存檔。
 
 ---
 
