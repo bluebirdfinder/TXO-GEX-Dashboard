@@ -1,10 +1,19 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.4)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.5)
 
-**當前版本**：`v47.4` (2026-08-27 IG/Threads 社群圖卡一鍵下載與 Blob 零阻檔防護修正版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.4)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.4)
+**當前版本**：`v47.5` (2026-08-27 手機版行動裝置多圖下載與跨平台 ZIP 智慧自動包裝修復版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.5)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.5)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v47.5 核心更新亮點（Mobile OS Download Throttle & Smart ZIP Auto-Package）
+
+### 📱 1. 手機行動裝置多圖下載與 ZIP 智慧自動包裝修復 (`app.js`)
+- **手機雙核心防護機制**：針對 iOS Safari 與 Android Chrome 在彈出第一張下載提示（Prompt）時會吞掉/阻檔後續 `link.click()` 導致 P2 被吃掉的問題，加入 `isMobileDevice()` 智慧判定。
+- **手機版一鍵自動 ZIP 打包**：行動裝置點擊「🚀 一鍵下載全部 3 張 PNG」時，自動切換為原生 `JSZip` 打包壓縮模式（100% 一點即收 1 個 ZIP 檔，完全不遺漏 P1/P2/P3 任何一張）。
+- **下載間隔與 Blob 生命週期延展**：非 ZIP 下載的間隔從 500ms 拉長至 1,500ms，Blob 記憶體對象釋放延長至 15,000ms，徹底排除行動裝置記憶體與發起頻率限制。
 
 ---
 

@@ -1,11 +1,20 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.4)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.5)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> T型報價視角 (DEFAULT) ✦ 社群圖卡 Blob 零阻檔下載 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> T型報價視角 (DEFAULT) ✦ 手機版 ZIP 智慧自動包裝防漏圖 ✦ 社群圖卡 Blob 零阻檔下載 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v47.4-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v47.5-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v47.5 手機版行動裝置多圖下載與跨平台 ZIP 智慧自動包裝修復
+
+### 📱 1. 手機行動裝置多圖下載與 ZIP 智慧自動包裝修復 (Mobile OS Download Throttle & Smart ZIP)
+- **手機雙核心防護機制**：針對 iOS Safari 與 Android Chrome 在彈出第一張下載提示（Prompt）時會吞掉/阻檔後續 `link.click()` 導致 P2 被吃掉的問題，加入 `isMobileDevice()` 智慧判定。
+- **手機版一鍵自動 ZIP 打包**：行動裝置點擊「🚀 一鍵下載全部 3 張 PNG」時，自動切換為原生 `JSZip` 打包壓縮模式（100% 一點即收 1 個 ZIP 檔，完全不遺漏 P1/P2/P3 任何一張）。
+- **下載間隔與 Blob 生命週期延展**：非 ZIP 下載的間隔從 500ms 拉長至 1,500ms，Blob 記憶體對象釋放延長至 15,000ms，徹底排除行動裝置記憶體與發起頻率限制。
 
 ---
 

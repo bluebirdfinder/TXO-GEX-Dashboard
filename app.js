@@ -1920,6 +1920,10 @@ function populateStockFutures() {
   tbody.innerHTML = html;
 }
 
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+}
+
 async function downloadSingleCard(fileUrl, fileName) {
   try {
     const response = await fetch(fileUrl);
@@ -1936,7 +1940,7 @@ async function downloadSingleCard(fileUrl, fileName) {
     setTimeout(() => {
       if (link.parentNode) link.parentNode.removeChild(link);
       URL.revokeObjectURL(blobUrl);
-    }, 2000);
+    }, 15000);
   } catch (err) {
     console.warn('Blob download fallback to direct link:', err);
     const link = document.createElement('a');
@@ -1946,7 +1950,7 @@ async function downloadSingleCard(fileUrl, fileName) {
     link.click();
     setTimeout(() => {
       if (link.parentNode) link.parentNode.removeChild(link);
-    }, 1000);
+    }, 2000);
   }
 }
 
@@ -1957,10 +1961,17 @@ async function downloadAllCards() {
     { url: 'data/social_card_p3_sector_rotation.png', name: 'Bluebird_Finder_GEX_P3_Sector.png' }
   ];
 
+  // Mobile OS (iOS Safari / Android Chrome) drops concurrent download prompts.
+  // ZIP packaging is 100% reliable on mobile as it triggers 1 single download dialog.
+  if (isMobileDevice() && typeof JSZip !== 'undefined') {
+    return downloadCardsZip();
+  }
+
+  const delayMs = isMobileDevice() ? 1500 : 800;
   for (let i = 0; i < cards.length; i++) {
     await downloadSingleCard(cards[i].url, cards[i].name);
     if (i < cards.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, delayMs));
     }
   }
 }
@@ -1988,7 +1999,7 @@ async function downloadCardsZip() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
       return;
     } catch (err) {
       console.warn('Zip creation failed, fallback to sequential download:', err);
