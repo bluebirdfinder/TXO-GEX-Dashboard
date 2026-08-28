@@ -1,10 +1,25 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v48.1)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.0)
 
-**當前版本**：`v48.1` (2026-08-28 國際重大總經、富台/MSCI與結算日 實時避險防護雷達版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v48.1)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v48.1)
+**當前版本**：`v49.0` (2026-08-28 Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.0)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.0)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v49.0 核心更新亮點（IG & Threads QR Code Follow Engine & Handle ID Integration）
+
+### 📱 1. 獨立高解析度 QR Code 自動生成器 (`scripts/generate_qr_codes.py`)
+- **雙平台高對比度 QR Code**：自動產出高解析度、高對比、相容所有手機鏡頭與第三方 APP 秒讀之 Instagram (`assets/qr_instagram.png`) 與 Threads (`assets/qr_threads.png`) 專屬黑金科技風 QR Code。
+- **QR Code 下方標示官方 ID (`@bluebird_finder`)**：於生成之 QR Code 圖檔、1:1 社群懶人圖卡與 Web 儀表板頁尾清楚標示 `IG: @bluebird_finder` 與 `Threads: @bluebird_finder`。
+
+### 📸 2. 1:1 正方形社群懶人圖卡頁尾整合 (`scripts/generate_social_card.py`)
+- **雙平台 QR Code 吸粉專區**：在每張每日自動生成發布之 1080x1080 圖卡（Card 1/2/3）頁尾加入雙平台 QR Code、官方 ID 標籤與吸粉文案：`📲 掃碼追蹤「尋鳥 Bluebird Finder」 | 每日即時盤中籌碼速報與做市商 GEX 轉折關卡`。
+
+### 🌐 3. Web Dashboard 導覽列與頁尾吸粉卡片 (`index.html` & `style.css`)
+- **頂部 Nav 按鈕**：新增 `📱 追蹤社群 (@bluebird_finder)` 亮眼按鈕，點擊可平滑滾動至頁尾社群專區。
+- **頁尾吸粉卡片**：在頁尾版權宣告前增設大器美觀的 `social-follow-card` 專區，展示雙平台 QR Code、官方 ID 與一鍵開啟連結按鈕。
 
 ---
 

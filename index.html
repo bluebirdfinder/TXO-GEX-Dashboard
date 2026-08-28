@@ -321,7 +321,7 @@
         <div class="logo-area">
           <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>尋鳥 Bluebird Finder</span>
-            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v48.0</span>
+            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v49.0</span>
           </h1>
           <div class="tagline">台指選擇權 Gamma / Vanna Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
@@ -343,6 +343,7 @@
           <span id="live-feed-text">⚪ 官方盤後定案 (靜態分析)</span>
         </div>
         <button id="download-social-card-btn" class="btn" style="border-color: #00d2ff; color: #00d2ff; background: rgba(0, 210, 255, 0.1);">📸 下載 IG/Threads 社群圖卡</button>
+        <button id="social-qr-modal-btn" class="btn" style="border-color: #e1306c; color: #ff6492; background: rgba(225, 48, 108, 0.18); font-weight: 700;" onclick="document.querySelector('.social-follow-card').scrollIntoView({ behavior: 'smooth' });">📱 追蹤社群 (@bluebird_finder)</button>
         <button id="education-btn" class="btn">❓ 判讀教學</button>
         <button id="lock-btn" class="btn" style="border-color: var(--panel-border);">🔒 鎖定</button>
       </div>
@@ -916,11 +917,37 @@
       
     </div>
 
+    <!-- 📱 尋鳥 Bluebird Finder Social Follow Section -->
+    <div class="social-follow-card">
+      <div class="social-follow-info">
+        <div class="social-follow-title">
+          <img src="assets/avatar.png" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--primary-accent);">
+          <span>📲 追蹤「尋鳥 Bluebird Finder」官方社群</span>
+        </div>
+        <div class="social-follow-sub">
+          每日即時發布台指選擇權做市商 GEX 轉折關卡、三大法人期權籌碼變化與 33 大產業輪動分析。<br>
+          掃描下方 QR Code 或點擊按鈕開啟 IG 與 Threads 追蹤！
+        </div>
+      </div>
+      <div class="social-qr-grid">
+        <a href="https://www.instagram.com/bluebird_finder/" target="_blank" rel="noopener noreferrer" class="social-qr-item ig-item" title="開啟 Instagram 追蹤 @bluebird_finder">
+          <img src="assets/qr_instagram.png" alt="Instagram QR Code" class="social-qr-img">
+          <span class="social-qr-handle" style="color: #ff6492;">IG: @bluebird_finder</span>
+          <span class="social-btn-link social-btn-ig">📸 前往 IG 追蹤</span>
+        </a>
+        <a href="https://www.threads.com/@bluebird_finder" target="_blank" rel="noopener noreferrer" class="social-qr-item threads-item" title="開啟 Threads 追蹤 @bluebird_finder">
+          <img src="assets/qr_threads.png" alt="Threads QR Code" class="social-qr-img">
+          <span class="social-qr-handle" style="color: #00f2fe;">Threads: @bluebird_finder</span>
+          <span class="social-btn-link social-btn-threads">🧵 前往 Threads 追蹤</span>
+        </a>
+      </div>
+    </div>
+
     <!-- Footer Disclaimer -->
     <footer>
       <p style="font-weight: 700; color: var(--primary-accent); margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
         <img src="assets/avatar.png" alt="Bluebird Finder Avatar" style="width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--primary-accent); vertical-align: middle;">
-        <span id="app-footer-version-badge">尋鳥 Bluebird Finder • TXO GEX 量化分析系統 v48.0</span>
+        <span id="app-footer-version-badge">尋鳥 Bluebird Finder • TXO GEX 量化分析系統 v49.0</span>
       </p>
       <p style="opacity: 0.85; margin-bottom: 6px; font-size: 0.8rem;">
         © 2026 尋鳥 Bluebird Finder Quant Labs. 版權所有，未經授權請勿商業重製與無償轉載。

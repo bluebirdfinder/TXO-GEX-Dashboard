@@ -28,6 +28,54 @@ def get_avatar_base64(root_dir):
             print(f"[Warning] Failed to read avatar image: {e}")
     return ""
 
+def get_qr_base64(root_dir, platform):
+    qr_filename = f"qr_{platform.lower()}.png"
+    qr_path = os.path.join(root_dir, "assets", qr_filename)
+    if not os.path.exists(qr_path):
+        try:
+            from generate_qr_codes import generate_all_qr_codes
+            generate_all_qr_codes()
+        except Exception as e:
+            print(f"[Warning] Failed to generate QR code: {e}")
+    if os.path.exists(qr_path):
+        try:
+            with open(qr_path, "rb") as f:
+                b64_str = base64.b64encode(f.read()).decode("utf-8")
+                return f"data:image/png;base64,{b64_str}"
+        except Exception as e:
+            print(f"[Warning] Failed to read QR image ({qr_path}): {e}")
+    return ""
+
+def get_social_qr_footer_html(qr_ig_url="", qr_threads_url=""):
+    ig_img = f'<img src="{qr_ig_url}" class="qr-img" alt="IG QR">' if qr_ig_url else ''
+    threads_img = f'<img src="{qr_threads_url}" class="qr-img" alt="Threads QR">' if qr_threads_url else ''
+    return f"""
+      <div class="social-qr-footer">
+        <div class="qr-group">
+          <div class="qr-card" style="border-color: rgba(225, 48, 108, 0.6);">
+            {ig_img}
+            <span class="qr-id" style="color: #ff6492;">IG: @bluebird_finder</span>
+          </div>
+          <div class="qr-card" style="border-color: rgba(0, 242, 254, 0.6);">
+            {threads_img}
+            <span class="qr-id" style="color: #00f2fe;">Threads: @bluebird_finder</span>
+          </div>
+        </div>
+        <div class="social-promo">
+          <div class="social-promo-title">
+            <span>📲 掃碼追蹤「尋鳥 Bluebird Finder」</span>
+          </div>
+          <div class="social-promo-sub">
+            每日即時盤中籌碼速報與做市商 GEX 轉折關卡
+          </div>
+          <div class="social-badge-list">
+            <span class="social-badge badge-ig">Instagram @bluebird_finder</span>
+            <span class="social-badge badge-threads">Threads @bluebird_finder</span>
+          </div>
+        </div>
+      </div>
+    """
+
 def get_common_css():
     return """
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;600;700;900&display=swap');
@@ -38,7 +86,7 @@ def get_common_css():
     background: #0b0f19;
     font-family: 'Inter', 'Noto Sans TC', -apple-system, sans-serif;
     color: #f8fafc;
-    padding: 30px 32px;
+    padding: 24px 28px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -58,59 +106,131 @@ def get_common_css():
     background: rgba(15, 23, 42, 0.85);
     border: 1.5px solid #00f2fe;
     border-radius: 16px;
-    padding: 14px 20px;
+    padding: 12px 18px;
     display: flex;
     align-items: center;
     gap: 16px;
     box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
   }
   .avatar-img {
-    width: 56px;
-    height: 56px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     border: 2px solid #ffd700;
     box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
     object-fit: cover;
   }
   .header-text { display: flex; flex-direction: column; }
-  .brand-title { font-size: 24px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }
-  .brand-sub { font-size: 14.5px; color: #00f2fe; font-weight: 600; margin-top: 2px; }
+  .brand-title { font-size: 23px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; }
+  .brand-sub { font-size: 14px; color: #00f2fe; font-weight: 600; margin-top: 2px; }
 
   .disclaimer-panel {
     background: rgba(15, 23, 42, 0.9);
-    border: 1.5px solid rgba(239, 68, 68, 0.5);
-    border-radius: 14px;
-    padding: 12px 18px;
+    border: 1.5px solid rgba(239, 68, 68, 0.4);
+    border-radius: 12px;
+    padding: 10px 16px;
     position: relative;
   }
   .disc-title {
-    font-size: 14.5px;
+    font-size: 13.5px;
     font-weight: 800;
     color: #ef4444;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     display: flex;
     justify-content: space-between;
   }
   .disc-body {
-    font-size: 12.5px;
+    font-size: 11.5px;
     color: #94a3b8;
-    line-height: 1.42;
+    line-height: 1.38;
   }
   .footer-copyright {
     display: flex;
     justify-content: flex-end;
-    margin-top: -6px;
+    margin-top: -4px;
     margin-bottom: 2px;
   }
   .copyright-text {
-    font-size: 13.5px;
+    font-size: 12.5px;
     color: rgba(255, 255, 255, 0.45);
     font-weight: 600;
   }
+
+  /* Social QR Code Banner */
+  .social-qr-footer {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1.5px solid rgba(0, 210, 255, 0.35);
+    border-radius: 12px;
+    padding: 8px 16px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+  .qr-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .qr-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 4px 6px;
+  }
+  .qr-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    object-fit: contain;
+  }
+  .qr-id {
+    font-size: 10.5px;
+    font-weight: 800;
+    margin-top: 2px;
+    letter-spacing: 0.3px;
+  }
+  .social-promo {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+  }
+  .social-promo-title {
+    font-size: 14.5px;
+    font-weight: 900;
+    color: #ffffff;
+  }
+  .social-promo-sub {
+    font-size: 12px;
+    color: #00d2ff;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .social-badge-list {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .social-badge {
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+  }
+  .badge-ig { background: rgba(225, 48, 108, 0.25); color: #ff6492; border: 1px solid #e1306c; }
+  .badge-threads { background: rgba(0, 242, 254, 0.2); color: #00f2fe; border: 1px solid #00f2fe; }
+
 """
 
-def build_card1_html(data, avatar_url):
+def build_card1_html(data, avatar_url, qr_ig_url="", qr_threads_url=""):
     date_str = data.get("date") or data.get("last_updated_time") or "2026-08-23"
+    social_qr_footer_html = get_social_qr_footer_html(qr_ig_url, qr_threads_url)
     session_name = (data.get("session_name") or "日盤結算籌碼").replace('☀️', '').replace('🌙', '').strip()
 
     session_shift = data.get("session_shift", {})
@@ -197,7 +317,7 @@ def build_card1_html(data, avatar_url):
     vex_sign_day = "+" if total_vex_day >= 0 else ""
     vex_sign = "+" if total_vex >= 0 else ""
 
-    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:56px;height:56px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
+    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:52px;height:52px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
     return f"""<!DOCTYPE html>
 <html lang="zh-TW">
@@ -386,13 +506,12 @@ def build_card1_html(data, avatar_url):
     </div>
 
     <div>
-      <div class="footer-copyright">
-        <span class="copyright-text">© 尋鳥 Bluebird Finder</span>
-      </div>
+      {social_qr_footer_html}
 
       <div class="disclaimer-panel">
         <div class="disc-title">
           <span>⚠️【免責與 AI 數據生成聲明】</span>
+          <span class="copyright-text">© 尋鳥 Bluebird Finder</span>
         </div>
         <div class="disc-body">
           本報告係由「尋鳥 Bluebird Finder Quant Labs」AI 量化數據模組自動編譯生成。內容包含台指期權做市商曝險與動態產業統計，可能因交易所傳輸延遲或演算模型誤差而有錯誤或不完備之處，<strong>使用者應獨立思考並自行對市場數據進行二次查證</strong>。本報告絕不構成任何形式之投資建議，交易人應自負全盤盈虧責任。
@@ -404,8 +523,9 @@ def build_card1_html(data, avatar_url):
 </html>
 """
 
-def build_card2_plotly_html(data, avatar_url):
+def build_card2_plotly_html(data, avatar_url, qr_ig_url="", qr_threads_url=""):
     date_str = data.get("date") or data.get("last_updated") or "2026-08-21"
+    social_qr_footer_html = get_social_qr_footer_html(qr_ig_url, qr_threads_url)
     spot_p = data.get("spot_price") or 45224.29
     zero_gamma = data.get("zero_gamma_level") or 45074.3
     call_wall = data.get("call_wall_strike") or 45500
@@ -427,7 +547,7 @@ def build_card2_plotly_html(data, avatar_url):
     fri_put = [-abs(item.get("fri_put", 0)) for item in sub_items]
     net_gex = [item.get("net_gex", 0) for item in sub_items]
 
-    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:56px;height:56px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
+    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:52px;height:52px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
     plotly_data_json = json.dumps({
         "strikes": strikes,
@@ -475,13 +595,12 @@ def build_card2_plotly_html(data, avatar_url):
     <div id="plotly-gex-container"></div>
 
     <div>
-      <div class="footer-copyright">
-        <span class="copyright-text">© 尋鳥 Bluebird Finder</span>
-      </div>
+      {social_qr_footer_html}
 
       <div class="disclaimer-panel">
         <div class="disc-title">
           <span>⚠️【免責與 AI 數據生成聲明】</span>
+          <span class="copyright-text">© 尋鳥 Bluebird Finder</span>
         </div>
         <div class="disc-body">
           本報告由 AI 量化數據模組自動編譯生成，包含 Call Wall, Put Wall, Zero Gamma 與 VEX 早鳥轉折位。交易人應自行獨立查證與評估風險。
@@ -639,12 +758,13 @@ Plotly.newPlot('plotly-gex-container', traces, layout, {{ responsive: true, disp
 </html>
 """
 
-def build_card3_sector_html(data, avatar_url):
+def build_card3_sector_html(data, avatar_url, qr_ig_url="", qr_threads_url=""):
     date_str = data.get("date") or data.get("last_updated") or "2026-08-21"
+    social_qr_footer_html = get_social_qr_footer_html(qr_ig_url, qr_threads_url)
     sector_data = data.get("sector_capital_rotation") or {}
     sectors = sector_data.get("sectors") or []
 
-    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:56px;height:56px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
+    avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:52px;height:52px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
     progress_bars_html = ""
     for s in sectors:
@@ -725,13 +845,12 @@ def build_card3_sector_html(data, avatar_url):
     </div>
 
     <div>
-      <div class="footer-copyright">
-        <span class="copyright-text">© 尋鳥 Bluebird Finder</span>
-      </div>
+      {social_qr_footer_html}
 
       <div class="disclaimer-panel">
         <div class="disc-title">
           <span>⚠️【免責與 AI 數據生成聲明】</span>
+          <span class="copyright-text">© 尋鳥 Bluebird Finder</span>
         </div>
         <div class="disc-body">
           本報告由「尋鳥 Bluebird Finder Quant Labs」AI 量化模組自動運算編譯，可能含有計算誤植，<strong>請自行複查確認並自負風險</strong>，不構成投資操作建議。
@@ -755,15 +874,17 @@ def generate_bluebird_social_card(gex_data_path=None, output_dir=None):
 
     root_dir = os.path.dirname(os.path.dirname(__file__))
     avatar_url = get_avatar_base64(root_dir)
+    qr_ig_url = get_qr_base64(root_dir, "instagram")
+    qr_threads_url = get_qr_base64(root_dir, "threads")
 
     with open(gex_data_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     os.makedirs(output_dir, exist_ok=True)
 
-    html1 = build_card1_html(data, avatar_url)
-    html2 = build_card2_plotly_html(data, avatar_url)
-    html3 = build_card3_sector_html(data, avatar_url)
+    html1 = build_card1_html(data, avatar_url, qr_ig_url, qr_threads_url)
+    html2 = build_card2_plotly_html(data, avatar_url, qr_ig_url, qr_threads_url)
+    html3 = build_card3_sector_html(data, avatar_url, qr_ig_url, qr_threads_url)
 
     tmp_h1 = os.path.join(output_dir, "card1_temp.html")
     tmp_h2 = os.path.join(output_dir, "card2_temp.html")

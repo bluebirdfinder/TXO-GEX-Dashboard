@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v49.0`** | 2026-08-28 | 📱 **Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合版** |
 | **`v48.1`** | 2026-08-28 | 🚨 **國際重大總經事件、富台/MSCI 甩尾與期權結算日 實時避險防護雷達版** |
 | **`v48.0`** | 2026-08-28 | 🌙 **期交所官方 6 大夜盤個股/ETF期貨 價量與籌碼即時行情矩陣版** |
 | **`v47.9`** | 2026-08-28 | 🌙 **夜盤 05:00 收盤價精確校正與自動排程時區防錯版** |
@@ -20,6 +21,12 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🚀 v49.0 Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合 (2026-08-28)
+- **獨立高解析度 QR Code 自動生成器 (`scripts/generate_qr_codes.py`)**：自動產出高對比、相容所有手機鏡頭與第三方 APP 秒讀之 Instagram (`assets/qr_instagram.png`) 與 Threads (`assets/qr_threads.png`) 專屬黑金科技風 QR Code。
+- **QR Code 下方標示官方 ID (`@bluebird_finder`)**：於生成之 QR Code 圖檔、1:1 社群懶人圖卡與 Web 儀表板頁尾清楚標示 `IG: @bluebird_finder` 與 `Threads: @bluebird_finder`。
+- **1:1 正方形社群懶人圖卡頁尾整合 (`scripts/generate_social_card.py`)**：每張生成的 1:1 正方形圖卡（Card 1/2/3）頁尾加入雙平台 QR Code、官方 ID 標籤與吸粉文案。
+- **Web Dashboard 導覽列與頁尾吸粉卡片 (`index.html` & `style.css`)**：頂部 Nav 增設 `📱 追蹤社群 (@bluebird_finder)` 按鈕，頁尾增設暗黑玻璃風格 `social-follow-card`。
 
 ### 🚀 v48.1 國際重大總經事件、富台/MSCI 甩尾與結算日 實時避險防護雷達 (2026-08-28)
 - **實時避險倒數雷達 (`#macro-events-radar-panel`)**：

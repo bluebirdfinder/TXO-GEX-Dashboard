@@ -1,11 +1,26 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v48.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v49.0)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v48.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v49.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v49.0 Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合
+
+### 📱 1. 獨立高解析度 QR Code 自動生成器 (`scripts/generate_qr_codes.py`)
+- **雙平台高對比度 QR Code**：自動產出高解析度、高對比、相容所有手機鏡頭與第三方 APP 秒讀之 Instagram 與 Threads 專屬黑金科技風 QR Code。
+- **QR Code 下方標示官方 ID (`@bluebird_finder`)**：於生成之 QR Code 圖檔、1:1 社群懶人圖卡與 Web 儀表板頁尾清楚標示 `IG: @bluebird_finder` 與 `Threads: @bluebird_finder`。
+
+### 📸 2. 1:1 正方形社群懶人圖卡頁尾整合 (`scripts/generate_social_card.py`)
+- **雙平台 QR Code 吸粉專區**：在每張每日自動生成發布之 1080x1080 圖卡（Card 1/2/3）頁尾加入雙平台 QR Code、官方 ID 標籤與吸粉文案：`📲 掃碼追蹤「尋鳥 Bluebird Finder」 | 每日即時盤中籌碼速報與做市商 GEX 轉折關卡`。
+
+### 🌐 3. Web Dashboard 導覽列與頁尾吸粉卡片 (`index.html` & `style.css`)
+- **頂部 Nav 按鈕**：新增 `📱 追蹤社群 (@bluebird_finder)` 亮眼按鈕，點擊可平滑滾動至頁尾社群專區。
+- **頁尾吸粉卡片**：在頁尾版權宣告前增設大器美觀的 `social-follow-card` 專區，展示雙平台 QR Code、官方 ID 與一鍵開啟連結按鈕。
 
 ---
 
