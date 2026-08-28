@@ -12,6 +12,10 @@ on:
     - cron: '30 7 * * 1-5'   # 15:30 TWD (Primary Day Settlement, Chips & Card Generation)
     - cron: '0 8 * * 1-5'    # 16:00 TWD (Day Session Failover Retry)
 
+    # --- 📈 TWSE Evening Margin Maintenance Ratio Window (21:00, 21:30 TWD) ---
+    - cron: '0 13 * * 1-5'   # 21:00 TWD (TWSE Margin Maintenance Ratio Release)
+    - cron: '30 13 * * 1-5'  # 21:30 TWD (Margin Maintenance Ratio Retry)
+
   workflow_dispatch: # Allows 1-click manual trigger from GitHub UI anytime on phone or PC
 
 # Grant GITHUB_TOKEN write access to repository contents for automated commits

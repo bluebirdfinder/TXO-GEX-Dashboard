@@ -9,6 +9,24 @@
 
 ---
 
+## 🌟 v49.0 數據引擎 Self-Audit 重構、多源熱備援與 21:00 融資維持率排程補齊
+
+### 🛡️ 1. TWSE 現貨指數多源熱備援機制 (`scripts/fetch_and_calc_vision.py`)
+- **多層級熱備援抓取 (Multi-Tier Fallback)**：重構 `fetch_twse_realtime_indices()`，依序嘗試 TWSE MIS API ➔ Yahoo Finance 全球 API (`^TWII` 加權 / `^TWOII` 櫃買) ➔ 本地 `gex_data.json` 快照，徹底解決 GitHub Actions 國外 IP 遭 TWSE 阻擋降級成舊值 `45811.01` / `400.95` 的硬碼問題。
+- **現貨漲跌幅實時動態渲染**：清理 `index.html` 寫死之 `+3,186.45` 硬碼字串，於 `app.js` 加入 `#stat-spot-sub` 與 `#stat-otc-sub` 的動態點數與 % 渲染（隨行情實時調色）。
+
+### 📊 2. 5 日歷程矩陣 T-1 前一交易日收盤價真實比對
+- **廢除偽造歷史公式 (`spot_price - 74`)**：歷史 10 盤對齊真實前一交易日現貨收盤價 (`prev_day_spot = spot_price - spot_change`)，讓矩陣真實算出 `(+356.23)` 點與 `(+2.45)` 點，解決手動提早或多次觸發腳本時顯示偽造 `(+74.00)` 點之錯誤。
+
+### ⏰ 3. GitHub Actions 補齊 21:00 TWD 融資維持率定時排程 (`auto_update.yml`)
+- **新增 21:00 / 21:30 TWD 自動定時抓取**：於 `.github/workflows/auto_update.yml` 加入 `- cron: '0 13 * * 1-5'` (21:00 TWD)，在證交所每晚 21:00 公布「大盤整戶融資維持率」時自動補齊數據。
+- **盤後定案保護**：夜網與 21:00 抓取時安全維護 15:30 盤後已定案之 GEX Profile 與三大法人籌碼，不重算或干擾 15:30 基線。
+
+### ⚡ 4. 全站版本號 100% 對齊 (消除重整瞬間 V49 閃跳 V48.2)
+- **前後端版本一致**：將 `scripts/fetch_and_calc_vision.py` 的 `ENGINE_VERSION` 提升為 `"v49.0"`，並重新產生 `data/gex_data.json` 與 `data/embedded_data.js`，解決 HTML 標籤 (`v49.0`) 與 JS 讀取數據 (`v48.2`) 不一致導致的重整閃爍現象。
+
+---
+
 ## 🌟 v49.0 Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合
 
 ### 📱 1. 獨立高解析度 QR Code 自動生成器 (`scripts/generate_qr_codes.py`)

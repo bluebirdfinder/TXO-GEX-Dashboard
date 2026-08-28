@@ -493,8 +493,28 @@ function renderDashboard() {
   const spotEl = document.getElementById('stat-spot');
   if (spotEl) spotEl.innerText = spot.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
+  const spotSubEl = document.getElementById('stat-spot-sub');
+  if (spotSubEl) {
+    const spotChg = gexData.spot_change || 0.0;
+    const spotPct = gexData.spot_change_pct || 0.0;
+    const sign = spotChg >= 0 ? '+' : '';
+    const color = spotChg > 0 ? 'var(--call-color)' : (spotChg < 0 ? 'var(--put-color)' : 'var(--text-muted)');
+    spotSubEl.innerText = `${sign}${spotChg.toFixed(2)} (${sign}${spotPct.toFixed(2)}%)`;
+    spotSubEl.style.color = color;
+  }
+
   const twoEl = document.getElementById('stat-two-price');
-  if (twoEl) twoEl.innerText = (gexData.two_price || 400.95).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  if (twoEl) twoEl.innerText = (gexData.two_price || 401.64).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+  const otcSubEl = document.getElementById('stat-otc-sub');
+  if (otcSubEl) {
+    const otcChg = gexData.two_change || 0.0;
+    const otcPct = gexData.two_change_pct || 0.0;
+    const sign = otcChg >= 0 ? '+' : '';
+    const color = otcChg > 0 ? 'var(--call-color)' : (otcChg < 0 ? 'var(--put-color)' : 'var(--text-muted)');
+    otcSubEl.innerText = `${sign}${otcChg.toFixed(2)} (${sign}${otcPct.toFixed(2)}%)`;
+    otcSubEl.style.color = color;
+  }
 
   const dateEl = document.getElementById('data-date');
   if (dateEl) dateEl.innerText = gexData.date || '2026-08-14';
@@ -2478,10 +2498,27 @@ function handleLiveTick(data) {
     freshnessText.innerText = `實時同步`;
   }
 
-  if (data.price > 0) {
-    const nowH = (new Date()).getHours();
-    const isNightSession = (nowH >= 15 || nowH < 5);
-    const targetEl = document.getElementById(isNightSession ? 'stat-txf-night' : 'stat-txf-day');
+  if (!data || !data.price || data.price <= 0) return;
+
+  // Route tick by ticker symbol
+  if (data.ticker === 'IX0001') {
+    const spotEl = document.getElementById('stat-spot');
+    if (spotEl) spotEl.innerText = data.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    if (gexData) gexData.spot_price = data.price;
+    return;
+  }
+
+  if (data.ticker === 'IX0043') {
+    const twoEl = document.getElementById('stat-two-price');
+    if (twoEl) twoEl.innerText = data.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    if (gexData) gexData.two_price = data.price;
+    return;
+  }
+
+  // Futures Ticks (TXF1!) -> Update Futures Dual Session Cards & Zero Gamma Recalculation
+  const nowH = (new Date()).getHours();
+  const isNightSession = (nowH >= 15 || nowH < 5);
+  const targetEl = document.getElementById(isNightSession ? 'stat-txf-night' : 'stat-txf-day');
 
     if (targetEl) {
       const formattedPrice = data.price.toLocaleString();

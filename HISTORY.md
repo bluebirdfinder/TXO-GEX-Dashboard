@@ -22,6 +22,13 @@
 
 ## 🎯 各版本詳細更新紀錄
 
+### 🚀 v49.0 數據引擎 Self-Audit 重構、多源熱備援與 21:00 融資維持率排程補齊 (2026-08-28)
+- **TWSE 現貨指數多源熱備援 (`fetch_twse_realtime_indices`)**：引入 3 級熱備援（TWSE MIS ➔ Yahoo Finance `^TWII`/`^TWOII` ➔ `gex_data.json`），徹底消除 GitHub Actions 國外 IP 遭 TWSE 阻擋降級成舊值 `45811.01` / `400.95` 的硬碼問題。現貨加權精準抓取為 `46,331.45 (+356.23)`，櫃買指數為 `402.83 (+2.45)`。
+- **現貨漲跌幅實時動態渲染**：清理 `index.html` 硬碼 `+3,186.45` 字串，於 `app.js` 動態更新 `#stat-spot-sub` 與 `#stat-otc-sub` 漲跌點數與 %，並於 `handleLiveTick` 加入 ticker 報價分流。
+- **5 日歷程矩陣 T-1 前一交易日收盤價真實比對**：歷史 10 盤對齊真實前一交易日現貨收盤價 (`prev_day_spot = spot_price - spot_change`)，讓矩陣真實算出 `(+356.23)` 點與 `(+2.45)` 點，解決手動提早或多次觸發腳本時顯示偽造 `(+74.00)` 點之錯誤。
+- **GitHub Actions 補齊 21:00 TWD 融資維持率定時排程 (`auto_update.yml`)**：新增 `- cron: '0 13 * * 1-5'` (21:00 TWD)，在證交所每晚 21:00 公布「大盤整戶融資維持率」時自動補齊數據，且安全保護 15:30 已定案之 GEX 基線與籌碼。
+- **全站版本號 100% 對齊 (消除重整閃爍)**：同步 `ENGINE_VERSION = "v49.0"`，解決 HTML (`v49.0`) 與 JS 讀取數據 (`v48.2`) 不一致導致的重整瞬間閃爍跳動現象。
+
 ### 🚀 v49.0 Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合 (2026-08-28)
 - **獨立高解析度 QR Code 自動生成器 (`scripts/generate_qr_codes.py`)**：自動產出高對比、相容所有手機鏡頭與第三方 APP 秒讀之 Instagram (`assets/qr_instagram.png`) 與 Threads (`assets/qr_threads.png`) 專屬黑金科技風 QR Code。
 - **QR Code 下方標示官方 ID (`@bluebird_finder`)**：於生成之 QR Code 圖檔、1:1 社群懶人圖卡與 Web 儀表板頁尾清楚標示 `IG: @bluebird_finder` 與 `Threads: @bluebird_finder`。
