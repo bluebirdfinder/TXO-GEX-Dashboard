@@ -1,11 +1,24 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.9)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v48.0)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v47.9-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v48.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v48.0 期交所官方 6 大夜盤個股/ETF期貨 價量與籌碼即時行情矩陣
+
+### 🌙 1. 官方 6 大夜盤股期/ETF期 即時價量關係與指標導航 (Night-Traded 6 Spotlight)
+- **夜盤 6 大開放契約聚焦**：專屬整合台積電期 (`2330`)、小型台積期 (`2330F`)、聯電期 (`2303`)、元大台灣50期 (`0050`)、小型台50期 (`0050F`) 與元大美債20年期 (`00679B`)。
+- **價量關係與警示訊號 (`app.js`)**：
+  - **價差診斷 (Basis Diagnostic)**：精確計算期現價差（🔴 正價差 / 🟢 逆價差）與對應基差。
+  - **大盤點數貢獻 (Points Contribution)**：估算台積期、聯電期、0050期對台指大盤的即時拉抬/壓低點數。
+  - **價量動態動能訊號**：自動計算並標註 `🔥 價量齊揚 (強勢偏多)`、`⚠️ 帶量拉回 (壓力避險)` 與 `☕ 盤整觀望` 訊號。
+  - **三大法人未平倉與除息日程**：呈現外資與自營商未平倉部位，並標註 TWSE 除權息日程與預扣現金股利。
+- **全站靜態資源版本標籤 (`?v=v48.0`)**：在 `index.html` 內所有的 CSS/JS/Data 標籤更新為 `?v=v48.0` 防快取。
 
 ---
 

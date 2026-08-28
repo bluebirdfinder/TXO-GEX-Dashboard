@@ -1,10 +1,23 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.9)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v48.0)
 
-**當前版本**：`v47.9` (2026-08-28 夜盤 05:00 收盤價精確校正與自動排程時區防錯版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.9)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.9)
+**當前版本**：`v48.0` (2026-08-28 官方 6 大夜盤個股/ETF期貨價量與籌碼即時行情矩陣版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v48.0)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v48.0)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v48.0 核心更新亮點（Night-Traded 6 Stock & ETF Futures Matrix）
+
+### 🌙 1. 官方 6 大夜盤股期/ETF期 即時價量關係與指標導航 (`app.js`)
+- **夜盤 6 大開放契約聚焦**：專屬整合台積電期 (`2330`)、小型台積期 (`2330F`)、聯電期 (`2303`)、元大台灣50期 (`0050`)、小型台50期 (`0050F`) 與元大美債20年期 (`00679B`)。
+- **價量關係與警示訊號 (`app.js`)**：
+  - **價差診斷 (Basis Diagnostic)**：精確計算期現價差（🔴 正價差 / 🟢 逆價差）與對應基差。
+  - **大盤點數貢獻 (Points Contribution)**：估算台積期、聯電期、0050期對台指大盤的即時拉抬/壓低點數。
+  - **價量動態動能訊號**：自動計算並標註 `🔥 價量齊揚 (強勢偏多)`、`⚠️ 帶量拉回 (壓力避險)` 與 `☕ 盤整觀望` 訊號。
+  - **三大法人未平倉與除息日程**：呈現外資與自營商未平倉部位，並標註 TWSE 除權息日程與預扣現金股利。
+- **全站靜態資源版本標籤 (`?v=v48.0`)**：在 `index.html` 內所有的 CSS/JS/Data 標籤更新為 `?v=v48.0` 防快取。
 
 ---
 

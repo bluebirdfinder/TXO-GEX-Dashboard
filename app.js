@@ -1843,8 +1843,99 @@ function populateAiQuantDigest() {
   container.innerHTML = html;
 }
 
+function renderNightSixSpotlight(dataObj) {
+  const container = document.getElementById('night-six-spotlight-container');
+  if (!container || !dataObj || !dataObj.stock_futures) return;
+
+  const nightItems = dataObj.stock_futures.filter(item => item.has_night);
+  if (!nightItems || nightItems.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let cardsHtml = '';
+  nightItems.forEach(item => {
+    const futPrice = item.fut_price || item.spot_price;
+    const basis = item.basis !== undefined ? item.basis : (futPrice - item.spot_price);
+    const basisBadge = basis > 0 
+      ? `<span class="badge" style="background: rgba(255, 82, 82, 0.2); color: #ff5252;">🔴 +${basis.toFixed(2)} (正價差)</span>`
+      : (basis < 0 
+        ? `<span class="badge" style="background: rgba(0, 230, 118, 0.2); color: #00e676;">🟢 ${basis.toFixed(2)} (逆價差)</span>`
+        : `<span class="badge" style="background: rgba(255, 255, 255, 0.1); color: #aaa;">0.00 (平價差)</span>`);
+
+    const ptsSign = item.point_contrib >= 0 ? '+' : '';
+    const ptsStr = item.point_contrib !== undefined && item.point_contrib !== 0 ? `<span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: 600; margin-left: 4px;">(${ptsSign}${item.point_contrib}點貢獻)</span>` : '';
+
+    const pvSignal = item.volume > 5000 
+      ? (item.change_pct >= 0 ? '<span class="badge" style="background: rgba(255,82,82,0.15); color: #ff5252; border: 1px solid rgba(255,82,82,0.3);">🔥 價量齊揚 (強勢偏多)</span>' : '<span class="badge" style="background: rgba(0,230,118,0.15); color: #00e676; border: 1px solid rgba(0,230,118,0.3);">⚠️ 帶量拉回 (壓力避險)</span>')
+      : '<span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">☕ 盤整觀望</span>';
+
+    const top10Tag = item.is_top10_buy 
+      ? `<span class="badge" style="background: rgba(255, 215, 0, 0.2); color: var(--gold-accent);">🔥 Top10買超</span>` 
+      : (item.is_top10_sell 
+        ? `<span class="badge" style="background: rgba(0, 210, 255, 0.2); color: var(--primary-accent);">❄️ Top10賣超</span>` 
+        : '');
+
+    const exBadge = item.ex_date && item.ex_date !== '-'
+      ? `<span class="badge" style="background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid rgba(255, 170, 0, 0.3); font-size: 0.72rem;">📅 ${item.ex_date} (${item.ex_dividend ? '$' + item.ex_dividend : (item.ex_type || '除息')})</span>`
+      : '';
+
+    cardsHtml += `
+      <div style="background: linear-gradient(135deg, rgba(18, 23, 33, 0.85), rgba(10, 14, 23, 0.95)); border: 1px solid rgba(255, 215, 0, 0.25); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); transition: transform 0.2s ease;" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='none'">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-weight: 700; color: var(--primary-accent); font-size: 0.95rem;">${item.code}</span>
+            <span style="font-weight: 700; color: #fff; font-size: 0.9rem;">${item.name}</span>
+            ${top10Tag}
+          </div>
+          <span style="font-size: 0.75rem; color: var(--gold-accent); background: rgba(255, 215, 0, 0.12); padding: 2px 6px; border-radius: 4px; font-weight: 600;">🌙 交易中</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.8rem;">
+          <div><span style="color: var(--text-muted);">現價 (Spot)：</span><strong style="color: #fff;">${item.spot_price.toFixed(2)}</strong></div>
+          <div><span style="color: var(--text-muted);">期價 (Fut)：</span><strong style="color: #fff;">${futPrice.toFixed(2)}</strong></div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+          <div>${basisBadge}</div>
+          <div style="font-weight: 700; color: ${item.change_pct >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">
+            ${item.change_pct >= 0 ? '+' : ''}${item.change_pct.toFixed(2)}% ${ptsStr}
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.06);">
+          <div><span style="color: var(--text-muted);">成交量：</span><strong style="color: #fff;">${item.volume.toLocaleString()} 口</strong></div>
+          <div>${pvSignal}</div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted);">
+          <div>外資: <strong style="color: ${item.foreign_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${item.foreign_net >= 0 ? '+' : ''}${item.foreign_net}</strong> | 自營: <strong style="color: ${item.dealer_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${item.dealer_net >= 0 ? '+' : ''}${item.dealer_net}</strong></div>
+          ${exBadge}
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = `
+    <div style="background: rgba(255, 215, 0, 0.04); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 14px; padding: 14px 18px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.1rem;">🌙</span>
+          <h4 style="margin: 0; color: var(--gold-accent); font-size: 0.98rem; font-weight: 700;">期交所官方 6 大夜盤開放標的 (Night-Traded Stock & ETF Futures) 價量行情矩陣</h4>
+          <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); font-weight: 600;">夜盤交易時間：15:00 ~ 次日 05:00</span>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">⚡ 包含台積期、聯電期、0050期、00679B期及小型契約</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+        ${cardsHtml}
+      </div>
+    </div>
+  `;
+}
+
 function populateStockFutures() {
   populateAiQuantDigest();
+  try { renderNightSixSpotlight(gexData); } catch (e) { console.error('Night Six Spotlight Error:', e); }
   const tbody = document.getElementById('stock-futures-body');
   if (!tbody || !gexData || !gexData.stock_futures) return;
 
@@ -1859,7 +1950,9 @@ function populateStockFutures() {
   let list = gexData.stock_futures.slice();
 
   // Filter logic
-  if (selectedCat === 'top10' || selectedCat === 'top10_buy') {
+  if (selectedCat === 'night6') {
+    list = list.filter(item => item.has_night);
+  } else if (selectedCat === 'top10' || selectedCat === 'top10_buy') {
     list = list.filter(item => item.is_top10_buy || (item.foreign_net + item.dealer_net) > 200);
   } else if (selectedCat === 'top10_sell') {
     list = list.filter(item => item.is_top10_sell || (item.foreign_net + item.dealer_net) < -200);
