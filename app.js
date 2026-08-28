@@ -1853,6 +1853,17 @@ function renderNightSixSpotlight(dataObj) {
     return;
   }
 
+  // Sort by market popularity hierarchy: 2330 -> 2330F -> 0050 -> 0050F -> 2303 -> 00679B
+  const NIGHT_POPULARITY_ORDER = ['2330', '2330F', '0050', '0050F', '2303', '00679B'];
+  nightItems.sort((a, b) => {
+    const idxA = NIGHT_POPULARITY_ORDER.indexOf(a.code);
+    const idxB = NIGHT_POPULARITY_ORDER.indexOf(b.code);
+    const posA = idxA !== -1 ? idxA : 99;
+    const posB = idxB !== -1 ? idxB : 99;
+    if (posA !== posB) return posA - posB;
+    return b.volume - a.volume;
+  });
+
   let cardsHtml = '';
   nightItems.forEach(item => {
     const futPrice = item.fut_price || item.spot_price;
@@ -1971,8 +1982,18 @@ function populateStockFutures() {
   }
 
   // Sort logic
+  const NIGHT_POPULARITY_ORDER = ['2330', '2330F', '0050', '0050F', '2303', '00679B'];
   const sortKey = currentSortKey || 'volume';
+  
   list.sort((a, b) => {
+    if (!currentSortKey && (selectedCat === 'night6' || nightOnly)) {
+      const idxA = NIGHT_POPULARITY_ORDER.indexOf(a.code);
+      const idxB = NIGHT_POPULARITY_ORDER.indexOf(b.code);
+      const posA = idxA !== -1 ? idxA : 99;
+      const posB = idxB !== -1 ? idxB : 99;
+      if (posA !== posB) return posA - posB;
+    }
+
     let valA = a[sortKey];
     let valB = b[sortKey];
 
