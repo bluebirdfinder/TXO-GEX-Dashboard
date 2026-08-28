@@ -2011,31 +2011,43 @@ def generate_gex_payload():
                 ld_d -= datetime.timedelta(days=1)
             msci_dt = ld_d
 
-        # 5. US NFP + Unemployment Rate (大非農 + 失業率): 1st Fri 20:30 TWD
+        # Helper for US Daylight Saving Time (DST) TWD Time Conversion
+        # Summer (Apr-Oct EDT): US 08:30 AM -> 20:30 TWD | Winter (Nov-Mar EST): US 08:30 AM -> 21:30 TWD
+        def get_us_twd_hour(m, summer_hour=20):
+            return summer_hour if (3 < m < 11) else (summer_hour + 1)
+
+        # 5. US NFP + Unemployment Rate (大非農 + 失業率): 1st Fri (20:30 Summer / 21:30 Winter TWD)
         first_fri_day = (4 - first_day.weekday()) % 7 + 1
-        nfp_dt = datetime.datetime(year, month, first_fri_day, 20, 30, tzinfo=tw_tz)
+        nfp_h = get_us_twd_hour(month, 20)
+        nfp_dt = datetime.datetime(year, month, first_fri_day, nfp_h, 30, tzinfo=tw_tz)
         if nfp_dt <= curr_twd:
             m_next = month + 1 if month < 12 else 1
             y_next = year if month < 12 else year + 1
             first_next = datetime.datetime(y_next, m_next, 1, tzinfo=tw_tz)
             first_fri_day = (4 - first_next.weekday()) % 7 + 1
-            nfp_dt = datetime.datetime(y_next, m_next, first_fri_day, 20, 30, tzinfo=tw_tz)
+            nfp_h = get_us_twd_hour(m_next, 20)
+            nfp_dt = datetime.datetime(y_next, m_next, first_fri_day, nfp_h, 30, tzinfo=tw_tz)
 
-        # 6. ADP Employment Change (ADP 小非農): Wed before NFP (2 days before NFP 20:15 TWD)
-        adp_dt = (nfp_dt - datetime.timedelta(days=2)).replace(hour=20, minute=15)
+        # 6. ADP Employment Change (ADP 小非農): Wed before NFP (2 days before NFP 20:15 / 21:15 TWD)
+        adp_h = get_us_twd_hour(nfp_dt.month, 20)
+        adp_dt = (nfp_dt - datetime.timedelta(days=2)).replace(hour=adp_h, minute=15)
 
-        # 7. Initial Jobless Claims (美每週初領失業金): Next Thursday 20:30 TWD
+        # 7. Initial Jobless Claims (美每週初領失業金): Next Thursday (20:30 / 21:30 TWD)
         days_to_thu = (3 - curr_twd.weekday()) % 7
         if days_to_thu == 0 and curr_twd.hour >= 21:
             days_to_thu = 7
-        jobless_dt = (curr_twd + datetime.timedelta(days=days_to_thu)).replace(hour=20, minute=30, second=0, microsecond=0)
+        jobless_dt = (curr_twd + datetime.timedelta(days=days_to_thu))
+        jobless_h = get_us_twd_hour(jobless_dt.month, 20)
+        jobless_dt = jobless_dt.replace(hour=jobless_h, minute=30, second=0, microsecond=0)
 
-        # 8. US CPI Inflation Data (美 CPI 通膨數據): 12th of month 20:30 TWD
-        cpi_dt = datetime.datetime(year, month, 12, 20, 30, tzinfo=tw_tz)
+        # 8. US CPI Inflation Data (美 CPI 通膨數據): 12th of month (20:30 / 21:30 TWD)
+        cpi_h = get_us_twd_hour(month, 20)
+        cpi_dt = datetime.datetime(year, month, 12, cpi_h, 30, tzinfo=tw_tz)
         if cpi_dt <= curr_twd:
             m_next = month + 1 if month < 12 else 1
             y_next = year if month < 12 else year + 1
-            cpi_dt = datetime.datetime(y_next, m_next, 12, 20, 30, tzinfo=tw_tz)
+            cpi_h = get_us_twd_hour(m_next, 20)
+            cpi_dt = datetime.datetime(y_next, m_next, 12, cpi_h, 30, tzinfo=tw_tz)
 
         candidates = [
             {
