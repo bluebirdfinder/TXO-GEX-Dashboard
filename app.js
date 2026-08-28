@@ -2612,7 +2612,6 @@ function handleLiveTick(data) {
         updateMicrostructureExpress(data.price);
       } catch (e) {}
     }
-  }
 }
 
 function updateMicrostructureExpress(livePrice = null) {
