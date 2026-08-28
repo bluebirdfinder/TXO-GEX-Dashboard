@@ -2870,8 +2870,6 @@ function renderMacroEventsRadar(dataObj) {
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px;">
       ${upcomingCardsHtml}
     </div>
-
-    <div style="text-align: right; margin-top: 10px; font-size: 11px; color: rgba(255, 255, 255, 0.45); font-weight: 600; user-select: none;">© 尋鳥 Bluebird Finder</div>
   `;
 
   updateCountdown();
