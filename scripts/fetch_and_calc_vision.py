@@ -2056,9 +2056,10 @@ def generate_gex_payload():
                 "category": "期權結算",
                 "impact": "HIGH",
                 "impact_label": "🔴 高度防守",
+                "pattern_type": "WINDOW_TIME",
                 "target_epoch": int(next_wed_dt.timestamp() * 1000),
-                "date_display": next_wed_dt.strftime("%m/%d %H:%M"),
-                "gex_advice": "結算前夕 13:00~13:30 留意莊家拉甩尾盤，近月牆位極度敏感。"
+                "date_display": next_wed_dt.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": "提防結算尾盤 13:00~13:30 做市商拉甩尾盤與權利金歸零磁吸！"
             },
             {
                 "id": "monthly_settlement",
@@ -2066,9 +2067,10 @@ def generate_gex_payload():
                 "category": "期權結算",
                 "impact": "HIGH",
                 "impact_label": "🔴 超高風險",
+                "pattern_type": "WINDOW_TIME",
                 "target_epoch": int(third_wed.timestamp() * 1000),
-                "date_display": third_wed.strftime("%m/%d %H:%M"),
-                "gex_advice": "月結算日全台資金交會，未平倉量大平倉歸零，大盤磁吸效應劇烈。"
+                "date_display": third_wed.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": "提防大結算日全天與 13:00~13:30 巨量未平倉平倉擺盪！"
             },
             {
                 "id": "stw_settlement",
@@ -2076,9 +2078,10 @@ def generate_gex_payload():
                 "category": "跨國結算",
                 "impact": "HIGH",
                 "impact_label": "🔴 跨國衝擊",
+                "pattern_type": "WINDOW_TIME",
                 "target_epoch": int(stw_dt.timestamp() * 1000),
-                "date_display": stw_dt.strftime("%m/%d %H:%M"),
-                "gex_advice": "新加坡富台期外資結算，台指期 13:30 後常有跨市場大筆擺盪。"
+                "date_display": stw_dt.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": "提防新加坡富台期結算日 13:30~13:45 跨市場甩尾與大筆開平倉！"
             },
             {
                 "id": "msci_rebalance",
@@ -2086,29 +2089,32 @@ def generate_gex_payload():
                 "category": "市場洗牌",
                 "impact": "HIGH",
                 "impact_label": "🔴 爆量洗牌",
+                "pattern_type": "WINDOW_TIME",
                 "target_epoch": int(msci_dt.timestamp() * 1000),
-                "date_display": msci_dt.strftime("%m/%d %H:%M"),
-                "gex_advice": "最後 5 分鐘撮合 (13:25~13:30) 爆出數百億洗牌換股，易爆發無預警跳空！"
+                "date_display": msci_dt.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": "提防尾盤 13:25~13:30 撮合被動基金爆量甩尾，避免最後 5 分鐘市價單追價！"
             },
             {
                 "id": "us_nfp_unemp",
-                "name": "美國非農就業 (NFP) + 失業率 (Unemployment Rate)",
+                "name": "美國非農就業 (NFP) + 失業率",
                 "category": "重磅總經",
                 "impact": "HIGH",
                 "impact_label": "🔴 波動爆發",
+                "pattern_type": "POINT_TIME",
                 "target_epoch": int(nfp_dt.timestamp() * 1000),
-                "date_display": nfp_dt.strftime("%m/%d %H:%M"),
-                "gex_advice": "美就業市場熱度決定 Fed 政策走向，公布瞬即破壞 IV 結構強打 GEX 牆位。"
+                "date_display": nfp_dt.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": f"發布前 30 分鐘 ({nfp_dt.strftime('%H:%M')} 起) 流動性急遽抽離，提防數據發布瞬間 50~150 點雙向劇烈刷洗！"
             },
             {
                 "id": "us_cpi",
-                "name": "美國 CPI 消費者物價指數 (Inflation)",
+                "name": "美國 CPI 消費者物價指數",
                 "category": "重磅總經",
                 "impact": "HIGH",
                 "impact_label": "🔴 波動爆發",
+                "pattern_type": "POINT_TIME",
                 "target_epoch": int(cpi_dt.timestamp() * 1000),
-                "date_display": cpi_dt.strftime("%m/%d %H:%M"),
-                "gex_advice": "美通膨報告直接引爆全球美債殖利率，夜盤台指期易出現超大幅度跳空。"
+                "date_display": cpi_dt.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": f"發布前 30 分鐘 ({cpi_dt.strftime('%H:%M')} 起) 流動性急遽抽離，提防數據發布瞬間 50~150 點雙向劇烈刷洗！"
             },
             {
                 "id": "us_adp",
@@ -2116,9 +2122,10 @@ def generate_gex_payload():
                 "category": "重點總經",
                 "impact": "MEDIUM",
                 "impact_label": "🟡 前瞻警戒",
+                "pattern_type": "POINT_TIME",
                 "target_epoch": int(adp_dt.timestamp() * 1000),
-                "date_display": adp_dt.strftime("%m/%d %H:%M"),
-                "gex_advice": "大非農前瞻數據，夜盤開盤前夕情緒預熱，IV 微幅上揚。"
+                "date_display": adp_dt.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": f"發布前 15 分鐘 ({adp_dt.strftime('%H:%M')} 起) 前瞻情緒預熱，提防夜盤開盤前夕情緒性波動。"
             },
             {
                 "id": "us_jobless",
@@ -2126,9 +2133,10 @@ def generate_gex_payload():
                 "category": "每週總經",
                 "impact": "MEDIUM",
                 "impact_label": "🟡 常態警戒",
+                "pattern_type": "POINT_TIME",
                 "target_epoch": int(jobless_dt.timestamp() * 1000),
-                "date_display": jobless_dt.strftime("%m/%d %H:%M"),
-                "gex_advice": "週四夜盤常態波動數據，評估勞動市場衰退或強勁軟著陸情況。"
+                "date_display": jobless_dt.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": f"每週四夜盤常態數據，觀察 {jobless_dt.strftime('%H:%M')} 公布前夕情緒與美債殖利率聯動。"
             }
         ]
 

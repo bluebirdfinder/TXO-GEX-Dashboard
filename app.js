@@ -2799,19 +2799,28 @@ function renderMacroEventsRadar(dataObj) {
   list.forEach((ev) => {
     const isPrimary = (ev.id === primary.id);
     const borderStyle = isPrimary ? 'border: 1px solid var(--gold-accent); background: rgba(255,215,0,0.06);' : 'border: 1px solid rgba(255,255,255,0.08); background: rgba(15,23,42,0.6);';
+    const typeBadge = ev.pattern_type === 'POINT_TIME' 
+      ? '<span class="badge" style="background: rgba(255,82,82,0.15); color: #ff5252; font-size: 0.68rem;">定點數據</span>'
+      : '<span class="badge" style="background: rgba(255,215,0,0.15); color: var(--gold-accent); font-size: 0.68rem;">視窗洗盤</span>';
+
     upcomingCardsHtml += `
       <div style="${borderStyle} padding: 10px 12px; border-radius: 8px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <strong style="color: #fff;">${ev.name}</strong>
-          <span class="badge" style="background: rgba(0,210,255,0.12); color: var(--primary-accent); font-size: 0.7rem;">${ev.category}</span>
+          ${typeBadge}
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 2px;">
-          <span style="color: var(--gold-accent); font-weight: 600;">📅 ${ev.date_display} (TWD)</span>
+          <span style="color: var(--gold-accent); font-weight: 600;">📅 ${ev.date_display}</span>
           <span>${ev.impact_label}</span>
         </div>
       </div>
     `;
   });
+
+  const headerTag = primary.pattern_type === 'POINT_TIME' ? '🚨 [重大數據預警]' : '🚨 [關鍵日曆預警]';
+  const advicePrefix = primary.pattern_type === 'POINT_TIME' 
+    ? `<strong style="color: #ff5252;">${headerTag}</strong> ${primary.date_display} 發布 <strong>${primary.name}</strong> ➔ `
+    : `<strong style="color: var(--gold-accent);">${headerTag}</strong> <strong>${primary.name}</strong> ➔ `;
 
   panel.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.12); padding-bottom: 10px; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
@@ -2821,7 +2830,7 @@ function renderMacroEventsRadar(dataObj) {
           <h3 style="margin: 0; font-size: 1.02rem; color: var(--gold-accent); font-weight: 700; display: flex; align-items: center; gap: 8px;">
             <span>國際重大總經事件、富台/MSCI 與結算日 實時避險防護雷達</span>
           </h3>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">涵蓋週/月選結算、富台期結算、MSCI甩尾調整、美CPI、非農+失業率、ADP與初領失業金</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">雙型態對齊：定點數據防範發布前流動性抽離 | 結算日防範尾盤爆量擺盪</div>
         </div>
       </div>
       <div id="macro-primary-regime" class="badge" style="font-weight: 700; font-size: 0.8rem; padding: 4px 10px; border-radius: 6px;">
@@ -2832,10 +2841,10 @@ function renderMacroEventsRadar(dataObj) {
     <!-- Primary Countdown Spotlight Box -->
     <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(0, 210, 255, 0.04)); border: 1px solid var(--gold-accent); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
       <div style="flex: 1; min-width: 260px;">
-        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">🎯 下一重磅關鍵催化劑 (Next Major Catalyst)</div>
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">🎯 下一重磅關鍵催化劑 (${primary.pattern_type === 'POINT_TIME' ? '定點數據型' : '視窗洗盤型'})</div>
         <div style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 4px;">${primary.name}</div>
         <div style="font-size: 0.82rem; color: var(--gold-accent); display: flex; align-items: center; gap: 8px;">
-          <span>📅 事件發布時間：<strong>${primary.date_display} (TWD)</strong></span>
+          <span>📅 事件發布時間：<strong>${primary.date_display}</strong></span>
           <span class="badge" style="background: rgba(255,82,82,0.15); color: #ff5252; border: 1px solid rgba(255,82,82,0.3);">${primary.impact_label}</span>
         </div>
       </div>
@@ -2846,8 +2855,8 @@ function renderMacroEventsRadar(dataObj) {
     </div>
 
     <!-- GEX Guidance & Upcoming 5 Grid -->
-    <div style="font-size: 0.82rem; color: var(--text-main); background: rgba(0, 210, 255, 0.03); padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; border-left: 4px solid var(--primary-accent); line-height: 1.6;">
-      <strong style="color: var(--primary-accent);">💡 做市商 GEX 與事件避險指引：</strong> ${primary.gex_advice}
+    <div style="font-size: 0.84rem; color: var(--text-main); background: rgba(0, 210, 255, 0.03); padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; border-left: 4px solid var(--gold-accent); line-height: 1.6;">
+      ${advicePrefix} ${primary.gex_advice}
     </div>
 
     <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
