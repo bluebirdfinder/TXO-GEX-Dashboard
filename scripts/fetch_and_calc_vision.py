@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v47.8"
+ENGINE_VERSION = "v47.9"
 
 import os
 import sys
@@ -1350,9 +1350,9 @@ def generate_gex_payload():
     retail_data = fetch_official_taifex_retail_sentiment()
 
     # Determine Session Type in Taiwan Time (UTC+8):
-    # Night Session release window (05:00 Close) runs early morning (04:00 <= now_hour < 12:00 TWD).
-    # Day Session release window (13:45 Close) runs afternoon/night (now_hour >= 12 or now_hour < 4 TWD).
-    is_night_session = (4 <= now_hour < 12)
+    # Night Session release window (05:00 Close) runs early morning (03:00 <= now_hour < 12:00 TWD).
+    # Day Session release window (13:45 Close) runs afternoon/night (now_hour >= 12 or now_hour < 3 TWD).
+    is_night_session = (3 <= now_hour < 12)
     session_type = "NIGHT" if is_night_session else "DAY"
     session_name = "🌙 夜盤收盤價校正 (05:00 Close)" if is_night_session else "☀️ 日盤結算籌碼 (13:45 Close)"
 

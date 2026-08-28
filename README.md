@@ -1,11 +1,23 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.8)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v47.9)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v47.8-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v47.9-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v47.9 台指期夜盤 05:00 收盤價精確校正與自動排程時區防錯機制
+
+### 🌙 1. 台指期夜盤 (TXF) 定案收盤價與 GEX 全套結構動態校正
+- **夜盤收盤價校正至 46,388**：將台指期夜盤結算收盤價校正至期交所官方 05:00 定案值 46,388 點（取代盤中未收盤暫存價 45,993 點）。
+- **GEX 籌碼結構與牆位全面聯動**：標的基準價變更同步引發 Call Wall (46,700 / 46,200), Zero Gamma (46,517.9 / 46,017.9), Put Wall (46,300 / 45,800), Max Pain (45,900 / 45,400) 與 P/C Ratio 全動態黑體算式精確重計算。
+- **自動排程與時區邊界防錯 (`scripts/fetch_and_calc_vision.py`)**：
+  - 優化夜盤視窗判定邏輯 `(3 <= now_hour < 12)`，確保清晨凌晨 03:00 起的自動或手動觸發皆能精確捕捉夜盤數據。
+  - 明確規範 GitHub Actions UTC 排程時區對齊（例：UTC 21:30 = 台灣時間 05:30 AM），防止未收盤即過早發布報告。
+- **全站靜態資源版本標籤 (`?v=v47.9`)**：在 `index.html` 內所有的 CSS/JS/Data 標籤更新為 `?v=v47.9` 防快取。
 
 ---
 

@@ -1,19 +1,22 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.8)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v47.9)
 
-**當前版本**：`v47.8` (2026-08-28 Gemini AI 焦點掃描卡與頂部 KPI 數據動態 100% 同步版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.8)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.8)
+**當前版本**：`v47.9` (2026-08-28 夜盤 05:00 收盤價精確校正與自動排程時區防錯版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v47.9)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v47.9)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
 
 ---
 
-## 🎯 v47.8 核心更新亮點（Gemini AI Dynamic Summary Alignment）
+## 🎯 v47.9 核心更新亮點（Night Session Close Calibration & Schedule Timezone Precision）
 
-### 🤖 1. Gemini AI 焦點掃描卡與頂部 KPI 數據 100% 動態同步 (`app.js`)
-- **消除靜態 JSON 數字不一致**：修復底部 `Gemini AI 籌碼、價差與除權息事件量化焦點掃描` 卡片呈現硬編碼舊數據，與頂部動態 KPI 卡片/切換頁籤數據不符的問題。
-- **動態綁定 Active Session 數據**：在 `populateAiQuantDigest()` 中動態帶入當前活躍 Session 之指數現價/夜盤價、Zero Gamma、Call Wall 與 Put Wall，確保 AI 摘要與儀表板頂部 100% 完全動態齊平！
-- **全站靜態資源版本標籤 (`?v=v47.8`)**：在 `index.html` 內所有的 CSS/JS/Data 標籤更新為 `?v=v47.8` 防快取。
+### 🌙 1. 台指期夜盤 (TXF) 定案收盤價與 GEX 全套結構動態校正 (`fetch_and_calc_vision.py`)
+- **夜盤收盤價校正至 46,388**：將台指期夜盤結算收盤價校正至期交所官方 05:00 定案值 46,388 點（取代盤中未收盤暫存價 45,993 點）。
+- **GEX 籌碼結構與牆位全面聯動**：標的基準價變更同步引發 Call Wall (46,700 / 46,200), Zero Gamma (46,517.9 / 46,017.9), Put Wall (46,300 / 45,800), Max Pain (45,900 / 45,400) 與 P/C Ratio 全動態黑體算式精確重計算。
+- **自動排程與時區邊界防錯 (`scripts/fetch_and_calc_vision.py`)**：
+  - 優化夜盤視窗判定邏輯 `(3 <= now_hour < 12)`，確保清晨凌晨 03:00 起的自動或手動觸發皆能精確捕捉夜盤數據。
+  - 明確規範 GitHub Actions UTC 排程時區對齊（例：UTC 21:30 = 台灣時間 05:30 AM），防止未收盤即過早發布報告。
+- **全站靜態資源版本標籤 (`?v=v47.9`)**：在 `index.html` 內所有的 CSS/JS/Data 標籤更新為 `?v=v47.9` 防快取。
 
 ---
 
