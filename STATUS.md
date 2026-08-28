@@ -1,14 +1,26 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v48.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v48.1)
 
-**當前版本**：`v48.0` (2026-08-28 官方 6 大夜盤個股/ETF期貨價量與籌碼即時行情矩陣版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v48.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v48.0)
+**當前版本**：`v48.1` (2026-08-28 國際重大總經、富台/MSCI與結算日 實時避險防護雷達版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v48.1)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v48.1)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
 
 ---
 
-## 🎯 v48.0 核心更新亮點（Night-Traded 6 Stock & ETF Futures Matrix）
+## 🎯 v48.1 核心更新亮點（Macro Catalysts & Settlement Live Risk Radar）
+
+### 🚨 1. 國際總經、富台/MSCI 甩尾與期權結算日 實時避險雷達 (`#macro-events-radar-panel`)
+- **完整納入關鍵大事件**：包含 **週/月台指選結算**、**SGX 富台指期貨結算**、**MSCI 季度/半年度尾盤爆量甩尾調整**、**美大非農 (NFP) + 失業率**、**美 ADP 小非農**、**美每週初領失業金 (Jobless Claims)**、**美 CPI 通膨數據** 與 **FOMC 利率決議**。
+- **秒級動態即時倒數與避險防護**：
+  - **即時倒數計時器**：每秒自動更新 `⏱️ XX天 XX時 XX分 XX秒`。
+  - **三重風險視窗燈號**：
+    - `🟢 平穩觀察期 (> 12小時)`：GEX 牆位抑波護盤效應正常。
+    - `🟡 變盤前夕警戒期 (2~12小時)`：IV 增溫、買方權利金變貴，防範假突破。
+    - `🚨 衝擊告急風暴圈 (< 2小時)`：自動變色閃爍，提示 IV 劇烈抽離 (IV Crush) 恐打穿既有 GEX 牆位。
+- **接續 5 大重磅總經日曆矩陣**：一目了然預覽一週內重磅事件與做市商避險操作指引。
+
+---
 
 ### 🌙 1. 官方 6 大夜盤股期/ETF期 即時價量關係與指標導航 (`app.js`)
 - **夜盤 6 大開放契約聚焦**：專屬整合台積電期 (`2330`)、小型台積期 (`2330F`)、元大台灣50期 (`0050`)、小型台50期 (`0050F`)、聯電期 (`2303`) 與元大美債20年期 (`00679B`)。

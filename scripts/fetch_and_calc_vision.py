@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v48.0"
+ENGINE_VERSION = "v48.1"
 
 import os
 import sys
@@ -1953,6 +1953,182 @@ def generate_gex_payload():
         "bullet_4": ai_bullet_4
     }
 
+    import calendar
+    def calculate_macro_events_radar(curr_twd):
+        year, month = curr_twd.year, curr_twd.month
+
+        # 1. Weekly Settlement (Next Wednesday 13:30 TWD)
+        days_to_wed = (2 - curr_twd.weekday()) % 7
+        if days_to_wed == 0 and curr_twd.hour >= 14:
+            days_to_wed = 7
+        next_wed_dt = (curr_twd + datetime.timedelta(days=days_to_wed)).replace(hour=13, minute=30, second=0, microsecond=0)
+
+        # 2. Monthly Settlement (3rd Wednesday 13:30 TWD)
+        first_day = datetime.datetime(year, month, 1, tzinfo=tw_tz)
+        offset = (2 - first_day.weekday()) % 7 + 14
+        third_wed = datetime.datetime(year, month, 1 + offset, 13, 30, tzinfo=tw_tz)
+        if third_wed <= curr_twd:
+            m_next = month + 1 if month < 12 else 1
+            y_next = year if month < 12 else year + 1
+            first_next = datetime.datetime(y_next, m_next, 1, tzinfo=tw_tz)
+            offset = (2 - first_next.weekday()) % 7 + 14
+            third_wed = datetime.datetime(y_next, m_next, 1 + offset, 13, 30, tzinfo=tw_tz)
+
+        # 3. FTSE Taiwan Futures Settlement (富台指結算): 2nd-to-last trading day of month at 13:45 TWD
+        ld_num = calendar.monthrange(year, month)[1]
+        last_dt = datetime.datetime(year, month, ld_num, 13, 45, tzinfo=tw_tz)
+        while last_dt.weekday() >= 5:
+            last_dt -= datetime.timedelta(days=1)
+        stw_dt = last_dt - datetime.timedelta(days=1)
+        while stw_dt.weekday() >= 5:
+            stw_dt -= datetime.timedelta(days=1)
+        if stw_dt <= curr_twd:
+            m_next = month + 1 if month < 12 else 1
+            y_next = year if month < 12 else year + 1
+            ld_num = calendar.monthrange(y_next, m_next)[1]
+            last_dt = datetime.datetime(y_next, m_next, ld_num, 13, 45, tzinfo=tw_tz)
+            while last_dt.weekday() >= 5:
+                last_dt -= datetime.timedelta(days=1)
+            stw_dt = last_dt - datetime.timedelta(days=1)
+            while stw_dt.weekday() >= 5:
+                stw_dt -= datetime.timedelta(days=1)
+
+        # 4. MSCI Rebalancing (MSCI 權重甩尾調整): Last trading day of Feb, May, Aug, Nov 13:25 TWD
+        msci_months = [2, 5, 8, 11]
+        msci_dt = None
+        for m in msci_months:
+            ld_n = calendar.monthrange(year, m)[1]
+            ld_d = datetime.datetime(year, m, ld_n, 13, 25, tzinfo=tw_tz)
+            while ld_d.weekday() >= 5:
+                ld_d -= datetime.timedelta(days=1)
+            if ld_d > curr_twd:
+                msci_dt = ld_d
+                break
+        if not msci_dt:
+            ld_n = calendar.monthrange(year + 1, 2)[1]
+            ld_d = datetime.datetime(year + 1, 2, ld_n, 13, 25, tzinfo=tw_tz)
+            while ld_d.weekday() >= 5:
+                ld_d -= datetime.timedelta(days=1)
+            msci_dt = ld_d
+
+        # 5. US NFP + Unemployment Rate (大非農 + 失業率): 1st Fri 20:30 TWD
+        first_fri_day = (4 - first_day.weekday()) % 7 + 1
+        nfp_dt = datetime.datetime(year, month, first_fri_day, 20, 30, tzinfo=tw_tz)
+        if nfp_dt <= curr_twd:
+            m_next = month + 1 if month < 12 else 1
+            y_next = year if month < 12 else year + 1
+            first_next = datetime.datetime(y_next, m_next, 1, tzinfo=tw_tz)
+            first_fri_day = (4 - first_next.weekday()) % 7 + 1
+            nfp_dt = datetime.datetime(y_next, m_next, first_fri_day, 20, 30, tzinfo=tw_tz)
+
+        # 6. ADP Employment Change (ADP 小非農): Wed before NFP (2 days before NFP 20:15 TWD)
+        adp_dt = (nfp_dt - datetime.timedelta(days=2)).replace(hour=20, minute=15)
+
+        # 7. Initial Jobless Claims (美每週初領失業金): Next Thursday 20:30 TWD
+        days_to_thu = (3 - curr_twd.weekday()) % 7
+        if days_to_thu == 0 and curr_twd.hour >= 21:
+            days_to_thu = 7
+        jobless_dt = (curr_twd + datetime.timedelta(days=days_to_thu)).replace(hour=20, minute=30, second=0, microsecond=0)
+
+        # 8. US CPI Inflation Data (美 CPI 通膨數據): 12th of month 20:30 TWD
+        cpi_dt = datetime.datetime(year, month, 12, 20, 30, tzinfo=tw_tz)
+        if cpi_dt <= curr_twd:
+            m_next = month + 1 if month < 12 else 1
+            y_next = year if month < 12 else year + 1
+            cpi_dt = datetime.datetime(y_next, m_next, 12, 20, 30, tzinfo=tw_tz)
+
+        candidates = [
+            {
+                "id": "weekly_settlement",
+                "name": "週台指選擇權 (TXO) 結算日",
+                "category": "期權結算",
+                "impact": "HIGH",
+                "impact_label": "🔴 高度防守",
+                "target_epoch": int(next_wed_dt.timestamp() * 1000),
+                "date_display": next_wed_dt.strftime("%m/%d %H:%M"),
+                "gex_advice": "結算前夕 13:00~13:30 留意莊家拉甩尾盤，近月牆位極度敏感。"
+            },
+            {
+                "id": "monthly_settlement",
+                "name": "月台指期/選擇權 (TXF/TXO) 大結算",
+                "category": "期權結算",
+                "impact": "HIGH",
+                "impact_label": "🔴 超高風險",
+                "target_epoch": int(third_wed.timestamp() * 1000),
+                "date_display": third_wed.strftime("%m/%d %H:%M"),
+                "gex_advice": "月結算日全台資金交會，未平倉量大平倉歸零，大盤磁吸效應劇烈。"
+            },
+            {
+                "id": "stw_settlement",
+                "name": "SGX 富台指期貨 (STW) 結算日",
+                "category": "跨國結算",
+                "impact": "HIGH",
+                "impact_label": "🔴 跨國衝擊",
+                "target_epoch": int(stw_dt.timestamp() * 1000),
+                "date_display": stw_dt.strftime("%m/%d %H:%M"),
+                "gex_advice": "新加坡富台期外資結算，台指期 13:30 後常有跨市場大筆擺盪。"
+            },
+            {
+                "id": "msci_rebalance",
+                "name": "MSCI 季度/半年度指數權重甩尾調整",
+                "category": "市場洗牌",
+                "impact": "HIGH",
+                "impact_label": "🔴 爆量洗牌",
+                "target_epoch": int(msci_dt.timestamp() * 1000),
+                "date_display": msci_dt.strftime("%m/%d %H:%M"),
+                "gex_advice": "最後 5 分鐘撮合 (13:25~13:30) 爆出數百億洗牌換股，易爆發無預警跳空！"
+            },
+            {
+                "id": "us_nfp_unemp",
+                "name": "美國非農就業 (NFP) + 失業率 (Unemployment Rate)",
+                "category": "重磅總經",
+                "impact": "HIGH",
+                "impact_label": "🔴 波動爆發",
+                "target_epoch": int(nfp_dt.timestamp() * 1000),
+                "date_display": nfp_dt.strftime("%m/%d %H:%M"),
+                "gex_advice": "美就業市場熱度決定 Fed 政策走向，公布瞬即破壞 IV 結構強打 GEX 牆位。"
+            },
+            {
+                "id": "us_cpi",
+                "name": "美國 CPI 消費者物價指數 (Inflation)",
+                "category": "重磅總經",
+                "impact": "HIGH",
+                "impact_label": "🔴 波動爆發",
+                "target_epoch": int(cpi_dt.timestamp() * 1000),
+                "date_display": cpi_dt.strftime("%m/%d %H:%M"),
+                "gex_advice": "美通膨報告直接引爆全球美債殖利率，夜盤台指期易出現超大幅度跳空。"
+            },
+            {
+                "id": "us_adp",
+                "name": "美國 ADP 小非農就業數據",
+                "category": "重點總經",
+                "impact": "MEDIUM",
+                "impact_label": "🟡 前瞻警戒",
+                "target_epoch": int(adp_dt.timestamp() * 1000),
+                "date_display": adp_dt.strftime("%m/%d %H:%M"),
+                "gex_advice": "大非農前瞻數據，夜盤開盤前夕情緒預熱，IV 微幅上揚。"
+            },
+            {
+                "id": "us_jobless",
+                "name": "美國每週初領失業金人數 (Jobless Claims)",
+                "category": "每週總經",
+                "impact": "MEDIUM",
+                "impact_label": "🟡 常態警戒",
+                "target_epoch": int(jobless_dt.timestamp() * 1000),
+                "date_display": jobless_dt.strftime("%m/%d %H:%M"),
+                "gex_advice": "週四夜盤常態波動數據，評估勞動市場衰退或強勁軟著陸情況。"
+            }
+        ]
+
+        valid_events = [e for e in candidates if e["target_epoch"] >= int(curr_twd.timestamp() * 1000)]
+        valid_events.sort(key=lambda x: x["target_epoch"])
+        return {
+            "primary_event": valid_events[0] if valid_events else candidates[0],
+            "upcoming_list": valid_events[:5]
+        }
+
+    macro_events_data = calculate_macro_events_radar(now_dt)
+
     return {
         "date": today_str,
         "engine_version": ENGINE_VERSION,
@@ -1997,7 +2173,8 @@ def generate_gex_payload():
         "total_gex_plus": gex_profile['total_gex_plus'],
         "sector_capital_rotation": sector_capital_rotation,
         "stock_futures": stock_futures,
-        "ai_ex_dividend_digest": ai_ex_dividend_digest
+        "ai_ex_dividend_digest": ai_ex_dividend_digest,
+        "macro_events_radar": macro_events_data
     }
 
 def main():

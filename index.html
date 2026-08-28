@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- CSS Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=v48.0">
+  <link rel="stylesheet" href="style.css?v=v48.1">
   
   <!-- Plotly.js for Financial Charts -->
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
@@ -23,7 +23,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <!-- Embedded Standalone Data Fallback -->
-  <script src="data/embedded_data.js?v=v48.0"></script>
+  <script src="data/embedded_data.js?v=v48.1"></script>
 </head>
 <body>
 
@@ -576,6 +576,11 @@
 
     <!-- Row 4: 🌐 國際熱錢動向與 5 日匯率歷程 (International Hot Money Digest) Card -->
     <div id="hot-money-express-panel" class="panel watermark-panel" style="margin-bottom: 20px; border: 1px solid var(--gold-accent); background: rgba(255, 215, 0, 0.03); border-radius: 12px;">
+      <!-- Populated dynamically by JavaScript -->
+    </div>
+
+    <!-- Row 5: 🚨 國際重大總經事件與結算日 實時避險防護雷達 (Macro Events Radar Panel) -->
+    <div id="macro-events-radar-panel" class="panel watermark-panel" style="margin-bottom: 20px; border: 1px solid rgba(255, 215, 0, 0.4); background: linear-gradient(135deg, rgba(20, 25, 38, 0.9), rgba(12, 16, 26, 0.95)); border-radius: 14px; padding: 18px 22px; box-shadow: 0 6px 24px rgba(0,0,0,0.3);">
       <!-- Populated dynamically by JavaScript -->
     </div>
 
@@ -1179,7 +1184,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=v48.0"></script>
+  <script src="app.js?v=v48.1"></script>
 </body>
 </html>
 

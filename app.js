@@ -665,6 +665,7 @@ function renderDashboard() {
   try { renderHistorySessionSelector(); } catch (e) { console.error('Selector Error:', e); }
   try { populateKeyMetrics5Day(); } catch (e) { console.error('Key Metrics 5Day Error:', e); }
   try { renderHotMoneyDigest(); } catch (e) { console.error('Hot Money Error:', e); }
+  try { renderMacroEventsRadar(gexData); } catch (e) { console.error('Macro Events Error:', e); }
   try { renderGEXChart(); } catch (e) { console.error('GEX Chart Error:', e); }
   try { populateRetailSentiment(); } catch (e) { console.error('Retail Error:', e); }
   try { populateNightTrading(); } catch (e) { console.error('Night Trading Error:', e); }
@@ -2711,6 +2712,156 @@ function renderSectorCapitalFlow() {
       <div style="text-align: right; margin-top: 8px; font-size: 11px; color: rgba(255, 255, 255, 0.4); font-weight: 600; user-select: none;">© 尋鳥 Bluebird Finder</div>
     </div>`;
   container.innerHTML = html;
+}
+
+let macroTimerInterval = null;
+
+function renderMacroEventsRadar(dataObj) {
+  const panel = document.getElementById('macro-events-radar-panel');
+  if (!panel || !dataObj || !dataObj.macro_events_radar) return;
+
+  const radarData = dataObj.macro_events_radar;
+  const primary = radarData.primary_event;
+  const list = radarData.upcoming_list || [];
+
+  if (macroTimerInterval) {
+    clearInterval(macroTimerInterval);
+  }
+
+  function updateCountdown() {
+    const now = Date.now();
+    const target = primary.target_epoch;
+    const diff = target - now;
+
+    const timerEl = document.getElementById('macro-primary-timer');
+    const badgeEl = document.getElementById('macro-primary-regime');
+    const borderEl = document.getElementById('macro-events-radar-panel');
+
+    if (diff <= 0) {
+      if (timerEl) timerEl.innerHTML = `<span style="color: var(--call-color); font-weight: 700;">🔥 事件正在進行 / 數據發布完成</span>`;
+      if (badgeEl) badgeEl.className = 'badge';
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const daysStr = days > 0 ? `${days}天 ` : '';
+    const hoursStr = String(hours).padStart(2, '0');
+    const minsStr = String(minutes).padStart(2, '0');
+    const secsStr = String(seconds).padStart(2, '0');
+
+    if (timerEl) {
+      timerEl.innerHTML = `<span style="font-family: 'Outfit', monospace; font-size: 1.22rem; font-weight: 700; color: var(--gold-accent); letter-spacing: 0.5px;">⏱️ ${daysStr}${hoursStr}時 ${minsStr}分 ${secsStr}秒</span>`;
+    }
+
+    // Dynamic Risk Window Styling
+    const totalHours = diff / (1000 * 60 * 60);
+    if (totalHours <= 2) {
+      if (badgeEl) {
+        badgeEl.innerHTML = `🚨 衝擊告急風暴圈 (< 2小時)`;
+        badgeEl.style.background = 'rgba(255, 82, 82, 0.25)';
+        badgeEl.style.color = '#ff5252';
+        badgeEl.style.border = '1px solid #ff5252';
+      }
+      if (borderEl) {
+        borderEl.style.border = '2px solid #ff5252';
+        borderEl.style.boxShadow = '0 0 20px rgba(255, 82, 82, 0.4)';
+      }
+    } else if (totalHours <= 12) {
+      if (badgeEl) {
+        badgeEl.innerHTML = `🟡 變盤前夕警戒期 (2~12小時)`;
+        badgeEl.style.background = 'rgba(255, 170, 0, 0.2)';
+        badgeEl.style.color = '#ffaa00';
+        badgeEl.style.border = '1px solid #ffaa00';
+      }
+      if (borderEl) {
+        borderEl.style.border = '1px solid var(--gold-accent)';
+        borderEl.style.boxShadow = '0 4px 20px rgba(255, 215, 0, 0.2)';
+      }
+    } else {
+      if (badgeEl) {
+        badgeEl.innerHTML = `🟢 平穩觀察緩衝期 (> 12小時)`;
+        badgeEl.style.background = 'rgba(0, 230, 118, 0.15)';
+        badgeEl.style.color = '#00e676';
+        badgeEl.style.border = '1px solid #00e676';
+      }
+      if (borderEl) {
+        borderEl.style.border = '1px solid rgba(255, 215, 0, 0.3)';
+        borderEl.style.boxShadow = '0 4px 20px rgba(0,0,0,0.25)';
+      }
+    }
+  }
+
+  let upcomingCardsHtml = '';
+  list.forEach((ev) => {
+    const isPrimary = (ev.id === primary.id);
+    const borderStyle = isPrimary ? 'border: 1px solid var(--gold-accent); background: rgba(255,215,0,0.06);' : 'border: 1px solid rgba(255,255,255,0.08); background: rgba(15,23,42,0.6);';
+    upcomingCardsHtml += `
+      <div style="${borderStyle} padding: 10px 12px; border-radius: 8px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <strong style="color: #fff;">${ev.name}</strong>
+          <span class="badge" style="background: rgba(0,210,255,0.12); color: var(--primary-accent); font-size: 0.7rem;">${ev.category}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 2px;">
+          <span style="color: var(--gold-accent); font-weight: 600;">📅 ${ev.date_display} (TWD)</span>
+          <span>${ev.impact_label}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  panel.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.12); padding-bottom: 10px; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 1.2rem;">🚨</span>
+        <div>
+          <h3 style="margin: 0; font-size: 1.02rem; color: var(--gold-accent); font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            <span>國際重大總經事件、富台/MSCI 與結算日 實時避險防護雷達</span>
+          </h3>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">涵蓋週/月選結算、富台期結算、MSCI甩尾調整、美CPI、非農+失業率、ADP與初領失業金</div>
+        </div>
+      </div>
+      <div id="macro-primary-regime" class="badge" style="font-weight: 700; font-size: 0.8rem; padding: 4px 10px; border-radius: 6px;">
+        🟢 平穩觀察緩衝期
+      </div>
+    </div>
+
+    <!-- Primary Countdown Spotlight Box -->
+    <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(0, 210, 255, 0.04)); border: 1px solid var(--gold-accent); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+      <div style="flex: 1; min-width: 260px;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">🎯 下一重磅關鍵催化劑 (Next Major Catalyst)</div>
+        <div style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 4px;">${primary.name}</div>
+        <div style="font-size: 0.82rem; color: var(--gold-accent); display: flex; align-items: center; gap: 8px;">
+          <span>📅 事件發布時間：<strong>${primary.date_display} (TWD)</strong></span>
+          <span class="badge" style="background: rgba(255,82,82,0.15); color: #ff5252; border: 1px solid rgba(255,82,82,0.3);">${primary.impact_label}</span>
+        </div>
+      </div>
+
+      <div id="macro-primary-timer" style="background: rgba(10, 14, 23, 0.8); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px; padding: 10px 18px; text-align: center; min-width: 220px;">
+        <!-- Timer updated by JS -->
+      </div>
+    </div>
+
+    <!-- GEX Guidance & Upcoming 5 Grid -->
+    <div style="font-size: 0.82rem; color: var(--text-main); background: rgba(0, 210, 255, 0.03); padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; border-left: 4px solid var(--primary-accent); line-height: 1.6;">
+      <strong style="color: var(--primary-accent);">💡 做市商 GEX 與事件避險指引：</strong> ${primary.gex_advice}
+    </div>
+
+    <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+      <span>📅 接續近期 5 大重磅總經與結算日曆矩陣：</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px;">
+      ${upcomingCardsHtml}
+    </div>
+
+    <div style="text-align: right; margin-top: 10px; font-size: 11px; color: rgba(255, 255, 255, 0.45); font-weight: 600; user-select: none;">© 尋鳥 Bluebird Finder</div>
+  `;
+
+  updateCountdown();
+  macroTimerInterval = setInterval(updateCountdown, 1000);
 }
 
 
