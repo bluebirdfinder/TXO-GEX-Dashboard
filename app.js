@@ -1940,6 +1940,7 @@ function renderNightSixSpotlight(dataObj) {
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
         ${cardsHtml}
       </div>
+      <div style="text-align: right; margin-top: 8px; font-size: 11px; color: rgba(255, 255, 255, 0.28); user-select: none;">© 尋鳥 Bluebird Finder</div>
     </div>
   `;
 }
