@@ -2057,6 +2057,8 @@ def generate_gex_payload():
                 "impact": "HIGH",
                 "impact_label": "🔴 高度防守",
                 "pattern_type": "WINDOW_TIME",
+                "warning_lead_hours": 12,
+                "critical_lead_mins": 90,
                 "target_epoch": int(next_wed_dt.timestamp() * 1000),
                 "date_display": next_wed_dt.strftime("%m/%d %H:%M (台灣時間)"),
                 "gex_advice": "提防結算尾盤 13:00~13:30 做市商拉甩尾盤與權利金歸零磁吸！"
@@ -2068,6 +2070,8 @@ def generate_gex_payload():
                 "impact": "HIGH",
                 "impact_label": "🔴 超高風險",
                 "pattern_type": "WINDOW_TIME",
+                "warning_lead_hours": 24,
+                "critical_lead_mins": 120,
                 "target_epoch": int(third_wed.timestamp() * 1000),
                 "date_display": third_wed.strftime("%m/%d %H:%M (台灣時間)"),
                 "gex_advice": "提防大結算日全天與 13:00~13:30 巨量未平倉平倉擺盪！"
@@ -2079,6 +2083,8 @@ def generate_gex_payload():
                 "impact": "HIGH",
                 "impact_label": "🔴 跨國衝擊",
                 "pattern_type": "WINDOW_TIME",
+                "warning_lead_hours": 12,
+                "critical_lead_mins": 90,
                 "target_epoch": int(stw_dt.timestamp() * 1000),
                 "date_display": stw_dt.strftime("%m/%d %H:%M (台灣時間)"),
                 "gex_advice": "提防新加坡富台期結算日 13:30~13:45 跨市場甩尾與大筆開平倉！"
@@ -2090,6 +2096,8 @@ def generate_gex_payload():
                 "impact": "HIGH",
                 "impact_label": "🔴 爆量洗牌",
                 "pattern_type": "WINDOW_TIME",
+                "warning_lead_hours": 24,
+                "critical_lead_mins": 90,
                 "target_epoch": int(msci_dt.timestamp() * 1000),
                 "date_display": msci_dt.strftime("%m/%d %H:%M (台灣時間)"),
                 "gex_advice": "提防尾盤 13:25~13:30 撮合被動基金爆量甩尾，避免最後 5 分鐘市價單追價！"
@@ -2101,6 +2109,8 @@ def generate_gex_payload():
                 "impact": "HIGH",
                 "impact_label": "🔴 波動爆發",
                 "pattern_type": "POINT_TIME",
+                "warning_lead_hours": 24,
+                "critical_lead_mins": 120,
                 "target_epoch": int(nfp_dt.timestamp() * 1000),
                 "date_display": nfp_dt.strftime("%m/%d %H:%M (台灣時間)"),
                 "gex_advice": f"發布前 30 分鐘 ({nfp_dt.strftime('%H:%M')} 起) 流動性急遽抽離，提防數據發布瞬間 50~150 點雙向劇烈刷洗！"
@@ -2112,6 +2122,8 @@ def generate_gex_payload():
                 "impact": "HIGH",
                 "impact_label": "🔴 波動爆發",
                 "pattern_type": "POINT_TIME",
+                "warning_lead_hours": 24,
+                "critical_lead_mins": 120,
                 "target_epoch": int(cpi_dt.timestamp() * 1000),
                 "date_display": cpi_dt.strftime("%m/%d %H:%M (台灣時間)"),
                 "gex_advice": f"發布前 30 分鐘 ({cpi_dt.strftime('%H:%M')} 起) 流動性急遽抽離，提防數據發布瞬間 50~150 點雙向劇烈刷洗！"
@@ -2123,6 +2135,8 @@ def generate_gex_payload():
                 "impact": "MEDIUM",
                 "impact_label": "🟡 前瞻警戒",
                 "pattern_type": "POINT_TIME",
+                "warning_lead_hours": 6,
+                "critical_lead_mins": 30,
                 "target_epoch": int(adp_dt.timestamp() * 1000),
                 "date_display": adp_dt.strftime("%m/%d %H:%M (台灣時間)"),
                 "gex_advice": f"發布前 15 分鐘 ({adp_dt.strftime('%H:%M')} 起) 前瞻情緒預熱，提防夜盤開盤前夕情緒性波動。"
@@ -2134,6 +2148,8 @@ def generate_gex_payload():
                 "impact": "MEDIUM",
                 "impact_label": "🟡 常態警戒",
                 "pattern_type": "POINT_TIME",
+                "warning_lead_hours": 6,
+                "critical_lead_mins": 30,
                 "target_epoch": int(jobless_dt.timestamp() * 1000),
                 "date_display": jobless_dt.strftime("%m/%d %H:%M (台灣時間)"),
                 "gex_advice": f"每週四夜盤常態數據，觀察 {jobless_dt.strftime('%H:%M')} 公布前夕情緒與美債殖利率聯動。"

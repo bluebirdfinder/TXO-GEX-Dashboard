@@ -2757,11 +2757,16 @@ function renderMacroEventsRadar(dataObj) {
       timerEl.innerHTML = `<span style="font-family: 'Outfit', monospace; font-size: 1.22rem; font-weight: 700; color: var(--gold-accent); letter-spacing: 0.5px;">⏱️ ${daysStr}${hoursStr}時 ${minsStr}分 ${secsStr}秒</span>`;
     }
 
-    // Dynamic Risk Window Styling
+    // Dynamic Risk Window Styling tailored per event
+    const totalMins = diff / (1000 * 60);
     const totalHours = diff / (1000 * 60 * 60);
-    if (totalHours <= 2) {
+
+    const critMins = primary.critical_lead_mins || 120;
+    const warnHours = primary.warning_lead_hours || 24;
+
+    if (totalMins <= critMins) {
       if (badgeEl) {
-        badgeEl.innerHTML = `🚨 衝擊告急風暴圈 (< 2小時)`;
+        badgeEl.innerHTML = `🚨 衝擊告急風暴圈 (< ${critMins >= 60 ? (critMins/60).toFixed(1) + '小時' : critMins + '分鐘'})`;
         badgeEl.style.background = 'rgba(255, 82, 82, 0.25)';
         badgeEl.style.color = '#ff5252';
         badgeEl.style.border = '1px solid #ff5252';
@@ -2770,9 +2775,9 @@ function renderMacroEventsRadar(dataObj) {
         borderEl.style.border = '2px solid #ff5252';
         borderEl.style.boxShadow = '0 0 20px rgba(255, 82, 82, 0.4)';
       }
-    } else if (totalHours <= 12) {
+    } else if (totalHours <= warnHours) {
       if (badgeEl) {
-        badgeEl.innerHTML = `🟡 變盤前夕警戒期 (2~12小時)`;
+        badgeEl.innerHTML = `🟡 變盤前夕警戒期 (< ${warnHours}小時)`;
         badgeEl.style.background = 'rgba(255, 170, 0, 0.2)';
         badgeEl.style.color = '#ffaa00';
         badgeEl.style.border = '1px solid #ffaa00';
@@ -2783,7 +2788,7 @@ function renderMacroEventsRadar(dataObj) {
       }
     } else {
       if (badgeEl) {
-        badgeEl.innerHTML = `🟢 平穩觀察緩衝期 (> 12小時)`;
+        badgeEl.innerHTML = `🟢 平穩觀察緩衝期 (> ${warnHours}小時)`;
         badgeEl.style.background = 'rgba(0, 230, 118, 0.15)';
         badgeEl.style.color = '#00e676';
         badgeEl.style.border = '1px solid #00e676';
