@@ -2,15 +2,15 @@ name: TAIFEX Data Engine (Day & Night Sessions)
 
 on:
   schedule:
-    # --- 🌙 Night Session Settlement Window (05:00 Close -> 05:30, 06:00, 06:30 TWD) ---
-    - cron: '30 21 * * 0-4'  # 05:30 TWD (Primary Night Settlement & Card Generation)
-    - cron: '0 22 * * 0-4'   # 06:00 TWD (Failover Retry 1)
-    - cron: '30 22 * * 0-4'  # 06:30 TWD (Failover Retry 2)
+    # --- 🌙 Night Session Settlement Window (05:00, 05:30, 06:00 TWD) ---
+    - cron: '0 21 * * 0-4'   # 05:00 TWD (Night Session Close Attempt 1)
+    - cron: '30 21 * * 0-4'  # 05:30 TWD (Night Session Settlement & Card Generation)
+    - cron: '0 22 * * 0-4'   # 06:00 TWD (Night Session Failover Retry)
 
-    # --- ☀️ Day Session Settlement & Institutional Chips Window (13:45 Close -> 15:30, 16:00, 16:30 TWD) ---
+    # --- ☀️ Day Session Settlement & Institutional Chips Window (15:00, 15:30, 16:00 TWD) ---
+    - cron: '0 7 * * 1-5'    # 15:00 TWD (Day Session Close Attempt 1)
     - cron: '30 7 * * 1-5'   # 15:30 TWD (Primary Day Settlement, Chips & Card Generation)
-    - cron: '0 8 * * 1-5'    # 16:00 TWD (Failover Retry 1)
-    - cron: '30 8 * * 1-5'   # 16:30 TWD (Failover Retry 2)
+    - cron: '0 8 * * 1-5'    # 16:00 TWD (Day Session Failover Retry)
 
   workflow_dispatch: # Allows 1-click manual trigger from GitHub UI anytime on phone or PC
 
