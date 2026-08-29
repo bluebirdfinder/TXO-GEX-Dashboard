@@ -49,12 +49,11 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python scripts/fetch_and_calc_vision.py
-          python scratch/make_embedded_data_js.py
 
       - name: Commit and Push Official Payload
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/gex_data.json data/encrypted_gex.json data/embedded_data.js
+          git add data/gex_data.json data/encrypted_gex.json data/embedded_data.js data/social_card_*.png
           git status
           git diff-index --quiet HEAD || (git commit -m "🏛️ [Official] TAIFEX Day/Night Session Positioning & GEX Baseline [skip ci]" && git push)

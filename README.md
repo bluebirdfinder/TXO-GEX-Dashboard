@@ -1,15 +1,30 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v49.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v49.1)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> TWSE 信用交易融資維持率 API 實時動態連線 ✦ 週末與跨日時間區間判定全重構 ✦ 週五夜盤歷程完整歸位 ✦ Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v49.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v49.1-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
-## 🌟 v49.0 數據引擎 Self-Audit 重構、多源熱備援與 21:00 融資維持率排程補齊
+## 🌟 v49.1 TWSE 信用交易融資維持率 API 實時動態連線與週末歷程時間判定重構
+
+### 🏛️ 1. TWSE 信用交易融資維持率 API 實時動態連線 (`fetch_twse_margin_maintenance`)
+- **實時 API 抓取與日期感知**：數據引擎直接連線臺灣證券交易所 (TWSE) 信用交易統計 API (`https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?response=json`)。當證交所完成當日盤後清算（約 20:30），自動辨識 `date` 狀態，即時轉為 `is_published = True` 並寫入當日大盤融資維持率 (`160.6% 🟢 安定`) 與個股維持率 (`145.9%`)，擺脫舊版硬編碼 `now_hour >= 21` 判定。
+- **前端提示文字優化**：更新未公布說明文字為 `(約20:30~21:00實時連線)`。
+
+### 🌙 2. 週末與跨日時間區間判定全重構 (週五夜盤歷程完整歸位)
+- **週末夜盤歸位修復**：重構 `scripts/fetch_and_calc_vision.py` 中的 `is_weekend` (週六/週日) 判定。解決舊邏輯在週末將週六上午誤判為「平日開盤 Live 狀態」並遺漏週六凌晨 05:00 結算之 `週五夜盤` 歷程欄位的 Bug。修復後，歷程矩陣第一列顯示 `8/28 (五) T夜盤 (05:00 定案版)`（結算價 45,900）。
+
+### 📈 3. 個股期貨價與 Basis (期現價差) Data Audit 與清洗
+- **刪除模擬偏置補償**：刪除舊後端個股期貨無成交量時的偏置補償邏輯 (`basis_offset`)，無成交時期貨價直接連線現貨價 (0.00 平價差)，保證個股期貨 270+ 檔數據 100% 客觀真實。
+
+### ⚙️ 4. GitHub Actions 排程工作流相容性修復 (`auto_update.yml`)
+- **無效指令清理**：刪除 `auto_update.yml` 中非必要之無效腳本引用，確保 GitHub Actions 每晚 21:00 與 21:30 的自動連線抓取、資料庫更新與 Auto-Commit 100% 順暢。
+
+---
 
 ### 🛡️ 1. TWSE 現貨指數多源熱備援機制 (`scripts/fetch_and_calc_vision.py`)
 - **多層級熱備援抓取 (Multi-Tier Fallback)**：重構 `fetch_twse_realtime_indices()`，依序嘗試 TWSE MIS API ➔ Yahoo Finance 全球 API (`^TWII` 加權 / `^TWOII` 櫃買) ➔ 本地 `gex_data.json` 快照，徹底解決 GitHub Actions 國外 IP 遭 TWSE 阻擋降級成舊值 `45811.01` / `400.95` 的硬碼問題。

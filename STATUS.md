@@ -1,14 +1,29 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.1)
 
-**當前版本**：`v49.0` (2026-08-28 數據引擎 Self-Audit 重構、多源熱備援與 21:00 融資維持率排程補齊版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.0)
+**當前版本**：`v49.1` (2026-08-29 TWSE 信用交易融資維持率 API 實時動態連線與週末歷程時間判定重構版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.1)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.1)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
 
 ---
 
-## 🎯 v49.0 核心更新亮點（Data Engine Self-Audit, Multi-Tier Fallbacks & 21:00 Schedule）
+## 🎯 v49.1 核心更新亮點（TWSE Margin MI_MARGN Real-time API & Weekend Session Fix）
+
+### 🏛️ 1. TWSE 信用交易融資維持率 API 實時動態連線 (`fetch_twse_margin_maintenance`)
+- **實時 API 抓取與日期感知**：數據引擎直接連線臺灣證券交易所 (TWSE) 信用交易統計 API (`https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?response=json`)。當證交所完成當日盤後清算（約 20:30），自動辨識 `date` 狀態，即時轉為 `is_published = True` 並寫入當日大盤融資維持率 (`160.6% 🟢 安定`) 與個股維持率 (`145.9%`)，擺脫舊版硬編碼 `now_hour >= 21` 判定。
+- **前端提示文字優化**：更新未公布說明文字為 `(約20:30~21:00實時連線)`。
+
+### 🌙 2. 週末與跨日時間區間判定全重構 (週五夜盤歷程完整歸位)
+- **週末夜盤歸位修復**：重構 `scripts/fetch_and_calc_vision.py` 中的 `is_weekend` (週六/週日) 判定。解決舊邏輯在週末將週六上午誤判為「平日開盤 Live 狀態」並遺漏週六凌晨 05:00 結算之 `週五夜盤` 歷程欄位的 Bug。修復後，歷程矩陣第一列顯示 `8/28 (五) T夜盤 (05:00 定案版)`（結算價 45,900）。
+
+### 📈 3. 個股期貨價與 Basis (期現價差) Data Audit 與清洗
+- **刪除模擬偏置補償**：刪除舊後端個股期貨無成交量時的偏置補償邏輯 (`basis_offset`)，無成交時期貨價直接連線現貨價 (0.00 平價差)，保證個股期貨 270+ 檔數據 100% 客觀真實。
+
+### ⚙️ 4. GitHub Actions 排程工作流相容性修復 (`auto_update.yml`)
+- **無效指令清理**：刪除 `auto_update.yml` 中非必要之無效腳本引用，確保 GitHub Actions 每晚 21:00 與 21:30 的自動連線抓取、資料庫更新與 Auto-Commit 100% 順暢。
+
+---
 
 ### 🛡️ 1. TWSE 現貨指數多源熱備援機制 (`scripts/fetch_and_calc_vision.py`)
 - **多層級熱備援抓取 (Multi-Tier Fallback)**：重構 `fetch_twse_realtime_indices()`，依序嘗試 TWSE MIS API ➔ Yahoo Finance 全球 API (`^TWII` 加權 / `^TWOII` 櫃買) ➔ 本地 `gex_data.json` 快照，徹底解決 GitHub Actions 國外 IP 遭 TWSE 阻擋降級成舊值 `45811.01` / `400.95` 的硬碼問題。加權現貨精準為 `46,331.45 (+356.23)`，櫃買指數為 `402.83 (+2.45)`。

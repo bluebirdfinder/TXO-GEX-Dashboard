@@ -834,7 +834,7 @@ function populateKeyMetrics5Day() {
       const isPublished = s.margin_maint_published !== false && s.margin_maint_published !== 'pending';
       if (!isPublished) {
         // 下午 16:00 產出圖卡/網頁時證交所尚未公布
-        mmMain = `<span style="font-size: 0.78rem; padding: 2px 6px; border-radius: 4px; background: rgba(255, 215, 0, 0.08); color: #ffd700; font-weight: 600; border: 1px dashed rgba(255, 215, 0, 0.4); display: inline-block; white-space: nowrap;">未公布 <span style="font-size: 0.72rem; opacity: 0.85;">(21:00更新)</span></span>`;
+        mmMain = `<span style="font-size: 0.78rem; padding: 2px 6px; border-radius: 4px; background: rgba(255, 215, 0, 0.08); color: #ffd700; font-weight: 600; border: 1px dashed rgba(255, 215, 0, 0.4); display: inline-block; white-space: nowrap;">未公布 <span style="font-size: 0.72rem; opacity: 0.85;">(約20:30~21:00實時連線)</span></span>`;
         mmSub = `<div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 2px;">TWSE 盤後清算中</div>`;
       } else {
         const mmMarket = s.margin_maint_market !== undefined ? s.margin_maint_market : (s.margin_ratio || 155.8);
