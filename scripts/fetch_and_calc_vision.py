@@ -1773,8 +1773,9 @@ def generate_gex_payload():
     if catalog_270:
         for idx, stk in enumerate(catalog_270):
             code = stk['code']
-            twse_info = stock_spot_dict.get(code, {})
-            spot_p = twse_info.get('price') or stk.get('spot_price', 100.0)
+            lookup_code = '2330' if code == '2330F' else ('0050' if code == '0050F' else code)
+            twse_info = stock_spot_dict.get(code, {}) or stock_spot_dict.get(lookup_code, {})
+            spot_p = twse_info.get('price') or stk.get('spot_price') or (2420.0 if '2330' in code else (105.9 if '0050' in code else (26.04 if '00679B' in code else 100.0)))
             chg_pct = twse_info.get('change_pct') or stk.get('change_pct', 0.0)
 
             # TAIFEX Ground-Truth Volume & Futures Price
@@ -1923,28 +1924,41 @@ def generate_gex_payload():
         }
     ]
 
+    now_hour = now_dt.hour
     now_minute = now_dt.minute
+    is_weekend = (now_dt.weekday() >= 5)
     is_before_open = (now_hour < 8 or (now_hour == 8 and now_minute < 45))
+
+    if is_weekend:
+        day_label = "☀️ T日盤 (定案)"
+        day_full_name = f"{t_days[4]} T日盤 (定案版)"
+        night_label = "🌙 T夜盤 (05:00 定案)"
+        night_full_name = f"{t_days[4]} T夜盤 (05:00 定案版)"
+    else:
+        day_label = "☀️ 日盤 (定案)" if is_before_open else ("🔥 T日盤 (Live)" if (8 <= now_hour < 14) else ("☀️ T日盤 (盤後快照)" if (14 <= now_hour < 15) else "☀️ T日盤 (定案)"))
+        day_full_name = f"{t_days[4]} 日盤 (定案版)" if is_before_open else (f"{t_days[4]} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (盤後快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)")))
+        night_label = "🌙 夜盤 (05:00 定案)" if is_before_open else ("🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 5) else "🌙 T夜盤 (05:00 定案)")
+        night_full_name = f"{t_days[4]} 夜盤 (05:00 定案版)" if is_before_open else (f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)"))
 
     t0_day_item = {
         "id": "t0_day", 
-        "label": "☀️ 日盤 (定案)" if is_before_open else ("🔥 T日盤 (Live)" if (8 <= now_hour < 14) else ("☀️ T日盤 (盤後快照)" if (14 <= now_hour < 15) else "☀️ T日盤 (定案)")), 
+        "label": day_label, 
         "date_display": f"{t_days[4]} ☀️", 
-        "full_name": f"{t_days[4]} 日盤 (定案版)" if is_before_open else (f"{t_days[4]} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (盤後快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)"))),
+        "full_name": day_full_name,
         "spot_price": spot_price, "two_price": otc_price, "txf_price": day_txf_price,
         "zero_gamma_level": day_zero_gamma, "gex_plus_flip": day_gex_plus_flip, "call_wall_strike": day_call_wall,
         "put_wall_strike": day_put_wall, "max_pain_strike": day_max_pain, "shift_vs_prev": -110,
         "pc_ratio": 111.8, "margin_maint_market": 155.8, "margin_maint_stock": 141.2,
-        "margin_maint_published": (now_hour >= 21 or now_hour < 6)
+        "margin_maint_published": True if is_weekend else (now_hour >= 21 or now_hour < 6)
     }
 
     active_night_spot = night_txf_price if (night_txf_price is not None and night_txf_price > 0 and abs(night_txf_price - day_txf_price) < 600) else spot_price
 
     t0_night_item = {
         "id": "t0_night", 
-        "label": "🌙 夜盤 (05:00 定案)" if is_before_open else ("🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 5) else "🌙 T夜盤 (05:00 定案)"), 
+        "label": night_label, 
         "date_display": f"{t_days[4]} 🌙", 
-        "full_name": f"{t_days[4]} 夜盤 (05:00 定案版)" if is_before_open else (f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)")),
+        "full_name": night_full_name,
         "spot_price": active_night_spot, "two_price": otc_price, "txf_price": night_txf_price,
         "zero_gamma_level": gex_profile['zero_gamma_level'], "gex_plus_flip": gex_profile['gex_plus_flip'], "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": txf_shift,
@@ -1955,8 +1969,8 @@ def generate_gex_payload():
     # Add day session
     history_10_sessions.append(t0_day_item)
 
-    # Only append night session if night trading is actually active, completed, or running before morning open
-    if is_before_open or now_hour >= 15 or now_hour < 8:
+    # Only append night session if night trading is actually active, completed, running before morning open, or on weekend
+    if is_weekend or is_before_open or now_hour >= 15 or now_hour < 8:
         history_10_sessions.append(t0_night_item)
 
     # Compute exact GEX bar distribution for each historical session on a fixed global strike grid
