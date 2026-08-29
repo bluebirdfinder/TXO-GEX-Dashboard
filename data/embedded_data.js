@@ -1,6 +1,6 @@
 window.GEX_EMBEDDED_DATA = {
   "date": "2026-08-29",
-  "engine_version": "v49.0",
+  "engine_version": "v49.1",
   "session_type": "NIGHT",
   "session_name": "🌙 夜盤收盤價校正 (05:00 Close)",
   "session_shift": {
@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 46417.7,
     "day_total_vex": 2558.79
   },
-  "last_updated_time": "2026-08-29 11:19",
+  "last_updated_time": "2026-08-29 11:24",
   "spot_price": 46331.45,
   "spot_change": 356.23,
   "spot_change_pct": 0.77,
@@ -22121,10 +22121,10 @@ window.GEX_EMBEDDED_DATA = {
         "pct": -0.25
       },
       "dxy": {
-        "date": "08/27 (四)",
-        "price": 99.16,
-        "change": -0.01,
-        "pct": -0.01
+        "date": "08/28 (五)",
+        "price": 99.68,
+        "change": 0.52,
+        "pct": 0.52
       },
       "usdjpy": {
         "date": "08/28 (五)",
@@ -22200,12 +22200,6 @@ window.GEX_EMBEDDED_DATA = {
       ],
       "dxy": [
         {
-          "date": "08/21 (五)",
-          "price": 98.8,
-          "change": -0.1,
-          "pct": -0.1
-        },
-        {
           "date": "08/24 (一)",
           "price": 99.0,
           "change": 0.2,
@@ -22228,10 +22222,16 @@ window.GEX_EMBEDDED_DATA = {
           "price": 99.16,
           "change": -0.01,
           "pct": -0.01
+        },
+        {
+          "date": "08/28 (五)",
+          "price": 99.68,
+          "change": 0.52,
+          "pct": 0.52
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card bull\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>🔥 <span style=\"color: var(--call-color); font-weight: 700;\">台幣強勢升值 (熱錢顯著匯入)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span>（單日升值 <span style=\"color: var(--call-color); font-weight: 700;\">0.08 元</span>）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.16</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.57</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bull\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>🔥 <span style=\"color: var(--call-color); font-weight: 700;\">台幣強勢升值 (熱錢顯著匯入)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span>（單日升值 <span style=\"color: var(--call-color); font-weight: 700;\">0.08 元</span>）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.68</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.57</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": 17,
@@ -22290,7 +22290,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -6221.28,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-29 11:19",
+    "last_updated": "2026-08-29 11:24",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
