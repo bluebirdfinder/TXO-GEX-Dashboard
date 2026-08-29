@@ -2619,39 +2619,58 @@ function updateMicrostructureExpress(livePrice = null) {
   const badgeEl = document.getElementById('express-regime-badge');
   if (!expressContentEl || !gexData) return;
 
-  const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
-  const activeSession = (sessions && sessions.length > 0) ? sessions[sessions.length - 1] : null;
+  // 1. Determine Current Session Phase based on Taiwan Time (UTC+8)
+  const twNow = new Date();
+  const twOffset = 8 * 60;
+  const localOffset = twNow.getTimezoneOffset();
+  const twTime = new Date(twNow.getTime() + (localOffset + twOffset) * 60000);
+  const dayOfWeek = twTime.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+  const totalMin = twTime.getHours() * 60 + twTime.getMinutes();
 
-  // 1. Current active price (livePrice > activeSession TXF > gexData night_txf_price > activeSession spot > gexData TXF/Spot)
-  let currentP = livePrice;
-  if (!currentP || currentP <= 0) {
-    if (activeSession && activeSession.txf_price && activeSession.txf_price > 0) {
-      currentP = activeSession.txf_price;
-    } else if (gexData.night_txf_price && gexData.night_txf_price > 0) {
-      currentP = gexData.night_txf_price;
-    } else if (activeSession && activeSession.spot_price && activeSession.spot_price > 0) {
-      currentP = activeSession.spot_price;
-    } else {
-      currentP = gexData.txf_price || gexData.spot_price || 45900;
-    }
+  let phase = 'NIGHT_SETTLED';
+  let phaseLabel = '🌙 夜盤 05:00 定案 (週末休市)';
+
+  const isWeekendClosed = (dayOfWeek === 6 && totalMin >= 300) || (dayOfWeek === 0) || (dayOfWeek === 1 && totalMin < 525);
+
+  if (isWeekendClosed) {
+    phase = 'NIGHT_SETTLED';
+    phaseLabel = '🌙 夜盤 05:00 定案 (週末休市)';
+  } else if (totalMin >= 525 && totalMin < 825 && dayOfWeek < 6) {
+    phase = 'DAY_LIVE';
+    phaseLabel = '🔥 日盤盤中 (Live)';
+  } else if (totalMin >= 825 && totalMin < 900 && dayOfWeek < 6) {
+    phase = 'DAY_SETTLED';
+    phaseLabel = '☀️ 日盤定案 (盤後)';
+  } else if ((totalMin >= 900 || totalMin < 300) && dayOfWeek !== 6) {
+    phase = 'NIGHT_LIVE';
+    phaseLabel = '🔥 夜盤盤中 (Live 對沖校正)';
+  } else {
+    phase = 'NIGHT_SETTLED';
+    phaseLabel = '🌙 夜盤 05:00 定案';
   }
 
-  // 2. Active Zero Gamma, Call Wall, Put Wall, Max Pain
-  const zg = (activeSession && activeSession.zero_gamma_level !== undefined) 
-    ? activeSession.zero_gamma_level 
-    : (gexData.zero_gamma_level || 46317.7);
+  // 2. Select Price & GEX parameters matching session phase
+  let currentP = livePrice;
+  let zg, cw, pw, mp;
 
-  const cw = (activeSession && activeSession.call_wall_strike !== undefined) 
-    ? activeSession.call_wall_strike 
-    : (gexData.call_wall_strike || 46500);
-
-  const pw = (activeSession && activeSession.put_wall_strike !== undefined) 
-    ? activeSession.put_wall_strike 
-    : (gexData.put_wall_strike || 46100);
-
-  const mp = (activeSession && activeSession.max_pain_strike !== undefined) 
-    ? activeSession.max_pain_strike 
-    : (gexData.max_pain_strike || 45700);
+  if (phase === 'DAY_LIVE' || phase === 'DAY_SETTLED') {
+    zg = gexData.day_zero_gamma || gexData.zero_gamma_level || 46401.9;
+    cw = gexData.day_call_wall || gexData.call_wall_strike || 46600;
+    pw = gexData.day_put_wall || gexData.put_wall_strike || 46200;
+    mp = gexData.day_max_pain || gexData.max_pain_strike || 45800;
+    if (!currentP || currentP <= 0) {
+      currentP = gexData.day_txf_price || gexData.spot_price || 46331.45;
+    }
+  } else {
+    // Night Live or Night Settled
+    zg = gexData.zero_gamma_level || 46317.7;
+    cw = gexData.call_wall_strike || 46500;
+    pw = gexData.put_wall_strike || 46100;
+    mp = gexData.max_pain_strike || 45700;
+    if (!currentP || currentP <= 0) {
+      currentP = gexData.night_txf_price || gexData.txf_price || gexData.spot_price || 45900;
+    }
+  }
 
   const isPosGamma = currentP >= zg;
   const flipDist = (Math.abs(currentP - zg)).toFixed(1);
@@ -2672,9 +2691,9 @@ function updateMicrostructureExpress(livePrice = null) {
 
   let regimeHtml = '';
   if (isPosGamma) {
-    regimeHtml = `🔴 <strong>正 Gamma 波動度抑制區 (平穩護盤)</strong> — <span style="color: var(--call-color); font-weight: 600;">🛡️ 標的物價格 (${currentP.toLocaleString()}) 高於 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。`;
+    regimeHtml = `🔴 <strong>正 Gamma 區 (護盤中)</strong> — <span style="color: var(--call-color); font-weight: 600;">🛡️ 【${phaseLabel}】標的物價格 (${currentP.toLocaleString()}) 高於 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。`;
   } else {
-    regimeHtml = `🟢 <strong>負 Gamma 波動度放大區 (避險引爆)</strong> — <span style="color: var(--put-color); font-weight: 700;">⚠️ 警告！標的物價格 (${currentP.toLocaleString()}) 已跌破 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！`;
+    regimeHtml = `🟢 <strong>負 Gamma 區 (避險追殺)</strong> — <span style="color: var(--put-color); font-weight: 700;">⚠️ 【${phaseLabel}】警告！標的物價格 (${currentP.toLocaleString()}) 已跌破 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！`;
   }
 
   let proximityHtml = '';

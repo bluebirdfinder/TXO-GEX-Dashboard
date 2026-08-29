@@ -1559,15 +1559,56 @@ def generate_gex_payload():
         "day_total_vex": day_total_vex
     }
 
-    # Microstructure Digest
-    active_price = night_txf_price if (night_txf_price is not None and night_txf_price > 0) else spot_price
-    is_pos_gamma = active_price >= gex_profile['zero_gamma_level']
-    flip_dist = round(abs(active_price - gex_profile['zero_gamma_level']), 1)
-    
-    cw = gex_profile['call_wall_strike']
-    pw = gex_profile['put_wall_strike']
-    mp = gex_profile['max_pain_strike']
-    zg = gex_profile['zero_gamma_level']
+    # Microstructure Digest - Dynamic 4-Phase Session Selector
+    now_tw = now_dt  # now_dt is in TWD (UTC+8)
+    day_of_week = now_tw.weekday() # 0=Mon, ..., 5=Sat, 6=Sun
+    total_min = now_tw.hour * 60 + now_tw.minute
+
+    is_weekend_closed = (day_of_week == 5 and total_min >= 300) or (day_of_week == 6) or (day_of_week == 0 and total_min < 525)
+
+    if is_weekend_closed:
+        session_phase = "NIGHT_SETTLED"
+        phase_label = "🌙 夜盤 05:00 定案 (週末休市)"
+        active_price = night_txf_price if (night_txf_price is not None and night_txf_price > 0) else spot_price
+        zg = gex_profile['zero_gamma_level']
+        cw = gex_profile['call_wall_strike']
+        pw = gex_profile['put_wall_strike']
+        mp = gex_profile['max_pain_strike']
+    elif 525 <= total_min < 825 and day_of_week < 5:
+        session_phase = "DAY_LIVE"
+        phase_label = "🔥 日盤盤中 (Live)"
+        active_price = day_txf_price if (day_txf_price is not None and day_txf_price > 0) else spot_price
+        zg = day_zero_gamma
+        cw = day_call_wall
+        pw = day_put_wall
+        mp = day_max_pain
+    elif 825 <= total_min < 900 and day_of_week < 5:
+        session_phase = "DAY_SETTLED"
+        phase_label = "☀️ 日盤定案 (盤後)"
+        active_price = spot_price
+        zg = day_zero_gamma
+        cw = day_call_wall
+        pw = day_put_wall
+        mp = day_max_pain
+    elif (total_min >= 900 or total_min < 300) and day_of_week < 6:
+        session_phase = "NIGHT_LIVE"
+        phase_label = "🔥 夜盤盤中 (Live 對沖校正)"
+        active_price = night_txf_price if (night_txf_price is not None and night_txf_price > 0) else spot_price
+        zg = gex_profile['zero_gamma_level']
+        cw = gex_profile['call_wall_strike']
+        pw = gex_profile['put_wall_strike']
+        mp = gex_profile['max_pain_strike']
+    else:
+        session_phase = "NIGHT_SETTLED"
+        phase_label = "🌙 夜盤 05:00 定案"
+        active_price = night_txf_price if (night_txf_price is not None and night_txf_price > 0) else spot_price
+        zg = gex_profile['zero_gamma_level']
+        cw = gex_profile['call_wall_strike']
+        pw = gex_profile['put_wall_strike']
+        mp = gex_profile['max_pain_strike']
+
+    is_pos_gamma = active_price >= zg
+    flip_dist = round(abs(active_price - zg), 1)
 
     if is_pos_gamma:
         regime_label = "🔴 正 Gamma 波動度抑制區 (平穩護盤)"
@@ -1596,6 +1637,9 @@ def generate_gex_payload():
         pw_desc = f"🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style=\"color: var(--primary-accent); font-weight: 700;\">{pw:,} 點</span> (距現價 {active_price - pw:.0f} 點)。"
 
     microstructure_summary = {
+        "session_phase": session_phase,
+        "phase_label": phase_label,
+        "active_price": active_price,
         "regime_label": regime_label,
         "theme_color": theme_color,
         "flip_dist": flip_dist,

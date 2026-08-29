@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 46417.7,
     "day_total_vex": 2558.79
   },
-  "last_updated_time": "2026-08-29 11:30",
+  "last_updated_time": "2026-08-29 11:37",
   "spot_price": 46331.45,
   "spot_change": 356.23,
   "spot_change_pct": 0.77,
@@ -22107,6 +22107,9 @@
     "settlement_outlook": "🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：最新行情 (<code>45,900.0</code>) 已跌破 Zero Gamma (<code>46,317.7 點</code>) 與 Put Wall 支撐牆 (<code>46,100 點</code>)。做市商呈現負 Gamma 順風避險追殺，多頭防線失守，行情向下避險尋求 <code>45,700 點</code> Max Pain 大痛點區防守；操作宜提防波動度擴大，嚴禁盲目承接。"
   },
   "microstructure_summary": {
+    "session_phase": "NIGHT_SETTLED",
+    "phase_label": "🌙 夜盤 05:00 定案 (週末休市)",
+    "active_price": 45900.0,
     "regime_label": "🟢 負 Gamma 波動度放大區 (避險引爆)",
     "theme_color": "bear",
     "flip_dist": 417.7,
@@ -22290,7 +22293,7 @@
   "total_gex_plus": -6221.28,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-29 11:30",
+    "last_updated": "2026-08-29 11:37",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
