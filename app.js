@@ -2620,32 +2620,38 @@ function updateMicrostructureExpress(livePrice = null) {
   if (!expressContentEl || !gexData) return;
 
   const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
-  // Always lock onto the latest / current active market session
   const activeSession = (sessions && sessions.length > 0) ? sessions[sessions.length - 1] : null;
 
-  // 1. Current active price (livePrice > activeSession TXF/Spot > gexData TXF/Spot)
+  // 1. Current active price (livePrice > activeSession TXF > gexData night_txf_price > activeSession spot > gexData TXF/Spot)
   let currentP = livePrice;
   if (!currentP || currentP <= 0) {
-    if (activeSession) {
-      currentP = activeSession.txf_price || activeSession.spot_price;
-    }
-    if (!currentP || currentP <= 0) {
-      currentP = gexData.txf_price || gexData.spot_price || 45832.62;
+    if (activeSession && activeSession.txf_price && activeSession.txf_price > 0) {
+      currentP = activeSession.txf_price;
+    } else if (gexData.night_txf_price && gexData.night_txf_price > 0) {
+      currentP = gexData.night_txf_price;
+    } else if (activeSession && activeSession.spot_price && activeSession.spot_price > 0) {
+      currentP = activeSession.spot_price;
+    } else {
+      currentP = gexData.txf_price || gexData.spot_price || 45900;
     }
   }
 
-  // 2. Active Zero Gamma, Call Wall, Put Wall from active session or gexData
+  // 2. Active Zero Gamma, Call Wall, Put Wall, Max Pain
   const zg = (activeSession && activeSession.zero_gamma_level !== undefined) 
     ? activeSession.zero_gamma_level 
-    : (gexData.zero_gamma_level || 45817.3);
+    : (gexData.zero_gamma_level || 46317.7);
 
   const cw = (activeSession && activeSession.call_wall_strike !== undefined) 
     ? activeSession.call_wall_strike 
-    : (gexData.call_wall_strike || 45950);
+    : (gexData.call_wall_strike || 46500);
 
   const pw = (activeSession && activeSession.put_wall_strike !== undefined) 
     ? activeSession.put_wall_strike 
-    : (gexData.put_wall_strike || 45650);
+    : (gexData.put_wall_strike || 46100);
+
+  const mp = (activeSession && activeSession.max_pain_strike !== undefined) 
+    ? activeSession.max_pain_strike 
+    : (gexData.max_pain_strike || 45700);
 
   const isPosGamma = currentP >= zg;
   const flipDist = (Math.abs(currentP - zg)).toFixed(1);
@@ -2668,14 +2674,14 @@ function updateMicrostructureExpress(livePrice = null) {
   if (isPosGamma) {
     regimeHtml = `🔴 <strong>正 Gamma 波動度抑制區 (平穩護盤)</strong> — <span style="color: var(--call-color); font-weight: 600;">🛡️ 標的物價格 (${currentP.toLocaleString()}) 高於 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。`;
   } else {
-    regimeHtml = `🟢 <strong>負 Gamma 波動度放大區 (避險引爆)</strong> — <span style="color: var(--put-color); font-weight: 700;">⚠️ 警告！標的物價格 (${currentP.toLocaleString()}) 低於 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！`;
+    regimeHtml = `🟢 <strong>負 Gamma 波動度放大區 (避險引爆)</strong> — <span style="color: var(--put-color); font-weight: 700;">⚠️ 警告！標的物價格 (${currentP.toLocaleString()}) 已跌破 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！`;
   }
 
   let proximityHtml = '';
   if (flipDist < 100) {
     proximityHtml = `⚡ <strong>轉折臨界告急</strong>：價格距離 Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${zg.toLocaleString()} 點</span>) 僅 <span style="color: var(--gold-accent); font-weight:700;">${flipDist} 點</span>，處於變盤臨界邊緣。`;
   } else {
-    proximityHtml = `📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${zg.toLocaleString()} 點</span>) 尚有 <span style="color: var(--gold-accent); font-weight:700;">${flipDist} 點</span>緩衝防守區。`;
+    proximityHtml = `📏 <strong>轉折距離位移</strong>：價格距 Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${zg.toLocaleString()} 點</span>) 相差 <span style="color: var(--gold-accent); font-weight:700;">${flipDist} 點</span>。`;
   }
 
   let cwHtml = '';
@@ -2685,7 +2691,14 @@ function updateMicrostructureExpress(livePrice = null) {
     cwHtml = `🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <span style="color: var(--gold-accent); font-weight: 700;">${cw.toLocaleString()} 點</span> (距現價 ${(cw - currentP).toFixed(0)} 點)。`;
   }
 
-  let pwHtml = `🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style="color: var(--primary-accent); font-weight: 700;">${pw.toLocaleString()} 點</span> (距現價 ${(currentP - pw).toFixed(0)} 點)。`;
+  let pwHtml = '';
+  if (currentP <= pw) {
+    const mpDist = (currentP - mp).toFixed(0);
+    const mpText = mpDist >= 0 ? `距 Max Pain 大痛點 ${mpDist} 點` : `已跌破 Max Pain ${Math.abs(mpDist)} 點`;
+    pwHtml = `💥 <strong>Put Wall 已跌破 (地板失守)</strong>：現價 (<span style="color: var(--put-color); font-weight:700;">${currentP.toLocaleString()}</span>) 跌破 Put Wall 支撐牆 (<span style="color: var(--primary-accent); font-weight:700;">${pw.toLocaleString()} 點</span>) ${(pw - currentP).toFixed(0)} 點，防線失守，行情向下回測逼近 Max Pain 大痛點位位移區 (<span style="color: #a855f7; font-weight:700;">${mp.toLocaleString()} 點</span>，${mpText})！`;
+  } else {
+    pwHtml = `🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style="color: var(--primary-accent); font-weight: 700;">${pw.toLocaleString()} 點</span> (距現價 ${(currentP - pw).toFixed(0)} 點)。`;
+  }
 
   expressContentEl.innerHTML = `
     <p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${regimeHtml}</p>

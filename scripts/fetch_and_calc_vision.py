@@ -1564,29 +1564,43 @@ def generate_gex_payload():
     is_pos_gamma = active_price >= gex_profile['zero_gamma_level']
     flip_dist = round(abs(active_price - gex_profile['zero_gamma_level']), 1)
     
+    cw = gex_profile['call_wall_strike']
+    pw = gex_profile['put_wall_strike']
+    mp = gex_profile['max_pain_strike']
+    zg = gex_profile['zero_gamma_level']
+
     if is_pos_gamma:
-        regime_label = "🔴 正 Gamma 波動度抑制區 (平穩震盪)"
-        regime_desc = f"<span style=\"color: var(--call-color); font-weight: 600;\">🛡️ 標的物處於正 Gamma 護盤區間</span> (標的價格 {active_price:.1f} > 轉折點 {gex_profile['zero_gamma_level']})，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。"
+        regime_label = "🔴 正 Gamma 波動度抑制區 (平穩護盤)"
+        regime_desc = f"<span style=\"color: var(--call-color); font-weight: 600;\">🛡️ 標的物價格 ({active_price:,.1f}) 高於 Zero Gamma 轉折點 ({zg:,.1f})</span>，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。"
         theme_color = "bull"
     else:
         regime_label = "🟢 負 Gamma 波動度放大區 (避險引爆)"
-        regime_desc = f"<span style=\"color: var(--put-color); font-weight: 700;\">⚠️ 警告！標的價格 ({active_price:.1f}) 低於 Zero Gamma 轉折點 ({gex_profile['zero_gamma_level']})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！"
+        regime_desc = f"<span style=\"color: var(--put-color); font-weight: 700;\">⚠️ 警告！標的物價格 ({active_price:,.1f}) 已跌破 Zero Gamma 轉折點 ({zg:,.1f})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！"
         theme_color = "bear"
 
     if flip_dist < 100:
-        proximity_text = f"⚡ <strong>轉折臨界告急</strong>：價格距離 Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">{gex_profile['zero_gamma_level']} 點</span>) 僅 <span style=\"color: var(--gold-accent); font-weight:700;\">{flip_dist} 點</span>，處於變盤邊緣。"
+        proximity_text = f"⚡ <strong>轉折臨界告急</strong>：價格距離 Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">{zg:,.1f} 點</span>) 僅 <span style=\"color: var(--gold-accent); font-weight:700;\">{flip_dist} 點</span>，處於變盤臨界邊緣。"
     else:
-        proximity_text = f"📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">{gex_profile['zero_gamma_level']} 點</span>) 尚有 <span style=\"color: var(--gold-accent); font-weight:700;\">{flip_dist} 點</span>緩衝防守區。"
+        proximity_text = f"📏 <strong>轉折距離位移</strong>：價格距 Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">{zg:,.1f} 點</span>) 相差 <span style=\"color: var(--gold-accent); font-weight:700;\">{flip_dist} 點</span>。"
 
-    cw_desc = f"🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <span style=\"color: var(--gold-accent); font-weight: 700;\">{gex_profile['call_wall_strike']} 點</span> (<span style=\"color: var(--gold-accent); font-weight:600;\">{call_wall_shift:+}點</span>)。"
-    pw_desc = f"🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style=\"color: var(--primary-accent); font-weight: 700;\">{gex_profile['put_wall_strike']} 點</span> (<span style=\"color: var(--primary-accent); font-weight:600;\">{put_wall_shift:+}點</span>)。"
+    if active_price >= cw:
+        cw_desc = f"🚀 <strong>Call Wall 已突破</strong>：現價 (<span style=\"color: var(--call-color); font-weight:700;\">{active_price:,.1f}</span>) 已突破天花板 <span style=\"color: var(--gold-accent); font-weight:700;\">{cw:,} 點</span>，引爆伽瑪擠壓 (Gamma Squeeze) 強勢軋空！"
+    else:
+        cw_desc = f"🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <span style=\"color: var(--gold-accent); font-weight: 700;\">{cw:,} 點</span> (距現價 {cw - active_price:.0f} 點)。"
+
+    if active_price <= pw:
+        mp_dist = round(active_price - mp, 0)
+        mp_text = f"距 Max Pain 大痛點 {mp_dist:.0f} 點" if mp_dist >= 0 else f"已跌破 Max Pain {abs(mp_dist):.0f} 點"
+        pw_desc = f"💥 <strong>Put Wall 已跌破 (地板失守)</strong>：現價 (<span style=\"color: var(--put-color); font-weight:700;\">{active_price:,.1f}</span>) 跌破 Put Wall 支撐牆 (<span style=\"color: var(--primary-accent); font-weight:700;\">{pw:,} 點</span>) {pw - active_price:.0f} 點，防線失守，行情向下回測逼近 Max Pain 大痛點位位移區 (<span style=\"color: #a855f7; font-weight:700;\">{mp:,} 點</span>，{mp_text})！"
+    else:
+        pw_desc = f"🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style=\"color: var(--primary-accent); font-weight: 700;\">{pw:,} 點</span> (距現價 {active_price - pw:.0f} 點)。"
 
     microstructure_summary = {
         "regime_label": regime_label,
         "theme_color": theme_color,
         "flip_dist": flip_dist,
         "full_html": f"""
-        <p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;"><strong>{regime_label}</strong> - {regime_desc}</p>
+        <p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">{regime_desc}</p>
         <p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">{proximity_text}</p>
         <p style="margin-bottom: 0; line-height: 1.7; font-size: 0.88rem;">{cw_desc} &nbsp; {pw_desc}</p>
         """
@@ -1759,7 +1773,7 @@ def generate_gex_payload():
     f_net_str = f"{last_foreign_net:,d}"
     f_amt_str = f"{contract_notional_billion:.1f}"
 
-    regime_str = "正 Gamma 波動度抑制區" if spot_price >= gex_profile['zero_gamma_level'] else "負 Gamma 避險助跌警示區"
+    regime_str = "正 Gamma 波動度抑制區" if active_price >= gex_profile['zero_gamma_level'] else "負 Gamma 避險助跌警示區"
     top5_val = lt_inst.get('top5_net', -11018)
     top10_val = lt_inst.get('top10_net', -22685)
     spec_val = lt_inst.get('top5_spec_net', -9043)
@@ -1811,12 +1825,24 @@ def generate_gex_payload():
         f"小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>{gex_profile['pc_ratio']:.1f}%</code> ({pc_badge})，莊家下檔防守支撐力道尚存。"
     )
 
-    settlement_outlook = (
-        f"🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>："
-        f"現價 (<code>{spot_price:,.2f}</code>) 處於 Zero Gamma (<code>{gex_profile['zero_gamma_level']:,} 點</code>) 上方之「{regime_str}」。"
-        f"若指數守穩 <code>{gex_profile['put_wall_strike']:,} 點</code> Put Wall，做市商對沖買盤護盤持續，拉回尋求支撐；"
-        f"衝高接近 <code>{gex_profile['call_wall_strike']:,} 點</code> Call Wall 壓力區宜逢高分批停利。"
-    )
+    if active_price <= pw:
+        settlement_outlook = (
+            f"🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>："
+            f"最新行情 (<code>{active_price:,.1f}</code>) 已跌破 Zero Gamma (<code>{gex_profile['zero_gamma_level']:,} 點</code>) 與 Put Wall 支撐牆 (<code>{pw:,} 點</code>)。"
+            f"做市商呈現負 Gamma 順風避險追殺，多頭防線失守，行情向下避險尋求 <code>{mp:,} 點</code> Max Pain 大痛點區防守；操作宜提防波動度擴大，嚴禁盲目承接。"
+        )
+    elif is_pos_gamma:
+        settlement_outlook = (
+            f"🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>："
+            f"現價 (<code>{active_price:,.1f}</code>) 處於 Zero Gamma (<code>{gex_profile['zero_gamma_level']:,} 點</code>) 上方之「正 Gamma 波動度抑制區」。"
+            f"若指數守穩 <code>{pw:,} 點</code> Put Wall，做市商對沖買盤護盤持續，拉回尋求支撐；衝高接近 <code>{cw:,} 點</code> Call Wall 壓力區宜逢高分批停利。"
+        )
+    else:
+        settlement_outlook = (
+            f"🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>："
+            f"現價 (<code>{active_price:,.1f}</code>) 處於 Zero Gamma (<code>{gex_profile['zero_gamma_level']:,} 點</code>) 下方之「負 Gamma 避險助跌區」。"
+            f"留意 <code>{pw:,} 點</code> Put Wall 支撐關卡防守，若失守恐引發多頭停損賣壓。"
+        )
 
     executive_digest = {
         "futures_summary": futures_summary,

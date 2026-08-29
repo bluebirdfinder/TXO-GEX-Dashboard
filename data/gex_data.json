@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 46417.7,
     "day_total_vex": 2558.79
   },
-  "last_updated_time": "2026-08-29 11:24",
+  "last_updated_time": "2026-08-29 11:30",
   "spot_price": 46331.45,
   "spot_change": 356.23,
   "spot_change_pct": 0.77,
@@ -22104,13 +22104,13 @@
     "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+458.28 億 TWD</code>！其中「外資 <code>+417.54 億</code>」、「投信 <code>-1.97 億</code>」與「自營商 <code>+42.71 億</code>」。",
     "options_structure": "🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>-3.17 億</code> 與 Put 賣權 <code>+0.32 億</code>；投信買權 <code>-2.21 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>46,500 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>46,100 點</code>。",
     "sentiment_audit": "📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>113.2%</code> (🔴 偏多看撐)，莊家下檔防守支撐力道尚存。",
-    "settlement_outlook": "🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：現價 (<code>46,331.45</code>) 處於 Zero Gamma (<code>46,317.7 點</code>) 上方之「正 Gamma 波動度抑制區」。若指數守穩 <code>46,100 點</code> Put Wall，做市商對沖買盤護盤持續，拉回尋求支撐；衝高接近 <code>46,500 點</code> Call Wall 壓力區宜逢高分批停利。"
+    "settlement_outlook": "🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：最新行情 (<code>45,900.0</code>) 已跌破 Zero Gamma (<code>46,317.7 點</code>) 與 Put Wall 支撐牆 (<code>46,100 點</code>)。做市商呈現負 Gamma 順風避險追殺，多頭防線失守，行情向下避險尋求 <code>45,700 點</code> Max Pain 大痛點區防守；操作宜提防波動度擴大，嚴禁盲目承接。"
   },
   "microstructure_summary": {
     "regime_label": "🟢 負 Gamma 波動度放大區 (避險引爆)",
     "theme_color": "bear",
     "flip_dist": 417.7,
-    "full_html": "\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\"><strong>🟢 負 Gamma 波動度放大區 (避險引爆)</strong> - <span style=\"color: var(--put-color); font-weight: 700;\">⚠️ 警告！標的價格 (45900.0) 低於 Zero Gamma 轉折點 (46317.7)</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！</p>\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\">📏 <strong>轉折安全距離</strong>：價格距 Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">46317.7 點</span>) 尚有 <span style=\"color: var(--gold-accent); font-weight:700;\">417.7 點</span>緩衝防守區。</p>\n        <p style=\"margin-bottom: 0; line-height: 1.7; font-size: 0.88rem;\">🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <span style=\"color: var(--gold-accent); font-weight: 700;\">46500 點</span> (<span style=\"color: var(--gold-accent); font-weight:600;\">-100點</span>)。 &nbsp; 🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style=\"color: var(--primary-accent); font-weight: 700;\">46100 點</span> (<span style=\"color: var(--primary-accent); font-weight:600;\">-100點</span>)。</p>\n        "
+    "full_html": "\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\"><span style=\"color: var(--put-color); font-weight: 700;\">⚠️ 警告！標的物價格 (45,900.0) 已跌破 Zero Gamma 轉折點 (46,317.7)</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！</p>\n        <p style=\"margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;\">📏 <strong>轉折距離位移</strong>：價格距 Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">46,317.7 點</span>) 相差 <span style=\"color: var(--gold-accent); font-weight:700;\">417.7 點</span>。</p>\n        <p style=\"margin-bottom: 0; line-height: 1.7; font-size: 0.88rem;\">🛑 <strong>Call Wall 賣壓牆</strong>：天花板位於 <span style=\"color: var(--gold-accent); font-weight: 700;\">46,500 點</span> (距現價 600 點)。 &nbsp; 💥 <strong>Put Wall 已跌破 (地板失守)</strong>：現價 (<span style=\"color: var(--put-color); font-weight:700;\">45,900.0</span>) 跌破 Put Wall 支撐牆 (<span style=\"color: var(--primary-accent); font-weight:700;\">46,100 點</span>) 200 點，防線失守，行情向下回測逼近 Max Pain 大痛點位位移區 (<span style=\"color: #a855f7; font-weight:700;\">45,700 點</span>，距 Max Pain 大痛點 200 點)！</p>\n        "
   },
   "hot_money_digest": {
     "current_fx": {
@@ -22290,7 +22290,7 @@
   "total_gex_plus": -6221.28,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-08-29 11:24",
+    "last_updated": "2026-08-29 11:30",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
