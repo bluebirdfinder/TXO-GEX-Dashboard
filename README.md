@@ -9,20 +9,21 @@
 
 ---
 
-## 🌟 v49.1 TWSE 信用交易融資維持率 API 實時動態連線與週末歷程時間判定重構
+## 🌟 v49.1 動態 4 階段時段 GEX 配對架構、期交所官方夜盤個股期 API 直連與 TWSE 融資維持率 API
 
-### 🏛️ 1. TWSE 信用交易融資維持率 API 實時動態連線 (`fetch_twse_margin_maintenance`)
-- **實時 API 抓取與日期感知**：數據引擎直接連線臺灣證券交易所 (TWSE) 信用交易統計 API (`https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?response=json`)。當證交所完成當日盤後清算（約 20:30），自動辨識 `date` 狀態，即時轉為 `is_published = True` 並寫入當日大盤融資維持率 (`160.6% 🟢 安定`) 與個股維持率 (`145.9%`)，擺脫舊版硬編碼 `now_hour >= 21` 判定。
-- **前端提示文字優化**：更新未公布說明文字為 `(約20:30~21:00實時連線)`。
+### 🕒 1. 動態 4 階段 Session 時段配對架構 (4-Phase Dynamic Session Architecture)
+- **時段感知與 GEX 點位嚴格配對**：重構行情判定邏輯，自動劃分 `DAY_LIVE` (日盤盤中 08:45~13:45)、`DAY_SETTLED` (日盤定案 13:45~15:00)、`NIGHT_LIVE` (夜盤盤中 15:00~05:00) 及 `NIGHT_SETTLED` (夜盤定案/週末休市) 4 大階段。
+- **點位與警告動態連動**：標的物價格 (`active_price`) 嚴格配對當前階段之 Zero Gamma (`zg`)、Call Wall (`cw`)、Put Wall (`pw`) 與 Max Pain (`mp`)，並於微觀速報與 Gemini AI 掃描卡片實時觸發「Put Wall 跌破 (46,100 點失守) 向下尋求 Max Pain (45,700 點) 磁吸防守」之警示。
 
-### 🌙 2. 週末與跨日時間區間判定全重構 (週五夜盤歷程完整歸位)
-- **週末夜盤歸位修復**：重構 `scripts/fetch_and_calc_vision.py` 中的 `is_weekend` (週六/週日) 判定。解決舊邏輯在週末將週六上午誤判為「平日開盤 Live 狀態」並遺漏週六凌晨 05:00 結算之 `週五夜盤` 歷程欄位的 Bug。修復後，歷程矩陣第一列顯示 `8/28 (五) T夜盤 (05:00 定案版)`（結算價 45,900）。
+### 🌙 2. 期交所官方 6 大夜盤個股/ETF期貨 API 直連 (`marketCode=1`)
+- **直連 TAIFEX 夜盤 API**：直接串接台灣期貨交易所官方夜盤行情 API (`futDailyMarketExcel?marketCode=1`)，精準抓取 6 大夜盤標的：台積電期 (`2330`)、小型台積期 (`2330F`)、聯電期 (`2303` CCF 夜盤定案 `127.00`)、元大台灣50期 (`0050`)、小型50期 (`0050F`) 及元大美債20年期 (`00679B`)。
+- **現貨價與期貨價劃分 (真實期現價差 Basis)**：保留 TWSE 日盤現貨收盤價 (如聯電現貨 `130.00`) 與 TAIFEX 夜盤期貨定案價 (聯電期 `127.00`)，真實驗算並渲染最新夜盤逆價差 (`-3.00 點`)。
 
-### 📈 3. 個股期貨價與 Basis (期現價差) Data Audit 與清洗
-- **刪除模擬偏置補償**：刪除舊後端個股期貨無成交量時的偏置補償邏輯 (`basis_offset`)，無成交時期貨價直接連線現貨價 (0.00 平價差)，保證個股期貨 270+ 檔數據 100% 客觀真實。
+### 🏛️ 3. TWSE 信用交易融資維持率 API 實時動態連線 (`fetch_twse_margin_maintenance`)
+- **實時 API 抓取與日期感知**：數據引擎直接連線臺灣證券交易所 (TWSE) 信用交易統計 API (`https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?response=json`)。當證交所完成當日盤後清算（約 20:30），自動辨識 `date` 狀態，即時轉為 `is_published = True` 並寫入當日大盤融資維持率 (`160.6% 🟢 安定`) 與個股維持率 (`145.9%`)。
 
-### ⚙️ 4. GitHub Actions 排程工作流相容性修復 (`auto_update.yml`)
-- **無效指令清理**：刪除 `auto_update.yml` 中非必要之無效腳本引用，確保 GitHub Actions 每晚 21:00 與 21:30 的自動連線抓取、資料庫更新與 Auto-Commit 100% 順暢。
+### 🚀 4. 常駐防錯發布 SOP 與全站版號對齊 (`.agents/rules/VERSION_RELEASE.md`)
+- **常駐 SOP 規則**：建置 `.agents/rules/VERSION_RELEASE.md` 自動常駐規則，規範版號變更時必須於 commit 前立即重跑 `python scripts/fetch_and_calc_vision.py` 重繪 Payload，徹底消除版號跳動與靜態/動態版號差異。
 
 ---
 
