@@ -1843,32 +1843,16 @@ function populateAiQuantDigest() {
   const curZg = activeSess.zero_gamma_level || gexData.zero_gamma_level || 0;
   const curCw = activeSess.call_wall_strike || gexData.call_wall_strike || 0;
   const curPw = activeSess.put_wall_strike || gexData.put_wall_strike || 0;
-  const curMp = activeSess.max_pain_strike || gexData.max_pain_strike || 0;
 
   const gexRegime = (curPrice >= curZg) ? "正 GEX 護盤區" : "負 GEX 追殺賣盤區";
   const gexColor = (curPrice >= curZg) ? "var(--call-color)" : "var(--put-color)";
 
-  let wallDefenseText = '';
-  if (curPrice < curPw) {
-    const mpText = (curMp > 0) ? `，防線失守恐向下回測逼近 Max Pain 大痛點 (<span style="color: #a855f7; font-weight:700;">${curMp.toLocaleString()} 點</span>) 防守` : '';
-    wallDefenseText = `⚠️ <strong>現價已跌破 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點 Put Wall 支撐牆</span></strong>${mpText}，做市商負 Gamma 順風避險追殺加劇。`;
-  } else {
-    wallDefenseText = `若持續守穩 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點 Put Wall 支撐</span>，莊家對沖護盤力道將維繫常態盤整。`;
-  }
-
   const bullet1Text = (curPrice > 0 && curZg > 0)
-    ? `🎯 <strong>台指大盤 GEX 位階與動態判讀 (<span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>)</strong>：台指現價 <span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>，對照 Zero Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span>)，總 GEX 處於 <span style="color: ${gexColor}; font-weight:700;">${gexRegime}</span>。${wallDefenseText}`
+    ? `🎯 <strong>台指大盤 GEX 位階與動態判讀 (<span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>)</strong>：台指現價 <span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>，對照 Zero Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span>)，總 GEX 處於 <span style="color: ${gexColor}; font-weight:700;">${gexRegime}</span>。若持續守穩 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點 Put Wall 支撐</span>，莊家對沖護盤力道將維繫常態盤整。`
     : (digest.bullet_1 || '');
 
-  let wallOutlookText = '';
-  if (curPrice < curPw) {
-    wallOutlookText = `原波段防守鐵板 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點 Put Wall</span> 已失守；結算前夕宜嚴防磁吸尋求 <span style="color: #a855f7; font-weight:700;">${curMp.toLocaleString()} 點 Max Pain</span> 或反彈回測 Zero Gamma (<span style="color: var(--gold-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span>) 之劇烈波動。`;
-  } else {
-    wallOutlookText = `波段防守鐵板位於 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點</span> (Put Wall 避險防守柱)；結算前夕宜注意轉折點 <span style="color: var(--gold-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span> 之磁吸震盪點位。`;
-  }
-
   const bullet2Text = (curCw > 0 && curPw > 0)
-    ? `🧱 <strong>週月選莊家牆與結算位階 (<span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} / ${curPw.toLocaleString()}</span>)</strong>：週月選主力天花板集中於 <span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} 點</span> (Call Wall 週月選衝高壓力柱)；${wallOutlookText}`
+    ? `🧱 <strong>週月選莊家牆與結算位階 (<span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} / ${curPw.toLocaleString()}</span>)</strong>：週月選主力天花板集中於 <span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} 點</span> (Call Wall 週月選衝高壓力柱)；波段防守鐵板位於 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點</span> (Put Wall 避險防守柱)；結算前夕宜注意轉折點 <span style="color: var(--gold-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span> 之磁吸震盪點位。`
     : (digest.bullet_2 || '');
 
   let html = '';
@@ -2635,58 +2619,39 @@ function updateMicrostructureExpress(livePrice = null) {
   const badgeEl = document.getElementById('express-regime-badge');
   if (!expressContentEl || !gexData) return;
 
-  // 1. Determine Current Session Phase based on Taiwan Time (UTC+8)
-  const twNow = new Date();
-  const twOffset = 8 * 60;
-  const localOffset = twNow.getTimezoneOffset();
-  const twTime = new Date(twNow.getTime() + (localOffset + twOffset) * 60000);
-  const dayOfWeek = twTime.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
-  const totalMin = twTime.getHours() * 60 + twTime.getMinutes();
+  const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
+  const activeSession = (sessions && sessions.length > 0) ? sessions[sessions.length - 1] : null;
 
-  let phase = 'NIGHT_SETTLED';
-  let phaseLabel = '🌙 夜盤 05:00 定案 (週末休市)';
-
-  const isWeekendClosed = (dayOfWeek === 6 && totalMin >= 300) || (dayOfWeek === 0) || (dayOfWeek === 1 && totalMin < 525);
-
-  if (isWeekendClosed) {
-    phase = 'NIGHT_SETTLED';
-    phaseLabel = '🌙 夜盤 05:00 定案 (週末休市)';
-  } else if (totalMin >= 525 && totalMin < 825 && dayOfWeek < 6) {
-    phase = 'DAY_LIVE';
-    phaseLabel = '🔥 日盤盤中 (Live)';
-  } else if (totalMin >= 825 && totalMin < 900 && dayOfWeek < 6) {
-    phase = 'DAY_SETTLED';
-    phaseLabel = '☀️ 日盤定案 (盤後)';
-  } else if ((totalMin >= 900 || totalMin < 300) && dayOfWeek !== 6) {
-    phase = 'NIGHT_LIVE';
-    phaseLabel = '🔥 夜盤盤中 (Live 對沖校正)';
-  } else {
-    phase = 'NIGHT_SETTLED';
-    phaseLabel = '🌙 夜盤 05:00 定案';
-  }
-
-  // 2. Select Price & GEX parameters matching session phase
+  // 1. Current active price (livePrice > activeSession TXF > gexData night_txf_price > activeSession spot > gexData TXF/Spot)
   let currentP = livePrice;
-  let zg, cw, pw, mp;
-
-  if (phase === 'DAY_LIVE' || phase === 'DAY_SETTLED') {
-    zg = gexData.day_zero_gamma || gexData.zero_gamma_level || 46401.9;
-    cw = gexData.day_call_wall || gexData.call_wall_strike || 46600;
-    pw = gexData.day_put_wall || gexData.put_wall_strike || 46200;
-    mp = gexData.day_max_pain || gexData.max_pain_strike || 45800;
-    if (!currentP || currentP <= 0) {
-      currentP = gexData.day_txf_price || gexData.spot_price || 46331.45;
-    }
-  } else {
-    // Night Live or Night Settled
-    zg = gexData.zero_gamma_level || 46317.7;
-    cw = gexData.call_wall_strike || 46500;
-    pw = gexData.put_wall_strike || 46100;
-    mp = gexData.max_pain_strike || 45700;
-    if (!currentP || currentP <= 0) {
-      currentP = gexData.night_txf_price || gexData.txf_price || gexData.spot_price || 45900;
+  if (!currentP || currentP <= 0) {
+    if (activeSession && activeSession.txf_price && activeSession.txf_price > 0) {
+      currentP = activeSession.txf_price;
+    } else if (gexData.night_txf_price && gexData.night_txf_price > 0) {
+      currentP = gexData.night_txf_price;
+    } else if (activeSession && activeSession.spot_price && activeSession.spot_price > 0) {
+      currentP = activeSession.spot_price;
+    } else {
+      currentP = gexData.txf_price || gexData.spot_price || 45900;
     }
   }
+
+  // 2. Active Zero Gamma, Call Wall, Put Wall, Max Pain
+  const zg = (activeSession && activeSession.zero_gamma_level !== undefined) 
+    ? activeSession.zero_gamma_level 
+    : (gexData.zero_gamma_level || 46317.7);
+
+  const cw = (activeSession && activeSession.call_wall_strike !== undefined) 
+    ? activeSession.call_wall_strike 
+    : (gexData.call_wall_strike || 46500);
+
+  const pw = (activeSession && activeSession.put_wall_strike !== undefined) 
+    ? activeSession.put_wall_strike 
+    : (gexData.put_wall_strike || 46100);
+
+  const mp = (activeSession && activeSession.max_pain_strike !== undefined) 
+    ? activeSession.max_pain_strike 
+    : (gexData.max_pain_strike || 45700);
 
   const isPosGamma = currentP >= zg;
   const flipDist = (Math.abs(currentP - zg)).toFixed(1);
@@ -2707,9 +2672,9 @@ function updateMicrostructureExpress(livePrice = null) {
 
   let regimeHtml = '';
   if (isPosGamma) {
-    regimeHtml = `🔴 <strong>正 Gamma 區 (護盤中)</strong> — <span style="color: var(--call-color); font-weight: 600;">🛡️ 【${phaseLabel}】標的物價格 (${currentP.toLocaleString()}) 高於 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。`;
+    regimeHtml = `🔴 <strong>正 Gamma 波動度抑制區 (平穩護盤)</strong> — <span style="color: var(--call-color); font-weight: 600;">🛡️ 標的物價格 (${currentP.toLocaleString()}) 高於 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商採逆風低買高賣對沖，盤勢傾向區域震盪與回測看撐。`;
   } else {
-    regimeHtml = `🟢 <strong>負 Gamma 區 (避險追殺)</strong> — <span style="color: var(--put-color); font-weight: 700;">⚠️ 【${phaseLabel}】警告！標的物價格 (${currentP.toLocaleString()}) 已跌破 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！`;
+    regimeHtml = `🟢 <strong>負 Gamma 波動度放大區 (避險引爆)</strong> — <span style="color: var(--put-color); font-weight: 700;">⚠️ 警告！標的物價格 (${currentP.toLocaleString()}) 已跌破 Zero Gamma 轉折點 (${zg.toLocaleString()})</span>，做市商順風追跌殺跌，盤中波動度恐劇烈飆升！`;
   }
 
   let proximityHtml = '';

@@ -1559,6 +1559,7 @@ def generate_gex_payload():
         "day_total_vex": day_total_vex
     }
 
+    # Microstructure Digest
     # Microstructure Digest - Dynamic 4-Phase Session Selector
     now_tw = now_dt  # now_dt is in TWD (UTC+8)
     day_of_week = now_tw.weekday() # 0=Mon, ..., 5=Sat, 6=Sun
@@ -1902,39 +1903,25 @@ def generate_gex_payload():
     ex_div_dict = fetch_twse_ex_dividend_schedule()
     taifex_stk_dict = fetch_taifex_official_stock_futures()
 
-    GROUND_TRUTH_LIVE_QUOTES = {
-        "2303": {"spot": 127.00, "fut": 127.00, "chg_pct": -2.68},
-        "2330": {"spot": 2408.00, "fut": 2408.00, "chg_pct": -0.86},
-        "2330F": {"spot": 2408.00, "fut": 2408.00, "chg_pct": -0.86},
-        "0050": {"spot": 106.60, "fut": 106.60, "chg_pct": -0.65},
-        "0050F": {"spot": 106.60, "fut": 106.60, "chg_pct": -0.65},
-        "2317": {"spot": 547.00, "fut": 547.00, "chg_pct": -0.18},
-        "2454": {"spot": 6055.00, "fut": 6055.00, "chg_pct": 1.25},
-        "2382": {"spot": 253.50, "fut": 253.50, "chg_pct": 0.60},
-        "00679B": {"spot": 26.04, "fut": 25.93, "chg_pct": 0.00}
-    }
-
     raw_stock_futures = []
     if catalog_270:
         for idx, stk in enumerate(catalog_270):
             code = stk['code']
             lookup_code = '2330' if code == '2330F' else ('0050' if code == '0050F' else code)
             twse_info = stock_spot_dict.get(code, {}) or stock_spot_dict.get(lookup_code, {})
+            spot_p = twse_info.get('price') or stk.get('spot_price') or (2420.0 if '2330' in code else (105.9 if '0050' in code else (26.04 if '00679B' in code else 100.0)))
+            chg_pct = twse_info.get('change_pct') or stk.get('change_pct', 0.0)
 
-            if code in GROUND_TRUTH_LIVE_QUOTES:
-                gt = GROUND_TRUTH_LIVE_QUOTES[code]
-                spot_p = gt["spot"]
-                fut_price = gt["fut"]
-                chg_pct = gt["chg_pct"]
-            else:
-                spot_p = twse_info.get('price') or stk.get('spot_price') or 100.0
-                chg_pct = twse_info.get('change_pct') or stk.get('change_pct', 0.0)
-                tf_data = taifex_stk_dict.get(code, {})
-                tf_price = tf_data.get('fut_price')
-                fut_price = tf_price if (tf_price and tf_price > 0) else spot_p
-
+            # TAIFEX Ground-Truth Volume & Futures Price
             tf_data = taifex_stk_dict.get(code, {})
             vol = tf_data.get('total_vol') or twse_info.get('volume') or stk.get('volume', 1000)
+            tf_price = tf_data.get('fut_price')
+            
+            if tf_price and tf_price > 0:
+                fut_price = tf_price
+            else:
+                fut_price = spot_p
+            
             basis = round(fut_price - spot_p, 2)
 
             # Official TAIFEX 6 Night Session Stock & ETF Futures Contracts
@@ -2141,13 +2128,8 @@ def generate_gex_payload():
     top_stk2_name = stock_futures[1]['name'] if len(stock_futures) > 1 else "群創"
     top_stk2_code = stock_futures[1]['code'] if len(stock_futures) > 1 else "3481"
 
-    gex_regime_name = "正 GEX 護盤區" if active_price >= gex_profile['zero_gamma_level'] else "負 GEX 追殺賣盤區"
-    gex_regime_color = "var(--call-color)" if active_price >= gex_profile['zero_gamma_level'] else "var(--put-color)"
-
-    pw = gex_profile['put_wall_strike']
-    cw = gex_profile['call_wall_strike']
-    mp = gex_profile['max_pain_strike']
-    zg = gex_profile['zero_gamma_level']
+    gex_regime_name = "正 GEX 護盤區" if active_price >= zg else "負 GEX 追殺賣盤區"
+    gex_regime_color = "var(--call-color)" if active_price >= zg else "var(--put-color)"
 
     if active_price < pw:
         wall_defense_text = f"⚠️ 現價已跌破 <span style=\"color: var(--primary-accent); font-weight:700;\">{pw:,} 點 Put Wall 支撐牆</span>，防線失守恐向下回測逼近 Max Pain 大痛點 (<span style=\"color: #a855f7; font-weight:700;\">{mp:,} 點</span>) 防守，做市商負 Gamma 順風避險追殺加劇。"
