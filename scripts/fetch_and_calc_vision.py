@@ -2127,22 +2127,31 @@ def generate_gex_payload():
     top_stk2_name = stock_futures[1]['name'] if len(stock_futures) > 1 else "群創"
     top_stk2_code = stock_futures[1]['code'] if len(stock_futures) > 1 else "3481"
 
-    gex_regime_name = "正 GEX 護盤區" if spot_price >= gex_profile['zero_gamma_level'] else "負 GEX 追殺賣盤區"
-    gex_regime_color = "var(--call-color)" if spot_price >= gex_profile['zero_gamma_level'] else "var(--put-color)"
+    gex_regime_name = "正 GEX 護盤區" if active_price >= gex_profile['zero_gamma_level'] else "負 GEX 追殺賣盤區"
+    gex_regime_color = "var(--call-color)" if active_price >= gex_profile['zero_gamma_level'] else "var(--put-color)"
+
+    pw = gex_profile['put_wall_strike']
+    cw = gex_profile['call_wall_strike']
+    mp = gex_profile['max_pain_strike']
+    zg = gex_profile['zero_gamma_level']
+
+    if active_price < pw:
+        wall_defense_text = f"⚠️ 現價已跌破 <span style=\"color: var(--primary-accent); font-weight:700;\">{pw:,} 點 Put Wall 支撐牆</span>，防線失守恐向下回測逼近 Max Pain 大痛點 (<span style=\"color: #a855f7; font-weight:700;\">{mp:,} 點</span>) 防守，做市商負 Gamma 順風避險追殺加劇。"
+        wall_outlook_text = f"原波段防守鐵板 <span style=\"color: var(--primary-accent); font-weight:700;\">{pw:,} 點 Put Wall</span> 已失守；結算前夕宜嚴防磁吸尋求 <span style=\"color: #a855f7; font-weight:700;\">{mp:,} 點 Max Pain</span> 或反彈回測 Zero Gamma (<span style=\"color: var(--gold-accent); font-weight:700;\">{zg:,} 點</span>) 之劇烈波動。"
+    else:
+        wall_defense_text = f"若持續守穩 <span style=\"color: var(--primary-accent); font-weight:700;\">{pw:,} 點 Put Wall 支撐</span>，莊家對沖護盤力道將維繫常態盤整。"
+        wall_outlook_text = f"波段防守鐵板位於 <span style=\"color: var(--primary-accent); font-weight:700;\">{pw:,} 點</span> (Put Wall 避險防守柱)；結算前夕宜注意轉折點 <span style=\"color: var(--gold-accent); font-weight:700;\">{zg:,} 點</span> 之磁吸震盪點位。"
 
     ai_bullet_1 = (
-        f"🎯 <strong>台指大盤 GEX 位階與動態判讀 (<span style=\"color: var(--gold-accent); font-weight:700;\">{spot_price:,.2f} 點</span>)</strong>："
-        f"台指現價 <span style=\"color: var(--gold-accent); font-weight:700;\">{spot_price:,.2f} 點</span>，"
-        f"對照 Zero Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">{gex_profile['zero_gamma_level']:,} 點</span>)，"
-        f"總 GEX 處於 <span style=\"color: {gex_regime_color}; font-weight:700;\">{gex_regime_name}</span>。"
-        f"若持續守穩 <span style=\"color: var(--primary-accent); font-weight:700;\">{gex_profile['put_wall_strike']:,} 點 Put Wall 支撐</span>，莊家對沖護盤力道將維繫常態盤整。"
+        f"🎯 <strong>台指大盤 GEX 位階與動態判讀 (<span style=\"color: var(--gold-accent); font-weight:700;\">{active_price:,.2f} 點</span>)</strong>："
+        f"台指現價 <span style=\"color: var(--gold-accent); font-weight:700;\">{active_price:,.2f} 點</span>，"
+        f"對照 Zero Gamma 轉折點 (<span style=\"color: var(--primary-accent); font-weight:700;\">{zg:,} 點</span>)，"
+        f"總 GEX 處於 <span style=\"color: {gex_regime_color}; font-weight:700;\">{gex_regime_name}</span>。{wall_defense_text}"
     )
 
     ai_bullet_2 = (
-        f"🧱 <strong>週月選莊家牆與結算位階 (<span style=\"color: var(--gold-accent); font-weight:700;\">{gex_profile['call_wall_strike']:,} / {gex_profile['put_wall_strike']:,}</span>)</strong>："
-        f"週月選主力天花板集中於 <span style=\"color: var(--gold-accent); font-weight:700;\">{gex_profile['call_wall_strike']:,} 點</span> (Call Wall 週月選衝高壓力柱)；"
-        f"波段防守鐵板位於 <span style=\"color: var(--primary-accent); font-weight:700;\">{gex_profile['put_wall_strike']:,} 點</span> (Put Wall 避險防守柱)；"
-        f"結算前夕宜注意轉折點 <span style=\"color: var(--gold-accent); font-weight:700;\">{gex_profile['zero_gamma_level']:,} 點</span> 之磁吸震盪點位。"
+        f"🧱 <strong>週月選莊家牆與結算位階 (<span style=\"color: var(--gold-accent); font-weight:700;\">{cw:,} / {pw:,}</span>)</strong>："
+        f"週月選主力天花板集中於 <span style=\"color: var(--gold-accent); font-weight:700;\">{cw:,} 點</span> (Call Wall 週月選衝高壓力柱)；{wall_outlook_text}"
     )
 
     s1_name = top_stk1_name.replace('期貨', '').replace('期', '')
