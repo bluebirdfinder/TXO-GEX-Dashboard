@@ -1839,21 +1839,32 @@ function populateAiQuantDigest() {
   const sessions = gexData.history_10_sessions || [];
   const activeSess = (sessions.length > 0) ? sessions[sessions.length - 1] : gexData;
 
-  const curPrice = activeSess.txf_price || activeSess.spot_price || gexData.spot_price || 0;
+  const curPrice = activeSess.txf_price || activeSess.spot_price || gexData.night_txf_price || gexData.spot_price || 0;
   const curZg = activeSess.zero_gamma_level || gexData.zero_gamma_level || 0;
   const curCw = activeSess.call_wall_strike || gexData.call_wall_strike || 0;
   const curPw = activeSess.put_wall_strike || gexData.put_wall_strike || 0;
+  const curMp = activeSess.max_pain_strike || gexData.max_pain_strike || 0;
 
   const gexRegime = (curPrice >= curZg) ? "正 GEX 護盤區" : "負 GEX 追殺賣盤區";
   const gexColor = (curPrice >= curZg) ? "var(--call-color)" : "var(--put-color)";
 
-  const bullet1Text = (curPrice > 0 && curZg > 0)
-    ? `🎯 <strong>台指大盤 GEX 位階與動態判讀 (<span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>)</strong>：台指現價 <span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>，對照 Zero Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span>)，總 GEX 處於 <span style="color: ${gexColor}; font-weight:700;">${gexRegime}</span>。若持續守穩 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點 Put Wall 支撐</span>，莊家對沖護盤力道將維繫常態盤整。`
-    : (digest.bullet_1 || '');
+  let wallDefenseText = '';
+  let wallOutlookText = '';
+  if (curPrice < curPw && curPw > 0) {
+    wallDefenseText = `⚠️ 現價已跌破 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點 Put Wall 支撐牆</span>，防線失守恐向下回測逼近 Max Pain 大痛點 (<span style="color: #a855f7; font-weight:700;">${curMp.toLocaleString()} 點</span>) 防守，做市商負 Gamma 順風避險追殺加劇。`;
+    wallOutlookText = `原波段防守鐵板 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點 Put Wall</span> 已失守；結算前夕宜嚴防磁吸尋求 <span style="color: #a855f7; font-weight:700;">${curMp.toLocaleString()} 點 Max Pain</span> 或反彈回測 Zero Gamma (<span style="color: var(--gold-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span>) 之劇烈波動。`;
+  } else {
+    wallDefenseText = `若持續守穩 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點 Put Wall 支撐</span>，莊家對沖護盤力道將維繫常態盤整。`;
+    wallOutlookText = `波段防守鐵板位於 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點</span> (Put Wall 避險防守柱)；結算前夕宜注意轉折點 <span style="color: var(--gold-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span> 之磁吸震盪點位。`;
+  }
 
-  const bullet2Text = (curCw > 0 && curPw > 0)
-    ? `🧱 <strong>週月選莊家牆與結算位階 (<span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} / ${curPw.toLocaleString()}</span>)</strong>：週月選主力天花板集中於 <span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} 點</span> (Call Wall 週月選衝高壓力柱)；波段防守鐵板位於 <span style="color: var(--primary-accent); font-weight:700;">${curPw.toLocaleString()} 點</span> (Put Wall 避險防守柱)；結算前夕宜注意轉折點 <span style="color: var(--gold-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span> 之磁吸震盪點位。`
-    : (digest.bullet_2 || '');
+  const bullet1Text = digest.bullet_1 || ((curPrice > 0 && curZg > 0)
+    ? `🎯 <strong>台指大盤 GEX 位階與動態判讀 (<span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>)</strong>：台指現價 <span style="color: var(--gold-accent); font-weight:700;">${curPrice.toLocaleString()} 點</span>，對照 Zero Gamma 轉折點 (<span style="color: var(--primary-accent); font-weight:700;">${curZg.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} 點</span>)，總 GEX 處於 <span style="color: ${gexColor}; font-weight:700;">${gexRegime}</span>。${wallDefenseText}`
+    : '');
+
+  const bullet2Text = digest.bullet_2 || ((curCw > 0 && curPw > 0)
+    ? `🧱 <strong>週月選莊家牆與結算位階 (<span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} / ${curPw.toLocaleString()}</span>)</strong>：週月選主力天花板集中於 <span style="color: var(--gold-accent); font-weight:700;">${curCw.toLocaleString()} 點</span> (Call Wall 週月選衝高壓力柱)；${wallOutlookText}`
+    : '');
 
   let html = '';
   if (bullet1Text) html += `<p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${highlightDigestText(bullet1Text)}</p>`;
