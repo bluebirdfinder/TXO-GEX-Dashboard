@@ -1976,13 +1976,13 @@ def generate_gex_payload():
             twse_info = stock_spot_dict.get(code, {}) or stock_spot_dict.get(lookup_code, {})
             has_night = (code in NIGHT_SESSION_CODES) or stk.get('has_night', False)
 
+            spot_p = twse_info.get('price') or stk.get('spot_price') or (2420.0 if '2330' in code else (130.0 if '2303' in code else (106.95 if '0050' in code else (26.04 if '00679B' in code else 100.0))))
+
             if has_night and code in taifex_night_dict and (session_phase in ("NIGHT_LIVE", "NIGHT_SETTLED") or is_weekend_closed):
                 nq = taifex_night_dict[code]
                 fut_price = nq['fut_price']
                 chg_pct = nq['change_pct']
-                spot_p = fut_price  # Night session futures tracking
             else:
-                spot_p = twse_info.get('price') or stk.get('spot_price') or (2420.0 if '2330' in code else (105.9 if '0050' in code else (26.04 if '00679B' in code else 100.0)))
                 chg_pct = twse_info.get('change_pct') or stk.get('change_pct', 0.0)
                 tf_data = taifex_stk_dict.get(code, {})
                 tf_price = tf_data.get('fut_price')
