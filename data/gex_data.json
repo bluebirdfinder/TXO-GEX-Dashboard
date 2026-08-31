@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 46016.8,
     "day_total_vex": 3216.37
   },
-  "last_updated_time": "2026-09-01 05:51",
+  "last_updated_time": "2026-09-01 06:15",
   "spot_price": 46128.47,
   "spot_change": -202.98,
   "spot_change_pct": -0.44,
@@ -22048,12 +22048,12 @@
   "night_institutional_5day_history": [
     {
       "date": "8/31 (一)",
-      "foreign_tx": 17,
-      "foreign_tx_amt": 1.26,
-      "foreign_mtx": -1985,
-      "foreign_micro": -4098,
-      "dealer_tx": 190,
-      "dealer_tx_amt": 17.52
+      "foreign_tx": -177,
+      "foreign_tx_amt": -16.2,
+      "foreign_mtx": -507,
+      "foreign_micro": -1604,
+      "dealer_tx": -34,
+      "dealer_tx_amt": -3.21
     },
     {
       "date": "8/28 (五)",
@@ -22237,14 +22237,14 @@
     "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.67</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.41</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.59</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
-    "tx_foreign_net_vol": 17,
-    "tx_foreign_net_amt": 1.26,
-    "tx_dealer_net_vol": 190,
-    "tx_dealer_net_amt": 17.52,
-    "mini_foreign_net_vol": -1985,
-    "micro_foreign_net_vol": -4098,
+    "tx_foreign_net_vol": -177,
+    "tx_foreign_net_amt": -16.2,
+    "tx_dealer_net_vol": -34,
+    "tx_dealer_net_amt": -3.21,
+    "mini_foreign_net_vol": -507,
+    "micro_foreign_net_vol": -1604,
     "night_sentiment": "⚖️ 外資夜盤中性觀望",
-    "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤變動 17 口（約 1.26 億 TWD），且在小台與微台變動 -6,083 口，籌碼結構維繫中性姿態。"
+    "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤變動 -177 口（約 -16.2 億 TWD），且在小台與微台變動 -2,111 口，籌碼結構維繫中性姿態。"
   },
   "retail_mini_ratio": 10.33,
   "retail_micro_ratio": 27.11,
@@ -22293,7 +22293,7 @@
   "total_gex_plus": -6707.07,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-01 05:51",
+    "last_updated": "2026-09-01 06:15",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
