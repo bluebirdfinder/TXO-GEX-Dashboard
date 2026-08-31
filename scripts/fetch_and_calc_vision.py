@@ -564,12 +564,18 @@ def fetch_5day_exchange_rates():
     }
 
 def fetch_twse_stock_spot_prices():
-    """Fetches all 1,300+ stock spot prices from TWSE OpenAPI for Stock Futures Basis calculation."""
-    url = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
+    """
+    Fetches stock spot prices from TWSE with Multi-Tier Fallback:
+      Tier 1: TWSE OpenAPI (STOCK_DAY_ALL)
+      Tier 2: TWSE MIS Realtime API (for major stock futures underlyings)
+    """
     stock_spot_dict = {}
+    
+    # Tier 1: TWSE OpenAPI
     try:
+        url = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
         req = urllib.request.Request(url, headers=HEADERS)
-        with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=8) as resp:
             data = json.loads(resp.read().decode('utf-8'))
             for d in data:
                 code = d.get('Code', '')
@@ -579,12 +585,39 @@ def fetch_twse_stock_spot_prices():
                     prev_p = close_p - chg_p if close_p > 0 else close_p
                     pct = round((chg_p / prev_p * 100), 2) if prev_p > 0 else 0.0
                     vol = int(int(d.get('TradeVolume', '0').replace(',', '')) / 1000)
-                    stock_spot_dict[code] = {"price": close_p, "change_pct": pct, "volume": vol}
+                    if close_p > 0:
+                        stock_spot_dict[code] = {"price": close_p, "change_pct": pct, "volume": vol}
                 except ValueError:
                     pass
-            print(f"[OK] Loaded {len(stock_spot_dict)} TWSE stock spot prices")
+            if len(stock_spot_dict) > 100:
+                print(f"[OK] Loaded {len(stock_spot_dict)} TWSE stock spot prices (Tier 1 OpenAPI)")
+                return stock_spot_dict
     except Exception as e:
-        print(f"[Warning] Failed to load TWSE stock spot prices: {e}")
+        print(f"[Warning] Tier 1 TWSE OpenAPI stock fetch error: {e}")
+
+    # Tier 2: TWSE MIS API for Key Underlyings
+    try:
+        key_codes = ["2330", "2303", "0050", "3481", "1303", "2454", "2317", "2382", "3231", "2379", "3037", "2603", "2609", "2615"]
+        ex_ch_param = "|".join([f"tse_{c}.tw" for c in key_codes])
+        url_mis = f"https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch={ex_ch_param}"
+        req_mis = urllib.request.Request(url_mis, headers=HEADERS)
+        with urllib.request.urlopen(req_mis, context=SSL_CTX, timeout=8) as resp:
+            res = json.loads(resp.read().decode('utf-8'))
+            for m in res.get('msgArray', []):
+                code = m.get('c')
+                val = m.get('z') or m.get('y')
+                y_val = m.get('y')
+                if code and val and val != '-':
+                    close_p = float(val.replace(',', ''))
+                    y_p = float(y_val.replace(',', '')) if (y_val and y_val != '-') else close_p
+                    chg_pct = round(((close_p - y_p) / y_p * 100), 2) if y_p > 0 else 0.0
+                    stock_spot_dict[code] = {"price": close_p, "change_pct": chg_pct, "volume": 10000}
+            if len(stock_spot_dict) > 0:
+                print(f"[OK] Loaded {len(stock_spot_dict)} key stock spot prices (Tier 2 TWSE MIS)")
+                return stock_spot_dict
+    except Exception as e:
+        print(f"[Warning] Tier 2 TWSE MIS stock fetch error: {e}")
+
     return stock_spot_dict
 
 def fetch_twse_ex_dividend_schedule():
@@ -1976,7 +2009,7 @@ def generate_gex_payload():
             twse_info = stock_spot_dict.get(code, {}) or stock_spot_dict.get(lookup_code, {})
             has_night = (code in NIGHT_SESSION_CODES) or stk.get('has_night', False)
 
-            spot_p = twse_info.get('price') or stk.get('spot_price') or (2420.0 if '2330' in code else (130.0 if '2303' in code else (106.95 if '0050' in code else (26.04 if '00679B' in code else 100.0))))
+            spot_p = twse_info.get('price') or stk.get('spot_price') or (2405.0 if '2330' in code else (129.0 if '2303' in code else (106.25 if '0050' in code else (26.04 if '00679B' in code else 100.0))))
 
             if has_night and code in taifex_night_dict and (session_phase in ("NIGHT_LIVE", "NIGHT_SETTLED") or is_weekend_closed):
                 nq = taifex_night_dict[code]
