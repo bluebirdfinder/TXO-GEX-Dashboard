@@ -1,14 +1,21 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.2)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.3)
 
-**當前版本**：`v49.2` (2026-09-01 GitHub Actions 離峰 Cron 排程錯開、離線夜盤時段視窗修復與 TWSE 融資維持率發布狀態校正版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.2)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.2)
+**當前版本**：`v49.3` (2026-09-01 TWSE 現股報價雙軌熱備援與通行碼彈窗自動通關熱修復版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.3)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.3)
 **系統狀態**：`✅ 100% 運作正常`
-**網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+**網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v49.2 核心更新亮點（Cron Schedule Shift & Offline Session Guard）
+## 🎯 v49.3 核心更新亮點（Multi-Tier Stock Spot Price Fallback & Passcode Auto-Bypass）
+
+### 🛡️ 1. TWSE 現股報價雙軌熱備援 (Multi-Tier Stock Spot Price Fallback)
+- **多層級現貨抓取**：升級 `fetch_twse_stock_spot_prices()` 導入 Tier 1 TWSE OpenAPI (`STOCK_DAY_ALL`) ➔ Tier 2 TWSE MIS 官方即時 API 雙軌抓取備援，並校正靜態備用庫，確保個股期現貨價差計算極致精準。
+
+### 🔑 2. 通行碼防護遮罩自動通關與作用域修復 (Passcode Modal Auto-Bypass & Scope Hotfix)
+- **休市作用域修復**：修正 `app.js` 在市場休市時段 `isMarketClosed` 的 `liveZg` 作用域問題。
+- **預設通關優化**：優化 `passcode-modal` 預設通行碼 (`GEX2026`) 自動通關邏輯，徹底解決開頁出現全螢幕黑色遮罩擋住內容之問題。
 
 ### ⏰ 1. GitHub Actions 離峰 Cron 排程錯開 (Cron Schedule Shift)
 - **避開全球整點塞車**：將 `.github/workflows/auto_update.yml` 中的自動觸發時間由原整點（如 `:00` / `:30`）調為離峰時間（如 `:03` / `:33`），徹底解決 GitHub 官方伺服器整點排隊延遲問題。

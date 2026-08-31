@@ -1,6 +1,6 @@
 window.GEX_EMBEDDED_DATA = {
   "date": "2026-09-01",
-  "engine_version": "v49.2",
+  "engine_version": "v49.3",
   "session_type": "NIGHT",
   "session_name": "🌙 夜盤收盤價校正 (05:00 Close)",
   "session_shift": {
@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 46016.8,
     "day_total_vex": 3216.37
   },
-  "last_updated_time": "2026-09-01 06:30",
+  "last_updated_time": "2026-09-01 06:43",
   "spot_price": 46128.47,
   "spot_change": -202.98,
   "spot_change_pct": -0.44,
@@ -22293,7 +22293,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -6707.07,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-01 06:30",
+    "last_updated": "2026-09-01 06:43",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",

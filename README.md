@@ -1,15 +1,22 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v49.2)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v49.3)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> GitHub Actions 離峰 Cron 排程錯開 ✦ 離線夜盤時段視窗修復 ✦ 休市保護機制 ✦ TWSE 信用交易融資維持率 API 實時連線 ✦ 動態 4 階段 Session 配對架構 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝
+> TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關與作用域熱修復 ✦ GitHub Actions 離峰 Cron 排程錯開 ✦ 離線夜盤時段視窗修復 ✦ 休市保護機制 ✦ TWSE 信用交易融資維持率 API 實時連線 ✦ 動態 4 階段 Session 配對架構 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v49.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v49.3-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
-## 🌟 v49.2 GitHub Actions 離峰 Cron 排程錯開、離線夜盤時段視窗修復與 TWSE 融資維持率發布校正
+## 🌟 v49.3 TWSE 現股報價雙軌熱備援與通行碼彈窗自動通關熱修復
+
+### 🛡️ 1. TWSE 現股報價雙軌熱備援 (Multi-Tier Stock Spot Price Fallback)
+- **多層級現貨抓取**：升級 `fetch_twse_stock_spot_prices()` 導入 Tier 1 TWSE OpenAPI (`STOCK_DAY_ALL`) ➔ Tier 2 TWSE MIS 官方即時 API 雙軌抓取備援，並校正靜態備用庫，確保個股期現貨價差計算極致精準。
+
+### 🔑 2. 通行碼防護遮罩自動通關與作用域修復 (Passcode Modal Auto-Bypass & Scope Hotfix)
+- **休市作用域修復**：修正 `app.js` 在市場休市時段 `isMarketClosed` 的 `liveZg` 作用域問題。
+- **預設通關優化**：優化 `passcode-modal` 預設通行碼 (`GEX2026`) 自動通關邏輯，徹底解決開頁出現全螢幕黑色遮罩擋住內容之問題。
 
 ### ⏰ 1. GitHub Actions 離峰 Cron 排程錯開 (Cron Schedule Shift)
 - **避開全球整點塞車**：將 `.github/workflows/auto_update.yml` 中的自動觸發時間由原整點（如 `:00` / `:30`）調為離峰時間（如 `:03` / `:33`），徹底解決 GitHub 官方伺服器整點排隊延遲問題。
