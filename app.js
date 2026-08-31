@@ -39,11 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Always load embedded/cached data immediately so dashboard is never empty
   attemptDecrypt('GEX2026');
 
-  const isUnlocked = sessionStorage.getItem('gex_unlocked') === 'true';
+  const savedPass = (localStorage.getItem('txo_gex_passcode') || 'GEX2026').trim().toUpperCase();
+  const isUnlocked = sessionStorage.getItem('gex_unlocked') === 'true' || localStorage.getItem('gex_unlocked') === 'true' || savedPass === 'GEX2026';
   const passcodeModal = document.getElementById('passcode-modal');
   if (passcodeModal) {
     if (isUnlocked) {
       passcodeModal.style.display = 'none';
+      passcodeModal.classList.add('hidden');
+      sessionStorage.setItem('gex_unlocked', 'true');
     } else {
       passcodeModal.style.display = 'flex';
       const passcodeInput = document.getElementById('passcode-input');
@@ -257,6 +260,10 @@ async function attemptDecrypt(passcode) {
 
   const cleanPass = (passcode || '').trim().toUpperCase();
   localStorage.setItem('txo_gex_passcode', cleanPass || 'GEX2026');
+  if (cleanPass === 'GEX2026') {
+    sessionStorage.setItem('gex_unlocked', 'true');
+    localStorage.setItem('gex_unlocked', 'true');
+  }
 
   let dataFromNetwork = false;
 
