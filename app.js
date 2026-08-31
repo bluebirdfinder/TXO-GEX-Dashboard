@@ -2576,63 +2576,64 @@ function handleLiveTick(data) {
     }
 
     // 2. Real-Time Dynamic Zero Gamma Shift Recalculation (ONLY during active live trading hours)
-    if (gexData && !isMarketClosed) {
-      const baseTxf = isNightSession ? (gexData.night_txf_price || gexData.txf_price) : (gexData.day_txf_price || gexData.txf_price);
-      const baseZg = isNightSession ? (gexData.zero_gamma_level) : (gexData.session_shift?.day_zero_gamma || gexData.zero_gamma_level);
-      const baseGp = isNightSession ? (gexData.gex_plus_flip) : (gexData.session_shift?.day_gex_plus_flip || gexData.gex_plus_flip);
-      const dayZg = gexData.session_shift?.day_zero_gamma || 46016.9;
-      
-      const priceDelta = data.price - baseTxf;
-      const liveZg = Math.round((baseZg + priceDelta * 0.62) * 10) / 10;
-      const liveGp = Math.round((baseGp + priceDelta * 0.62) * 10) / 10;
-      
-      gexData.spot_price = data.price;
-      gexData.zero_gamma_level = liveZg;
-      gexData.gex_plus_flip = liveGp;
-      
-      const elZgNight = document.getElementById('stat-zg-night');
-      if (elZgNight) elZgNight.innerText = liveZg.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
-      
-      const elZgShift = document.getElementById('stat-zg-shift');
-      if (elZgShift) {
-        const shiftVal = liveZg - dayZg;
-        const sign = shiftVal >= 0 ? '+' : '';
-        elZgShift.innerText = `(${sign}${shiftVal.toFixed(1)} 點)`;
-      }
-    }
-
-      // 3. Synchronize Latest Session in 10-Session History Array ONLY IF Session is LIVE
-      const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
-      if (sessions && sessions.length > 0) {
-        const latestSess = sessions[sessions.length - 1];
-        const isLive = latestSess && (
-          (latestSess.label && latestSess.label.includes('Live')) || 
-          (latestSess.full_name && latestSess.full_name.includes('Live'))
-        );
-        if (isLive) {
-          latestSess.spot_price = data.price;
-          if (data.is_futures !== false) {
-            latestSess.txf_price = data.price;
-          }
-          latestSess.zero_gamma_level = liveZg;
-          latestSess.gex_plus_flip = liveGp;
+    if (gexData) {
+      if (!isMarketClosed) {
+        const baseTxf = isNightSession ? (gexData.night_txf_price || gexData.txf_price) : (gexData.day_txf_price || gexData.txf_price);
+        const baseZg = isNightSession ? (gexData.zero_gamma_level) : (gexData.session_shift?.day_zero_gamma || gexData.zero_gamma_level);
+        const baseGp = isNightSession ? (gexData.gex_plus_flip) : (gexData.session_shift?.day_gex_plus_flip || gexData.gex_plus_flip);
+        const dayZg = gexData.session_shift?.day_zero_gamma || 46016.9;
+        
+        const priceDelta = data.price - baseTxf;
+        const liveZg = Math.round((baseZg + priceDelta * 0.62) * 10) / 10;
+        const liveGp = Math.round((baseGp + priceDelta * 0.62) * 10) / 10;
+        
+        gexData.spot_price = data.price;
+        gexData.zero_gamma_level = liveZg;
+        gexData.gex_plus_flip = liveGp;
+        
+        const elZgNight = document.getElementById('stat-zg-night');
+        if (elZgNight) elZgNight.innerText = liveZg.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+        
+        const elZgShift = document.getElementById('stat-zg-shift');
+        if (elZgShift) {
+          const shiftVal = liveZg - dayZg;
+          const sign = shiftVal >= 0 ? '+' : '';
+          elZgShift.innerText = `(${sign}${shiftVal.toFixed(1)} 點)`;
         }
+
+        // 3. Synchronize Latest Session in 10-Session History Array ONLY IF Session is LIVE
+        const sessions = gexData.history_10_sessions || gexData.history_6_sessions;
+        if (sessions && sessions.length > 0) {
+          const latestSess = sessions[sessions.length - 1];
+          const isLive = latestSess && (
+            (latestSess.label && latestSess.label.includes('Live')) || 
+            (latestSess.full_name && latestSess.full_name.includes('Live'))
+          );
+          if (isLive) {
+            latestSess.spot_price = data.price;
+            if (data.is_futures !== false) {
+              latestSess.txf_price = data.price;
+            }
+            latestSess.zero_gamma_level = liveZg;
+            latestSess.gex_plus_flip = liveGp;
+          }
+        }
+
+        // 4. Trigger Table 2 Re-render so Image 2 Live Row jumps in real-time
+        try {
+          populateKeyMetrics5Day();
+        } catch (e) {}
+
+        // 5. Trigger Left GEX Chart Re-render so Image 1 Spot Line & Zero Gamma update in real-time
+        try {
+          renderGEXChart();
+        } catch (e) {}
+
+        // 6. Update Microstructure Express Digest in real-time
+        try {
+          updateMicrostructureExpress(data.price);
+        } catch (e) {}
       }
-
-      // 4. Trigger Table 2 Re-render so Image 2 Live Row jumps in real-time
-      try {
-        populateKeyMetrics5Day();
-      } catch (e) {}
-
-      // 5. Trigger Left GEX Chart Re-render so Image 1 Spot Line & Zero Gamma update in real-time
-      try {
-        renderGEXChart();
-      } catch (e) {}
-
-      // 6. Update Microstructure Express Digest in real-time
-      try {
-        updateMicrostructureExpress(data.price);
-      } catch (e) {}
     }
 }
 
