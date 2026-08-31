@@ -1,11 +1,26 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v49.1)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v49.2)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> TWSE 信用交易融資維持率 API 實時動態連線 ✦ 週末與跨日時間區間判定全重構 ✦ 週五夜盤歷程完整歸位 ✦ Instagram & Threads 官方 QR Code 增粉與 @bluebird_finder 標籤全站整合 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝 ✦ 速報當下即時盤態單向鎖定 ✦ Max Pain 空間籌碼拓撲 ✦ 交易時段實時燈號 ✦ 5日歷程矩陣日期校正 ✦ TWSE BFI82U 三大法人現貨全對齊 ✦ VEX 恐慌曝險 ✦ GEX+ Flip 早鳥防守線 ✦ 融資維持率 21:00 TWSE 雙軌清算 Location A 矩陣 ✦ 全套 3 張社群圖卡動態對齊與下載 ✦ 10 盤演變播放器 ✦ 期交所官方外匯引擎
+> GitHub Actions 離峰 Cron 排程錯開 ✦ 離線夜盤時段視窗修復 ✦ 休市保護機制 ✦ TWSE 信用交易融資維持率 API 實時連線 ✦ 動態 4 階段 Session 配對架構 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v49.1-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v49.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v49.2 GitHub Actions 離峰 Cron 排程錯開、離線夜盤時段視窗修復與 TWSE 融資維持率發布校正
+
+### ⏰ 1. GitHub Actions 離峰 Cron 排程錯開 (Cron Schedule Shift)
+- **避開全球整點塞車**：將 `.github/workflows/auto_update.yml` 中的自動觸發時間由原整點（如 `:00` / `:30`）調為離峰時間（如 `:03` / `:33`），徹底解決 GitHub 官方伺服器整點排隊延遲問題。
+- **融資維持率保險重試**：晚上維持率視窗新增 `22:03` (TWD) 備援排程，防止證交所盤後數據延遲發布時遺漏更新。
+
+### 🌙 2. 離線/無富邦 Gateway 之夜盤時段視窗與休市保護 (Offline Session Guard)
+- **時段涵蓋修正**：修正 `app.js` 與 Cloudflare Worker 之 `isNightSession` 判斷視窗 (`05:00~08:45 AM` 涵蓋入夜盤定案視窗)。
+- **休市位移保護 (`isMarketClosed`)**：於非交易時段（05:00~08:45 / 13:45~15:00）鎖定動態位移，防止未開啟富邦 API 時備援來源（期交所 MIS / 雅虎）將夜盤定案版 Zero Gamma (`46,116.8`) 蓋掉。
+
+### 🏛️ 3. TWSE 融資維持率發布狀態校正 (`fetch_twse_margin_maintenance`)
+- **發布狀態邏輯修正**：修正 `fetch_and_calc_vision.py` 之 `is_published` 判斷，清晨執行時正確帶出已發布之融資維持率 (`159.2%`)。
 
 ---
 

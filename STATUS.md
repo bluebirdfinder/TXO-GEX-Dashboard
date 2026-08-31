@@ -1,10 +1,25 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.1)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.2)
 
-**當前版本**：`v49.1` (2026-08-29 TWSE 信用交易融資維持率 API 實時動態連線與週末歷程時間判定重構版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.1)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.1)
+**當前版本**：`v49.2` (2026-09-01 GitHub Actions 離峰 Cron 排程錯開、離線夜盤時段視窗修復與 TWSE 融資維持率發布狀態校正版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.2)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.2)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，支援 👁️ 眼睛切換顯示）
+
+---
+
+## 🎯 v49.2 核心更新亮點（Cron Schedule Shift & Offline Session Guard）
+
+### ⏰ 1. GitHub Actions 離峰 Cron 排程錯開 (Cron Schedule Shift)
+- **避開全球整點塞車**：將 `.github/workflows/auto_update.yml` 中的自動觸發時間由原整點（如 `:00` / `:30`）調為離峰時間（如 `:03` / `:33`），徹底解決 GitHub 官方伺服器整點排隊延遲問題。
+- **融資維持率保險重試**：晚上維持率視窗新增 `22:03` (TWD) 備援排程，防止證交所盤後數據延遲發布時遺漏更新。
+
+### 🌙 2. 離線/無富邦 Gateway 之夜盤時段視窗與休市保護 (Offline Session Guard)
+- **時段涵蓋修正**：修正 `app.js` 與 Cloudflare Worker 之 `isNightSession` 判斷視窗 (`05:00~08:45 AM` 涵蓋入夜盤定案視窗)。
+- **休市位移保護 (`isMarketClosed`)**：於非交易時段（05:00~08:45 / 13:45~15:00）鎖定動態位移，防止未開啟富邦 API 時備援來源（期交所 MIS / 雅虎）將夜盤定案版 Zero Gamma (`46,116.8`) 蓋掉。
+
+### 🏛️ 3. TWSE 融資維持率發布狀態校正 (`fetch_twse_margin_maintenance`)
+- **發布狀態邏輯修正**：修正 `fetch_and_calc_vision.py` 之 `is_published` 判斷，清晨執行時正確帶出已發布之融資維持率 (`159.2%`)。
 
 ---
 

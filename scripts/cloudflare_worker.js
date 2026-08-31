@@ -66,7 +66,8 @@ export default {
         try {
           const dateUtc8 = new Date(Date.now() + 8 * 3600 * 1000);
           const h8 = dateUtc8.getUTCHours();
-          const isNightSession = (h8 >= 15 || h8 < 5);
+          const m8 = dateUtc8.getUTCMinutes();
+          const isNightSession = (h8 >= 15 || h8 < 8 || (h8 === 8 && m8 < 45));
           const mType = isNightSession ? '1' : '0';
 
           const taifexRes = await fetch('https://mis.taifex.com.tw/futures/api/getQuoteList', {

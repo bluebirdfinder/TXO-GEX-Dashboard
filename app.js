@@ -2407,8 +2407,10 @@ function initLiveTickPolling() {
 
     // 3. Fallback to TAIFEX MIS Live API (Night Session MarketType '1', Day Session MarketType '0')
     try {
-      const nowH = (new Date()).getHours();
-      const isNightSession = (nowH >= 15 || nowH < 5);
+      const nowDt = new Date();
+      const nowH = nowDt.getHours();
+      const nowM = nowDt.getMinutes();
+      const isNightSession = (nowH >= 15 || nowH < 8 || (nowH === 8 && nowM < 45));
       const mType = isNightSession ? '1' : '0';
       
       const taifexRes = await fetch('https://mis.taifex.com.tw/futures/api/getQuoteList', {
@@ -2443,8 +2445,10 @@ function initLiveTickPolling() {
         const yData = await yRes.json();
         const price = yData?.chart?.result?.[0]?.meta?.regularMarketPrice;
         if (price && price > 0) {
-          const nowH = (new Date()).getHours();
-          const isNightSession = (nowH >= 15 || nowH < 5);
+          const nowDt = new Date();
+          const nowH = nowDt.getHours();
+          const nowM = nowDt.getMinutes();
+          const isNightSession = (nowH >= 15 || nowH < 8 || (nowH === 8 && nowM < 45));
           handleLiveTick({
             ticker: 'IX0001',
             price: price,
@@ -2527,8 +2531,14 @@ function handleLiveTick(data) {
   }
 
   // Futures Ticks (TXF1!) -> Update Futures Dual Session Cards & Zero Gamma Recalculation
-  const nowH = (new Date()).getHours();
-  const isNightSession = (nowH >= 15 || nowH < 5);
+  const nowDt = new Date();
+  const nowH = nowDt.getHours();
+  const nowM = nowDt.getMinutes();
+  const isNightSession = (nowH >= 15 || nowH < 8 || (nowH === 8 && nowM < 45));
+  const isMarketClosed = (
+    (nowH >= 5 && (nowH < 8 || (nowH === 8 && nowM < 45))) || 
+    (nowH === 13 && nowM >= 45) || (nowH === 14)
+  );
   const targetEl = document.getElementById(isNightSession ? 'stat-txf-night' : 'stat-txf-day');
 
     if (targetEl) {
@@ -2565,16 +2575,16 @@ function handleLiveTick(data) {
       }
     }
 
-    // 2. Real-Time Dynamic Zero Gamma Shift Recalculation (Image 1 & 2 Live Sync)
-    if (gexData) {
-      const dayTxf = gexData.day_txf_price || 45027.0;
-      const priceDelta = data.price - dayTxf;
-      const dayZg = gexData.session_shift?.day_zero_gamma || 45016.5;
-      const dayGp = gexData.session_shift?.day_gex_plus_flip || 45216.5;
+    // 2. Real-Time Dynamic Zero Gamma Shift Recalculation (ONLY during active live trading hours)
+    if (gexData && !isMarketClosed) {
+      const baseTxf = isNightSession ? (gexData.night_txf_price || gexData.txf_price) : (gexData.day_txf_price || gexData.txf_price);
+      const baseZg = isNightSession ? (gexData.zero_gamma_level) : (gexData.session_shift?.day_zero_gamma || gexData.zero_gamma_level);
+      const baseGp = isNightSession ? (gexData.gex_plus_flip) : (gexData.session_shift?.day_gex_plus_flip || gexData.gex_plus_flip);
+      const dayZg = gexData.session_shift?.day_zero_gamma || 46016.9;
       
-      // Dynamic shift formula: ZG & GEX+ Flip shift smoothly with intraday price delta based on net GEX slope
-      const liveZg = Math.round((dayZg + priceDelta * 0.62) * 10) / 10;
-      const liveGp = Math.round((dayGp + priceDelta * 0.62) * 10) / 10;
+      const priceDelta = data.price - baseTxf;
+      const liveZg = Math.round((baseZg + priceDelta * 0.62) * 10) / 10;
+      const liveGp = Math.round((baseGp + priceDelta * 0.62) * 10) / 10;
       
       gexData.spot_price = data.price;
       gexData.zero_gamma_level = liveZg;
@@ -2589,6 +2599,7 @@ function handleLiveTick(data) {
         const sign = shiftVal >= 0 ? '+' : '';
         elZgShift.innerText = `(${sign}${shiftVal.toFixed(1)} 點)`;
       }
+    }
 
       // 3. Synchronize Latest Session in 10-Session History Array ONLY IF Session is LIVE
       const sessions = gexData.history_10_sessions || gexData.history_6_sessions;

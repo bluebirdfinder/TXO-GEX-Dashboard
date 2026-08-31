@@ -1,6 +1,6 @@
 window.GEX_EMBEDDED_DATA = {
   "date": "2026-09-01",
-  "engine_version": "v49.1",
+  "engine_version": "v49.2",
   "session_type": "NIGHT",
   "session_name": "🌙 夜盤收盤價校正 (05:00 Close)",
   "session_shift": {
@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 46016.8,
     "day_total_vex": 3216.37
   },
-  "last_updated_time": "2026-09-01 06:15",
+  "last_updated_time": "2026-09-01 06:16",
   "spot_price": 46128.47,
   "spot_change": -202.98,
   "spot_change_pct": -0.44,
@@ -11598,7 +11598,7 @@ window.GEX_EMBEDDED_DATA = {
       "pc_ratio": 111.8,
       "margin_maint_market": 159.2,
       "margin_maint_stock": 144.8,
-      "margin_maint_published": false,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 45200,
@@ -19310,7 +19310,7 @@ window.GEX_EMBEDDED_DATA = {
       "pc_ratio": 111.8,
       "margin_maint_market": 159.2,
       "margin_maint_stock": 144.8,
-      "margin_maint_published": false,
+      "margin_maint_published": true,
       "total_gex": [
         {
           "strike": 45200,
@@ -22126,8 +22126,8 @@ window.GEX_EMBEDDED_DATA = {
       "dxy": {
         "date": "08/31 (一)",
         "price": 99.41,
-        "change": -0.29,
-        "pct": -0.29
+        "change": 0.25,
+        "pct": 0.25
       },
       "usdjpy": {
         "date": "08/31 (一)",
@@ -22203,6 +22203,12 @@ window.GEX_EMBEDDED_DATA = {
       ],
       "dxy": [
         {
+          "date": "08/24 (一)",
+          "price": 99.0,
+          "change": 0.2,
+          "pct": 0.2
+        },
+        {
           "date": "08/25 (二)",
           "price": 98.92,
           "change": -0.08,
@@ -22221,16 +22227,10 @@ window.GEX_EMBEDDED_DATA = {
           "pct": -0.01
         },
         {
-          "date": "08/28 (五)",
-          "price": 99.7,
-          "change": 0.54,
-          "pct": 0.54
-        },
-        {
           "date": "08/31 (一)",
           "price": 99.41,
-          "change": -0.29,
-          "pct": -0.29
+          "change": 0.25,
+          "pct": 0.25
         }
       ]
     },
@@ -22293,7 +22293,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -6707.07,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-01 06:15",
+    "last_updated": "2026-09-01 06:16",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",

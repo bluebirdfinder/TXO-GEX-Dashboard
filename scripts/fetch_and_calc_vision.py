@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v49.1"
+ENGINE_VERSION = "v49.2"
 
 import os
 import sys
@@ -272,7 +272,7 @@ def fetch_twse_margin_maintenance(target_date_str=None):
                 if not target_date_str:
                     target_date_str = today_yyyymmdd
                     
-                is_published = (pub_date == target_date_str) or is_weekend or (pub_date == today_yyyymmdd)
+                is_published = True if (stat == 'OK' and pub_date) else False
                 
                 tables = res.get('tables', [])
                 if len(tables) > 0:
