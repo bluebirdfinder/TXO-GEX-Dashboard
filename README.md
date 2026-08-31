@@ -1,15 +1,15 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v49.3)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v49.4)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關與作用域熱修復 ✦ GitHub Actions 離峰 Cron 排程錯開 ✦ 離線夜盤時段視窗修復 ✦ 休市保護機制 ✦ TWSE 信用交易融資維持率 API 實時連線 ✦ 動態 4 階段 Session 配對架構 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪 ✦ HTTP 快取破壞與 Cache-Buster 防護 ✦ 手機版 ZIP 智慧自動包裝
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v49.3-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v49.4-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
-## 🌟 v49.3 TWSE 現股報價雙軌熱備援與通行碼彈窗自動通關熱修復
+## 🌟 v49.4 TWSE 現股報價雙軌熱備援與通行碼彈窗自動通關熱修復
 
 ### 🛡️ 1. TWSE 現股報價雙軌熱備援 (Multi-Tier Stock Spot Price Fallback)
 - **多層級現貨抓取**：升級 `fetch_twse_stock_spot_prices()` 導入 Tier 1 TWSE OpenAPI (`STOCK_DAY_ALL`) ➔ Tier 2 TWSE MIS 官方即時 API 雙軌抓取備援，並校正靜態備用庫，確保個股期現貨價差計算極致精準。

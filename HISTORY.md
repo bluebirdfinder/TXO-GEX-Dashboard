@@ -25,6 +25,14 @@
 
 ## 🎯 各版本詳細更新紀錄
 
+### 🚀 v49.4 期交所官方夜盤即時成交量 (marketCode=1 Volume) 直連寫入與夜盤個股期真理源對齊版 (2026-09-01)
+- **夜盤真實成交量 (Night Real Volume) 對齊**：
+  - 升級 etch_taifex_official_night_stock_futures()，從期交所 utDailyMarketExcel?marketCode=1 官方夜盤端點精準提取 cols[8] 夜盤真實成交量與 cols[6] 漲跌點數。
+  - 徹底排除將日盤總成交量誤寫入夜盤之問題，全系統 6 大夜盤股期/ETF成交量對齊期交所官方公告。
+- **4-Tier 熔斷防範與 0 價避險保護網**：
+  - 強化 etch_and_calc_vision.py 數據生成器，確保期交所清晨 05:00~06:15 結算維護期不落入空值，寫入無零價保證。
+
+
 ### 🚀 v49.1 動態 4 階段 Session 配對架構、期交所官方夜盤個股期 API 直連與 TWSE 融資維持率 (2026-08-29)
 - **動態 4 階段 Session 配對架構 (4-Phase Dynamic Session Architecture)**：
   - 劃分 `DAY_LIVE` / `DAY_SETTLED` / `NIGHT_LIVE` / `NIGHT_SETTLED` 4 大時段。
@@ -122,6 +130,14 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🚀 v49.4 期交所官方夜盤即時成交量 (marketCode=1 Volume) 直連寫入與夜盤個股期真理源對齊版 (2026-09-01)
+- **夜盤真實成交量 (Night Real Volume) 對齊**：
+  - 升級 etch_taifex_official_night_stock_futures()，從期交所 utDailyMarketExcel?marketCode=1 官方夜盤端點精準提取 cols[8] 夜盤真實成交量與 cols[6] 漲跌點數。
+  - 徹底排除將日盤總成交量誤寫入夜盤之問題，全系統 6 大夜盤股期/ETF成交量對齊期交所官方公告。
+- **4-Tier 熔斷防範與 0 價避險保護網**：
+  - 強化 etch_and_calc_vision.py 數據生成器，確保期交所清晨 05:00~06:15 結算維護期不落入空值，寫入無零價保證。
+
 
 ### 🚀 v47.1 證交所 BFI82U 現貨三大法人買賣超金額對齊 (2026-08-26)
 - **修正 BFI82U 解析覆蓋 Bug**：修復舊版 `if '外資' in name:` 在循環中被 `外資自營商` 覆蓋 `外資及陸資(不含外資自營商)` 之問題，完全涵蓋盤後鉅額對敲交易。
