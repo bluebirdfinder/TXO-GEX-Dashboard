@@ -803,15 +803,19 @@ def fetch_taifex_official_night_stock_futures():
                 soup = BeautifulSoup(html, 'html.parser')
                 for r in soup.find_all('tr'):
                     cols = [td.get_text().strip() for td in r.find_all(['td', 'th'])]
-                    if cols and len(cols) >= 8 and cols[0] == cid and '/' not in cols[1]:
+                    if cols and len(cols) >= 9 and cols[0] == cid and '/' not in cols[1]:
                         try:
                             p = float(cols[5].replace(',', ''))
+                            chg_pts = float(cols[6].replace(',', '')) if cols[6] != '-' else 0.0
                             chg_str = cols[7].replace('%', '').replace(',', '')
                             chg_pct = float(chg_str) if chg_str != '-' else 0.0
+                            vol = int(cols[8].replace(',', '')) if cols[8] != '-' else 0
                             if p > 0:
                                 night_quotes[code] = {
                                     'fut_price': p,
-                                    'change_pct': chg_pct
+                                    'change_pts': chg_pts,
+                                    'change_pct': chg_pct,
+                                    'volume': vol
                                 }
                                 break
                         except Exception:
@@ -2022,7 +2026,7 @@ def generate_gex_payload():
                 fut_price = tf_price if (tf_price and tf_price > 0) else spot_p
 
             tf_data = taifex_stk_dict.get(code, {})
-            vol = tf_data.get('total_vol') or twse_info.get('volume') or stk.get('volume', 1000)
+            vol = (nq.get('volume') if 'nq' in locals() and nq else 0) or tf_data.get('total_vol') or twse_info.get('volume') or stk.get('volume', 1000)
             basis = round(fut_price - spot_p, 2)
 
             # Official TAIFEX 6 Night Session Stock & ETF Futures Contracts
