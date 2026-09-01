@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47216.7,
     "day_total_vex": 3272.72
   },
-  "last_updated_time": "2026-09-01 15:17",
+  "last_updated_time": "2026-09-01 15:29",
   "spot_price": 46948.72,
   "spot_change": 820.25,
   "spot_change_pct": 1.78,
@@ -22125,9 +22125,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/01 (二)",
-        "price": 99.53,
-        "change": 0.1,
-        "pct": 0.1
+        "price": 99.54,
+        "change": 0.11,
+        "pct": 0.11
       },
       "usdjpy": {
         "date": "09/01 (二)",
@@ -22203,12 +22203,6 @@ window.GEX_EMBEDDED_DATA = {
       ],
       "dxy": [
         {
-          "date": "08/25 (二)",
-          "price": 98.92,
-          "change": -0.08,
-          "pct": -0.08
-        },
-        {
           "date": "08/26 (三)",
           "price": 99.17,
           "change": 0.25,
@@ -22221,20 +22215,26 @@ window.GEX_EMBEDDED_DATA = {
           "pct": -0.01
         },
         {
+          "date": "08/28 (五)",
+          "price": 99.7,
+          "change": 0.54,
+          "pct": 0.54
+        },
+        {
           "date": "08/31 (一)",
           "price": 99.43,
-          "change": 0.27,
-          "pct": 0.27
+          "change": -0.27,
+          "pct": -0.27
         },
         {
           "date": "09/01 (二)",
-          "price": 99.53,
-          "change": 0.1,
-          "pct": 0.1
+          "price": 99.54,
+          "change": 0.11,
+          "pct": 0.11
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.53</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.88</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.54</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.88</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -177,
@@ -22293,7 +22293,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -5682.75,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-01 15:17",
+    "last_updated": "2026-09-01 15:29",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
