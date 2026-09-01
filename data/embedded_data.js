@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47216.7,
     "day_total_vex": 3272.72
   },
-  "last_updated_time": "2026-09-01 15:59",
+  "last_updated_time": "2026-09-01 20:28",
   "spot_price": 46948.72,
   "spot_change": 820.25,
   "spot_change_pct": 1.78,
@@ -21900,10 +21900,10 @@ window.GEX_EMBEDDED_DATA = {
       "itrust_fut_net": 76027,
       "dealer_fut_net": -990,
       "foreign_stock_net": 267.08,
-      "trust_stock_net": 131.02,
-      "itrust_stock_net": 131.02,
+      "trust_stock_net": 136.0,
+      "itrust_stock_net": 136.0,
       "dealer_stock_net": 163.29,
-      "total_stock_net": 561.39,
+      "total_stock_net": 566.37,
       "foreign_opt_net": -3.66,
       "trust_opt_net": -4.16,
       "itrust_opt_net": -4.16,
@@ -22101,7 +22101,7 @@ window.GEX_EMBEDDED_DATA = {
   },
   "executive_digest": {
     "futures_summary": "📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：前五大淨部位 <code>-7,059 口</code>、前十大 <code>-20,283 口</code>，特定法人淨部位 <code>-6,161 口</code>。外資台指期未平倉空單 <code>-78,706 口</code>（單日變動 <code>+3,823 口</code>，約合 <code>361.0 億 TWD</code> 契約金額）。📈 顯著回補偏多。",
-    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+561.39 億 TWD</code>！其中「外資 <code>+267.08 億</code>」、「投信 <code>+131.02 億</code>」與「自營商 <code>+163.29 億</code>」。",
+    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+566.37 億 TWD</code>！其中「外資 <code>+267.08 億</code>」、「投信 <code>+136.00 億</code>」與「自營商 <code>+163.29 億</code>」。",
     "options_structure": "🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>-4.00 億</code> 與 Put 賣權 <code>+0.34 億</code>；投信買權 <code>-4.16 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>47,100 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>46,750 點</code>。",
     "sentiment_audit": "📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>113.2%</code> (🔴 偏多看撐)，莊家下檔防守支撐力道尚存。",
     "settlement_outlook": "🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：現價 (<code>46,870.0</code>) 處於 Zero Gamma (<code>46,916.7 點</code>) 下方之「負 Gamma 避險助跌區」。留意 <code>46,750 點</code> Put Wall 支撐關卡防守，若失守恐引發多頭停損賣壓。"
@@ -22125,15 +22125,15 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/01 (二)",
-        "price": 99.59,
-        "change": 0.16,
-        "pct": 0.16
+        "price": 99.62,
+        "change": 0.19,
+        "pct": 0.19
       },
       "usdjpy": {
         "date": "09/01 (二)",
-        "price": 159.88,
-        "change": 0.29,
-        "pct": 0.18
+        "price": 160.0,
+        "change": 0.41,
+        "pct": 0.26
       }
     },
     "fx_5day_history": {
@@ -22196,9 +22196,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/01 (二)",
-          "price": 159.88,
-          "change": 0.29,
-          "pct": 0.18
+          "price": 160.0,
+          "change": 0.41,
+          "pct": 0.26
         }
       ],
       "dxy": [
@@ -22228,13 +22228,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/01 (二)",
-          "price": 99.59,
-          "change": 0.16,
-          "pct": 0.16
+          "price": 99.62,
+          "change": 0.19,
+          "pct": 0.19
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.59</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.88</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.62</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>160.0</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -177,
@@ -22293,7 +22293,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -5682.75,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-01 15:59",
+    "last_updated": "2026-09-01 20:28",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -22849,8 +22849,8 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 40.57,
-      "fut_price": 40.57,
-      "basis": 0.0,
+      "fut_price": 40.8,
+      "basis": 0.23,
       "basis_tag": "🔴 正價差",
       "change_pct": -0.12,
       "point_contrib": -0.0,
@@ -22959,8 +22959,8 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 27.63,
-      "fut_price": 27.63,
-      "basis": 0.0,
+      "fut_price": 27.87,
+      "basis": 0.24,
       "basis_tag": "🔴 正價差",
       "change_pct": -0.07,
       "point_contrib": -0.0,
@@ -22981,8 +22981,8 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 16.38,
-      "fut_price": 16.38,
-      "basis": 0.0,
+      "fut_price": 16.4,
+      "basis": 0.02,
       "basis_tag": "🔴 正價差",
       "change_pct": -0.79,
       "point_contrib": -0.0,
@@ -25803,9 +25803,9 @@ window.GEX_EMBEDDED_DATA = {
       "change_pct": -0.14,
       "point_contrib": -0.1,
       "volume": 838,
-      "ex_date": "-",
-      "ex_dividend": 0.0,
-      "ex_type": "",
+      "ex_date": "09/08",
+      "ex_dividend": 25.0,
+      "ex_type": "除息",
       "foreign_net": 98,
       "dealer_net": -34,
       "is_top10_buy": false,
@@ -28327,9 +28327,9 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 100.0,
-      "fut_price": 100.0,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
+      "fut_price": 14.31,
+      "basis": -85.69,
+      "basis_tag": "🟢 逆價差",
       "change_pct": 0.0,
       "point_contrib": 0.0,
       "volume": 172,
@@ -28415,9 +28415,9 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 140.0,
-      "fut_price": 140.0,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
+      "fut_price": 135.5,
+      "basis": -4.5,
+      "basis_tag": "🟢 逆價差",
       "change_pct": 0.94,
       "point_contrib": 0.1,
       "volume": 172,
