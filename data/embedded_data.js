@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47216.7,
     "day_total_vex": 3272.72
   },
-  "last_updated_time": "2026-09-01 20:28",
+  "last_updated_time": "2026-09-01 20:41",
   "spot_price": 46948.72,
   "spot_change": 820.25,
   "spot_change_pct": 1.78,
@@ -11596,8 +11596,8 @@ window.GEX_EMBEDDED_DATA = {
       "max_pain_strike": 46600,
       "shift_vs_prev": -110,
       "pc_ratio": 111.8,
-      "margin_maint_market": 159.2,
-      "margin_maint_stock": 144.8,
+      "margin_maint_market": 160.9,
+      "margin_maint_stock": 146.2,
       "margin_maint_published": true,
       "total_gex": [
         {
@@ -12881,8 +12881,8 @@ window.GEX_EMBEDDED_DATA = {
       "max_pain_strike": 46300,
       "shift_vs_prev": -339.0,
       "pc_ratio": 113.23,
-      "margin_maint_market": 159.2,
-      "margin_maint_stock": 144.8,
+      "margin_maint_market": 160.9,
+      "margin_maint_stock": 146.2,
       "margin_maint_published": false,
       "total_gex": [
         {
@@ -19308,8 +19308,8 @@ window.GEX_EMBEDDED_DATA = {
       "max_pain_strike": 46600,
       "shift_vs_prev": -110,
       "pc_ratio": 111.8,
-      "margin_maint_market": 159.2,
-      "margin_maint_stock": 144.8,
+      "margin_maint_market": 160.9,
+      "margin_maint_stock": 146.2,
       "margin_maint_published": true,
       "total_gex": [
         {
@@ -20593,8 +20593,8 @@ window.GEX_EMBEDDED_DATA = {
       "max_pain_strike": 46300,
       "shift_vs_prev": -339.0,
       "pc_ratio": 113.23,
-      "margin_maint_market": 159.2,
-      "margin_maint_stock": 144.8,
+      "margin_maint_market": 160.9,
+      "margin_maint_stock": 146.2,
       "margin_maint_published": false,
       "total_gex": [
         {
@@ -22125,9 +22125,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/01 (二)",
-        "price": 99.62,
-        "change": 0.19,
-        "pct": 0.19
+        "price": 99.61,
+        "change": 0.18,
+        "pct": 0.18
       },
       "usdjpy": {
         "date": "09/01 (二)",
@@ -22228,13 +22228,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/01 (二)",
-          "price": 99.62,
-          "change": 0.19,
-          "pct": 0.19
+          "price": 99.61,
+          "change": 0.18,
+          "pct": 0.18
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.62</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>160.0</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.61</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>160.0</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -177,
@@ -22293,7 +22293,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -5682.75,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-01 20:28",
+    "last_updated": "2026-09-01 20:41",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
