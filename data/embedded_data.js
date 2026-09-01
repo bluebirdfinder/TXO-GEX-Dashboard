@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47217.9,
     "day_total_vex": 2805.43
   },
-  "last_updated_time": "2026-09-02 07:13",
+  "last_updated_time": "2026-09-02 07:28",
   "spot_price": 46948.72,
   "spot_change": 820.25,
   "spot_change_pct": 1.78,
@@ -22203,12 +22203,6 @@ window.GEX_EMBEDDED_DATA = {
       ],
       "dxy": [
         {
-          "date": "08/25 (二)",
-          "price": 98.92,
-          "change": -0.08,
-          "pct": -0.08
-        },
-        {
           "date": "08/26 (三)",
           "price": 99.17,
           "change": 0.25,
@@ -22221,10 +22215,16 @@ window.GEX_EMBEDDED_DATA = {
           "pct": -0.01
         },
         {
+          "date": "08/28 (五)",
+          "price": 99.7,
+          "change": 0.54,
+          "pct": 0.54
+        },
+        {
           "date": "08/31 (一)",
           "price": 99.43,
-          "change": 0.27,
-          "pct": 0.27
+          "change": -0.27,
+          "pct": -0.27
         },
         {
           "date": "09/01 (二)",
@@ -22293,7 +22293,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -6680.43,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-02 07:13",
+    "last_updated": "2026-09-02 07:28",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
