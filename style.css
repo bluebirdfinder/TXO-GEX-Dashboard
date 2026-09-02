@@ -432,10 +432,16 @@ footer p {
   background: rgba(10, 14, 23, 0.85);
   backdrop-filter: blur(6px);
   z-index: 9999;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   padding: 20px;
+}
+
+.modal-overlay.active,
+.modal-overlay.show,
+.modal-overlay.open {
+  display: flex !important;
 }
 
 .modal-content {

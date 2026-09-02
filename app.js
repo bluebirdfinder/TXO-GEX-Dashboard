@@ -39,18 +39,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Always load embedded/cached data immediately so dashboard is never empty
   attemptDecrypt('GEX2026');
 
-  const savedPass = (localStorage.getItem('txo_gex_passcode') || 'GEX2026').trim().toUpperCase();
-  const isUnlocked = sessionStorage.getItem('gex_unlocked') === 'true' || localStorage.getItem('gex_unlocked') === 'true' || savedPass === 'GEX2026';
+  const isExplicitlyLocked = sessionStorage.getItem('gex_locked') === 'true';
   const passcodeModal = document.getElementById('passcode-modal');
   if (passcodeModal) {
-    if (isUnlocked) {
-      passcodeModal.style.display = 'none';
-      passcodeModal.classList.add('hidden');
-      sessionStorage.setItem('gex_unlocked', 'true');
-    } else {
+    if (isExplicitlyLocked) {
       passcodeModal.style.display = 'flex';
       const passcodeInput = document.getElementById('passcode-input');
       if (passcodeInput) setTimeout(() => passcodeInput.focus(), 150);
+    } else {
+      passcodeModal.style.display = 'none';
+      passcodeModal.classList.add('hidden');
+      sessionStorage.setItem('gex_unlocked', 'true');
+      localStorage.setItem('gex_unlocked', 'true');
+      localStorage.setItem('txo_gex_passcode', 'GEX2026');
     }
   }
   initLiveTickPolling();
@@ -104,7 +105,7 @@ function initEventListeners() {
       if (modal) modal.style.display = 'flex';
     });
   }
-  const closeTaxonomyBtn = document.getElementById('close-taxonomy-btn');
+  const closeTaxonomyBtn = document.getElementById('close-taxonomy-modal') || document.getElementById('close-taxonomy-btn');
   if (closeTaxonomyBtn) {
     closeTaxonomyBtn.addEventListener('click', () => {
       const modal = document.getElementById('taxonomy-modal');
@@ -2324,13 +2325,14 @@ function initModals() {
   const passcodeError = document.getElementById('passcode-error');
 
   // Check session unlock status on page load
-  const isUnlocked = sessionStorage.getItem('gex_unlocked') === 'true';
+  const isExplicitlyLocked = sessionStorage.getItem('gex_locked') === 'true';
   if (passcodeModal) {
-    if (isUnlocked) {
-      passcodeModal.style.display = 'none';
-    } else {
+    if (isExplicitlyLocked) {
       passcodeModal.style.display = 'flex';
       if (passcodeInput) setTimeout(() => passcodeInput.focus(), 150);
+    } else {
+      passcodeModal.style.display = 'none';
+      passcodeModal.classList.add('hidden');
     }
   }
 
@@ -2341,8 +2343,13 @@ function initModals() {
       const code = (inputEl ? inputEl.value : '').trim().toUpperCase();
       if (code === 'GEX2026') {
         passcodeModal.style.display = 'none';
+        passcodeModal.classList.add('hidden');
         if (passcodeError) passcodeError.style.display = 'none';
         sessionStorage.setItem('gex_unlocked', 'true');
+        sessionStorage.removeItem('gex_locked');
+        localStorage.setItem('gex_unlocked', 'true');
+        localStorage.setItem('txo_gex_passcode', 'GEX2026');
+        attemptDecrypt('GEX2026');
       } else {
         if (passcodeError) passcodeError.style.display = 'block';
         if (inputEl) {
@@ -2355,7 +2362,9 @@ function initModals() {
 
   if (lockBtn && passcodeModal) {
     lockBtn.onclick = function() {
+      sessionStorage.setItem('gex_locked', 'true');
       sessionStorage.removeItem('gex_unlocked');
+      localStorage.removeItem('gex_unlocked');
       if (passcodeModal) passcodeModal.style.display = 'flex';
       if (passcodeInput) {
         passcodeInput.value = '';
