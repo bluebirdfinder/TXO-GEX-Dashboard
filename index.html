@@ -228,78 +228,129 @@
 
   <!-- ⚡ VIX & Volatility Matrix Education Modal Overlay -->
   <div id="vix-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
-    <div class="modal-content" style="max-width: 680px; max-height: 88vh; overflow-y: auto; background: var(--panel-bg); border: 1px solid #00b0ff; border-radius: 14px; padding: 22px;">
+    <div class="modal-content" style="max-width: 760px; max-height: 88vh; overflow-y: auto; background: var(--panel-bg); border: 1px solid #00b0ff; border-radius: 14px; padding: 24px; box-shadow: 0 12px 40px rgba(0, 176, 255, 0.3);">
       <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 16px;">
-        <h3 style="color: #00b0ff; margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-          <span>⚡ VIX 恐慌指標對照表與 GEX 實戰對策手冊</span>
+        <h3 style="color: #00b0ff; margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
+          <span>⚡ GEX ✕ VEX ✕ VIX 三位一體量化實戰指南與對策手冊</span>
         </h3>
         <button id="close-vix-modal" style="background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer;">&times;</button>
       </div>
 
-      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
-        <p style="margin-bottom: 14px;"><strong>【什麼是 VIX 波動率指數？】</strong><br>
-        VIX（Volatility Index）被稱為「恐慌指數」，由期交所根據 TXO 選擇權買賣價（隱含波動率 Implied Volatility）倒推算得。它衡量市場對未來 30 天價格波動劇烈程度的預期。VIX 越高，選擇權「權利金越貴」；VIX 越低，權利金越便宜。</p>
+      <div style="font-size: 0.88rem; line-height: 1.75; color: var(--text-main);">
+        
+        <!-- Core Concept Header Box -->
+        <div style="background: rgba(0, 176, 255, 0.08); border: 1px solid rgba(0, 176, 255, 0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+          <div style="font-weight: 700; color: #00b0ff; margin-bottom: 4px; font-size: 0.95rem;">💡 核心理念：表面風向 vs 底層對沖引擎</div>
+          <div style="color: var(--text-main); font-size: 0.84rem;">
+            <b>👁️ VIX</b> 是表面上的恐慌程度（預期波動大小，告訴你現在風大不大）；而 <b>⚙️ GEX</b> 與 <b>🌊 VEX</b> 則是隱藏在大盤底層、驅動波動率與股價變化的「做市商對沖引擎」（告訴你當股價移動或風向改變時，莊家會往哪裡合力推一把）。
+          </div>
+        </div>
 
-        <h4 style="color: var(--gold-accent); margin: 14px 0 8px 0; font-size: 0.98rem;">1. 台股 TAIFEX VIX 數值狀態對照表</h4>
+        <!-- 1. Trinity Definition Table -->
+        <h4 style="color: var(--gold-accent); margin: 16px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>1. GEX ✕ VEX ✕ VIX 關注維度與核心定義</span>
+        </h4>
         <div style="overflow-x: auto; margin-bottom: 16px;">
           <table class="matrix-table" style="width: 100%; text-align: left; font-size: 0.82rem;">
             <thead>
               <tr style="background: #18202d; color: #fff;">
-                <th style="padding: 8px;">VIX 區間</th>
-                <th style="padding: 8px;">市場情緒等級</th>
-                <th style="padding: 8px;">選擇權權利金狀態</th>
-                <th style="padding: 8px;">建議交易策略</th>
+                <th style="padding: 8px 10px;">指標</th>
+                <th style="padding: 8px 10px;">英文全稱</th>
+                <th style="padding: 8px 10px;">關注的變數關係</th>
+                <th style="padding: 8px 10px;">它告訴你什麼？（做市商行為）</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style="padding: 8px; font-weight: bold; color: #00e676;">&lt; 14.0</td>
-                <td style="padding: 8px; color: #00e676;">🟢 極度平靜 (Low Vol)</td>
-                <td style="padding: 8px;">權利金被大幅壓縮 (便宜)</td>
-                <td style="padding: 8px;">適合買方 (Long Option) 或單邊趨勢微台</td>
+                <td style="padding: 8px 10px; font-weight: bold; color: #00b0ff;">👁️ VIX</td>
+                <td style="padding: 8px 10px;">Volatility Index</td>
+                <td style="padding: 8px 10px;">波動率隨時間變化</td>
+                <td style="padding: 8px 10px;">目前市場預期未來 30 天大盤的表面恐慌程度與定價溢價。</td>
               </tr>
               <tr>
-                <td style="padding: 8px; font-weight: bold; color: #00b0ff;">14.0 ~ 18.0</td>
-                <td style="padding: 8px; color: #00b0ff;">🔵 常態溫和 (Normal Vol)</td>
-                <td style="padding: 8px;">權利金定價合理 (常態)</td>
-                <td style="padding: 8px;">適合常態 GEX 價差單 (Sell Put/Call)</td>
+                <td style="padding: 8px 10px; font-weight: bold; color: #ffd700;">⚙️ GEX</td>
+                <td style="padding: 8px 10px;">Gamma Exposure</td>
+                <td style="padding: 8px 10px;">做市商避險與「標的價格」</td>
+                <td style="padding: 8px 10px;">股價變動時，做市商會<b>減震</b>（+GEX 越跌越買）還是<b>踩油門</b>（-GEX 追跌殺跌）。</td>
               </tr>
               <tr>
-                <td style="padding: 8px; font-weight: bold; color: #ffd700;">18.0 ~ 22.0</td>
-                <td style="padding: 8px; color: #ffd700;">🟡 恐慌升溫 (Elevated Vol)</td>
-                <td style="padding: 8px;">權利金開始發胖 (偏貴)</td>
-                <td style="padding: 8px;">縮小口數、拉遠護盤牆檔位防守</td>
-              </tr>
-              <tr>
-                <td style="padding: 8px; font-weight: bold; color: #ff5252;">&gt; 22.0</td>
-                <td style="padding: 8px; color: #ff5252;">🔴 極度恐慌 (Extreme Vol)</td>
-                <td style="padding: 8px;">權利金飆至天價 (極貴)</td>
-                <td style="padding: 8px;">觀望等待 VIX 轉折；回落時建倉爆賺</td>
+                <td style="padding: 8px 10px; font-weight: bold; color: #d500f9;">🌊 VEX</td>
+                <td style="padding: 8px 10px;">Vanna Exposure</td>
+                <td style="padding: 8px 10px;">做市商避險與「隱含波動率 IV」</td>
+                <td style="padding: 8px 10px;">當 VIX 每變動 1%，做市商被迫在現貨/期貨拋售或回補多少部位（二次海嘯）。</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <h4 style="color: #00b0ff; margin: 14px 0 8px 0; font-size: 0.98rem;">2. GEX ✕ VIX 雙指標實戰共振矩陣</h4>
+        <!-- 2. Taiwan Market Ecology -->
+        <h4 style="color: #00b0ff; margin: 16px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>2. 台灣市場獨特生態：做市商造市與結算效應</span>
+        </h4>
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.83rem;">
+          <p style="margin-bottom: 8px;">• <strong style="color: var(--gold-accent);">誰是台灣做市商？</strong>：<b>自營商（證券商衍生商品部）</b>為發行權證與提供 TXO 流動性，必須嚴格維持 Delta 中性，避險盤最為機械化；<b>外資</b>則常在避險（買方）與套利（賣方）間轉換。</p>
+          <p style="margin-bottom: 8px;">• <strong style="color: #ff5252;">週三結算日 Gamma 擠壓 (Gamma Squeeze)</strong>：每週三下午 13:00~13:30 週期權到期時 Gamma 趨近無限大，只要指數逼近 Call Wall / Put Wall，自營商為防爆倉必須在期貨市場瘋狂掃單避險，造成尾盤 100~200 點無預警單邊急拉或急殺！</p>
+          <p style="margin: 0;">• <strong style="color: #a855f7;">外資夜盤流動性斷層與 VEX 超跌</strong>：台灣夜盤流動性較小，若美股暴跌推升美股 VIX，負 VEX 敞口將觸發程式單在夜盤機械式拋售台指期，造成台指夜盤常出現比美股更劇烈的「超跌效應」。</p>
+        </div>
+
+        <!-- 3. Four Resonance Scenarios -->
+        <h4 style="color: var(--gold-accent); margin: 16px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>3. 實戰四大共振狀態矩陣（如何一起看？）</span>
+        </h4>
         
-        <div style="background: rgba(0, 230, 118, 0.05); border-left: 3px solid #00e676; padding: 10px 12px; border-radius: 6px; margin-bottom: 10px;">
-          <strong style="color: #00e676;">情境 1：正 GEX + VIX 低檔 (&lt; 16) ➔ 做市商護盤鎖區間</strong><br>
-          <span style="font-size: 0.82rem; color: var(--text-muted);">做市商買低賣高抑制波動，大盤被鎖定在 Call/Put Wall 之間，極利於雙向賣方 (Iron Condor) 與 Covered Call 爽領時間價值。</span>
+        <div style="background: rgba(0, 230, 118, 0.06); border-left: 3px solid #00e676; padding: 10px 14px; border-radius: 6px; margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <strong style="color: #00e676;">🟢 雙正共振 (+GEX / +VEX) ➔ 金髮女孩經濟（平穩收租）</strong>
+            <span style="font-size: 0.72rem; padding: 1px 6px; border-radius: 4px; background: rgba(0,230,118,0.2); color: #00e676;">適合賣方雙賣</span>
+          </div>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">指數在 Zero Gamma 之上且 VIX 緩步走低，即使有小利空也會被做市商買盤托底。極適合雙賣 (Sell Strangle/Iron Condor) 賺取時間價值 (Theta)。</span>
         </div>
 
-        <div style="background: rgba(255, 215, 0, 0.05); border-left: 3px solid #ffd700; padding: 10px 12px; border-radius: 6px; margin-bottom: 10px;">
-          <strong style="color: #ffd700;">情境 2：負 GEX + VIX 飆升 (&gt; 20) ➔ 防範護盤牆遭貫穿</strong><br>
-          <span style="font-size: 0.82rem; color: var(--text-muted);">做市商追跌助漲，避險賣壓湧入。護盤牆防守轉弱，嚴禁逆勢單腳短檔硬接，價差單應拉長距離或平倉防守。</span>
+        <div style="background: rgba(255, 23, 68, 0.08); border-left: 3px solid #ff1744; padding: 10px 14px; border-radius: 6px; margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <strong style="color: #ff1744;">🔴 雙負共振 (-GEX / -VEX) ➔ 閃崩風暴 / 斷頭海嘯（連鎖拋售）</strong>
+            <span style="font-size: 0.72rem; padding: 1px 6px; border-radius: 4px; background: rgba(255,23,68,0.2); color: #ff1744;">切忌逆勢接刀</span>
+          </div>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">跌價觸發 GEX 順風追殺，VIX 飆升又觸發 VEX 強制拋售，兩股力量形成惡性循環。VIX 短期內翻倍飆升，大盤暴跌，賣方應立即停損或拉寬翅膀防守。</span>
         </div>
 
-        <div style="background: rgba(255, 82, 82, 0.05); border-left: 3px solid #ff5252; padding: 10px 12px; border-radius: 6px; margin-bottom: 12px;">
-          <strong style="color: #ff5252;">情境 3：恐慌極致 + VIX 衝高回落 ➔ 機構級正金字塔爆賺點</strong><br>
-          <span style="font-size: 0.82rem; color: var(--text-muted);">當 VIX 衝高後開始見頂反折，選擇權 IV 達到天價。配合 GEX 深端護盤牆打腳，為執行 1:2:3 正金字塔分批建倉吸納天價權利金的最佳良機。</span>
+        <div style="background: rgba(255, 215, 0, 0.06); border-left: 3px solid #ffd700; padding: 10px 14px; border-radius: 6px; margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <strong style="color: #ffd700;">🟡 指標背離 (-GEX ✕ VIX 偏低) ➔ 暴風雨前的寧靜（隱蔽地雷）</strong>
+            <span style="font-size: 0.72rem; padding: 1px 6px; border-radius: 4px; background: rgba(255,215,0,0.2); color: #ffd700;">防禦極端脆弱</span>
+          </div>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">代表平值 (ATM) 部位蠢蠢欲動但遠期 (OTM) 避險尚未進場。表面看似風平浪靜，但底層缺乏莊家托底買盤，一有風吹草動易引發超預期劇烈崩跌。</span>
         </div>
 
-        <div style="background: rgba(0, 176, 255, 0.05); border-left: 3px solid #00b0ff; padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); border-radius: 4px;">
-          ⚖️ <strong>風控心法</strong>：GEX 解決的是「價格空間卡在何處」，VIX 解決的是「定價情緒與溢價高低」。雙劍合璧方能達到高勝率且風控完備之量化交易體系。
+        <div style="background: rgba(0, 176, 255, 0.06); border-left: 3px solid #00b0ff; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <strong style="color: #00b0ff;">🔵 恐慌極致 + VIX 見頂反折 ➔ 機構級正金字塔建倉良機</strong>
+            <span style="font-size: 0.72rem; padding: 1px 6px; border-radius: 4px; background: rgba(0,176,255,0.2); color: #00b0ff;">天價權利金暴賺點</span>
+          </div>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">當 VIX 衝高後開始見頂反折，選擇權 IV 達到天價。配合 GEX 深端 Put Wall 打腳，為執行 1:2:3 正金字塔分批建倉吸納暴肥權利金的最佳良機。</span>
         </div>
+
+        <!-- 4. VIX Range Scale Table -->
+        <h4 style="color: var(--text-main); margin: 16px 0 8px 0; font-size: 0.95rem;">4. 台指 TAIFEX VIX 四級數值對照</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; font-size: 0.78rem;">
+          <div style="background: rgba(0,230,118,0.08); border: 1px solid #00e676; border-radius: 6px; padding: 8px; text-align: center;">
+            <div style="color: #00e676; font-weight: 700;">🟢 &lt; 14.0 極度平靜</div>
+            <div style="color: var(--text-muted); margin-top: 2px;">權利金極度壓縮，適合買方爆發</div>
+          </div>
+          <div style="background: rgba(0,176,255,0.08); border: 1px solid #00b0ff; border-radius: 6px; padding: 8px; text-align: center;">
+            <div style="color: #00b0ff; font-weight: 700;">🔵 14.0~18.0 常態溫和</div>
+            <div style="color: var(--text-muted); margin-top: 2px;">權利金定價合理，常態 GEX 價差單</div>
+          </div>
+          <div style="background: rgba(255,215,0,0.08); border: 1px solid #ffd700; border-radius: 6px; padding: 8px; text-align: center;">
+            <div style="color: #ffd700; font-weight: 700;">🟡 18.0~22.0 恐慌升溫</div>
+            <div style="color: var(--text-muted); margin-top: 2px;">權利金偏貴，拉遠檔位防守</div>
+          </div>
+          <div style="background: rgba(255,82,82,0.08); border: 1px solid #ff5252; border-radius: 6px; padding: 8px; text-align: center;">
+            <div style="color: #ff5252; font-weight: 700;">🔴 &gt; 22.0 極度恐慌</div>
+            <div style="color: var(--text-muted); margin-top: 2px;">權利金天價，靜待 VIX 見頂轉折</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
