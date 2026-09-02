@@ -602,6 +602,28 @@
           </div>
         </div>
 
+        <!-- 16. Practical Broker Smart Order Setting Templates -->
+        <h4 style="color: #00b0ff; margin: 20px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>📋 16. 券商智慧單參數範例：期貨母子連動市價 IOC ✕ 組合單讓點限價 IOC</span>
+        </h4>
+
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 0.83rem;">
+          <div style="background: rgba(0, 210, 255, 0.06); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 6px; padding: 10px 12px; margin-bottom: 10px;">
+            <strong style="color: var(--primary-accent); font-size: 0.88rem;">📅 範例一：【期貨點位 ➔ 觸發 ➔ 選擇權組合單市價 IOC】（B 軌重倉防穿牆必用）</strong>
+            <p style="margin: 6px 0 4px 0;">• <b>母條件監控</b>：台指期近月 (FITX) 成交價 &le; 45,980（Put Wall 46,000 穿透 20 點）</p>
+            <p style="margin: 0 0 4px 0;">• <b>子單群組動作</b>：選取複式組合單 ➔ 買賣別：平倉 ➔ 價格別：<b>市價 (Market) + IOC 連續重送</b></p>
+            <p style="margin: 0; color: var(--gold-accent);">• <i>為什麼用市價 IOC？</i> 既然期貨實體破牆代表大盤失守，直接市價連續重送保證毫秒內 100% 砍掉，斷絕穿透風險！</p>
+          </div>
+
+          <div style="background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); border-radius: 6px; padding: 10px 12px;">
+            <strong style="color: #00e676; font-size: 0.88rem;">📅 範例二：【組合單點數洗價 ➔ 觸發 ➔ 讓點（Tick）限價 IOC】（A 軌死士區資產極限防護）</strong>
+            <p style="margin: 6px 0 4px 0;">• <b>監控標的</b>：當週複式單（如 Sell 46,000 P / Buy 45,800 P，開倉收 15 點）</p>
+            <p style="margin: 0 0 4px 0;">• <b>觸發條件</b>：組合單市價 &ge; 45 點（停損臨界值）</p>
+            <p style="margin: 0 0 4px 0;">• <b>下單委託</b>：<b>限價 50 點 + 委託屬性 IOC</b>（主動讓 5 點 / 10 個 Tick 作為滑價買路財）</p>
+            <p style="margin: 0; color: #00e676;">• <i>實戰效果</i>：瞬間用 50 點買盤掃光市場上 45~49 點零散賣單，確保單子絕不會因行情跑太快而掛在 45 點發呆穿倉！</p>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
