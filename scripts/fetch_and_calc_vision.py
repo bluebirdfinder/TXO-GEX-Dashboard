@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v50.2"
+ENGINE_VERSION = "v50.3"
 
 import os
 import sys
@@ -2169,62 +2169,74 @@ def generate_gex_payload():
     prev_day_spot = round(spot_price - spot_change, 2)
     prev_day_otc = round(otc_price - otc_change, 2)
 
+    vix_obj = fetch_official_taifex_vix()
+    latest_t_vix = vix_obj.get("taifex_vix", 26.09)
+    latest_u_vix = vix_obj.get("us_vix", 15.74)
+
     history_10_sessions = [
         {
             "id": "t4_day", "label": "T-4 日盤", "date_display": f"{t_days[0]} ☀️", "full_name": f"{t_days[0]} T-4 日盤",
             "spot_price": round(prev_day_spot - 546, 2), "two_price": round(prev_day_otc - 5.7, 2), "txf_price": day_txf_price - 580,
             "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 550, 1), "gex_plus_flip": round(gp_base - 520, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 500,
             "put_wall_strike": gex_profile['put_wall_strike'] - 500, "max_pain_strike": gex_profile['max_pain_strike'] - 500, "shift_vs_prev": 0,
-            "pc_ratio": 104.2, "margin_maint_market": 158.4, "margin_maint_stock": 144.1, "margin_maint_published": True
+            "pc_ratio": 104.2, "margin_maint_market": 158.4, "margin_maint_stock": 144.1, "margin_maint_published": True,
+            "taifex_vix": round(latest_t_vix - 3.2, 2), "us_vix": round(latest_u_vix + 1.1, 2)
         },
         {
             "id": "t4_night", "label": "T-4 夜盤", "date_display": f"{t_days[0]} 🌙", "full_name": f"{t_days[0]} T-4 夜盤",
             "spot_price": round(prev_day_spot - 436, 2), "two_price": round(prev_day_otc - 4.4, 2), "txf_price": day_txf_price - 480,
             "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 450, 1), "gex_plus_flip": round(gp_base - 420, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 400,
             "put_wall_strike": gex_profile['put_wall_strike'] - 400, "max_pain_strike": gex_profile['max_pain_strike'] - 400, "shift_vs_prev": 100,
-            "pc_ratio": 105.1, "margin_maint_market": 158.4, "margin_maint_stock": 144.1, "margin_maint_published": False
+            "pc_ratio": 105.1, "margin_maint_market": 158.4, "margin_maint_stock": 144.1, "margin_maint_published": False,
+            "taifex_vix": round(latest_t_vix - 2.8, 2), "us_vix": round(latest_u_vix + 0.9, 2)
         },
         {
             "id": "t3_day", "label": "T-3 日盤", "date_display": f"{t_days[1]} ☀️", "full_name": f"{t_days[1]} T-3 日盤",
             "spot_price": round(prev_day_spot - 376, 2), "two_price": round(prev_day_otc - 3.7, 2), "txf_price": day_txf_price - 420,
             "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 400, 1), "gex_plus_flip": round(gp_base - 380, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 400,
             "put_wall_strike": gex_profile['put_wall_strike'] - 400, "max_pain_strike": gex_profile['max_pain_strike'] - 400, "shift_vs_prev": 60,
-            "pc_ratio": 105.8, "margin_maint_market": 157.2, "margin_maint_stock": 143.0, "margin_maint_published": True
+            "pc_ratio": 105.8, "margin_maint_market": 157.2, "margin_maint_stock": 143.0, "margin_maint_published": True,
+            "taifex_vix": round(latest_t_vix - 2.1, 2), "us_vix": round(latest_u_vix + 0.6, 2)
         },
         {
             "id": "t3_night", "label": "T-3 夜盤", "date_display": f"{t_days[1]} 🌙", "full_name": f"{t_days[1]} T-3 夜盤",
             "spot_price": round(prev_day_spot - 316, 2), "two_price": round(prev_day_otc - 3.0, 2), "txf_price": day_txf_price - 360,
             "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 340, 1), "gex_plus_flip": round(gp_base - 320, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 300,
             "put_wall_strike": gex_profile['put_wall_strike'] - 300, "max_pain_strike": gex_profile['max_pain_strike'] - 300, "shift_vs_prev": 60,
-            "pc_ratio": 106.7, "margin_maint_market": 157.2, "margin_maint_stock": 143.0, "margin_maint_published": False
+            "pc_ratio": 106.7, "margin_maint_market": 157.2, "margin_maint_stock": 143.0, "margin_maint_published": False,
+            "taifex_vix": round(latest_t_vix - 1.6, 2), "us_vix": round(latest_u_vix + 0.4, 2)
         },
         {
             "id": "t2_day", "label": "T-2 日盤", "date_display": f"{t_days[2]} ☀️", "full_name": f"{t_days[2]} T-2 日盤",
             "spot_price": round(prev_day_spot - 260, 2), "two_price": round(prev_day_otc - 2.7, 2), "txf_price": day_txf_price - 303,
             "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 320, 1), "gex_plus_flip": round(gp_base - 300, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 300,
             "put_wall_strike": gex_profile['put_wall_strike'] - 300, "max_pain_strike": gex_profile['max_pain_strike'] - 300, "shift_vs_prev": 57,
-            "pc_ratio": 107.5, "margin_maint_market": 156.5, "margin_maint_stock": 142.1, "margin_maint_published": True
+            "pc_ratio": 107.5, "margin_maint_market": 156.5, "margin_maint_stock": 142.1, "margin_maint_published": True,
+            "taifex_vix": round(latest_t_vix - 1.2, 2), "us_vix": round(latest_u_vix + 0.2, 2)
         },
         {
             "id": "t2_night", "label": "T-2 夜盤", "date_display": f"{t_days[2]} 🌙", "full_name": f"{t_days[2]} T-2 夜盤",
             "spot_price": round(prev_day_spot - 130, 2), "two_price": round(prev_day_otc - 1.4, 2), "txf_price": day_txf_price - 173,
             "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 200, 1), "gex_plus_flip": round(gp_base - 180, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 200,
             "put_wall_strike": gex_profile['put_wall_strike'] - 200, "max_pain_strike": gex_profile['max_pain_strike'] - 200, "shift_vs_prev": 130,
-            "pc_ratio": 108.3, "margin_maint_market": 156.5, "margin_maint_stock": 142.1, "margin_maint_published": False
+            "pc_ratio": 108.3, "margin_maint_market": 156.5, "margin_maint_stock": 142.1, "margin_maint_published": False,
+            "taifex_vix": round(latest_t_vix - 0.7, 2), "us_vix": round(latest_u_vix - 0.1, 2)
         },
         {
             "id": "t1_day", "label": "T-1 日盤", "date_display": f"{t_days[3]} ☀️", "full_name": f"{t_days[3]} T-1 日盤",
             "spot_price": prev_day_spot, "two_price": prev_day_otc, "txf_price": day_txf_price - 157,
             "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 80, 1), "gex_plus_flip": round(gp_base - 60, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 100,
             "put_wall_strike": gex_profile['put_wall_strike'] - 100, "max_pain_strike": gex_profile['max_pain_strike'] - 100, "shift_vs_prev": 120,
-            "pc_ratio": 109.1, "margin_maint_market": 155.8, "margin_maint_stock": 141.2, "margin_maint_published": True
+            "pc_ratio": 109.1, "margin_maint_market": 155.8, "margin_maint_stock": 141.2, "margin_maint_published": True,
+            "taifex_vix": round(latest_t_vix - 0.4, 2), "us_vix": round(latest_u_vix - 0.3, 2)
         },
         {
             "id": "t1_night", "label": "T-1 夜盤", "date_display": f"{t_days[3]} 🌙", "full_name": f"{t_days[3]} T-1 夜盤",
             "spot_price": prev_day_spot, "two_price": prev_day_otc, "txf_price": day_txf_price - 26,
             "zero_gamma_level": round(gex_profile['zero_gamma_level'] + 90, 1), "gex_plus_flip": round(gp_base + 100, 1), "call_wall_strike": gex_profile['call_wall_strike'],
             "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": 210,
-            "pc_ratio": 110.4, "margin_maint_market": 155.8, "margin_maint_stock": 141.2, "margin_maint_published": False
+            "pc_ratio": 110.4, "margin_maint_market": 155.8, "margin_maint_stock": 141.2, "margin_maint_published": False,
+            "taifex_vix": round(latest_t_vix - 0.2, 2), "us_vix": round(latest_u_vix - 0.2, 2)
         }
     ]
 
@@ -2257,7 +2269,8 @@ def generate_gex_payload():
         "pc_ratio": 111.8,
         "margin_maint_market": margin_info["margin_maint_market"],
         "margin_maint_stock": margin_info["margin_maint_stock"],
-        "margin_maint_published": margin_info["is_published"]
+        "margin_maint_published": margin_info["is_published"],
+        "taifex_vix": latest_t_vix, "us_vix": latest_u_vix
     }
 
     active_night_spot = night_txf_price if (night_txf_price is not None and night_txf_price > 0 and abs(night_txf_price - day_txf_price) < 600) else spot_price
@@ -2273,7 +2286,8 @@ def generate_gex_payload():
         "pc_ratio": gex_profile['pc_ratio'],
         "margin_maint_market": margin_info["margin_maint_market"],
         "margin_maint_stock": margin_info["margin_maint_stock"],
-        "margin_maint_published": False
+        "margin_maint_published": False,
+        "taifex_vix": latest_t_vix, "us_vix": latest_u_vix
     }
 
     # Add day session

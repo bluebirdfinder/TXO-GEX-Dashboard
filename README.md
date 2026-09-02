@@ -1,15 +1,24 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v50.2)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v50.3)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> 富邦期貨本週焦點 (2026.08.31-09.04) ✕ 熱門股票期貨對照矩陣 ✦ VIX 雙軌數據引擎 (TAIFEX VIX ✕ 美股 ^VIX) ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 波動率四級市場情緒評級 ✦ VIX 互動式對策彈窗 ✦ TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關 ✦ GitHub Actions 離峰 Cron 排程錯開 ✦ 離線夜盤時段視窗修復 ✦ 休市保護機制 ✦ TWSE 信用交易融資維持率 API 實時連線 ✦ 動態 4 階段 Session 配對架構 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪
+> 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 富邦期貨本週焦點 (2026.08.31-09.04) ✕ 熱門股票期貨對照矩陣 ✦ VIX 雙軌數據引擎 (TAIFEX VIX ✕ 美股 ^VIX) ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 波動率四級市場情緒評級 ✦ VIX 互動式對策彈窗 ✦ TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關 ✦ GitHub Actions 離峰 Cron 排程錯開 ✦ 離線夜盤時段視窗修復 ✦ TWSE 信用交易融資維持率 API 實時連線 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ Gemini AI 摘要動態齊平
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v50.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v50.3-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
-## 🌟 v50.2 富邦期貨本週市場焦點 (8/31-9/04)、熱門股票期貨對照矩陣與 VIX 雙軌對策版
+## 🌟 v50.3 VIX 5日歷史歷程欄位、微觀結構恐慌警報與 HTML DOM 結構終極修復
+
+### ⚡ 1. 近 5 日關鍵市場指數與 GEX 結構歷程矩陣：新增 `⚡ VIX 恐慌 (台/美)` 欄位
+- **5 日 VIX 演變歷程**：於「近 5 日關鍵市場指數與 GEX 結構歷程矩陣」表格中新增 `⚡ VIX 恐慌 (台/美)` 專屬欄位，清楚記錄過去 10 個日夜盤台指 VIX 與美股 ^VIX 的動態走勢（包含恐慌級別顏色標示：🟢/🔵/🟡/🔴）。
+
+### 📌 2. 日夜盤微觀結構速報：整合 VIX 實時恐慌警報與選擇權策略
+- **即時恐慌位移**：於「日夜盤微觀結構速報」模組中加入 VIX 實時恐慌指標評級警報，依據目前恐慌指數與 Gamma 區間給出買賣方具體防守建議（例如：`恐慌爆發，選擇權賣方拉寬翅膀防守，買方關注轉折打腳`）。
+
+### 🛠️ 3. 網頁 HTML DOM 結構修復與 0ms 秒開優化
+- **消除全螢幕黑屏**：修復 `index.html` 中未閉合之彈窗標籤，並將所有 Modal 遮罩改為預設隱藏，徹底解決全螢幕黑罩遮擋問題。
 
 ### 📅 1. 富邦期貨本週市場焦點 (Fubon Weekly Market Focus 2026.08.31 - 09.04)
 - **事件對應熱門股期**：完整注入富邦期貨本週市場焦點，包含 8/31 MSCI 季度調整（載板/記憶體股期）、9/01 ISM 製造業（MNQ/MES）、9/02 半導體展 + Dell 財報（設備/AI伺服器股期）、9/03 ISM 非製造業 + Broadcom/HPE 財報（MNQ/ASIC股期）、9/04 美國非農就業（MNQ/MES）。

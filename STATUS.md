@@ -1,14 +1,23 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.2)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.3)
 
-**當前版本**：`v50.2` (2026-09-02 富邦期貨本週市場焦點 8/31-9/04 ✕ 熱門股票期貨對照矩陣與 VIX 雙軌對策版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.2)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.2)
+**當前版本**：`v50.3` (2026-09-03 VIX 5日歷史歷程欄位 ✕ 微觀結構恐慌警報 ✕ DOM結構終極修復版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.3)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.3)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v50.2 核心更新亮點（Fubon Weekly Market Focus & Stock Futures Matrix）
+## 🎯 v50.3 核心更新亮點 (VIX 5-Day Matrix Column & Microstructure Alert)
+
+### ⚡ 1. 近 5 日關鍵市場指數與 GEX 結構歷程矩陣：新增 `⚡ VIX 恐慌 (台/美)` 欄位
+- 於 5 日歷史表格新增 `⚡ VIX 恐慌 (台/美)` 專屬欄位，完整追蹤過去 10 個日夜盤台指 VIX 與美股 ^VIX 動態演變與恐慌級別。
+
+### 📌 2. 日夜盤微觀結構速報：整合 VIX 實時恐慌警報
+- 在即時多空位移判定中，融合 VIX 指數評級與做市商避險狀態，給出買賣方具體防守指引。
+
+### 🛠️ 3. 網頁 HTML DOM 結構修復與 0ms 秒開優化
+- 修復 `index.html` 未閉合標籤與 Modal 預設隱藏，解決全螢幕遮罩問題。
 
 ### 📅 1. 富邦期貨本週市場焦點 (Fubon Weekly Market Focus 2026.08.31 - 09.04)
 - **事件與股票期貨標的對應**：

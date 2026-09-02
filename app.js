@@ -850,6 +850,17 @@ function populateKeyMetrics5Day() {
       txfSub = formatSubDelta(s.txf_price - prevSession.txf_price, false, 0);
     }
 
+    // 3.5. VIX 恐慌指數 (台指 VIX ✕ 美股 ^VIX)
+    const tv = s.taifex_vix !== undefined ? s.taifex_vix : (gexData.vix_info ? gexData.vix_info.taifex_vix : 26.09);
+    const uv = s.us_vix !== undefined ? s.us_vix : (gexData.vix_info ? gexData.vix_info.us_vix : 15.74);
+    let vixColor = '#00d2ff';
+    if (tv >= 22) vixColor = '#ff5252';
+    else if (tv >= 18) vixColor = '#ffaa00';
+    else if (tv >= 14) vixColor = '#00d2ff';
+    else vixColor = '#00e676';
+    const vixMain = `<span style="font-weight: 700; color: ${vixColor};">${tv ? tv.toFixed(2) : '-'}</span>`;
+    const vixSub = `<div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 1px;">^VIX ${uv ? uv.toFixed(2) : '-'}</div>`;
+
     // 4. Zero Gamma Level
     const zgMain = (s.zero_gamma_level || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
     let zgSub = '';
@@ -921,12 +932,12 @@ function populateKeyMetrics5Day() {
           mmBg = 'rgba(0, 230, 118, 0.18)';
           mmBadgeText = '🟢 安定';
         } else if (mmMarket >= 150) {
-          mmColor = '#ffd700'; // 🟡 常態 (150%~160%)
-          mmBg = 'rgba(255, 215, 0, 0.18)';
+          mmColor = '#ffd700'; // 🟡 常態 (150% ~ 160%)
+          mmBg = 'rgba(255, 215, 0, 0.15)';
           mmBadgeText = '🟡 常態';
         } else if (mmMarket >= 140) {
-          mmColor = '#ff9100'; // 🟠 警戒 (140%~150%)
-          mmBg = 'rgba(255, 145, 0, 0.18)';
+          mmColor = '#ffaa00'; // 🟠 警戒 (140% ~ 150%)
+          mmBg = 'rgba(255, 170, 0, 0.18)';
           mmBadgeText = '🟠 警戒';
         } else {
           mmColor = '#ff1744'; // 🔴 斷頭洗盤 (<140%)
@@ -947,6 +958,7 @@ function populateKeyMetrics5Day() {
       <td style="font-weight: 600; vertical-align: middle;"><div>${spotMain}</div>${spotSub}</td>
       <td style="font-weight: 600; vertical-align: middle;"><div>${otcMain}</div>${otcSub}</td>
       <td style="font-weight: 700; color: var(--gold-accent); vertical-align: middle;"><div>${txfMain}</div>${txfSub}</td>
+      <td style="vertical-align: middle;"><div>${vixMain}</div>${vixSub}</td>
       <td style="color: #ffd700; font-weight: 600; vertical-align: middle;"><div>${zgMain}</div>${zgSub}</td>
       <td style="color: #d500f9; font-weight: 700; vertical-align: middle;"><div>${gpMain}</div>${gpSub}</td>
       <td style="color: var(--call-color); font-weight: 600; vertical-align: middle;"><div>${cwMain}</div>${cwSub}</td>
@@ -2812,9 +2824,13 @@ function updateMicrostructureExpress(livePrice = null) {
     pwHtml = `🛡️ <strong>Put Wall 支撐牆</strong>：地板位於 <span style="color: var(--primary-accent); font-weight: 700;">${pw.toLocaleString()} 點</span> (距現價 ${(currentP - pw).toFixed(0)} 點)。`;
   }
 
+  const vixInfo = gexData.vix_info || { taifex_vix: 26.09, regime_tag: '🔴 極度恐慌 (Extreme Panic)', strategy_advice: '恐慌爆發，賣方防守，買方關注轉折' };
+  const vixExpressHtml = `⚡ <strong>VIX 恐慌動態警報</strong>：台指 VIX <span style="color: ${vixInfo.regime_color || '#ff5252'}; font-weight:700;">${vixInfo.taifex_vix}</span> (<span style="color: ${vixInfo.regime_color || '#ff5252'}; font-weight:600;">${vixInfo.regime_tag}</span>) — ${vixInfo.strategy_advice || '做市商避險對沖中'}。`;
+
   expressContentEl.innerHTML = `
     <p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${regimeHtml}</p>
     <p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${proximityHtml}</p>
+    <p style="margin-bottom: 8px; line-height: 1.7; font-size: 0.88rem;">${vixExpressHtml}</p>
     <p style="margin-bottom: 0; line-height: 1.7; font-size: 0.88rem;">${cwHtml} &nbsp; ${pwHtml}</p>
   `;
 }
