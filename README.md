@@ -1,15 +1,15 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v50.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v50.1)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > VIX 雙軌數據引擎 (TAIFEX VIX ✕ 美股 ^VIX) ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 波動率四級市場情緒評級 ✦ VIX 互動式對策彈窗 ✦ TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關 ✦ GitHub Actions 離峰 Cron 排程錯開 ✦ 離線夜盤時段視窗修復 ✦ 休市保護機制 ✦ TWSE 信用交易融資維持率 API 實時連線 ✦ 動態 4 階段 Session 配對架構 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ 排程時區防錯對齊 ✦ Gemini AI 摘要動態齊平 ✦ T型報價視角 (DEFAULT) ✦ iOS Safari 同步手勢下載修復 ✦ 社群圖卡即時重繪
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v50.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v50.1-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ---
 
-## 🌟 v50.0 VIX 雙軌數據引擎、波動率四級評級與 GEX ✕ VIX 實戰對策手冊發布版
+## 🌟 v50.1 TAIFEX VIX ✕ 美股 CBOE VIX 雙軌對接、全自動排程與 VIX ✕ GEX 實戰對策手冊發布版
 
 ### ⚡ 1. 台指 TAIFEX VIX ✕ 美股 CBOE VIX (`^VIX`) 雙軌數據引擎 (`scripts/fetch_and_calc_vision.py`)
 - **多源即時對接**：自動串接期交所 vixMinNew / getVixData 抓取台指 VIX（最新 `26.09` / `+1.17`），並透過 Yahoo Finance API 無縫對接美股 CBOE VIX（`16.10` / `-0.24`），根目錄 Payload 封裝 `vix_info` 導出至 `gex_data.json` 與 `embedded_data.js`。

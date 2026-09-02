@@ -1,14 +1,14 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.1)
 
-**當前版本**：`v50.0` (2026-09-02 VIX 雙軌數據引擎、波動率四級評級與 GEX ✕ VIX 實戰對策手冊發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.0)
+**當前版本**：`v50.1` (2026-09-02 TAIFEX VIX ✕ 美股 CBOE VIX 雙軌對接、全自動排程與 VIX ✕ GEX 實戰對策手冊發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.1)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.1)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v50.0 核心更新亮點（VIX Dual-Track Engine & Interactive Strategy Matrix）
+## 🎯 v50.1 核心更新亮點（VIX Dual-Track Engine & Interactive Strategy Matrix）
 
 ### ⚡ 1. 台指 TAIFEX VIX ✕ 美股 CBOE VIX (`^VIX`) 雙軌數據引擎 (`scripts/fetch_and_calc_vision.py`)
 - **多源即時對接**：自動串接期交所 vixMinNew / getVixData 抓取台指 VIX（最新 `26.09` / `+1.17`），並透過 Yahoo Finance API 無縫對接美股 CBOE VIX（`16.10` / `-0.24`），根目錄 Payload 封裝 `vix_info` 導出至 `gex_data.json` 與 `embedded_data.js`。
