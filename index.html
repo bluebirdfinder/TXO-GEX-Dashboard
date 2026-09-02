@@ -643,6 +643,29 @@
           </div>
         </div>
 
+        <!-- 18. Micro TXF Covered Call Dynamic Hedging -->
+        <h4 style="color: var(--gold-accent); margin: 20px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>🌟 18. 5口微台 (Micro TXF) 搭配 Covered Call：跨資產動態 Delta 對沖與波動率套利</span>
+        </h4>
+
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 0.83rem;">
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #00e676;">⚖️ 1. 微積分級「Delta 中性」開倉優勢</strong>：
+            1 口微台 Delta = +0.2，1 口 OTM Call Delta &asymp; -0.3。用 <b>3 口微台 (+0.6) 配 2 口 Sell Call (-0.6)</b> 即可在開倉瞬間做到完美的「Delta 中性」，不賭方向，單純收割高隱波與 Theta！
+          </p>
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #ffd700;">🧱 2. 結合 GEX 牆體的「階梯式 Covered Call」</strong>：
+            持有 5 口微台多單，在 Call Wall 內側賣 2 口 Call（收乾 Theta），外側賣 3 口 Call（重倉防守）。大漲穿牆時分批獲利了結 2 口微台期貨，<b>實體期貨暴利完美抵消 Sell Call 虧損，鎖定頂峰獲利</b>！
+          </p>
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #00b0ff;">🌊 3. VIX 跨資產時間差套利法</strong>：
+            殺到 Put Wall 且 VIX 頂點時，低點分批買進 5 口微台（先不賣 Call）；反彈至 1σ 步長且 VIX 回落時，高點反手賣出 5 口 OTM Call 組成 Covered Call，實現「期貨抄底 ✕ 選擇權賣在高 IV」的跨資產暴利！
+          </p>
+          <div style="background: rgba(255, 215, 0, 0.1); border-left: 3px solid var(--gold-accent); padding: 8px 12px; border-radius: 4px; color: #fff; font-weight: 600; margin-top: 10px;">
+            👑 最高境界：以期貨為矛（調整 Delta），以選擇權為盾（收割 Theta/Vega）！
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
