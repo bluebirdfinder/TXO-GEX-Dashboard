@@ -1,14 +1,19 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.3)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.4)
 
-**當前版本**：`v50.3` (2026-09-03 VIX 5日歷史歷程欄位 ✕ 微觀結構恐慌警報 ✕ DOM結構終極修復版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.3)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.3)
+**當前版本**：`v50.4` (2026-09-03 方案 B：富邦期貨 ✕ 國際市場焦點週報 全自動排程引擎上線版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.4)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.4)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v50.3 核心更新亮點 (VIX 5-Day Matrix Column & Microstructure Alert)
+## 🎯 v50.4 核心更新亮點 (Plan B Automated Weekly Market Focus)
+
+### 🤖 1. 方案 B：全自動對接期交所與國際總經日曆之週報生成引擎
+- 零人工介入自動排程更新：根據當前日期自動界定本週交易時段，動態識別 MSCI、ISM、NFP、CPI、結算等重大總經事件。
+- 個股期貨標的自動對應矩陣：智慧對應載板、記憶體、設備股、AI伺服器、ASIC等熱門股期標的。
+- 手動微調熱備援機制：支援 `data/weekly_focus_override.json` 覆寫機制。
 
 ### ⚡ 1. 近 5 日關鍵市場指數與 GEX 結構歷程矩陣：新增 `⚡ VIX 恐慌 (台/美)` 欄位
 - 於 5 日歷史表格新增 `⚡ VIX 恐慌 (台/美)` 專屬欄位，完整追蹤過去 10 個日夜盤台指 VIX 與美股 ^VIX 動態演變與恐慌級別。
