@@ -1,14 +1,27 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.1)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.2)
 
-**當前版本**：`v50.1` (2026-09-02 TAIFEX VIX ✕ 美股 CBOE VIX 雙軌對接、全自動排程與 VIX ✕ GEX 實戰對策手冊發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.1)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.1)
+**當前版本**：`v50.2` (2026-09-02 富邦期貨本週市場焦點 8/31-9/04 ✕ 熱門股票期貨對照矩陣與 VIX 雙軌對策版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.2)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.2)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v50.1 核心更新亮點（VIX Dual-Track Engine & Interactive Strategy Matrix）
+## 🎯 v50.2 核心更新亮點（Fubon Weekly Market Focus & Stock Futures Matrix）
+
+### 📅 1. 富邦期貨本週市場焦點 (Fubon Weekly Market Focus 2026.08.31 - 09.04)
+- **事件與股票期貨標的對應**：
+  - `8/31 (週一)`：MSCI 季度調整 ✕ 載板（欣興 3037 / 景碩 3189 / 南電 8046）、記憶體（華邦電 2344 / 旺宏 2337 / 南亞科 2408）股票期貨。
+  - `9/01 (週二)`：ISM 製造業指數 ✕ MNQ 微型那指期貨 / MES 微型標普期貨。
+  - `9/02 (週三)`：半導體展 (9/2-9/4) ✕ 戴爾 (Dell) 財報 ✕ 設備股（弘塑 3131 / 辛耘 3583 / 萬潤 6187）、AI伺服器（鴻海 2317 / 廣達 2382 / 緯創 3231）股票期貨。
+  - `9/03 (週四)`：ISM 非製造業指數 ✕ 博通 (Broadcom)/HPE 財報 ✕ MNQ 微型那指、ASIC（世芯-KY 3661 / 智原 3035 / 創意 3443）股票期貨。
+  - `9/04 (週五)`：美國 8 月非農就業 (NFP + 失業率) ✕ MNQ / MES 微型期貨。
+
+### 🚨 2. 防護雷達動態卡片渲染 (`app.js`)
+- 在頂部防護雷達新增本週市場焦點網格區塊，將富邦期貨每週重點與股票期貨對照標的動態渲染給交易者參考。
+
+---
 
 ### ⚡ 1. 台指 TAIFEX VIX ✕ 美股 CBOE VIX (`^VIX`) 雙軌數據引擎 (`scripts/fetch_and_calc_vision.py`)
 - **多源即時對接**：自動串接期交所 vixMinNew / getVixData 抓取台指 VIX（最新 `26.09` / `+1.17`），並透過 Yahoo Finance API 無縫對接美股 CBOE VIX（`16.10` / `-0.24`），根目錄 Payload 封裝 `vix_info` 導出至 `gex_data.json` 與 `embedded_data.js`。

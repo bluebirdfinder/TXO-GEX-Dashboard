@@ -2961,6 +2961,50 @@ function renderMacroEventsRadar(dataObj) {
     ? `<strong style="color: #ff5252;">${headerTag}</strong> ${primary.date_display} 發布 <strong>${primary.name}</strong> ➔ `
     : `<strong style="color: var(--gold-accent);">${headerTag}</strong> <strong>${primary.name}</strong> ➔ `;
 
+  let fubonWeeklyFocusHtml = '';
+  if (dataObj.fubon_weekly_focus && dataObj.fubon_weekly_focus.schedule) {
+    const focusData = dataObj.fubon_weekly_focus;
+    let daysHtml = '';
+    focusData.schedule.forEach(day => {
+      let catsHtml = '';
+      day.categories.forEach(cat => {
+        catsHtml += `
+          <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 210, 255, 0.1); border: 1px solid rgba(0, 210, 255, 0.3); padding: 3px 8px; border-radius: 6px; font-size: 0.73rem;">
+            <span style="color: var(--primary-accent); font-weight: 700;">${cat.label}</span>
+            <span style="color: var(--text-muted); font-size: 0.68rem;">[${cat.type}]</span>
+            <span style="color: #fff; font-size: 0.7rem;">${cat.symbols}</span>
+          </div>
+        `;
+      });
+      daysHtml += `
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: var(--gold-accent); font-weight: 700; font-size: 0.85rem;">📅 ${day.date}</span>
+            <span style="color: #fff; font-weight: 600; font-size: 0.82rem;">${day.event}</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px;">
+            ${catsHtml}
+          </div>
+        </div>
+      `;
+    });
+
+    fubonWeeklyFocusHtml = `
+      <div style="margin-top: 18px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+            <span style="color: var(--primary-accent);">📊 富邦期貨本週市場焦點</span>
+            <span style="font-size: 0.75rem; color: var(--gold-accent); background: rgba(255, 215, 0, 0.12); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3);">${focusData.date_range} | ${focusData.theme}</span>
+          </div>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">對應台股與美股熱門股票期貨標的</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+          ${daysHtml}
+        </div>
+      </div>
+    `;
+  }
+
   panel.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.12); padding-bottom: 10px; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
       <div style="display: flex; align-items: center; gap: 10px;">
@@ -3004,6 +3048,8 @@ function renderMacroEventsRadar(dataObj) {
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px;">
       ${upcomingCardsHtml}
     </div>
+
+    ${fubonWeeklyFocusHtml}
   `;
 
   updateCountdown();

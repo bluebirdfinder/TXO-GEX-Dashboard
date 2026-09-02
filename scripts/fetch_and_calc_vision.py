@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v50.1"
+ENGINE_VERSION = "v50.2"
 
 import os
 import sys
@@ -2602,7 +2602,54 @@ def generate_gex_payload():
         "stock_futures": stock_futures,
         "ai_ex_dividend_digest": ai_ex_dividend_digest,
         "macro_events_radar": macro_events_data,
-        "vix_info": fetch_official_taifex_vix()
+        "vix_info": fetch_official_taifex_vix(),
+        "fubon_weekly_focus": {
+            "title": "富邦期貨本週市場焦點 (Fubon Weekly Market Focus)",
+            "date_range": "2026.08.31 – 09.04",
+            "theme": "半導體展 + 美國非農數據",
+            "schedule": [
+                {
+                    "date": "8/31 (週一)",
+                    "event": "MSCI 季度調整",
+                    "categories": [
+                        {"label": "載板", "type": "股票期貨", "symbols": "欣興 (3037)、景碩 (3189)、南電 (8046)"},
+                        {"label": "記憶體", "type": "股票期貨", "symbols": "華邦電 (2344)、旺宏 (2337)、南亞科 (2408)"}
+                    ]
+                },
+                {
+                    "date": "9/01 (週二)",
+                    "event": "ISM 製造業指數",
+                    "categories": [
+                        {"label": "MNQ", "type": "微型那指期貨", "symbols": "NASDAQ 100 Micro"},
+                        {"label": "MES", "type": "微型標普期貨", "symbols": "S&P 500 Micro"}
+                    ]
+                },
+                {
+                    "date": "9/02 (週三)",
+                    "event": "半導體展 (9/2-9/4) ✕ 戴爾 (Dell) 財報",
+                    "categories": [
+                        {"label": "設備股", "type": "股票期貨", "symbols": "弘塑 (3131)、辛耘 (3583)、萬潤 (6187)"},
+                        {"label": "AI伺服器", "type": "股票期貨", "symbols": "鴻海 (2317)、廣達 (2382)、緯創 (3231)"}
+                    ]
+                },
+                {
+                    "date": "9/03 (週四)",
+                    "event": "ISM 非製造業指數 ✕ 博通(Broadcom)/HPE 財報",
+                    "categories": [
+                        {"label": "MNQ", "type": "微型那指期貨", "symbols": "NASDAQ 100 Micro"},
+                        {"label": "ASIC", "type": "股票期貨", "symbols": "世芯-KY (3661)、智原 (3035)、創意 (3443)"}
+                    ]
+                },
+                {
+                    "date": "9/04 (週五)",
+                    "event": "美國 8 月非農就業 (NFP + 失業率)",
+                    "categories": [
+                        {"label": "MNQ", "type": "微型那指期貨", "symbols": "NASDAQ 100 Micro"},
+                        {"label": "MES", "type": "微型標普期貨", "symbols": "S&P 500 Micro"}
+                    ]
+                }
+            ]
+        }
     }
 
 def main():
