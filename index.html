@@ -512,22 +512,39 @@
 
         <!-- 12. Ultra-Low Volatility Dynamic Adaptation -->
         <h4 style="color: #00b0ff; margin: 20px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
-          <span>📉 12. VIX &lt; 13 極端低波動 (Low Vol) 死魚盤之動態變形戰術</span>
+          <span>📉 12. VIX &lt; 13 極端低波動 (Low Vol) 死魚盤之三大動態變形</span>
         </h4>
 
         <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 0.83rem;">
           <p style="margin-bottom: 8px;">
-            <strong style="color: #ffd700;">⚠️ 1. 低波動陷阱（不要為湊點數而硬縮檔位）</strong>：
-            當台指 VIX &lt; 13 時，牆外 200 點的權利金少得可憐。新手常會為了湊 15~20 點權利金，被迫將 Sell 方「往內擠進牆內」，隨便一個跳空就遭貫穿。
+            <strong style="color: #ffd700;">⚠️ 1. 核心鐵律：「寧可少賺，絕不內移；延後進場，以時換點。」</strong>
+            <br>當台指 VIX &lt; 13 時，若為了湊 15~20 點權利金而把階梯往內移進牆內，隨便一個跳空就遭貫穿。
           </p>
           <p style="margin-bottom: 8px;">
-            <strong style="color: #00e676;">🔄 2. 三大低波變形策略</strong>：
-            <br>• <b>變形 A【縮短作戰半徑，只打週三結算日最後 3 小時】</b>：放棄週一/週四提前開倉，專注在週三 09:30~12:30 進場，在正 GEX 釘盤效應下吃最後幾小時加速歸零的純時間價值。
-            <br>• <b>變形 B【單邊買權/賣權比率價差 (Ratio Spread)】</b>：放棄雙賣鐵兀鷹，改做單邊順勢價差，並利用低 IV 便宜買進遠端保護。
-            <br>• <b>變形 C【保留子彈，靜待 VIX 暴衝後的均值回歸】</b>：低波期降低部位至平時 30%，保留現金；一旦突發事件讓 VIX 衝破 18~20，立即進場以「高 IV 飽滿權利金」大口收割！
+            <strong style="color: #00e676;">🔄 2. 三大低波實戰變形策略</strong>：
+            <br>• <b>變形 A【開倉時機逆向延後 ➔ 改打週二/週三閃電戰】</b>：放棄週三下午週五選（避免扛兩夜風險只賺皮毛），改延後至週一現貨開盤或週二。距離結算只剩 24~48 小時，利用 Theta 斷崖式暴跌「秒殺」收租，大幅縮短夜盤曝險！
+            <br>• <b>變形 B【金字塔不對稱佈局 ➔ Call 側進攻，Put 側防守】</b>：低波鈍化驚驚漲時，Call 側被刺穿機率極低，口數比例放大至 2:4:6（吃飽上檔時間價值）；Put 側縮減至 1/3 口數且階梯拉寬到 300 點，用 Call 側的肉補貼 Put 側的遠距防禦！
+            <br>• <b>變形 C【引入跨期時間差對沖 (Calendar-Like Hedge)】</b>：當週 Put Wall 外架設金字塔價差單，同時在 2σ 最外圍以極低價買進「下週或當月遠期 Put」。平時當週全拿；若突發破牆跳空，遠期 Buy Put 因 Vega 暴賺與 Theta 損耗慢產生超強掩護！
+          </p>
+        </div>
+
+        <!-- 13. High Volatility Shorting Playbook -->
+        <h4 style="color: var(--gold-accent); margin: 20px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>🚀 13. 高隱波反手倒貨 (Volatility Shorting)：VIX 飆升至 18~22+ 的利潤極大化戰術</span>
+        </h4>
+
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 0.83rem;">
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #ff5252;">🎯 1. 最佳進場黃金時窗（美股暴跌隔天早盤 09:15 ~ 09:45）</strong>：
+            當美股前夜大跌或台指夜盤殺盤，台指 VIX 飆破 18~22 時，全市場 OTM 選擇權隱含波動率（IV）被灌到天價，這是做市商與大法人瘋狂「反手倒貨（Sell Volatility）」的歷史級肥肉！
+          </p>
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #00e676;">📐 2. 高隱波金字塔大口收割法</strong>：
+            <br>• <b>安全邊際幾何級拉寬</b>：因為權利金極度暴肥，原本要架在 200 點外的階梯，現在可以直接架在 <b>Put Wall 之外 400~600 點</b>，依然能收到豐厚權利金！
+            <br>• <b>1:2:4 梯級重兵出擊</b>：將重倉部署在 3σ 數學極限之外，坐等早盤現貨開盤後台指期企穩、VIX 必然發生的「均值回歸（Volatility Crush 暴跌）」，短短 1~2 天即可收割 80%+ 的無風險利潤！
           </p>
           <div style="background: rgba(0, 210, 255, 0.1); border-left: 3px solid var(--primary-accent); padding: 8px 12px; border-radius: 4px; color: #fff; font-weight: 600; margin-top: 10px;">
-            🎯 莊家思維：VIX 高時大口吃肉（拉遠檔位賣高 IV），VIX 低時謹慎防守（縮小部位打結算短衝）！
+            🏆 終極期權哲學：低 VIX 謹慎防守（延後進場打閃電戰），高 VIX 貪婪獵殺（遠端金字塔狂賣暴肥隱波）！
           </div>
         </div>
 
