@@ -1,6 +1,6 @@
 window.GEX_EMBEDDED_DATA = {
   "date": "2026-09-03",
-  "engine_version": "v50.4",
+  "engine_version": "v50.5",
   "session_type": "DAY",
   "session_name": "☀️ 日盤結算籌碼 (13:45 Close)",
   "session_shift": {

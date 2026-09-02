@@ -1,19 +1,24 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.4)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.5)
 
-**當前版本**：`v50.4` (2026-09-03 方案 B：本週重大市場焦點週報 全自動排程引擎上線版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.4)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.4)
+**當前版本**：`v50.5` (2026-09-03 台指選擇權造市商 21 章量化實戰手冊與 Covered Call 完全體版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.5)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.5)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v50.4 核心更新亮點 (Plan B Automated Weekly Market Focus)
+## 🎯 v50.5 核心更新亮點 (21-Chapter Options Quant Playbook & Covered Call)
 
-### 🤖 1. 方案 B：全自動對接期交所與國際總經日曆之週報生成引擎
-- 零人工介入自動排程更新：根據當前日期自動界定本週交易時段，動態識別 MSCI、ISM、NFP、CPI、結算等重大總經事件。
-- 個股期貨標的自動對應矩陣：智慧對應載板、記憶體、設備股、AI伺服器、ASIC等熱門股期標的。
-- 手動微調熱備援機制：支援 `data/weekly_focus_override.json` 覆寫機制。
+### 🦅 1. 21 大章節造市商量化操盤手冊全面收錄
+- **獨立 Markdown 策略手冊產出**：自動導出 `docs/OPTIONS_QUANT_PLAYBOOK.md`，方便隨時傳入 Lumi 機器人進行策略建構與自動化回測。
+- **線上儀表板即時彈窗**：點擊 `Card 9` 頂部 `📖 VIX 教學` 即可隨身查閱 1 ~ 21 章完整圖文。
+- **跨資產 Covered Call 4 大機構級變形**：PMCC、動態 Delta 避險、Covered Straddle、Ratio 慢牛流。
+- **輝哥 100% 現貨本位不開槓桿週週收息**：231 萬資金配置、週三/週一雙節奏收息、拆單 2:3 階梯防現貨被廉價收購。
+- **兩階段修煉全圖譜**：階段一固定 5 口微台收租流 ➔ 階段二 VIX 動態 Delta 自動避險對沖流。
+
+### 🤖 2. 方案 B：本週重大市場焦點週報全自動排程引擎
+- 實作 `generate_dynamic_weekly_focus` 演算法，根據目前日期動態界定每週一至週五交易時段，自動識別重大總經事件與對應股票期貨標的。
 
 ### ⚡ 1. 近 5 日關鍵市場指數與 GEX 結構歷程矩陣：新增 `⚡ VIX 恐慌 (台/美)` 欄位
 - 於 5 日歷史表格新增 `⚡ VIX 恐慌 (台/美)` 專屬欄位，完整追蹤過去 10 個日夜盤台指 VIX 與美股 ^VIX 動態演變與恐慌級別。
