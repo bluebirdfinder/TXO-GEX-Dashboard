@@ -1,14 +1,31 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.4)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.0)
 
-**當前版本**：`v49.4` (2026-09-02 富邦 API 實時報價 WebSocket 閃爍跳動與 Zero Gamma 即時複利漂移雙重熱修復版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.4)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.4)
+**當前版本**：`v50.0` (2026-09-02 VIX 雙軌數據引擎、波動率四級評級與 GEX ✕ VIX 實戰對策手冊發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.0)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.0)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v49.4 核心更新亮點（WebSocket Anti-Flicker & Zero Gamma Accumulation Hotfix）
+## 🎯 v50.0 核心更新亮點（VIX Dual-Track Engine & Interactive Strategy Matrix）
+
+### ⚡ 1. 台指 TAIFEX VIX ✕ 美股 CBOE VIX (`^VIX`) 雙軌數據引擎 (`scripts/fetch_and_calc_vision.py`)
+- **多源即時對接**：自動串接期交所 vixMinNew / getVixData 抓取台指 VIX（最新 `26.09` / `+1.17`），並透過 Yahoo Finance API 無縫對接美股 CBOE VIX（`16.10` / `-0.24`），根目錄 Payload 封裝 `vix_info` 導出至 `gex_data.json` 與 `embedded_data.js`。
+
+### 🟢🔵🟡🔴 2. 波動率四級市場狀態評級與燈號
+- **自動評判燈號**：根據台指 VIX 自動劃分：🟢 極度平靜 (`<14.0`) / 🔵 常態溫和 (`14.0~18.0`) / 🟡 恐慌升溫 (`18.0~22.0`) / 🔴 極度恐慌 (`>22.0`)，並給出做市商對沖與買賣方策略指引。
+
+### 📊 3. Card 9: VIX 恐慌指數 & 美股 ^VIX 核心數據卡片 (`index.html` & `app.js`)
+- **頂部雙軌卡片**：於儀表板 `.summary-grid` 新增第 9 張核心數據卡片，完美呈現日盤台指 VIX、夜盤美股 VIX、變動幅與恐慌燈號徽章，提供一鍵點擊 `📖 VIX 教學` 鈕開啟實戰手冊。
+
+### 📖 4. 互動式教學彈窗 (`vix-modal`)
+- **完全量化對策手冊**：收錄 VIX 白話原理、選擇權權利金定價關聯、數值對照表以及 **GEX ✕ VIX 雙指標實戰共振矩陣**（情境 1 正 GEX 鎖區間 / 情境 2 負 GEX 破牆防守 / 情境 3 恐慌極致 + VIX 衝高轉折正金字塔爆賺點）。
+
+### 📸 5. 2K 盤後社交圖卡引擎同步渲染 (`scripts/generate_social_card.py`)
+- **P1 圖卡升級**：P1 盤後總覽 1:1 方形圖卡注入 VIX 指標看板。
+
+---
 
 ### ⚡ 1. 頂部連線狀態標籤閃爍跳動熱修復 (Status Pill Anti-Flicker Fix)
 - **連線鎖定旗標**：修復 `app.js` 中 `updateMarketTradingStatus()` 每 2 秒強制重洗狀態文字與 `handleLiveTick()` 傳入 `provider_name` 互相搶奪蓋掉標籤文字的衝突，補齊 `feedText.dataset.hasLiveSocket = 'true'` 連線鎖定旗標。

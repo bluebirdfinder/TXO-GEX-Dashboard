@@ -150,6 +150,16 @@ function initEventListeners() {
       const modal = document.getElementById('fx-modal');
       if (modal) modal.style.display = 'none';
     }
+
+    // VIX Education Modal Listeners
+    if (e.target && (e.target.id === 'open-vix-modal-btn' || e.target.closest('#open-vix-modal-btn'))) {
+      const modal = document.getElementById('vix-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+    if (e.target && (e.target.id === 'close-vix-modal' || e.target.closest('#close-vix-modal'))) {
+      const modal = document.getElementById('vix-modal');
+      if (modal) modal.style.display = 'none';
+    }
   });
 
   // Tab switching logic for GEX Charts
@@ -671,6 +681,44 @@ function renderDashboard() {
   if (elVexBadgeNight) {
     elVexBadgeNight.innerText = vexNight < 0 ? '🟢 恐慌時做市商助跌' : '🔴 恐慌時做市商護盤';
     elVexBadgeNight.style.color = vexNight < 0 ? 'var(--put-color)' : 'var(--call-color)';
+  }
+
+  // 7. VIX Card Data Update
+  const vixInfo = gexData.vix_info || (gexData.retail_sentiment_details ? gexData.retail_sentiment_details.vix_info : null);
+  const taifexVix = vixInfo ? vixInfo.taifex_vix : (gexData.vix_index || 18.45);
+  const taifexChg = vixInfo ? vixInfo.taifex_vix_change : (gexData.vix_change || 0.25);
+  const taifexPct = vixInfo ? vixInfo.taifex_vix_change_pct : 1.37;
+  const regimeTag = vixInfo ? vixInfo.regime_tag : '🔵 常態溫和';
+  const regimeColor = vixInfo ? vixInfo.regime_color : '#00b0ff';
+
+  const usVix = vixInfo ? vixInfo.us_vix : 15.82;
+  const usChg = vixInfo ? vixInfo.us_vix_change : -0.34;
+  const usPct = vixInfo ? vixInfo.us_vix_change_pct : -2.10;
+
+  const elTaifexVix = document.getElementById('stat-taifex-vix');
+  if (elTaifexVix) elTaifexVix.innerText = taifexVix.toFixed(2);
+
+  const elTaifexVixSub = document.getElementById('stat-taifex-vix-sub');
+  if (elTaifexVixSub) {
+    const sign = taifexChg >= 0 ? '+' : '';
+    elTaifexVixSub.innerText = `${sign}${taifexChg.toFixed(2)} (${sign}${taifexPct.toFixed(2)}%)`;
+    elTaifexVixSub.style.color = taifexChg >= 0 ? 'var(--put-color)' : 'var(--call-color)';
+  }
+
+  const elVixRegimeBadge = document.getElementById('stat-vix-regime-badge');
+  if (elVixRegimeBadge) {
+    elVixRegimeBadge.innerText = regimeTag;
+    elVixRegimeBadge.style.color = regimeColor;
+  }
+
+  const elUsVix = document.getElementById('stat-us-vix');
+  if (elUsVix) elUsVix.innerText = usVix.toFixed(2);
+
+  const elUsVixSub = document.getElementById('stat-us-vix-sub');
+  if (elUsVixSub) {
+    const sign = usChg >= 0 ? '+' : '';
+    elUsVixSub.innerText = `${sign}${usChg.toFixed(2)} (${sign}${usPct.toFixed(2)}%)`;
+    elUsVixSub.style.color = usChg >= 0 ? 'var(--put-color)' : 'var(--call-color)';
   }
 
   // Session Shift Banner

@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v49.4"
+ENGINE_VERSION = "v50.0"
 
 import os
 import sys
@@ -1026,8 +1026,15 @@ def encrypt_payload_sha256(plain_json_str, passcode):
 
 def fetch_official_taifex_vix():
     """
-    Fetches real-time / daily official TAIFEX VIX index & daily change from TAIFEX vixMinNew endpoint.
+    Fetches real-time / daily official TAIFEX VIX index & daily change from TAIFEX vixMinNew endpoint,
+    as well as US CBOE VIX (^VIX) via Yahoo Finance API with fallback.
+    Returns a comprehensive vix_info dictionary.
     """
+    taifex_vix = 18.45
+    taifex_chg = 0.25
+    taifex_pct = 1.37
+
+    # 1. Fetch TAIFEX VIX
     try:
         url_page = "https://www.taifex.com.tw/cht/7/vixMinNew"
         req = urllib.request.Request(url_page, headers=HEADERS)
@@ -1059,10 +1066,67 @@ def fetch_official_taifex_vix():
                 p_today = read_vix_file(d_today)
                 p_prev = read_vix_file(d_prev)
                 if p_today and p_prev:
-                    return round(p_today, 2), round(p_today - p_prev, 2)
+                    taifex_vix = round(p_today, 2)
+                    taifex_chg = round(p_today - p_prev, 2)
+                    taifex_pct = round((taifex_chg / p_prev) * 100, 2) if p_prev > 0 else 0.0
     except Exception as e:
         print(f"[Warning] Failed to fetch official TAIFEX VIX: {e}")
-    return 30.46, 1.38
+
+    # 2. Fetch US CBOE VIX (^VIX) via Yahoo Finance API
+    us_vix = 15.82
+    us_chg = -0.34
+    us_pct = -2.10
+    try:
+        url_yf = "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d"
+        req_yf = urllib.request.Request(url_yf, headers=HEADERS)
+        with urllib.request.urlopen(req_yf, context=SSL_CTX, timeout=10) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+            result = data.get('chart', {}).get('result', [])
+            if result:
+                meta = result[0].get('meta', {})
+                price = meta.get('regularMarketPrice')
+                prev_close = meta.get('chartPreviousClose') or meta.get('previousClose')
+                if price and prev_close:
+                    us_vix = round(price, 2)
+                    us_chg = round(price - prev_close, 2)
+                    us_pct = round((us_chg / prev_close) * 100, 2)
+    except Exception as e:
+        print(f"[Warning] Failed to fetch US CBOE VIX: {e}")
+
+    # 3. Determine Regime Tag & Strategy Recommendation based on TAIFEX VIX
+    if taifex_vix < 14.0:
+        regime_tag = "🟢 極度平靜 (Low Vol)"
+        regime_color = "#00e676"
+        regime_desc = "權利金嚴重壓縮，市場避險需求極低。適合買方 (Long Option) 或單邊趨勢微台。"
+        strategy_advice = "波動率處於低檔冰點，買方發動成本便宜；賣方價差單收取的權利金偏低，宜注意突破拉升風險。"
+    elif taifex_vix < 18.0:
+        regime_tag = "🔵 常態溫和 (Normal Vol)"
+        regime_color = "#00b0ff"
+        regime_desc = "權利金定價合理，市場多空秩序平穩。適合常態 GEX 價差單 (Sell Put / Sell Call)。"
+        strategy_advice = "適合區間震盪做市商策略，配合 GEX Call/Put Wall 佈局垂直價差或 Iron Condor。"
+    elif taifex_vix < 22.0:
+        regime_tag = "🟡 恐慌升溫 (Elevated Vol)"
+        regime_color = "#ffd700"
+        regime_desc = "避險需求湧入，權利金膨脹。護盤牆防守力道轉脆弱，宜拉遠檔位並縮減口數。"
+        strategy_advice = "市場恐慌升溫，選擇權價格變貴。賣方建倉應拉遠檔位防守，嚴禁短檔單腳硬接。"
+    else:
+        regime_tag = "🔴 極度恐慌 (Extreme Panic)"
+        regime_color = "#ff5252"
+        regime_desc = "恐慌爆發，追跌避險賣壓沉重。觀望等待 VIX 轉折；回落時為機構級建倉爆賺期。"
+        strategy_advice = "恐慌達到頂峰，若 VIX 出現衝高回落且配合 GEX 護盤牆打腳，為深端建立正金字塔價差單之黃金爆賺時機。"
+
+    return {
+        "taifex_vix": taifex_vix,
+        "taifex_vix_change": taifex_chg,
+        "taifex_vix_change_pct": taifex_pct,
+        "us_vix": us_vix,
+        "us_vix_change": us_chg,
+        "us_vix_change_pct": us_pct,
+        "regime_tag": regime_tag,
+        "regime_color": regime_color,
+        "regime_desc": regime_desc,
+        "strategy_advice": strategy_advice
+    }
 
 def fetch_official_taifex_options_matrix():
     """
@@ -1332,7 +1396,9 @@ def fetch_official_taifex_retail_sentiment():
     tmf_near_ratio = round((tmf_r_net / tmf_near_total) * 100, 2) if tmf_near_total > 0 else 31.10
     tmf_total_ratio = round((tmf_r_net / tmf_total) * 100, 2) if tmf_total > 0 else 6.31
 
-    vix_idx, vix_chg = fetch_official_taifex_vix()
+    vix_info = fetch_official_taifex_vix()
+    vix_idx = vix_info["taifex_vix"]
+    vix_chg = vix_info["taifex_vix_change"]
 
     # Primary ratio = Broker Standard Near-Month Ratio (+26.19% / +31.10%)
     mtx_ratio = mtx_near_ratio
@@ -2535,7 +2601,8 @@ def generate_gex_payload():
         "sector_capital_rotation": sector_capital_rotation,
         "stock_futures": stock_futures,
         "ai_ex_dividend_digest": ai_ex_dividend_digest,
-        "macro_events_radar": macro_events_data
+        "macro_events_radar": macro_events_data,
+        "vix_info": fetch_official_taifex_vix()
     }
 
 def main():

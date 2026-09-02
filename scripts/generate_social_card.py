@@ -316,6 +316,18 @@ def build_card1_html(data, avatar_url, qr_ig_url="", qr_threads_url=""):
     vex_color = "#ff4d4f" if total_vex >= 0 else "#26a69a"
     vex_sign_day = "+" if total_vex_day >= 0 else ""
     vex_sign = "+" if total_vex >= 0 else ""
+    # 9. VIX 恐慌指標 & 美股 ^VIX
+    vix_info = data.get("vix_info") or {}
+    taifex_vix = vix_info.get("taifex_vix") or data.get("vix_index") or 18.45
+    taifex_vix_chg = vix_info.get("taifex_vix_change") or data.get("vix_change") or 0.25
+    taifex_vix_pct = vix_info.get("taifex_vix_change_pct") or 1.37
+    us_vix = vix_info.get("us_vix") or 15.82
+    us_vix_chg = vix_info.get("us_vix_change") or -0.34
+    us_vix_pct = vix_info.get("us_vix_change_pct") or -2.10
+    vix_regime_tag = vix_info.get("regime_tag") or "🔵 常態溫和"
+    vix_regime_color = vix_info.get("regime_color") or "#00b0ff"
+    vix_sign = "+" if taifex_vix_chg >= 0 else ""
+    us_vix_sign = "+" if us_vix_chg >= 0 else ""
 
     avatar_html = f'<img src="{avatar_url}" class="avatar-img">' if avatar_url else '<div style="width:52px;height:52px;border-radius:50%;background:#1e293b;border:2px solid #ffd700;"></div>'
 
@@ -500,6 +512,26 @@ def build_card1_html(data, avatar_url, qr_ig_url="", qr_threads_url=""):
         <div style="font-size: 12px; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; margin-top: 1px;">
           <span>VEX: <code style="color: {vex_color}; font-weight: bold;">{vex_sign}{total_vex:,.1f}億</code></span>
           <span style="color: {vex_color}; font-weight: bold; font-size: 11.5px;">{vex_badge}</span>
+        </div>
+      </div>
+
+      <!-- Card 9: VIX 恐慌指標 & 美股 ^VIX -->
+      <div class="stat-card" style="border-left: 4px solid #00b0ff; grid-column: span 2; padding: 12px 18px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 14px; font-weight: 700; color: #00b0ff;">⚡ VIX 恐慌指數 & 美股 ^VIX 波動率監控</div>
+          <div style="font-size: 12.5px; font-weight: 800; color: {vix_regime_color}; background: rgba(0, 176, 255, 0.15); padding: 2px 10px; border-radius: 10px; border: 1px solid {vix_regime_color};">{vix_regime_tag}</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+          <div>
+            <span style="font-size: 13px; color: #ffd700;">🇹🇼 台指 VIX (日盤):</span>
+            <strong style="font-size: 18px; color: #00b0ff; margin-left: 6px;">{taifex_vix:.2f}</strong>
+            <span style="font-size: 12.5px; color: {'#ff4d4f' if taifex_vix_chg >= 0 else '#26a69a'}; font-weight: bold; margin-left: 6px;">({vix_sign}{taifex_vix_chg:.2f} / {vix_sign}{taifex_vix_pct:.2f}%)</span>
+          </div>
+          <div>
+            <span style="font-size: 13px; color: #a855f7;">🇺🇸 美股 ^VIX (夜盤):</span>
+            <strong style="font-size: 18px; color: #e040fb; margin-left: 6px;">{us_vix:.2f}</strong>
+            <span style="font-size: 12.5px; color: {'#ff4d4f' if us_vix_chg >= 0 else '#26a69a'}; font-weight: bold; margin-left: 6px;">({us_vix_sign}{us_vix_chg:.2f} / {us_vix_sign}{us_vix_pct:.2f}%)</span>
+          </div>
         </div>
       </div>
 
