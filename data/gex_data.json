@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 46217.9,
     "day_total_vex": 2776.6
   },
-  "last_updated_time": "2026-09-02 15:05",
+  "last_updated_time": "2026-09-02 15:40",
   "spot_price": 46164.72,
   "spot_change": -784.0,
   "spot_change_pct": -1.67,
@@ -22126,8 +22126,8 @@
       "dxy": {
         "date": "09/02 (三)",
         "price": 99.76,
-        "change": 0.1,
-        "pct": 0.1
+        "change": 0.09,
+        "pct": 0.09
       },
       "usdjpy": {
         "date": "09/02 (三)",
@@ -22229,8 +22229,8 @@
         {
           "date": "09/02 (三)",
           "price": 99.76,
-          "change": 0.1,
-          "pct": 0.1
+          "change": 0.09,
+          "pct": 0.09
         }
       ]
     },
@@ -22293,7 +22293,7 @@
   "total_gex_plus": -8196.47,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-02 15:05",
+    "last_updated": "2026-09-02 15:40",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
