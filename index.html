@@ -493,6 +493,44 @@
           </div>
         </div>
 
+        <!-- 11. Tail Hedge & Skew Optimization Playbook -->
+        <h4 style="color: var(--gold-accent); margin: 20px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>🛡️ 11. 黑天鵝尾部保護 (Tail Hedge)：不對稱 Ratio Spread ✕ VEX 偏斜優化</span>
+        </h4>
+
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 0.83rem;">
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #ff5252;">🦢 1. 黑天鵝尾部保護（不對稱 Ratio Spread 買方加碼）</strong>：
+            在跨週末或長假前，最外圍重倉那一階（如距 Put Wall 400 點外），將平時的 1:1 價差（Sell 10口 / Buy 10口）改為 <b>Sell 10口 / Buy 12口（淨買方比率）</b>。多出來的 2 口 Buy 權利金極微薄（當作保險費）；一旦遇到開盤直接跳空 500 點穿透金字塔的世紀黑天鵝，多出的 Buy Put 因 Delta 衝至 1.0 且 Vega 膨脹產生數十倍暴利，直接全額對沖掉金字塔 Sell 方的穿透虧損！
+          </p>
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #00b0ff;">📐 2. 利用 VEX 偏斜（Volatility Skew）優化階梯寬度</strong>：
+            <br>• <b>空差（Call 側）</b>：大漲時 VIX 下跌（正 VEX 收縮）且有 Call Wall 壓制，維持 <b>200 點等距階梯</b> 極其安全。
+            <br>• <b>多差（Put 側）</b>：大跌時 VIX 暴漲（Put 隱波集體膨脹）。週三下午做週五選時，建議將 Put 側最外圍重倉階梯擴張至 <b>250~300 點</b>，避免夜盤 VIX 暴走時 IOC 智慧單太早被掃出場的假警報滑價。
+          </p>
+        </div>
+
+        <!-- 12. Ultra-Low Volatility Dynamic Adaptation -->
+        <h4 style="color: #00b0ff; margin: 20px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>📉 12. VIX &lt; 13 極端低波動 (Low Vol) 死魚盤之動態變形戰術</span>
+        </h4>
+
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 0.83rem;">
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #ffd700;">⚠️ 1. 低波動陷阱（不要為湊點數而硬縮檔位）</strong>：
+            當台指 VIX &lt; 13 時，牆外 200 點的權利金少得可憐。新手常會為了湊 15~20 點權利金，被迫將 Sell 方「往內擠進牆內」，隨便一個跳空就遭貫穿。
+          </p>
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #00e676;">🔄 2. 三大低波變形策略</strong>：
+            <br>• <b>變形 A【縮短作戰半徑，只打週三結算日最後 3 小時】</b>：放棄週一/週四提前開倉，專注在週三 09:30~12:30 進場，在正 GEX 釘盤效應下吃最後幾小時加速歸零的純時間價值。
+            <br>• <b>變形 B【單邊買權/賣權比率價差 (Ratio Spread)】</b>：放棄雙賣鐵兀鷹，改做單邊順勢價差，並利用低 IV 便宜買進遠端保護。
+            <br>• <b>變形 C【保留子彈，靜待 VIX 暴衝後的均值回歸】</b>：低波期降低部位至平時 30%，保留現金；一旦突發事件讓 VIX 衝破 18~20，立即進場以「高 IV 飽滿權利金」大口收割！
+          </p>
+          <div style="background: rgba(0, 210, 255, 0.1); border-left: 3px solid var(--primary-accent); padding: 8px 12px; border-radius: 4px; color: #fff; font-weight: 600; margin-top: 10px;">
+            🎯 莊家思維：VIX 高時大口吃肉（拉遠檔位賣高 IV），VIX 低時謹慎防守（縮小部位打結算短衝）！
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
