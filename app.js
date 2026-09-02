@@ -275,6 +275,18 @@ async function attemptDecrypt(passcode) {
     localStorage.setItem('gex_unlocked', 'true');
   }
 
+  // 1. Immediately render fallback/embedded data for instant 0ms display
+  if (!gexData && window.GEX_EMBEDDED_DATA) {
+    gexData = window.GEX_EMBEDDED_DATA;
+    try {
+      updateFreshnessIndicator(gexData);
+      renderDashboard();
+    } catch (eInit) {
+      console.warn('Initial render with embedded data failed:', eInit);
+    }
+  }
+
+  // 2. Fetch fresh network payload asynchronously
   let dataFromNetwork = false;
 
   try {
@@ -282,20 +294,26 @@ async function attemptDecrypt(passcode) {
     if (res && res.ok) {
       const encObj = await res.json();
       if (encObj && encObj.payload) {
-        gexData = decryptPayload(encObj.payload, cleanPass);
-        if (gexData) dataFromNetwork = true;
+        const decrypted = decryptPayload(encObj.payload, cleanPass);
+        if (decrypted) {
+          gexData = decrypted;
+          dataFromNetwork = true;
+        }
       }
     }
   } catch (e) {
     console.warn('Encrypted payload fetch skipped or failed:', e);
   }
 
-  if (!gexData) {
+  if (!dataFromNetwork) {
     try {
       let rawRes = await fetch('data/gex_data.json?v=' + Date.now());
       if (rawRes && rawRes.ok) {
-        gexData = await rawRes.json();
-        if (gexData) dataFromNetwork = true;
+        const rawObj = await rawRes.json();
+        if (rawObj) {
+          gexData = rawObj;
+          dataFromNetwork = true;
+        }
       }
     } catch (e2) {
       console.warn('Raw json fetch failed:', e2);
