@@ -3036,11 +3036,11 @@ function renderMacroEventsRadar(dataObj) {
       <div style="margin-top: 18px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 14px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
           <div style="font-size: 0.88rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <span style="color: var(--primary-accent);">📊 富邦期貨 ✕ 國際市場焦點週報</span>
-            <span style="font-size: 0.72rem; color: #38bdf8; background: rgba(56, 189, 248, 0.15); padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.3);">🤖 方案 B：全自動排程更新</span>
+            <span style="color: var(--primary-accent);">📊 本週重大市場焦點週報</span>
+            <span style="font-size: 0.72rem; color: #38bdf8; background: rgba(56, 189, 248, 0.15); padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.3);">🤖 全自動排程即時更新</span>
             <span style="font-size: 0.75rem; color: var(--gold-accent); background: rgba(255, 215, 0, 0.12); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3);">${focusData.date_range} | ${focusData.theme}</span>
           </div>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">對應台股與美股熱門股票期貨標的</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">對應台股與美股熱門期權/股期標的</span>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
           ${daysHtml}

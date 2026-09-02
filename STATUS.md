@@ -1,6 +1,6 @@
 # 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.4)
 
-**當前版本**：`v50.4` (2026-09-03 方案 B：富邦期貨 ✕ 國際市場焦點週報 全自動排程引擎上線版)
+**當前版本**：`v50.4` (2026-09-03 方案 B：本週重大市場焦點週報 全自動排程引擎上線版)
 **資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.4)
 **即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.4)
 **系統狀態**：`✅ 100% 運作正常`

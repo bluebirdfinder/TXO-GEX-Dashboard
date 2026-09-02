@@ -1,7 +1,7 @@
 # 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v50.4)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> 📅 方案 B：富邦期貨 ✕ 國際市場焦點週報 (Python 自動排程即時生成) ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ VIX 雙軌數據引擎 (TAIFEX VIX ✕ 美股 ^VIX) ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 波動率四級市場情緒評級 ✦ VIX 互動式對策彈窗 ✦ TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關 ✦ GitHub Actions 離峰 Cron 排程錯開 ✦ 離線夜盤時段視窗修復 ✦ TWSE 信用交易融資維持率 API 實時連線 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ Gemini AI 摘要動態齊平
+> 📅 方案 B：本週重大市場焦點週報 (Python 自動排程即時生成) ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ VIX 雙軌數據引擎 (TAIFEX VIX ✕ 美股 ^VIX) ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 波動率四級市場情緒評級 ✦ VIX 互動式對策彈窗 ✦ TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關 ✦ GitHub Actions 離峰 Cron 排程錯開 ✦ 離線夜盤時段視窗修復 ✦ TWSE 信用交易融資維持率 API 實時連線 ✦ 官方 6 大夜盤股期/ETF期價量矩陣 ✦ 夜盤05:00收盤價精確校正 ✦ Gemini AI 摘要動態齊平
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
@@ -9,7 +9,7 @@
 
 ---
 
-## 🌟 v50.4 方案 B：富邦期貨 ✕ 國際市場焦點週報 (全自動排程引擎上線版)
+## 🌟 v50.4 方案 B：本週重大市場焦點週報 (全自動排程引擎上線版)
 
 ### 🤖 1. 方案 B：全自動對接期交所與國際總經日曆之週報生成引擎 (`scripts/fetch_and_calc_vision.py`)
 - **零人工介入自動排程更新**：實作 `generate_dynamic_weekly_focus(curr_twd)` 演算法，根據目前日期動態界定每週一至週五交易時段，自動識別本週重大總經事件（MSCI 季度調整、ISM 製造業/非製造業、美國非農就業 NFP、CPI 通膨數據、台指月合約大結算、半導體展 SEMICON 等）。

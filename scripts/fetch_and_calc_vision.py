@@ -2708,8 +2708,8 @@ def generate_gex_payload():
             ]
 
         return {
-            "title": "富邦期貨 ✕ 國際市場焦點週報 (方案 B 自動排程更新)",
-            "source": "富邦研究焦點 ✕ 期交所國際日曆 (Python 自動化引擎)",
+            "title": "本週重大市場焦點週報 (全自動排程即時更新)",
+            "source": "國際總經焦點 ✕ 期交所官方日曆 (Python 自動化引擎)",
             "date_range": date_range_str,
             "theme": theme_str,
             "schedule": [
