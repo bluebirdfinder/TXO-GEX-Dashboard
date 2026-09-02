@@ -1333,32 +1333,32 @@ function renderGEXChart() {
 
   const chartShapes = [];
   if (isHoriz) {
-    if (putWall) chartShapes.push({ type: 'line', y0: putWall, y1: putWall, x0: 0, x1: 1, xref: 'paper', line: { color: '#00e676', width: 2 } });
-    if (zeroGamma) chartShapes.push({ type: 'line', y0: zeroGamma, y1: zeroGamma, x0: 0, x1: 1, xref: 'paper', line: { color: '#ffd700', width: 2, dash: 'dash' } });
-    if (callWall) chartShapes.push({ type: 'line', y0: callWall, y1: callWall, x0: 0, x1: 1, xref: 'paper', line: { color: '#ff5252', width: 2 } });
-    if (spot) chartShapes.push({ type: 'line', y0: spot, y1: spot, x0: 0, x1: 1, xref: 'paper', line: { color: '#ffffff', width: 1.5, dash: 'dot' } });
-    if (gexPlusFlip !== null) chartShapes.push({ type: 'line', y0: gexPlusFlip, y1: gexPlusFlip, x0: 0, x1: 1, xref: 'paper', line: { color: '#d500f9', width: 2, dash: 'dashdot' } });
+    if (putWall && putWall > 10000) chartShapes.push({ type: 'line', y0: putWall, y1: putWall, x0: 0, x1: 1, xref: 'paper', line: { color: '#00e676', width: 2 } });
+    if (zeroGamma && zeroGamma > 10000) chartShapes.push({ type: 'line', y0: zeroGamma, y1: zeroGamma, x0: 0, x1: 1, xref: 'paper', line: { color: '#ffd700', width: 2, dash: 'dash' } });
+    if (callWall && callWall > 10000) chartShapes.push({ type: 'line', y0: callWall, y1: callWall, x0: 0, x1: 1, xref: 'paper', line: { color: '#ff5252', width: 2 } });
+    if (spot && spot > 10000) chartShapes.push({ type: 'line', y0: spot, y1: spot, x0: 0, x1: 1, xref: 'paper', line: { color: '#ffffff', width: 1.5, dash: 'dot' } });
+    if (gexPlusFlip !== null && gexPlusFlip > 10000) chartShapes.push({ type: 'line', y0: gexPlusFlip, y1: gexPlusFlip, x0: 0, x1: 1, xref: 'paper', line: { color: '#d500f9', width: 2, dash: 'dashdot' } });
   } else {
-    if (putWall) chartShapes.push({ type: 'line', x0: putWall, x1: putWall, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#00e676', width: 2 } });
-    if (zeroGamma) chartShapes.push({ type: 'line', x0: zeroGamma, x1: zeroGamma, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ffd700', width: 2, dash: 'dash' } });
-    if (callWall) chartShapes.push({ type: 'line', x0: callWall, x1: callWall, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ff5252', width: 2 } });
-    if (spot) chartShapes.push({ type: 'line', x0: spot, x1: spot, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ffffff', width: 1.5, dash: 'dot' } });
-    if (gexPlusFlip !== null) chartShapes.push({ type: 'line', x0: gexPlusFlip, x1: gexPlusFlip, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#d500f9', width: 2, dash: 'dashdot' } });
+    if (putWall && putWall > 10000) chartShapes.push({ type: 'line', x0: putWall, x1: putWall, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#00e676', width: 2 } });
+    if (zeroGamma && zeroGamma > 10000) chartShapes.push({ type: 'line', x0: zeroGamma, x1: zeroGamma, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ffd700', width: 2, dash: 'dash' } });
+    if (callWall && callWall > 10000) chartShapes.push({ type: 'line', x0: callWall, x1: callWall, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ff5252', width: 2 } });
+    if (spot && spot > 10000) chartShapes.push({ type: 'line', x0: spot, x1: spot, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#ffffff', width: 1.5, dash: 'dot' } });
+    if (gexPlusFlip !== null && gexPlusFlip > 10000) chartShapes.push({ type: 'line', x0: gexPlusFlip, x1: gexPlusFlip, y0: 0, y1: 1.05, yref: 'paper', clip: false, line: { color: '#d500f9', width: 2, dash: 'dashdot' } });
   }
 
   const chartAnnotations = [];
   if (isHoriz) {
-    if (putWall) chartAnnotations.push({ y: putWall, x: 0.98, xref: 'paper', yanchor: 'top', xanchor: 'right', text: `<b>${isMobile ? 'PW' : 'Put Wall'}: ${putWall}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#00e676', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#00e676', size: isMobile ? 10 : 11 } });
-    if (zeroGamma) chartAnnotations.push({ y: zeroGamma, x: 0.68, xref: 'paper', yanchor: 'bottom', xanchor: 'center', text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${typeof zeroGamma === 'number' ? zeroGamma.toFixed(1) : zeroGamma}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#ffd700', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#ffd700', size: isMobile ? 10 : 11 } });
-    if (callWall) chartAnnotations.push({ y: callWall, x: 0.98, xref: 'paper', yanchor: 'bottom', xanchor: 'right', text: `<b>${isMobile ? 'CW' : 'Call Wall'}: ${callWall}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#ff5252', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#ff5252', size: isMobile ? 10 : 11 } });
-    if (spot) chartAnnotations.push({ y: spot, x: 0.02, xref: 'paper', yanchor: 'bottom', xanchor: 'left', text: `<b>${isMobile ? '現價' : '標的現價'}: ${typeof spot === 'number' ? spot.toFixed(1) : spot}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#ffffff', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#ffffff', size: isMobile ? 10 : 11 } });
-    if (gexPlusFlip !== null) chartAnnotations.push({ y: gexPlusFlip, x: 0.35, xref: 'paper', yanchor: 'top', xanchor: 'center', text: `<b>${isMobile ? '早鳥' : '🐣 GEX+ 早鳥轉折'}: ${gexPlusFlip.toFixed(1)}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#d500f9', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#d500f9', size: isMobile ? 10 : 11 } });
+    if (putWall && putWall > 10000) chartAnnotations.push({ y: putWall, x: 0.98, xref: 'paper', yanchor: 'top', xanchor: 'right', text: `<b>${isMobile ? 'PW' : 'Put Wall'}: ${putWall}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#00e676', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#00e676', size: isMobile ? 10 : 11 } });
+    if (zeroGamma && zeroGamma > 10000) chartAnnotations.push({ y: zeroGamma, x: 0.68, xref: 'paper', yanchor: 'bottom', xanchor: 'center', text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${typeof zeroGamma === 'number' ? zeroGamma.toFixed(1) : zeroGamma}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#ffd700', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#ffd700', size: isMobile ? 10 : 11 } });
+    if (callWall && callWall > 10000) chartAnnotations.push({ y: callWall, x: 0.98, xref: 'paper', yanchor: 'bottom', xanchor: 'right', text: `<b>${isMobile ? 'CW' : 'Call Wall'}: ${callWall}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#ff5252', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#ff5252', size: isMobile ? 10 : 11 } });
+    if (spot && spot > 10000) chartAnnotations.push({ y: spot, x: 0.02, xref: 'paper', yanchor: 'bottom', xanchor: 'left', text: `<b>${isMobile ? '現價' : '標的現價'}: ${typeof spot === 'number' ? spot.toFixed(1) : spot}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#ffffff', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#ffffff', size: isMobile ? 10 : 11 } });
+    if (gexPlusFlip !== null && gexPlusFlip > 10000) chartAnnotations.push({ y: gexPlusFlip, x: 0.35, xref: 'paper', yanchor: 'top', xanchor: 'center', text: `<b>${isMobile ? '早鳥' : '🐣 GEX+ 早鳥轉折'}: ${gexPlusFlip.toFixed(1)}</b>`, showarrow: false, bgcolor: '#0a0e17', bordercolor: '#d500f9', borderwidth: 1.5, borderpad: isMobile ? 3 : 5, font: { color: '#d500f9', size: isMobile ? 10 : 11 } });
   } else {
-    if (putWall) chartAnnotations.push({ x: putWall, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? 'PW' : 'Put Wall'}: ${putWall}</b>`, showarrow: true, ax: 0, ay: -22, bgcolor: '#0a0e17', bordercolor: '#00e676', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#00e676', size: isMobile ? 9 : 10 } });
-    if (zeroGamma) chartAnnotations.push({ x: zeroGamma, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${typeof zeroGamma === 'number' ? zeroGamma.toFixed(1) : zeroGamma}</b>`, showarrow: true, ax: 0, ay: -46, bgcolor: '#0a0e17', bordercolor: '#ffd700', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#ffd700', size: isMobile ? 9 : 10 } });
-    if (callWall) chartAnnotations.push({ x: callWall, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? 'CW' : 'Call Wall'}: ${callWall}</b>`, showarrow: true, ax: 0, ay: -70, bgcolor: '#0a0e17', bordercolor: '#ff5252', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#ff5252', size: isMobile ? 9 : 10 } });
-    if (gexPlusFlip !== null) chartAnnotations.push({ x: gexPlusFlip, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? '早鳥' : '🐣 GEX+'}: ${gexPlusFlip.toFixed(1)}</b>`, showarrow: true, ax: 0, ay: -94, bgcolor: '#0a0e17', bordercolor: '#d500f9', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#d500f9', size: isMobile ? 9 : 10 } });
-    if (spot) chartAnnotations.push({ x: spot, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? '現價' : '標的現價'}: ${typeof spot === 'number' ? spot.toFixed(1) : spot}</b>`, showarrow: true, ax: 0, ay: -118, bgcolor: '#0a0e17', bordercolor: '#ffffff', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#ffffff', size: isMobile ? 9 : 10 } });
+    if (putWall && putWall > 10000) chartAnnotations.push({ x: putWall, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? 'PW' : 'Put Wall'}: ${putWall}</b>`, showarrow: true, ax: 0, ay: -22, bgcolor: '#0a0e17', bordercolor: '#00e676', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#00e676', size: isMobile ? 9 : 10 } });
+    if (zeroGamma && zeroGamma > 10000) chartAnnotations.push({ x: zeroGamma, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? 'ZG' : 'Zero Gamma'}: ${typeof zeroGamma === 'number' ? zeroGamma.toFixed(1) : zeroGamma}</b>`, showarrow: true, ax: 0, ay: -46, bgcolor: '#0a0e17', bordercolor: '#ffd700', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#ffd700', size: isMobile ? 9 : 10 } });
+    if (callWall && callWall > 10000) chartAnnotations.push({ x: callWall, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? 'CW' : 'Call Wall'}: ${callWall}</b>`, showarrow: true, ax: 0, ay: -70, bgcolor: '#0a0e17', bordercolor: '#ff5252', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#ff5252', size: isMobile ? 9 : 10 } });
+    if (gexPlusFlip !== null && gexPlusFlip > 10000) chartAnnotations.push({ x: gexPlusFlip, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? '早鳥' : '🐣 GEX+'}: ${gexPlusFlip.toFixed(1)}</b>`, showarrow: true, ax: 0, ay: -94, bgcolor: '#0a0e17', bordercolor: '#d500f9', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#d500f9', size: isMobile ? 9 : 10 } });
+    if (spot && spot > 10000) chartAnnotations.push({ x: spot, y: 1.05, yref: 'paper', xanchor: 'center', text: `<b>${isMobile ? '現價' : '標的現價'}: ${typeof spot === 'number' ? spot.toFixed(1) : spot}</b>`, showarrow: true, ax: 0, ay: -118, bgcolor: '#0a0e17', bordercolor: '#ffffff', borderwidth: 1.5, borderpad: isMobile ? 3 : 4, font: { color: '#ffffff', size: isMobile ? 9 : 10 } });
   }
 
   chartAnnotations.push({ x: 0.5, y: 0.5, xref: 'paper', yref: 'paper', text: '尋鳥 Bluebird Finder • TXO GEX Quant System', showarrow: false, font: { color: 'rgba(0, 210, 255, 0.09)', size: isMobile ? 15 : 22, family: 'Inter, sans-serif' }, xanchor: 'center', yanchor: 'middle' });
@@ -2500,6 +2500,7 @@ function handleLiveTick(data) {
   const feedPill = document.getElementById('live-feed-pill');
 
   if (feedText && data.provider_name) {
+    feedText.dataset.hasLiveSocket = 'true';
     feedText.innerText = data.provider_name;
     if (data.provider === 'FUBON') {
       if (feedDot) { feedDot.style.background = '#00e676'; feedDot.style.boxShadow = '0 0 8px #00e676'; }
@@ -2585,9 +2586,15 @@ function handleLiveTick(data) {
     // 2. Real-Time Dynamic Zero Gamma Shift Recalculation (ONLY during active live trading hours)
     if (gexData) {
       if (!isMarketClosed) {
+        if (gexData._base_zero_gamma === undefined) {
+          gexData._base_zero_gamma = gexData.zero_gamma_level;
+        }
+        if (gexData._base_gex_plus_flip === undefined) {
+          gexData._base_gex_plus_flip = gexData.gex_plus_flip;
+        }
         const baseTxf = isNightSession ? (gexData.night_txf_price || gexData.txf_price) : (gexData.day_txf_price || gexData.txf_price);
-        const baseZg = isNightSession ? (gexData.zero_gamma_level) : (gexData.session_shift?.day_zero_gamma || gexData.zero_gamma_level);
-        const baseGp = isNightSession ? (gexData.gex_plus_flip) : (gexData.session_shift?.day_gex_plus_flip || gexData.gex_plus_flip);
+        const baseZg = isNightSession ? (gexData._base_zero_gamma) : (gexData.session_shift?.day_zero_gamma || gexData._base_zero_gamma);
+        const baseGp = isNightSession ? (gexData._base_gex_plus_flip) : (gexData.session_shift?.day_gex_plus_flip || gexData._base_gex_plus_flip);
         const dayZg = gexData.session_shift?.day_zero_gamma || 46016.9;
         
         const priceDelta = data.price - baseTxf;

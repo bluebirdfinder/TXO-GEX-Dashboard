@@ -1,14 +1,28 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.3)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v49.4)
 
-**當前版本**：`v49.3` (2026-09-01 TWSE 現股報價雙軌熱備援與通行碼彈窗自動通關熱修復版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.3)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.3)
+**當前版本**：`v49.4` (2026-09-02 富邦 API 實時報價 WebSocket 閃爍跳動與 Zero Gamma 即時複利漂移雙重熱修復版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v49.4)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v49.4)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v49.3 核心更新亮點（Multi-Tier Stock Spot Price Fallback & Passcode Auto-Bypass）
+## 🎯 v49.4 核心更新亮點（WebSocket Anti-Flicker & Zero Gamma Accumulation Hotfix）
+
+### ⚡ 1. 頂部連線狀態標籤閃爍跳動熱修復 (Status Pill Anti-Flicker Fix)
+- **連線鎖定旗標**：修復 `app.js` 中 `updateMarketTradingStatus()` 每 2 秒強制重洗狀態文字與 `handleLiveTick()` 傳入 `provider_name` 互相搶奪蓋掉標籤文字的衝突，補齊 `feedText.dataset.hasLiveSocket = 'true'` 連線鎖定旗標。
+
+### 📈 2. Zero Gamma 與 GEX+ Flip 即時計算複利累加漂移修復 (Zero Gamma Accumulation Drift Fix)
+- **消除重複扣血**：解決高頻 Tick（富邦 API WebSocket / HTTP 輪詢）觸發時，`liveZg` 不斷在已修改過的 `gexData.zero_gamma_level` 上重複加減價格價差的複利累加 BUG（避免點位一路扣至 `-24,436.6` 等無窮負數點）。
+- **靜態凍結記憶體**：引入 `_base_zero_gamma` 與 `_base_gex_plus_flip` 靜態凍結記憶體，確保實時點位算式精準依據官方日/夜盤結算點位進行單次動態校正。
+
+### 🛡️ 3. GEX 圖表 Y 軸防爆邊界保護網 (Plotly Chart Safety Bounds Guard)
+- **Plotly 刻度保護**：針對 `renderGEXChart()` 增加 `> 10000` 數值門檻防護，避免異常點位破壞 Plotly Y 軸（履約價 Strike）刻度，確保履約價柱狀圖與線型絕不擠壓變形。
+
+---
+
+## 🎯 v49.3 歷史更新紀錄（Multi-Tier Stock Spot Price Fallback & Passcode Auto-Bypass）
 
 ### 🛡️ 1. TWSE 現股報價雙軌熱備援 (Multi-Tier Stock Spot Price Fallback)
 - **多層級現貨抓取**：升級 `fetch_twse_stock_spot_prices()` 導入 Tier 1 TWSE OpenAPI (`STOCK_DAY_ALL`) ➔ Tier 2 TWSE MIS 官方即時 API 雙軌抓取備援，並校正靜態備用庫，確保個股期現貨價差計算極致精準。

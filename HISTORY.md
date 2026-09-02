@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v49.4`** | 2026-09-02 | ⚡ **富邦 API 實時報價 WebSocket 閃爍跳動與 Zero Gamma 即時複利漂移雙重熱修復版** |
 | **`v49.3`** | 2026-09-01 | 🛡️ **TWSE 現股報價雙軌熱備援與通行碼彈窗自動通關熱修復版** |
 | **`v49.2`** | 2026-09-01 | ⏰ **GitHub Actions 離峰 Cron 排程錯開、離線夜盤時段視窗修復與 TWSE 融資維持率判定校正版** |
 | **`v49.1`** | 2026-08-29 | 🕒 **動態 4 階段 Session 配對架構、期交所官方夜盤個股期 API 直連與 TWSE 融資維持率 API 版** |
@@ -25,7 +26,16 @@
 
 ## 🎯 各版本詳細更新紀錄
 
-### 🚀 v49.4 期交所官方夜盤即時成交量 (marketCode=1 Volume) 直連寫入與夜盤個股期真理源對齊版 (2026-09-01)
+### 🚀 v49.4 富邦 API 實時報價 WebSocket 閃爍跳動與 Zero Gamma 即時複利漂移雙重熱修復版 (2026-09-02)
+- **頂部連線狀態標籤閃爍跳動熱修復 (Status Pill Anti-Flicker Fix)**：
+  - 修復 `app.js` 中 `updateMarketTradingStatus()` 每 2 秒強制重洗狀態文字與 `handleLiveTick()` 傳入 `provider_name` 互相搶奪蓋掉標籤文字的衝突，補齊 `feedText.dataset.hasLiveSocket = 'true'` 連線鎖定旗標。
+- **Zero Gamma 與 GEX+ Flip 即時計算複利累加漂移修復 (Zero Gamma Accumulation Drift Fix)**：
+  - 解決高頻 Tick（富邦 API WebSocket / HTTP 輪詢）觸發時，`liveZg` 不斷在已修改過的 `gexData.zero_gamma_level` 上重複加減價格價差的複利累加 BUG（避免點位一路扣至 `-24,436.6` 等無窮負數點）。
+  - 引入 `_base_zero_gamma` 與 `_base_gex_plus_flip` 靜態凍結記憶體，確保實時點位算式精準依據官方日/夜盤結算點位進行單次動態校正。
+- **GEX 圖表 Y 軸防爆邊界保護網 (Plotly Chart Safety Bounds Guard)**：
+  - 針對 `renderGEXChart()` 增加 `> 10000` 數值門檻防護，避免異常點位破壞 Plotly Y 軸（履約價 Strike）刻度，確保履約價柱狀圖與線型絕不擠壓變形。
+
+### 🚀 v49.3 TWSE 現股報價雙軌熱備援與通行碼彈窗自動通關熱修復版 (2026-09-01)
 - **夜盤真實成交量 (Night Real Volume) 對齊**：
   - 升級 etch_taifex_official_night_stock_futures()，從期交所 utDailyMarketExcel?marketCode=1 官方夜盤端點精準提取 cols[8] 夜盤真實成交量與 cols[6] 漲跌點數。
   - 徹底排除將日盤總成交量誤寫入夜盤之問題，全系統 6 大夜盤股期/ETF成交量對齊期交所官方公告。
