@@ -427,6 +427,26 @@
           </div>
         </div>
 
+        <!-- 8. IOC Continuous Trigger Order Playbook -->
+        <h4 style="color: #00b0ff; margin: 20px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>🤖 8. 券商系統端 IOC 連續洗價單：排除人性的夜盤終極防禦架構</span>
+        </h4>
+
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 0.83rem;">
+          <p style="margin-bottom: 8px;">
+            <strong style="color: var(--primary-accent);">⚡ 1. 為什麼採用「IOC 連續智慧單」？</strong>：
+            在週四夜盤美股暴震時，做市商負 VEX 敞口常在幾分鐘內推升隱波（IV 暴漲）。若人肉盯盤容易陷入「自我安慰明天開盤會拉回」的人性陷阱。掛好系統端 <b>IOC（立即成交否則取消）智慧單</b>，能破壞隱波扭曲並避免市價單在夜盤流動性真空時產生巨大滑價（Slippage）。
+          </p>
+          <p style="margin-bottom: 8px;">
+            <strong style="color: var(--gold-accent);">⚙️ 2. 兩種量化觸發設定技巧（期貨點位 vs 權利金倍數）</strong>：
+            <br>• <b>方法 A【期貨關鍵點位觸發】（滑價最小、推薦主力）</b>：當近月台指期即時點位觸碰最大 OI（Put/Call Wall）前 15~20 點時，自動以 IOC 執行價差單平倉。好處是能在隱波飆至最瘋狂前出在最漂亮的價位！
+            <br>• <b>方法 B【選擇權 2.5~3 倍權利金觸發】（災難保險絲）</b>：當 Sell 方權利金飆至開倉價的 2.5~3 倍時無條件啟動平倉，100% 鎖死單筆最大虧損上限。
+          </p>
+          <div style="background: rgba(0, 210, 255, 0.1); border-left: 3px solid var(--primary-accent); padding: 8px 12px; border-radius: 4px; color: #fff; font-weight: 600; margin-top: 10px;">
+            🏆 頂級法人雙軌配置：以「期貨點位前 15 點」為第 1 線主力觸發（滑價最小），以「選擇權 3 倍權利金」為第 2 線終極保險絲！
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
