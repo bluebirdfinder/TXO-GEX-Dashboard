@@ -554,6 +554,30 @@
           </div>
         </div>
 
+        <!-- 14. Anti-Lockup Circuit Breaker & Dual-Track Execution -->
+        <h4 style="color: #00b0ff; margin: 20px 0 8px 0; font-size: 0.98rem; display: flex; align-items: center; gap: 6px;">
+          <span>⚙️ 14. 洗價與調倉防卡死：斷路器機制 ✕ 總價差洗價 ✕ 死士與主力雙軌制</span>
+        </h4>
+
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 0.83rem;">
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #ff5252;">🔌 1. 「一分鐘百點暴衝」斷路器（Circuit Breaker）</strong>：
+            夜盤毫秒級暴衝時人手暫停改單絕對來不及。利用長效單設定「1 分鐘暴衝 &gt; 100 點時，<b>自動一鍵刪除/暫停所有階梯平倉單</b>」，強制讓市場冷靜 5 分鐘，避免智慧單在最爛的流動性真空與扭曲隱波下被冤枉斷頭。
+          </p>
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #ffd700;">📊 2. 採取「價差總權利金洗價」爭取調倉緩衝</strong>：
+            監控整組價差單的淨市值（如開倉收 15 點，當總價差市價 &gt; 45 點時才平倉），而非單看單一 Sell 方點數。Buy 方同步飆漲能死死拉住虧損，爭取更充裕的手動應變餘裕。
+          </p>
+          <p style="margin-bottom: 8px;">
+            <strong style="color: #00e676;">⚔️ 3. 機構級「死士區 vs 主力區」雙軌制</strong>：
+            <br>• <b>🔴 A 軌【死士區】（最內側 1~2 階輕倉）</b>：直接掛好硬挺 IOC 停損，完全不手動救單，冷酷任由系統去砍，認賠不心疼。
+            <br>• <b>🟢 B 軌【主力區】（Put Wall 外 2σ 重倉）</b>：預留 15~20 點手動防空洞。當 A 軌被砍、大盤殺到 Put Wall（46,000）時，做市商正 GEX 減震會產生 5~10 分鐘抵抗空窗。操盤手利用這 5 分鐘優雅地將 B 軌外圍 Sell 方往外 Roll 200 點（此時高 VIX 點數極肥），直接補回 A 軌損失！
+          </p>
+          <div style="background: rgba(0, 210, 255, 0.1); border-left: 3px solid var(--primary-accent); padding: 8px 12px; border-radius: 4px; color: #fff; font-weight: 600; margin-top: 10px;">
+            🏆 操盤境界：把輕倉交給冷酷的系統去砍，把重倉利用 GEX 牆體的減震時間進行手動轉向！
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
