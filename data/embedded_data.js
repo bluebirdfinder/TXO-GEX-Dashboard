@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 46217.9,
     "day_total_vex": 2776.6
   },
-  "last_updated_time": "2026-09-02 20:01",
+  "last_updated_time": "2026-09-02 20:19",
   "spot_price": 46164.72,
   "spot_change": -784.0,
   "spot_change_pct": -1.67,
@@ -22125,9 +22125,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/02 (三)",
-        "price": 99.78,
-        "change": 0.11,
-        "pct": 0.11
+        "price": 99.76,
+        "change": 0.09,
+        "pct": 0.09
       },
       "usdjpy": {
         "date": "09/02 (三)",
@@ -22228,13 +22228,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/02 (三)",
-          "price": 99.78,
-          "change": 0.11,
-          "pct": 0.11
+          "price": 99.76,
+          "change": 0.09,
+          "pct": 0.09
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.73</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.10 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.78</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.72</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.73</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.10 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.76</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.72</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -3309,
@@ -22293,7 +22293,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -8196.47,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-02 20:01",
+    "last_updated": "2026-09-02 20:19",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -28727,32 +28727,19 @@ window.GEX_EMBEDDED_DATA = {
   },
   "macro_events_radar": {
     "primary_event": {
-      "id": "us_adp",
-      "name": "美國 ADP 小非農就業數據",
-      "category": "重點總經",
+      "id": "us_jobless",
+      "name": "美國每週初領失業金人數 (Jobless Claims)",
+      "category": "每週總經",
       "impact": "MEDIUM",
-      "impact_label": "🟡 前瞻警戒",
+      "impact_label": "🟡 常態警戒",
       "pattern_type": "POINT_TIME",
       "warning_lead_hours": 6,
       "critical_lead_mins": 30,
-      "target_epoch": 1788351300000,
-      "date_display": "09/02 20:15 (台灣時間)",
-      "gex_advice": "發布前 15 分鐘 (20:15 起) 前瞻情緒預熱，提防夜盤開盤前夕情緒性波動。"
+      "target_epoch": 1788438600000,
+      "date_display": "09/03 20:30 (台灣時間)",
+      "gex_advice": "每週四夜盤常態數據，觀察 20:30 公布前夕情緒與美債殖利率聯動。"
     },
     "upcoming_list": [
-      {
-        "id": "us_adp",
-        "name": "美國 ADP 小非農就業數據",
-        "category": "重點總經",
-        "impact": "MEDIUM",
-        "impact_label": "🟡 前瞻警戒",
-        "pattern_type": "POINT_TIME",
-        "warning_lead_hours": 6,
-        "critical_lead_mins": 30,
-        "target_epoch": 1788351300000,
-        "date_display": "09/02 20:15 (台灣時間)",
-        "gex_advice": "發布前 15 分鐘 (20:15 起) 前瞻情緒預熱，提防夜盤開盤前夕情緒性波動。"
-      },
       {
         "id": "us_jobless",
         "name": "美國每週初領失業金人數 (Jobless Claims)",
@@ -28804,6 +28791,19 @@ window.GEX_EMBEDDED_DATA = {
         "target_epoch": 1789216200000,
         "date_display": "09/12 20:30 (台灣時間)",
         "gex_advice": "發布前 30 分鐘 (20:30 起) 流動性急遽抽離，提防數據發布瞬間 50~150 點雙向劇烈刷洗！"
+      },
+      {
+        "id": "monthly_settlement",
+        "name": "月台指期/選擇權 (TXF/TXO) 大結算",
+        "category": "期權結算",
+        "impact": "HIGH",
+        "impact_label": "🔴 超高風險",
+        "pattern_type": "WINDOW_TIME",
+        "warning_lead_hours": 24,
+        "critical_lead_mins": 120,
+        "target_epoch": 1789536600000,
+        "date_display": "09/16 13:30 (台灣時間)",
+        "gex_advice": "提防大結算日全天與 13:00~13:30 巨量未平倉平倉擺盪！"
       }
     ]
   }
