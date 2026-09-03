@@ -626,30 +626,49 @@ function renderDashboard() {
   const elMpNight = document.getElementById('stat-mp-night');
   if (elMpNight) elMpNight.innerText = mpVal.toLocaleString();
 
-  // Max Pain 空間拓撲動態計算 (台股紅多綠空標準)
+  // Max Pain 空間拓撲動態計算 (台股紅多綠空標準 + 4大空間幾何拓撲)
   const mpBadgeEl = document.getElementById('stat-mp-topology-badge');
   if (mpBadgeEl) {
-    if (mpVal < pwVal) {
-      // 🔴 型態 A：痛點沉底 / 下檔磁吸 (Max Pain < Put Wall)
-      mpBadgeEl.innerText = '🔴 【型態 A：痛點沉底 / 下檔磁吸】';
+    const instBias = (gexData.institutional_sentiment && gexData.institutional_sentiment.bias) || '';
+    const isBearish = instBias.includes('空') || (gexData.institutional_sentiment && gexData.institutional_sentiment.score < -2);
+    const isBullish = instBias.includes('多') || (gexData.institutional_sentiment && gexData.institutional_sentiment.score > 2);
+
+    if (mpVal > cwVal) {
+      // 🚀 型態 D：極端軋空 / 痛點頂天 (Put Wall < Call Wall < Max Pain)
+      mpBadgeEl.innerText = '🚀 【型態 D：極端軋空 / 痛點頂天】';
+      mpBadgeEl.style.background = 'rgba(168, 85, 247, 0.18)';
+      mpBadgeEl.style.color = '#a855f7';
+      mpBadgeEl.style.border = '1px solid #a855f7';
+      mpBadgeEl.title = isBullish
+        ? '【D1: 歷史級天花板破裂軋空】籌碼偏多 ✕ 痛點頂天，做市商面臨雙重 Gamma Squeeze，嚴禁摸頂做空！'
+        : '【型態 D: 極端軋空/痛點頂天】痛點超越 Call Wall，做市商 Gamma 擠壓，順勢做多或拉高 Bull Put Spread 保護線';
+    } else if (mpVal < pwVal) {
+      // 🔴 型態 A：痛點沉底 / 懸空防守 (Max Pain < Put Wall < Call Wall)
+      mpBadgeEl.innerText = '🔴 【型態 A：痛點沉底 / 懸空防守】';
       mpBadgeEl.style.background = 'rgba(239, 68, 68, 0.18)';
       mpBadgeEl.style.color = '#ef4444';
       mpBadgeEl.style.border = '1px solid #ef4444';
-      mpBadgeEl.title = 'Max Pain < Put Wall：上方大額 Call OI 累積極重，最大痛點沉於低位；機構在近端 Put Wall 建立關鍵防守線。首防 Put Wall 建立 Bull Put Spread (2腳)；若實體跌破 Put Wall 提防下檔磁吸下探';
+      mpBadgeEl.title = isBearish
+        ? '⚠️【A3: 假支撐磁吸下殺 (地雷!)】外資期現大倒貨 ✕ 痛點沉底：Put Wall 脆弱易遭摜破，一旦跌破將被下方 Max Pain 引力磁吸加速下殺！'
+        : (isBullish
+          ? '🔥【A1: 踩牆軋空爆發】籌碼偏多 ✕ 痛點沉底：近端 Put Wall 護盤固若金湯，踩穩即爆發軋空！'
+          : '【A2: 懸空防守震盪】上方大額 Call 累積極重，痛點沉於低位；首防 Put Wall 建立 Bull Put Spread，跌破提防下檔磁吸下探');
     } else if (pwVal <= mpVal && mpVal <= cwVal) {
       // 🟡 型態 B：對稱健康箱體 (Put Wall <= Max Pain <= Call Wall)
       mpBadgeEl.innerText = '🟡 【型態 B：對稱健康箱體】';
       mpBadgeEl.style.background = 'rgba(255, 215, 0, 0.18)';
       mpBadgeEl.style.color = '#ffd700';
       mpBadgeEl.style.border = '1px solid #ffd700';
-      mpBadgeEl.title = 'Put Wall <= Max Pain <= Call Wall：多空對稱，Max Pain 居中央，週三結算日具強烈結算引力吸附，適合 Iron Condor 雙賣鐵鷹 (4腳)';
+      mpBadgeEl.title = '【型態 B: 對稱健康箱體】Put Wall <= Max Pain <= Call Wall：多空對稱，Max Pain 居中央，週三結算日具強烈結算引力吸附，適合 Iron Condor 雙賣鐵鷹 (4腳)';
     } else {
-      // 🟢 型態 C：空頭恐慌避險 (Put Wall << Max Pain)
-      mpBadgeEl.innerText = '🟢 【型態 C：空頭恐慌避險】';
+      // 🟢 型態 C：恐慌避險 / 下檔開天窗 (Put Wall << Max Pain)
+      mpBadgeEl.innerText = '🟢 【型態 C：恐慌避險 / 下檔開天窗】';
       mpBadgeEl.style.background = 'rgba(0, 230, 118, 0.18)';
       mpBadgeEl.style.color = '#00e676';
       mpBadgeEl.style.border = '1px solid #00e676';
-      mpBadgeEl.title = 'Put Wall << Max Pain：深價外 Put 避險強烈，下檔波動率升，建議 Bear Call Spread 防禦或微台順勢空';
+      mpBadgeEl.title = isBearish
+        ? '⚠️【C3: 順風避險大崩盤】外資大倒貨 ✕ 下檔開天窗，做市商負 Gamma 踩踏追殺，嚴禁摸底接刀！'
+        : '【型態 C: 恐慌避險/下檔開天窗】深價外 Put 避險強烈，下檔波動率升，建議 Bear Call Spread 防禦或微台順勢空';
     }
   }
 

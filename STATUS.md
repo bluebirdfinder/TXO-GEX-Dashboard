@@ -248,12 +248,14 @@
 
 ## 🎯 v47.0 核心更新亮點（Max Pain Spatial Topology & TWSE 21:00 Margin Maintenance Dual Session Split）
 
-### 🧲 1. Max Pain 空間籌碼結構拓撲 (Spatial Topology Matrix)
-- **動態 Badge 診斷與色彩標準 (符合台股紅多綠空)**：
-  - 🔴 **型態 A：痛點沉底 / 下檔磁吸拓撲** (`Max Pain < Put Wall`): 上方大額 Call OI 累積極重，最大痛點沉於低位；機構在近端 Put Wall 建立關鍵防守線。首防 Put Wall 建立 **Bull Put Spread【2腳】** (`Sell Put@Put Wall` / `Buy Put@Put Wall-200`)；若 5K 實體跌破 Put Wall 提防下檔 Max Pain 引力磁吸加速下探，順勢避險或追空看至 Max Pain。
+### 🧲 1. Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振實戰矩陣 (Spatial Topology Matrix)
+- **4 大空間幾何拓撲動態 Badge 與色彩標準**：
+  - 🔴 **型態 A：痛點沉底 / 懸空防守拓撲** (`Max Pain < Put Wall < Call Wall`): 市場最大痛點沉在低檔，近端 Put Wall 建立防守線。若籌碼偏多 (Level +1/+2) 為踩牆軋空；若籌碼偏空 (Level -1/-2) 則 Put Wall 脆弱，一旦跌破將順勢被下方 Max Pain 引力磁吸加速下殺！
   - 🟡 **型態 B：對稱健康箱體** (`Put Wall <= Max Pain <= Call Wall`): 多空對稱，Max Pain 居中央，週三結算引力吸附，適合 **Iron Condor 雙賣鐵鷹【4腳】**。
-  - 🟢 **型態 C：空頭恐慌避險** (`Put Wall << Max Pain`): 深價外 Put 避險強烈，下檔波動率升，建議 **Bear Call Spread【2腳】** 防禦或微台順勢空。
-- **UI 動態 Badge 與 Modal 內建教學指南**：頂部 MAX PAIN KPI 卡片整合動態 Badge 與 `🎓 拓撲診斷 ℹ️` 按鈕，單擊直達【判讀教學指南 Modal】第 4 區塊拓撲診斷對照表與 2腳/4腳精確下單 SOP。
+  - 🟢 **型態 C：恐慌避險 / 下檔開天窗** (`Put Wall << Max Pain ≈ Call Wall`): 深價外 Put 避險強烈，下檔支撐真空開天窗，波動率升，建議 **Bear Call Spread【2腳】** 防禦或微台順勢空。
+  - 🚀 **型態 D：極端軋空 / 痛點頂天** (`Put Wall < Call Wall < Max Pain`): 市場大額 Put 累積極重將痛點推至天際超越 Call Wall，做市商面臨雙重 Gamma 擠壓，引爆主升段飆漲軋空。
+- **12 種二維共振實戰矩陣 (空間幾何 ✕ 籌碼強度 Level)**：
+  - 徹底解決「大跌行情卻死板判定多頭軋空」的認知矛盾，在 UI Badge、Tooltip 與 Modal 診斷表格中提供 12 種全情境精確 SOP 指引（如 A1 踩牆軋空、A3 假支撐磁吸下殺、C1 恐慌 V 轉、C3 順風避險大崩盤、D1 歷史級破裂軋空等）。
 
 ### 📊 2. 融資維持率 21:00 TWSE 清算時序與夜盤雙軌分離
 - **夜盤 Session 嚴謹分離**：個股在夜盤休市無成交價與信用交易變動，標示 `- (非交易時段)` 與 `夜盤休市無數據`。
