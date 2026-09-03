@@ -1,10 +1,23 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.5)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.6)
 
-**當前版本**：`v50.5` (2026-09-03 台指選擇權造市商 21 章量化實戰手冊與 Covered Call 完全體版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.5)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.5)
+**當前版本**：`v50.6` (2026-09-03 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.6)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.6)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
+
+---
+
+## 🎯 v50.6 核心更新亮點 (Max Pain 2D Resonance 12-Scenario Matrix)
+
+### 🧲 1. 徹底消弭多空矛盾：二維共振 12 種全情境實戰矩陣 (Spatial Topology ✕ Institutional Bias)
+- **4 大空間幾何拓撲 (X軸)**：
+  - 🔴 **型態 A【痛點沉底 / 懸空防守拓撲】** (`Max Pain < Put Wall < Call Wall`): 痛點沉在低位，近端 Put Wall 建立防守線。若籌碼偏多 (Level +1/+2) 為踩牆軋空；若籌碼偏空 (Level -1/-2) 則 Put Wall 脆弱，一旦跌破將被下方 Max Pain 引力磁吸加速下殺！
+  - 🟡 **型態 B【對稱健康箱體拓撲】** (`Put Wall <= Max Pain <= Call Wall`): 多空對稱，Max Pain 居中央，週三結算引力吸附，適合 Iron Condor 雙賣鐵鷹。
+  - 🟢 **型態 C【恐慌避險 / 下檔開天窗拓撲】** (`Put Wall << Max Pain ≈ Call Wall`): 深價外 Put 避險強烈，下檔支撐真空開天窗，Bear Call Spread 空差防禦。
+  - 🚀 **型態 D【極端軋空 / 痛點頂天拓撲】** (`Put Wall < Call Wall < Max Pain`): 市場大額 Put 累積極重將痛點推至天際超越 Call Wall，做市商面臨雙重 Gamma 擠壓，引爆主升段飆漲軋空。
+- **12 種全情境交叉共振**：於 `index.html` 拓撲診斷區塊與 `docs/OPTIONS_QUANT_PLAYBOOK.md` 第 4.5 節完整收錄 A1 踩牆軋空、A3 假支撐磁吸下殺、C1 恐慌 V 轉、C3 順風避險大崩盤、D1 歷史級破裂軋空等 12 種實戰指引！
+- **動態 Tooltip 警報連動**：`app.js` 動態讀取法人籌碼強度，在滑鼠懸停時即刻呈現當前二維共振代號與精準處置 SOP。
 
 ---
 

@@ -1,11 +1,24 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v50.5)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v50.6)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 輝哥 100% 現貨本位不開槓桿週週收息 ✦ 📅 方案 B：本週重大市場焦點週報 (Python 自動排程即時生成) ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ VIX 雙軌數據引擎 (TAIFEX VIX ✕ 美股 ^VIX) ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 波動率四級市場情緒評級 ✦ VIX 互動式對策彈窗 ✦ TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關
+> 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 輝哥 100% 現貨本位不開槓桿週週收息 ✦ 📅 方案 B：本週重大市場焦點週報 (Python 自動排程即時生成) ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ VIX 雙軌數據引擎 (TAIFEX VIX ✕ 美股 ^VIX) ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 波動率四級市場情緒評級 ✦ VIX 互動式對策彈窗 ✦ TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v50.5-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v50.6-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+---
+
+## 🌟 v50.6 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振實戰矩陣
+
+### 🧲 1. 徹底消弭多空矛盾：二維共振 12 種全情境實戰矩陣 (Spatial Topology ✕ Institutional Bias)
+- **4 大空間幾何拓撲 (X軸)**：
+  - 🔴 **型態 A【痛點沉底 / 懸空防守拓撲】** (`Max Pain < Put Wall < Call Wall`)：痛點沉在低位，近端 Put Wall 建立防守線。若籌碼偏多 (Level +1/+2) 為踩牆軋空；若籌碼偏空 (Level -1/-2) 則 Put Wall 脆弱，一旦跌破將被下方 Max Pain 引力磁吸加速下殺！
+  - 🟡 **型態 B【對稱健康箱體拓撲】** (`Put Wall <= Max Pain <= Call Wall`)：多空對稱，Max Pain 居中央，週三結算引力吸附，適合 Iron Condor 雙賣鐵鷹。
+  - 🟢 **型態 C【恐慌避險 / 下檔開天窗拓撲】** (`Put Wall << Max Pain ≈ Call Wall`)：深價外 Put 避險強烈，下檔支撐真空開天窗，Bear Call Spread 空差防禦。
+  - 🚀 **型態 D【極端軋空 / 痛點頂天拓撲】** (`Put Wall < Call Wall < Max Pain`)：市場大額 Put 累積極重將痛點推至天際超越 Call Wall，做市商面臨雙重 Gamma 擠壓，引爆主升段飆漲軋空。
+- **12 種全情境交叉共振**：於 `index.html` 拓撲診斷區塊與 `docs/OPTIONS_QUANT_PLAYBOOK.md` 第 4.5 節完整收錄 A1 踩牆軋空、A3 假支撐磁吸下殺、C1 恐慌 V 轉、C3 順風避險大崩盤、D1 歷史級破裂軋空等 12 種實戰指引！
+- **動態 Tooltip 警報連動**：`app.js` 動態讀取法人籌碼強度，在滑鼠懸停時即刻呈現當前二維共振代號與精準處置 SOP。
 
 ---
 
