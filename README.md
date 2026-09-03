@@ -216,7 +216,7 @@
   - ☕ `週五/週末定案版 (週末休市)`
 
 ### 📸 3. Max Pain 三大空間型態社群圖卡動態對齊
-- 社群圖卡 P1 卡片 7 加入 Max Pain 空間型態標籤（🟢 多頭強勢軋空型 / 🟡 箱體沉積結算引力型 / 🔴 恐慌避險暴跌型），與網頁版完全對齊。
+- 社群圖卡 P1 卡片 7 加入 Max Pain 空間型態標籤（🔴 痛點沉底/下檔磁吸型 / 🟡 箱體沉積結算引力型 / 🟢 恐慌避險暴跌型），與網頁版完全對齊。
 
 ---
 
@@ -269,7 +269,7 @@
 
 ### 🧲 1. Max Pain 空間籌碼結構拓撲 (Spatial Topology Matrix)
 - **動態 Badge 診斷與色彩標準 (符合台股紅多綠空)**：
-  - 🔴 **型態 A：多頭強勢軋空** (`Max Pain < Put Wall`): 上方 Call OI 大量累積，近端 Put Wall 護盤，首防 Put Wall 建立 **Bull Put Spread【2腳】** (`Sell Put@Put Wall` / `Buy Put@Put Wall-200`)。
+  - 🔴 **型態 A：痛點沉底 / 下檔磁吸拓撲** (`Max Pain < Put Wall`): 上方大額 Call OI 累積極重，最大痛點沉於低位；機構在近端 Put Wall 建立關鍵防守線。首防 Put Wall 建立 **Bull Put Spread【2腳】** (`Sell Put@Put Wall` / `Buy Put@Put Wall-200`)；若 5K 實體跌破 Put Wall 提防下檔 Max Pain 引力磁吸加速下探，順勢避險或追空看至 Max Pain。
   - 🟡 **型態 B：對稱健康箱體** (`Put Wall <= Max Pain <= Call Wall`): 多空對稱，Max Pain 居中央，週三結算引力吸附，適合 **Iron Condor 雙賣鐵鷹【4腳】**。
   - 🟢 **型態 C：空頭恐慌避險** (`Put Wall << Max Pain`): 深價外 Put 避險強烈，下檔波動率升，建議 **Bear Call Spread【2腳】** 防禦或微台順勢空。
 - **UI 互動與 Modal 內建教學指南**：頂部 MAX PAIN KPI 卡片新增動態 Badge 與 `🎓 拓撲診斷 ℹ️` 按鈕，單擊直達【判讀教學指南 Modal】第 4 區塊拓撲診斷對照表與 2腳/4腳精確下單 SOP。

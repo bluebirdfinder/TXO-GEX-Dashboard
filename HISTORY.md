@@ -177,7 +177,7 @@
   - **三大法人合計**：`合計` (如 `+579.13 億 TWD`)。
 
 ### 🚀 v47.0 Max Pain 空間籌碼結構拓撲 & 融資維持率 21:00 TWSE 雙軌清算分離 (2026-08-26)
-- **Max Pain 空間籌碼結構拓撲 (Spatial Topology Matrix)**：依據 `Max Pain`、`Put Wall` 與 `Call Wall` 相對空間位置動態判定 🔴 型態 A (多頭強勢軋空 / `Max Pain < Put Wall`)、🟡 型態 B (對稱健康箱體 / `Put Wall <= Max Pain <= Call Wall`) 與 🟢 型態 C (空頭恐慌避險 / `Put Wall << Max Pain`)，符合台股紅多綠空標準色彩。
+- **Max Pain 空間籌碼結構拓撲 (Spatial Topology Matrix)**：依據 `Max Pain`、`Put Wall` 與 `Call Wall` 相對空間位置動態判定 🔴 型態 A (痛點沉底/下檔磁吸 / `Max Pain < Put Wall`)、🟡 型態 B (對稱健康箱體 / `Put Wall <= Max Pain <= Call Wall`) 與 🟢 型態 C (空頭恐慌避險 / `Put Wall << Max Pain`)，符合台股紅多綠空標準色彩。
 - **UI 動態 Badge 與 Modal 內建教學指南**：頂部 MAX PAIN KPI 卡片整合動態 Badge 與 `🎓 拓撲診斷 ℹ️` 按鈕，單擊直達【判讀教學指南 Modal】第 4 區塊拓撲診斷對照表與 2腳/4腳精確下單 SOP。
 - **融資維持率 21:00 TWSE 清算時序與夜盤雙軌分離**：
   - **夜盤 Session 嚴謹分離**：個股在夜盤休市無成交價與信用交易變動，標示 `- (非交易時段)` 與 `夜盤休市無數據`。

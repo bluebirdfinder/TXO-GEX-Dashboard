@@ -288,7 +288,7 @@ def build_card1_html(data, avatar_url, qr_ig_url="", qr_threads_url=""):
     pc_badge = '大勝' if pc_ratio > 115 else ('偏多看撐' if pc_ratio > 105 else '偏空看壓')
 
     if max_pain < put_wall:
-        mp_topology_text = "🔴 【型態 A：多頭強勢軋空】"
+        mp_topology_text = "🔴 【型態 A：痛點沉底 / 下檔磁吸】"
         mp_topology_bg = "rgba(239, 68, 68, 0.18)"
         mp_topology_color = "#ef4444"
         mp_topology_border = "#ef4444"

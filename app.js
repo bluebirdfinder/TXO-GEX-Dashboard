@@ -630,12 +630,12 @@ function renderDashboard() {
   const mpBadgeEl = document.getElementById('stat-mp-topology-badge');
   if (mpBadgeEl) {
     if (mpVal < pwVal) {
-      // 🔴 型態 A：多頭強勢軋空 (Max Pain < Put Wall)
-      mpBadgeEl.innerText = '🔴 【型態 A：多頭強勢軋空】';
+      // 🔴 型態 A：痛點沉底 / 下檔磁吸 (Max Pain < Put Wall)
+      mpBadgeEl.innerText = '🔴 【型態 A：痛點沉底 / 下檔磁吸】';
       mpBadgeEl.style.background = 'rgba(239, 68, 68, 0.18)';
       mpBadgeEl.style.color = '#ef4444';
       mpBadgeEl.style.border = '1px solid #ef4444';
-      mpBadgeEl.title = 'Max Pain < Put Wall：大額 Call OI 拖低痛點，近端 Put Wall 為首要護盤牆。勝率最高做法為首防 Put Wall 建立 Bull Put Spread (2腳)';
+      mpBadgeEl.title = 'Max Pain < Put Wall：上方大額 Call OI 累積極重，最大痛點沉於低位；機構在近端 Put Wall 建立關鍵防守線。首防 Put Wall 建立 Bull Put Spread (2腳)；若實體跌破 Put Wall 提防下檔磁吸下探';
     } else if (pwVal <= mpVal && mpVal <= cwVal) {
       // 🟡 型態 B：對稱健康箱體 (Put Wall <= Max Pain <= Call Wall)
       mpBadgeEl.innerText = '🟡 【型態 B：對稱健康箱體】';
