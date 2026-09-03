@@ -937,17 +937,20 @@ def generate_bluebird_social_card(gex_data_path=None, output_dir=None):
             page = browser.new_page(viewport={"width": 1080, "height": 1080}, device_scale_factor=2)
 
             # Card 1 Snapshot 1080x1080 Square
-            page.goto(f"file:///{tmp_h1.replace('\\', '/')}")
+            url1 = f"file:///{tmp_h1.replace(os.sep, '/')}" if os.sep != '/' else f"file:///{tmp_h1}"
+            page.goto(url1)
             page.wait_for_timeout(300)
             page.screenshot(path=card1_path)
 
             # Card 2 Snapshot 1080x1080 Square
-            page.goto(f"file:///{tmp_h2.replace('\\', '/')}")
+            url2 = f"file:///{tmp_h2.replace(os.sep, '/')}" if os.sep != '/' else f"file:///{tmp_h2}"
+            page.goto(url2)
             page.wait_for_timeout(1500)  # Wait for Plotly animation/rendering
             page.screenshot(path=card2_path)
 
             # Card 3 Snapshot 1080x1080 Square
-            page.goto(f"file:///{tmp_h3.replace('\\', '/')}")
+            url3 = f"file:///{tmp_h3.replace(os.sep, '/')}" if os.sep != '/' else f"file:///{tmp_h3}"
+            page.goto(url3)
             page.wait_for_timeout(300)
             page.screenshot(path=card3_path)
 

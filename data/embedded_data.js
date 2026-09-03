@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 45817.6,
     "day_total_vex": 3021.73
   },
-  "last_updated_time": "2026-09-03 20:13",
+  "last_updated_time": "2026-09-03 20:22",
   "spot_price": 45857.66,
   "spot_change": -307.06,
   "spot_change_pct": -0.67,
@@ -1320,7 +1320,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.1,
       "margin_maint_published": true,
       "taifex_vix": 22.46,
-      "us_vix": 16.5,
+      "us_vix": 16.47,
       "total_gex": [
         {
           "strike": 45000,
@@ -2607,7 +2607,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.1,
       "margin_maint_published": false,
       "taifex_vix": 22.86,
-      "us_vix": 16.3,
+      "us_vix": 16.27,
       "total_gex": [
         {
           "strike": 45000,
@@ -3894,7 +3894,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.0,
       "margin_maint_published": true,
       "taifex_vix": 23.56,
-      "us_vix": 16.0,
+      "us_vix": 15.97,
       "total_gex": [
         {
           "strike": 45000,
@@ -5181,7 +5181,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.0,
       "margin_maint_published": false,
       "taifex_vix": 24.06,
-      "us_vix": 15.8,
+      "us_vix": 15.77,
       "total_gex": [
         {
           "strike": 45000,
@@ -6468,7 +6468,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 24.46,
-      "us_vix": 15.6,
+      "us_vix": 15.57,
       "total_gex": [
         {
           "strike": 45000,
@@ -7755,7 +7755,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 24.96,
-      "us_vix": 15.3,
+      "us_vix": 15.27,
       "total_gex": [
         {
           "strike": 45000,
@@ -9042,7 +9042,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 25.26,
-      "us_vix": 15.1,
+      "us_vix": 15.07,
       "total_gex": [
         {
           "strike": 45000,
@@ -10329,7 +10329,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 25.46,
-      "us_vix": 15.2,
+      "us_vix": 15.17,
       "total_gex": [
         {
           "strike": 45000,
@@ -11616,7 +11616,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 146.0,
       "margin_maint_published": true,
       "taifex_vix": 25.66,
-      "us_vix": 15.4,
+      "us_vix": 15.37,
       "total_gex": [
         {
           "strike": 45000,
@@ -12903,7 +12903,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 146.0,
       "margin_maint_published": false,
       "taifex_vix": 25.66,
-      "us_vix": 15.4,
+      "us_vix": 15.37,
       "total_gex": [
         {
           "strike": 45000,
@@ -14192,7 +14192,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 24.46,
-      "us_vix": 15.6,
+      "us_vix": 15.57,
       "total_gex": [
         {
           "strike": 45000,
@@ -15479,7 +15479,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 24.96,
-      "us_vix": 15.3,
+      "us_vix": 15.27,
       "total_gex": [
         {
           "strike": 45000,
@@ -16766,7 +16766,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 25.26,
-      "us_vix": 15.1,
+      "us_vix": 15.07,
       "total_gex": [
         {
           "strike": 45000,
@@ -18053,7 +18053,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 25.46,
-      "us_vix": 15.2,
+      "us_vix": 15.17,
       "total_gex": [
         {
           "strike": 45000,
@@ -19340,7 +19340,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 146.0,
       "margin_maint_published": true,
       "taifex_vix": 25.66,
-      "us_vix": 15.4,
+      "us_vix": 15.37,
       "total_gex": [
         {
           "strike": 45000,
@@ -20627,7 +20627,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 146.0,
       "margin_maint_published": false,
       "taifex_vix": 25.66,
-      "us_vix": 15.4,
+      "us_vix": 15.37,
       "total_gex": [
         {
           "strike": 45000,
@@ -22157,9 +22157,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/03 (四)",
-        "price": 99.12,
-        "change": -0.44,
-        "pct": -0.44
+        "price": 99.13,
+        "change": -0.43,
+        "pct": -0.43
       },
       "usdjpy": {
         "date": "09/03 (四)",
@@ -22235,16 +22235,16 @@ window.GEX_EMBEDDED_DATA = {
       ],
       "dxy": [
         {
-          "date": "08/28 (五)",
-          "price": 99.7,
-          "change": 0.54,
-          "pct": 0.54
+          "date": "08/27 (四)",
+          "price": 99.16,
+          "change": -0.01,
+          "pct": -0.01
         },
         {
           "date": "08/31 (一)",
           "price": 99.43,
-          "change": -0.27,
-          "pct": -0.27
+          "change": 0.27,
+          "pct": 0.27
         },
         {
           "date": "09/01 (二)",
@@ -22260,13 +22260,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/03 (四)",
-          "price": 99.12,
-          "change": -0.44,
-          "pct": -0.44
+          "price": 99.13,
+          "change": -0.43,
+          "pct": -0.43
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.75</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.12</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>157.16</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.75</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.13</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>157.16</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": 1538,
@@ -22325,7 +22325,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -9616.19,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-03 20:13",
+    "last_updated": "2026-09-03 20:22",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -28843,9 +28843,9 @@ window.GEX_EMBEDDED_DATA = {
     "taifex_vix": 25.66,
     "taifex_vix_change": -0.43,
     "taifex_vix_change_pct": -1.65,
-    "us_vix": 15.4,
-    "us_vix_change": 0.2,
-    "us_vix_change_pct": 1.32,
+    "us_vix": 15.37,
+    "us_vix_change": 0.17,
+    "us_vix_change_pct": 1.12,
     "regime_tag": "🔴 極度恐慌 (Extreme Panic)",
     "regime_color": "#ff5252",
     "regime_desc": "恐慌爆發，追跌避險賣壓沉重。觀望等待 VIX 轉折；回落時為機構級建倉爆賺期。",
