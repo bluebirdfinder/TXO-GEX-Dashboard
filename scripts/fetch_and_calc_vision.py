@@ -88,7 +88,7 @@ def fetch_official_taifex_tx_prices():
                     try:
                         p = float(cols[5].replace(',', ''))
                         if p > 0:
-                            if day_tx_close is None or abs(p - day_tx_close) < 600:
+                            if p > 10000 and len(cols[1]) == 6 and cols[1].isdigit() and '/' not in cols[1]:
                                 night_tx_close = p
                                 print(f"[OK] Official TAIFEX Night TX ({cols[1]}): {night_tx_close}")
                                 break
@@ -98,7 +98,7 @@ def fetch_official_taifex_tx_prices():
         print(f"[Warning] Night TX fetch error: {e}")
 
     if night_tx_close is None and day_tx_close is not None:
-        night_tx_close = day_tx_close + 239.0
+        night_tx_close = day_tx_close
 
     return day_tx_close or 45027.0, night_tx_close or 45266.0
 
@@ -2273,7 +2273,7 @@ def generate_gex_payload():
         "taifex_vix": latest_t_vix, "us_vix": latest_u_vix
     }
 
-    active_night_spot = night_txf_price if (night_txf_price is not None and night_txf_price > 0 and abs(night_txf_price - day_txf_price) < 600) else spot_price
+    active_night_spot = night_txf_price if (night_txf_price is not None and night_txf_price > 0 and night_txf_price > 10000) else spot_price
 
     t0_night_item = {
         "id": "t0_night", 
