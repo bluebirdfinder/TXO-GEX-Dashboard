@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 46718.3,
     "day_total_vex": 2846.91
   },
-  "last_updated_time": "2026-09-04 15:08",
+  "last_updated_time": "2026-09-04 20:03",
   "spot_price": 46551.13,
   "spot_change": 693.47,
   "spot_change_pct": 1.51,
@@ -1320,7 +1320,7 @@
       "margin_maint_stock": 144.1,
       "margin_maint_published": true,
       "taifex_vix": 20.8,
-      "us_vix": 15.42,
+      "us_vix": 15.21,
       "total_gex": [
         {
           "strike": 45700,
@@ -2607,7 +2607,7 @@
       "margin_maint_stock": 144.1,
       "margin_maint_published": false,
       "taifex_vix": 21.2,
-      "us_vix": 15.22,
+      "us_vix": 15.01,
       "total_gex": [
         {
           "strike": 45700,
@@ -3894,7 +3894,7 @@
       "margin_maint_stock": 143.0,
       "margin_maint_published": true,
       "taifex_vix": 21.9,
-      "us_vix": 14.92,
+      "us_vix": 14.71,
       "total_gex": [
         {
           "strike": 45700,
@@ -5181,7 +5181,7 @@
       "margin_maint_stock": 143.0,
       "margin_maint_published": false,
       "taifex_vix": 22.4,
-      "us_vix": 14.72,
+      "us_vix": 14.51,
       "total_gex": [
         {
           "strike": 45700,
@@ -6468,7 +6468,7 @@
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 22.8,
-      "us_vix": 14.52,
+      "us_vix": 14.31,
       "total_gex": [
         {
           "strike": 45700,
@@ -7755,7 +7755,7 @@
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 23.3,
-      "us_vix": 14.22,
+      "us_vix": 14.01,
       "total_gex": [
         {
           "strike": 45700,
@@ -9042,7 +9042,7 @@
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 23.6,
-      "us_vix": 14.02,
+      "us_vix": 13.81,
       "total_gex": [
         {
           "strike": 45700,
@@ -10329,7 +10329,7 @@
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 23.8,
-      "us_vix": 14.12,
+      "us_vix": 13.91,
       "total_gex": [
         {
           "strike": 45700,
@@ -11616,7 +11616,7 @@
       "margin_maint_stock": 142.4,
       "margin_maint_published": true,
       "taifex_vix": 24.0,
-      "us_vix": 14.32,
+      "us_vix": 14.11,
       "total_gex": [
         {
           "strike": 45700,
@@ -12903,7 +12903,7 @@
       "margin_maint_stock": 142.4,
       "margin_maint_published": false,
       "taifex_vix": 24.0,
-      "us_vix": 14.32,
+      "us_vix": 14.11,
       "total_gex": [
         {
           "strike": 45700,
@@ -14192,7 +14192,7 @@
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 22.8,
-      "us_vix": 14.52,
+      "us_vix": 14.31,
       "total_gex": [
         {
           "strike": 45700,
@@ -15479,7 +15479,7 @@
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 23.3,
-      "us_vix": 14.22,
+      "us_vix": 14.01,
       "total_gex": [
         {
           "strike": 45700,
@@ -16766,7 +16766,7 @@
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 23.6,
-      "us_vix": 14.02,
+      "us_vix": 13.81,
       "total_gex": [
         {
           "strike": 45700,
@@ -18053,7 +18053,7 @@
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 23.8,
-      "us_vix": 14.12,
+      "us_vix": 13.91,
       "total_gex": [
         {
           "strike": 45700,
@@ -19340,7 +19340,7 @@
       "margin_maint_stock": 142.4,
       "margin_maint_published": true,
       "taifex_vix": 24.0,
-      "us_vix": 14.32,
+      "us_vix": 14.11,
       "total_gex": [
         {
           "strike": 45700,
@@ -20627,7 +20627,7 @@
       "margin_maint_stock": 142.4,
       "margin_maint_published": false,
       "taifex_vix": 24.0,
-      "us_vix": 14.32,
+      "us_vix": 14.11,
       "total_gex": [
         {
           "strike": 45700,
@@ -21932,10 +21932,10 @@
       "itrust_fut_net": 76174,
       "dealer_fut_net": -697,
       "foreign_stock_net": 562.13,
-      "trust_stock_net": 2.89,
-      "itrust_stock_net": 2.89,
+      "trust_stock_net": -9.11,
+      "itrust_stock_net": -9.11,
       "dealer_stock_net": 63.7,
-      "total_stock_net": 628.72,
+      "total_stock_net": 616.72,
       "foreign_opt_net": -2.95,
       "trust_opt_net": -2.86,
       "itrust_opt_net": -2.86,
@@ -22133,7 +22133,7 @@
   },
   "executive_digest": {
     "futures_summary": "📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：前五大淨部位 <code>-7,694 口</code>、前十大 <code>-21,926 口</code>，特定法人淨部位 <code>-5,194 口</code>。外資台指期未平倉空單 <code>-82,389 口</code>（單日變動 <code>+140 口</code>，約合 <code>13.1 億 TWD</code> 契約金額）。⚖️ 中性觀望 / 微幅調整。",
-    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+628.72 億 TWD</code>！其中「外資 <code>+562.13 億</code>」、「投信 <code>+2.89 億</code>」與「自營商 <code>+63.70 億</code>」。",
+    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+616.72 億 TWD</code>！其中「外資 <code>+562.13 億</code>」、「投信 <code>-9.11 億</code>」與「自營商 <code>+63.70 億</code>」。",
     "options_structure": "🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>-3.24 億</code> 與 Put 賣權 <code>+0.29 億</code>；投信買權 <code>-2.86 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>46,800 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>46,400 點</code>。",
     "sentiment_audit": "📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>113.2%</code> (🔴 偏多看撐)，莊家下檔防守支撐力道尚存。",
     "settlement_outlook": "🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：現價 (<code>46,487.0</code>) 處於 Zero Gamma (<code>46,618.4 點</code>) 下方之「負 Gamma 避險助跌區」。留意 <code>46,400 點</code> Put Wall 支撐關卡防守，若失守恐引發多頭停損賣壓。"
@@ -22151,21 +22151,21 @@
     "current_fx": {
       "usdtwd": {
         "date": "09/04 (五)",
-        "price": 31.73,
-        "change": -0.02,
-        "pct": -0.06
+        "price": 31.63,
+        "change": -0.12,
+        "pct": -0.38
       },
       "dxy": {
         "date": "09/04 (五)",
-        "price": 99.01,
-        "change": 0.01,
-        "pct": 0.01
+        "price": 99.07,
+        "change": 0.07,
+        "pct": 0.07
       },
       "usdjpy": {
         "date": "09/04 (五)",
-        "price": 156.31,
-        "change": -0.85,
-        "pct": -0.54
+        "price": 156.38,
+        "change": -0.78,
+        "pct": -0.5
       }
     },
     "fx_5day_history": {
@@ -22196,9 +22196,9 @@
         },
         {
           "date": "09/04 (五)",
-          "price": 31.73,
-          "change": -0.02,
-          "pct": -0.06
+          "price": 31.63,
+          "change": -0.12,
+          "pct": -0.38
         }
       ],
       "usdjpy": [
@@ -22228,9 +22228,9 @@
         },
         {
           "date": "09/04 (五)",
-          "price": 156.31,
-          "change": -0.85,
-          "pct": -0.54
+          "price": 156.38,
+          "change": -0.78,
+          "pct": -0.5
         }
       ],
       "dxy": [
@@ -22260,13 +22260,13 @@
         },
         {
           "date": "09/04 (五)",
-          "price": 99.01,
-          "change": 0.01,
-          "pct": 0.01
+          "price": 99.07,
+          "change": 0.07,
+          "pct": 0.07
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.73</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.01</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>156.31</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bull\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>🔥 <span style=\"color: var(--call-color); font-weight: 700;\">台幣強勢升值 (熱錢顯著匯入)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span>（單日升值 <span style=\"color: var(--call-color); font-weight: 700;\">0.12 元</span>）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.07</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>156.38</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -816,
@@ -22325,7 +22325,7 @@
   "total_gex_plus": -7987.31,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-04 15:08",
+    "last_updated": "2026-09-04 20:03",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -22881,8 +22881,8 @@
       "has_night": false,
       "liquidity": "中",
       "spot_price": 40.5,
-      "fut_price": 40.5,
-      "basis": 0.0,
+      "fut_price": 41.01,
+      "basis": 0.51,
       "basis_tag": "🔴 正價差",
       "change_pct": -0.05,
       "point_contrib": -0.0,
@@ -22903,8 +22903,8 @@
       "has_night": false,
       "liquidity": "中",
       "spot_price": 37.74,
-      "fut_price": 37.74,
-      "basis": 0.0,
+      "fut_price": 38.2,
+      "basis": 0.46,
       "basis_tag": "🔴 正價差",
       "change_pct": -0.47,
       "point_contrib": -0.0,
@@ -22991,8 +22991,8 @@
       "has_night": false,
       "liquidity": "中",
       "spot_price": 27.38,
-      "fut_price": 27.38,
-      "basis": 0.0,
+      "fut_price": 27.71,
+      "basis": 0.33,
       "basis_tag": "🔴 正價差",
       "change_pct": -0.33,
       "point_contrib": -0.0,
@@ -23013,8 +23013,8 @@
       "has_night": false,
       "liquidity": "中",
       "spot_price": 16.01,
-      "fut_price": 16.01,
-      "basis": 0.0,
+      "fut_price": 16.19,
+      "basis": 0.18,
       "basis_tag": "🔴 正價差",
       "change_pct": -0.44,
       "point_contrib": -0.0,
@@ -23035,8 +23035,8 @@
       "has_night": false,
       "liquidity": "中",
       "spot_price": 18.06,
-      "fut_price": 18.06,
-      "basis": 0.0,
+      "fut_price": 18.07,
+      "basis": 0.01,
       "basis_tag": "🔴 正價差",
       "change_pct": -0.71,
       "point_contrib": -0.0,
@@ -24333,8 +24333,8 @@
       "has_night": false,
       "liquidity": "中",
       "spot_price": 18.53,
-      "fut_price": 18.53,
-      "basis": 0.0,
+      "fut_price": 18.88,
+      "basis": 0.35,
       "basis_tag": "🔴 正價差",
       "change_pct": -0.05,
       "point_contrib": -0.0,
@@ -28123,8 +28123,8 @@
       "change_pct": 0.53,
       "point_contrib": 0.0,
       "volume": 25,
-      "ex_date": "06/16",
-      "ex_dividend": 1.0,
+      "ex_date": "09/16",
+      "ex_dividend": 1.1,
       "ex_type": "除息",
       "foreign_net": 104,
       "dealer_net": -38,
@@ -28359,9 +28359,9 @@
       "has_night": false,
       "liquidity": "中",
       "spot_price": 100.0,
-      "fut_price": 100.0,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
+      "fut_price": 14.29,
+      "basis": -85.71,
+      "basis_tag": "🟢 逆價差",
       "change_pct": 0.0,
       "point_contrib": 0.0,
       "volume": 25,
@@ -28381,9 +28381,9 @@
       "has_night": false,
       "liquidity": "中",
       "spot_price": 100.0,
-      "fut_price": 100.0,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
+      "fut_price": 27.11,
+      "basis": -72.89,
+      "basis_tag": "🟢 逆價差",
       "change_pct": 0.0,
       "point_contrib": 0.0,
       "volume": 25,
@@ -28447,8 +28447,8 @@
       "has_night": false,
       "liquidity": "中",
       "spot_price": 138.25,
-      "fut_price": 138.25,
-      "basis": 0.0,
+      "fut_price": 141.0,
+      "basis": 2.75,
       "basis_tag": "🔴 正價差",
       "change_pct": 0.0,
       "point_contrib": 0.0,
@@ -28843,9 +28843,9 @@
     "taifex_vix": 24.0,
     "taifex_vix_change": -1.66,
     "taifex_vix_change_pct": -6.47,
-    "us_vix": 14.32,
-    "us_vix_change": 0.0,
-    "us_vix_change_pct": 0.0,
+    "us_vix": 14.11,
+    "us_vix_change": -0.21,
+    "us_vix_change_pct": -1.47,
     "regime_tag": "🔴 極度恐慌 (Extreme Panic)",
     "regime_color": "#ff5252",
     "regime_desc": "恐慌爆發，追跌避險賣壓沉重。觀望等待 VIX 轉折；回落時為機構級建倉爆賺期。",
