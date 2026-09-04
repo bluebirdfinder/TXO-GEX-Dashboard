@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 46718.3,
     "day_total_vex": 2846.91
   },
-  "last_updated_time": "2026-09-04 20:03",
+  "last_updated_time": "2026-09-04 20:13",
   "spot_price": 46551.13,
   "spot_change": 693.47,
   "spot_change_pct": 1.51,
@@ -1320,7 +1320,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.1,
       "margin_maint_published": true,
       "taifex_vix": 20.8,
-      "us_vix": 15.21,
+      "us_vix": 15.22,
       "total_gex": [
         {
           "strike": 45700,
@@ -2607,7 +2607,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.1,
       "margin_maint_published": false,
       "taifex_vix": 21.2,
-      "us_vix": 15.01,
+      "us_vix": 15.02,
       "total_gex": [
         {
           "strike": 45700,
@@ -3894,7 +3894,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.0,
       "margin_maint_published": true,
       "taifex_vix": 21.9,
-      "us_vix": 14.71,
+      "us_vix": 14.72,
       "total_gex": [
         {
           "strike": 45700,
@@ -5181,7 +5181,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.0,
       "margin_maint_published": false,
       "taifex_vix": 22.4,
-      "us_vix": 14.51,
+      "us_vix": 14.52,
       "total_gex": [
         {
           "strike": 45700,
@@ -6468,7 +6468,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 22.8,
-      "us_vix": 14.31,
+      "us_vix": 14.32,
       "total_gex": [
         {
           "strike": 45700,
@@ -7755,7 +7755,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 23.3,
-      "us_vix": 14.01,
+      "us_vix": 14.02,
       "total_gex": [
         {
           "strike": 45700,
@@ -9042,7 +9042,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 23.6,
-      "us_vix": 13.81,
+      "us_vix": 13.82,
       "total_gex": [
         {
           "strike": 45700,
@@ -10329,7 +10329,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 23.8,
-      "us_vix": 13.91,
+      "us_vix": 13.92,
       "total_gex": [
         {
           "strike": 45700,
@@ -11616,7 +11616,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.4,
       "margin_maint_published": true,
       "taifex_vix": 24.0,
-      "us_vix": 14.11,
+      "us_vix": 14.12,
       "total_gex": [
         {
           "strike": 45700,
@@ -12903,7 +12903,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.4,
       "margin_maint_published": false,
       "taifex_vix": 24.0,
-      "us_vix": 14.11,
+      "us_vix": 14.12,
       "total_gex": [
         {
           "strike": 45700,
@@ -14192,7 +14192,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 22.8,
-      "us_vix": 14.31,
+      "us_vix": 14.32,
       "total_gex": [
         {
           "strike": 45700,
@@ -15479,7 +15479,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 23.3,
-      "us_vix": 14.01,
+      "us_vix": 14.02,
       "total_gex": [
         {
           "strike": 45700,
@@ -16766,7 +16766,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 23.6,
-      "us_vix": 13.81,
+      "us_vix": 13.82,
       "total_gex": [
         {
           "strike": 45700,
@@ -18053,7 +18053,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 23.8,
-      "us_vix": 13.91,
+      "us_vix": 13.92,
       "total_gex": [
         {
           "strike": 45700,
@@ -19340,7 +19340,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.4,
       "margin_maint_published": true,
       "taifex_vix": 24.0,
-      "us_vix": 14.11,
+      "us_vix": 14.12,
       "total_gex": [
         {
           "strike": 45700,
@@ -20627,7 +20627,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.4,
       "margin_maint_published": false,
       "taifex_vix": 24.0,
-      "us_vix": 14.11,
+      "us_vix": 14.12,
       "total_gex": [
         {
           "strike": 45700,
@@ -22157,9 +22157,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/04 (五)",
-        "price": 99.07,
-        "change": 0.07,
-        "pct": 0.07
+        "price": 99.05,
+        "change": 0.05,
+        "pct": 0.05
       },
       "usdjpy": {
         "date": "09/04 (五)",
@@ -22260,13 +22260,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/04 (五)",
-          "price": 99.07,
-          "change": 0.07,
-          "pct": 0.07
+          "price": 99.05,
+          "change": 0.05,
+          "pct": 0.05
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card bull\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>🔥 <span style=\"color: var(--call-color); font-weight: 700;\">台幣強勢升值 (熱錢顯著匯入)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span>（單日升值 <span style=\"color: var(--call-color); font-weight: 700;\">0.12 元</span>）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.07</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>156.38</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bull\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>🔥 <span style=\"color: var(--call-color); font-weight: 700;\">台幣強勢升值 (熱錢顯著匯入)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.63</span>（單日升值 <span style=\"color: var(--call-color); font-weight: 700;\">0.12 元</span>）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.05</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>156.38</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -816,
@@ -22325,7 +22325,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -7987.31,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-04 20:03",
+    "last_updated": "2026-09-04 20:13",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -28843,9 +28843,9 @@ window.GEX_EMBEDDED_DATA = {
     "taifex_vix": 24.0,
     "taifex_vix_change": -1.66,
     "taifex_vix_change_pct": -6.47,
-    "us_vix": 14.11,
-    "us_vix_change": -0.21,
-    "us_vix_change_pct": -1.47,
+    "us_vix": 14.12,
+    "us_vix_change": -0.2,
+    "us_vix_change_pct": -1.4,
     "regime_tag": "🔴 極度恐慌 (Extreme Panic)",
     "regime_color": "#ff5252",
     "regime_desc": "恐慌爆發，追跌避險賣壓沉重。觀望等待 VIX 轉折；回落時為機構級建倉爆賺期。",
