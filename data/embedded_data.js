@@ -1,6 +1,6 @@
 window.GEX_EMBEDDED_DATA = {
   "date": "2026-09-07",
-  "engine_version": "v50.7",
+  "engine_version": "v50.8",
   "session_type": "DAY",
   "session_name": "☀️ 日盤結算籌碼 (13:45 Close)",
   "session_shift": {
@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47517.8,
     "day_total_vex": 3452.7
   },
-  "last_updated_time": "2026-09-07 19:49",
+  "last_updated_time": "2026-09-07 20:06",
   "spot_price": 47326.27,
   "spot_change": 775.14,
   "spot_change_pct": 1.67,
@@ -21932,10 +21932,10 @@ window.GEX_EMBEDDED_DATA = {
       "itrust_fut_net": 75446,
       "dealer_fut_net": -2045,
       "foreign_stock_net": 883.08,
-      "trust_stock_net": 98.7,
-      "itrust_stock_net": 98.7,
+      "trust_stock_net": 87.24,
+      "itrust_stock_net": 87.24,
       "dealer_stock_net": 156.88,
-      "total_stock_net": 1138.65,
+      "total_stock_net": 1127.19,
       "foreign_opt_net": -3.79,
       "trust_opt_net": -4.32,
       "itrust_opt_net": -4.32,
@@ -22133,7 +22133,7 @@ window.GEX_EMBEDDED_DATA = {
   },
   "executive_digest": {
     "futures_summary": "📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：前五大淨部位 <code>-7,086 口</code>、前十大 <code>-21,489 口</code>，特定法人淨部位 <code>-5,669 口</code>。外資台指期未平倉空單 <code>-79,399 口</code>（單日變動 <code>+3,130 口</code>，約合 <code>297.2 億 TWD</code> 契約金額）。📈 顯著回補偏多。",
-    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+1138.65 億 TWD</code>！其中「外資 <code>+883.08 億</code>」、「投信 <code>+98.70 億</code>」與「自營商 <code>+156.88 億</code>」。",
+    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+1127.19 億 TWD</code>！其中「外資 <code>+883.08 億</code>」、「投信 <code>+87.24 億</code>」與「自營商 <code>+156.88 億</code>」。",
     "options_structure": "🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>-4.12 億</code> 與 Put 賣權 <code>+0.33 億</code>；投信買權 <code>-4.32 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>47,500 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>47,100 點</code>。",
     "sentiment_audit": "📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>113.2%</code> (🔴 偏多看撐)，莊家下檔防守支撐力道尚存。",
     "settlement_outlook": "🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：現價 (<code>47,182.0</code>) 處於 Zero Gamma (<code>47,317.8 點</code>) 下方之「負 Gamma 避險助跌區」。留意 <code>47,100 點</code> Put Wall 支撐關卡防守，若失守恐引發多頭停損賣壓。"
@@ -22157,9 +22157,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/07 (一)",
-        "price": 98.94,
-        "change": -0.22,
-        "pct": -0.22
+        "price": 98.96,
+        "change": -0.2,
+        "pct": -0.2
       },
       "usdjpy": {
         "date": "09/07 (一)",
@@ -22260,13 +22260,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/07 (一)",
-          "price": 98.94,
-          "change": -0.22,
-          "pct": -0.22
+          "price": 98.96,
+          "change": -0.2,
+          "pct": -0.2
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card bull\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>🔥 <span style=\"color: var(--call-color); font-weight: 700;\">台幣強勢升值 (熱錢顯著匯入)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.55</span>（單日升值 <span style=\"color: var(--call-color); font-weight: 700;\">0.08 元</span>）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.94</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>154.72</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bull\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>🔥 <span style=\"color: var(--call-color); font-weight: 700;\">台幣強勢升值 (熱錢顯著匯入)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.55</span>（單日升值 <span style=\"color: var(--call-color); font-weight: 700;\">0.08 元</span>）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.96</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>154.72</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": 1282,
@@ -22325,7 +22325,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -8112.09,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-07 19:49",
+    "last_updated": "2026-09-07 20:06",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
