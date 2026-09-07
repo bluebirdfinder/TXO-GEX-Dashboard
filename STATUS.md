@@ -1,10 +1,22 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.7)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.8)
 
-**當前版本**：`v50.7` (2026-09-07 TWSE 融資維持率發布狀態日期比對與開盤未公布狀態判定校正版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.7)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.7)
+**當前版本**：`v50.8` (2026-09-07 Playwright 2K 圖卡截圖管線硬核新鮮度過濾與雙向自動同步版)
+**過往版本**：`v50.7` (2026-09-07 TWSE 融資維持率發布狀態日期比對與開盤未公布狀態判定校正版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.8)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.8)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
+
+---
+
+## 🎯 v50.8 核心更新亮點 (Playwright 2K Hard Freshness Gatekeeper & Git Auto Sync)
+
+### 📸 1. Playwright 2K 高清圖卡截圖管線硬核新鮮度過濾
+- **硬核阻斷機制**：強化網頁 `#data-date` 與當日最新交易日之嚴格比對。工作日若經 10 次輪詢重試後仍為舊日期，強制阻斷並退出無頭瀏覽器，100% 避免過期圖卡推播。
+- **2K 畫質全套圖卡驗證**：產出 10 張 2K 高清圖卡，支援週選/月選動態頁籤切換。
+
+### 🔄 2. 雙向 Git Auto Commit & Push
+- 數據引擎更新完畢後自動提交並推送到 GitHub Pages，確保雲端儀表板與 Telegram 機器人零時差對齊。
 
 ---
 
