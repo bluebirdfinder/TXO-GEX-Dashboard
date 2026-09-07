@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v50.6"
+ENGINE_VERSION = "v50.7"
 
 import os
 import sys
@@ -257,22 +257,22 @@ def fetch_twse_margin_maintenance(target_date_str=None):
     Returns dict with margin maintenance flags, balances, and calculated ratios.
     """
     url = "https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?response=json"
+    now_tw = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
+    is_weekend = (now_tw.weekday() >= 5)
+    today_yyyymmdd = now_tw.strftime('%Y%m%d')
+    if not target_date_str:
+        target_date_str = today_yyyymmdd
+
     try:
         req = urllib.request.Request(url, headers=HEADERS)
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
             res = json.loads(resp.read().decode('utf-8'))
             stat = res.get('stat', '')
-            pub_date = res.get('date', '') # e.g. "20260828"
+            pub_date = res.get('date', '') # e.g. "20260904"
             
             if stat == 'OK' and pub_date:
-                now_tw = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
-                is_weekend = (now_tw.weekday() >= 5)
-                today_yyyymmdd = now_tw.strftime('%Y%m%d')
-                
-                if not target_date_str:
-                    target_date_str = today_yyyymmdd
-                    
-                is_published = True if (stat == 'OK' and pub_date) else False
+                # Strictly verify if TWSE published data matches the target session date
+                is_published = (pub_date == target_date_str)
                 
                 tables = res.get('tables', [])
                 if len(tables) > 0:
@@ -290,7 +290,7 @@ def fetch_twse_margin_maintenance(target_date_str=None):
                         maint_market = round(158.4 + (diff_bal * 0.03), 1)
                         maint_stock = round(144.1 + (diff_bal * 0.025), 1)
                         
-                        print(f"[OK] TWSE Official Margin MI_MARGN ({pub_date}): Published={is_published}, Balance={today_bal}億 ({diff_bal:+}億), Market Maint={maint_market}%")
+                        print(f"[OK] TWSE Official Margin MI_MARGN ({pub_date}): Published={is_published} (Target={target_date_str}), Balance={today_bal}億 ({diff_bal:+}億), Market Maint={maint_market}%")
                         return {
                             "is_published": is_published,
                             "pub_date": pub_date,
@@ -302,10 +302,8 @@ def fetch_twse_margin_maintenance(target_date_str=None):
     except Exception as e:
         print(f"[Warning] Failed to fetch TWSE MI_MARGN: {e}")
         
-    now_tw = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
-    is_weekend = (now_tw.weekday() >= 5)
     return {
-        "is_published": is_weekend or (now_tw.hour >= 20),
+        "is_published": False,
         "pub_date": "",
         "margin_balance_billion": 567.18,
         "margin_diff_billion": 7.26,
@@ -2256,7 +2254,8 @@ def generate_gex_payload():
         night_label = "🌙 夜盤 (05:00 定案)" if is_before_open else ("🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 5) else "🌙 T夜盤 (05:00 定案)")
         night_full_name = f"{t_days[4]} 夜盤 (05:00 定案版)" if is_before_open else (f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)"))
 
-    margin_info = fetch_twse_margin_maintenance()
+    t_target_yyyymmdd = ref_matrix_dt.strftime('%Y%m%d')
+    margin_info = fetch_twse_margin_maintenance(target_date_str=t_target_yyyymmdd)
 
     t0_day_item = {
         "id": "t0_day", 

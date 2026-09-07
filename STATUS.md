@@ -1,14 +1,20 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.6)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v50.7)
 
-**當前版本**：`v50.6` (2026-09-03 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.6)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.6)
+**當前版本**：`v50.7` (2026-09-07 TWSE 融資維持率發布狀態日期比對與開盤未公布狀態判定校正版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v50.7)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v50.7)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v50.6 核心更新亮點 (Max Pain 2D Resonance 12-Scenario Matrix)
+## 🎯 v50.7 核心更新亮點 (TWSE Margin Maintenance Publication Strict Verification)
+
+### 🏛️ 1. TWSE 融資維持率發布狀態日期嚴格校驗 (`fetch_twse_margin_maintenance`)
+- **漏洞根因修復**：修正 `fetch_and_calc_vision.py` 中 `fetch_twse_margin_maintenance` 發布狀態判定。原程式碼僅檢查 API 回傳成功 (`stat == 'OK'`)，未比對資料公布日期 `pub_date` 與目標交易日 `target_date_str`。導致週一開盤時誤將前一交易日（週五）的資料判定為今日已公布。
+- **嚴格日期比對**：全面改為 `is_published = (pub_date == target_date_str)`。當日開盤與盤中（尚未至 20:30 證交所清算完成前），T 日盤正確標記為 `is_published = False`，前端表格正確顯示「`未公布 (約20:30~21:00實時連線)`」與「`TWSE 盤後清算中`」，待晚間 20:30~21:00 證交所正式公布當日資料時再無縫點亮數值與四級燈號。
+
+---
 
 ### 🧲 1. 徹底消弭多空矛盾：二維共振 12 種全情境實戰矩陣 (Spatial Topology ✕ Institutional Bias)
 - **4 大空間幾何拓撲 (X軸)**：
