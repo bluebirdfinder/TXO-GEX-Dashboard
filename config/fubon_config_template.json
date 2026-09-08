@@ -1,0 +1,17 @@
+{
+  "_comment": "富邦 API (Fubon Neo API) 帳號與憑證設定檔",
+  "user_id": "YOUR_FUBON_ID",
+  "password": "YOUR_FUBON_PASSWORD",
+  "cert_path": "C:\\path\\to\\fubon_cert.pfx",
+  "cert_password": "YOUR_CERT_PASSWORD",
+  "active_mode": "AUTO",
+  "subscribed_symbols": [
+    "TXF",
+    "MXF",
+    "2330",
+    "1605",
+    "2454",
+    "2317",
+    "2881"
+  ]
+}

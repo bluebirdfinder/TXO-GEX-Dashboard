@@ -1,0 +1,207 @@
+//@version=6
+// ==============================================================================
+// 指標名稱: 尋鳥 GEX 籌碼關卡 (Bluebird GEX & VEX Institutional Levels)
+// 設計概念: 尋鳥 Bluebird Finder 量化團隊原創 GEX/VEX 做市商防衛結構模型
+// 適用商品: 台指期大台 (TXF1!) / 小台 (MXF1!) / 微台 (TMF1!) / TXO 選擇權
+// 最新數據對齊: 根據 TXO-GEX-Dashboard 最新夜盤動態校正籌碼 (45,000+ 區間)
+// 特色功能: 
+//   1. 右側 Y 軸彩色價位圖例 (與 MA 均線指標完全一致，可在價格軸直觀查看)
+//   2. 智慧防重疊防護 (Zero Gamma 與 VEX 距離小於 15 點時自動合併顯示)
+//   3. 盤中觸及圖例標記 (K 棒直接跳出 🚀突破 / 🍊轉折 / ⚠️跌破 視覺圖示)
+//   4. 支援 Zero Gamma 盤中即時動態漂移 (嚴格錨定大台 TXF1! 官方即時成交價)
+//   5. 智慧商品防護過濾 (切換非台指商品自動隱藏，防止 Y 軸拉歪)
+// ==============================================================================
+indicator("尋鳥 GEX 籌碼關卡", overlay=true)
+
+// ==========================================
+// 1. 每日 尋鳥 GEX & VEX 最新夜盤校正籌碼數據 (100% 精準對齊網頁)
+// ==========================================
+gex_call_wall   = input.float(46050.0, "🔴 Call Wall (賣權強壓天花板)", group="尋鳥 GEX/VEX 核心關卡", step=50.0)
+vex_early_flip  = input.float(45917.7, "🟠 VEX Early Flip (VEX 早鳥轉折線)", group="尋鳥 GEX/VEX 核心關卡", step=10.0)
+gex_zero_gamma  = input.float(45917.8, "⚡ Zero Gamma (基準多空變盤點)", group="尋鳥 GEX/VEX 核心關卡", step=10.0)
+gex_max_pain    = input.float(45300.0, "🔵 Max Pain (選擇權最大痛點)", group="尋鳥 GEX/VEX 核心關卡", step=50.0)
+gex_put_wall    = input.float(45750.0, "🟢 Put Wall (買權強撐地板牆)", group="尋鳥 GEX/VEX 核心關卡", step=50.0)
+
+// 關卡顏色與線條樣式自訂
+color_call = input.color(#EF4444, "🔴 Call Wall 顏色", inline="cw", group="關卡顏色與線條樣式")
+style_call = input.string("實線 (Solid)", "", options=["實線 (Solid)", "虛線 (Dashed)", "點線 (Dotted)"], inline="cw", group="關卡顏色與線條樣式")
+
+color_vex  = input.color(#F97316, "🟠 VEX Early 顏色", inline="vex", group="關卡顏色與線條樣式")
+style_vex  = input.string("虛線 (Dashed)", "", options=["實線 (Solid)", "虛線 (Dashed)", "點線 (Dotted)"], inline="vex", group="關卡顏色與線條樣式")
+
+color_zero = input.color(#F59E0B, "⚡ Zero Gamma 顏色", inline="zg", group="關卡顏色與線條樣式")
+style_zero = input.string("虛線 (Dashed)", "", options=["實線 (Solid)", "虛線 (Dashed)", "點線 (Dotted)"], inline="zg", group="關卡顏色與線條樣式")
+
+color_pain = input.color(#3B82F6, "🔵 Max Pain 顏色", inline="mp", group="關卡顏色與線條樣式")
+style_pain = input.string("點線 (Dotted)", "", options=["實線 (Solid)", "虛線 (Dashed)", "點線 (Dotted)"], inline="mp", group="關卡顏色與線條樣式")
+
+color_put  = input.color(#10B981, "🟢 Put Wall 顏色", inline="pw", group="關卡顏色與線條樣式")
+style_put  = input.string("實線 (Solid)", "", options=["實線 (Solid)", "虛線 (Dashed)", "點線 (Dotted)"], inline="pw", group="關卡顏色與線條樣式")
+
+// 盤中即時動態設定
+enable_live_zg  = input.bool(true, "啟用 Zero Gamma & VEX 早鳥 盤中即時動態漂移", group="盤中即時動態設定")
+base_txf_price  = input.float(46336.0, "基準夜盤台指期結算價", group="盤中即時動態設定", step=10.0)
+zg_shift_ratio  = input.float(-0.416, "Zero Gamma 敏感度係數 (Shift Ratio)", group="盤中即時動態設定", step=0.01)
+vex_shift_ratio = input.float(-0.416, "VEX 早鳥轉折 敏感度係數 (Shift Ratio)", group="盤中即時動態設定", step=0.01)
+
+// 視覺與標籤自訂設定
+show_price_scale= input.bool(true, "顯示右側 Y 軸彩色價位圖例 (Price Scale)", group="視覺設定")
+show_labels     = input.bool(true, "顯示圖表內浮動價位標籤", group="視覺設定")
+label_offset    = input.int(20, "標籤向右推移距離 (K棒數)", group="視覺設定", minval=1, maxval=100, step=5)
+signal_scope    = input.string("僅顯示當日/最新 (Today Only)", "訊號圖示顯示範圍", options=["僅顯示當日/最新 (Today Only)", "顯示全部歷史 (All History)"], group="視覺設定")
+label_size_opt  = input.string("極小 (tiny)", "標籤文字大小", options=["極小 (tiny)", "小 (small)", "正常 (normal)"], group="視覺設定")
+label_style_opt = input.string("微型純文字 (無背景框)", "標籤外觀樣式", options=["微型純文字 (無背景框)", "彩色膠囊框 (Pill Box)"], group="視覺設定")
+label_pos_opt   = input.string("文字在線上 (Above Line)", "標籤與線條相對位置", options=["文字在線上 (Above Line)", "線上居中 (Centered)", "文字在線下 (Below Line)"], group="視覺設定")
+auto_filter     = input.bool(true, "自動過濾非台指期商品 (防止 Y 軸圖表拉歪)", group="智慧防護設定")
+
+// 盤中觸及訊號圖示/文字設定
+show_signal_text  = input.bool(true, "顯示觸及訊號說明文字", group="觸及訊號圖示設定")
+signal_text_col   = input.color(#FACC15, "⚡ 訊號說明文字顏色", group="觸及訊號圖示設定")
+color_call_signal = input.color(#EF4444, "🔺 突破 Call Wall 圖示顏色 (預設紅色向上)", group="觸及訊號圖示設定")
+color_vex_signal  = input.color(#10B981, "🔻 跌破 VEX 早鳥 圖示顏色 (預設綠色向下)", group="觸及訊號圖示設定")
+color_put_signal  = input.color(#10B981, "🔻 跌破 Put Wall 圖示顏色 (預設綠色向下)", group="觸及訊號圖示設定")
+
+// 線條樣式轉換函數 (LuxAlgo 標準 Switch)
+get_line_style(string s) =>
+    switch s
+        "實線 (Solid)"  => line.style_solid
+        "虛線 (Dashed)" => line.style_dashed
+        "點線 (Dotted)" => line.style_dotted
+        => line.style_solid
+
+// ==========================================
+// 2. 盤中即時動態 Zero Gamma & VEX 早鳥轉折計算 (嚴格鎖定大台 TXF1! 行情)
+// ==========================================
+txf_live_close = request.security("TAIFEX:TXF1!", timeframe.period, close, ignore_invalid_symbol=true)
+ref_live_price = na(txf_live_close) ? close : txf_live_close
+calculated_zero_gamma = enable_live_zg ? (gex_zero_gamma + (ref_live_price - base_txf_price) * zg_shift_ratio) : gex_zero_gamma
+calculated_vex_early  = enable_live_zg ? (vex_early_flip + (ref_live_price - base_txf_price) * vex_shift_ratio) : vex_early_flip
+
+// 商品過濾邏輯
+is_taiex_futures = str.startswith(syminfo.ticker, "TXF") or str.startswith(syminfo.ticker, "MXF") or str.startswith(syminfo.ticker, "TMF") or str.startswith(syminfo.ticker, "TXO") or syminfo.ticker == "TAIEX"
+valid_display = auto_filter ? is_taiex_futures : true
+
+// ==========================================
+// 3. 繪製 5 大機構關卡水平線 (即時延伸)
+// ==========================================
+var line line_call = na
+var line line_vex  = na
+var line line_zero = na
+var line line_pain = na
+var line line_put  = na
+
+if valid_display
+    if not na(line_call)
+        line.delete(line_call)
+        line.delete(line_vex)
+        line.delete(line_zero)
+        line.delete(line_pain)
+        line.delete(line_put)
+
+    line_call := line.new(bar_index - 1, gex_call_wall, bar_index + 20, gex_call_wall, xloc=xloc.bar_index, extend=extend.both, color=color_call, style=get_line_style(style_call), width=2)
+    line_vex  := line.new(bar_index - 1, calculated_vex_early, bar_index + 20, calculated_vex_early, xloc=xloc.bar_index, extend=extend.both, color=color_vex, style=get_line_style(style_vex), width=2)
+    line_zero := line.new(bar_index - 1, calculated_zero_gamma, bar_index + 20, calculated_zero_gamma, xloc=xloc.bar_index, extend=extend.both, color=color_zero, style=get_line_style(style_zero), width=2)
+    line_pain := line.new(bar_index - 1, gex_max_pain, bar_index + 20, gex_max_pain, xloc=xloc.bar_index, extend=extend.both, color=color_pain, style=get_line_style(style_pain), width=1)
+    line_put  := line.new(bar_index - 1, gex_put_wall, bar_index + 20, gex_put_wall, xloc=xloc.bar_index, extend=extend.both, color=color_put, style=get_line_style(style_put), width=2)
+
+// ==========================================
+// 4. 右側 Y 軸彩色價位圖例 (Price Scale)
+// ==========================================
+plot(valid_display and show_price_scale ? gex_call_wall : na, "🔴 Call Wall (Y軸)", color=color_call, show_last=1)
+plot(valid_display and show_price_scale ? calculated_vex_early : na, "🟠 VEX Early (Y軸)", color=color_vex, show_last=1)
+plot(valid_display and show_price_scale ? calculated_zero_gamma : na, "⚡ Zero Gamma (Y軸)", color=color_zero, show_last=1)
+plot(valid_display and show_price_scale ? gex_max_pain : na, "🔵 Max Pain (Y軸)", color=color_pain, show_last=1)
+plot(valid_display and show_price_scale ? gex_put_wall : na, "🟢 Put Wall (Y軸)", color=color_put, show_last=1)
+
+// ==========================================
+// 5. 智慧防重疊 浮動價位標籤 (Floating Labels)
+// ==========================================
+var label lbl_call = na
+var label lbl_vex  = na
+var label lbl_zero = na
+var label lbl_pain = na
+var label lbl_put  = na
+
+if valid_display and show_labels and barstate.islast
+    if not na(lbl_call)
+        label.delete(lbl_call)
+        label.delete(lbl_vex)
+        label.delete(lbl_zero)
+        label.delete(lbl_pain)
+        label.delete(lbl_put)
+
+    right_time_bar = time + (label_offset * (time - time[1]))
+
+    lbl_size = label_size_opt == "極小 (tiny)" ? size.tiny : (label_size_opt == "小 (small)" ? size.small : size.normal)
+    
+    lbl_style = switch label_pos_opt
+        "文字在線上 (Above Line)" => label.style_label_lower_left
+        "文字在線下 (Below Line)" => label.style_label_upper_left
+        => label.style_label_left
+
+    c_bg = label_style_opt == "微型純文字 (無背景框)" ? color(na) : color_call
+    v_bg = label_style_opt == "微型純文字 (無背景框)" ? color(na) : color_vex
+    z_bg = label_style_opt == "微型純文字 (無背景框)" ? color(na) : color_zero
+    m_bg = label_style_opt == "微型純文字 (無背景框)" ? color(na) : color_pain
+    p_bg = label_style_opt == "微型純文字 (無背景框)" ? color(na) : color_put
+
+    c_txt = label_style_opt == "微型純文字 (無背景框)" ? color_call : color.white
+    v_txt = label_style_opt == "微型純文字 (無背景框)" ? color_vex  : color.white
+    z_txt = label_style_opt == "微型純文字 (無背景框)" ? color_zero : color.black
+    m_txt = label_style_opt == "微型純文字 (無背景框)" ? color_pain : color.white
+    p_txt = label_style_opt == "微型純文字 (無背景框)" ? color_put  : color.white
+
+    lbl_call := label.new(chart.point.new(right_time_bar, na, gex_call_wall), "Call Wall: " + str.tostring(gex_call_wall, "#"), xloc = xloc.bar_time, color=c_bg, textcolor=c_txt, style=lbl_style, size=lbl_size)
+    lbl_pain := label.new(chart.point.new(right_time_bar, na, gex_max_pain),  "Max Pain: "  + str.tostring(gex_max_pain,  "#"), xloc = xloc.bar_time, color=m_bg, textcolor=m_txt, style=lbl_style, size=lbl_size)
+    lbl_put  := label.new(chart.point.new(right_time_bar, na, gex_put_wall),  "Put Wall: "  + str.tostring(gex_put_wall,  "#"), xloc = xloc.bar_time, color=p_bg, textcolor=p_txt, style=lbl_style, size=lbl_size)
+
+    if math.abs(calculated_vex_early - calculated_zero_gamma) < 15.0
+        lbl_zero := label.new(chart.point.new(right_time_bar, na, calculated_zero_gamma), "⚡ ZG / 🟠 VEX: " + str.tostring(calculated_zero_gamma, "#.1"), xloc = xloc.bar_time, color=z_bg, textcolor=z_txt, style=lbl_style, size=lbl_size)
+    else
+        lbl_vex  := label.new(chart.point.new(right_time_bar, na, calculated_vex_early),   "VEX Early: "  + str.tostring(calculated_vex_early, "#.1"), xloc = xloc.bar_time, color=v_bg, textcolor=v_txt, style=lbl_style, size=lbl_size)
+        lbl_zero := label.new(chart.point.new(right_time_bar, na, calculated_zero_gamma), "Zero Gamma: " + str.tostring(calculated_zero_gamma, "#.1"), xloc = xloc.bar_time, color=z_bg, textcolor=z_txt, style=lbl_style, size=lbl_size)
+
+// ==========================================
+// 6. 盤中圖示標記 (On-Chart Touch Visual Signals)
+// ==========================================
+x_call = ta.crossover(close, gex_call_wall)
+x_vex  = ta.crossunder(close, calculated_vex_early)
+x_put  = ta.crossunder(close, gex_put_wall)
+
+// 當日/歷史過濾器
+is_today_bar = (year(time) == year(timenow)) and (month(time) == month(timenow)) and (dayofmonth(time) == dayofmonth(timenow))
+show_signal  = signal_scope == "顯示全部歷史 (All History)" or is_today_bar or barstate.islast
+
+hit_call = valid_display and x_call and show_signal
+hit_vex  = valid_display and x_vex  and show_signal
+hit_put  = valid_display and x_put  and show_signal
+
+// 1. 突破 Call Wall (🔺 向上三角形，隨 K 棒自動放縮 size.auto)
+plotshape(hit_call and show_signal_text,     title="圖示: 突破 Call Wall (帶文字)", style=shape.triangleup,   location=location.belowbar, color=color_call_signal, size=size.auto, text="📈 Call Wall 突破", textcolor=signal_text_col)
+plotshape(hit_call and not show_signal_text, title="圖示: 突破 Call Wall (純圖示)", style=shape.triangleup,   location=location.belowbar, color=color_call_signal, size=size.auto)
+
+// 2. 跌破 VEX 早鳥 (🔻 向下三角形，隨 K 棒自動放縮 size.auto)
+plotshape(hit_vex and show_signal_text,      title="圖示: 跌破 VEX 早鳥 (帶文字)", style=shape.triangledown, location=location.abovebar, color=color_vex_signal,  size=size.auto, text="🚨 VEX 早鳥轉折", textcolor=signal_text_col)
+plotshape(hit_vex and not show_signal_text,  title="圖示: 跌破 VEX 早鳥 (純圖示)", style=shape.triangledown, location=location.abovebar, color=color_vex_signal,  size=size.auto)
+
+// 3. 跌破 Put Wall (🔻 向下三角形，隨 K 棒自動放縮 size.auto)
+plotshape(hit_put and show_signal_text,      title="圖示: 跌破 Put Wall (帶文字)",  style=shape.triangledown, location=location.abovebar, color=color_put_signal,  size=size.auto, text="📉 Put Wall 跌破", textcolor=signal_text_col)
+plotshape(hit_put and not show_signal_text,  title="圖示: 跌破 Put Wall (純圖示)",  style=shape.triangledown, location=location.abovebar, color=color_put_signal,  size=size.auto)
+
+// 背景預警
+is_vex_warning = valid_display and close < calculated_vex_early and close > calculated_zero_gamma
+bgcolor(is_vex_warning ? color.new(color_vex, 92) : na, title="VEX 早鳥轉折預警背景")
+
+// 盤中秒級即時警報
+alertcondition(hit_call, title="尋鳥 GEX: 突破 Call Wall", message="📈 尋鳥 GEX: 台指期突破 Call Wall 天花板 {{close}}！")
+alertcondition(hit_vex,  title="尋鳥 GEX: 跌破 VEX 早鳥線", message="🚨 尋鳥 GEX 警告！台指期跌破 VEX 早鳥轉折線 {{close}}，做市商防線鬆動！")
+alertcondition(hit_put,  title="尋鳥 GEX: 跌破 Put Wall",  message="📉 尋鳥 GEX: 台指期跌破 Put Wall 防守牆 {{close}}！")
+
+if hit_call
+    alert("📈 尋鳥 GEX: 台指期突破 Call Wall 天花板 " + str.tostring(close, "#") + "！", alert.freq_once_per_bar_close)
+
+if hit_vex
+    alert("🚨 尋鳥 GEX 警告！台指期跌破 VEX 早鳥轉折線 " + str.tostring(close, "#.1") + "，做市商防線鬆動！", alert.freq_once_per_bar_close)
+
+if hit_put
+    alert("📉 尋鳥 GEX: 台指期跌破 Put Wall 防守牆 " + str.tostring(close, "#") + "！", alert.freq_once_per_bar_close)

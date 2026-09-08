@@ -1,0 +1,428 @@
+//@version=6
+indicator("5K Strategy Master V4", shorttitle="5K戰法 V4", overlay=true, max_labels_count=500)
+
+// ==============================================================================
+// 1. 參數設定 (Inputs)
+// ==============================================================================
+grp_auto = "智能模式 (Smart Mode)"
+use_auto_params = input.bool(true, title="啟用智能商品辨識 (Auto-Detect Parameters)", group=grp_auto, tooltip="開啟時，自動辨識圖表商品並覆寫最佳化的回溯區間、ATR乘數與風報比。")
+
+grp_momentum = "動能過濾與極值 (手動設定 Manual)"
+lookback_bars = input.int(48, title="回溯區間 (Lookback Bars, 48=4H)", group=grp_momentum, tooltip="手動模式下尋找局部最高/最低點的範圍\n✅ 股指期貨（台指/那指/標普/道瓊）：48~60根\n✅ 全天交易商品（黃金/原油/外匯）：72~96根")
+atr_len = input.int(5, title="ATR 週期 (ATR Length)", group=grp_momentum, tooltip="計算波動幅度的週期\n✅ 平衡市場：5根（預設）\n⚠️ 趨勢市：可調至 8~10 根更穩定")
+atr_mult = input.float(1.5, title="急殺/急拉 ATR 乘數", group=grp_momentum, step=0.1, tooltip="手動模式下：波動需多大才算急殺/急拉，越大訊號越少但越精\n\n指數期貨\n✅ 台指/富台/標普/道瓊：1.5~2.0\n✅ 那指/羅素：1.5~2.0\n⚠️ 日經/德指：2.0~2.5\n❌ 恆生：謹慎，政策風險大\n\n原物料\n✅ 黃金/銅：1.5~2.0（趨勢佳）\n✅ 原油：1.5~2.0\n⚠️ 白銀：2.0~2.5（每跳$5，風險大）\n⚠️ 農產品（黃豆/玉米/小麥）：1.5~2.0\n❌ 天然氣：2.5~3.0，謹慎\n\n外匯期貨\n⚠️ 歐元/英鎊/日幣：1.0~1.5\n❌ 澳幣/加幣：波動太小，訊號難觸發")
+setup_age_limit = input.int(10, title="防雙刷壓制 (Setup Age Limit)", group=grp_momentum, tooltip="V4 新增：當反向訊號發生時，若距離上一個同向未進場 Setup 的 K 棒數小於此值，則壓制舊訊號，防止震盪雙刷。\n\n智能模式(Auto)下會自動依時框調整，手動模式下以此設定為準。\n\n📊 各時框建議值：\n⏱ 1分K：20根（=20分鐘緩衝）\n⏱ 3分K：15根（=45分鐘）\n⏱ 5分K：12根（=1小時）\n⏱ 15分K：10根（預設）\n⏱ 30分K：8根\n⏱ 1H K：6根（=6小時）\n⏱ 4H K：4根（=16小時）\n⏱ 日K：3根\n\n📌 商品差異調整：\n✅ 黃金(GC/MGC)：比預設稍低（趨勢性強，少壓制）\n✅ BTC：比預設稍高（假突破多）\n✅ 外匯(6E/6B)：接近預設（波動緩）\n⚠️ 天然氣(NG)：建議拉高（行情反覆）")
+
+grp_entry = "進場微調 (Entry Settings)"
+trade_dir = input.string("Both", title="交易方向 (Trade Direction)", options=["Both", "Long Only", "Short Only"], group=grp_entry, tooltip="過濾不想要的方向\n✅ 大漲中後期：選 Long Only\n✅ 高空後期：選 Short Only\n✅ 平衡市場：選 Both\nℹ️ 啟用 17/88MA 過濾器時，此選項與MA方向雙重篩選")
+buffer_ticks = input.int(1, title="突破緩衝 (Buffer Ticks)", group=grp_entry, tooltip="突破極值時的額外確認空間\n✅ 股指/多數商品：1 tick（預設）\n⚠️ 外匯期貨：可調至 2 tick\nℹ️ 數字越大越不易被假突破，但進場會稍慢")
+
+grp_exit = "停利設定 (手動設定 Manual)"
+rr_ratio = input.float(1.5, title="快速停利風報比", group=grp_exit, step=0.1, tooltip="手動模式下：目標價距進場價的倍數，1.5 = 獲利是停損的 1.5 倍\n\n建議\n✅ 趨勢性強商品（黃金/銅/那指）：2.0，讓獲利空間更大\n✅ 原油：1.5~2.0 交替使用\n⚠️ 盤整商品（外匯/農產品）：維持 1.5，快進快出\n❌ 天然氣/恆生：不建議使用此指標")
+
+grp_trend = "均線趨勢過濾 (Trend Filter)"
+use_trend_filter = input.bool(true, title="啟用均線趨勢過濾", group=grp_trend, tooltip="啟用後，17MA > 88MA 時僅允許做多，反之僅允許做空")
+ma_fast_len = input.int(17, title="快速均線長度 (Fast MA)", group=grp_trend)
+ma_slow_len = input.int(88, title="慢速均線長度 (Slow MA)", group=grp_trend)
+col_ma_fast = input.color(color.yellow, title="快速均線顏色", group=grp_trend)
+col_ma_slow = input.color(color.fuchsia, title="慢速均線顏色", group=grp_trend)
+show_ma = input.bool(true, title="顯示均線於圖表上", group=grp_trend)
+
+grp_visual = "視覺顯示 (Visual Settings)"
+show_sl = input.bool(true, title="顯示停損線 (Stop Loss)", group=grp_visual, tooltip="開啟時，會在持倉期間顯示防守停損位置的水平線")
+show_tp = input.bool(false, title="顯示目標價線 (First Target)", group=grp_visual, tooltip="開啟時，會在持倉期間顯示預期達標(風報比)的獲利位置")
+show_base = input.bool(false, title="顯示極值基準線 (Base Lines)", group=grp_visual, tooltip="開啟時，會在等待進場時顯示目前監控突破的最高/最低點水平線")
+show_table = input.bool(true, title="顯示 Dashboard 面板", group=grp_visual, tooltip="顯示目前的狀態與 ATR 等數據面板")
+panel_pos_str = input.string("Middle Right", title="面板位置 (Panel Position)", options=["Top Right", "Middle Right", "Bottom Right", "Bottom Left", "Top Left"], group=grp_visual)
+panel_size_str = input.string("Small", title="面板文字大小 (Text Size)", options=["Tiny", "Small", "Normal"], group=grp_visual)
+
+grp_macd = "1分K MACD 停利參數 (MTF MACD)"
+macd_fast = input.int(12, title="MACD 快線", group=grp_macd)
+macd_slow = input.int(26, title="MACD 慢線", group=grp_macd)
+macd_signal = input.int(9, title="MACD 訊號線", group=grp_macd)
+
+// [V4 顏色修改] 訊號圓球改為台股習慣 (多=紅, 空=綠)，但圖表標記保留原色
+grp_colors = "顏色設定 (Color Settings)"
+col_long_entry = input.color(color.red, title="做多進場箭頭顏色 (Long Entry)", group=grp_colors, tooltip="設定買入箭頭(▲)的顏色")
+col_short_entry = input.color(color.green, title="做空進場箭頭顏色 (Short Entry)", group=grp_colors, tooltip="設定放空箭頭(▼)的顏色")
+col_long_exit = input.color(color.yellow, title="做多出場符號顏色 (Long Exit)", group=grp_colors, tooltip="設定多單出場(＄/SL)的顏色")
+col_short_exit = input.color(color.yellow, title="做空出場符號顏色 (Short Exit)", group=grp_colors, tooltip="設定空單出場(＄/SL)的顏色")
+col_sl_line = input.color(color.new(#ff82b2, 0), title="停損線顏色 (Stop Loss Line)", group=grp_colors, tooltip="設定停損水平線的顏色與透明度")
+col_tp_line = input.color(color.new(#4dd0e1, 0), title="目標價線顏色 (Target Line)", group=grp_colors, tooltip="設定目標價水平線的顏色與透明度")
+col_base_line = input.color(color.new(color.gray, 70), title="極值基準線顏色 (Base Line)", group=grp_colors, tooltip="設定等待突破的基準線顏色與透明度")
+
+grp_alerts = "警報與通知 (Alerts & Telegram) V4"
+string dummy_alert_setting = input.string("請參考 Tooltip 設定", title="Telegram Webhook 設定說明", group=grp_alerts, tooltip="若要連動 Telegram，請在建立警報時：\n1. 條件選『任何 alert() 函數調用』\n2. 勾選『Webhook URL』\n3. 填入以下專屬 GAS 網址：\nhttps://script.google.com/macros/s/AKfycbzTZSzOQIij57h7a1Y2SHZDfgPtvLLCAyDKXHCoADvm5FFojIdcYdQQ-gKjOcUcWYv4LA/exec")
+
+// ==============================================================================
+// 1.5 智能商品辨識邏輯 (Auto-Detect Logic)
+// ==============================================================================
+string r = syminfo.root
+string asset_class = "Unknown"
+float auto_atr_mult = 1.5
+float auto_rr_ratio = 1.5
+int auto_lookback = 48
+
+// Indices
+if array.includes(array.from("TX", "MTX", "TWN"), r)
+    asset_class := "Taiwan Index (TX/TWN)"
+    auto_atr_mult := 1.5, auto_rr_ratio := 1.5, auto_lookback := 48
+else if array.includes(array.from("ES", "MES", "YM", "MYM"), r)
+    asset_class := "US Index (Stable)"
+    auto_atr_mult := 1.5, auto_rr_ratio := 1.5, auto_lookback := 48
+else if array.includes(array.from("NQ", "MNQ", "RTY", "M2K"), r)
+    asset_class := "US Index (Volatile)"
+    auto_atr_mult := 2.0, auto_rr_ratio := 2.0, auto_lookback := 48
+else if array.includes(array.from("NKD", "MNI", "NK225", "NK225M", "NK225MC", "FDAX", "FDXM"), r)
+    asset_class := "Intl Index (High Vol)"
+    auto_atr_mult := 2.2, auto_rr_ratio := 2.0, auto_lookback := 48
+else if array.includes(array.from("HSI", "HHI", "MHI", "MCH"), r)
+    asset_class := "Hang Seng"
+    auto_atr_mult := 2.5, auto_rr_ratio := 2.0, auto_lookback := 48
+    
+// Commodities
+else if array.includes(array.from("GC", "MGC", "HG", "QC", "MHG"), r)
+    asset_class := "Metals (Trend)"
+    auto_atr_mult := 1.5, auto_rr_ratio := 2.0, auto_lookback := 72
+else if array.includes(array.from("SI", "SIL"), r)
+    asset_class := "Silver (High Vol)"
+    auto_atr_mult := 2.5, auto_rr_ratio := 2.0, auto_lookback := 72
+else if array.includes(array.from("PL", "MPL", "PA"), r)
+    asset_class := "Platinum/Palladium (High Vol)"
+    auto_atr_mult := 2.5, auto_rr_ratio := 2.0, auto_lookback := 72
+else if array.includes(array.from("CL", "MCL", "QM"), r)
+    asset_class := "Crude Oil"
+    auto_atr_mult := 2.0, auto_rr_ratio := 1.5, auto_lookback := 72
+else if array.includes(array.from("NG", "QG", "MNG"), r)
+    asset_class := "Natural Gas"
+    auto_atr_mult := 3.0, auto_rr_ratio := 2.0, auto_lookback := 72
+else if array.includes(array.from("ZS", "ZC", "ZW", "ZL"), r)
+    asset_class := "Agriculture"
+    auto_atr_mult := 1.5, auto_rr_ratio := 1.5, auto_lookback := 48
+else if array.includes(array.from("CT"), r)
+    asset_class := "Cotton"
+    auto_atr_mult := 2.0, auto_rr_ratio := 2.0, auto_lookback := 48
+    
+// Forex
+else if array.includes(array.from("6E", "M6E", "6A", "6C", "DX"), r)
+    asset_class := "Forex (Low Vol)"
+    auto_atr_mult := 1.2, auto_rr_ratio := 1.5, auto_lookback := 72
+else if array.includes(array.from("6B", "M6B", "6J", "XJK", "JPYUSD", "USDJPY"), r)
+    asset_class := "Forex (Mid Vol)"
+    auto_atr_mult := 1.5, auto_rr_ratio := 1.5, auto_lookback := 72
+
+// Crypto
+else if syminfo.root == "BTC"
+    asset_class := "Crypto (BTC)"
+    auto_atr_mult := 2.5, auto_rr_ratio := 2.0, auto_lookback := 48
+else if syminfo.type == "crypto"
+    asset_class := "Crypto (Alt)"
+    auto_atr_mult := 2.0, auto_rr_ratio := 2.0, auto_lookback := 48
+
+bool is_auto_active = use_auto_params and asset_class != "Unknown"
+final_atr_mult = is_auto_active ? auto_atr_mult : atr_mult
+final_rr_ratio = is_auto_active ? auto_rr_ratio : rr_ratio
+final_lookback = is_auto_active ? auto_lookback : lookback_bars
+
+// [V4.1 新增] 依時框自動計算防雙刷壓制數值 (智能模式下生效)
+int auto_setup_age = timeframe.period == "1" ? 20 : timeframe.period == "3" ? 15 : timeframe.period == "5" ? 12 : timeframe.period == "15" ? 10 : timeframe.period == "30" ? 8 : timeframe.period == "60" ? 6 : timeframe.period == "240" ? 4 : 3
+int final_setup_age_limit = is_auto_active ? auto_setup_age : setup_age_limit
+
+// ==============================================================================
+// 2. 基礎計算 (Base Calculations)
+// ==============================================================================
+atr_val = ta.atr(atr_len)
+tick_size = syminfo.mintick
+buffer_val = buffer_ticks * tick_size
+
+[macdLine_1m, signalLine_1m, histLine_1m] = request.security(syminfo.tickerid, "1", ta.macd(close, macd_fast, macd_slow, macd_signal))
+is_macd_dead_cross_1m = ta.crossunder(macdLine_1m, signalLine_1m)
+is_macd_golden_cross_1m = ta.crossover(macdLine_1m, signalLine_1m)
+
+ma_fast = ta.sma(close, ma_fast_len)
+ma_slow = ta.sma(close, ma_slow_len)
+is_bull_trend = ma_fast > ma_slow
+is_bear_trend = ma_fast < ma_slow
+
+ma_diff = math.abs(ma_fast - ma_slow)
+bool is_consolidation = ma_diff < (atr_val * 0.2)
+string market_state_str = is_consolidation ? "盤整/糾結 ⚠️" : (is_bull_trend ? "多頭趨勢 🚀" : "空頭趨勢 📉")
+
+// ==============================================================================
+// 2.5 多時框均線分析 (MTF Trend Analysis) - 顏色修正 (多紅空綠)
+// ==============================================================================
+get_mtf_trend(res) =>
+    f = request.security(syminfo.tickerid, res, ta.sma(close, ma_fast_len))
+    s = request.security(syminfo.tickerid, res, ta.sma(close, ma_slow_len))
+    a = request.security(syminfo.tickerid, res, ta.atr(atr_len))
+    diff = math.abs(f - s)
+    is_bull = f > s and diff > (a * 0.2)
+    is_bear = f < s and diff > (a * 0.2)
+    is_consol = diff <= (a * 0.2)
+    [is_bull, is_bear, is_consol]
+
+[bull_w, bear_w, consol_w] = get_mtf_trend("W")
+[bull_d, bear_d, consol_d] = get_mtf_trend("D")
+[bull_4h, bear_4h, consol_4h] = get_mtf_trend("240")
+[bull_1h, bear_1h, consol_1h] = get_mtf_trend("60")
+[bull_30m, bear_30m, consol_30m] = get_mtf_trend("30")
+
+mtf_w_str = bull_w ? "多頭排列 🔴" : (bear_w ? "空頭排列 🟢" : "多空交界 🟡")
+mtf_d_str = bull_d ? "多頭排列 🔴" : (bear_d ? "空頭排列 🟢" : "多空交界 🟡")
+mtf_4h_str = bull_4h ? "多頭排列 🔴" : (bear_4h ? "空頭排列 🟢" : "多空交界 🟡")
+mtf_1h_str = bull_1h ? "多頭排列 🔴" : (bear_1h ? "空頭排列 🟢" : "多空交界 🟡")
+mtf_30m_str = bull_30m ? "多頭排列 🔴" : (bear_30m ? "空頭排列 🟢" : "多空交界 🟡")
+
+// [V4.1 優化] 倉位建議改為 4H + 日線雙重共識，避免大週期逆勢時誤導重倉
+bool is_strong_bull = bull_4h and bull_d  // 4H 與日線同為多頭，才算強多
+bool is_strong_bear = bear_4h and bear_d  // 4H 與日線同為空頭，才算強空
+string suggested_size_long = is_strong_bull ? "標準倉位 (4H+日線順勢)" : (is_strong_bear ? "縮半倉⚠️ (大週期逆勢)" : "輕倉觀察 (4H/日線分歧)")
+string suggested_size_short = is_strong_bear ? "標準倉位 (4H+日線順勢)" : (is_strong_bull ? "縮半倉⚠️ (大週期逆勢)" : "輕倉觀察 (4H/日線分歧)")
+
+// ==============================================================================
+// 3. 狀態變數管理 (State Variables - V4 獨立狀態機)
+// ==============================================================================
+var int pos_long = 0
+var int pos_short = 0
+
+var float long_entry_price = na
+var float long_sl_price = na
+var float long_tp_price = na
+var int long_entry_bar = na
+
+var float short_entry_price = na
+var float short_sl_price = na
+var float short_tp_price = na
+var int short_entry_bar = na
+
+var float target_low_val = na
+var float target_low_bar_high = na 
+var int target_low_bar_index = na
+var bool is_valid_low_setup = false
+
+var float target_high_val = na
+var float target_high_bar_low = na 
+var int target_high_bar_index = na
+var bool is_valid_high_setup = false
+
+// ==============================================================================
+// 4. 尋找局部極值與急殺急拉 (Extremum & Momentum Logic)
+// ==============================================================================
+is_pivot_low = low[1] < low[0] and low[1] < low[2]
+is_pivot_high = high[1] > high[0] and high[1] > high[2]
+
+float price_drop = na
+float price_surge = na
+
+highest_recent = ta.highest(high[1], final_lookback) 
+lowest_recent = ta.lowest(low[1], final_lookback) 
+
+if is_pivot_low
+    price_drop := highest_recent - low[1]
+if is_pivot_high
+    price_surge := high[1] - lowest_recent
+
+// V4 更新：加入防雙刷壓制邏輯
+if is_pivot_low and price_drop > (atr_val[1] * final_atr_mult)
+    target_low_val := low[1]
+    target_low_bar_high := high[1]
+    target_low_bar_index := bar_index[1]
+    is_valid_low_setup := true
+    // 防雙刷壓制
+    if is_valid_high_setup and (bar_index - target_high_bar_index <= final_setup_age_limit)
+        is_valid_high_setup := false
+
+if is_pivot_high and price_surge > (atr_val[1] * final_atr_mult)
+    target_high_val := high[1]
+    target_high_bar_low := low[1]
+    target_high_bar_index := bar_index[1]
+    is_valid_high_setup := true
+    // 防雙刷壓制
+    if is_valid_low_setup and (bar_index - target_low_bar_index <= final_setup_age_limit)
+        is_valid_low_setup := false
+
+// ==============================================================================
+// 5. 進場邏輯 (Entry Logic - V4 獨立進場)
+// ==============================================================================
+bool long_entry_cond = false
+bool trend_allow_long = not use_trend_filter or is_bull_trend
+bool allow_long = (trade_dir == "Both" or trade_dir == "Long Only") and trend_allow_long
+
+bool is_breakout = is_valid_low_setup and close > (target_low_bar_high + buffer_val)
+bool is_bullish_candle = close > open
+bool is_upper_half = close > (high + low) / 2
+
+// 不再受短單狀態限制
+if pos_long == 0 and allow_long and is_breakout and is_bullish_candle and is_upper_half
+    long_entry_cond := true
+
+bool short_entry_cond = false
+bool trend_allow_short = not use_trend_filter or is_bear_trend
+bool allow_short = (trade_dir == "Both" or trade_dir == "Short Only") and trend_allow_short
+
+bool is_breakdown = is_valid_high_setup and close < (target_high_bar_low - buffer_val)
+bool is_bearish_candle = close < open
+bool is_lower_half = close < (high + low) / 2
+
+// 不再受長單狀態限制
+if pos_short == 0 and allow_short and is_breakdown and is_bearish_candle and is_lower_half
+    short_entry_cond := true
+
+if long_entry_cond
+    pos_long := 1
+    long_entry_price := close
+    long_entry_bar := bar_index 
+    long_sl_price := target_low_val
+    long_tp_price := long_entry_price + ((long_entry_price - long_sl_price) * final_rr_ratio)
+    is_valid_low_setup := false // 消耗 Setup
+
+if short_entry_cond
+    pos_short := 1
+    short_entry_price := close
+    short_entry_bar := bar_index 
+    short_sl_price := target_high_val
+    short_tp_price := short_entry_price - ((short_sl_price - short_entry_price) * final_rr_ratio)
+    is_valid_high_setup := false // 消耗 Setup
+
+// ==============================================================================
+// 6. 出場邏輯 (Exit Logic - V4 獨立出場)
+// ==============================================================================
+bool long_sl_cond = false
+bool long_tp_cond = false
+bool short_sl_cond = false
+bool short_tp_cond = false
+
+if pos_long == 1
+    bool can_tp_long = bar_index > long_entry_bar
+    if low <= long_sl_price
+        long_sl_cond := true
+    else // [V4.1 修正] SL 優先：只有在未觸發停損時才評估停利，防止跳空時雙重觸發
+        float sl_distance = math.abs(long_entry_price - long_sl_price)
+        bool has_min_profit = close > (long_entry_price + sl_distance * 0.5)
+        if can_tp_long and has_min_profit and is_macd_dead_cross_1m
+            long_tp_cond := true
+    if long_sl_cond or long_tp_cond
+        pos_long := 0
+
+if pos_short == 1
+    bool can_tp_short = bar_index > short_entry_bar
+    if high >= short_sl_price
+        short_sl_cond := true
+    else // [V4.1 修正] SL 優先：只有在未觸發停損時才評估停利，防止跳空時雙重觸發
+        float sl_distance = math.abs(short_entry_price - short_sl_price)
+        bool has_min_profit = close < (short_entry_price - sl_distance * 0.5)
+        if can_tp_short and has_min_profit and is_macd_golden_cross_1m
+            short_tp_cond := true
+    if short_sl_cond or short_tp_cond
+        pos_short := 0
+
+// ==============================================================================
+// 7. 警報與通知邏輯 (Alerts & Telegram Logic)
+// ==============================================================================
+time_str = str.format_time(timenow, "yyyy-MM-dd HH:mm", "UTC+8")
+tf_str = timeframe.period == "1" ? "1分K" : timeframe.period == "3" ? "3分K" : timeframe.period == "5" ? "5分K" : timeframe.period == "15" ? "15分K" : timeframe.period == "30" ? "30分K" : timeframe.period == "60" ? "1H K" : timeframe.period == "120" ? "2H K" : timeframe.period == "240" ? "4H K" : timeframe.period == "D" ? "日K" : timeframe.period == "W" ? "週K" : timeframe.period == "M" ? "月K" : timeframe.period + "分K"
+
+mtf_status_str = "週線: " + mtf_w_str + "\n日線: " + mtf_d_str + "\n4H : " + mtf_4h_str + "\n1H : " + mtf_1h_str + "\n30分: " + mtf_30m_str
+
+string long_msg  = "🚨 【5K 戰法 V4】" + syminfo.ticker + " (" + tf_str + ")\n📈 做多進場訊號！\n進場價：" + str.tostring(close) + "\n停損位：" + str.tostring(target_low_val) + "\n目標位：" + str.tostring(long_tp_price) + "\n風報比：1 : " + str.tostring(final_rr_ratio) + "\n⚠️ 建議倉位：" + suggested_size_long + "\n\n📊 多時框均線狀態\n" + mtf_status_str + "\n\n⏰ " + time_str + " (台灣時間)"
+string short_msg = "🚨 【5K 戰法 V4】" + syminfo.ticker + " (" + tf_str + ")\n📉 做空進場訊號！\n進場價：" + str.tostring(close) + "\n停損位：" + str.tostring(target_high_val) + "\n目標位：" + str.tostring(short_tp_price) + "\n風報比：1 : " + str.tostring(final_rr_ratio) + "\n⚠️ 建議倉位：" + suggested_size_short + "\n\n📊 多時框均線狀態\n" + mtf_status_str + "\n\n⏰ " + time_str + " (台灣時間)"
+
+string long_sl_msg  = "🟢 【5K 戰法 V4】" + syminfo.ticker + " (" + tf_str + ")\n🛑 多單停損出場！\n進場價：" + str.tostring(long_entry_price) + "\n出場價：" + str.tostring(close) + "\n\n⏰ " + time_str + " (台灣時間)"
+string long_tp_msg  = "🔴 【5K 戰法 V4】" + syminfo.ticker + " (" + tf_str + ")\n✅ 多單停利出場！\n進場價：" + str.tostring(long_entry_price) + "\n出場價：" + str.tostring(close) + "\n\n⏰ " + time_str + " (台灣時間)"
+string short_sl_msg = "🔴 【5K 戰法 V4】" + syminfo.ticker + " (" + tf_str + ")\n🛑 空單停損出場！\n進場價：" + str.tostring(short_entry_price) + "\n出場價：" + str.tostring(close) + "\n\n⏰ " + time_str + " (台灣時間)"
+string short_tp_msg = "🟢 【5K 戰法 V4】" + syminfo.ticker + " (" + tf_str + ")\n✅ 空單停利出場！\n進場價：" + str.tostring(short_entry_price) + "\n出場價：" + str.tostring(close) + "\n\n⏰ " + time_str + " (台灣時間)"
+
+if long_entry_cond
+    alert(long_msg, alert.freq_once_per_bar_close)
+if short_entry_cond
+    alert(short_msg, alert.freq_once_per_bar_close)
+
+if long_sl_cond
+    alert(long_sl_msg, alert.freq_once_per_bar)
+if long_tp_cond
+    alert(long_tp_msg, alert.freq_once_per_bar)
+if short_sl_cond
+    alert(short_sl_msg, alert.freq_once_per_bar)
+if short_tp_cond
+    alert(short_tp_msg, alert.freq_once_per_bar)
+
+alertcondition(long_entry_cond,              title="做多進場",  message="5K V4：做多進場訊號")
+alertcondition(short_entry_cond,             title="做空進場",  message="5K V4：做空進場訊號")
+alertcondition(long_sl_cond,                 title="多單停損",  message="5K V4：多單停損出場")
+alertcondition(long_tp_cond,                 title="多單停利",  message="5K V4：多單停利出場")
+alertcondition(short_sl_cond,                title="空單停損",  message="5K V4：空單停損出場")
+alertcondition(short_tp_cond,                title="空單停利",  message="5K V4：空單停利出場")
+
+// ==============================================================================
+// 8. 視覺化呈現 (Visuals)
+// ==============================================================================
+plotshape(long_entry_cond, title="Long Entry", style=shape.triangleup, location=location.belowbar, color=col_long_entry, size=size.auto)
+plotshape(short_entry_cond, title="Short Entry", style=shape.triangledown, location=location.abovebar, color=col_short_entry, size=size.auto)
+
+plotshape(long_sl_cond, title="Long Stop Loss", style=shape.triangledown, location=location.abovebar, color=col_long_exit, size=size.auto, text="SL", textcolor=col_long_exit)
+plotchar(long_tp_cond, title="Long Take Profit", char="＄", location=location.abovebar, color=col_long_exit, size=size.auto, text="TP", textcolor=col_long_exit)
+
+plotshape(short_sl_cond, title="Short Stop Loss", style=shape.triangleup, location=location.belowbar, color=col_short_exit, size=size.auto, text="SL", textcolor=col_short_exit)
+plotchar(short_tp_cond, title="Short Take Profit", char="＄", location=location.belowbar, color=col_short_exit, size=size.auto, text="TP", textcolor=col_short_exit)
+
+plot(show_base and is_valid_low_setup and pos_long == 0 ? target_low_val : na, title="Target Low", color=col_base_line, style=plot.style_linebr, linewidth=2)
+plot(show_base and is_valid_high_setup and pos_short == 0 ? target_high_val : na, title="Target High", color=col_base_line, style=plot.style_linebr, linewidth=2)
+
+plot(show_sl and pos_long == 1 ? long_sl_price : na, title="Long Stop Loss Line", color=col_sl_line, style=plot.style_linebr, linewidth=1)
+plot(show_tp and pos_long == 1 ? long_tp_price : na, title="Long Target Line", color=col_tp_line, style=plot.style_linebr, linewidth=1)
+plot(show_sl and pos_short == 1 ? short_sl_price : na, title="Short Stop Loss Line", color=col_sl_line, style=plot.style_linebr, linewidth=1)
+plot(show_tp and pos_short == 1 ? short_tp_price : na, title="Short Target Line", color=col_tp_line, style=plot.style_linebr, linewidth=1)
+
+plot(show_ma ? ma_fast : na, title="Fast MA", color=col_ma_fast, linewidth=2)
+plot(show_ma ? ma_slow : na, title="Slow MA", color=col_ma_slow, linewidth=2)
+
+// ==============================================================================
+// 9. 資訊面板 (Dashboard)
+// ==============================================================================
+var string p_pos = panel_pos_str == "Top Right" ? position.top_right : panel_pos_str == "Middle Right" ? position.middle_right : panel_pos_str == "Bottom Left" ? position.bottom_left : panel_pos_str == "Top Left" ? position.top_left : position.bottom_right
+var string p_size = panel_size_str == "Tiny" ? size.tiny : panel_size_str == "Small" ? size.small : size.normal
+
+// 增加至 10 列以容納倉位建議與 Setup Age 顯示
+var table panel = table.new(p_pos, 2, 10, bgcolor=color.new(color.black, 80), border_width=1, border_color=color.gray)
+
+if show_table and barstate.islast
+    table.cell(panel, 0, 0, "5K Strategy Master", text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 0, "v4.0", text_color=color.lime, text_halign=text.align_right, text_size=p_size)
+    
+    string mode_txt = is_auto_active ? "Auto (智能)" : "Manual (手動)"
+    color mode_col = is_auto_active ? color.orange : color.gray
+    table.cell(panel, 0, 1, "Mode:", text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 1, mode_txt, text_color=mode_col, text_halign=text.align_right, text_size=p_size)
+    
+    table.cell(panel, 0, 2, "Asset:", text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 2, asset_class, text_color=color.yellow, text_halign=text.align_right, text_size=p_size)
+    
+    string status_txt = (pos_long == 1 and pos_short == 1) ? "Hedged (雙向)" : (pos_long == 1 ? "Long (多單)" : (pos_short == 1 ? "Short (空單)" : "Waiting (等待)"))
+    color status_col = (pos_long == 1 and pos_short == 1) ? color.yellow : (pos_long == 1 ? color.red : (pos_short == 1 ? color.green : color.gray))
+    table.cell(panel, 0, 3, "Status:", text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 3, status_txt, text_color=status_col, text_halign=text.align_right, text_size=p_size)
+    
+    table.cell(panel, 0, 4, "Current ATR:", text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 4, str.tostring(atr_val, "#.##"), text_color=color.yellow, text_halign=text.align_right, text_size=p_size)
+    
+    string macd_txt = macdLine_1m > signalLine_1m ? "Bullish (多)" : "Bearish (空)"
+    color macd_col = macdLine_1m > signalLine_1m ? color.red : color.green
+    table.cell(panel, 0, 5, "1m MACD:", text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 5, macd_txt, text_color=macd_col, text_halign=text.align_right, text_size=p_size)
+    
+    string trend_txt = is_bull_trend ? "Bullish (多頭)" : "Bearish (空頭)"
+    color trend_col = is_bull_trend ? color.red : color.green
+    table.cell(panel, 0, 6, "MA Trend:", text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 6, trend_txt, text_color=trend_col, text_halign=text.align_right, text_size=p_size)
+    
+    table.cell(panel, 0, 7, "Market State:", text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 7, market_state_str, text_color=is_consolidation ? color.yellow : (is_bull_trend ? color.red : color.green), text_halign=text.align_right, text_size=p_size)
+
+    string display_sug = pos_long == 1 ? suggested_size_long : (pos_short == 1 ? suggested_size_short : (is_strong_bull ? "偏多 (4H+日線順勢)" : (is_strong_bear ? "偏空 (4H+日線順勢)" : "盤整觀望")))
+    table.cell(panel, 0, 8, "Sizing Sug.:", text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 8, display_sug, text_color=color.yellow, text_halign=text.align_right, text_size=p_size)
+
+    // [V4.1 新增] 顯示當前生效的防雙刷壓制數值
+    string age_label = is_auto_active ? "Setup Age (Auto):" : "Setup Age (Man.):"
+    table.cell(panel, 0, 9, age_label, text_color=color.white, text_halign=text.align_left, text_size=p_size)
+    table.cell(panel, 1, 9, str.tostring(final_setup_age_limit) + " bars", text_color=color.aqua, text_halign=text.align_right, text_size=p_size)

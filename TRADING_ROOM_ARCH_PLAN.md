@@ -67,9 +67,9 @@ flowchart TD
 
 ## 📝 四、 未來開發里程碑備忘 (Roadmap)
 
-- [ ] **Milestone 1**：引入本機 Lightweight Charts v5.0.9 庫，建立台指期 + GEX 關鍵價位原型。
-- [ ] **Milestone 2**：將使用者的 TradingView Pine Script 指標逐一轉譯為 Python 模組。
-- [ ] **Milestone 3**：前端建立獨立 `room.html` 三欄式戰情室（左：合約監控 / 中：多層圖表 / 右：軍師面板），並與 `index.html` 互相切換。
+- [x] **Milestone 1**：引入本機 Lightweight Charts 庫，建立台指期 + GEX 關鍵價位原型。（✅ 已完成）
+- [x] **Milestone 2**：將使用者的 TradingView Pine Script 指標逐一轉譯為 Python 模組。（✅ 已完成 `scripts/tv_indicators_engine.py` 與 `room.js` 1:1 實作）
+- [x] **Milestone 3**：前端建立獨立 `room.html` 三欄式戰情室（左：合約監控 / 中：多層圖表 / 右：軍師面板），並與 `index.html` 互相切換。（✅ 已完成）
 - [ ] **Milestone 4**：串接 Gemini API 實現第一代「尋鳥軍師」，並內嵌 `AGENTS.md` 風控鐵律。
 - [ ] **Milestone 5**（選配）：整合富邦 SDK (`fubon_neo`) 達成盤中毫秒級即時自動更新。
 

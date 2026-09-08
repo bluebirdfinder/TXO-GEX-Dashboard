@@ -1,0 +1,462 @@
+// ╔══════════════════════════════════════════════════════════════════════╗
+// ║            DeMark Sequential V3 - US Equities Pro | 美股專武版         ║
+// ║  Standalone parameter tuning version optimized for US Stocks.         ║
+// ╚══════════════════════════════════════════════════════════════════════╝
+//@version=6
+indicator("DeMark V3 - US Equities Pro | 美股專武", shorttitle="V3-Equities-US", overlay=true, max_labels_count=500, max_lines_count=500)
+
+// ══════════════════════════════════════════════════════════════════════
+// ▌ SECTION 0 – UI / UX INPUT 控制面板
+// ══════════════════════════════════════════════════════════════════════
+g1 = "🚀 群組 1：1~3 試單過濾器"
+g2 = "🎯 群組 2：7~13 轉折防護"
+g3 = "🛡️ 群組 3：兩棲防禦與系統設定"
+
+// --- Group 1: Early Action Filters (1~3) ---
+// ══ 交易情境快速切換鈕 ══
+i_situation = input.string("🔄 通用版 (均衡)", "🎚️ 交易情境模式",
+    options=["🔄 通用版 (均衡)", "📡 左右側切換 (V 轉發動)", "📈 趨勢延伸 (第 2~3 波)", "🛠️ 手動自訂模式"],
+    group=g1,
+    tooltip="【通用版/V轉/趨勢】選擇後會自動覆蓋下方參數，套用美股最佳化設定。\n【🛠️ 手動自訂模式】選擇後將完全尊重下方您手動設定的所有開關與數值。")
+
+// V轉模式 RSI 確認門檻 (防盤整期假V轉雜訊)
+i_vturn_rsi = input.int(40, "📡 V轉模式 RSI 確認門檻", minval=20, maxval=60, step=5, group=g1,
+    tooltip="【V轉發動模式專用】買訊出現時 RSI 必須低於此值，確保訊號在真正的超賣/底部區域附近才放行。\n預設 40：RSI 在 40 以下代表市場處於弱勢/超賣區域，是真正的底部時機。\n調高到 50：門檻較寬鬆，會多出一些早期訊號（適合積極的左側交易者）。\n調低到 30：門檻極安全，只在極端超賣區放行（適合僅限右側進場之人）。")
+
+// --- 個別細部 (進階微調用) ---
+i_f1_vol   = input.bool(true, "啟用 Volume 爆量過濾", group=g1, inline="f1al", tooltip="【意義】當前成交量須大於N天均量的X倍，代表主力放量表態。\n【最佳主場】美股、加密幣。專抓莊家砸出的破局點。\n【盲區】外匯(無集中成交量)、長波段原物料(無量緩漲/跌)。")
+i_f1_vol_l = input.int(15, "均量天數 (美股推薦: 15)", minval=5, maxval=100, group=g1, inline="f1al")
+i_f1_vol_m = input.float(1.5, "爆量倍數 (美股建議見提示)", step=0.1, group=g1, inline="f1al", 
+    tooltip="【美股規模建議】\n- 🦣 Mag7 (NVDA/AAPL): 1.3x~1.5x (緩步推升)\n- 📊 大型股 (S&P500): 1.5x~1.8x (標準發動)\n- 📈 小型股 (Russell): 2.5x+ (爆發力強)")
+
+i_f1_sqz   = input.bool(true, "啟用 BB Squeeze 擠壓防護", group=g1, tooltip="【意義】當布林通道縮小到肯特納通道內，代表市場陷入極低波動的死魚盤整(擠壓)。解壓縮時放行訊號。\n【最佳主場】全商品(原物料/個股/加密)。專抓暴漲前的寧靜與無量緩漲，完美取代量能過濾。\n【盲區】極端V型反轉(因跌勢太大通道無法收斂)。")
+
+i_f1_ma    = input.bool(true, "啟用 MA 均線斜率防護", group=g1, inline="f1bl", tooltip="【意義】長短天期均線必須與試單方向一致，順勢終極保鑣。\n【最佳主場】全商品大波段。防止在空頭瀑布中接刀。\n【盲區】V型反轉、底部剛起漲瞬間。均線滯後，抓不到第一波。")
+i_f1_ma_l  = input.int(50, "MA長度 (美股推薦: 50)", group=g1, inline="f1bl")
+
+i_f1_macd  = input.bool(false, "啟用 MACD 趨勢共振", group=g1, tooltip="【意義】快慢EMA交叉，捕捉動能(Momentum)瞬間轉換。\n【最佳主場】指數、原物料。解決MA滯後性，在V轉發動第一時間敏銳放行初升段。")
+i_f1_ao    = input.bool(false, "啟用 AO 中長軸過濾", group=g1, tooltip="【意義】測量5期與34期中位數動能。比MACD平滑。\n【最佳主場】指數波段。過濾大牛市中的短暫惡意回調騙線。")
+
+// --- Group 2: Exhaustion Filters (7~13) ---
+i_f2_uni   = input.bool(true,  "啟用 Unicode 動態標記 (★, ↗, ↘)", group=g2, tooltip="【意義】總開關。開啟後強制過濾常規13，只在極端狀態跳出 Unicode (★/↗/↘) 警告。")
+i_f2_rsi   = input.bool(false, "啟用 RSI 鈍化/背離 防火牆", group=g2, inline="f2al", tooltip="【意義】價格創新高但RSI未過高(背離)，或處於極端超買賣區。動能衰竭。\n【最佳主場】外匯、大盤。均值回歸勝率極高。\n【盲區】原物料單邊趨勢(Super Cycle)。可能在RSI高達90時不背離連漲數月，易錯過歷史大頂。")
+i_f2_rsi_u = input.int(75, "RSI 超買線", group=g2, inline="f2al", 
+    tooltip="【美股規模建議】\n- 🦣 Mag7: 80 (高檔鈍化強)\n- 📊 大型股: 75\n- 📈 小型股: 70 (回歸快)")
+i_f2_rsi_d = input.int(25, "RSI 超賣線", group=g2, inline="f2al",
+    tooltip="【美股規模建議】\n- 🦣 Mag7: 20\n- 📊 大型股: 25\n- 📈 小型股: 30")
+
+i_f2_kd    = input.bool(false, "啟用 KD 極端交叉確認", group=g2, inline="f2bl", tooltip="【意義】印出13後，強迫等KD在極端區實際發生死/金叉才算轉折確立。\n【最佳主場】期貨當沖、右側交易者。不預設高點，等頭部成型往下拐的第一瞬間才開槍。")
+
+// --- Group 3: Auxiliary & Defense ---
+i_f3_atr   = input.bool(false, "啟用 ATR 動態防守線", group=g3, inline="f3al", tooltip="【意義】根據真實波動幅度畫出動態停損界線。\n【最佳主場】加密貨幣、原物料。對付上下插針洗盤。K棒實體沒跌破這條線就死抱部位。")
+i_f3_atr_m = input.float(1.5, "倍數", step=0.1, group=g3, inline="f3al")
+
+show_perf  = input.bool(true,  "顯示 Setup Perfection (9★)", group=g3)
+show_tdst  = input.bool(true,  "繪製 TDST 防守支撐/壓力線", group=g3)
+q_8v5      = input.bool(false, "嚴格倒數: 8 vs 5", group=g3)
+q_lv8      = input.bool(true,  "嚴格倒數: 13 vs 8", group=g3)
+tdst_rule  = input.bool(true,  "TDST 突破取消倒數規則", group=g3)
+rev_rule   = input.bool(true,  "反向 Setup 取消倒數規則", group=g3)
+use_recycle= input.bool(true,  "啟用 Recycle (R) 靜默防護", group=g3, tooltip="【意義】當趨勢進入極端單邊市場(Setup達到22次)，背景自動重置倒數並取消13訊號，防止逆勢接刀。")
+recycle_n  = input.int (22,    "Recycle 觸發門檻", minval=9, group=g3)
+
+// Color settings
+g_buy_zone  = "⬇️ 多頭行動區 (Buy)"
+g_sell_zone = "⬆️ 空頭行動區 (Sell)"
+early_up_1 = input.color(#D1C4E9, "初升段試多單 1", group=g_buy_zone)
+early_up_2 = input.color(#b495e9, "初升段試多單 2", group=g_buy_zone)
+early_up_3 = input.color(#9071ee, "初升段試多單 3", group=g_buy_zone)
+b_col_7    = input.color(#FFEE58, "賣盤竭盡抄底 7", group=g_buy_zone)
+b_col_8    = input.color(#FFA726, "賣盤竭盡抄底 8", group=g_buy_zone)
+b_col_9    = input.color(#F48FB1, "賣盤竭盡抄底 9", group=g_buy_zone)
+b_col_13   = input.color(#FFEB3B, "賣盤竭盡抄底 13", group=g_buy_zone)
+
+early_dn_1 = input.color(#B3E5FC, "初跌段試空單 1", group=g_sell_zone)
+early_dn_2 = input.color(color.rgb(120, 186, 248), "初跌段試空單 2", group=g_sell_zone)
+early_dn_3 = input.color(color.rgb(57, 168, 241), "初跌段試空單 3", group=g_sell_zone)
+s_col_7    = input.color(color.rgb(15, 189, 151), "買盤竭盡減碼 7", group=g_sell_zone)
+s_col_8    = input.color(#4CAF50, "買盤竭盡減碼 8", group=g_sell_zone)
+s_col_9    = input.color(color.rgb(103, 241, 200), "買盤竭盡減碼 9", group=g_sell_zone)
+s_col_13   = input.color(#9af2f5, "空極限 13", group=g_sell_zone)
+
+g_atr = "🛡️ ATR 防守線外觀"
+atr_b_col  = input.color(color.new(#FFEB3B, 20), "多方 ATR 防守顏色", group=g_atr)
+atr_s_col  = input.color(color.new(#9af2f5, 20), "空方 ATR 防守顏色", group=g_atr)
+atr_width  = input.int(2, "ATR 線條粗細", minval=1, maxval=4, group=g_atr)
+
+g_td = "📏 TDST 線條顏色"
+buy_tdst_col   = input.color (color.new(#E53935, 30), "買方 TDST 顏色",  group=g_td)
+buy_tdst_sty   = input.string("實線 ━━━━", "買方 TDST 線型", options=["實線 ━━━━", "虛線 ╌╌╌╌", "點線 ┈┈┈┈"], group=g_td)
+sell_tdst_col  = input.color (color.new(#26A69A, 30), "賣方 TDST 顏色",  group=g_td)
+sell_tdst_sty  = input.string("虛線 ╌╌╌╌", "賣方 TDST 線型", options=["實線 ━━━━", "虛線 ╌╌╌╌", "點線 ┈┈┈┈"], group=g_td)
+
+f_line_style(s) =>
+    switch s
+        "實線 ━━━━" => line.style_solid
+        "虛線 ╌╌╌╌" => line.style_dashed
+        =>              line.style_dotted
+
+buy_tdst_style  = f_line_style(buy_tdst_sty)
+sell_tdst_style = f_line_style(sell_tdst_sty)
+
+// ══════════════════════════════════════════════════════════════════════
+// ▌ SECTION 1 – 參數綁定 + 交易情境覆蓋引擎
+// ══════════════════════════════════════════════════════════════════════
+bool  cfg_f1_active = true 
+bool  cfg_vol       = i_f1_vol
+int   cfg_vol_l     = i_f1_vol_l
+float cfg_vol_m     = i_f1_vol_m
+bool  cfg_sqz       = i_f1_sqz
+bool  cfg_ma        = i_f1_ma
+int   cfg_ma_l      = i_f1_ma_l
+bool  cfg_macd      = i_f1_macd
+bool  cfg_ao        = i_f1_ao
+bool  cfg_rsi       = i_f2_rsi
+int   cfg_rsi_u     = i_f2_rsi_u
+int   cfg_rsi_d     = i_f2_rsi_d
+bool  cfg_kd        = i_f2_kd
+bool  cfg_atr       = i_f3_atr
+float cfg_atr_m     = i_f3_atr_m
+
+// ─── Situation Mode Override ───────────────────────────────────────────────
+// 情境模式強制覆蓋上方個別開關，以套用最佳防護組合。
+bool is_vturn = i_situation == "📡 左右側切換 (V 轉發動)"
+bool is_cont  = i_situation == "📈 趨勢延伸 (第 2~3 波)"
+bool is_gen   = i_situation == "🔄 通用版 (均衡)"
+bool is_manu  = i_situation == "🛠️ 手動自訂模式"
+
+if is_vturn
+    // 📡 V轉發動模式 [美股專屬]
+    cfg_vol   := false
+    cfg_sqz   := true
+    cfg_ma    := false
+    cfg_macd  := false
+    cfg_ao    := false
+else if is_cont
+    // 📈 趨勢延伸模式 [美股專屬]
+    cfg_vol   := true
+    cfg_vol_l := 15                // 美股採用 15 天均量 (約三週交易日) 以兼顧穩定與靈敏
+    cfg_vol_m := 1.5               // 美股通用爆量門檻
+    cfg_sqz   := false
+    cfg_ma    := true
+    cfg_ma_l  := 50                // 美股核心趨勢線: 50 MA
+    cfg_macd  := false
+    cfg_ao    := false
+else if is_gen
+    // 🔄 通用均衡模式 [美股專屬]
+    cfg_vol   := true
+    cfg_vol_l := 15
+    cfg_vol_m := 1.2
+    cfg_sqz   := true
+    cfg_ma    := false
+    cfg_macd  := false
+    cfg_ao    := false
+// else (is_manu) -> 使用面板初始設定 (美股預設)
+
+// ══════════════════════════════════════════════════════════════════════
+// ▌ SECTION 2 – 科學過濾器引擎庫 (Filter Engine)
+// ══════════════════════════════════════════════════════════════════════
+vol_avg = ta.sma(volume, cfg_vol_l)
+is_vol_break = volume > (vol_avg * cfg_vol_m)
+
+ma_line = ta.sma(close, cfg_ma_l)
+is_ma_up = ma_line > ma_line[5]
+is_ma_dn = ma_line < ma_line[5]
+
+[macd_line, macd_sig, _] = ta.macd(close, 12, 26, 9)
+is_macd_bull = macd_line > macd_sig
+is_macd_bear = macd_line < macd_sig
+
+ao = ta.sma(hl2, 5) - ta.sma(hl2, 34)
+is_ao_bull = ao > 0
+is_ao_bear = ao < 0
+
+rsi_val = ta.rsi(close, 14)
+is_rsi_ob = rsi_val >= cfg_rsi_u
+is_rsi_os = rsi_val <= cfg_rsi_d
+price_hh = close > ta.highest(close, 20)[1]
+rsi_lh   = rsi_val < ta.highest(rsi_val, 20)[1]
+is_bear_div = price_hh and rsi_lh
+price_ll = close < ta.lowest(close, 20)[1]
+rsi_hl   = rsi_val > ta.lowest(rsi_val, 20)[1]
+is_bull_div = price_ll and rsi_hl
+
+k = ta.stoch(close, high, low, 9)
+d = ta.sma(k, 3)
+is_kd_cross_up = ta.crossover(k, d) and k < 30
+is_kd_cross_dn = ta.crossunder(k, d) and k > 70
+
+atr_val = ta.atr(14)
+
+// --- Squeeze Engine ---
+bb_basis = ta.sma(close, 20)
+bb_dev = 2.0 * ta.stdev(close, 20)
+bb_upper = bb_basis + bb_dev
+bb_lower = bb_basis - bb_dev
+kc_basis = ta.sma(close, 20)
+kc_dev = 1.5 * ta.atr(20)
+kc_upper = kc_basis + kc_dev
+kc_lower = kc_basis - kc_dev
+is_squeeze = (bb_upper < kc_upper) and (bb_lower > kc_lower)
+
+bool pass_f1_buy = true
+if cfg_vol and not is_vol_break
+    pass_f1_buy := false
+// Squeeze 過濾器 + RSI 底部背離 OR 繞過機制 (V轉模式專用)
+if cfg_sqz and is_squeeze
+    if not (is_vturn and is_bull_div)
+        pass_f1_buy := false
+// V轉模式 RSI 區間門檻：買訊只在 RSI 超賣區域附近才放行
+if is_vturn and rsi_val > i_vturn_rsi
+    pass_f1_buy := false
+if cfg_ma and not is_ma_up
+    pass_f1_buy := false
+if cfg_macd and not is_macd_bear 
+    pass_f1_buy := false
+if cfg_ao and not is_ao_bear
+    pass_f1_buy := false
+
+bool pass_f1_sell = true
+if cfg_vol and not is_vol_break
+    pass_f1_sell := false
+// Squeeze 過濾 + RSI 頂部背離 OR 繞過 (V轉模式專用)
+if cfg_sqz and is_squeeze
+    if not (is_vturn and is_bear_div)
+        pass_f1_sell := false
+// V轉模式 RSI 區間門檻：賣訊只在 RSI 超買區域附近才放行
+if is_vturn and rsi_val < (100 - i_vturn_rsi)
+    pass_f1_sell := false
+if cfg_ma and not is_ma_dn
+    pass_f1_sell := false
+if cfg_macd and not is_macd_bull 
+    pass_f1_sell := false
+if cfg_ao and not is_ao_bull
+    pass_f1_sell := false
+
+// ══════════════════════════════════════════════════════════════════════
+// ▌ SECTION 3 – 神奇九轉 V2 核心運算
+// ══════════════════════════════════════════════════════════════════════
+b_cond = close < close[4]
+s_cond = close > close[4]
+b_flip = b_cond and not b_cond[1]
+s_flip = s_cond and not s_cond[1]
+
+var int b_cnt = 0
+var int s_cnt = 0
+b_cnt := b_cond ? (b_flip ? 1 : b_cnt[1] > 0 ? b_cnt[1] + 1 : 0) : 0
+s_cnt := s_cond ? (s_flip ? 1 : s_cnt[1] > 0 ? s_cnt[1] + 1 : 0) : 0
+
+var float b_maxH = na
+var float s_minL = na
+b_maxH := b_cnt > 0 ? (b_cnt == 1 ? high : math.max(b_maxH[1], high)) : na
+s_minL := s_cnt > 0 ? (s_cnt == 1 ? low  : math.min(s_minL[1], low))  : na
+
+var float bl6 = na, var float bl7 = na, var float bl8 = na
+var float sh6 = na, var float sh7 = na, var float sh8 = na
+if b_cnt == 6
+    bl6 := low
+if b_cnt == 7
+    bl7 := low
+if b_cnt == 8
+    bl8 := low
+if s_cnt == 6
+    sh6 := high
+if s_cnt == 7
+    sh7 := high
+if s_cnt == 8
+    sh8 := high
+
+b_done = b_cnt == 9
+s_done = s_cnt == 9
+b_perf = show_perf and b_done and not na(bl6) and not na(bl7) and not na(bl8) and math.min(bl8, low)  < math.min(bl6, bl7)
+s_perf = show_perf and s_done and not na(sh6) and not na(sh7) and not na(sh8) and math.max(sh8, high) > math.max(sh6, sh7)
+
+// --- TDST Lines ---
+var line buy_tdst_line  = na
+var line sell_tdst_line = na
+if b_done and show_tdst
+    if not na(buy_tdst_line)
+        line.delete(buy_tdst_line)
+    buy_tdst_line := line.new(bar_index - 8, nz(b_maxH, high), bar_index, nz(b_maxH, high), color=buy_tdst_col, width=1, style=buy_tdst_style, extend=extend.right)
+if s_done and show_tdst
+    if not na(sell_tdst_line)
+        line.delete(sell_tdst_line)
+    sell_tdst_line := line.new(bar_index - 8, nz(s_minL, low), bar_index, nz(s_minL, low), color=sell_tdst_col, width=1, style=sell_tdst_style, extend=extend.right)
+
+// --- Countdown Phase ---
+var int   bc       = 0
+var bool  bc_on    = false
+var float bc_tdst  = na
+var float bc_cl5   = na
+var float bc_cl8   = na
+var bool  bc_recyd = false
+
+var int   sc       = 0
+var bool  sc_on    = false
+var float sc_tdst  = na
+var float sc_cl5   = na
+var float sc_cl8   = na
+var bool  sc_recyd = false
+
+if (bc_on and tdst_rule and not na(bc_tdst) and high > bc_tdst) or (bc_on and rev_rule and s_done)
+    bc_on := false, bc := 0, bc_cl5 := na, bc_cl8 := na
+if (sc_on and tdst_rule and not na(sc_tdst) and low < sc_tdst)  or (sc_on and rev_rule  and b_done)
+    sc_on := false, sc := 0, sc_cl5 := na, sc_cl8 := na
+
+if b_done and not bc_on
+    bc_on := true, bc := 0, bc_recyd := false, bc_tdst := nz(b_maxH, high), bc_cl5 := na, bc_cl8 := na
+if s_done and not sc_on
+    sc_on := true, sc := 0, sc_recyd := false, sc_tdst := nz(s_minL, low), sc_cl5 := na, sc_cl8 := na
+
+if bc_on and use_recycle and b_cnt == recycle_n
+    bc := 0, bc_recyd := true, bc_tdst := nz(b_maxH, high), bc_cl5 := na, bc_cl8 := na
+if sc_on and use_recycle and s_cnt == recycle_n
+    sc := 0, sc_recyd := true, sc_tdst := nz(s_minL, low), sc_cl5 := na, sc_cl8 := na
+
+bc_bar = close <= low[2]
+sc_bar = close >= high[2]
+if bc_on and bc_bar and bc < 13 and not b_done
+    if bc == 7 and q_8v5
+        if low < nz(bc_cl5, high)
+            bc := 8, bc_cl8 := close
+    else if bc == 12 and q_lv8
+        if low <= nz(bc_cl8, high)
+            bc := 13
+    else if bc != 7 or not q_8v5
+        bc += 1
+        if bc == 5
+            bc_cl5 := close
+        if bc == 8
+            bc_cl8 := close
+
+if sc_on and sc_bar and sc < 13 and not s_done
+    if sc == 7 and q_8v5
+        if high > nz(sc_cl5, low)
+            sc := 8, sc_cl8 := close
+    else if sc == 12 and q_lv8
+        if high >= nz(sc_cl8, low)
+            sc := 13
+    else if sc != 7 or not q_8v5
+        sc += 1
+        if sc == 5
+            sc_cl5 := close
+        if sc == 8
+            sc_cl8 := close
+
+bc_comp = bc_on and bc == 13
+sc_comp = sc_on and sc == 13
+if bc_comp
+    bc_on := false
+if sc_comp
+    sc_on := false
+
+// ══════════════════════════════════════════════════════════════════════
+// ▌ SECTION 4 – 混血視圖與 Unicode 特效引擎
+// ══════════════════════════════════════════════════════════════════════
+bool block_b_exhaust = cfg_kd and not is_kd_cross_up
+bool block_s_exhaust = cfg_kd and not is_kd_cross_dn
+bool show_b9_up = is_ma_up
+bool show_s9_dn = is_ma_dn
+
+bool draw_b9 = (not block_b_exhaust) and b_done and not b_perf and not (i_f2_uni and show_b9_up)
+bool draw_b9_star = (not block_b_exhaust) and b_done and b_perf 
+bool draw_b9_arrow = (not block_b_exhaust) and b_done and not b_perf and (i_f2_uni and show_b9_up)
+bool draw_s9 = (not block_s_exhaust) and s_done and not s_perf and not (i_f2_uni and show_s9_dn)
+bool draw_s9_star = (not block_s_exhaust) and s_done and s_perf 
+bool draw_s9_arrow = (not block_s_exhaust) and s_done and not s_perf and (i_f2_uni and show_s9_dn)
+
+bool is_b_ext = is_bull_div or is_rsi_os
+bool draw_b13 = (not block_b_exhaust) and bc_comp and not bc_recyd and not (i_f2_uni and is_b_ext)
+bool draw_b13_star = (not block_b_exhaust) and bc_comp and not bc_recyd and (i_f2_uni and is_bull_div)
+bool draw_b13_arrow = (not block_b_exhaust) and bc_comp and not bc_recyd and (i_f2_uni and is_rsi_os and not is_bull_div)
+bool is_s_ext = is_bear_div or is_rsi_ob
+bool draw_s13 = (not block_s_exhaust) and sc_comp and not sc_recyd and not (i_f2_uni and is_s_ext)
+bool draw_s13_star = (not block_s_exhaust) and sc_comp and not sc_recyd and (i_f2_uni and is_bear_div)
+bool draw_s13_arrow = (not block_s_exhaust) and sc_comp and not sc_recyd and (i_f2_uni and is_rsi_ob and not is_bear_div)
+
+// Phase 1 (1~3)
+if cfg_f1_active and s_cnt == 1 and pass_f1_buy
+    label.new(bar_index, na, text="●\n1", textcolor=early_up_1, style=label.style_none, yloc=yloc.belowbar, size=size.small)
+if cfg_f1_active and s_cnt == 2 and pass_f1_buy
+    label.new(bar_index, na, text="●\n2", textcolor=early_up_2, style=label.style_none, yloc=yloc.belowbar, size=size.small)
+if cfg_f1_active and s_cnt == 3 and pass_f1_buy
+    label.new(bar_index, na, text="●\n3", textcolor=early_up_3, style=label.style_none, yloc=yloc.belowbar, size=size.small)
+if cfg_f1_active and b_cnt == 1 and pass_f1_sell
+    label.new(bar_index, na, text="1\n●", textcolor=early_dn_1, style=label.style_none, yloc=yloc.abovebar, size=size.small)
+if cfg_f1_active and b_cnt == 2 and pass_f1_sell
+    label.new(bar_index, na, text="2\n●", textcolor=early_dn_2, style=label.style_none, yloc=yloc.abovebar, size=size.small)
+if cfg_f1_active and b_cnt == 3 and pass_f1_sell
+    label.new(bar_index, na, text="3\n●", textcolor=early_dn_3, style=label.style_none, yloc=yloc.abovebar, size=size.small)
+
+// Phase 2 (7,8,9)
+plotshape(b_cnt == 7 and not block_b_exhaust, title="Buy 7", style=shape.circle, location=location.belowbar, color=b_col_7, text="7", textcolor=b_col_7, size=size.auto)
+plotshape(b_cnt == 8 and not block_b_exhaust, title="Buy 8", style=shape.circle, location=location.belowbar, color=b_col_8, text="8", textcolor=b_col_8, size=size.auto)
+plotshape(s_cnt == 7 and not block_s_exhaust, title="Sell 7", style=shape.circle, location=location.abovebar, color=s_col_7, text="7", textcolor=s_col_7, size=size.auto)
+plotshape(s_cnt == 8 and not block_s_exhaust, title="Sell 8", style=shape.circle, location=location.abovebar, color=s_col_8, text="8", textcolor=s_col_8, size=size.auto)
+plotshape(draw_b9, title="Buy 9", style=shape.circle, location=location.belowbar, color=b_col_9, text="9", textcolor=b_col_9, size=size.auto)
+plotshape(draw_b9_star, title="Buy 9★", style=shape.circle, location=location.belowbar, color=b_col_9, text="9★", textcolor=b_col_9, size=size.auto)
+plotshape(draw_b9_arrow, title="Buy 9↗", style=shape.circle, location=location.belowbar, color=b_col_9, text="9↗", textcolor=b_col_9, size=size.auto)
+plotshape(draw_s9, title="Sell 9", style=shape.circle, location=location.abovebar, color=s_col_9, text="9", textcolor=s_col_9, size=size.auto)
+plotshape(draw_s9_star, title="Sell 9★", style=shape.circle, location=location.abovebar, color=s_col_9, text="9★", textcolor=s_col_9, size=size.auto)
+plotshape(draw_s9_arrow, title="Sell 9↘", style=shape.circle, location=location.abovebar, color=s_col_9, text="9↘", textcolor=s_col_9, size=size.auto)
+
+// Phase 3 (13)
+plotshape(draw_b13, title="Buy 13", style=shape.circle, location=location.belowbar, color=b_col_13, text="13", textcolor=b_col_13, size=size.auto)
+plotshape(draw_b13_star, title="Buy 13★", style=shape.circle, location=location.belowbar, color=b_col_13, text="13★", textcolor=b_col_13, size=size.auto)
+plotshape(draw_b13_arrow, title="Buy 13↘", style=shape.circle, location=location.belowbar, color=b_col_13, text="13↘", textcolor=b_col_13, size=size.auto)
+plotshape(draw_s13, title="Sell 13", style=shape.circle, location=location.abovebar, color=s_col_13, text="13", textcolor=s_col_13, size=size.auto)
+plotshape(draw_s13_star, title="Sell 13★", style=shape.circle, location=location.abovebar, color=s_col_13, text="13★", textcolor=s_col_13, size=size.auto)
+plotshape(draw_s13_arrow, title="Sell 13↗", style=shape.circle, location=location.abovebar, color=s_col_13, text="13↗", textcolor=s_col_13, size=size.auto)
+
+// ATR Defense Line
+var line b_atr_line = na
+var line s_atr_line = na
+if cfg_atr and (b_done or bc_comp)
+    if not na(b_atr_line)
+        line.delete(b_atr_line)
+    limit = low - (atr_val * cfg_atr_m)
+    b_atr_line := line.new(bar_index - 1, limit, bar_index, limit, color=atr_b_col, width=atr_width, style=line.style_dashed, extend=extend.right)
+if cfg_atr and (s_done or sc_comp)
+    if not na(s_atr_line)
+        line.delete(s_atr_line)
+    limit = high + (atr_val * cfg_atr_m)
+    s_atr_line := line.new(bar_index - 1, limit, bar_index, limit, color=atr_s_col, width=atr_width, style=line.style_dashed, extend=extend.right)
+
+// ══════════════════════════════════════════════════════════════════════
+// ▌ SECTION 5 – 動態狀態儀表板
+// ══════════════════════════════════════════════════════════════════════
+var table db = table.new(position.bottom_right, 1, 4, bgcolor=color.new(color.black, 40), border_width=1, border_color=color.gray)
+string title_str = "💡 DeMark V3 | 美股專武 (US Equities Pro)"
+string mode_str  = is_vturn ? "📡 情境: V轉發動 | 防護: Squeeze OR RSI底部背離" :
+                  is_cont  ? "📈 情境: 趨勢延伸 | 防護: Vol(1.5x) + MA(50)" :
+                  is_gen   ? "🔄 情境: 通用版 | 防護: Vol(1.2x) + Squeeze" :
+                             "🛠️ 情境: 手動自訂模式 | 尊重面板設定"
+
+// 動態讀取底層真正運作的過濾器狀態
+string f_str = ""
+if cfg_f1_active
+    if cfg_vol
+        f_str += "Vol(" + str.tostring(cfg_vol_m) + "x) "
+    if cfg_sqz
+        f_str += "Squeeze "
+    if cfg_ma
+        f_str += "MA(" + str.tostring(cfg_ma_l) + ") "
+    if cfg_macd
+        f_str += "MACD "
+    if cfg_ao
+        f_str += "AO "
+if cfg_rsi
+    f_str += "RSI(" + str.tostring(cfg_rsi_u) + "/" + str.tostring(cfg_rsi_d) + ") "
+if cfg_kd
+    f_str += "KD "
+if cfg_atr
+    f_str += "ATR(" + str.tostring(cfg_atr_m) + "x) "
+
+if f_str == ""
+    f_str := "無 (原始九轉)"
+string filter_status_str = "🛡️ 啟動防禦: " + f_str
+
+if barstate.islast
+    table.cell(db, 0, 0, title_str,         text_color=color.white,  text_size=size.small, text_halign=text.align_left)
+    table.cell(db, 0, 1, mode_str,          text_color=color.yellow, text_size=size.small, text_halign=text.align_left)
+    table.cell(db, 0, 2, filter_status_str, text_color=color.aqua,   text_size=size.small, text_halign=text.align_left)

@@ -1,0 +1,127 @@
+//@version=6
+indicator("J Indicator Advanced - Ghost Claws (開發測試版)", overlay=true)
+
+// ==========================================
+// 1. 布林通道區 (Bollinger Bands)
+// ==========================================
+bb_length = input.int(20,       "布林週期",     minval = 1, group="布林通道設定")
+bb_maType = input.string("SMA", "中軌均線種類", options = ["SMA", "EMA", "SMMA (RMA)", "WMA", "VWMA"], group="布林通道設定")
+bb_src    = input(close,        "計算來源",     group="布林通道設定")
+bb_mult   = input.float(2.0,    "標準差倍數",   minval = 0.001, maxval = 50, group="布林通道設定")
+bb_offset = input.int(0,        "偏移量",       minval = -500,  maxval = 500, display = display.none, group="布林通道設定")
+
+get_bb_ma(source, length, _type) =>
+    switch _type
+        "SMA" => ta.sma(source, length)
+        "EMA" => ta.ema(source, length)
+        "SMMA (RMA)" => ta.rma(source, length)
+        "WMA" => ta.wma(source, length)
+        "VWMA" => ta.vwma(source, length)
+
+bb_basis = get_bb_ma(bb_src, bb_length, bb_maType)
+bb_dev   = bb_mult * ta.stdev(bb_src, bb_length)
+bb_upper = bb_basis + bb_dev
+bb_lower = bb_basis - bb_dev
+
+p1 = plot(bb_upper, "上軌", color=color.new(#82B1FF, 0), offset = bb_offset, linewidth=1)
+p2 = plot(bb_lower, "下軌", color=color.new(#82B1FF, 0), offset = bb_offset, linewidth=1)
+plot(bb_basis,      "中軌", color=color.new(#00E5FF, 0), offset = bb_offset, linewidth=1)
+fill(p1, p2, title = "背景", color=color.rgb(33, 150, 243, 90))
+
+// ==========================================
+// 2. 純淨均線區 
+// ==========================================
+len7   = input.int(7,   "快線",   group="一般 MA 設定")
+len17  = input.int(17,  "持股線", group="一般 MA 設定")
+len88  = input.int(88,  "多空線", group="一般 MA 設定")
+len200 = input.int(200, "年線",   group="一般 MA 設定")
+
+ma7   = ta.sma(close, len7)
+ma17  = ta.sma(close, len17) 
+ma88  = ta.sma(close, len88)
+ma200 = ta.sma(close, len200)
+
+plot(ma7,   "快線",   color.new(#FFFFFF, 0),      linewidth=2)
+plot(ma88,  "多空線", color.new(#E91E63, 0),      linewidth=2) 
+plot(ma200, "年線",   color.new(#9C27B0, 0),      linewidth=2) 
+
+// ==========================================
+// 3. MACD 動能狀態判斷
+// ==========================================
+fastLen = input.int(12, "MACD Fast", group="過濾器設定", display=display.none)
+slowLen = input.int(26, "MACD Slow", group="過濾器設定", display=display.none)
+sigLen  = input.int(9,  "MACD Signal", group="過濾器設定", display=display.none)
+
+macdLine = ta.ema(close, fastLen) - ta.ema(close, slowLen)
+signalLine = ta.ema(macdLine, sigLen)
+hist = macdLine - signalLine
+
+// ==========================================
+// 4. 進場與出場提示 (解開束縛，流暢運作版)
+// ==========================================
+// 【大趨勢鐵律】：持股線必須維持在多空線之上
+is_bull_trend = (ma17 > ma88)
+
+// (1) 🐦 藍鳥進場：純看 MACD 動能發動，不再用價格去卡死它
+rule_bird = ta.crossover(hist, 0) and is_bull_trend
+
+// (2) 🚀 火箭進場：均線主結構長線波段成形
+rule_rocket = ta.crossover(ma17, ma88) and (hist > 0)
+
+// (3) 💰 錢袋基底：MACD紅柱連續兩天衰退，且趨勢安全 (拔除破7MA卡死限制)
+rule_reduce_base = (hist > 0) and (hist < hist[1]) and (hist[1] < hist[2]) and is_bull_trend
+
+// (4) ⚠️ 警告基底：MACD 死叉
+rule_exit_base = ta.crossunder(hist, 0) 
+
+// ----------------------------------------------------
+// 🔥 【超級持倉狀態追蹤器】：只出清一次，不洗雜訊
+// ----------------------------------------------------
+var bool is_holding = false
+var int reduce_count = 0
+var bool just_reduced_in_wave = false
+
+if (hist > hist[1])
+    just_reduced_in_wave := false
+
+// 買進後，狀態歸零重新計算
+if rule_bird or rule_rocket
+    is_holding := true
+    reduce_count := 0
+    just_reduced_in_wave := false
+
+// 減碼次數控制 (上限2次)
+trigger_reduce = rule_reduce_base and is_holding and (reduce_count < 2) and not just_reduced_in_wave
+
+if trigger_reduce
+    reduce_count += 1
+    just_reduced_in_wave := true 
+
+// 出清控制 (一次性乾淨俐落)
+trigger_exit   = rule_exit_base and is_holding
+
+if trigger_exit
+    is_holding := false
+    
+// 繪圖區
+plotchar(rule_bird,   "短多試單(藍鳥)", "🐦", location.belowbar, color.new(#00E5FF, 0), size=size.tiny)
+plotchar(rule_rocket, "正式起漲(火箭)", "🚀", location.belowbar, color.white, size=size.tiny)
+plotchar(trigger_reduce, "減碼落袋(錢袋)", "💰", location.abovebar, color.orange, size=size.tiny)
+plotchar(trigger_exit,   "全數出清(警告)", "⚠️", location.abovebar, color.red, size=size.tiny)
+
+// ==========================================
+// 5. 💡 鬼爪特效區 
+// ==========================================
+claw_slow_len = input.int(20, "鬼爪專用慢線週期間距", group="鬼爪參數 (手動微調)")
+mult_1 = input.float(0.6, "中繼鬼爪(深黃) 張力倍數", step=0.1, group="鬼爪參數 (手動微調)")
+mult_2 = input.float(1.2, "外層鬼爪(螢綠) 張力倍數", step=0.1, group="鬼爪參數 (手動微調)")
+
+ma_slow = ta.sma(close, claw_slow_len)
+spread = math.max(0, ma_slow - ma17)
+
+claw_upper  = ma17 + spread * mult_2
+claw_middle = ma17 + spread * mult_1
+
+plot(claw_upper,  title="外層鬼爪 (螢光綠)", color=color.new(#00FF00, 0), linewidth=2, style=plot.style_linebr)
+plot(claw_middle, title="中繼鬼爪 (深黃色)", color=color.new(#FF9800, 0), linewidth=2, style=plot.style_linebr)
+plot(ma17,        title="持股線軌道 (螢光黃)", color=color.new(#FFEB3B, 0), linewidth=2)

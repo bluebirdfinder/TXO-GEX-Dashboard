@@ -1,0 +1,305 @@
+//@version=6
+indicator("JJ Indicator V3 - Ghost Claws Master", shorttitle="JJ 鬼爪 V3", overlay=true, max_labels_count=500)
+
+// ==========================================
+// 1. 參數設定 (Inputs)
+// ==========================================
+grp_auto = "智能模式 (Smart Mode)"
+use_auto = input.bool(true, "啟用智能商品辨識", group=grp_auto, tooltip="自動根據商品類型（台股/期貨/加密貨幣）調整乖離率、MFI、ADX 門檻。建議預設開啟。")
+
+grp_bias = "乖離率與量能 (Bias & MFI)"
+man_bias_neg    = input.float(8.0,  "乖離率門檻（負乖離）%", group=grp_bias, tooltip="當股價低於 MA88 超過此百分比時，藍鳥升級為強力藍鳥。台股建議 8%，期貨建議 3%。")
+man_bias_pos    = input.float(8.0,  "乖離率門檻（正乖離）%", group=grp_bias, tooltip="當股價高於 MA88 超過此百分比時，火箭訊號附加追高警示。台股建議 8%，期貨建議 3%。")
+mfi_len         = input.int(14,     "MFI 週期",               group=grp_bias, tooltip="計算資金流量的週期。預設 14。數值越小越靈敏，越大越穩定。")
+man_mfi_thresh  = input.float(55.0, "MFI 多空門檻",           group=grp_bias, tooltip="MFI 超過此值代表買盤主導（強火箭）。建議 55，加密貨幣可調低至 50。")
+
+grp_trend = "趨勢過濾 (ADX Filter)"
+adx_len         = input.int(14,     "ADX 週期",   group=grp_trend, tooltip="計算趨勢強度的週期。預設 14。")
+man_adx_thresh  = input.float(20.0, "ADX 盤整門檻", group=grp_trend, tooltip="ADX 低於此值時，市場處於盤整，訊號淡化。建議 20（台股）/ 22（期貨）。")
+
+grp_macd = "MACD 設定 (MACD Settings)"
+fastLen = input.int(12, "MACD 快線", group=grp_macd, tooltip="計算 MACD 動能的快線週期。預設 12。")
+slowLen = input.int(26, "MACD 慢線", group=grp_macd, tooltip="計算 MACD 動能的慢線週期。預設 26。")
+sigLen  = input.int(9,  "MACD 訊號", group=grp_macd, tooltip="計算 MACD 訊號線的週期。預設 9。")
+
+grp_bb = "布林通道設定 (Bollinger Bands)"
+bb_length = input.int(20,       "布林週期",     minval=1, group=grp_bb)
+bb_maType = input.string("SMA", "中軌均線種類", options=["SMA", "EMA", "SMMA (RMA)", "WMA", "VWMA"], group=grp_bb)
+bb_src    = input(close,        "計算來源",     group=grp_bb)
+bb_mult   = input.float(2.0,    "標準差倍數",   minval=0.001, maxval=50, group=grp_bb)
+
+grp_ma = "一般 MA 設定 (Moving Averages)"
+len7   = input.int(7,   "快線 (MA7)",    group=grp_ma)
+len17  = input.int(17,  "持股線 (MA17)", group=grp_ma)
+len88  = input.int(88,  "多空線 (MA88)", group=grp_ma)
+len200 = input.int(200, "年線 (MA200)",  group=grp_ma)
+
+grp_claw = "鬼爪特效 (Ghost Claws)"
+claw_lookback = input.int(2,     "斜率觀測期",             group=grp_claw, tooltip="觀察 N 根 K 棒前的 MA17 位置，計算爪子張力。建議 2~3，數值越大爪子越遲鈍但雜訊越少。")
+claw_mult_1   = input.float(0.6, "中繼鬼爪(深黃) 張力倍數", step=0.1, group=grp_claw, tooltip="橘黃色中繼爪子的張開幅度。預設 0.6，加密貨幣可調高至 1.0。")
+claw_mult_2   = input.float(1.2, "外層鬼爪(螢綠) 張力倍數", step=0.1, group=grp_claw, tooltip="螢綠色外層爪子的張開幅度。預設 1.2，加密貨幣可調高至 1.8。")
+
+grp_visual = "視覺與面板 (Visuals & Dashboard)"
+show_dash = input.bool(true, "顯示智能監控面板", group=grp_visual)
+dash_pos  = input.string("Bottom Right", "面板位置", options=["Top Right", "Bottom Right", "Bottom Left"], group=grp_visual)
+dash_size = input.string("Small", "面板文字大小", options=["Tiny", "Small", "Normal"], group=grp_visual, tooltip="調整右下角儀表板的文字大小。Tiny = 最小，Small = 預設，Normal = 較大（適合投影或手機截圖）。")
+
+// ==========================================
+// 2. 智能商品辨識 (AI Router)
+// ==========================================
+string r = syminfo.root
+string asset_class = "通用模式"
+float auto_bias_pos = 8.0
+float auto_bias_neg = 8.0
+float auto_mfi      = 52.0
+float auto_adx      = 20.0
+
+if array.includes(array.from("TX", "MTX", "TWN"), r)
+    asset_class := "台指期貨"
+    auto_bias_pos := 5.0, auto_bias_neg := 5.0, auto_mfi := 50.0, auto_adx := 22.0
+else if array.includes(array.from("ES", "MES", "YM", "MYM"), r)
+    asset_class := "美股穩定指數"
+    auto_bias_pos := 3.0, auto_bias_neg := 3.0, auto_mfi := 55.0, auto_adx := 22.0
+else if array.includes(array.from("NQ", "MNQ", "RTY", "M2K"), r)
+    asset_class := "美股波動指數"
+    auto_bias_pos := 5.0, auto_bias_neg := 5.0, auto_mfi := 52.0, auto_adx := 22.0
+else if array.includes(array.from("NKD", "MNI", "NK225", "NK225M", "NK225MC", "FDAX", "FDXM"), r)
+    asset_class := "國際指數"
+    auto_bias_pos := 5.0, auto_bias_neg := 5.0, auto_mfi := 52.0, auto_adx := 22.0
+else if array.includes(array.from("GC", "MGC", "HG", "QC", "MHG"), r)
+    asset_class := "黃金/銅等貴金屬"
+    auto_bias_pos := 5.0, auto_bias_neg := 5.0, auto_mfi := 52.0, auto_adx := 20.0
+else if array.includes(array.from("SI", "SIL"), r)
+    asset_class := "白銀（高波動）"
+    auto_bias_pos := 8.0, auto_bias_neg := 8.0, auto_mfi := 50.0, auto_adx := 20.0
+else if array.includes(array.from("CL", "MCL", "QM"), r)
+    asset_class := "原油"
+    auto_bias_pos := 5.0, auto_bias_neg := 5.0, auto_mfi := 52.0, auto_adx := 22.0
+else if array.includes(array.from("NG", "QG", "MNG"), r)
+    asset_class := "天然氣（極高波動）"
+    auto_bias_pos := 10.0, auto_bias_neg := 10.0, auto_mfi := 48.0, auto_adx := 22.0
+else if array.includes(array.from("ZS", "ZC", "ZW", "ZL"), r)
+    asset_class := "農產品"
+    auto_bias_pos := 5.0, auto_bias_neg := 5.0, auto_mfi := 52.0, auto_adx := 20.0
+else if array.includes(array.from("CT"), r)
+    asset_class := "棉花"
+    auto_bias_pos := 8.0, auto_bias_neg := 8.0, auto_mfi := 50.0, auto_adx := 20.0
+else if array.includes(array.from("6E", "M6E", "6A", "6C", "DX"), r)
+    asset_class := "外匯（低波動）"
+    auto_bias_pos := 3.0, auto_bias_neg := 3.0, auto_mfi := 55.0, auto_adx := 20.0
+else if array.includes(array.from("6B", "M6B", "6J", "XJK", "JPYUSD", "USDJPY"), r)
+    asset_class := "外匯（中波動）"
+    auto_bias_pos := 5.0, auto_bias_neg := 5.0, auto_mfi := 52.0, auto_adx := 20.0
+else if syminfo.type == "crypto"
+    asset_class := "加密貨幣"
+    auto_bias_pos := 20.0, auto_bias_neg := 20.0, auto_mfi := 48.0, auto_adx := 18.0
+else if syminfo.country == "TW" and syminfo.type == "stock"
+    asset_class := "台股個股"
+    auto_bias_pos := 8.0, auto_bias_neg := 8.0, auto_mfi := 52.0, auto_adx := 20.0
+else if syminfo.country == "US" and syminfo.type == "stock"
+    asset_class := "美股個股"
+    auto_bias_pos := 5.0, auto_bias_neg := 5.0, auto_mfi := 52.0, auto_adx := 20.0
+
+float final_bias_pos   = use_auto ? auto_bias_pos : man_bias_pos
+float final_bias_neg   = use_auto ? auto_bias_neg : man_bias_neg
+float final_mfi_thresh = use_auto ? auto_mfi : man_mfi_thresh
+float final_adx_thresh = use_auto ? auto_adx : man_adx_thresh
+
+// ==========================================
+// 3. 基礎指標計算 (Base Calculations)
+// ==========================================
+// (1) MFI & ADX
+mfi_val = ta.mfi(hlc3, mfi_len)
+[diplus, diminus, adx_val] = ta.dmi(adx_len, adx_len)
+
+// (2) 一般 MA
+ma7   = ta.sma(close, len7)
+ma17  = ta.sma(close, len17)
+ma88  = ta.sma(close, len88)
+ma200 = ta.sma(close, len200)
+
+// (3) Bias (乖離率)
+bias88 = ((close - ma88) / ma88) * 100
+
+// (4) Bollinger Bands
+get_bb_ma(source, length, _type) =>
+    switch _type
+        "SMA"         => ta.sma(source, length)
+        "EMA"         => ta.ema(source, length)
+        "SMMA (RMA)"  => ta.rma(source, length)
+        "WMA"         => ta.wma(source, length)
+        "VWMA"        => ta.vwma(source, length)
+
+bb_basis = get_bb_ma(bb_src, bb_length, bb_maType)
+bb_dev   = bb_mult * ta.stdev(bb_src, bb_length)
+bb_upper = bb_basis + bb_dev
+bb_lower = bb_basis - bb_dev
+
+// (5) MACD
+macdLine   = ta.ema(close, fastLen) - ta.ema(close, slowLen)
+signalLine = ta.ema(macdLine, sigLen)
+hist       = macdLine - signalLine
+
+// ==========================================
+// 4. 訊號邏輯 (Signal Logic)
+// ==========================================
+is_bull_trend = (ma17 > ma88)
+is_above_bb   = (close > bb_basis)
+is_below_bb   = (close < bb_basis)
+adx_is_weak   = (adx_val < final_adx_thresh)
+
+// 【藍鳥】：MACD 翻正 + 多頭排列 + 站上布林中軌
+cond_bird      = ta.crossover(hist, 0) and is_bull_trend and is_above_bb
+is_strong_bird = cond_bird and (bias88 <= -final_bias_neg)
+is_normal_bird = cond_bird and (bias88 > -final_bias_neg)
+
+// 【火箭】：MA17 黃金交叉 MA88 + MACD 紅柱
+cond_rocket       = ta.crossover(ma17, ma88) and (hist > 0)
+is_strong_rocket  = cond_rocket and (mfi_val > final_mfi_thresh)
+is_weak_rocket    = cond_rocket and (mfi_val <= final_mfi_thresh)
+
+// 【持倉狀態追蹤】
+var bool is_holding           = false
+var int  reduce_count         = 0
+var bool just_reduced_in_wave = false
+
+if (hist > hist[1])
+    just_reduced_in_wave := false
+
+if cond_bird or cond_rocket
+    is_holding            := true
+    reduce_count          := 0
+    just_reduced_in_wave  := false
+
+// 【錢袋】：ADX > 25 強趨勢時放寬至 3 次衰退
+bool reduce_cond = false
+if adx_val > 25
+    reduce_cond := (hist > 0) and (hist < hist[1]) and (hist[1] < hist[2]) and (hist[2] < hist[3]) and is_bull_trend
+else
+    reduce_cond := (hist > 0) and (hist < hist[1]) and (hist[1] < hist[2]) and is_bull_trend
+
+trigger_reduce = reduce_cond and is_holding and (reduce_count < 2) and not just_reduced_in_wave
+
+if trigger_reduce
+    reduce_count         += 1
+    just_reduced_in_wave := true
+
+// 【警告出清】：MACD 死叉 且 跌破布林中軌（雙重確認首次觸發）
+exit_state   = (hist < 0) and is_below_bb
+exit_trigger = exit_state and not exit_state[1]
+trigger_exit = exit_trigger and is_holding
+
+if trigger_exit
+    is_holding := false
+
+// ==========================================
+// 5. 繪圖與圖示 (Plots & Visuals)
+// ==========================================
+// Bollinger Bands
+p1 = plot(bb_upper, "上軌", color=color.new(#82B1FF, 0), linewidth=1)
+p2 = plot(bb_lower, "下軌", color=color.new(#82B1FF, 0), linewidth=1)
+plot(bb_basis, "中軌", color=color.new(#00E5FF, 0), linewidth=1)
+fill(p1, p2, title="背景", color=color.rgb(33, 150, 243, 90))
+
+// Moving Averages
+plot(ma7,   "快線",   color.new(#FFFFFF, 0), linewidth=2)
+plot(ma88,  "多空線", color.new(#E91E63, 0), linewidth=2)
+plot(ma200, "年線",   color.new(#9C27B0, 0), linewidth=2)
+
+// Ghost Claws
+spread      = math.max(0, ma17[claw_lookback] - ma17)
+claw_upper  = ma17 + spread * claw_mult_2
+claw_middle = ma17 + spread * claw_mult_1
+
+plot(claw_upper,  title="外層鬼爪 (螢光綠)",   color=color.new(#53fd2d, 0), linewidth=2, style=plot.style_linebr)
+plot(claw_middle, title="中繼鬼爪 (深黃色)",   color=color.new(#FF9800, 0), linewidth=2, style=plot.style_linebr)
+plot(ma17,        title="持股線軌道 (螢光黃)", color=color.new(#FFEB3B, 0), linewidth=2)
+
+// 訊號圖示（ADX 盤整時自動淡化至 70% 透明）
+color col_bird_n = adx_is_weak ? color.new(#00E5FF, 70) : color.new(#00E5FF, 0)
+color col_bird_s = adx_is_weak ? color.new(#00B0FF, 70) : color.new(#00B0FF, 0)
+color col_rock_w = adx_is_weak ? color.new(color.white, 70) : color.white
+color col_rock_s = adx_is_weak ? color.new(#FFD600, 70)  : color.new(#FFD600, 0)
+color col_reduce = adx_is_weak ? color.new(color.orange, 70) : color.orange
+color col_exit   = adx_is_weak ? color.new(color.red, 70) : color.red
+
+plotchar(is_normal_bird,   "一般藍鳥", "🐣", location.belowbar, color=col_bird_n, size=size.auto)
+plotchar(is_strong_bird,   "強力藍鳥", "🐦", location.belowbar, color=col_bird_s, size=size.auto)
+plotchar(is_weak_rocket,   "弱火箭",   "✈️", location.belowbar, color=col_rock_w, size=size.auto)
+plotchar(is_strong_rocket, "強火箭",   "🚀", location.belowbar, color=col_rock_s, size=size.auto)
+plotchar(trigger_reduce,   "錢袋減碼", "💰", location.abovebar, color=col_reduce, size=size.auto)
+plotchar(trigger_exit,     "警告出清", "⚠️", location.abovebar, color=col_exit,   size=size.auto)
+
+// ==========================================
+// 6. 智能面板 (Dashboard)
+// ==========================================
+// [FIX] var 宣告必須在頂層，不可在 if 區塊內
+var table panel = table.new(position.bottom_right, 2, 7, bgcolor=color.new(color.black, 80), border_width=1, border_color=color.gray)
+
+if show_dash and barstate.islast
+    // 將使用者選擇的文字大小對應到 Pine Script 的 size 常數
+    string p_size = dash_size == "Tiny" ? size.tiny : dash_size == "Normal" ? size.normal : size.small
+
+    // 重新設定面板位置
+    string p_pos_str = dash_pos == "Top Right" ? position.top_right : dash_pos == "Bottom Left" ? position.bottom_left : position.bottom_right
+
+    table.cell(panel, 0, 0, "JJ Ghost Claws",  text_color=color.white,  text_halign=text.align_left,  text_size=p_size)
+    table.cell(panel, 1, 0, "v3.0",             text_color=color.gray,   text_halign=text.align_right, text_size=p_size)
+
+    string mode_str = use_auto ? "Auto (智能)" : "Manual (手動)"
+    color  mode_col = use_auto ? color.orange : color.gray
+    table.cell(panel, 0, 1, "Mode:",  text_color=color.white, text_halign=text.align_left,  text_size=p_size)
+    table.cell(panel, 1, 1, mode_str, text_color=mode_col,   text_halign=text.align_right, text_size=p_size)
+
+    table.cell(panel, 0, 2, "Asset:",      text_color=color.white,  text_halign=text.align_left,  text_size=p_size)
+    table.cell(panel, 1, 2, asset_class,   text_color=color.yellow, text_halign=text.align_right, text_size=p_size)
+
+    string bias_str = str.tostring(bias88, "#.##") + "%"
+    color  bias_col = bias88 >= final_bias_pos ? color.red : bias88 <= -final_bias_neg ? color.lime : color.white
+    table.cell(panel, 0, 3, "MA88 Bias:", text_color=color.white, text_halign=text.align_left,  text_size=p_size)
+    table.cell(panel, 1, 3, bias_str,     text_color=bias_col,    text_halign=text.align_right, text_size=p_size)
+
+    string mfi_str = str.tostring(mfi_val, "#.##")
+    color  mfi_col = mfi_val > final_mfi_thresh ? color.lime : color.red
+    table.cell(panel, 0, 4, "MFI Vol:", text_color=color.white, text_halign=text.align_left,  text_size=p_size)
+    table.cell(panel, 1, 4, mfi_str,    text_color=mfi_col,    text_halign=text.align_right, text_size=p_size)
+
+    string adx_str = str.tostring(adx_val, "#.##")
+    color  adx_col = adx_val > final_adx_thresh ? color.lime : color.gray
+    table.cell(panel, 0, 5, "ADX Trend:", text_color=color.white, text_halign=text.align_left,  text_size=p_size)
+    table.cell(panel, 1, 5, adx_str,     text_color=adx_col,    text_halign=text.align_right, text_size=p_size)
+
+    string trend_str = is_bull_trend ? "Bullish (多)" : "Bearish (空)"
+    color  trend_col = is_bull_trend ? color.lime : color.red
+    table.cell(panel, 0, 6, "Trend (17/88):", text_color=color.white, text_halign=text.align_left,  text_size=p_size)
+    table.cell(panel, 1, 6, trend_str,         text_color=trend_col,  text_halign=text.align_right, text_size=p_size)
+
+// ==========================================
+// 7. 警報系統 (Alerts)
+// ==========================================
+// [FIX] 明確宣告 string 型別，避免 V6 型別推斷錯誤
+
+if is_normal_bird
+    string msg_nb = "🐣 JJ 鬼爪 - 一般藍鳥 Bird Signal\n商品：" + syminfo.ticker + " | 週期：" + timeframe.period + "\n時間：{{time}}\n趨勢：MA17 > MA88 ✅\n動能：MACD 翻正 ✅\n量能：MFI " + str.tostring(mfi_val, "#.#") + "（未達強勢門檻）\n建議：小量試單，等待火箭確認"
+    alert(msg_nb, alert.freq_once_per_bar_close)
+
+if is_strong_bird
+    string msg_sb = "🐦 JJ 鬼爪 - 強力藍鳥 Strong Bird！\n商品：" + syminfo.ticker + " | 週期：" + timeframe.period + "\n時間：{{time}}\n趨勢：MA17 > MA88 ✅ | 動能：MACD 翻正 ✅\n乖離率：" + str.tostring(bias88, "#.##") + "%（超跌反彈）✅\n量能：帶量啟動（MFI " + str.tostring(mfi_val, "#.#") + "）✅\n建議：可積極試單！"
+    alert(msg_sb, alert.freq_once_per_bar_close)
+
+if is_weak_rocket
+    string msg_wr = "✈️ JJ 鬼爪 - 弱火箭 Weak Rocket\n商品：" + syminfo.ticker + " | 週期：" + timeframe.period + "\n時間：{{time}}\nMA17 穿越 MA88 ✅ | MACD > 0 ✅\n乖離率：" + str.tostring(bias88, "#.##") + "%\n量能：⚠️ 未帶量 (MFI " + str.tostring(mfi_val, "#.#") + ")\n建議：輕倉觀察，等量能跟進再加碼"
+    alert(msg_wr, alert.freq_once_per_bar_close)
+
+if is_strong_rocket
+    string chase_warn = bias88 > final_bias_pos ? "\n⚠️ 追高警示：正乖離過大！" : ""
+    string msg_sr = "🚀 JJ 鬼爪 - 強火箭 Strong Rocket!\n商品：" + syminfo.ticker + " | 週期：" + timeframe.period + "\n時間：{{time}}\nMA17 穿越 MA88 ✅ | MACD > 0 ✅\n乖離率：" + str.tostring(bias88, "#.##") + "%" + chase_warn + "\n量能：帶量突破 ✅（MFI " + str.tostring(mfi_val, "#.#") + "）\n建議：正式建立波段部位"
+    alert(msg_sr, alert.freq_once_per_bar_close)
+
+if trigger_reduce
+    string msg_rp = "💰 JJ 鬼爪 - 錢袋減碼 Take Profit\n商品：" + syminfo.ticker + " | 週期：" + timeframe.period + "\n時間：{{time}}\nMACD 紅柱第 " + str.tostring(reduce_count) + " 次衰退 | 部分獲利落袋\n建議：賣出 1/3 ~ 1/2"
+    alert(msg_rp, alert.freq_once_per_bar_close)
+
+if trigger_exit
+    string msg_ex = "⚠️ JJ 鬼爪 - 全數出清 Exit！\n商品：" + syminfo.ticker + " | 週期：" + timeframe.period + "\n時間：{{time}}\n動能轉弱且跌破布林中軌 ✅\n建議：清空部位，結束本波"
+    alert(msg_ex, alert.freq_once_per_bar_close)
