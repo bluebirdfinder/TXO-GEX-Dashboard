@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v50.8"
+ENGINE_VERSION = "v50.9"
 
 import os
 import sys
@@ -2229,12 +2229,12 @@ def generate_gex_payload():
             "taifex_vix": round(latest_t_vix - 0.4, 2), "us_vix": round(latest_u_vix - 0.3, 2)
         },
         {
-            "id": "t1_night", "label": "T-1 夜盤", "date_display": f"{t_days[3]} 🌙", "full_name": f"{t_days[3]} T-1 夜盤",
-            "spot_price": prev_day_spot, "two_price": prev_day_otc, "txf_price": day_txf_price - 26,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] + 90, 1), "gex_plus_flip": round(gp_base + 100, 1), "call_wall_strike": gex_profile['call_wall_strike'],
-            "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": 210,
-            "pc_ratio": 110.4, "margin_maint_market": 155.8, "margin_maint_stock": 141.2, "margin_maint_published": False,
-            "taifex_vix": round(latest_t_vix - 0.2, 2), "us_vix": round(latest_u_vix - 0.2, 2)
+            "id": "t1_night", "label": "T-1 夜盤", "date_display": f"{t_days[3]} 🌙", "full_name": f"{t_days[3]} T-1 夜盤 (05:00 定案版)",
+            "spot_price": prev_day_spot, "two_price": prev_day_otc, "txf_price": night_txf_price if (night_txf_price and night_txf_price > 0) else (day_txf_price - 26),
+            "zero_gamma_level": gex_profile['zero_gamma_level'], "gex_plus_flip": gex_profile['gex_plus_flip'], "call_wall_strike": gex_profile['call_wall_strike'],
+            "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": txf_shift,
+            "pc_ratio": gex_profile['pc_ratio'], "margin_maint_market": 155.8, "margin_maint_stock": 141.2, "margin_maint_published": False,
+            "taifex_vix": latest_t_vix, "us_vix": latest_u_vix
         }
     ]
 
@@ -2264,7 +2264,7 @@ def generate_gex_payload():
         "full_name": day_full_name,
         "spot_price": spot_price, "two_price": otc_price, "txf_price": day_txf_price,
         "zero_gamma_level": day_zero_gamma, "gex_plus_flip": day_gex_plus_flip, "call_wall_strike": day_call_wall,
-        "put_wall_strike": day_put_wall, "max_pain_strike": day_max_pain, "shift_vs_prev": -110,
+        "put_wall_strike": day_put_wall, "max_pain_strike": day_max_pain, "shift_vs_prev": (day_txf_price - (night_txf_price if night_txf_price else day_txf_price)),
         "pc_ratio": 111.8,
         "margin_maint_market": margin_info["margin_maint_market"],
         "margin_maint_stock": margin_info["margin_maint_stock"],
@@ -2292,7 +2292,7 @@ def generate_gex_payload():
     # Add day session
     history_10_sessions.append(t0_day_item)
 
-    # Only append night session if night trading is actually active, completed, running before morning open, or on weekend
+    # Only append night session if night trading is actually active, running before morning open, or on weekend
     if is_weekend or is_before_open or now_hour >= 15 or now_hour < 8:
         history_10_sessions.append(t0_night_item)
 
