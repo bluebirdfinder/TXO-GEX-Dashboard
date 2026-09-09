@@ -52,21 +52,22 @@ let overlaySeries = {
 let priceLines = {};
 let currentTf = '15M';
 let activeContract = 'TXF';
-let activeSub4 = 'ao'; // 'ao' | 'cvd' | 'dmi'
-
 let symbolsUniverse = [];
-let currentActiveSymbol = {
-  symbol: 'TXF',
-  name: '台指期貨',
-  category: '指數期貨',
-  market: 'TAIFEX',
-  has_futures: true,
-  futures_code: 'TXF',
-  asset_type: 'index_futures',
-  bias_default: 5.0,
-  mfi_thresh: 50.0,
-  adx_thresh: 22.0
+
+// 8 Core Curated Preset Assets for Instant 1-Click Verification
+const CORE_PRESET_ASSETS = {
+  'TXF': { symbol: 'TXF', name: '台指期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'TXF', base_price: 47187, is_yield: false },
+  'TAIEX': { symbol: 'TAIEX', name: '加權指數', category: '大盤現貨', market: 'TWSE', has_futures: true, futures_code: 'TXF', base_price: 24530.8, is_yield: false },
+  'OTC': { symbol: 'OTC', name: '櫃買指數', category: '中小型股', market: 'TPEx', has_futures: true, futures_code: 'GDF', base_price: 278.45, is_yield: false },
+  'CDF': { symbol: 'CDF', name: '台積電期貨', category: '個股期貨', market: 'TAIFEX', has_futures: true, futures_code: 'CDF', base_price: 1045, is_yield: false },
+  'MTX': { symbol: 'MTX', name: '微台期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'TMF', base_price: 47187, is_yield: false },
+  'MXF': { symbol: 'MXF', name: '小台期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'MXF', base_price: 47187, is_yield: false },
+  'US10Y': { symbol: 'US10Y', name: '美國10年公債殖利率', category: '總經公債', market: 'GLOBAL', has_futures: false, futures_code: 'ZN', base_price: 4.784, is_yield: true },
+  'DXY': { symbol: 'DXY', name: '美元指數 (DXY)', category: '總經外匯', market: 'ICE', has_futures: false, futures_code: 'DX', base_price: 99.196, is_yield: false },
+  'CL': { symbol: 'CL', name: '紐約輕原油期貨', category: '大宗商品', market: 'NYMEX', has_futures: true, futures_code: 'CL', base_price: 72.50, is_yield: false }
 };
+
+let currentActiveSymbol = CORE_PRESET_ASSETS['TXF'];
 
 // User Configurable Indicator Settings
 let indicatorConfig = {
@@ -97,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initTradingRoom() {
-  console.log('🦅 Initializing Multi-Pane Bird Trading Room v50.9...');
+  console.log('🦅 Initializing Multi-Pane Bird Trading Room v59.0...');
   
   // 1. Load Data
   await loadDashboardData();
@@ -334,13 +335,18 @@ function handleChartResize() {
  */
 function generateIndicatorsData(tf) {
   let basePrice = 47187;
-  if (gexData && gexData.txf_price) {
-    basePrice = gexData.txf_price;
-  }
-  
-  if (currentActiveSymbol && currentActiveSymbol.symbol !== 'TXF') {
+  let isYield = false;
+
+  if (currentActiveSymbol) {
     const sym = currentActiveSymbol.symbol;
-    if (realQuotesData && realQuotesData[sym] && realQuotesData[sym].close) {
+    isYield = !!currentActiveSymbol.is_yield;
+
+    if (CORE_PRESET_ASSETS[sym]) {
+      basePrice = CORE_PRESET_ASSETS[sym].base_price;
+      if (sym === 'TXF' && gexData && gexData.txf_price) {
+        basePrice = gexData.txf_price;
+      }
+    } else if (realQuotesData && realQuotesData[sym] && realQuotesData[sym].close) {
       basePrice = realQuotesData[sym].close;
     } else if (sym === '2330' || sym === 'CDF') {
       basePrice = 1045;
@@ -361,11 +367,27 @@ function generateIndicatorsData(tf) {
       for (let c = 0; c < sym.length; c++) hash = (hash * 31 + sym.charCodeAt(c)) % 1000;
       basePrice = 45 + (hash % 500);
     }
+  } else if (gexData && gexData.txf_price) {
+    basePrice = gexData.txf_price;
   }
   
   let count = 120;
   let intervalSec = 900; // 15M default
-  let atrBase = basePrice > 10000 ? 55 : (basePrice > 1000 ? 8 : (basePrice > 100 ? 2.5 : 0.6));
+  let atrBase = 55;
+
+  if (isYield) {
+    atrBase = 0.025;
+  } else if (basePrice > 20000) {
+    atrBase = 65;
+  } else if (basePrice > 1000) {
+    atrBase = 9;
+  } else if (basePrice > 100) {
+    atrBase = 1.4;
+  } else if (basePrice > 50) {
+    atrBase = 0.55;
+  } else {
+    atrBase = 0.15;
+  }
   
   if (tf === '1M') { count = 180; intervalSec = 60; atrBase *= 0.35; }
   else if (tf === '3M') { count = 160; intervalSec = 180; atrBase *= 0.55; }
@@ -387,27 +409,29 @@ function generateIndicatorsData(tf) {
   const lows = [];
   const opens = [];
   
+  // Decimals rounder helper
+  const roundDec = (v) => isYield ? (Math.round(v * 1000) / 1000) : (basePrice < 500 ? (Math.round(v * 100) / 100) : (Math.round(v * 10) / 10));
+
   // Seeded deterministic random walk anchored on actual base price
-  let seed = Math.floor(basePrice) * 17 + intervalSec;
+  let seed = Math.floor(basePrice * 10) * 17 + intervalSec;
   function pseudoRandom() {
     seed = (seed * 9301 + 49297) % 233280;
     return seed / 233280;
   }
 
   // Generate continuous realistic price movement
-  const zgLevel = (gexData && gexData.zero_gamma_level) ? gexData.zero_gamma_level : basePrice - 30;
-  let runningClose = basePrice - (atrBase * 4.5);
+  let runningClose = basePrice - (atrBase * 3.5);
   
   for (let i = 0; i < count; i++) {
     const t = startTime + (i * intervalSec);
     
-    // Natural market mean-reversion pull towards Zero Gamma / Spot baseline
+    // Natural market mean-reversion pull towards Spot baseline
     const pull = (basePrice - runningClose) * 0.045;
     const shock = (pseudoRandom() - 0.48) * atrBase * 1.8;
-    const drift = (i / count) * atrBase * 2.5;
+    const drift = (i / count) * atrBase * 2.2;
     
-    let open = Math.round((runningClose + (pseudoRandom() - 0.5) * (atrBase * 0.4)) * 10) / 10;
-    let close = Math.round((runningClose + pull + shock + drift * 0.1) * 10) / 10;
+    let open = roundDec(runningClose + (pseudoRandom() - 0.5) * (atrBase * 0.35));
+    let close = roundDec(runningClose + pull + shock + drift * 0.1);
     
     // Make last candle match the exact live base price
     if (i === count - 1) {
@@ -416,15 +440,15 @@ function generateIndicatorsData(tf) {
     
     const bodyHigh = Math.max(open, close);
     const bodyLow = Math.min(open, close);
-    const wickUp = pseudoRandom() * (atrBase * 0.9) + (atrBase * 0.1);
-    const wickDown = pseudoRandom() * (atrBase * 0.9) + (atrBase * 0.1);
+    const wickUp = pseudoRandom() * (atrBase * 0.8) + (atrBase * 0.1);
+    const wickDown = pseudoRandom() * (atrBase * 0.8) + (atrBase * 0.1);
     
-    const high = Math.round((bodyHigh + wickUp) * 10) / 10;
-    const low = Math.round((bodyLow - wickDown) * 10) / 10;
+    const high = roundDec(bodyHigh + wickUp);
+    const low = roundDec(bodyLow - wickDown);
     
     // Realistic volume distribution with occasional cluster spikes
     const isSpike = pseudoRandom() > 0.88;
-    const volBase = basePrice > 10000 ? 1200 : 50000;
+    const volBase = isYield ? 5000 : (basePrice > 10000 ? 1200 : 50000);
     const vol = Math.round(volBase * (0.6 + pseudoRandom() * 0.8 + (isSpike ? 1.8 : 0)));
 
     candles.push({ time: t, open, high, low, close });
@@ -1179,21 +1203,26 @@ function updateLegendOverlay(param) {
   const candle = param.seriesData.get(candleSeries);
   if (!candle) return;
 
+  const isYield = currentActiveSymbol && currentActiveSymbol.is_yield;
+  const isSmall = currentActiveSymbol && currentActiveSymbol.base_price < 500;
+
+  const fmt = (v) => isYield ? v.toFixed(3) + '%' : (isSmall ? v.toFixed(2) : v.toLocaleString());
+
   const lOpen = document.getElementById('leg-open');
   const lHigh = document.getElementById('leg-high');
   const lLow = document.getElementById('leg-low');
   const lClose = document.getElementById('leg-close');
   const lDiff = document.getElementById('leg-diff');
 
-  if (lOpen) lOpen.innerText = candle.open.toLocaleString();
-  if (lHigh) lHigh.innerText = candle.high.toLocaleString();
-  if (lLow) lLow.innerText = candle.low.toLocaleString();
-  if (lClose) lClose.innerText = candle.close.toLocaleString();
+  if (lOpen) lOpen.innerText = fmt(candle.open);
+  if (lHigh) lHigh.innerText = fmt(candle.high);
+  if (lLow) lLow.innerText = fmt(candle.low);
+  if (lClose) lClose.innerText = fmt(candle.close);
 
   if (lDiff) {
     const diff = candle.close - candle.open;
     const sign = diff >= 0 ? '+' : '';
-    lDiff.innerText = `${sign}${diff}`;
+    lDiff.innerText = `${sign}${isYield ? diff.toFixed(3) : (isSmall ? diff.toFixed(2) : diff)}`;
     lDiff.style.color = diff >= 0 ? 'var(--call-color)' : 'var(--put-color)';
   }
 }
@@ -1205,7 +1234,24 @@ function renderLeftPanel() {
   if (!gexData) return;
 
   const isIndexFutures = currentActiveSymbol && ['TXF', 'MXF', 'TMF', 'TWN'].includes(currentActiveSymbol.symbol);
-  const baseP = isIndexFutures ? (gexData.txf_price || 47187) : (currentActiveSymbol.symbol === '2330' || currentActiveSymbol.symbol === 'CDF' ? 1045 : (currentActiveSymbol.symbol === '2454' ? 1430 : 215));
+  let baseP = 47187;
+
+  if (currentActiveSymbol) {
+    if (CORE_PRESET_ASSETS[currentActiveSymbol.symbol]) {
+      baseP = CORE_PRESET_ASSETS[currentActiveSymbol.symbol].base_price;
+      if (currentActiveSymbol.symbol === 'TXF' && gexData.txf_price) {
+        baseP = gexData.txf_price;
+      }
+    } else if (isIndexFutures) {
+      baseP = gexData.txf_price || 47187;
+    } else if (currentActiveSymbol.symbol === '2330' || currentActiveSymbol.symbol === 'CDF') {
+      baseP = 1045;
+    } else if (currentActiveSymbol.symbol === '2454') {
+      baseP = 1430;
+    } else {
+      baseP = 215;
+    }
+  }
   
   const cw = gexData.call_wall_strike || 47400;
   const zg = gexData.zero_gamma_level || 47217.4;
@@ -1218,7 +1264,9 @@ function renderLeftPanel() {
 
   // Quotes
   const pEl = document.getElementById('left-main-price');
-  if (pEl) pEl.innerText = baseP.toLocaleString();
+  if (pEl) {
+    pEl.innerText = currentActiveSymbol.is_yield ? `${baseP.toFixed(3)}%` : (baseP < 500 ? baseP.toFixed(2) : baseP.toLocaleString());
+  }
 
   // Distances
   const distCW = baseP - cw;
@@ -1338,7 +1386,7 @@ function setupEventListeners() {
     });
   });
 
-  // Contract Switcher
+  // Core Preset Assets & Contract Switcher (8 Core Curated Assets)
   const contractBtns = document.querySelectorAll('.contract-tab');
   contractBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1346,15 +1394,61 @@ function setupEventListeners() {
       btn.classList.add('active');
       const code = btn.getAttribute('data-contract');
       
-      const matched = symbolsUniverse.find(s => s.symbol === code || s.futures_code === code);
-      if (matched) {
-        switchActiveSymbol(matched);
+      if (CORE_PRESET_ASSETS[code]) {
+        switchActiveSymbol(CORE_PRESET_ASSETS[code]);
       } else {
-        activeContract = code;
-        renderChartData();
+        const matched = symbolsUniverse.find(s => s.symbol === code || s.futures_code === code);
+        if (matched) {
+          switchActiveSymbol(matched);
+        } else {
+          activeContract = code;
+          renderChartData();
+        }
       }
     });
   });
+
+  // Mobile Drawer Triggers & Controls
+  const btnToggleLeft = document.getElementById('btn-toggle-left-drawer');
+  const btnToggleRight = document.getElementById('btn-toggle-right-drawer');
+  const btnCloseLeft = document.getElementById('btn-close-left-drawer');
+  const btnCloseRight = document.getElementById('btn-close-right-drawer');
+  const overlay = document.getElementById('mobile-drawer-overlay');
+  const leftPanel = document.getElementById('room-left-panel');
+  const rightPanel = document.getElementById('room-right-panel');
+
+  function closeAllDrawers() {
+    if (leftPanel) leftPanel.classList.remove('drawer-open');
+    if (rightPanel) rightPanel.classList.remove('drawer-open');
+    if (overlay) overlay.classList.remove('active');
+    setTimeout(handleChartResize, 300);
+  }
+
+  if (btnToggleLeft && leftPanel && overlay) {
+    btnToggleLeft.addEventListener('click', () => {
+      const isOpen = leftPanel.classList.contains('drawer-open');
+      closeAllDrawers();
+      if (!isOpen) {
+        leftPanel.classList.add('drawer-open');
+        overlay.classList.add('active');
+      }
+    });
+  }
+
+  if (btnToggleRight && rightPanel && overlay) {
+    btnToggleRight.addEventListener('click', () => {
+      const isOpen = rightPanel.classList.contains('drawer-open');
+      closeAllDrawers();
+      if (!isOpen) {
+        rightPanel.classList.add('drawer-open');
+        overlay.classList.add('active');
+      }
+    });
+  }
+
+  if (btnCloseLeft) btnCloseLeft.addEventListener('click', closeAllDrawers);
+  if (btnCloseRight) btnCloseRight.addEventListener('click', closeAllDrawers);
+  if (overlay) overlay.addEventListener('click', closeAllDrawers);
 
   // Sub-Pane 4 Tab Switcher (AO / CVD / DMI / Momentum)
   const sub4Tabs = document.querySelectorAll('.sub4-tab-btn');

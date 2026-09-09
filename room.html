@@ -30,12 +30,16 @@
         <span class="badge-version">v59.0</span>
       </div>
       
-      <!-- Contract Switcher -->
-      <div class="contract-tabs">
-        <button class="contract-tab active" data-contract="TXF">台指期 TXF</button>
-        <button class="contract-tab" data-contract="MXF">小台 MXF</button>
-        <button class="contract-tab" data-contract="MTX">微台 MTX</button>
-        <button class="contract-tab" data-contract="CDF">台積期 CDF</button>
+      <!-- Core Macro & Market Asset Quick Switcher (8 Core Assets) -->
+      <div class="contract-tabs" id="core-asset-tabs">
+        <button class="contract-tab active" data-contract="TXF" title="台指期貨即時">🇹🇼 台指期 TXF</button>
+        <button class="contract-tab" data-contract="TAIEX" title="台灣加權指數">🇹🇼 加權指數</button>
+        <button class="contract-tab" data-contract="OTC" title="櫃買指數">📈 櫃買指數</button>
+        <button class="contract-tab" data-contract="CDF" title="台積電期貨">💎 台積期 CDF</button>
+        <button class="contract-tab" data-contract="MTX" title="微型台指期貨">🎯 微台 MTX</button>
+        <button class="contract-tab" data-contract="US10Y" title="美國10年期公債殖利率">🇺🇸 美債10Y</button>
+        <button class="contract-tab" data-contract="DXY" title="美元指數">💵 美元 DXY</button>
+        <button class="contract-tab" data-contract="CL" title="紐約輕原油期貨">🛢️ 輕原油 CL</button>
       </div>
 
       <!-- Global Symbol Search Bar (TWSE + TAIFEX All Stock Futures) -->
@@ -81,8 +85,20 @@
       </div>
     </div>
 
-    <!-- Header Navigation & Switcher -->
+    <!-- Header Navigation & Mobile Drawer Triggers -->
     <div class="header-right">
+      <!-- Mobile Quick Drawer Triggers -->
+      <div class="mobile-drawer-triggers">
+        <button class="btn-drawer-toggle" id="btn-toggle-left-drawer" title="開啟行情與宏觀風控">
+          <span>📊</span>
+          <span class="drawer-btn-label">行情/風控</span>
+        </button>
+        <button class="btn-drawer-toggle" id="btn-toggle-right-drawer" title="開啟 AI 量化軍師">
+          <span>🤖</span>
+          <span class="drawer-btn-label">AI軍師</span>
+        </button>
+      </div>
+
       <a href="index.html" class="btn-nav-switch">
         <span>📊</span>
         <span>返回宏觀儀表板</span>
@@ -95,6 +111,10 @@
     
     <!-- LEFT PANEL: Quotes, GEX Levels & Trend Ribbons HUD -->
     <aside class="panel-left" id="panel-left">
+      <div class="drawer-header-mobile">
+        <span style="font-weight: 700; color: var(--primary-accent);">📊 行情與宏觀風控監控</span>
+        <button class="btn-close-drawer" id="btn-close-left-drawer">✕</button>
+      </div>
 
       <!-- 🌐 全球股市宏觀風險 HUD (精簡整合於左側頂部) -->
       <div class="left-section macro-risk-hud-section" id="macro-risk-hud" style="border-bottom: 1px solid var(--panel-border); background: linear-gradient(135deg, rgba(16, 22, 35, 0.95), rgba(10, 14, 24, 0.98)); padding: 8px 10px;">
@@ -166,13 +186,13 @@
             </div>
           </div>
 
-          <!-- 3. 台指期貨 Active Main Focus -->
+          <!-- 3. 台指期貨 Active Main Focus (台灣紅漲綠跌標準) -->
           <div class="index-card-row active-focus" style="padding: 10px; background: rgba(0, 210, 255, 0.08); border-radius: 8px; border: 1px solid var(--primary-accent); text-align: center; margin-top: 2px;">
             <div style="font-size: 0.76rem; font-weight: 700; color: var(--primary-accent); margin-bottom: 2px;" id="active-symbol-title">⚡ 台指期貨即時報價 (TXF)</div>
-            <div id="left-main-price" class="main-price-val" style="color: var(--put-color); font-size: 1.8rem; font-weight: 800;">47,207</div>
+            <div id="left-main-price" class="main-price-val" style="color: var(--call-color); font-size: 1.8rem; font-weight: 800;">47,187</div>
             <div class="price-change-sub" style="display: flex; justify-content: center; gap: 6px; font-size: 0.82rem;">
-              <span id="left-price-diff" style="color: var(--put-color); font-weight: 700;">+252</span>
-              <span id="left-price-pct" style="color: var(--put-color); font-weight: 700;">(+0.54%)</span>
+              <span id="left-price-diff" style="color: var(--call-color); font-weight: 700;">+252</span>
+              <span id="left-price-pct" style="color: var(--call-color); font-weight: 700;">(+0.54%)</span>
             </div>
           </div>
         </div>
@@ -512,7 +532,10 @@
           <span>🤖</span>
           <span>尋鳥 AI 量化軍師</span>
         </div>
-        <span class="model-badge">Gemini Pro ✕ AGENTS.md</span>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span class="model-badge">Gemini Pro ✕ AGENTS.md</span>
+          <button class="btn-close-drawer mobile-only" id="btn-close-right-drawer">✕</button>
+        </div>
       </div>
 
       <!-- Quick Action Chips -->
@@ -533,6 +556,9 @@
       </div>
 
     </aside>
+
+    <!-- Mobile Drawer Dark Blur Overlay -->
+    <div id="mobile-drawer-overlay" class="mobile-drawer-overlay"></div>
 
   </main>
 

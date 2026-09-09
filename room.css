@@ -39,12 +39,15 @@
   font-family: var(--font-family);
 }
 
-body {
+html, body {
   background-color: var(--bg-dark);
   color: var(--text-main);
   height: 100vh;
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
 }
@@ -79,7 +82,8 @@ body {
   padding: 0 14px;
   z-index: 100;
   flex-shrink: 0;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
 }
 
@@ -276,8 +280,10 @@ body {
   display: flex;
   flex: 1;
   height: calc(100vh - var(--header-height));
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw;
   overflow: hidden;
+  position: relative;
 }
 
 /* Left Panel: Contract & Quote Monitor */
@@ -506,19 +512,25 @@ body {
   flex-direction: column;
   width: 100%;
   height: calc(100% - 40px);
+  min-height: 0;
+  overflow: hidden;
   position: relative;
 }
 
 .main-chart-pane {
-  flex: 44;
+  flex: 40;
   width: 100%;
+  min-height: 0;
+  overflow: hidden;
   position: relative;
   border-bottom: 1px solid var(--panel-border);
 }
 
 .sub-chart-pane {
-  flex: 14;
+  flex: 15;
   width: 100%;
+  min-height: 0;
+  overflow: hidden;
   position: relative;
   border-bottom: 1px solid var(--panel-border);
   background: rgba(7, 10, 16, 0.85);
@@ -1576,7 +1588,7 @@ body {
 }
 
 /* ================================================================
-   選股雷達觸發按鈕與響應式排版 (Screener Button & Responsive Rules)
+   選股雷達觸發按鈕與響應式抽屜排版 (Screener Button & Mobile Responsive Drawers)
    ================================================================ */
 .btn-screener-trigger {
   display: flex;
@@ -1601,47 +1613,140 @@ body {
   transform: translateY(-1px);
 }
 
-@media (max-width: 1300px) {
-  .indices-ticker-strip {
-    font-size: 0.72rem;
-  }
+/* Mobile Quick Drawer Triggers in Header */
+.mobile-drawer-triggers {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-drawer-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  border-radius: 6px;
+  background: rgba(0, 210, 255, 0.12);
+  border: 1px solid var(--primary-accent);
+  color: var(--primary-accent);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-drawer-toggle:hover {
+  background: var(--primary-accent);
+  color: #070a10;
+}
+
+.drawer-header-mobile {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--panel-border);
+  background: rgba(13, 19, 31, 0.98);
+}
+
+.btn-close-drawer {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.btn-close-drawer:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-only {
+  display: none;
+}
+
+.mobile-drawer-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 180;
+}
+
+.mobile-drawer-overlay.active {
+  display: block;
+}
+
+@media (max-width: 1280px) {
   .quick-stats-strip {
     display: none;
   }
 }
 
-@media (max-width: 900px) {
-  body {
-    overflow-y: auto !important;
+@media (max-width: 1024px) {
+  .mobile-drawer-triggers {
+    display: flex;
   }
-  .room-header {
-    height: auto;
-    flex-wrap: wrap;
-    padding: 8px 10px;
-    gap: 8px;
+  .drawer-header-mobile {
+    display: flex;
   }
-  .header-left, .header-center, .header-right {
-    width: 100%;
-    justify-content: space-between;
+  .mobile-only {
+    display: inline-flex;
   }
-  .symbol-search-container {
-    max-width: 160px;
+
+  .panel-left {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 320px;
+    max-width: 86vw;
+    z-index: 200;
+    background: #0d131f;
+    box-shadow: 6px 0 28px rgba(0, 0, 0, 0.85);
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .contract-tabs {
-    display: none;
+
+  .panel-left.drawer-open {
+    transform: translateX(0);
   }
-  .room-main-container {
-    flex-direction: column;
-    height: auto;
-    overflow-y: auto;
+
+  .panel-right {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 350px;
+    max-width: 86vw;
+    z-index: 200;
+    background: #0d131f;
+    box-shadow: -6px 0 28px rgba(0, 0, 0, 0.85);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .panel-left, .panel-right {
-    width: 100% !important;
-    max-height: 400px;
-    overflow-y: auto;
+
+  .panel-right.drawer-open {
+    transform: translateX(0);
   }
+
   .panel-center {
-    height: 500px;
+    width: 100%;
+    flex: 1;
+  }
+
+  .contract-tabs {
+    max-width: 360px;
+    overflow-x: auto;
+    white-space: nowrap;
   }
 }
 
