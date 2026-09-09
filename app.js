@@ -2057,7 +2057,7 @@ function renderNightSixSpotlight(dataObj) {
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted);">
-          <div>外資: <strong style="color: ${item.foreign_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${item.foreign_net >= 0 ? '+' : ''}${item.foreign_net}</strong> | 自營: <strong style="color: ${item.dealer_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${item.dealer_net >= 0 ? '+' : ''}${item.dealer_net}</strong></div>
+          <div>籌碼意圖: <strong style="color: #fff;">${item.intent_tag || '⚡ 即時量價'}</strong></div>
           ${exBadge}
         </div>
       </div>

@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v58.0"
+ENGINE_VERSION = "v59.0"
 
 import os
 import sys
@@ -1489,68 +1489,83 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
     military_bio_codes = {"8033", "2634", "6753", "6446", "1795", "6472", "4743"}
     financial_trad_codes = {"2881", "2882", "2891", "2886", "2884", "2885", "2892", "2002", "1301", "1303"}
 
-    semi_chgs, semi_names = [], []
-    ai_chgs, ai_names = [], []
-    leo_chgs, leo_names = [], []
-    green_chgs, green_names = [], []
-    ship_chgs, ship_names = [], []
-    const_chgs, const_names = [], []
-    mili_bio_chgs, mili_bio_names = [], []
-    fin_chgs, fin_names = [], []
+    semi_chgs, semi_names, semi_intents = [], [], []
+    ai_chgs, ai_names, ai_intents = [], [], []
+    leo_chgs, leo_names, leo_intents = [], [], []
+    green_chgs, green_names, green_intents = [], [], []
+    ship_chgs, ship_names, ship_intents = [], [], []
+    const_chgs, const_names, const_intents = [], [], []
+    mili_bio_chgs, mili_bio_names, mili_bio_intents = [], [], []
+    fin_chgs, fin_names, fin_intents = [], [], []
 
     for stk in (stock_futures or []):
         code = stk.get('code', '')
         name = stk.get('name', '')
         chg = stk.get('change_pct', 0.0)
+        intent = stk.get('intent_tag', '')
         clean_name = name.replace("期貨", "").replace("個股期", "")
 
         if code in semicon_codes or '台積電' in clean_name or '聯發科' in clean_name or '聯電' in clean_name:
             semi_chgs.append(chg)
+            if intent: semi_intents.append(intent)
             if len(semi_names) < 3: semi_names.append(clean_name)
         elif code in ai_server_codes or '鴻海' in clean_name or '廣達' in clean_name or '緯創' in clean_name:
             ai_chgs.append(chg)
+            if intent: ai_intents.append(intent)
             if len(ai_names) < 3: ai_names.append(clean_name)
         elif code in leo_sat_codes or '昇達科' in clean_name or '啟碁' in clean_name or '華通' in clean_name:
             leo_chgs.append(chg)
+            if intent: leo_intents.append(intent)
             if len(leo_names) < 3: leo_names.append(clean_name)
         elif code in green_solar_codes or '華城' in clean_name or '士電' in clean_name or '中興電' in clean_name or '元晶' in clean_name:
             green_chgs.append(chg)
+            if intent: green_intents.append(intent)
             if len(green_names) < 3: green_names.append(clean_name)
         elif code in shipping_codes or '長榮' in clean_name or '萬海' in clean_name or '陽明' in clean_name or '慧洋' in clean_name:
             ship_chgs.append(chg)
+            if intent: ship_intents.append(intent)
             if len(ship_names) < 3: ship_names.append(clean_name)
         elif code in construction_codes or '興富發' in clean_name or '遠雄' in clean_name or '國建' in clean_name or '華固' in clean_name or '長虹' in clean_name:
             const_chgs.append(chg)
+            if intent: const_intents.append(intent)
             if len(const_names) < 3: const_names.append(clean_name)
         elif code in military_bio_codes or '雷虎' in clean_name or '漢翔' in clean_name or '藥華藥' in clean_name or '美時' in clean_name:
             mili_bio_chgs.append(chg)
+            if intent: mili_bio_intents.append(intent)
             if len(mili_bio_names) < 3: mili_bio_names.append(clean_name)
         elif code in financial_trad_codes or '富邦金' in clean_name or '國泰金' in clean_name or '中信金' in clean_name:
             fin_chgs.append(chg)
+            if intent: fin_intents.append(intent)
             if len(fin_names) < 3: fin_names.append(clean_name)
 
-    def calc_stat(arr, default_chg):
+    def calc_stat(arr, intents, default_chg):
         avg = round(sum(arr)/len(arr), 2) if arr else default_chg
-        if avg > 1.0:
-            status, color = "🔥 資金狂拉大漲", "var(--call-color)"
+        bull_count = sum(1 for it in intents if '真看多' in it)
+        bear_count = sum(1 for it in intents if '真看空' in it)
+        hedge_count = sum(1 for it in intents if '避險' in it)
+
+        if avg > 1.0 or bull_count >= 2:
+            status, color = "🔥 買盤點火狂拉", "var(--call-color)"
         elif avg > 0.2:
             status, color = "📈 買盤點火吸金", "var(--call-color)"
-        elif avg < -1.0:
+        elif avg < -1.0 or bear_count >= 2:
             status, color = "❄️ 賣壓顯著拉回", "var(--put-color)"
         elif avg < -0.2:
             status, color = "📉 震盪小幅拉回", "var(--put-color)"
+        elif hedge_count >= 2:
+            status, color = "🛡️ 避險對沖防守", "var(--primary-accent)"
         else:
             status, color = "⚖️ 資金平穩觀望", "var(--gold-accent)"
         return f"{'+' if avg >= 0 else ''}{avg:.1f}%", status, color
 
-    semi_chg_str, semi_status, semi_color = calc_stat(semi_chgs, 1.20)
-    ai_chg_str, ai_status, ai_color = calc_stat(ai_chgs, 0.85)
-    leo_chg_str, leo_status, leo_color = calc_stat(leo_chgs, 1.45)
-    green_chg_str, green_status, green_color = calc_stat(green_chgs, -0.40)
-    ship_chg_str, ship_status, ship_color = calc_stat(ship_chgs, 1.60)
-    const_chg_str, const_status, const_color = calc_stat(const_chgs, 0.75)
-    mili_bio_chg_str, mili_bio_status, mili_bio_color = calc_stat(mili_bio_chgs, 3.20)
-    fin_chg_str, fin_status, fin_color = calc_stat(fin_chgs, -0.40)
+    semi_chg_str, semi_status, semi_color = calc_stat(semi_chgs, semi_intents, 1.20)
+    ai_chg_str, ai_status, ai_color = calc_stat(ai_chgs, ai_intents, 0.85)
+    leo_chg_str, leo_status, leo_color = calc_stat(leo_chgs, leo_intents, 1.45)
+    green_chg_str, green_status, green_color = calc_stat(green_chgs, green_intents, -0.40)
+    ship_chg_str, ship_status, ship_color = calc_stat(ship_chgs, ship_intents, 1.60)
+    const_chg_str, const_status, const_color = calc_stat(const_chgs, const_intents, 0.75)
+    mili_bio_chg_str, mili_bio_status, mili_bio_color = calc_stat(mili_bio_chgs, mili_bio_intents, 3.20)
+    fin_chg_str, fin_status, fin_color = calc_stat(fin_chgs, fin_intents, -0.40)
 
     return {
         "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",

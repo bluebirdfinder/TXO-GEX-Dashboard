@@ -1,11 +1,27 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v58.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v59.0)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > 🏛️ TWSE 融資維持率發布狀態日期比對與開盤未公布狀態判定校正 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 輝哥 100% 現貨本位不開槓桿週週收息 ✦ 📅 方案 B：本週重大市場焦點週報 (Python 自動排程即時生成) ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ VIX 雙軌數據引擎 (TAIFEX VIX ✕ 美股 ^VIX) ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 波動率四級市場情緒評級 ✦ VIX 互動式對策彈窗 ✦ TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v58.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v59.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+## 🌟 v59.0 台股全市場盤後數據公布時程表 ✕ 四大商品籌碼量化分析優化升級
+
+### ⏱️ 1. 台股全市場盤後數據公布時程全覽建立 ([MARKET_DATA_SCHEDULE.md](MARKET_DATA_SCHEDULE.md))
+- **全市場時程全覽**：完整梳理 13:30 收盤至隔日 05:00 夜盤收盤之官方數據公布流水線（15:30 三大法人現貨/期權、18:00 大額交易人、18:30 券商分點、20:00 官股行庫、21:00 融資維持率、05:00 夜盤行情）。
+- **05:00 快訊黃金窗口**：確立清晨 05:00 夜盤收盤為全市場 100% 完整籌碼匯總之最佳快訊發布窗口。
+
+### 🎯 2. 四大主力商品（台指期、選擇權、個股期、個股）量化優化
+- **台指期**：確立小台散戶多空比反向指標 + 前五大特法 vs 外資空單避險分歧診斷。
+- **選擇權**：正/負 Gamma 環境制度化風控（+GEX 雙賣收 $\theta$、-GEX 防追殺順勢/縮倉）、動態 Call/Put Wall 搬移預警、週選嚴禁拆單鐵律。
+- **個股期貨**：直擊期交稅低 150 倍之主力大戶足跡，結合 17:30 大額交易人未平倉 + 05:00 夜盤 6 檔美股連動行情。
+- **個股現貨**：投信連買佔股本比認養策略 + 八大官股逆勢護盤指標 + 個股融資維持率斷頭警戒。
+
+### 🌙 3. 6 大夜盤個股/ETF期貨矩陣數據真實度清洗與 8 大板塊意圖整合
+- 清理夜盤卡片中非官方之夜盤法人合成估算欄位，改以清晰標示「籌碼意圖」與真實夜盤價量基差，杜絕任何誤導。
+- 資金輪動矩陣狀態判定深度結合板塊成分股主力意圖標籤，即時呈現「買盤點火狂拉」、「避險對沖防守」與「賣壓調節拉回」之深度動能。
 
 ---
 
