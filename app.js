@@ -2112,9 +2112,11 @@ function populateStockFutures() {
   } else if (selectedCat === 'intent_neutral') {
     list = list.filter(item => (item.intent_tag || '').includes('觀望分歧'));
   } else if (selectedCat === 'top10' || selectedCat === 'top10_buy') {
-    list = list.filter(item => item.is_top10_buy || (item.foreign_net + item.dealer_net) > 200);
+    list = list.filter(item => item.is_top10_buy);
+    if (!currentSortKey) list.sort((a, b) => (b.top10_net_oi || 0) - (a.top10_net_oi || 0));
   } else if (selectedCat === 'top10_sell') {
-    list = list.filter(item => item.is_top10_sell || (item.foreign_net + item.dealer_net) < -200);
+    list = list.filter(item => item.is_top10_sell);
+    if (!currentSortKey) list.sort((a, b) => (a.top10_net_oi || 0) - (b.top10_net_oi || 0));
   } else if (selectedCat === 'upcoming_ex') {
     list = list.filter(item => item.ex_date && item.ex_date !== '-');
   } else if (selectedCat !== 'all') {

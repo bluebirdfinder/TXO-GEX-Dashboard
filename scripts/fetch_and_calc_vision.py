@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v57.0"
+ENGINE_VERSION = "v58.0"
 
 import os
 import sys
@@ -2252,12 +2252,28 @@ def generate_gex_payload():
         item["dealer_net"] = top10_net_oi
         item["intent_tag"] = intent_tag
         item["intent_desc"] = intent_desc
-        item["is_top10_buy"] = is_top10_buy
-        item["is_top10_sell"] = is_top10_sell
+        item["is_top10_buy"] = False   # Will be re-assigned in second pass below
+        item["is_top10_sell"] = False  # Will be re-assigned in second pass below
         item["trend"] = "Bull" if chg_pct >= 0 else "Bear"
         stock_futures.append(item)
 
+    # ── 第二輪後處理：依「籌碼意圖」篩選，再依「期貨大戶浮部位」排序，取前 10 名標記 ──
+    # Top10多：意圖=強勢真看多 → 依 top10_net_oi 降序 (最大多單在前)
+    true_bull = [item for item in stock_futures if "強勢真看多" in (item.get("intent_tag") or "")]
+    true_bull.sort(key=lambda x: x.get("top10_net_oi", 0), reverse=True)
+    top10_bull_codes = {item["code"] for item in true_bull[:10]}
+
+    # Top10空：意圖=強勢真看空 → 依 top10_net_oi 升序 (最大空單在前)
+    true_bear = [item for item in stock_futures if "強勢真看空" in (item.get("intent_tag") or "")]
+    true_bear.sort(key=lambda x: x.get("top10_net_oi", 0))
+    top10_bear_codes = {item["code"] for item in true_bear[:10]}
+
+    for item in stock_futures:
+        item["is_top10_buy"] = item["code"] in top10_bull_codes
+        item["is_top10_sell"] = item["code"] in top10_bear_codes
+
     sector_capital_rotation = calculate_dynamic_sector_rotation(stock_futures, now_dt)
+
 
     gp_base = gex_profile['gex_plus_flip']
     prev_day_spot = round(spot_price - spot_change, 2)

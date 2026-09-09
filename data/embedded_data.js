@@ -1,6 +1,6 @@
 window.GEX_EMBEDDED_DATA = {
   "date": "2026-09-10",
-  "engine_version": "v57.0",
+  "engine_version": "v58.0",
   "session_type": "DAY",
   "session_name": "☀️ 日盤結算籌碼 (13:45 Close)",
   "session_shift": {
@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47218.5,
     "day_total_vex": 3751.54
   },
-  "last_updated_time": "2026-09-10 00:19",
+  "last_updated_time": "2026-09-10 00:50",
   "spot_price": 47183.36,
   "spot_change": 77.58,
   "spot_change_pct": 0.16,
@@ -1320,7 +1320,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.1,
       "margin_maint_published": true,
       "taifex_vix": 23.14,
-      "us_vix": 17.43,
+      "us_vix": 17.51,
       "total_gex": [
         {
           "strike": 46300,
@@ -2607,7 +2607,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.1,
       "margin_maint_published": false,
       "taifex_vix": 23.54,
-      "us_vix": 17.23,
+      "us_vix": 17.31,
       "total_gex": [
         {
           "strike": 46300,
@@ -3894,7 +3894,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.0,
       "margin_maint_published": true,
       "taifex_vix": 24.24,
-      "us_vix": 16.93,
+      "us_vix": 17.01,
       "total_gex": [
         {
           "strike": 46300,
@@ -5181,7 +5181,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.0,
       "margin_maint_published": false,
       "taifex_vix": 24.74,
-      "us_vix": 16.73,
+      "us_vix": 16.81,
       "total_gex": [
         {
           "strike": 46300,
@@ -6468,7 +6468,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 25.14,
-      "us_vix": 16.53,
+      "us_vix": 16.61,
       "total_gex": [
         {
           "strike": 46300,
@@ -7755,7 +7755,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 25.64,
-      "us_vix": 16.23,
+      "us_vix": 16.31,
       "total_gex": [
         {
           "strike": 46300,
@@ -9042,7 +9042,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 25.94,
-      "us_vix": 16.03,
+      "us_vix": 16.11,
       "total_gex": [
         {
           "strike": 46300,
@@ -10329,7 +10329,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 16.33,
+      "us_vix": 16.41,
       "total_gex": [
         {
           "strike": 46300,
@@ -11616,7 +11616,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.3,
       "margin_maint_published": true,
       "taifex_vix": 26.34,
-      "us_vix": 16.33,
+      "us_vix": 16.41,
       "total_gex": [
         {
           "strike": 46300,
@@ -12903,7 +12903,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.3,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 16.33,
+      "us_vix": 16.41,
       "total_gex": [
         {
           "strike": 46300,
@@ -14192,7 +14192,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 25.14,
-      "us_vix": 16.53,
+      "us_vix": 16.61,
       "total_gex": [
         {
           "strike": 46300,
@@ -15479,7 +15479,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 25.64,
-      "us_vix": 16.23,
+      "us_vix": 16.31,
       "total_gex": [
         {
           "strike": 46300,
@@ -16766,7 +16766,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 25.94,
-      "us_vix": 16.03,
+      "us_vix": 16.11,
       "total_gex": [
         {
           "strike": 46300,
@@ -18053,7 +18053,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 16.33,
+      "us_vix": 16.41,
       "total_gex": [
         {
           "strike": 46300,
@@ -19340,7 +19340,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.3,
       "margin_maint_published": true,
       "taifex_vix": 26.34,
-      "us_vix": 16.33,
+      "us_vix": 16.41,
       "total_gex": [
         {
           "strike": 46300,
@@ -20627,7 +20627,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.3,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 16.33,
+      "us_vix": 16.41,
       "total_gex": [
         {
           "strike": 46300,
@@ -22157,9 +22157,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/09 (三)",
-        "price": 98.81,
-        "change": -0.03,
-        "pct": -0.03
+        "price": 98.78,
+        "change": -0.06,
+        "pct": -0.06
       },
       "usdjpy": {
         "date": "09/09 (三)",
@@ -22260,13 +22260,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/09 (三)",
-          "price": 98.81,
-          "change": -0.03,
-          "pct": -0.03
+          "price": 98.78,
+          "change": -0.06,
+          "pct": -0.06
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.5</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.81</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>153.34</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.5</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.78</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>153.34</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -235,
@@ -22325,7 +22325,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -11027.42,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-10 00:19",
+    "last_updated": "2026-09-10 00:50",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -22465,7 +22465,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 1295,
       "intent_tag": "⚡ 基差套利",
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
-      "is_top10_buy": true,
+      "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -22500,7 +22500,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 1211,
       "intent_tag": "⚡ 基差套利",
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
-      "is_top10_buy": true,
+      "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -22535,7 +22535,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 1127,
       "intent_tag": "⚡ 基差套利",
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
-      "is_top10_buy": true,
+      "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -22570,7 +22570,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 1043,
       "intent_tag": "⚡ 基差套利",
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
-      "is_top10_buy": true,
+      "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -22640,7 +22640,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 875,
       "intent_tag": "⚡ 基差套利",
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
-      "is_top10_buy": true,
+      "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -22675,7 +22675,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 791,
       "intent_tag": "⚡ 基差套利",
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
-      "is_top10_buy": true,
+      "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -22710,7 +22710,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 707,
       "intent_tag": "⚡ 基差套利",
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
-      "is_top10_buy": true,
+      "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -22780,7 +22780,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 539,
       "intent_tag": "⚡ 基差套利",
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
-      "is_top10_buy": true,
+      "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -22816,7 +22816,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_tag": "🛡️ 對沖避險",
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
-      "is_top10_sell": true,
+      "is_top10_sell": false,
       "trend": "Bull"
     },
     {
@@ -22991,7 +22991,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_tag": "🛡️ 對沖避險",
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
-      "is_top10_sell": true,
+      "is_top10_sell": false,
       "trend": "Bull"
     },
     {
@@ -23061,7 +23061,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_tag": "🛡️ 對沖避險",
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
-      "is_top10_sell": true,
+      "is_top10_sell": false,
       "trend": "Bull"
     },
     {
@@ -23096,7 +23096,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_tag": "🛡️ 對沖避險",
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
-      "is_top10_sell": true,
+      "is_top10_sell": false,
       "trend": "Bull"
     },
     {
@@ -23725,7 +23725,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 128,
       "intent_tag": "🔥 強勢真看多",
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
-      "is_top10_buy": false,
+      "is_top10_buy": true,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -24145,7 +24145,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 124,
       "intent_tag": "🔥 強勢真看多",
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
-      "is_top10_buy": false,
+      "is_top10_buy": true,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -24565,7 +24565,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 120,
       "intent_tag": "🔥 強勢真看多",
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
-      "is_top10_buy": false,
+      "is_top10_buy": true,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -24985,7 +24985,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 116,
       "intent_tag": "🔥 強勢真看多",
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
-      "is_top10_buy": false,
+      "is_top10_buy": true,
       "is_top10_sell": false,
       "trend": "Bull"
     },
@@ -25021,7 +25021,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_tag": "❄️ 強勢真看空",
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
-      "is_top10_sell": false,
+      "is_top10_sell": true,
       "trend": "Bull"
     },
     {
@@ -25405,7 +25405,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 112,
       "intent_tag": "🔥 強勢真看多",
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
-      "is_top10_buy": false,
+      "is_top10_buy": true,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -25441,7 +25441,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_tag": "❄️ 強勢真看空",
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
-      "is_top10_sell": false,
+      "is_top10_sell": true,
       "trend": "Bull"
     },
     {
@@ -29675,7 +29675,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 118,
       "intent_tag": "🔥 強勢真看多",
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
-      "is_top10_buy": false,
+      "is_top10_buy": true,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -30095,7 +30095,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 114,
       "intent_tag": "🔥 強勢真看多",
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
-      "is_top10_buy": false,
+      "is_top10_buy": true,
       "is_top10_sell": false,
       "trend": "Bear"
     },
@@ -30131,7 +30131,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_tag": "❄️ 強勢真看空",
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
-      "is_top10_sell": false,
+      "is_top10_sell": true,
       "trend": "Bear"
     },
     {
@@ -30551,7 +30551,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_tag": "❄️ 強勢真看空",
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
-      "is_top10_sell": false,
+      "is_top10_sell": true,
       "trend": "Bull"
     },
     {
@@ -31880,7 +31880,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_net": 113,
       "intent_tag": "🔥 強勢真看多",
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
-      "is_top10_buy": false,
+      "is_top10_buy": true,
       "is_top10_sell": false,
       "trend": "Bull"
     },
@@ -32601,9 +32601,9 @@ window.GEX_EMBEDDED_DATA = {
     "taifex_vix": 26.34,
     "taifex_vix_change": 0.55,
     "taifex_vix_change_pct": 2.13,
-    "us_vix": 16.34,
-    "us_vix_change": 0.62,
-    "us_vix_change_pct": 3.94,
+    "us_vix": 16.41,
+    "us_vix_change": 0.69,
+    "us_vix_change_pct": 4.39,
     "regime_tag": "🔴 極度恐慌 (Extreme Panic)",
     "regime_color": "#ff5252",
     "regime_desc": "恐慌爆發，追跌避險賣壓沉重。觀望等待 VIX 轉折；回落時為機構級建倉爆賺期。",
