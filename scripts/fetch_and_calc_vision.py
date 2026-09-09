@@ -2306,14 +2306,29 @@ def generate_gex_payload():
         is_it_adopted = (it_ratio >= 0.5 and it_consec_days >= 3)
         it_badge = "🚀 投信波段認養" if is_it_adopted else ("⚡ 投信連買" if it_consec_days >= 3 else "-")
 
-        # Night Stock Futures with ADR linkage
+        # Night Stock Futures with ADR linkage (Complete Taiwan ADR Matrix)
         ADR_MAPPING = {
-            "2330": {"adr_symbol": "TSM ADR", "adr_change_pct": 2.15, "adr_basis": "+0.45%"},
-            "2330F": {"adr_symbol": "TSM ADR", "adr_change_pct": 2.15, "adr_basis": "+0.45%"},
-            "2303": {"adr_symbol": "UMC ADR", "adr_change_pct": -0.65, "adr_basis": "-0.15%"},
-            "0050": {"adr_symbol": "EWT (台股ETF)", "adr_change_pct": 1.40, "adr_basis": "+0.25%"},
-            "0050F": {"adr_symbol": "EWT (台股ETF)", "adr_change_pct": 1.40, "adr_basis": "+0.25%"},
-            "00679B": {"adr_symbol": "TLT (美債ETF)", "adr_change_pct": 0.35, "adr_basis": "+0.10%"}
+            "2330": {"adr_symbol": "TSM (台積電ADR)", "adr_change_pct": 2.15, "adr_basis": "+0.45%"},
+            "2330F": {"adr_symbol": "TSM (台積電ADR)", "adr_change_pct": 2.15, "adr_basis": "+0.45%"},
+            "2303": {"adr_symbol": "UMC (聯電ADR)", "adr_change_pct": 2.77, "adr_basis": "+0.32%"},
+            "2303F": {"adr_symbol": "UMC (聯電ADR)", "adr_change_pct": 2.77, "adr_basis": "+0.32%"},
+            "3711": {"adr_symbol": "ASX (日月光ADR)", "adr_change_pct": 2.81, "adr_basis": "+0.40%"},
+            "3711F": {"adr_symbol": "ASX (日月光ADR)", "adr_change_pct": 2.81, "adr_basis": "+0.40%"},
+            "2317": {"adr_symbol": "HNHPF (鴻海ADR)", "adr_change_pct": 0.69, "adr_basis": "+0.15%"},
+            "2317F": {"adr_symbol": "HNHPF (鴻海ADR)", "adr_change_pct": 0.69, "adr_basis": "+0.15%"},
+            "2409": {"adr_symbol": "AUOTY (友達ADR)", "adr_change_pct": 2.95, "adr_basis": "+0.20%"},
+            "2409F": {"adr_symbol": "AUOTY (友達ADR)", "adr_change_pct": 2.95, "adr_basis": "+0.20%"},
+            "2412": {"adr_symbol": "CHT (中華電ADR)", "adr_change_pct": 0.29, "adr_basis": "+0.05%"},
+            "2412F": {"adr_symbol": "CHT (中華電ADR)", "adr_change_pct": 0.29, "adr_basis": "+0.05%"},
+            "8150": {"adr_symbol": "IMOS (南茂ADR)", "adr_change_pct": 2.07, "adr_basis": "+0.35%"},
+            "8150F": {"adr_symbol": "IMOS (南茂ADR)", "adr_change_pct": 2.07, "adr_basis": "+0.35%"},
+            "2882": {"adr_symbol": "CHYYY (國泰金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
+            "2882F": {"adr_symbol": "CHYYY (國泰金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
+            "2881": {"adr_symbol": "FUISY (富邦金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
+            "2881F": {"adr_symbol": "FUISY (富邦金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
+            "0050": {"adr_symbol": "EWT (MSCI台灣ETF)", "adr_change_pct": 1.40, "adr_basis": "+0.25%"},
+            "0050F": {"adr_symbol": "EWT (MSCI台灣ETF)", "adr_change_pct": 1.40, "adr_basis": "+0.25%"},
+            "00679B": {"adr_symbol": "TLT (美債20Y ETF)", "adr_change_pct": 0.35, "adr_basis": "+0.10%"}
         }
         adr_info = ADR_MAPPING.get(code, {"adr_symbol": "-", "adr_change_pct": 0.0, "adr_basis": "-"})
 
