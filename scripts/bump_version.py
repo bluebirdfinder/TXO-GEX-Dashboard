@@ -94,7 +94,33 @@ def bump_version(new_version, release_note=""):
         r_content = r_content.replace(f'Engine-{old_version}', f'Engine-{new_version}')
         with open(readme_md, 'w', encoding='utf-8') as f:
             f.write(r_content)
-        print(f"  ✅ [5/5] 更新 README.md")
+        print(f"  ✅ [5/7] 更新 README.md")
+
+    # 6.1 更新 room.html
+    room_html = os.path.join(BASE_DIR, 'room.html')
+    if os.path.exists(room_html):
+        with open(room_html, 'r', encoding='utf-8') as f:
+            rm_html_content = f.read()
+        rm_html_content = rm_html_content.replace(f'Bird Trading Room {old_version}', f'Bird Trading Room {new_version}')
+        rm_html_content = rm_html_content.replace(f'badge-version">{old_version}<', f'badge-version">{new_version}<')
+        rm_html_content = rm_html_content.replace(f'room.css?v={old_version}', f'room.css?v={new_version}')
+        rm_html_content = rm_html_content.replace(f'embedded_data.js?v={old_version}', f'embedded_data.js?v={new_version}')
+        rm_html_content = rm_html_content.replace(f'room.js?v={old_version}', f'room.js?v={new_version}')
+        with open(room_html, 'w', encoding='utf-8') as f:
+            f.write(rm_html_content)
+        print(f"  ✅ [6/7] 更新 room.html")
+
+    # 6.2 更新 room.js
+    room_js = os.path.join(BASE_DIR, 'room.js')
+    if os.path.exists(room_js):
+        with open(room_js, 'r', encoding='utf-8') as f:
+            rm_js_content = f.read()
+        rm_js_content = rm_js_content.replace(f'Core Engine {old_version}', f'Core Engine {new_version}')
+        rm_js_content = rm_js_content.replace(f'Trading Room {old_version}', f'Trading Room {new_version}')
+        rm_js_content = rm_js_content.replace(f'即時全域量化診斷 ({old_version})', f'即時全域量化診斷 ({new_version})')
+        with open(room_js, 'w', encoding='utf-8') as f:
+            f.write(rm_js_content)
+        print(f"  ✅ [7/7] 更新 room.js")
 
     # 7. ⚡ CRITICAL：自動執行數據引擎重新生成 gex_data.json / embedded_data.js
     print(f"\n⚡ [核心防呆] 正在執行數據引擎，產出帶有 [{new_version}] 的最新數據 Payload...")
