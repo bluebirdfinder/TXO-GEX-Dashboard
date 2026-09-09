@@ -745,6 +745,117 @@
     </div>
   </div>
 
+  <!-- 🧠 AI 主力意圖診斷與個股期貨教學 Modal Overlay -->
+  <div id="intent-guide-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.88); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #121824; border: 1px solid var(--gold-accent); border-radius: 16px; padding: 26px; max-width: 820px; width: 92%; max-height: 88vh; overflow-y: auto; box-shadow: 0 12px 48px rgba(255, 215, 0, 0.25);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="color: var(--gold-accent); margin: 0; font-size: 1.18rem; display: flex; align-items: center; gap: 8px;">
+          <span>🧠 AI 主力意圖診斷、正逆價差與個股期貨實戰教學</span>
+        </h3>
+        <button id="close-intent-modal" style="background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="font-size: 0.88rem; line-height: 1.7; color: var(--text-main);">
+        <!-- Core Concept Banner -->
+        <div style="background: rgba(255, 215, 0, 0.06); border: 1px solid rgba(255, 215, 0, 0.25); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+          <strong style="color: var(--gold-accent); font-size: 0.95rem;">💡 核心原理：為什麼必須結合「現貨三大法人 + 期貨大戶 + 基差」？</strong>
+          <p style="margin: 4px 0 0 0; color: var(--text-main); font-size: 0.84rem;">
+            主力機構常因「稅負考量（個股期交稅便宜 150 倍）」或「龐大現貨避險需求」而在期貨市場建立反向部位。若單看現貨買賣超或單看期貨口數容易被假動作誤導。本系統透過三維交叉運算，精確拆解出主力的<b>真意圖</b>。
+          </p>
+        </div>
+
+        <!-- 1. The 5 Intent Archetypes Matrix -->
+        <h4 style="color: var(--primary-accent); margin: 14px 0 8px 0; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+          <span>1. AI 主力意圖 5 大維度診斷矩陣對照表</span>
+        </h4>
+        <div style="overflow-x: auto; margin-bottom: 18px;">
+          <table class="matrix-table" style="width: 100%; text-align: center; font-size: 0.82rem;">
+            <thead>
+              <tr style="background: #18202d;">
+                <th>意圖標籤</th>
+                <th>現貨三大法人</th>
+                <th>期貨大戶部位</th>
+                <th>期現價差 (Basis)</th>
+                <th>主力背後動機</th>
+                <th>實戰操盤對策</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: var(--call-color); font-weight: 700; white-space: nowrap;">🔥 強勢真看多</td>
+                <td style="color: var(--call-color); font-weight: 600;">大幅買超</td>
+                <td style="color: var(--call-color); font-weight: 600;">淨多單大增</td>
+                <td>正價差 / 溫和收斂</td>
+                <td>現期雙買，真金白銀發動主升段</td>
+                <td style="color: var(--call-color);">順勢偏多，拉回支撐找買點</td>
+              </tr>
+              <tr>
+                <td style="color: var(--put-color); font-weight: 700; white-space: nowrap;">❄️ 強勢真看空</td>
+                <td style="color: var(--put-color); font-weight: 600;">大幅賣超</td>
+                <td style="color: var(--put-color); font-weight: 600;">淨空單重押</td>
+                <td>實質逆價差擴大</td>
+                <td>現期雙殺，主力出貨並期貨作空</td>
+                <td style="color: var(--put-color);">嚴格停損出場，反彈遇壓調節</td>
+              </tr>
+              <tr>
+                <td style="color: var(--primary-accent); font-weight: 700; white-space: nowrap;">🛡️ 對沖避險</td>
+                <td style="color: var(--call-color); font-weight: 600;">持續買超/重倉</td>
+                <td style="color: var(--put-color); font-weight: 600;">期貨大額空單</td>
+                <td>微幅逆價差</td>
+                <td>保護現貨資產，期貨僅買保險</td>
+                <td style="color: var(--primary-accent);">多頭格局未變，勿被期貨空單嚇跑</td>
+              </tr>
+              <tr>
+                <td style="color: var(--gold-accent); font-weight: 700; white-space: nowrap;">⚡ 基差套利</td>
+                <td>買賣超平衡</td>
+                <td>部位與價差反向</td>
+                <td>正/逆價差異常擴大</td>
+                <td>鎖定無風險利差，等待結算收斂</td>
+                <td style="color: var(--gold-accent);">不具方向性，區間震盪收斂看待</td>
+              </tr>
+              <tr>
+                <td style="color: var(--text-muted); font-weight: 700; white-space: nowrap;">⚖️ 觀望分歧</td>
+                <td>中性小額</td>
+                <td>多空互相抵銷</td>
+                <td>平價差 (±0)</td>
+                <td>等待重大財報或總經數據表態</td>
+                <td>降低槓桿，縮小部位靜待表態</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 2. Ex-Dividend Guidance -->
+        <h4 style="color: var(--gold-accent); margin: 16px 0 8px 0; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+          <span>2. 📅 除權息日程 (Ex-Dividend) ✕ 假性逆價差避坑指南</span>
+        </h4>
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--panel-border); border-radius: 8px; padding: 14px; margin-bottom: 16px; font-size: 0.83rem;">
+          <p style="margin-bottom: 8px;">
+            • <strong style="color: #ffaa00;">假性逆價差原理</strong>：個股期貨在除息日前夕，期貨價格會<b>預扣預計發放之現金股利點數</b>。例如某檔 1,000 元股票即將配息 30 元，期貨價格可能為 970 元（帳面呈現 -30 元巨額逆價差），這屬於除息常態，<b>並非主力看空放空</b>！
+          </p>
+          <p style="margin-bottom: 8px;">
+            • <strong style="color: var(--primary-accent);">實質基差還原</strong>：系統即時串接證交所除權息日程與股利金額，將除息點數加回計算「實質基差 (Real Basis)」，精確還原市場真實多空心態，杜絕被假逆價差誤導！
+          </p>
+          <p style="margin: 0;">
+            • <strong style="color: var(--call-color);">除息後填息動能</strong>：除息當日，若個股期貨快速爆量拉升正價差，常為大戶積極搶填息的強烈買盤訊號。
+          </p>
+        </div>
+
+        <!-- 3. Night-Traded 6 Stock Futures -->
+        <h4 style="color: var(--primary-accent); margin: 16px 0 8px 0; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+          <span>3. 🌙 期交所官方 6 大夜盤個股/ETF 期貨的跨市領先價值</span>
+        </h4>
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 8px; padding: 14px; margin-bottom: 14px; font-size: 0.83rem;">
+          <p style="margin-bottom: 6px;">• <b>官方 6 大開放標的</b>：台積電期 (2330 / 小型 2330F)、聯電期 (2303)、元大台灣50期 (0050 / 小型 0050F)、元大美債20年期 (00679B)。</p>
+          <p style="margin-bottom: 6px;">• <b>美股夜間連動雷達</b>：夜盤交易時間至次日凌晨 05:00，能直接反應美股科技股（TSM ADR、NVDA、AAPL）夜間波動。</p>
+          <p style="margin: 0; color: var(--gold-accent);">• <b>清晨 05:00 預判開盤</b>：05:00 夜盤結算價能讓交易者在 09:00 台股開盤前 4 小時提前預判跳空點位與大盤加權指數試搓壓力！</p>
+        </div>
+
+        <div style="text-align: right; font-size: 11px; color: rgba(255, 255, 255, 0.4); font-weight: 600; user-select: none;">© 尋鳥 Bluebird Finder Quant Labs</div>
+      </div>
+    </div>
+  </div>
+
   <!-- 🔒 Passcode Protection Modal Overlay (網頁開啟密碼防護) -->
   <div id="passcode-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 14, 23, 0.96); backdrop-filter: blur(14px); z-index: 99999; justify-content: center; align-items: center;">
     <div style="background: #121824; border: 2px solid var(--primary-accent); border-radius: 16px; padding: 36px 28px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 12px 48px rgba(0, 210, 255, 0.3);">
