@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v51.0"
+ENGINE_VERSION = "v51.1"
 
 import os
 import sys
@@ -569,6 +569,24 @@ def fetch_twse_stock_spot_prices():
     """
     stock_spot_dict = {}
     
+    # Tier 0: Local real quotes cache (tw_quotes_latest.json containing 7,141 TWSE & TPEx quotes)
+    local_quotes_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "tw_quotes_latest.json")
+    if os.path.exists(local_quotes_path):
+        try:
+            with open(local_quotes_path, "r", encoding="utf-8") as f:
+                q_data = json.load(f)
+                quotes = q_data.get("quotes", {})
+                for code, q in quotes.items():
+                    close_p = float(q.get("close", 0.0) or 0.0)
+                    chg_pct = float(q.get("pct_change", 0.0) or 0.0)
+                    vol = int(q.get("volume", 1000) or 1000)
+                    if close_p > 0 and code not in ("TXF", "MXF", "TMF", "TWN"):
+                        stock_spot_dict[code] = {"price": close_p, "change_pct": chg_pct, "volume": vol}
+            if len(stock_spot_dict) > 100:
+                print(f"[OK] Loaded {len(stock_spot_dict)} stock spot prices from local tw_quotes_latest.json cache")
+        except Exception as ex_q:
+            print(f"[Warning] Failed to load local quotes cache: {ex_q}")
+
     # Tier 1: TWSE OpenAPI
     try:
         url = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
@@ -2073,12 +2091,13 @@ def generate_gex_payload():
     if catalog_270:
         for idx, stk in enumerate(catalog_270):
             code = stk['code']
-            lookup_code = '2330' if code == '2330F' else ('0050' if code == '0050F' else code)
+            lookup_code = code[:-1] if (code.endswith('F') and len(code) >= 5) else code
             twse_info = stock_spot_dict.get(code, {}) or stock_spot_dict.get(lookup_code, {})
             has_night = (code in NIGHT_SESSION_CODES) or stk.get('has_night', False)
 
-            spot_p = twse_info.get('price') or stk.get('spot_price') or (2405.0 if '2330' in code else (129.0 if '2303' in code else (106.25 if '0050' in code else (26.04 if '00679B' in code else 100.0))))
+            spot_p = twse_info.get('price') or stk.get('spot_price') or 0.0
 
+            nq = None
             if has_night and code in taifex_night_dict and (session_phase in ("NIGHT_LIVE", "NIGHT_SETTLED") or is_weekend_closed):
                 nq = taifex_night_dict[code]
                 fut_price = nq['fut_price']
@@ -2090,14 +2109,10 @@ def generate_gex_payload():
                 fut_price = tf_price if (tf_price and tf_price > 0) else spot_p
 
             tf_data = taifex_stk_dict.get(code, {})
-            vol = (nq.get('volume') if 'nq' in locals() and nq else 0) or tf_data.get('total_vol') or twse_info.get('volume') or stk.get('volume', 1000)
+            vol = (nq.get('volume') if nq else 0) or tf_data.get('total_vol') or twse_info.get('volume') or stk.get('volume', 1000)
             basis = round(fut_price - spot_p, 2)
 
-            # Official TAIFEX 6 Night Session Stock & ETF Futures Contracts
-            NIGHT_SESSION_CODES = {"2330", "2330F", "2303", "0050", "0050F", "00679B"}
-            has_night = (code in NIGHT_SESSION_CODES) or stk.get('has_night', False)
-
-            ex_info = ex_div_dict.get(code, {})
+            ex_info = ex_div_dict.get(code, {}) or ex_div_dict.get(lookup_code, {})
             ex_date = ex_info.get("ex_date", "-")
             ex_dividend = ex_info.get("dividend", 0.0)
             ex_type = ex_info.get("type", "")

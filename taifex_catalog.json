@@ -1626,12 +1626,6 @@
     "has_night": true
   },
   {
-    "code": "2303F",
-    "name": "小型聯電期",
-    "category": "小型個股期貨",
-    "has_night": false
-  },
-  {
     "code": "2317F",
     "name": "小型鴻海期",
     "category": "小型個股期貨",
