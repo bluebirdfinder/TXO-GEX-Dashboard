@@ -23,7 +23,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <!-- Embedded Standalone Data Fallback -->
-  <script src="data/embedded_data.js?v=v55.0"></script>
+  <script src="data/embedded_data.js?v=v56.0"></script>
 </head>
 <body>
 
@@ -840,7 +840,7 @@
         <div class="logo-area">
           <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>尋鳥 Bluebird Finder</span>
-            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v55.0</span>
+            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v56.0</span>
           </h1>
           <div class="tagline">台指選擇權 Gamma / Vanna Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
@@ -1392,6 +1392,11 @@
           <span style="font-size: 0.85rem; color: var(--text-muted);">契約類別切換：</span>
           <select id="category-filter-select" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--primary-accent); background: #121721; color: var(--primary-accent); font-weight: 600; font-size: 0.85rem;">
             <option value="all">🌐 全部 287 檔契約 (All Categories)</option>
+            <option value="intent_bull">🔥 意圖：強勢真看多 (Strong Bullish)</option>
+            <option value="intent_bear">❄️ 意圖：強勢真看空 (Strong Bearish)</option>
+            <option value="intent_hedge">🛡️ 意圖：對沖避險 (Hedging)</option>
+            <option value="intent_arb">⚡ 意圖：基差套利 (Arbitrage)</option>
+            <option value="intent_neutral">⚖️ 意圖：觀望分歧 (Neutral)</option>
             <option value="night6">🌙 官方 6 大夜盤個股/ETF期貨 (Night-Traded 6)</option>
             <option value="top10_buy">🔥 法人買超 Top 10 熱門標的</option>
             <option value="top10_sell">❄️ 法人賣超 Top 10 避險標的</option>
@@ -1878,7 +1883,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=v55.0"></script>
+  <script src="app.js?v=v56.0"></script>
 </body>
 </html>
 

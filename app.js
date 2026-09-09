@@ -2101,6 +2101,16 @@ function populateStockFutures() {
   // Filter logic
   if (selectedCat === 'night6') {
     list = list.filter(item => item.has_night);
+  } else if (selectedCat === 'intent_bull') {
+    list = list.filter(item => (item.intent_tag || '').includes('強勢真看多'));
+  } else if (selectedCat === 'intent_bear') {
+    list = list.filter(item => (item.intent_tag || '').includes('強勢真看空'));
+  } else if (selectedCat === 'intent_hedge') {
+    list = list.filter(item => (item.intent_tag || '').includes('對沖避險'));
+  } else if (selectedCat === 'intent_arb') {
+    list = list.filter(item => (item.intent_tag || '').includes('基差套利') || (item.intent_tag || '').includes('套利'));
+  } else if (selectedCat === 'intent_neutral') {
+    list = list.filter(item => (item.intent_tag || '').includes('觀望分歧'));
   } else if (selectedCat === 'top10' || selectedCat === 'top10_buy') {
     list = list.filter(item => item.is_top10_buy || (item.foreign_net + item.dealer_net) > 200);
   } else if (selectedCat === 'top10_sell') {
@@ -2121,6 +2131,7 @@ function populateStockFutures() {
 
   // Sort logic
   const NIGHT_POPULARITY_ORDER = ['2330', '2330F', '0050', '0050F', '2303', '00679B'];
+  const INTENT_SORT_RANK = { '🔥 強勢真看多': 1, '🛡️ 對沖避險': 2, '⚡ 基差套利': 3, '⚖️ 觀望分歧': 4, '❄️ 強勢真看空': 5 };
   const sortKey = currentSortKey || 'volume';
   
   list.sort((a, b) => {
@@ -2130,6 +2141,12 @@ function populateStockFutures() {
       const posA = idxA !== -1 ? idxA : 99;
       const posB = idxB !== -1 ? idxB : 99;
       if (posA !== posB) return posA - posB;
+    }
+
+    if (sortKey === 'intent_tag') {
+      const rankA = INTENT_SORT_RANK[a.intent_tag] || 99;
+      const rankB = INTENT_SORT_RANK[b.intent_tag] || 99;
+      return currentSortOrder === 'asc' ? rankA - rankB : rankB - rankA;
     }
 
     let valA = a[sortKey];
@@ -2202,19 +2219,19 @@ function populateStockFutures() {
     const top10Inst = item.top10_inst_oi !== undefined ? item.top10_inst_oi : Math.round(top10NetOi * 0.85);
 
     const spotSubChips = `
-      <div style="font-size: 0.67rem; margin-top: 3px; display: flex; gap: 4px; flex-wrap: wrap; line-height: 1.2;">
+      <div style="font-size: 0.67rem; margin-top: 3px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; line-height: 1.25;">
         <span style="color: ${spotForeign >= 0 ? '#ff7043' : '#26a69a'};" title="外資淨買賣張數">外:${spotForeign >= 0 ? '+' : ''}${spotForeign}</span>
         <span style="color: ${spotTrust >= 0 ? '#ff7043' : '#26a69a'};" title="投信淨買賣張數">投:${spotTrust >= 0 ? '+' : ''}${spotTrust}</span>
         <span style="color: ${spotDealer >= 0 ? '#ff7043' : '#26a69a'};" title="自營商淨買賣張數">自:${spotDealer >= 0 ? '+' : ''}${spotDealer}</span>
-        <span style="color: ${spotGov >= 0 ? '#ffaa00' : '#aaa'}; font-weight: 600;" title="八大官股行庫估算張數">官:${spotGov >= 0 ? '+' : ''}${spotGov}</span>
+        <span style="color: ${spotGov >= 0 ? '#ffaa00' : '#888'}; font-weight: 600;" title="八大官股行庫估算張數">官:${spotGov >= 0 ? '+' : ''}${spotGov}</span>
       </div>
     `;
 
     const futSubChips = `
-      <div style="font-size: 0.67rem; margin-top: 3px; display: flex; gap: 4px; flex-wrap: wrap; line-height: 1.2;">
+      <div style="font-size: 0.67rem; margin-top: 3px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; line-height: 1.25;">
         <span style="color: ${top5Net >= 0 ? '#ff7043' : '#26a69a'};" title="前五大交易人淨口數">前5:${top5Net >= 0 ? '+' : ''}${top5Net}</span>
         <span style="color: ${top10NetOi >= 0 ? '#ff7043' : '#26a69a'};" title="前十大交易人淨口數">前10:${top10NetOi >= 0 ? '+' : ''}${top10NetOi}</span>
-        <span style="color: ${top10Inst >= 0 ? '#ffaa00' : '#aaa'}; font-weight: 600;" title="前10大特定法人淨口數">特法:${top10Inst >= 0 ? '+' : ''}${top10Inst}</span>
+        <span style="grid-column: 1 / -1; color: ${top10Inst >= 0 ? '#ffaa00' : '#888'}; font-weight: 600;" title="前10大特定法人淨口數">特法:${top10Inst >= 0 ? '+' : ''}${top10Inst}</span>
       </div>
     `;
 
