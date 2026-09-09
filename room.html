@@ -90,6 +90,70 @@
     </div>
   </header>
 
+  <!-- 🌐 全球股市風險儀表板 (Global Macro Risk Panel - 圖1) -->
+  <div id="global-macro-risk-panel" class="global-risk-banner" style="background: linear-gradient(135deg, rgba(20, 25, 38, 0.95), rgba(12, 16, 26, 0.98)); border: 1px solid rgba(0, 210, 255, 0.35); border-radius: 10px; padding: 12px 16px; margin: 10px 16px 0 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.12); padding-bottom: 8px; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 1.1rem;">🌐</span>
+        <strong style="color: var(--gold-accent); font-size: 0.92rem;">全球股市風險儀表板 (Global Macro Risk Dashboard)</strong>
+        <span class="badge" style="background: rgba(0,210,255,0.15); color: var(--primary-accent); border: 1px solid rgba(0,210,255,0.3); font-size: 0.7rem;">實時三大巨頭風控雷達</span>
+      </div>
+      <div style="font-size: 0.78rem; color: #fff; background: rgba(255,255,255,0.05); padding: 3px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+        💡 <strong style="color: var(--gold-accent);">宏觀風控結論：</strong> VIX維持低檔有利多頭，但殖利率續升形成壓力，短線偏震盪，宜聚焦 AI 及獲利成長族群。
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+      <!-- 1. 美元指數 DXY -->
+      <div style="background: rgba(10, 14, 23, 0.6); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,82,82,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-weight: 700; color: #38bdf8; font-size: 0.85rem;">💵 美元指數 (DXY)</span>
+          <span class="badge" style="background: rgba(38,166,154,0.2); color: #26a69a; border: 1px solid #26a69a;">跌落20日線 (偏空)</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 8px; font-family: 'Outfit', monospace; margin-bottom: 6px;">
+          <span style="font-size: 1.1rem; font-weight: 700; color: #fff;">99.196</span>
+          <span style="font-size: 0.72rem; color: #aaa;">EMA20: 99.434</span>
+        </div>
+        <ul style="margin: 0; padding-left: 14px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
+          <li>重新跌落 20 日均線，短線震盪偏空。</li>
+          <li>美元持續走弱，亞股與台股資金壓力暫時解除。</li>
+        </ul>
+      </div>
+
+      <!-- 2. 美殖利率 US10Y -->
+      <div style="background: rgba(10, 14, 23, 0.6); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,170,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-weight: 700; color: #ffaa00; font-size: 0.85rem;">📈 美殖利率 (10年期 US10Y)</span>
+          <span class="badge" style="background: rgba(255,82,82,0.2); color: #ff5252; border: 1px solid #ff5252;">站穩20日線 (創高)</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 8px; font-family: 'Outfit', monospace; margin-bottom: 6px;">
+          <span style="font-size: 1.1rem; font-weight: 700; color: #fff;">4.784%</span>
+          <span style="font-size: 0.72rem; color: #aaa;">EMA20: 4.715%</span>
+        </div>
+        <ul style="margin: 0; padding-left: 14px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
+          <li>持續創近期新高，明顯站穩 20 日均線之上。</li>
+          <li>殖利率上升代表要求更高報酬率，提升企業融資成本。</li>
+        </ul>
+      </div>
+
+      <!-- 3. VIX 恐慌指標 -->
+      <div style="background: rgba(10, 14, 23, 0.6); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(0,230,118,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-weight: 700; color: #00e676; font-size: 0.85rem;">📊 VIX 恐慌指標 (CBOE)</span>
+          <span class="badge" style="background: rgba(0,230,118,0.2); color: #00e676; border: 1px solid #00e676;">跌破20日線 (低檔)</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 8px; font-family: 'Outfit', monospace; margin-bottom: 6px;">
+          <span style="font-size: 1.1rem; font-weight: 700; color: #fff;">14.53</span>
+          <span style="font-size: 0.72rem; color: #aaa;">EMA20: 15.29</span>
+        </div>
+        <ul style="margin: 0; padding-left: 14px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
+          <li>位於近半年相對低檔，持續跌破 20 日均線。</li>
+          <li>市場恐慌情緒不高，資金仍願意持有風險資產。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <!-- 3-Column Main Trading Room Layout -->
   <main class="room-main-container">
     

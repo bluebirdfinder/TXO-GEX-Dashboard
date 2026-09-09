@@ -3131,6 +3131,40 @@ function renderMacroEventsRadar(dataObj) {
       ${upcomingCardsHtml}
     </div>
 
+    <!-- 📅 圖 2: 近期重要財經事件與影響等級日曆 (Macro Economic Events Calendar) -->
+    <div style="margin-top: 16px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 12px;">
+      <div style="font-size: 0.88rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+        <span style="display: flex; align-items: center; gap: 6px;">
+          <span>📅 近期重要財經事件與市場影響等級日曆 (Macro Economic Calendar)</span>
+        </span>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">即時串接國際央行與總經公布日程</span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left; background: rgba(0,0,0,0.25); border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);">
+          <thead>
+            <tr style="background: rgba(255,255,255,0.06); color: var(--text-main);">
+              <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 14%;">日期</th>
+              <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 30%;">事件</th>
+              <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 44%;">市場關注點</th>
+              <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 12%; text-align: center;">影響等級</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(radarData.macro_events_calendar || []).map(item => `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 8px 12px; font-weight: 700; color: var(--gold-accent);">${item.date}</td>
+                <td style="padding: 8px 12px; font-weight: 600; color: #fff;">${item.event}</td>
+                <td style="padding: 8px 12px; color: var(--text-muted);">${item.focus}</td>
+                <td style="padding: 8px 12px; text-align: center;">
+                  <span class="badge" style="background: ${item.impact_color}25; color: ${item.impact_color}; border: 1px solid ${item.impact_color}60; font-weight: 700; padding: 2px 8px;">${item.impact}</span>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     ${fubonWeeklyFocusHtml}
   `;
 

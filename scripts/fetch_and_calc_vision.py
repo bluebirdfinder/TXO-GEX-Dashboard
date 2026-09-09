@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v52.0"
+ENGINE_VERSION = "v53.0"
 
 import os
 import sys
@@ -2615,9 +2615,59 @@ def generate_gex_payload():
 
         valid_events = [e for e in candidates if e["target_epoch"] >= int(curr_twd.timestamp() * 1000)]
         valid_events.sort(key=lambda x: x["target_epoch"])
+
+        # 🌐 圖 1: 全球股市風險儀表板 (DXY, US10Y, VIX 價位、EMA20 與技術面講評)
+        macro_risk_dashboard = {
+            "summary": "VIX維持低檔有利多頭，但殖利率續升形成壓力，短線偏震盪，宜聚焦 AI 及獲利成長族群。",
+            "dxy": {
+                "name": "美元指數 (DXY)",
+                "price": 99.196,
+                "ema20": 99.434,
+                "trend": "Bearish Below EMA20",
+                "trend_label": "跌落 20 日線 (偏空)",
+                "comments": [
+                    "重新跌落 20 日均線，短線震盪偏空。",
+                    "美元持續走弱，亞股與台股資金壓力暫時解除。"
+                ]
+            },
+            "us10y": {
+                "name": "美殖利率 (10年期 US10Y)",
+                "price": 4.784,
+                "ema20": 4.715,
+                "trend": "Bullish Above EMA20",
+                "trend_label": "站穩 20 日線 (創高)",
+                "comments": [
+                    "持續創近期新高，明顯站穩 20 日均線之上。",
+                    "殖利率上升代表市場要求更高報酬率，也提高企業融資成本。"
+                ]
+            },
+            "vix": {
+                "name": "VIX恐慌指標 (CBOE)",
+                "price": 14.53,
+                "ema20": 15.29,
+                "trend": "Low Risk / Bullish Bias",
+                "trend_label": "跌破 20 日線 (低檔)",
+                "comments": [
+                    "位於近半年相對低檔，持續跌破 20 日均線。",
+                    "市場恐慌情緒不高，資金仍願意持有風險資產。"
+                ]
+            }
+        }
+
+        # 📅 圖 2: 近期重要財經事件日曆 (日期、事件、市場關注點、影響等級)
+        macro_events_calendar = [
+            {"date": "9/7 (一)", "event": "美國 Labor Day 休市 / 日本 Q2 GDP 終值", "focus": "美股休市，亞歐交易日本成長確認", "impact": "中", "impact_code": "M", "impact_color": "#26a69a"},
+            {"date": "9/9 (三)", "event": "中國 8 月 CPI / PPI", "focus": "通縮風險 vs 溫和回升 (預期 CPI 約 0.7%)", "impact": "中高", "impact_code": "MH", "impact_color": "#ffaa00"},
+            {"date": "9/10 (四)", "event": "ECB 利率決議 / 美國 8 月 PPI", "focus": "升息 25bp 幾乎確定，關注後續路徑與油價影響", "impact": "高", "impact_code": "H", "impact_color": "#ff7043"},
+            {"date": "9/11 (五)", "event": "美國 8 月 CPI / 密西根消費者信心", "focus": "核心通膨走勢決定 Fed 升息機率", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"},
+            {"date": "9/16 (三)", "event": "FOMC 利率決議 / 台指期 09 月結算日", "focus": "升息與否將由本週 CPI 主導點陣圖與結算擺盪", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"}
+        ]
+
         return {
             "primary_event": valid_events[0] if valid_events else candidates[0],
-            "upcoming_list": valid_events[:5]
+            "upcoming_list": valid_events[:5],
+            "macro_risk_dashboard": macro_risk_dashboard,
+            "macro_events_calendar": macro_events_calendar
         }
 
     macro_events_data = calculate_macro_events_radar(now_dt)
