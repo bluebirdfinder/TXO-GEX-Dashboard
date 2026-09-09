@@ -1,9 +1,9 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v59.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v60.0)
 
-**當前版本**：`v59.0` (2026-09-10 台股全市場盤後數據公布時程表、四大商品籌碼量化分析優化與夜盤/8大板塊真實度升級版)
+**當前版本**：`v60.0` (2026-09-10 台股全市場盤後數據公布時程表、四大商品籌碼量化分析優化與夜盤/8大板塊真實度升級版)
 **過往版本**：`v58.0` (2026-09-09 富邦 API 實時行情極速專線直連與多維選股雷達真實數據整合版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v59.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v59.0)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v60.0)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v60.0)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 

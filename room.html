@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🦅 尋鳥戰情交易室 — TXO GEX 即時戰情室 (Bird Trading Room v59.0)</title>
+  <title>🦅 尋鳥戰情交易室 — TXO GEX 即時戰情室 (Bird Trading Room v60.0)</title>
   
   <!-- Modern FinTech Font (Outfit & Microsoft JhengHei) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,13 +11,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- CSS Stylesheet -->
-  <link rel="stylesheet" href="room.css?v=v59.0">
+  <link rel="stylesheet" href="room.css?v=v60.0">
   
   <!-- TradingView Lightweight Charts Standalone Engine -->
   <script src="assets/lightweight-charts.standalone.production.js"></script>
   
   <!-- Embedded Standalone Data Fallback -->
-  <script src="data/embedded_data.js?v=v59.0"></script>
+  <script src="data/embedded_data.js?v=v60.0"></script>
 </head>
 <body>
 
@@ -27,7 +27,7 @@
       <div class="room-logo">
         <img src="assets/avatar.png" alt="尋鳥" class="user-avatar-img">
         <span>尋鳥戰情交易室</span>
-        <span class="badge-version">v59.0</span>
+        <span class="badge-version">v60.0</span>
       </div>
       
       <!-- Core Macro & Market Asset Quick Switcher (8 Core Assets) -->
@@ -751,12 +751,13 @@
       <div class="screener-preset-strip">
         <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">⚡ 經典強勢組合快選：</span>
         <button class="preset-chip" data-preset="rocket_s">🚀 強火箭 ＋ Grade S 狂飆</button>
+        <button class="preset-chip" data-preset="it_adopt">⭐ 投信波段認養 ＋ Grade A</button>
         <button class="preset-chip" data-preset="bird_bottom">🐦 強力藍鳥 ＋ 九轉 9★ 抄底</button>
         <button class="preset-chip" data-preset="restart_turbo">🛸 飛碟再啟 ＋ 5K 破線突破</button>
         <button class="preset-chip" data-preset="macd_flip">⚡ 雙層 MACD 水下翻紅 ＋ 放量</button>
       </div>
 
-      <!-- Multi-Condition Filter Deck (5 Groups) -->
+      <!-- Multi-Condition Filter Deck (6 Groups) -->
       <div class="screener-filter-deck">
         
         <!-- Group 1: Momentum Bird 8 Signals -->
@@ -868,6 +869,21 @@
           </div>
         </div>
 
+        <!-- Group 6: Institutional Chips & IT Adoption -->
+        <div class="filter-group-card">
+          <div class="filter-group-title">
+            <span>🚀 6. 籌碼與投信波段認養</span>
+          </div>
+          <div class="filter-options-grid">
+            <label class="filter-check-item">
+              <input type="checkbox" id="sc-it-adopt">
+              <span>投信波段認養 (>0.5% 且連買≥3天)</span>
+            </label>
+            <label class="filter-check-item">
+              <input type="checkbox" id="sc-chip-bull">
+              <span>三大法人連續同步偏多 (籌碼翻正)</span>
+            </label>
+          </div>
       </div>
 
       <!-- Action Bar & Counters -->
@@ -913,7 +929,7 @@
   </div>
 
   <!-- Trading Room Script Logic -->
-  <script src="room.js?v=v59.0"></script>
+  <script src="room.js?v=v60.0"></script>
 </body>
 </html>
 

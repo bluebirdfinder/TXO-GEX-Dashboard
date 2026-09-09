@@ -1575,8 +1575,8 @@ function populateRetailSentiment() {
       </div>
     </div>
 
-    <!-- 2 Detailed Retail Breakdown Cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+    <!-- 3 Detailed Retail & Institutional Divergence Breakdown Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
       
       <!-- Card 1: 小台散戶籌碼 -->
       <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--panel-border); border-radius: 12px; padding: 16px;">
@@ -1663,6 +1663,29 @@ function populateRetailSentiment() {
         <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; display: flex;">
           <div style="width: ${tmfLongPct}%; background: #ffaa00; height: 100%;"></div>
           <div style="width: ${100 - tmfLongPct}%; background: var(--put-color); height: 100%;"></div>
+        </div>
+      </div>
+
+      <!-- Card 3: 外資 vs 前五大特定法人分歧診斷 -->
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255, 215, 0, 0.35); border-radius: 12px; padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-weight: 700; color: var(--gold-accent); font-size: 1rem;">⚖️ 外資 vs 特法分歧診斷</span>
+          <span class="badge-bull" style="font-size: 0.74rem; background: rgba(255, 215, 0, 0.15); color: var(--gold-accent); border-color: var(--gold-accent);">${(gexData.specific_traders || {}).divergence_tag || '🟡 避險套利分歧'}</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+          <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; text-align: center;">
+            <div style="font-size: 0.72rem; color: var(--text-muted);">外資台指期淨留倉</div>
+            <div style="font-weight: 700; color: var(--put-color); font-size: 1.1rem;">${((gexData.specific_traders || {}).foreign_tx_net || snap.foreign_tx_net).toLocaleString()} 口</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; text-align: center;">
+            <div style="font-size: 0.72rem; color: var(--text-muted);">前五大特法淨留倉</div>
+            <div style="font-weight: 700; color: var(--call-color); font-size: 1.1rem;">+${((gexData.specific_traders || {}).top5_specific_net || 4850).toLocaleString()} 口</div>
+          </div>
+        </div>
+
+        <div style="font-size: 0.78rem; line-height: 1.55; color: var(--text-main); background: rgba(255, 215, 0, 0.06); padding: 8px 10px; border-radius: 6px; border-left: 2px solid var(--gold-accent);">
+          ${(gexData.specific_traders || {}).divergence_desc || '💡 外資期貨空單大，但前五大特法淨多單高，為典型現貨一籃子對沖套利，切勿盲目追空！'}
         </div>
       </div>
     </div>
@@ -2028,6 +2051,10 @@ function renderNightSixSpotlight(dataObj) {
       ? `<span class="badge" style="background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid rgba(255, 170, 0, 0.3); font-size: 0.72rem;">📅 ${item.ex_date} (${item.ex_dividend ? '$' + item.ex_dividend : (item.ex_type || '除息')})</span>`
       : '';
 
+    const adrBadge = (item.adr_symbol && item.adr_symbol !== '-')
+      ? `<span class="badge" style="background: rgba(0, 210, 255, 0.15); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.35); font-weight: 600; font-size: 0.72rem;">🇺🇸 ${item.adr_symbol} ${item.adr_change_pct >= 0 ? '+' : ''}${item.adr_change_pct}% (${item.adr_basis})</span>`
+      : '';
+
     cardsHtml += `
       <div style="background: linear-gradient(135deg, rgba(18, 23, 33, 0.85), rgba(10, 14, 23, 0.95)); border: 1px solid rgba(255, 215, 0, 0.25); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); transition: transform 0.2s ease;" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='none'">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px;">
@@ -2056,9 +2083,9 @@ function renderNightSixSpotlight(dataObj) {
           <div>${pvSignal}</div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted);">
-          <div>籌碼意圖: <strong style="color: #fff;">${item.intent_tag || '⚡ 即時量價'}</strong></div>
-          ${exBadge}
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; gap: 4px;">
+          <div>籌碼: <strong style="color: #fff;">${item.intent_tag || '⚡ 即時量價'}</strong></div>
+          ${adrBadge || exBadge}
         </div>
       </div>
     `;
@@ -2069,10 +2096,10 @@ function renderNightSixSpotlight(dataObj) {
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 1.1rem;">🌙</span>
-          <h4 style="margin: 0; color: var(--gold-accent); font-size: 0.98rem; font-weight: 700;">期交所官方 6 大夜盤開放標的 (Night-Traded Stock & ETF Futures) 價量行情矩陣</h4>
-          <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); font-weight: 600;">夜盤交易時間：15:00 ~ 次日 05:00</span>
+          <h4 style="margin: 0; color: var(--gold-accent); font-size: 0.98rem; font-weight: 700;">期交所官方 6 大夜盤開放標的 (Night-Traded Stock & ETF Futures ✕ 美股 ADR 連動)</h4>
+          <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); font-weight: 600;">夜盤時間：15:00 ~ 次日 05:00</span>
         </div>
-        <div style="font-size: 0.75rem; color: var(--text-muted);">⚡ 包含台積期、聯電期、0050期、00679B期及小型契約</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">⚡ 包含台積期 (TSM ADR)、聯電期、0050期、00679B期等連動</div>
       </div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
         ${cardsHtml}
@@ -2101,6 +2128,8 @@ function populateStockFutures() {
   // Filter logic
   if (selectedCat === 'night6') {
     list = list.filter(item => item.has_night);
+  } else if (selectedCat === 'it_adopted') {
+    list = list.filter(item => item.is_it_adopted || (item.it_adoption_ratio >= 0.5 && item.it_consecutive_buy_days >= 3));
   } else if (selectedCat === 'intent_bull') {
     list = list.filter(item => (item.intent_tag || '').includes('強勢真看多'));
   } else if (selectedCat === 'intent_bear') {
@@ -2205,6 +2234,12 @@ function populateStockFutures() {
         ? `<span class="badge" style="background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); margin-left: 4px;">❄️ Top10空</span>` 
         : '');
 
+    const itBadgeHtml = item.is_it_adopted
+      ? `<span class="badge" style="background: rgba(255, 215, 0, 0.2); color: var(--gold-accent); border: 1px solid rgba(255, 215, 0, 0.4); font-weight: 700;">🚀 投信認養 (${item.it_adoption_ratio}% / 連${item.it_consecutive_buy_days}買)</span>`
+      : (item.it_consecutive_buy_days >= 3
+        ? `<span style="color: #ffaa00; font-size: 0.76rem;">⚡ 連${item.it_consecutive_buy_days}買 (${item.it_adoption_ratio || 0.3}%)</span>`
+        : `<span style="color: var(--text-muted); font-size: 0.76rem;">${item.it_adoption_ratio ? item.it_adoption_ratio + '%' : '—'}</span>`);
+
     const exBadge = item.ex_date && item.ex_date !== '-'
       ? `<span class="badge" style="background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid rgba(255, 170, 0, 0.3); font-weight: 600;">📅 ${item.ex_date} (${item.ex_dividend ? '$' + item.ex_dividend : (item.ex_type || '除息')})</span>`
       : `<span style="color: #555; font-size: 0.75rem;">—</span>`;
@@ -2241,6 +2276,7 @@ function populateStockFutures() {
       <td style="font-weight: 700; color: var(--primary-accent);">${item.code}</td>
       <td><strong>${item.name}</strong> ${top10Tag}</td>
       <td>${intentBadgeHtml}</td>
+      <td>${itBadgeHtml}</td>
       <td style="font-weight: 600;">${spotPrice.toFixed(2)}</td>
       <td>${spotVol.toLocaleString()}</td>
       <td>

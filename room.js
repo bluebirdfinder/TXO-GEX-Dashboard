@@ -1,5 +1,5 @@
 /**
- * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v59.0
+ * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v60.0
  * True Multi-Pane Trading Terminal with 10 Timeframes & 4 Sub-Panes
  *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + Supertrend + SAR
  *   - Sub-Chart 1 (14%): 成交量 Volume + 5MA & 10MA 雙均量線
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initTradingRoom() {
-  console.log('🦅 Initializing Multi-Pane Bird Trading Room v59.0...');
+  console.log('🦅 Initializing Multi-Pane Bird Trading Room v60.0...');
   
   // 1. Load Data
   await loadDashboardData();
@@ -1575,7 +1575,7 @@ function initAdvisorFeed() {
         <span class="time">${new Date().toLocaleTimeString()}</span>
       </div>
       <div class="msg-bubble">
-        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v59.0)</h4>
+        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v60.0)</h4>
         <p style="font-size: 0.8rem; line-height: 1.55; margin-bottom: 6px;">
           🔹 <strong>當前空間拓撲</strong>：型態 A【痛點沉底 / 懸空防守拓撲】<br>
           ⚡ <strong>GEX 狀態</strong>：台指期 (<strong>${txf}</strong>) 位於 Zero Gamma (<strong>${zg}</strong>) ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。<br>
@@ -2144,6 +2144,9 @@ function initQuantScreenerModal() {
       if (p === 'rocket_s') {
         document.getElementById('sc-rocket-s').checked = true;
         document.getElementById('sc-grade-s').checked = true;
+      } else if (p === 'it_adopt') {
+        document.getElementById('sc-it-adopt').checked = true;
+        document.getElementById('sc-grade-a').checked = true;
       } else if (p === 'bird_bottom') {
         document.getElementById('sc-bird-s').checked = true;
         document.getElementById('sc-demark-turn').checked = true;
@@ -2180,6 +2183,8 @@ function runBirdQuantScreener() {
   const fDemark = document.getElementById('sc-demark-turn')?.checked;
   const f5k = document.getElementById('sc-5k-break')?.checked;
   const fVol = document.getElementById('sc-vol-spike')?.checked;
+  const fItAdopt = document.getElementById('sc-it-adopt')?.checked;
+  const fChipBull = document.getElementById('sc-chip-bull')?.checked;
 
   setTimeout(() => {
     // Generate deterministic candidates based on symbol hash
@@ -2201,6 +2206,8 @@ function runBirdQuantScreener() {
       const hasDemark = (hash % 31 === 0);
       const has5k = (hash % 27 === 0);
       const hasVol = (hash % 6 === 0);
+      const hasItAdopt = (hash % 9 === 0);
+      const hasChipBull = (hash % 7 === 0);
 
       // Condition checking
       let match = true;
@@ -2217,6 +2224,8 @@ function runBirdQuantScreener() {
       if (fDemark && !hasDemark) match = false;
       if (f5k && !has5k) match = false;
       if (fVol && !hasVol) match = false;
+      if (fItAdopt && !hasItAdopt) match = false;
+      if (fChipBull && !hasChipBull) match = false;
 
       if (match) {
         let price = (hash % 800) + 25;
@@ -2229,6 +2238,7 @@ function runBirdQuantScreener() {
         
         const sigs = [];
         if (hasRocketS) sigs.push('🚀 強火箭');
+        if (hasItAdopt) sigs.push('⭐ 投信認養');
         if (hasBirdS) sigs.push('🐦 強力藍鳥');
         if (hasRestartS) sigs.push('🛸 飛碟再啟');
         if (hasRestartN) sigs.push('⚡ 動能再啟');
