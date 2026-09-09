@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47218.7,
     "day_total_vex": 3433.43
   },
-  "last_updated_time": "2026-09-09 15:35",
+  "last_updated_time": "2026-09-09 20:14",
   "spot_price": 47183.36,
   "spot_change": 77.58,
   "spot_change_pct": 0.16,
@@ -1320,7 +1320,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.1,
       "margin_maint_published": true,
       "taifex_vix": 23.14,
-      "us_vix": 16.72,
+      "us_vix": 17.47,
       "total_gex": [
         {
           "strike": 46300,
@@ -2607,7 +2607,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 144.1,
       "margin_maint_published": false,
       "taifex_vix": 23.54,
-      "us_vix": 16.52,
+      "us_vix": 17.27,
       "total_gex": [
         {
           "strike": 46300,
@@ -3894,7 +3894,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.0,
       "margin_maint_published": true,
       "taifex_vix": 24.24,
-      "us_vix": 16.22,
+      "us_vix": 16.97,
       "total_gex": [
         {
           "strike": 46300,
@@ -5181,7 +5181,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.0,
       "margin_maint_published": false,
       "taifex_vix": 24.74,
-      "us_vix": 16.02,
+      "us_vix": 16.77,
       "total_gex": [
         {
           "strike": 46300,
@@ -6468,7 +6468,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 25.14,
-      "us_vix": 15.82,
+      "us_vix": 16.57,
       "total_gex": [
         {
           "strike": 46300,
@@ -7755,7 +7755,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 25.64,
-      "us_vix": 15.52,
+      "us_vix": 16.27,
       "total_gex": [
         {
           "strike": 46300,
@@ -9042,7 +9042,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 25.94,
-      "us_vix": 15.32,
+      "us_vix": 16.07,
       "total_gex": [
         {
           "strike": 46300,
@@ -10329,7 +10329,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 15.62,
+      "us_vix": 16.37,
       "total_gex": [
         {
           "strike": 46300,
@@ -11616,7 +11616,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.6,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 15.62,
+      "us_vix": 16.37,
       "total_gex": [
         {
           "strike": 46300,
@@ -12903,7 +12903,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.6,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 15.62,
+      "us_vix": 16.37,
       "total_gex": [
         {
           "strike": 46300,
@@ -14192,7 +14192,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": true,
       "taifex_vix": 25.14,
-      "us_vix": 15.82,
+      "us_vix": 16.57,
       "total_gex": [
         {
           "strike": 46300,
@@ -15479,7 +15479,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 142.1,
       "margin_maint_published": false,
       "taifex_vix": 25.64,
-      "us_vix": 15.52,
+      "us_vix": 16.27,
       "total_gex": [
         {
           "strike": 46300,
@@ -16766,7 +16766,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": true,
       "taifex_vix": 25.94,
-      "us_vix": 15.32,
+      "us_vix": 16.07,
       "total_gex": [
         {
           "strike": 46300,
@@ -18053,7 +18053,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 141.2,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 15.62,
+      "us_vix": 16.37,
       "total_gex": [
         {
           "strike": 46300,
@@ -19340,7 +19340,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.6,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 15.62,
+      "us_vix": 16.37,
       "total_gex": [
         {
           "strike": 46300,
@@ -20627,7 +20627,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.6,
       "margin_maint_published": false,
       "taifex_vix": 26.34,
-      "us_vix": 15.62,
+      "us_vix": 16.37,
       "total_gex": [
         {
           "strike": 46300,
@@ -21932,10 +21932,10 @@ window.GEX_EMBEDDED_DATA = {
       "itrust_fut_net": 74819,
       "dealer_fut_net": -376,
       "foreign_stock_net": 209.24,
-      "trust_stock_net": 30.4,
-      "itrust_stock_net": 30.4,
+      "trust_stock_net": 20.85,
+      "itrust_stock_net": 20.85,
       "dealer_stock_net": -18.84,
-      "total_stock_net": 220.81,
+      "total_stock_net": 211.25,
       "foreign_opt_net": -2.95,
       "trust_opt_net": -3.12,
       "itrust_opt_net": -3.12,
@@ -22133,7 +22133,7 @@ window.GEX_EMBEDDED_DATA = {
   },
   "executive_digest": {
     "futures_summary": "📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：前五大淨部位 <code>-6,869 口</code>、前十大 <code>-21,994 口</code>，特定法人淨部位 <code>-5,452 口</code>。外資台指期未平倉空單 <code>-81,066 口</code>（單日變動 <code>+1,463 口</code>，約合 <code>138.1 億 TWD</code> 契約金額）。⚖️ 中性觀望 / 微幅調整。",
-    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+220.81 億 TWD</code>！其中「外資 <code>+209.24 億</code>」、「投信 <code>+30.40 億</code>」與「自營商 <code>-18.84 億</code>」。",
+    "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨合計買賣超 <code>+211.25 億 TWD</code>！其中「外資 <code>+209.24 億</code>」、「投信 <code>+20.85 億</code>」與「自營商 <code>-18.84 億</code>」。",
     "options_structure": "🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>-3.71 億</code> 與 Put 賣權 <code>+0.76 億</code>；投信買權 <code>-3.12 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>47,400 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>47,000 點</code>。",
     "sentiment_audit": "📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>113.2%</code> (🔴 偏多看撐)，莊家下檔防守支撐力道尚存。",
     "settlement_outlook": "🔮 <strong>結算展望與操作指南 (Trading Guide)</strong>：現價 (<code>47,055.0</code>) 處於 Zero Gamma (<code>47,218.8 點</code>) 下方之「負 Gamma 避險助跌區」。留意 <code>47,000 點</code> Put Wall 支撐關卡防守，若失守恐引發多頭停損賣壓。"
@@ -22157,15 +22157,15 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/09 (三)",
-        "price": 98.7,
-        "change": -0.14,
-        "pct": -0.14
+        "price": 98.63,
+        "change": -0.21,
+        "pct": -0.21
       },
       "usdjpy": {
         "date": "09/09 (三)",
-        "price": 153.32,
-        "change": -0.63,
-        "pct": -0.41
+        "price": 153.34,
+        "change": -0.61,
+        "pct": -0.4
       }
     },
     "fx_5day_history": {
@@ -22228,9 +22228,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/09 (三)",
-          "price": 153.32,
-          "change": -0.63,
-          "pct": -0.41
+          "price": 153.34,
+          "change": -0.61,
+          "pct": -0.4
         }
       ],
       "dxy": [
@@ -22260,13 +22260,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/09 (三)",
-          "price": 98.7,
-          "change": -0.14,
-          "pct": -0.14
+          "price": 98.63,
+          "change": -0.21,
+          "pct": -0.21
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.5</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.7</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>153.32</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.5</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>98.63</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>153.34</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -235,
@@ -22325,7 +22325,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -9708.69,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-09 15:35",
+    "last_updated": "2026-09-09 20:14",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -26423,8 +26423,8 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 40.21,
-      "fut_price": 40.21,
-      "basis": 0.0,
+      "fut_price": 40.53,
+      "basis": 0.32,
       "basis_tag": "🔴 正價差",
       "change_pct": 0.07,
       "point_contrib": 0.0,
@@ -26533,9 +26533,9 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 27.38,
-      "fut_price": 27.38,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
+      "fut_price": 27.3,
+      "basis": -0.08,
+      "basis_tag": "🟢 逆價差",
       "change_pct": -0.44,
       "point_contrib": -0.0,
       "volume": 1549,
@@ -26555,9 +26555,9 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 16.13,
-      "fut_price": 16.13,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
+      "fut_price": 16.09,
+      "basis": -0.04,
+      "basis_tag": "🟢 逆價差",
       "change_pct": -0.43,
       "point_contrib": -0.0,
       "volume": 1549,
@@ -26577,9 +26577,9 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 18.13,
-      "fut_price": 18.13,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
+      "fut_price": 18.11,
+      "basis": -0.02,
+      "basis_tag": "🟢 逆價差",
       "change_pct": 0.17,
       "point_contrib": 0.0,
       "volume": 1549,
@@ -28359,9 +28359,9 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 100.0,
-      "fut_price": 100.0,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
+      "fut_price": 14.24,
+      "basis": -85.76,
+      "basis_tag": "🟢 逆價差",
       "change_pct": 0.0,
       "point_contrib": 0.0,
       "volume": 142,
@@ -28447,9 +28447,9 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 139.15,
-      "fut_price": 139.15,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
+      "fut_price": 138.6,
+      "basis": -0.55,
+      "basis_tag": "🟢 逆價差",
       "change_pct": -0.54,
       "point_contrib": -0.1,
       "volume": 142,
@@ -28843,9 +28843,9 @@ window.GEX_EMBEDDED_DATA = {
     "taifex_vix": 26.34,
     "taifex_vix_change": 0.55,
     "taifex_vix_change_pct": 2.13,
-    "us_vix": 15.62,
-    "us_vix_change": -0.1,
-    "us_vix_change_pct": -0.64,
+    "us_vix": 16.37,
+    "us_vix_change": 0.65,
+    "us_vix_change_pct": 4.13,
     "regime_tag": "🔴 極度恐慌 (Extreme Panic)",
     "regime_color": "#ff5252",
     "regime_desc": "恐慌爆發，追跌避險賣壓沉重。觀望等待 VIX 轉折；回落時為機構級建倉爆賺期。",
