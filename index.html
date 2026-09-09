@@ -23,7 +23,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <!-- Embedded Standalone Data Fallback -->
-  <script src="data/embedded_data.js?v=v54.0"></script>
+  <script src="data/embedded_data.js?v=v55.0"></script>
 </head>
 <body>
 
@@ -840,7 +840,7 @@
         <div class="logo-area">
           <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>尋鳥 Bluebird Finder</span>
-            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v54.0</span>
+            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v55.0</span>
           </h1>
           <div class="tagline">台指選擇權 Gamma / Vanna Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
@@ -1378,8 +1378,13 @@
       <div id="night-six-spotlight-container" style="margin-bottom: 16px;"></div>
 
       <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 12px;">
-        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-          <div class="panel-title">💎 期交所全量 287 檔個股與 ETF 期貨篩選明細</div>
+        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div class="panel-title" style="display: flex; align-items: center; gap: 10px;">
+            <span>💎 期交所全量 287 檔個股與 ETF 期貨篩選明細</span>
+            <button id="open-intent-modal-btn" class="btn" style="font-size: 0.78rem; padding: 4px 12px; border-radius: 16px; border-color: var(--gold-accent); color: var(--gold-accent);" title="查看 AI 主力意圖診斷對照表與實戰教學">
+              ℹ️ AI 主力意圖診斷教學
+            </button>
+          </div>
           <input type="text" id="search-stock-input" placeholder="🔍 搜尋代號/名稱..." style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(0,0,0,0.3); color: #fff; font-size: 0.8rem;">
         </div>
 
@@ -1419,7 +1424,7 @@
               <span>🔥 ❄️ 📅 篩選類別與除權息指標判讀：</span>
             </div>
             <ul style="margin: 0; padding-left: 16px; color: var(--text-muted); font-size: 0.8rem; line-height: 1.65;">
-              <li><strong style="color: var(--gold-accent);">🧠 AI 籌碼與意圖診斷</strong>：綜合比對現貨三大法人買賣超 (張) + 期貨大額交易人淨部位 (口) + 期現價差態樣，判定主力真意圖（🔥強勢真多 / ❄️強勢真空 / 🛡️對沖避險 / ⚡基差套利 / ⚖️觀望）。</li>
+              <li><strong style="color: var(--gold-accent);">🧠 AI 籌碼與意圖診斷</strong>：綜合比對現貨三大法人買賣超 (張) + 期貨大額交易人淨部位 (口) + 期現價差態樣，判定主力真意圖（🔥強勢真多 / ❄️強勢真空 / 🛡️對沖避險 / ⚡基差套利 / ⚖️觀望）。點擊上方 <strong>ℹ️ AI 主力意圖診斷教學</strong> 查看完整對照表。</li>
               <li><strong style="color: #ffaa00;">📅 除權息日程與現金股利</strong>：串接 TWSE 官方除權息日程。個股期貨在除息前夕會預扣現金股利（假性逆價差）。標註除息日程有助於第一時間區分「除息常態扣點」與「實質空頭逆價差」，避免誤判！</li>
             </ul>
           </div>
@@ -1439,54 +1444,6 @@
                   <br>• <strong>高手/機構操作</strong>：扣除預估除息點數後若仍為深幅實質逆價差，機構進行反向套利或佈局過度恐慌後的均值回歸。
                 </li>
               </ul>
-            </div>
-          </div>
-
-          <!-- Column 3: 🧠 2. 🧠 AI 主力意圖診斷引擎 5 大標籤對照表 (User Screenshot) -->
-          <div style="grid-column: 1 / -1; background: rgba(10, 14, 23, 0.6); padding: 14px 16px; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3); margin-top: 6px;">
-            <div style="font-weight: 700; color: var(--gold-accent); margin-bottom: 6px; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
-              <span>🧠 2. 🧠 AI 主力意圖診斷引擎 (Quantitative Strategic Intent Diagnosis) 對照表</span>
-            </div>
-            <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px;">
-              系統自動交叉比對<strong>現貨三大法人買賣超（張）</strong>與<strong>期貨大戶淨部位（口）</strong>，即時標示 5 大意圖標籤：
-            </div>
-            <div style="overflow-x: auto;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left; background: rgba(0,0,0,0.25); border-radius: 6px; overflow: hidden;">
-                <thead>
-                  <tr style="background: rgba(255,255,255,0.06); color: var(--text-main);">
-                    <th style="padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 18%;">意圖標籤</th>
-                    <th style="padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 32%;">判讀條件</th>
-                    <th style="padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 50%;">機構實戰意涵</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 7px 12px; font-weight: 700; color: #ff4d4f;">🔥 強勢真看多</td>
-                    <td style="padding: 7px 12px;">現貨買超 &gt; 80張 <strong>且</strong> 期貨大戶 &gt; +50口</td>
-                    <td style="padding: 7px 12px;">現貨法人大買 + 期貨大戶做多，<strong>現期雙向共振多頭</strong>。</td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 7px 12px; font-weight: 700; color: #26a69a;">❄️ 強勢真看空</td>
-                    <td style="padding: 7px 12px;">現貨賣超 &lt; -80張 <strong>且</strong> 期貨大戶 &lt; -50口</td>
-                    <td style="padding: 7px 12px;">現貨法人甩賣 + 期貨大戶放空，<strong>現期雙殺壓制空頭</strong>。</td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 7px 12px; font-weight: 700; color: var(--gold-accent);">🛡️ 對沖避險</td>
-                    <td style="padding: 7px 12px;">現貨買超 &gt; 80張 <strong>但</strong> 期貨大戶 &lt; -50口</td>
-                    <td style="padding: 7px 12px;"><strong>買現貨 + 賣期貨避險</strong>（鎖定除息跌價風險或股票對沖）。</td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 7px 12px; font-weight: 700; color: #00d2ff;">⚡ 基差套利</td>
-                    <td style="padding: 7px 12px;">現貨賣超 &lt; -80張 <strong>但</strong> 期貨大戶 &gt; +50口</td>
-                    <td style="padding: 7px 12px;"><strong>賣現貨/借券 + 買期貨多單</strong>（逆價差套利/反向對沖）。</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 7px 12px; font-weight: 700; color: #aaa;">⚖️ 觀望分歧</td>
-                    <td style="padding: 7px 12px;">未達顯著臨界值</td>
-                    <td style="padding: 7px 12px;">現期籌碼力道平淡，無顯著單向趨勢。</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
@@ -1921,7 +1878,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=v54.0"></script>
+  <script src="app.js?v=v55.0"></script>
 </body>
 </html>
 

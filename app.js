@@ -2502,10 +2502,25 @@ function initModals() {
     };
   }
 
-  if (taxonomyModal) {
-    taxonomyModal.onclick = function(e) {
-      if (e.target === taxonomyModal) {
-        taxonomyModal.style.display = 'none';
+  // Intent Guide Modal
+  const openIntentBtn = document.getElementById('open-intent-modal-btn');
+  const intentModal = document.getElementById('intent-guide-modal');
+  const closeIntentBtn = document.getElementById('close-intent-modal');
+
+  if (openIntentBtn && intentModal) {
+    openIntentBtn.onclick = function() {
+      intentModal.style.display = 'flex';
+    };
+  }
+  if (closeIntentBtn && intentModal) {
+    closeIntentBtn.onclick = function() {
+      intentModal.style.display = 'none';
+    };
+  }
+  if (intentModal) {
+    intentModal.onclick = function(e) {
+      if (e.target === intentModal) {
+        intentModal.style.display = 'none';
       }
     };
   }
