@@ -3105,53 +3105,8 @@ function renderMacroEventsRadar(dataObj) {
     ? `<strong style="color: #ff5252;">${headerTag}</strong> ${primary.date_display} 發布 <strong>${primary.name}</strong> ➔ `
     : `<strong style="color: var(--gold-accent);">${headerTag}</strong> <strong>${primary.name}</strong> ➔ `;
 
-  let fubonWeeklyFocusHtml = '';
-  if (dataObj.fubon_weekly_focus && dataObj.fubon_weekly_focus.schedule) {
-    const focusData = dataObj.fubon_weekly_focus;
-    let daysHtml = '';
-    focusData.schedule.forEach(day => {
-      let catsHtml = '';
-      day.categories.forEach(cat => {
-        catsHtml += `
-          <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 210, 255, 0.1); border: 1px solid rgba(0, 210, 255, 0.3); padding: 3px 8px; border-radius: 6px; font-size: 0.73rem;">
-            <span style="color: var(--primary-accent); font-weight: 700;">${cat.label}</span>
-            <span style="color: var(--text-muted); font-size: 0.68rem;">[${cat.type}]</span>
-            <span style="color: #fff; font-size: 0.7rem;">${cat.symbols}</span>
-          </div>
-        `;
-      });
-      daysHtml += `
-        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="color: var(--gold-accent); font-weight: 700; font-size: 0.85rem;">📅 ${day.date}</span>
-            <span style="color: #fff; font-weight: 600; font-size: 0.82rem;">${day.event}</span>
-          </div>
-          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px;">
-            ${catsHtml}
-          </div>
-        </div>
-      `;
-    });
-
-    fubonWeeklyFocusHtml = `
-      <div style="margin-top: 18px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 14px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
-          <div style="font-size: 0.88rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <span style="color: var(--primary-accent);">📊 本週重大市場焦點週報</span>
-            <span style="font-size: 0.72rem; color: #38bdf8; background: rgba(56, 189, 248, 0.15); padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.3);">🤖 全自動排程即時更新</span>
-            <span style="font-size: 0.75rem; color: var(--gold-accent); background: rgba(255, 215, 0, 0.12); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3);">${focusData.date_range} | ${focusData.theme}</span>
-          </div>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">對應台股與美股熱門期權/股期標的</span>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
-          ${daysHtml}
-        </div>
-      </div>
-    `;
-  }
-
   panel.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.12); padding-bottom: 10px; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.12); padding-bottom: 10px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
       <div style="display: flex; align-items: center; gap: 10px;">
         <span style="font-size: 1.2rem;">🚨</span>
         <div>
@@ -3167,7 +3122,7 @@ function renderMacroEventsRadar(dataObj) {
     </div>
 
     <!-- Primary Countdown Spotlight Box -->
-    <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(0, 210, 255, 0.04)); border: 1px solid var(--gold-accent); border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+    <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(0, 210, 255, 0.04)); border: 1px solid var(--gold-accent); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
       <div style="flex: 1; min-width: 260px;">
         <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">🎯 下一重磅關鍵催化劑 (${primary.pattern_type === 'POINT_TIME' ? '定點數據型' : '視窗洗盤型'})</div>
         <div style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 4px;">${primary.name}</div>
@@ -3182,21 +3137,14 @@ function renderMacroEventsRadar(dataObj) {
       </div>
     </div>
 
-    <!-- GEX Guidance & Upcoming 5 Grid -->
-    <div style="font-size: 0.84rem; color: var(--text-main); background: rgba(0, 210, 255, 0.03); padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; border-left: 4px solid var(--gold-accent); line-height: 1.6;">
+    <!-- GEX Guidance -->
+    <div style="font-size: 0.84rem; color: var(--text-main); background: rgba(0, 210, 255, 0.03); padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; border-left: 4px solid var(--gold-accent); line-height: 1.5;">
       ${advicePrefix} ${primary.gex_advice}
     </div>
 
-    <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-      <span>📅 接續近期 5 大重磅總經與結算日曆矩陣：</span>
-    </div>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px;">
-      ${upcomingCardsHtml}
-    </div>
-
     <!-- 📅 圖 2: 近期重要財經事件與影響等級日曆 (Macro Economic Events Calendar) -->
-    <div style="margin-top: 16px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 12px;">
-      <div style="font-size: 0.88rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+    <div style="border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 10px;">
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--gold-accent); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
         <span style="display: flex; align-items: center; gap: 6px;">
           <span>📅 近期重要財經事件與市場影響等級日曆 (Macro Economic Calendar)</span>
         </span>
@@ -3206,19 +3154,19 @@ function renderMacroEventsRadar(dataObj) {
         <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left; background: rgba(0,0,0,0.25); border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);">
           <thead>
             <tr style="background: rgba(255,255,255,0.06); color: var(--text-main);">
-              <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 14%;">日期</th>
-              <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 30%;">事件</th>
-              <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 44%;">市場關注點</th>
-              <th style="padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 12%; text-align: center;">影響等級</th>
+              <th style="padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 14%;">日期</th>
+              <th style="padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 30%;">事件</th>
+              <th style="padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 44%;">市場關注點</th>
+              <th style="padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 12%; text-align: center;">影響等級</th>
             </tr>
           </thead>
           <tbody>
             ${(radarData.macro_events_calendar || []).map(item => `
               <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <td style="padding: 8px 12px; font-weight: 700; color: var(--gold-accent);">${item.date}</td>
-                <td style="padding: 8px 12px; font-weight: 600; color: #fff;">${item.event}</td>
-                <td style="padding: 8px 12px; color: var(--text-muted);">${item.focus}</td>
-                <td style="padding: 8px 12px; text-align: center;">
+                <td style="padding: 7px 12px; font-weight: 700; color: var(--gold-accent);">${item.date}</td>
+                <td style="padding: 7px 12px; font-weight: 600; color: #fff;">${item.event}</td>
+                <td style="padding: 7px 12px; color: var(--text-muted);">${item.focus}</td>
+                <td style="padding: 7px 12px; text-align: center;">
                   <span class="badge" style="background: ${item.impact_color}25; color: ${item.impact_color}; border: 1px solid ${item.impact_color}60; font-weight: 700; padding: 2px 8px;">${item.impact}</span>
                 </td>
               </tr>
@@ -3227,8 +3175,6 @@ function renderMacroEventsRadar(dataObj) {
         </table>
       </div>
     </div>
-
-    ${fubonWeeklyFocusHtml}
   `;
 
   updateCountdown();

@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v56.0"
+ENGINE_VERSION = "v57.0"
 
 import os
 import sys
@@ -2697,14 +2697,28 @@ def generate_gex_payload():
             }
         }
 
-        # 📅 圖 2: 近期重要財經事件日曆 (日期、事件、市場關注點、影響等級)
-        macro_events_calendar = [
-            {"date": "9/7 (一)", "event": "美國 Labor Day 休市 / 日本 Q2 GDP 終值", "focus": "美股休市，亞歐交易日本成長確認", "impact": "中", "impact_code": "M", "impact_color": "#26a69a"},
-            {"date": "9/9 (三)", "event": "中國 8 月 CPI / PPI", "focus": "通縮風險 vs 溫和回升 (預期 CPI 約 0.7%)", "impact": "中高", "impact_code": "MH", "impact_color": "#ffaa00"},
-            {"date": "9/10 (四)", "event": "ECB 利率決議 / 美國 8 月 PPI", "focus": "升息 25bp 幾乎確定，關注後續路徑與油價影響", "impact": "高", "impact_code": "H", "impact_color": "#ff7043"},
-            {"date": "9/11 (五)", "event": "美國 8 月 CPI / 密西根消費者信心", "focus": "核心通膨走勢決定 Fed 升息機率", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"},
-            {"date": "9/16 (三)", "event": "FOMC 利率決議 / 台指期 09 月結算日", "focus": "升息與否將由本週 CPI 主導點陣圖與結算擺盪", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"}
+        # 📅 圖 2: 近期重要財經事件日曆 (Macro Economic Calendar) - 自動過濾過期舊數據
+        raw_calendar_items = [
+            {"year": 2026, "month": 9, "day": 7, "weekday": "一", "event": "美國 Labor Day 休市 / 日本 Q2 GDP 終值", "focus": "美股休市，亞歐交易日本成長確認", "impact": "中", "impact_code": "M", "impact_color": "#26a69a"},
+            {"year": 2026, "month": 9, "day": 9, "weekday": "三", "event": "中國 8 月 CPI / PPI", "focus": "通縮風險 vs 溫和回升 (預期 CPI 約 0.7%)", "impact": "中高", "impact_code": "MH", "impact_color": "#ffaa00"},
+            {"year": 2026, "month": 9, "day": 10, "weekday": "四", "event": "ECB 利率決議 / 美國 8 月 PPI", "focus": "升息 25bp 幾乎確定，關注後續路徑與油價影響", "impact": "高", "impact_code": "H", "impact_color": "#ff7043"},
+            {"year": 2026, "month": 9, "day": 11, "weekday": "五", "event": "美國 8 月 CPI / 密西根消費者信心", "focus": "核心通膨走勢決定 Fed 升息機率", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"},
+            {"year": 2026, "month": 9, "day": 16, "weekday": "三", "event": "FOMC 利率決議 / 台指期 09 月結算日", "focus": "升息與否將由本週 CPI 主導點陣圖與結算擺盪", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"}
         ]
+
+        # Dynamically append future valid_events if not already in raw calendar items
+        macro_events_calendar = []
+        for item in raw_calendar_items:
+            item_date = datetime.date(item["year"], item["month"], item["day"])
+            if item_date >= curr_twd.date():
+                macro_events_calendar.append({
+                    "date": f"{item['month']}/{item['day']} ({item['weekday']})",
+                    "event": item["event"],
+                    "focus": item["focus"],
+                    "impact": item["impact"],
+                    "impact_code": item["impact_code"],
+                    "impact_color": item["impact_color"]
+                })
 
         return {
             "primary_event": valid_events[0] if valid_events else candidates[0],

@@ -1,9 +1,9 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v56.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v57.0)
 
-**當前版本**：`v56.0` (2026-09-07 Playwright 2K 圖卡截圖管線硬核新鮮度過濾與雙向自動同步版)
+**當前版本**：`v57.0` (2026-09-07 Playwright 2K 圖卡截圖管線硬核新鮮度過濾與雙向自動同步版)
 **過往版本**：`v50.7` (2026-09-07 TWSE 融資維持率發布狀態日期比對與開盤未公布狀態判定校正版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v56.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v56.0)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v57.0)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v57.0)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
