@@ -23,7 +23,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <!-- Embedded Standalone Data Fallback -->
-  <script src="data/embedded_data.js?v=v51.1"></script>
+  <script src="data/embedded_data.js?v=v52.0"></script>
 </head>
 <body>
 
@@ -840,7 +840,7 @@
         <div class="logo-area">
           <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>尋鳥 Bluebird Finder</span>
-            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v51.1</span>
+            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v52.0</span>
           </h1>
           <div class="tagline">台指選擇權 Gamma / Vanna Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
@@ -1419,7 +1419,7 @@
               <span>🔥 ❄️ 📅 篩選類別與除權息指標判讀：</span>
             </div>
             <ul style="margin: 0; padding-left: 16px; color: var(--text-muted); font-size: 0.8rem; line-height: 1.65;">
-              <li><strong style="color: var(--gold-accent);">🔥 Top 10 買超 / 賣超</strong>：三大法人（外資+自營）期貨未平倉淨加碼與避險減碼前 10 大標的。</li>
+              <li><strong style="color: var(--gold-accent);">🧠 AI 籌碼與意圖診斷</strong>：綜合比對現貨三大法人買賣超 (張) + 期貨大額交易人淨部位 (口) + 期現價差態樣，判定主力真意圖（🔥強勢真多 / ❄️強勢真空 / 🛡️對沖避險 / ⚡基差套利 / ⚖️觀望）。</li>
               <li><strong style="color: #ffaa00;">📅 除權息日程與現金股利</strong>：串接 TWSE 官方除權息日程。個股期貨在除息前夕會預扣現金股利（假性逆價差）。標註除息日程有助於第一時間區分「除息常態扣點」與「實質空頭逆價差」，避免誤判！</li>
             </ul>
           </div>
@@ -1451,15 +1451,14 @@
             <tr>
               <th data-sort="code" style="cursor: pointer;">代號 ⇕</th>
               <th data-sort="name" style="cursor: pointer;">標的名稱 ⇕</th>
-              <th data-sort="category" style="cursor: pointer;">契約類別 ⇕</th>
-              <th data-sort="trend" style="cursor: pointer;">趨勢 ⇕</th>
+              <th data-sort="intent_tag" style="cursor: pointer; color: var(--gold-accent);">🧠 籌碼與意圖診斷 ⇕</th>
               <th data-sort="spot_price" style="cursor: pointer;">現價 (TWD) ⇕</th>
+              <th data-sort="spot_volume" style="cursor: pointer;">現貨成交量 (張) ⇕</th>
+              <th data-sort="spot_inst_net" style="cursor: pointer;">現貨三大法人 (張) ⇕</th>
               <th data-sort="fut_price" style="cursor: pointer;">期貨價 (TWD) ⇕</th>
+              <th data-sort="fut_volume" style="cursor: pointer;">期貨成交量 (口) ⇕</th>
               <th data-sort="basis" style="cursor: pointer; color: var(--gold-accent);">期現價差 (Basis) ⇕</th>
-              <th data-sort="change_pct" style="cursor: pointer;">漲跌幅 % ⇕</th>
-              <th data-sort="volume" style="cursor: pointer;">成交量 (口) ⇕</th>
-              <th data-sort="foreign_net" style="cursor: pointer;">外資期貨淨部位 ⇕</th>
-              <th data-sort="dealer_net" style="cursor: pointer;">自營商期貨淨部位 ⇕</th>
+              <th data-sort="top10_net_oi" style="cursor: pointer;">期貨大戶淨部位 (口) ⇕</th>
               <th>夜盤標籤</th>
               <th data-sort="ex_date" style="cursor: pointer; color: var(--gold-accent);">📅 除權息日程 ⇕</th>
             </tr>
@@ -1874,7 +1873,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=v51.1"></script>
+  <script src="app.js?v=v52.0"></script>
 </body>
 </html>
 

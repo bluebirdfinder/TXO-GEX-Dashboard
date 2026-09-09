@@ -2151,40 +2151,59 @@ function populateStockFutures() {
 
   let html = '';
   list.forEach(item => {
-    const futPrice = item.fut_price || item.spot_price;
-    const basis = item.basis !== undefined ? item.basis : (futPrice - item.spot_price);
+    const spotPrice = item.spot_price || 0.0;
+    const futPrice = item.fut_price || spotPrice;
+    const basis = item.basis !== undefined ? item.basis : (futPrice - spotPrice);
     const basisBadge = basis > 0 
       ? `<span class="badge" style="background: rgba(255, 82, 82, 0.2); color: #ff5252;">🔴 +${basis.toFixed(2)} (正價差)</span>`
       : (basis < 0 
         ? `<span class="badge" style="background: rgba(0, 230, 118, 0.2); color: #00e676;">🟢 ${basis.toFixed(2)} (逆價差)</span>`
         : `<span class="badge" style="background: rgba(255, 255, 255, 0.1); color: #aaa;">0.00 (平價差)</span>`);
 
+    const spotVol = item.spot_volume || item.volume || 1000;
+    const spotInstNet = item.spot_inst_net !== undefined ? item.spot_inst_net : (item.foreign_net || 0);
+    const futVol = item.fut_volume || item.volume || 0;
+    const top10NetOi = item.top10_net_oi !== undefined ? item.top10_net_oi : ((item.foreign_net || 0) + (item.dealer_net || 0));
+
+    // Strategic Intent Badge
+    let intentBadgeHtml = '';
+    const intentTag = item.intent_tag || '⚖️ 觀望分歧';
+    if (intentTag.includes('強勢真看多')) {
+      intentBadgeHtml = `<span class="badge" style="background: rgba(255, 77, 79, 0.25); color: #ff4d4f; border: 1px solid rgba(255, 77, 79, 0.45); font-weight: 700; padding: 4px 8px;">🔥 強勢真多</span>`;
+    } else if (intentTag.includes('強勢真看空')) {
+      intentBadgeHtml = `<span class="badge" style="background: rgba(38, 166, 154, 0.25); color: #26a69a; border: 1px solid rgba(38, 166, 154, 0.45); font-weight: 700; padding: 4px 8px;">❄️ 強勢真空</span>`;
+    } else if (intentTag.includes('對沖避險')) {
+      intentBadgeHtml = `<span class="badge" style="background: rgba(255, 215, 0, 0.25); color: var(--gold-accent); border: 1px solid rgba(255, 215, 0, 0.45); font-weight: 700; padding: 4px 8px;">🛡️ 對沖避險</span>`;
+    } else if (intentTag.includes('基差套利') || intentTag.includes('套利')) {
+      intentBadgeHtml = `<span class="badge" style="background: rgba(0, 210, 255, 0.25); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.45); font-weight: 700; padding: 4px 8px;">⚡ 基差套利</span>`;
+    } else {
+      intentBadgeHtml = `<span class="badge" style="background: rgba(255, 255, 255, 0.08); color: #aaa; padding: 4px 8px;">⚖️ 觀望分歧</span>`;
+    }
+
     const top10Tag = item.is_top10_buy 
-      ? `<span class="badge" style="background: rgba(255, 215, 0, 0.2); color: var(--gold-accent); margin-left: 4px;">🔥 Top10買超</span>` 
+      ? `<span class="badge" style="background: rgba(255, 215, 0, 0.15); color: var(--gold-accent); margin-left: 4px;">🔥 Top10多</span>` 
       : (item.is_top10_sell 
-        ? `<span class="badge" style="background: rgba(0, 210, 255, 0.2); color: var(--primary-accent); margin-left: 4px;">❄️ Top10賣超</span>` 
+        ? `<span class="badge" style="background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); margin-left: 4px;">❄️ Top10空</span>` 
         : '');
-    const trendBadge = item.trend === 'Bull' ? '<span style="color: var(--call-color);">▲ 看多</span>' : '<span style="color: var(--put-color);">▼ 看空</span>';
 
     const exBadge = item.ex_date && item.ex_date !== '-'
       ? `<span class="badge" style="background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid rgba(255, 170, 0, 0.3); font-weight: 600;">📅 ${item.ex_date} (${item.ex_dividend ? '$' + item.ex_dividend : (item.ex_type || '除息')})</span>`
       : `<span style="color: #555; font-size: 0.75rem;">—</span>`;
 
-    const ptsSign = item.point_contrib >= 0 ? '+' : '';
-    const ptsStr = item.point_contrib !== undefined && item.point_contrib !== 0 ? `<div style="font-size: 0.7rem; color: var(--gold-accent); font-weight: normal;">(${ptsSign}${item.point_contrib}點)</div>` : '';
+    const spotNetSign = spotInstNet >= 0 ? '+' : '';
+    const futNetSign = top10NetOi >= 0 ? '+' : '';
 
     html += `<tr>
       <td style="font-weight: 700; color: var(--primary-accent);">${item.code}</td>
-      <td>${item.name} ${top10Tag}</td>
-      <td><span class="badge" style="background: rgba(255,255,255,0.05);">${item.category}</span></td>
-      <td>${trendBadge}</td>
-      <td style="font-weight: 600;">${item.spot_price.toFixed(2)}</td>
+      <td><strong>${item.name}</strong> ${top10Tag}</td>
+      <td>${intentBadgeHtml}</td>
+      <td style="font-weight: 600;">${spotPrice.toFixed(2)}</td>
+      <td>${spotVol.toLocaleString()}</td>
+      <td style="color: ${spotInstNet >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${spotNetSign}${spotInstNet.toLocaleString()}</td>
       <td style="font-weight: 600;">${futPrice.toFixed(2)}</td>
+      <td>${futVol.toLocaleString()}</td>
       <td>${basisBadge}</td>
-      <td><div style="color: ${item.change_pct >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 700;">${item.change_pct >= 0 ? '+' : ''}${item.change_pct.toFixed(2)}%</div>${ptsStr}</td>
-      <td>${item.volume.toLocaleString()}</td>
-      <td style="color: ${item.foreign_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${item.foreign_net >= 0 ? '+' : ''}${item.foreign_net.toLocaleString()}</td>
-      <td style="color: ${item.dealer_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${item.dealer_net >= 0 ? '+' : ''}${item.dealer_net.toLocaleString()}</td>
+      <td style="color: ${top10NetOi >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${futNetSign}${top10NetOi.toLocaleString()}</td>
       <td>${item.has_night ? '<span style="color: var(--gold-accent);">🌙 交易中</span>' : '<span style="color: #666;">日盤</span>'}</td>
       <td>${exBadge}</td>
     </tr>`;
