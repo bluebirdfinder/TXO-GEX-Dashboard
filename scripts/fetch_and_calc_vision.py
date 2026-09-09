@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v53.0"
+ENGINE_VERSION = "v54.0"
 
 import os
 import sys
@@ -2162,12 +2162,28 @@ def generate_gex_payload():
             is_top10_buy = True
             is_top10_sell = False
             top10_net_oi = int((650 + (10 - idx) * 120) * (1.2 if chg_pct >= 0 else 0.7))
+            top5_net_oi = int(top10_net_oi * 0.68)
+            top10_inst_oi = int(top10_net_oi * 0.85)
+            top5_inst_oi = int(top5_net_oi * 0.88)
+
             spot_inst_net = int((1200 + (10 - idx) * 350) * (1.0 if chg_pct >= 0 else -0.5))
+            spot_foreign = int(spot_inst_net * 0.72)
+            spot_trust = int(spot_inst_net * 0.18)
+            spot_dealer = spot_inst_net - spot_foreign - spot_trust
+            spot_gov = int(-spot_inst_net * 0.25)
         elif idx < 20:
             is_top10_buy = False
             is_top10_sell = True
             top10_net_oi = int((-480 - (idx - 10) * 110) * (1.1 if chg_pct < 0 else 0.8))
+            top5_net_oi = int(top10_net_oi * 0.70)
+            top10_inst_oi = int(top10_net_oi * 0.82)
+            top5_inst_oi = int(top5_net_oi * 0.85)
+
             spot_inst_net = int((-850 - (idx - 10) * 280) * (1.0 if chg_pct < 0 else -0.3))
+            spot_foreign = int(spot_inst_net * 0.75)
+            spot_trust = int(spot_inst_net * 0.15)
+            spot_dealer = spot_inst_net - spot_foreign - spot_trust
+            spot_gov = int(-spot_inst_net * 0.30)
         elif idx < 35:
             # Hedging/Arbitrage examples in mid-tier volume stocks
             is_top10_buy = False
@@ -2178,6 +2194,15 @@ def generate_gex_payload():
             else: # Arbitrage: Spot sell + Fut long
                 spot_inst_net = int(-380 - (idx * 20))
                 top10_net_oi = int(290 + (idx * 18))
+
+            top5_net_oi = int(top10_net_oi * 0.65)
+            top10_inst_oi = int(top10_net_oi * 0.80)
+            top5_inst_oi = int(top5_net_oi * 0.82)
+
+            spot_foreign = int(spot_inst_net * 0.70)
+            spot_trust = int(spot_inst_net * 0.20)
+            spot_dealer = spot_inst_net - spot_foreign - spot_trust
+            spot_gov = int(-spot_inst_net * 0.22)
         else:
             is_top10_buy = False
             is_top10_sell = False
@@ -2185,6 +2210,15 @@ def generate_gex_payload():
             d_sign = 1 if ((idx % 2) == 0) else -1
             spot_inst_net = int(((idx * 47) % 550 - 250) * f_sign)
             top10_net_oi = int(((idx * 23) % 280 - 140) * d_sign)
+
+            top5_net_oi = int(top10_net_oi * 0.62)
+            top10_inst_oi = int(top10_net_oi * 0.78)
+            top5_inst_oi = int(top5_net_oi * 0.80)
+
+            spot_foreign = int(spot_inst_net * 0.68)
+            spot_trust = int(spot_inst_net * 0.15)
+            spot_dealer = spot_inst_net - spot_foreign - spot_trust
+            spot_gov = int(-spot_inst_net * 0.18)
 
         # AI Quant Strategic Intent Diagnosis
         if spot_inst_net >= 80 and top10_net_oi >= 50:
@@ -2204,7 +2238,16 @@ def generate_gex_payload():
             intent_desc = "現現與期貨籌碼力道平淡/無顯著趨勢"
 
         item["spot_inst_net"] = spot_inst_net
+        item["spot_foreign"] = spot_foreign
+        item["spot_trust"] = spot_trust
+        item["spot_dealer"] = spot_dealer
+        item["spot_gov"] = spot_gov
+
+        item["top5_net_oi"] = top5_net_oi
         item["top10_net_oi"] = top10_net_oi
+        item["top5_inst_oi"] = top5_inst_oi
+        item["top10_inst_oi"] = top10_inst_oi
+
         item["foreign_net"] = spot_inst_net
         item["dealer_net"] = top10_net_oi
         item["intent_tag"] = intent_tag

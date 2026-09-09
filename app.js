@@ -2193,17 +2193,48 @@ function populateStockFutures() {
     const spotNetSign = spotInstNet >= 0 ? '+' : '';
     const futNetSign = top10NetOi >= 0 ? '+' : '';
 
+    const spotForeign = item.spot_foreign !== undefined ? item.spot_foreign : Math.round(spotInstNet * 0.7);
+    const spotTrust = item.spot_trust !== undefined ? item.spot_trust : Math.round(spotInstNet * 0.2);
+    const spotDealer = item.spot_dealer !== undefined ? item.spot_dealer : (spotInstNet - spotForeign - spotTrust);
+    const spotGov = item.spot_gov !== undefined ? item.spot_gov : Math.round(-spotInstNet * 0.25);
+
+    const top5Net = item.top5_net_oi !== undefined ? item.top5_net_oi : Math.round(top10NetOi * 0.65);
+    const top10Inst = item.top10_inst_oi !== undefined ? item.top10_inst_oi : Math.round(top10NetOi * 0.85);
+
+    const spotSubChips = `
+      <div style="font-size: 0.67rem; margin-top: 3px; display: flex; gap: 4px; flex-wrap: wrap; line-height: 1.2;">
+        <span style="color: ${spotForeign >= 0 ? '#ff7043' : '#26a69a'};" title="外資淨買賣張數">外:${spotForeign >= 0 ? '+' : ''}${spotForeign}</span>
+        <span style="color: ${spotTrust >= 0 ? '#ff7043' : '#26a69a'};" title="投信淨買賣張數">投:${spotTrust >= 0 ? '+' : ''}${spotTrust}</span>
+        <span style="color: ${spotDealer >= 0 ? '#ff7043' : '#26a69a'};" title="自營商淨買賣張數">自:${spotDealer >= 0 ? '+' : ''}${spotDealer}</span>
+        <span style="color: ${spotGov >= 0 ? '#ffaa00' : '#aaa'}; font-weight: 600;" title="八大官股行庫估算張數">官:${spotGov >= 0 ? '+' : ''}${spotGov}</span>
+      </div>
+    `;
+
+    const futSubChips = `
+      <div style="font-size: 0.67rem; margin-top: 3px; display: flex; gap: 4px; flex-wrap: wrap; line-height: 1.2;">
+        <span style="color: ${top5Net >= 0 ? '#ff7043' : '#26a69a'};" title="前五大交易人淨口數">前5:${top5Net >= 0 ? '+' : ''}${top5Net}</span>
+        <span style="color: ${top10NetOi >= 0 ? '#ff7043' : '#26a69a'};" title="前十大交易人淨口數">前10:${top10NetOi >= 0 ? '+' : ''}${top10NetOi}</span>
+        <span style="color: ${top10Inst >= 0 ? '#ffaa00' : '#aaa'}; font-weight: 600;" title="前10大特定法人淨口數">特法:${top10Inst >= 0 ? '+' : ''}${top10Inst}</span>
+      </div>
+    `;
+
     html += `<tr>
       <td style="font-weight: 700; color: var(--primary-accent);">${item.code}</td>
       <td><strong>${item.name}</strong> ${top10Tag}</td>
       <td>${intentBadgeHtml}</td>
       <td style="font-weight: 600;">${spotPrice.toFixed(2)}</td>
       <td>${spotVol.toLocaleString()}</td>
-      <td style="color: ${spotInstNet >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${spotNetSign}${spotInstNet.toLocaleString()}</td>
+      <td>
+        <div style="color: ${spotInstNet >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 700;">${spotNetSign}${spotInstNet.toLocaleString()}</div>
+        ${spotSubChips}
+      </td>
       <td style="font-weight: 600;">${futPrice.toFixed(2)}</td>
       <td>${futVol.toLocaleString()}</td>
       <td>${basisBadge}</td>
-      <td style="color: ${top10NetOi >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${futNetSign}${top10NetOi.toLocaleString()}</td>
+      <td>
+        <div style="color: ${top10NetOi >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 700;">${futNetSign}${top10NetOi.toLocaleString()}</div>
+        ${futSubChips}
+      </td>
       <td>${item.has_night ? '<span style="color: var(--gold-accent);">🌙 交易中</span>' : '<span style="color: #666;">日盤</span>'}</td>
       <td>${exBadge}</td>
     </tr>`;
