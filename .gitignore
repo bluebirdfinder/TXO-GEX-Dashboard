@@ -14,8 +14,9 @@
 config.json
 secrets.json
 GEX_MONETIZATION_STRATEGY_GUIDE.md
-
-
+pinescript/
+*.pine
+*.xscript
 # ==========================================
 # Python Runtime & Dependencies
 # ==========================================
