@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 46219.5,
     "day_total_vex": 4065.09
   },
-  "last_updated_time": "2026-09-12 01:04",
+  "last_updated_time": "2026-09-12 01:43",
   "spot_price": 46184.85,
   "spot_change": -755.64,
   "spot_change_pct": -1.61,
@@ -1528,7 +1528,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.1,
       "margin_maint_published": true,
       "taifex_vix": 27.53,
-      "us_vix": 15.74,
+      "us_vix": 15.67,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -2816,7 +2816,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.1,
       "margin_maint_published": false,
       "taifex_vix": 27.53,
-      "us_vix": 15.74,
+      "us_vix": 15.67,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -4210,7 +4210,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.1,
       "margin_maint_published": true,
       "taifex_vix": 27.53,
-      "us_vix": 15.74,
+      "us_vix": 15.67,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -5498,7 +5498,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_stock": 143.1,
       "margin_maint_published": false,
       "taifex_vix": 27.53,
-      "us_vix": 15.74,
+      "us_vix": 15.67,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -7207,7 +7207,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -10805.79,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-12 01:04",
+    "last_updated": "2026-09-12 01:43",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -19469,17 +19469,17 @@ window.GEX_EMBEDDED_DATA = {
     "taifex_vix": 27.53,
     "taifex_vix_change": 1.25,
     "taifex_vix_change_pct": 4.76,
-    "us_vix": 15.74,
-    "us_vix_change": -2.1,
-    "us_vix_change_pct": -11.77,
-    "us_vvix": 92.01,
-    "us_vvix_change": -10.65,
-    "us_vvix_change_pct": -10.37,
+    "us_vix": 15.67,
+    "us_vix_change": -0.79,
+    "us_vix_change_pct": -4.8,
+    "us_vvix": 91.75,
+    "us_vvix_change": -10.91,
+    "us_vvix_change_pct": -10.63,
     "vvix_regime_tag": "🟢 風穩常態",
     "vvix_regime_color": "#00e676",
     "vvix_safety_buffer": "🛡️ 氣墊: 250~350 點",
     "vvix_desc": "波動率加速度平穩，做市商避險情緒沉靜，賣腳貼牆防守安全。",
-    "tail_risk_status": "VIX (27.53) 與 VVIX (92.01) 同步對齊，🟢 風穩常態",
+    "tail_risk_status": "VIX (27.53) 與 VVIX (91.75) 同步對齊，🟢 風穩常態",
     "regime_tag": "🔴 極度恐慌 (Extreme Panic)",
     "regime_color": "#ff5252",
     "regime_desc": "恐慌爆發，追跌避險賣壓沉重。觀望等待 VIX 轉折；回落時為機構級建倉爆賺期。",
