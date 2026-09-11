@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v61.0"
+ENGINE_VERSION = "v62.0"
 
 import os
 import sys
@@ -1109,6 +1109,55 @@ def fetch_official_taifex_vix():
     except Exception as e:
         print(f"[Warning] Failed to fetch US CBOE VIX: {e}")
 
+    # 2.5. Fetch US CBOE VVIX (^VVIX - Volatility of Volatility) via Yahoo Finance API
+    us_vvix = 102.66
+    us_vvix_chg = 1.85
+    us_vvix_pct = 1.83
+    try:
+        url_vvix = "https://query1.finance.yahoo.com/v8/finance/chart/%5EVVIX?interval=1d"
+        req_vvix = urllib.request.Request(url_vvix, headers=HEADERS)
+        with urllib.request.urlopen(req_vvix, context=SSL_CTX, timeout=10) as resp:
+            data_vv = json.loads(resp.read().decode('utf-8'))
+            result_vv = data_vv.get('chart', {}).get('result', [])
+            if result_vv:
+                meta_vv = result_vv[0].get('meta', {})
+                price_vv = meta_vv.get('regularMarketPrice')
+                prev_close_vv = meta_vv.get('chartPreviousClose') or meta_vv.get('previousClose')
+                if price_vv and prev_close_vv:
+                    us_vvix = round(price_vv, 2)
+                    us_vvix_chg = round(price_vv - prev_close_vv, 2)
+                    us_vvix_pct = round((us_vvix_chg / prev_close_vv) * 100, 2)
+    except Exception as e:
+        print(f"[Warning] Failed to fetch US CBOE VVIX: {e}")
+
+    # 2.6 Determine VVIX Tail Risk Matrix & Safety Buffer
+    if us_vvix < 95.0:
+        vvix_regime_tag = "🟢 風穩常態"
+        vvix_regime_color = "#00e676"
+        vvix_safety_buffer = "🛡️ 氣墊: 250~350 點"
+        vvix_desc = "波動率加速度平穩，做市商避險情緒沉靜，賣腳貼牆防守安全。"
+    elif us_vvix < 100.0:
+        vvix_regime_tag = "🟡 避險溫和升溫"
+        vvix_regime_color = "#ffd700"
+        vvix_safety_buffer = "🛡️ 氣墊: 300~400 點"
+        vvix_desc = "做市商 VIX Call 避險需求微升，賣腳防守氣墊預備擴大。"
+    elif us_vvix < 110.0:
+        vvix_regime_tag = "🟠 尾部黑天鵝避險潮"
+        vvix_regime_color = "#ff9100"
+        vvix_safety_buffer = "🛡️ 氣墊: 350~500 點外"
+        vvix_desc = "機構大量買進 VIX Calls 避險！建議賣腳安全氣墊擴大至現價 350~500 點外，啟動 B 軌金字塔階梯伏擊網。"
+    else:
+        vvix_regime_tag = "🔴 極端波動暴衝"
+        vvix_regime_color = "#ff5252"
+        vvix_safety_buffer = "🛡️ 氣墊: 500+ 點 (嚴禁裸賣)"
+        vvix_desc = "極端黑天鵝避險海嘯，氣墊 500+ 點，嚴禁近端賣腳單腳硬接！"
+
+    # Divergence Check: VIX low/normal but VVIX >= 100
+    if (taifex_vix < 20.0 or us_vix < 20.0) and us_vvix >= 100.0:
+        tail_risk_status = f"⚠️ 隱含波動率加速度背離：VIX 處於低檔 ({taifex_vix:.2f}) 但 VVIX 破百 ({us_vvix:.2f})，顯示主力大資金正在爆買 VIX Call 尾部避險，賣方氣墊需擴大至 350~500 點！"
+    else:
+        tail_risk_status = f"VIX ({taifex_vix:.2f}) 與 VVIX ({us_vvix:.2f}) 同步對齊，{vvix_regime_tag}"
+
     # 3. Determine Regime Tag & Strategy Recommendation based on TAIFEX VIX
     if taifex_vix < 14.0:
         regime_tag = "🟢 極度平靜 (Low Vol)"
@@ -1138,6 +1187,14 @@ def fetch_official_taifex_vix():
         "us_vix": us_vix,
         "us_vix_change": us_chg,
         "us_vix_change_pct": us_pct,
+        "us_vvix": us_vvix,
+        "us_vvix_change": us_vvix_chg,
+        "us_vvix_change_pct": us_vvix_pct,
+        "vvix_regime_tag": vvix_regime_tag,
+        "vvix_regime_color": vvix_regime_color,
+        "vvix_safety_buffer": vvix_safety_buffer,
+        "vvix_desc": vvix_desc,
+        "tail_risk_status": tail_risk_status,
         "regime_tag": regime_tag,
         "regime_color": regime_color,
         "regime_desc": regime_desc,

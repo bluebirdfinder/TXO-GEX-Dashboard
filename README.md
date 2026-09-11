@@ -1,11 +1,33 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v61.0)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v62.0)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
-> 🏛️ TWSE 融資維持率發布狀態日期比對與開盤未公布狀態判定校正 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 輝哥 100% 現貨本位不開槓桿週週收息 ✦ 📅 方案 B：本週重大市場焦點週報 (Python 自動排程即時生成) ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ VIX 雙軌數據引擎 (TAIFEX VIX ✕ 美股 ^VIX) ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 波動率四級市場情緒評級 ✦ VIX 互動式對策彈窗 ✦ TWSE 現股報價雙軌熱備援 ✦ 通行碼彈窗自動通關
+> 🌪️ CBOE 美股 ^VVIX 實時採集 ✦ 4級尾部風險矩陣 ✦ 做市商賣腳安全氣墊 (350~500點外) ✦ 尋鳥戰情室 4 欄式 Macro Risk HUD ✦ 🏛️ TWSE 融資維持率發布狀態日期比對 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v61.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v62.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+## 🌟 v62.0 CBOE VVIX 尾部避險雷達 ✕ 4 級尾部風險矩陣 ✕ 尋鳥戰情室 4 欄式 Macro Risk HUD 升級
+
+### 🌪️ 1. CBOE 美股 ^VVIX 實時採集與 4 級尾部風險矩陣 (Tail Risk Matrix)
+- **美股 ^VVIX 即時串接**：串接 Yahoo Finance API 實時採集美股 `^VVIX`（即時值 `102.66` / 漲跌 `+1.85` / 幅度 `+1.83%`），解析做市商對沖黑天鵝風險的買盤加速度。
+- **4 級尾部風險評級與賣腳氣墊指引**：
+  1. `VVIX < 95` 🟢 **風穩常態**：賣腳防守安全氣墊 `250~350 點`，貼牆收租。
+  2. `95 <= VVIX < 100` 🟡 **避險溫和升溫**：賣腳防守氣墊預備擴大至 `300~400 點`。
+  3. `100 <= VVIX < 110` 🟠 **尾部黑天鵝避險潮 (當前 102.66)**：做市商/大資金大量買進 VIX Calls 避險！賣腳防守氣墊**強制擴大至現價 350~500 點外**，啟動 B 軌金字塔階梯伏擊網。
+  4. `VVIX >= 110` 🔴 **極端波動暴衝**：氣墊 `500+ 點`，**嚴禁近端裸賣**。
+
+### ⚡ 2. 隱含波動率加速度背離 (VIX/VVIX Divergence) 實時診斷
+- 當 VIX 處於低檔 (如 VIX < 20)，但 VVIX 率先突破 100+ (如 102.66)，發動「⚠️ 隱含波動率加速度背離」警報：顯示大資金正在提前爆買 VIX 深價外 Call 進行尾部避險，大盤防守牆韌性轉弱。
+
+### 🌐 3. GEX 主儀表板 Card 9 恐慌 & 避險雷達區塊擴充
+- 新增 `🇺🇸 美股 ^VVIX (波動加速度)` 實時欄位、`stat-vvix-regime-badge` 狀態標籤與 `stat-vvix-safety-buffer` 賣腳氣墊防禦提示。
+
+### 🦅 4. 尋鳥戰情室 (Trading Room) 4 欄式 Macro Risk HUD 整合
+- 頂部 Quick Pills 增設 `🌪️ VVIX 102.66 🟠`。
+- 左側 Macro Risk HUD 升級為 4 欄式宏觀風險雷達（DXY, US10Y, VIX, VVIX），連動 `risk-badge-vvix` 與整體 `🟠 尾部避險` 警報。
+
+---
 
 ## 🌟 v59.0 台股全市場盤後數據公布時程表 ✕ 四大商品籌碼量化分析優化升級
 

@@ -23,7 +23,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <!-- Embedded Standalone Data Fallback -->
-  <script src="data/embedded_data.js?v=v61.0"></script>
+  <script src="data/embedded_data.js?v=v62.0"></script>
 </head>
 <body>
 
@@ -951,7 +951,7 @@
         <div class="logo-area">
           <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>尋鳥 Bluebird Finder</span>
-            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v61.0</span>
+            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v62.0</span>
           </h1>
           <div class="tagline">台指選擇權 Gamma / Vanna Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
@@ -1157,17 +1157,17 @@
         </div>
       </div>
 
-      <!-- Card 9: VIX 恐慌指數 & 美股 ^VIX Card -->
+      <!-- Card 9: VIX 恐慌指數 & 美股 ^VIX / ^VVIX Card -->
       <div class="stat-card" style="border-left: 4px solid #00b0ff;">
         <div class="stat-label" style="display: flex; justify-content: space-between; align-items: center;">
-          <span>VIX 恐慌指數 & 美股 ^VIX</span>
-          <button id="open-vix-modal-btn" class="btn" style="font-size: 0.7rem; padding: 2px 6px; border-radius: 12px; border-color: #00b0ff; color: #00b0ff; background: rgba(0,176,255,0.1);" title="點擊查看 ⚡ VIX 恐慌指標對照表與 GEX 實戰對策手冊">
-            📖 VIX 教學
+          <span>VIX 恐慌 & VVIX 避險雷達</span>
+          <button id="open-vix-modal-btn" class="btn" style="font-size: 0.7rem; padding: 2px 6px; border-radius: 12px; border-color: #00b0ff; color: #00b0ff; background: rgba(0,176,255,0.1);" title="點擊查看 ⚡ VIX / VVIX 恐慌指標對照表與 GEX 實戰對策手冊">
+            📖 VIX/VVIX 教學
           </button>
         </div>
         
         <!-- Day Session Part (TAIFEX VIX) -->
-        <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
+        <div style="margin-top: 4px; padding-bottom: 5px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
           <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between; align-items: center;">
             <span>🇹🇼 台指 VIX (日盤)</span>
             <strong id="stat-taifex-vix" style="font-size: 0.95rem; color: #00b0ff;">18.45</strong>
@@ -1178,15 +1178,30 @@
           </div>
         </div>
 
-        <!-- Night Session Part (US CBOE VIX) -->
-        <div style="margin-top: 6px;">
+        <!-- Night Session Part (US CBOE VIX & VVIX) -->
+        <div style="margin-top: 5px; padding-bottom: 5px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
           <div style="font-size: 0.72rem; color: #a855f7; display: flex; justify-content: space-between; align-items: center;">
-            <span>🇺🇸 美股 ^VIX (夜盤參考)</span>
+            <span>🇺🇸 美股 ^VIX (夜盤)</span>
             <strong id="stat-us-vix" style="font-size: 0.95rem; color: #e040fb;">15.82</strong>
           </div>
           <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-top: 2px; align-items: center;">
             <span>變動: <strong id="stat-us-vix-sub" style="color: #00e676;">-0.34 (-2.10%)</strong></span>
-            <span style="font-size: 0.68rem; color: var(--text-muted);">CBOE 實時波動</span>
+            <span style="font-size: 0.68rem; color: var(--text-muted);">CBOE 實時</span>
+          </div>
+        </div>
+
+        <!-- VVIX Vol-of-Vol Tail Risk Part -->
+        <div style="margin-top: 5px;">
+          <div style="font-size: 0.72rem; color: #ff9100; display: flex; justify-content: space-between; align-items: center;">
+            <span>🇺🇸 美股 ^VVIX (波動加速度)</span>
+            <strong id="stat-us-vvix" style="font-size: 0.95rem; color: #ff9100;">102.66</strong>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-top: 2px; align-items: center;">
+            <span>變動: <strong id="stat-us-vvix-sub" style="color: #ff4d4f;">+1.85 (+1.83%)</strong></span>
+            <strong id="stat-vvix-regime-badge" style="color: #ff9100; font-size: 0.68rem;">🟠 尾部黑天鵝避險潮</strong>
+          </div>
+          <div id="stat-vvix-safety-buffer" style="font-size: 0.66rem; color: #ffd700; margin-top: 3px; padding: 1px 5px; background: rgba(255, 145, 0, 0.12); border-radius: 4px; border: 1px solid rgba(255, 145, 0, 0.3); text-align: center;">
+            🛡️ 賣腳氣墊: 現價 350~500 點外
           </div>
         </div>
       </div>
@@ -1996,7 +2011,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=v61.0"></script>
+  <script src="app.js?v=v62.0"></script>
 </body>
 </html>
 

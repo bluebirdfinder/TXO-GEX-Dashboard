@@ -1,15 +1,33 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v61.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v62.0)
 
-**當前版本**：`v61.0` (2026-09-10 台股全市場盤後數據公布時程表、四大商品籌碼量化分析優化與夜盤/8大板塊真實度升級版)
-**過往版本**：`v58.0` (2026-09-09 富邦 API 實時行情極速專線直連與多維選股雷達真實數據整合版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v61.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v61.0)
+**當前版本**：`v62.0` (2026-09-11 CBOE VVIX 波動率之波動率即時採集、4級尾部風險矩陣、賣腳安全氣墊與尋鳥戰情室 4 欄式 Macro Risk HUD 升級版)
+**過往版本**：`v61.0` (2026-09-10 台灣 6 檔正統在美 ADR 換股比率與折溢價公式精確對照版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v62.0)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v62.0)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
 
-## 🎯 v59.0 核心更新亮點 (Taiwan Market Data Schedule & 4-Asset Quant Strategy Optimization)
+## 🎯 v62.0 核心更新亮點 (CBOE VVIX Tail Risk Radar & 4-Column Macro Risk HUD)
+
+### 🌪️ 1. CBOE 美股 ^VVIX 實時採集與 4 級尾部風險矩陣 (Tail Risk Matrix)
+- 串接 Yahoo Finance API 實時採集美股 `^VVIX`（即時值 `102.66` / 漲跌 `+1.85` / 幅度 `+1.83%`），解析做市商對沖黑天鵝風險的買盤加速度。
+- 建立 4 級尾部風險評級與做市商賣腳安全氣墊指引：
+  1. `VVIX < 95` 🟢 **風穩常態**：賣腳防守安全氣墊 `250~350 點`，貼牆收租。
+  2. `95 <= VVIX < 100` 🟡 **避險溫和升溫**：賣腳防守氣墊預備擴大至 `300~400 點`。
+  3. `100 <= VVIX < 110` 🟠 **尾部黑天鵝避險潮 (當前 102.66)**：做市商/大資金大量買進 VIX Calls 避險！賣腳防守氣墊**強制擴大至現價 350~500 點外**，啟動 B 軌金字塔階梯伏擊網。
+  4. `VVIX >= 110` 🔴 **極端波動暴衝**：氣墊 `500+ 點`，**嚴禁近端裸賣**。
+
+### ⚡ 2. 隱含波動率加速度背離 (VIX/VVIX Divergence) 實時診斷
+- 當 VIX 處於低檔 (如 VIX < 20)，但 VVIX 率先突破 100+ (如 102.66)，發動「⚠️ 隱含波動率加速度背離」警報：顯示大資金正在提前爆買 VIX 深價外 Call 進行尾部避險，大盤防守牆韌性轉弱。
+
+### 🌐 3. GEX 主儀表板 Card 9 恐慌 & 避險雷達區塊擴充
+- 新增 `🇺🇸 美股 ^VVIX (波動加速度)` 實時欄位、`stat-vvix-regime-badge` 狀態標籤與 `stat-vvix-safety-buffer` 賣腳氣墊防禦提示。
+
+### 🦅 4. 尋鳥戰情室 (Trading Room) 4 欄式 Macro Risk HUD 整合
+- 頂部 Quick Pills 增設 `🌪️ VVIX 102.66 🟠`。
+- 左側 Macro Risk HUD 升級為 4 欄式宏觀風險雷達（DXY, US10Y, VIX, VVIX），連動 `risk-badge-vvix` 與整體 `🟠 尾部避險` 警報。
 
 ### ⏱️ 1. 台股全市場盤後數據公布時程全覽建立 ([MARKET_DATA_SCHEDULE.md](MARKET_DATA_SCHEDULE.md))
 - 完整梳理 13:30 收盤至隔日 05:00 夜盤收盤之官方數據發布流水線（三大法人現貨/期權、大額交易人、券商分點、八大官股、融資維持率、夜盤收盤）。

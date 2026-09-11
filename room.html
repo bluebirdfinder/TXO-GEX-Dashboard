@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🦅 尋鳥戰情交易室 — TXO GEX 即時戰情室 (Bird Trading Room v61.0)</title>
+  <title>🦅 尋鳥戰情交易室 — TXO GEX 即時戰情室 (Bird Trading Room v62.0)</title>
   
   <!-- Modern FinTech Font (Outfit & Microsoft JhengHei) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,13 +11,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- CSS Stylesheet -->
-  <link rel="stylesheet" href="room.css?v=v61.0">
+  <link rel="stylesheet" href="room.css?v=v62.0">
   
   <!-- TradingView Lightweight Charts Standalone Engine -->
   <script src="assets/lightweight-charts.standalone.production.js"></script>
   
   <!-- Embedded Standalone Data Fallback -->
-  <script src="data/embedded_data.js?v=v61.0"></script>
+  <script src="data/embedded_data.js?v=v62.0"></script>
 </head>
 <body>
 
@@ -27,7 +27,7 @@
       <div class="room-logo">
         <img src="assets/avatar.png" alt="尋鳥" class="user-avatar-img">
         <span>尋鳥戰情交易室</span>
-        <span class="badge-version">v61.0</span>
+        <span class="badge-version">v62.0</span>
       </div>
       
       <!-- Core Macro & Market Asset Quick Switcher (8 Core Assets) -->
@@ -82,6 +82,10 @@
           <span class="label">⚡ VIX</span>
           <span id="top-stat-vix" class="val" style="color: #FF5252;">26.09 🔴</span>
         </div>
+        <div class="stat-pill">
+          <span class="label">🌪️ VVIX</span>
+          <span id="top-stat-vvix" class="val" style="color: #FF9100;">102.66 🟠</span>
+        </div>
       </div>
     </div>
 
@@ -120,32 +124,39 @@
       <div class="left-section macro-risk-hud-section" id="macro-risk-hud" style="border-bottom: 1px solid var(--panel-border); background: linear-gradient(135deg, rgba(16, 22, 35, 0.95), rgba(10, 14, 24, 0.98)); padding: 8px 10px;">
         <div class="section-title" style="margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
           <span style="display: flex; align-items: center; gap: 4px; font-weight: 700; color: var(--gold-accent); font-size: 0.78rem;">
-            <span>🌐 宏觀風險雷達</span>
+            <span>🌐 宏觀與尾部風險雷達</span>
           </span>
           <span id="risk-overall-badge" class="badge" style="background: rgba(38,166,154,0.18); color: #26a69a; border: 1px solid #26a69a; font-size: 0.62rem; padding: 1px 5px;">🟢 總經偏安</span>
         </div>
 
-        <!-- 3-Item Compact Grid -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; text-align: center; margin-bottom: 5px;">
+        <!-- 4-Item Compact Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; text-align: center; margin-bottom: 5px;">
           <!-- DXY -->
           <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 5px; padding: 3px 2px;">
-            <div style="font-size: 0.62rem; color: var(--text-muted);">💵 美元 DXY</div>
-            <div id="risk-val-dxy" style="font-size: 0.76rem; font-weight: 700; color: #38bdf8; font-family: 'Outfit', monospace;">99.196</div>
-            <span id="risk-badge-dxy" class="badge" style="font-size: 0.55rem; padding: 0 2px; background: rgba(38,166,154,0.15); color: #26a69a;">破20MA(多)</span>
+            <div style="font-size: 0.60rem; color: var(--text-muted);">💵 美元 DXY</div>
+            <div id="risk-val-dxy" style="font-size: 0.74rem; font-weight: 700; color: #38bdf8; font-family: 'Outfit', monospace;">99.196</div>
+            <span id="risk-badge-dxy" class="badge" style="font-size: 0.52rem; padding: 0 2px; background: rgba(38,166,154,0.15); color: #26a69a;">破20MA(多)</span>
           </div>
 
           <!-- US10Y -->
           <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 5px; padding: 3px 2px;">
-            <div style="font-size: 0.62rem; color: var(--text-muted);">📈 美債 10Y</div>
-            <div id="risk-val-us10y" style="font-size: 0.76rem; font-weight: 700; color: #ffaa00; font-family: 'Outfit', monospace;">4.784%</div>
-            <span id="risk-badge-us10y" class="badge" style="font-size: 0.55rem; padding: 0 2px; background: rgba(255,82,82,0.15); color: #ff5252;">站20MA(壓)</span>
+            <div style="font-size: 0.60rem; color: var(--text-muted);">📈 美債 10Y</div>
+            <div id="risk-val-us10y" style="font-size: 0.74rem; font-weight: 700; color: #ffaa00; font-family: 'Outfit', monospace;">4.784%</div>
+            <span id="risk-badge-us10y" class="badge" style="font-size: 0.52rem; padding: 0 2px; background: rgba(255,82,82,0.15); color: #ff5252;">站20MA(壓)</span>
           </div>
 
           <!-- VIX -->
           <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 5px; padding: 3px 2px;">
-            <div style="font-size: 0.62rem; color: var(--text-muted);">⚡ 恐慌 VIX</div>
-            <div id="risk-val-vix" style="font-size: 0.76rem; font-weight: 700; color: #00e676; font-family: 'Outfit', monospace;">14.53</div>
-            <span id="risk-badge-vix" class="badge" style="font-size: 0.55rem; padding: 0 2px; background: rgba(0,230,118,0.15); color: #00e676;">低波安定</span>
+            <div style="font-size: 0.60rem; color: var(--text-muted);">⚡ 恐慌 VIX</div>
+            <div id="risk-val-vix" style="font-size: 0.74rem; font-weight: 700; color: #00e676; font-family: 'Outfit', monospace;">14.53</div>
+            <span id="risk-badge-vix" class="badge" style="font-size: 0.52rem; padding: 0 2px; background: rgba(0,230,118,0.15); color: #00e676;">低波安定</span>
+          </div>
+
+          <!-- VVIX -->
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 5px; padding: 3px 2px;">
+            <div style="font-size: 0.60rem; color: var(--text-muted);">🌪️ 波動 VVIX</div>
+            <div id="risk-val-vvix" style="font-size: 0.74rem; font-weight: 700; color: #ff9100; font-family: 'Outfit', monospace;">102.66</div>
+            <span id="risk-badge-vvix" class="badge" style="font-size: 0.52rem; padding: 0 2px; background: rgba(255,145,0,0.15); color: #ff9100;">尾部避險潮</span>
           </div>
         </div>
 
@@ -929,7 +940,7 @@
   </div>
 
   <!-- Trading Room Script Logic -->
-  <script src="room.js?v=v61.0"></script>
+  <script src="room.js?v=v62.0"></script>
 </body>
 </html>
 

@@ -721,7 +721,7 @@ function renderDashboard() {
     elVexBadgeNight.style.color = vexNight < 0 ? 'var(--put-color)' : 'var(--call-color)';
   }
 
-  // 7. VIX Card Data Update
+  // 7. VIX & VVIX Card Data Update
   const vixInfo = gexData.vix_info || (gexData.retail_sentiment_details ? gexData.retail_sentiment_details.vix_info : null);
   const taifexVix = vixInfo ? vixInfo.taifex_vix : (gexData.vix_index || 18.45);
   const taifexChg = vixInfo ? vixInfo.taifex_vix_change : (gexData.vix_change || 0.25);
@@ -732,6 +732,13 @@ function renderDashboard() {
   const usVix = vixInfo ? vixInfo.us_vix : 15.82;
   const usChg = vixInfo ? vixInfo.us_vix_change : -0.34;
   const usPct = vixInfo ? vixInfo.us_vix_change_pct : -2.10;
+
+  const usVvix = vixInfo ? (vixInfo.us_vvix || 102.66) : 102.66;
+  const usVvixChg = vixInfo ? (vixInfo.us_vvix_change !== undefined ? vixInfo.us_vvix_change : 1.85) : 1.85;
+  const usVvixPct = vixInfo ? (vixInfo.us_vvix_change_pct !== undefined ? vixInfo.us_vvix_change_pct : 1.83) : 1.83;
+  const vvixRegimeTag = vixInfo ? (vixInfo.vvix_regime_tag || '🟠 尾部黑天鵝避險潮') : '🟠 尾部黑天鵝避險潮';
+  const vvixRegimeColor = vixInfo ? (vixInfo.vvix_regime_color || '#ff9100') : '#ff9100';
+  const vvixSafetyBuffer = vixInfo ? (vixInfo.vvix_safety_buffer || '🛡️ 賣腳氣墊: 現價 350~500 點外') : '🛡️ 賣腳氣墊: 現價 350~500 點外';
 
   const elTaifexVix = document.getElementById('stat-taifex-vix');
   if (elTaifexVix) elTaifexVix.innerText = taifexVix.toFixed(2);
@@ -757,6 +764,27 @@ function renderDashboard() {
     const sign = usChg >= 0 ? '+' : '';
     elUsVixSub.innerText = `${sign}${usChg.toFixed(2)} (${sign}${usPct.toFixed(2)}%)`;
     elUsVixSub.style.color = usChg >= 0 ? 'var(--put-color)' : 'var(--call-color)';
+  }
+
+  const elUsVvix = document.getElementById('stat-us-vvix');
+  if (elUsVvix) elUsVvix.innerText = usVvix.toFixed(2);
+
+  const elUsVvixSub = document.getElementById('stat-us-vvix-sub');
+  if (elUsVvixSub) {
+    const sign = usVvixChg >= 0 ? '+' : '';
+    elUsVvixSub.innerText = `${sign}${usVvixChg.toFixed(2)} (${sign}${usVvixPct.toFixed(2)}%)`;
+    elUsVvixSub.style.color = usVvixChg >= 0 ? 'var(--put-color)' : 'var(--call-color)';
+  }
+
+  const elVvixBadge = document.getElementById('stat-vvix-regime-badge');
+  if (elVvixBadge) {
+    elVvixBadge.innerText = vvixRegimeTag;
+    elVvixBadge.style.color = vvixRegimeColor;
+  }
+
+  const elVvixBuffer = document.getElementById('stat-vvix-safety-buffer');
+  if (elVvixBuffer) {
+    elVvixBuffer.innerText = vvixSafetyBuffer;
   }
 
   // Session Shift Banner

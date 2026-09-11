@@ -1,5 +1,5 @@
 /**
- * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v61.0
+ * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v62.0
  * True Multi-Pane Trading Terminal with 10 Timeframes & 4 Sub-Panes
  *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + Supertrend + SAR
  *   - Sub-Chart 1 (14%): 成交量 Volume + 5MA & 10MA 雙均量線
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initTradingRoom() {
-  console.log('🦅 Initializing Multi-Pane Bird Trading Room v61.0...');
+  console.log('🦅 Initializing Multi-Pane Bird Trading Room v62.0...');
   
   // 1. Load Data
   await loadDashboardData();
@@ -1313,13 +1313,19 @@ function renderLeftPanel() {
     const vixVal = (gexData.vix_info && gexData.vix_info.taifex_vix) ? gexData.vix_info.taifex_vix : 26.09;
     topVIX.innerText = `${vixVal} 🔴`;
   }
+  const topVVIX = document.getElementById('top-stat-vvix');
+  if (topVVIX) {
+    const vvixVal = (gexData.vix_info && gexData.vix_info.us_vvix) ? gexData.vix_info.us_vvix : 102.66;
+    const badge = vvixVal >= 110 ? '🔴' : (vvixVal >= 100 ? '🟠' : (vvixVal >= 95 ? '🟡' : '🟢'));
+    topVVIX.innerText = `${vvixVal.toFixed(2)} ${badge}`;
+  }
 
   // Update Left Macro Risk HUD
   updateMacroRiskHUD(gexData.macro_risk_dashboard || null);
 }
 
 /**
- * Update Left Macro Risk HUD (DXY, US10Y, VIX)
+ * Update Left Macro Risk HUD (DXY, US10Y, VIX, VVIX)
  */
 function updateMacroRiskHUD(macroData, liveTick) {
   const dxyValEl = document.getElementById('risk-val-dxy');
@@ -1328,18 +1334,23 @@ function updateMacroRiskHUD(macroData, liveTick) {
   const us10yBadgeEl = document.getElementById('risk-badge-us10y');
   const vixValEl = document.getElementById('risk-val-vix');
   const vixBadgeEl = document.getElementById('risk-badge-vix');
+  const vvixValEl = document.getElementById('risk-val-vvix');
+  const vvixBadgeEl = document.getElementById('risk-badge-vvix');
   const overallBadgeEl = document.getElementById('risk-overall-badge');
   const summaryEl = document.getElementById('risk-macro-summary');
 
   // Default / Parsed Macro Indicators
   const dxy = macroData?.dxy || { price: 99.196, trend_label: '跌落 20 日線 (偏多台股)' };
   const us10y = macroData?.us10y || { price: 4.784, trend_label: '站穩 20 日線 (創高承壓)' };
-  const vix = macroData?.vix || { price: 14.53, trend_label: '低波安定' };
-  const summary = macroData?.summary || '💡 VIX 維持低檔有利多頭，美元走弱亞股資金無虞，聚焦突破與量化動能標的。';
+  const vix = macroData?.vix || { price: (gexData?.vix_info?.taifex_vix || 18.45), trend_label: '低波安定' };
+  const vvixVal = (gexData?.vix_info?.us_vvix || 102.66);
+  const tailStatus = gexData?.vix_info?.tail_risk_status || '';
+  const summary = macroData?.summary || (tailStatus ? `💡 ${tailStatus}` : '💡 VIX 維持低檔有利多頭，美元走弱亞股資金無虞，聚焦突破與量化動能標的。');
 
   const dxyPrice = liveTick?.dxy || dxy.price;
   const us10yPrice = liveTick?.us10y || us10y.price;
   const vixPrice = liveTick?.vix || vix.price;
+  const vvixPrice = liveTick?.vvix || vvixVal;
 
   if (dxyValEl) dxyValEl.textContent = dxyPrice.toFixed(3);
   if (dxyBadgeEl) dxyBadgeEl.textContent = dxyPrice < 100.5 ? '破20MA(多)' : '站20MA(壓)';
@@ -1350,18 +1361,47 @@ function updateMacroRiskHUD(macroData, liveTick) {
   if (vixValEl) vixValEl.textContent = vixPrice.toFixed(2);
   if (vixBadgeEl) vixBadgeEl.textContent = vixPrice < 20 ? '低波安定' : '恐慌升溫';
 
-  if (summaryEl) summaryEl.textContent = `💡 ${summary}`;
+  if (vvixValEl) vvixValEl.textContent = vvixPrice.toFixed(2);
+  if (vvixBadgeEl) {
+    if (vvixPrice >= 110) {
+      vvixBadgeEl.textContent = '極端暴衝';
+      vvixBadgeEl.style.color = '#ff5252';
+      vvixBadgeEl.style.background = 'rgba(255,82,82,0.15)';
+    } else if (vvixPrice >= 100) {
+      vvixBadgeEl.textContent = '尾部避險潮';
+      vvixBadgeEl.style.color = '#ff9100';
+      vvixBadgeEl.style.background = 'rgba(255,145,0,0.15)';
+    } else if (vvixPrice >= 95) {
+      vvixBadgeEl.textContent = '避險升溫';
+      vvixBadgeEl.style.color = '#ffd700';
+      vvixBadgeEl.style.background = 'rgba(255,215,0,0.15)';
+    } else {
+      vvixBadgeEl.textContent = '風穩常態';
+      vvixBadgeEl.style.color = '#00e676';
+      vvixBadgeEl.style.background = 'rgba(0,230,118,0.15)';
+    }
+  }
+
+  if (summaryEl) summaryEl.textContent = summary.startsWith('💡') ? summary : `💡 ${summary}`;
   if (overallBadgeEl) {
-    const isGood = vixPrice < 20 && dxyPrice < 102;
-    overallBadgeEl.textContent = isGood ? '🟢 總經偏安' : '🔴 總經避險';
-    overallBadgeEl.style.color = isGood ? '#26a69a' : '#ff5252';
-    overallBadgeEl.style.borderColor = isGood ? '#26a69a' : '#ff5252';
-    overallBadgeEl.style.background = isGood ? 'rgba(38,166,154,0.18)' : 'rgba(255,82,82,0.18)';
+    const isTailRisk = vvixPrice >= 100;
+    const isGood = vixPrice < 20 && dxyPrice < 102 && !isTailRisk;
+    if (isTailRisk) {
+      overallBadgeEl.textContent = '🟠 尾部避險';
+      overallBadgeEl.style.color = '#ff9100';
+      overallBadgeEl.style.borderColor = '#ff9100';
+      overallBadgeEl.style.background = 'rgba(255,145,0,0.18)';
+    } else {
+      overallBadgeEl.textContent = isGood ? '🟢 總經偏安' : '🔴 總經避險';
+      overallBadgeEl.style.color = isGood ? '#26a69a' : '#ff5252';
+      overallBadgeEl.style.borderColor = isGood ? '#26a69a' : '#ff5252';
+      overallBadgeEl.style.background = isGood ? 'rgba(38,166,154,0.18)' : 'rgba(255,82,82,0.18)';
+    }
   }
 
   // Micro flash glow animation if live tick triggered
   if (liveTick) {
-    [dxyValEl, us10yValEl, vixValEl].forEach(el => {
+    [dxyValEl, us10yValEl, vixValEl, vvixValEl].forEach(el => {
       if (el) {
         el.style.transition = 'text-shadow 0.2s ease';
         el.style.textShadow = '0 0 8px rgba(0, 210, 255, 0.8)';
@@ -1575,7 +1615,7 @@ function initAdvisorFeed() {
         <span class="time">${new Date().toLocaleTimeString()}</span>
       </div>
       <div class="msg-bubble">
-        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v61.0)</h4>
+        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v62.0)</h4>
         <p style="font-size: 0.8rem; line-height: 1.55; margin-bottom: 6px;">
           🔹 <strong>當前空間拓撲</strong>：型態 A【痛點沉底 / 懸空防守拓撲】<br>
           ⚡ <strong>GEX 狀態</strong>：台指期 (<strong>${txf}</strong>) 位於 Zero Gamma (<strong>${zg}</strong>) ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。<br>
