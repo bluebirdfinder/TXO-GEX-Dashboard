@@ -1,5 +1,5 @@
 /**
- * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v62.0
+ * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v62.1
  * True Multi-Pane Trading Terminal with 10 Timeframes & 4 Sub-Panes
  *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + Supertrend + SAR
  *   - Sub-Chart 1 (14%): 成交量 Volume + 5MA & 10MA 雙均量線
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initTradingRoom() {
-  console.log('🦅 Initializing Multi-Pane Bird Trading Room v62.0...');
+  console.log('🦅 Initializing Multi-Pane Bird Trading Room v62.1...');
   
   // 1. Load Data
   await loadDashboardData();
@@ -1615,7 +1615,7 @@ function initAdvisorFeed() {
         <span class="time">${new Date().toLocaleTimeString()}</span>
       </div>
       <div class="msg-bubble">
-        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v62.0)</h4>
+        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v62.1)</h4>
         <p style="font-size: 0.8rem; line-height: 1.55; margin-bottom: 6px;">
           🔹 <strong>當前空間拓撲</strong>：型態 A【痛點沉底 / 懸空防守拓撲】<br>
           ⚡ <strong>GEX 狀態</strong>：台指期 (<strong>${txf}</strong>) 位於 Zero Gamma (<strong>${zg}</strong>) ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。<br>

@@ -1,9 +1,9 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v62.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v62.1)
 
-**當前版本**：`v62.0` (2026-09-11 CBOE VVIX 波動率之波動率即時採集、4級尾部風險矩陣、賣腳安全氣墊與尋鳥戰情室 4 欄式 Macro Risk HUD 升級版)
+**當前版本**：`v62.1` (2026-09-11 CBOE VVIX 波動率之波動率即時採集、4級尾部風險矩陣、賣腳安全氣墊與尋鳥戰情室 4 欄式 Macro Risk HUD 升級版)
 **過往版本**：`v61.0` (2026-09-10 台灣 6 檔正統在美 ADR 換股比率與折溢價公式精確對照版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v62.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v62.0)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v62.1)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v62.1)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
