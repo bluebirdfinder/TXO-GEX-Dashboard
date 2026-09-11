@@ -1798,6 +1798,98 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
         ]
     }
 
+# ==============================================================================
+# 📸 SESSION SNAPSHOT SYSTEM — Persistent Historical Data Store
+# ==============================================================================
+
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_DATA_DIR = os.path.join(os.path.dirname(_SCRIPT_DIR), "data")
+SNAPSHOT_FILE = os.path.join(_DATA_DIR, "session_snapshots.json")
+TW_HOLIDAYS_FILE = os.path.join(_DATA_DIR, "tw_holidays.json")
+
+def _load_tw_holidays():
+    """Load Taiwan exchange holiday set from local tw_holidays.json."""
+    try:
+        with open(TW_HOLIDAYS_FILE, 'r', encoding='utf-8') as f:
+            return set(json.load(f).get('holidays', []))
+    except Exception:
+        return set()
+
+TW_HOLIDAYS = _load_tw_holidays()  # loaded once at module level
+
+def is_tw_trading_day(d):
+    """True if date d is a Taiwan stock/futures trading day."""
+    if d.weekday() >= 5:  # Sat=5, Sun=6
+        return False
+    if d.strftime('%Y-%m-%d') in TW_HOLIDAYS:
+        return False
+    return True
+
+def get_recent_tw_trading_days(ref_dt, n=5):
+    """
+    Return the n most recent Taiwan trading days up to and including ref_dt.
+    ref_dt: datetime or date object (Taiwan time).
+    Returns list of date objects, oldest first.
+    """
+    _WEEKDAYS_CN = ["(一)", "(二)", "(三)", "(四)", "(五)", "(六)", "(日)"]
+    curr = ref_dt.date() if hasattr(ref_dt, 'date') else ref_dt
+    days = []
+    while len(days) < n:
+        if is_tw_trading_day(curr):
+            days.append(curr)
+        curr -= datetime.timedelta(days=1)
+    days.reverse()  # oldest first
+    return days
+
+def load_session_snapshots():
+    """Load all session snapshots from data/session_snapshots.json."""
+    try:
+        with open(SNAPSHOT_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def save_session_snapshots(snapshots):
+    """Persist session snapshots to data/session_snapshots.json."""
+    os.makedirs(_DATA_DIR, exist_ok=True)
+    with open(SNAPSHOT_FILE, 'w', encoding='utf-8') as f:
+        json.dump(snapshots, f, ensure_ascii=False, indent=2)
+
+def write_current_session_snapshot(now_dt, session_type,
+                                   spot_price, otc_price, txf_price,
+                                   zero_gamma, gex_plus_flip,
+                                   call_wall, put_wall, max_pain,
+                                   pc_ratio, taifex_vix, us_vix,
+                                   margin_market, margin_stock):
+    """
+    Merge-write the current session's real data into the snapshot store.
+    Key: YYYY-MM-DD_DAY or YYYY-MM-DD_NIGHT (absolute date, not T-n offset).
+    Rule: always overwrite with the latest run (more data = better).
+    """
+    snap_key = f"{now_dt.strftime('%Y-%m-%d')}_{session_type}"
+    snapshots = load_session_snapshots()
+    snapshots[snap_key] = {
+        "date":             now_dt.strftime('%Y-%m-%d'),
+        "session":          session_type,
+        "spot_price":       spot_price,
+        "otc_price":        otc_price,
+        "txf_price":        txf_price,
+        "zero_gamma_level": zero_gamma,
+        "gex_plus_flip":    gex_plus_flip,
+        "call_wall_strike": call_wall,
+        "put_wall_strike":  put_wall,
+        "max_pain_strike":  max_pain,
+        "pc_ratio":         pc_ratio,
+        "taifex_vix":       taifex_vix,
+        "us_vix":           us_vix,
+        "margin_maint_market": margin_market,
+        "margin_maint_stock":  margin_stock,
+        "written_at":       now_dt.isoformat()
+    }
+    save_session_snapshots(snapshots)
+    print(f"[SNAPSHOT] Written {snap_key} → {SNAPSHOT_FILE}")
+    return snap_key
+
 def generate_gex_payload():
     tw_tz = datetime.timezone(datetime.timedelta(hours=8))
     now_dt = datetime.datetime.now(datetime.timezone.utc).astimezone(tw_tz)
@@ -1998,38 +2090,27 @@ def generate_gex_payload():
         """
     }
 
-    # 5-Day Positioning History
-    # 若在盤後資料尚未更新的時段（凌晨 00:00 ~ 08:44 AM），以「前一個交易日 (T-1)」為基準，
-    # 避免把尚未開盤的今天算進 5 日歷史，造成矩陣日期與期貨價格顯示錯位。
-    def get_last_trading_dt(base_dt):
-        """Return the last completed trading day. Before 13:00, step back one day."""
-        ref = base_dt
-        if base_dt.hour < 13:  # TAIFEX 日盤 13:45 結算，13:00 前今天尚未結算
-            ref = base_dt - datetime.timedelta(days=1)
-        # Skip weekends
-        while ref.weekday() >= 5:  # 0=Mon...4=Fri, 5=Sat, 6=Sun
-            ref -= datetime.timedelta(days=1)
-        return ref
-
-    def get_recent_5_trading_days(base_dt):
-        weekdays = ["(一)", "(二)", "(三)", "(四)", "(五)", "(六)", "(日)"]
-        days = []
-        curr = base_dt
-        while len(days) < 5:
-            if curr.weekday() < 5:
-                days.append(f"{curr.month}/{curr.day} {weekdays[curr.weekday()]}")
-            curr -= datetime.timedelta(days=1)
-        return list(reversed(days))
-
-    # Before Day market open (08:45 AM), today's trading day hasn't started yet.
-    if now_dt.hour < 8 or (now_dt.hour == 8 and now_dt.minute < 45):
-        ref_matrix_dt = now_dt - datetime.timedelta(days=1)
+    # ============================================================
+    # 📅 Holiday-aware 5 trading day calculator (replaces T-n offset logic)
+    # ============================================================
+    # Determine the "reference" trading day for today.
+    # Before 08:45: today's session hasn't opened → use yesterday as T-0
+    # 08:45~13:45: Day session live/settling → today is T-0
+    # 13:45 onward: Day session closed → today is T-0 (settled)
+    # 15:00~05:00: Night session → today is still T-0
+    _WEEKDAYS_CN_LOCAL = ["(一)", "(二)", "(三)", "(四)", "(五)", "(六)", "(日)"]
+    is_before_day_open = (now_dt.hour < 8 or (now_dt.hour == 8 and now_dt.minute < 45))
+    if is_before_day_open:
+        ref_matrix_base = now_dt - datetime.timedelta(days=1)
     else:
-        ref_matrix_dt = now_dt
-    while ref_matrix_dt.weekday() >= 5:
-        ref_matrix_dt -= datetime.timedelta(days=1)
+        ref_matrix_base = now_dt
 
-    t_days = get_recent_5_trading_days(ref_matrix_dt)
+    # t_days_dates: list of 5 date objects [T-4, T-3, T-2, T-1, T-0], oldest first
+    t_days_dates = get_recent_tw_trading_days(ref_matrix_base, n=5)
+
+    # t_days: legacy string list for backward-compat with institutional_5day_history
+    t_days = [f"{d.month}/{d.day} {_WEEKDAYS_CN_LOCAL[d.weekday()]}" for d in t_days_dates]
+    ref_matrix_dt = datetime.datetime.combine(t_days_dates[-1], datetime.time(12, 0), tzinfo=now_dt.tzinfo)
 
     opt_inst = fetch_official_taifex_options_matrix()
     lt_inst = fetch_official_taifex_large_trader()
@@ -2489,137 +2570,173 @@ def generate_gex_payload():
     latest_t_vix = vix_obj.get("taifex_vix", 26.09)
     latest_u_vix = vix_obj.get("us_vix", 15.74)
 
-    history_10_sessions = [
-        {
-            "id": "t4_day", "label": "T-4 日盤", "date_display": f"{t_days[0]} ☀️", "full_name": f"{t_days[0]} T-4 日盤",
-            "spot_price": round(prev_day_spot - 546, 2), "two_price": round(prev_day_otc - 5.7, 2), "txf_price": prev_day_txf_price - 580,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 550, 1), "gex_plus_flip": round(gp_base - 520, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 500,
-            "put_wall_strike": gex_profile['put_wall_strike'] - 500, "max_pain_strike": gex_profile['max_pain_strike'] - 500, "shift_vs_prev": 0,
-            "pc_ratio": 104.2, "margin_maint_market": 158.4, "margin_maint_stock": 144.1, "margin_maint_published": True,
-            "taifex_vix": round(latest_t_vix - 3.2, 2), "us_vix": round(latest_u_vix + 1.1, 2)
-        },
-        {
-            "id": "t4_night", "label": "T-4 夜盤", "date_display": f"{t_days[0]} 🌙", "full_name": f"{t_days[0]} T-4 夜盤",
-            "spot_price": round(prev_day_spot - 436, 2), "two_price": round(prev_day_otc - 4.4, 2), "txf_price": prev_day_txf_price - 480,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 450, 1), "gex_plus_flip": round(gp_base - 420, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 400,
-            "put_wall_strike": gex_profile['put_wall_strike'] - 400, "max_pain_strike": gex_profile['max_pain_strike'] - 400, "shift_vs_prev": 100,
-            "pc_ratio": 105.1, "margin_maint_market": 158.4, "margin_maint_stock": 144.1, "margin_maint_published": False,
-            "taifex_vix": round(latest_t_vix - 2.8, 2), "us_vix": round(latest_u_vix + 0.9, 2)
-        },
-        {
-            "id": "t3_day", "label": "T-3 日盤", "date_display": f"{t_days[1]} ☀️", "full_name": f"{t_days[1]} T-3 日盤",
-            "spot_price": round(prev_day_spot - 376, 2), "two_price": round(prev_day_otc - 3.7, 2), "txf_price": prev_day_txf_price - 420,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 400, 1), "gex_plus_flip": round(gp_base - 380, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 400,
-            "put_wall_strike": gex_profile['put_wall_strike'] - 400, "max_pain_strike": gex_profile['max_pain_strike'] - 400, "shift_vs_prev": 60,
-            "pc_ratio": 105.8, "margin_maint_market": 157.2, "margin_maint_stock": 143.0, "margin_maint_published": True,
-            "taifex_vix": round(latest_t_vix - 2.1, 2), "us_vix": round(latest_u_vix + 0.6, 2)
-        },
-        {
-            "id": "t3_night", "label": "T-3 夜盤", "date_display": f"{t_days[1]} 🌙", "full_name": f"{t_days[1]} T-3 夜盤",
-            "spot_price": round(prev_day_spot - 316, 2), "two_price": round(prev_day_otc - 3.0, 2), "txf_price": prev_day_txf_price - 360,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 340, 1), "gex_plus_flip": round(gp_base - 320, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 300,
-            "put_wall_strike": gex_profile['put_wall_strike'] - 300, "max_pain_strike": gex_profile['max_pain_strike'] - 300, "shift_vs_prev": 60,
-            "pc_ratio": 106.7, "margin_maint_market": 157.2, "margin_maint_stock": 143.0, "margin_maint_published": False,
-            "taifex_vix": round(latest_t_vix - 1.6, 2), "us_vix": round(latest_u_vix + 0.4, 2)
-        },
-        {
-            "id": "t2_day", "label": "T-2 日盤", "date_display": f"{t_days[2]} ☀️", "full_name": f"{t_days[2]} T-2 日盤",
-            "spot_price": round(prev_day_spot - 260, 2), "two_price": round(prev_day_otc - 2.7, 2), "txf_price": prev_day_txf_price - 303,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 320, 1), "gex_plus_flip": round(gp_base - 300, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 300,
-            "put_wall_strike": gex_profile['put_wall_strike'] - 300, "max_pain_strike": gex_profile['max_pain_strike'] - 300, "shift_vs_prev": 57,
-            "pc_ratio": 107.5, "margin_maint_market": 156.5, "margin_maint_stock": 142.1, "margin_maint_published": True,
-            "taifex_vix": round(latest_t_vix - 1.2, 2), "us_vix": round(latest_u_vix + 0.2, 2)
-        },
-        {
-            "id": "t2_night", "label": "T-2 夜盤", "date_display": f"{t_days[2]} 🌙", "full_name": f"{t_days[2]} T-2 夜盤",
-            "spot_price": round(prev_day_spot - 130, 2), "two_price": round(prev_day_otc - 1.4, 2), "txf_price": prev_day_txf_price - 173,
-            "zero_gamma_level": round(gex_profile['zero_gamma_level'] - 200, 1), "gex_plus_flip": round(gp_base - 180, 1), "call_wall_strike": gex_profile['call_wall_strike'] - 200,
-            "put_wall_strike": gex_profile['put_wall_strike'] - 200, "max_pain_strike": gex_profile['max_pain_strike'] - 200, "shift_vs_prev": 130,
-            "pc_ratio": 108.3, "margin_maint_market": 156.5, "margin_maint_stock": 142.1, "margin_maint_published": False,
-            "taifex_vix": round(latest_t_vix - 0.7, 2), "us_vix": round(latest_u_vix - 0.1, 2)
-        },
-        {
-            "id": "t1_day", "label": "T-1 日盤", "date_display": f"{t_days[3]} ☀️", "full_name": f"{t_days[3]} T-1 日盤",
-            "spot_price": prev_day_spot, "two_price": prev_day_otc, "txf_price": prev_day_txf_price,
-            "zero_gamma_level": 46039.5, "gex_plus_flip": 46059.4, "call_wall_strike": 46200,
-            "put_wall_strike": 45800, "max_pain_strike": 45400, "shift_vs_prev": 16,
-            "pc_ratio": 109.1, "margin_maint_market": 155.8, "margin_maint_stock": 141.2, "margin_maint_published": True,
-            "taifex_vix": round(latest_t_vix - 0.4, 2), "us_vix": round(latest_u_vix - 0.3, 2)
-        },
-        {
-            "id": "t1_night", "label": "T-1 夜盤", "date_display": f"{t_days[3]} 🌙", "full_name": f"{t_days[3]} T-1 夜盤 (05:00 定案版)",
-            "spot_price": prev_day_spot, "two_price": prev_day_otc, "txf_price": night_txf_price if (night_txf_price and night_txf_price > 0) else (prev_day_txf_price - 798),
-            "zero_gamma_level": 46119.5, "gex_plus_flip": 46119.4, "call_wall_strike": 46300,
-            "put_wall_strike": 45900, "max_pain_strike": 45500, "shift_vs_prev": round(night_txf_price - prev_day_txf_price, 1) if (night_txf_price and prev_day_txf_price) else -798,
-            "pc_ratio": 113.2, "margin_maint_market": 155.8, "margin_maint_stock": 141.2, "margin_maint_published": False,
-            "taifex_vix": latest_t_vix, "us_vix": latest_u_vix
-        }
-    ]
+    # ============================================================
+    # 📸 SNAPSHOT-BASED HISTORICAL SESSION MATRIX
+    # Builds history_10_sessions from persistent snapshots.
+    # T-4 to T-1: read from data/session_snapshots.json (real data)
+    # T-0: built from live API data, then written to snapshots.
+    # Has_snapshot=False → frontend displays "—" instead of fake numbers.
+    # ============================================================
+    _WDAY_CN = ["(一)", "(二)", "(三)", "(四)", "(五)", "(六)", "(日)"]
+    snapshots = load_session_snapshots()
 
-    now_hour = now_dt.hour
+    def _make_null_session(sess_id, t_label, day_date, sess_type):
+        disp = f"{day_date.month}/{day_date.day} {_WDAY_CN[day_date.weekday()]}"
+        emoji = "☀️" if sess_type == "DAY" else "🌙"
+        lbl   = f"{t_label} {'日盤' if sess_type == 'DAY' else '夜盤'}"
+        return {
+            "id": sess_id, "label": lbl,
+            "date_display": f"{disp} {emoji}",
+            "full_name": f"{disp} {lbl} (快照建立中)",
+            "spot_price": None, "two_price": None, "txf_price": None,
+            "zero_gamma_level": None, "gex_plus_flip": None,
+            "call_wall_strike": None, "put_wall_strike": None, "max_pain_strike": None,
+            "shift_vs_prev": None, "pc_ratio": None,
+            "margin_maint_market": None, "margin_maint_stock": None, "margin_maint_published": False,
+            "taifex_vix": None, "us_vix": None, "has_snapshot": False
+        }
+
+    def _make_snap_session(sess_id, t_label, day_date, sess_type, snap):
+        disp = f"{day_date.month}/{day_date.day} {_WDAY_CN[day_date.weekday()]}"
+        emoji = "☀️" if sess_type == "DAY" else "🌙"
+        lbl   = f"{t_label} {'日盤' if sess_type == 'DAY' else '夜盤'}"
+        return {
+            "id": sess_id, "label": lbl,
+            "date_display": f"{disp} {emoji}",
+            "full_name": f"{disp} {lbl}" + ("" if sess_type == "DAY" else " (05:00 定案版)"),
+            "spot_price": snap.get("spot_price"), "two_price": snap.get("otc_price"), "txf_price": snap.get("txf_price"),
+            "zero_gamma_level": snap.get("zero_gamma_level"), "gex_plus_flip": snap.get("gex_plus_flip"),
+            "call_wall_strike": snap.get("call_wall_strike"), "put_wall_strike": snap.get("put_wall_strike"),
+            "max_pain_strike": snap.get("max_pain_strike"), "shift_vs_prev": 0,
+            "pc_ratio": snap.get("pc_ratio"),
+            "margin_maint_market": snap.get("margin_maint_market"), "margin_maint_stock": snap.get("margin_maint_stock"),
+            "margin_maint_published": sess_type == "DAY",
+            "taifex_vix": snap.get("taifex_vix"), "us_vix": snap.get("us_vix"), "has_snapshot": True
+        }
+
+    # Build T-4 to T-1 from snapshots (t_days_dates[0..3])
+    _t_labels  = ["T-4", "T-3", "T-2", "T-1"]
+    _t_ids_day = ["t4_day", "t3_day", "t2_day", "t1_day"]
+    _t_ids_ngt = ["t4_night", "t3_night", "t2_night", "t1_night"]
+
+    history_10_sessions = []
+    for i in range(4):  # T-4, T-3, T-2, T-1
+        d = t_days_dates[i]
+        d_str = d.strftime('%Y-%m-%d')
+        for sess_type_h, sid in [("DAY", _t_ids_day[i]), ("NIGHT", _t_ids_ngt[i])]:
+            snap_k = f"{d_str}_{sess_type_h}"
+            snap   = snapshots.get(snap_k)
+            if snap:
+                item = _make_snap_session(sid, _t_labels[i], d, sess_type_h, snap)
+            else:
+                item = _make_null_session(sid, _t_labels[i], d, sess_type_h)
+            history_10_sessions.append(item)
+
+    # ---- T-0 today: built from live data ----
+    now_hour   = now_dt.hour
     now_minute = now_dt.minute
-    is_weekend = (now_dt.weekday() >= 5)
+    is_weekend  = (now_dt.weekday() >= 5)
     is_before_open = (now_hour < 8 or (now_hour == 8 and now_minute < 45))
 
+    t0_date = t_days_dates[4]
+    t0_disp = f"{t0_date.month}/{t0_date.day} {_WDAY_CN[t0_date.weekday()]}"
+
     if is_weekend:
-        day_label = "☀️ T日盤 (定案)"
-        day_full_name = f"{t_days[4]} T日盤 (定案版)"
-        night_label = "🌙 T夜盤 (05:00 定案)"
-        night_full_name = f"{t_days[4]} T夜盤 (05:00 定案版)"
+        day_label     = "☀️ T日盤 (定案)"
+        day_full_name = f"{t0_disp} T日盤 (定案版)"
+        night_label     = "🌙 T夜盤 (05:00 定案)"
+        night_full_name = f"{t0_disp} T夜盤 (05:00 定案版)"
     else:
         day_label = "☀️ 日盤 (定案)" if is_before_open else ("🔥 T日盤 (Live)" if (8 <= now_hour < 14) else ("☀️ T日盤 (盤後快照)" if (14 <= now_hour < 15) else "☀️ T日盤 (定案)"))
-        day_full_name = f"{t_days[4]} 日盤 (定案版)" if is_before_open else (f"{t_days[4]} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (盤後快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)")))
+        day_full_name = f"{t0_disp} 日盤 (定案版)" if is_before_open else (f"{t0_disp} T日盤" + (" (Live 即時動態)" if (8 <= now_hour < 14) else (" (盤後快照/待16:00清算)" if (14 <= now_hour < 15) else " (定案版)")))
         night_label = "🌙 夜盤 (05:00 定案)" if is_before_open else ("🔥 T夜盤 (Live)" if (now_hour >= 15 or now_hour < 5) else "🌙 T夜盤 (05:00 定案)")
-        night_full_name = f"{t_days[4]} 夜盤 (05:00 定案版)" if is_before_open else (f"{t_days[4]} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)"))
+        night_full_name = f"{t0_disp} 夜盤 (05:00 定案版)" if is_before_open else (f"{t0_disp} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)"))
 
-    t_target_yyyymmdd = ref_matrix_dt.strftime('%Y%m%d')
+    t_target_yyyymmdd = t0_date.strftime('%Y%m%d')
     margin_info = fetch_twse_margin_maintenance(target_date_str=t_target_yyyymmdd)
 
     t0_day_shift = round(day_txf_price - (night_txf_price if night_txf_price else prev_day_txf_price), 1)
 
     t0_day_item = {
-        "id": "t0_day", 
-        "label": day_label, 
-        "date_display": f"{t_days[4]} ☀️", 
+        "id": "t0_day",
+        "label": day_label,
+        "date_display": f"{t0_disp} ☀️",
         "full_name": day_full_name,
         "spot_price": spot_price, "two_price": otc_price, "txf_price": day_txf_price,
         "zero_gamma_level": day_zero_gamma, "gex_plus_flip": day_gex_plus_flip, "call_wall_strike": day_call_wall,
         "put_wall_strike": day_put_wall, "max_pain_strike": day_max_pain, "shift_vs_prev": t0_day_shift,
-        "pc_ratio": 111.8,
+        "pc_ratio": gex_profile['pc_ratio'],
         "margin_maint_market": margin_info["margin_maint_market"],
         "margin_maint_stock": margin_info["margin_maint_stock"],
         "margin_maint_published": margin_info["is_published"],
-        "taifex_vix": latest_t_vix, "us_vix": latest_u_vix
+        "taifex_vix": latest_t_vix, "us_vix": latest_u_vix, "has_snapshot": True
     }
 
     active_night_spot = night_txf_price if (night_txf_price is not None and night_txf_price > 0 and night_txf_price > 10000) else spot_price
 
     t0_night_item = {
-        "id": "t0_night", 
-        "label": night_label, 
-        "date_display": f"{t_days[4]} 🌙", 
+        "id": "t0_night",
+        "label": night_label,
+        "date_display": f"{t0_disp} 🌙",
         "full_name": night_full_name,
         "spot_price": active_night_spot, "two_price": otc_price, "txf_price": night_txf_price,
-        "zero_gamma_level": gex_profile['zero_gamma_level'], "gex_plus_flip": gex_profile['gex_plus_flip'], "call_wall_strike": gex_profile['call_wall_strike'],
-        "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'], "shift_vs_prev": txf_shift,
+        "zero_gamma_level": gex_profile['zero_gamma_level'], "gex_plus_flip": gex_profile['gex_plus_flip'],
+        "call_wall_strike": gex_profile['call_wall_strike'],
+        "put_wall_strike": gex_profile['put_wall_strike'], "max_pain_strike": gex_profile['max_pain_strike'],
+        "shift_vs_prev": txf_shift,
         "pc_ratio": gex_profile['pc_ratio'],
         "margin_maint_market": margin_info["margin_maint_market"],
         "margin_maint_stock": margin_info["margin_maint_stock"],
         "margin_maint_published": False,
-        "taifex_vix": latest_t_vix, "us_vix": latest_u_vix
+        "taifex_vix": latest_t_vix, "us_vix": latest_u_vix, "has_snapshot": True
     }
 
-    # Add day session
+    # 📸 Persist T-0 real snapshot to disk (merge, always latest wins)
+    _snap_txf  = day_txf_price  if session_type == "DAY" else night_txf_price
+    _snap_zg   = day_zero_gamma if session_type == "DAY" else gex_profile['zero_gamma_level']
+    _snap_gpf  = day_gex_plus_flip if session_type == "DAY" else gex_profile['gex_plus_flip']
+    _snap_cw   = day_call_wall  if session_type == "DAY" else gex_profile['call_wall_strike']
+    _snap_pw   = day_put_wall   if session_type == "DAY" else gex_profile['put_wall_strike']
+    _snap_mp   = day_max_pain   if session_type == "DAY" else gex_profile['max_pain_strike']
+    write_current_session_snapshot(
+        now_dt=now_dt, session_type=session_type,
+        spot_price=spot_price, otc_price=otc_price, txf_price=_snap_txf,
+        zero_gamma=_snap_zg, gex_plus_flip=_snap_gpf,
+        call_wall=_snap_cw, put_wall=_snap_pw, max_pain=_snap_mp,
+        pc_ratio=gex_profile['pc_ratio'],
+        taifex_vix=latest_t_vix, us_vix=latest_u_vix,
+        margin_market=margin_info["margin_maint_market"],
+        margin_stock=margin_info["margin_maint_stock"]
+    )
+
+    # Compute shift_vs_prev (TXF delta between consecutive sessions)
+    _all_sess = history_10_sessions + [t0_day_item, t0_night_item]
+    if _all_sess:
+        _all_sess[0]['shift_vs_prev'] = 0
+    for _si in range(1, len(_all_sess)):
+        _cur = _all_sess[_si].get('txf_price')
+        _prv = _all_sess[_si-1].get('txf_price')
+        if _cur is not None and _prv is not None:
+            _all_sess[_si]['shift_vs_prev'] = round(_cur - _prv, 1)
+
+    # Add T-0 day session
     history_10_sessions.append(t0_day_item)
 
-    # Only append night session if night trading is actually active, running before morning open, or on weekend
+    # Only append night session if night trading is active, before morning open, or on weekend
     if is_weekend or is_before_open or now_hour >= 15 or now_hour < 8:
         history_10_sessions.append(t0_night_item)
 
     # Compute exact GEX bar distribution for each historical session on a fixed global strike grid
+    # Skip sessions without snapshot data (spot_price is None) to avoid TypeError
     global_base_strike = round(spot_price / 100) * 100
     for sess_item in history_10_sessions:
         s_spot = sess_item['spot_price']
+        if s_spot is None or s_spot <= 0:
+            sess_item['total_gex'] = None
+            sess_item['weekly_gex'] = None
+            sess_item['friday_gex'] = None
+            sess_item['monthly_gex'] = None
+            continue
         sess_prof = calculate_true_gex_profile(s_spot, {}, raw_days_wed, raw_days_fri, raw_days_mth, fixed_base_strike=global_base_strike)
         sess_item['total_gex'] = sess_prof['total_gex']
         sess_item['weekly_gex'] = sess_prof['weekly_gex']
