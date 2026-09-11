@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 46219.4,
     "day_total_vex": 3734.09
   },
-  "last_updated_time": "2026-09-11 20:06",
+  "last_updated_time": "2026-09-11 20:19",
   "spot_price": 46184.85,
   "spot_change": -755.64,
   "spot_change_pct": -1.61,
@@ -7207,7 +7207,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -9644.03,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-11 20:06",
+    "last_updated": "2026-09-11 20:19",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
