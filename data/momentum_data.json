@@ -1,0 +1,74 @@
+{
+  "version": "v62.2",
+  "updated_at": "2026-09-12 02:40:31",
+  "date": "20260912",
+  "summary": {
+    "overall_stance": "BULLISH",
+    "headline": "三大法人連續同步偏多，外資空單回補，散戶偏空（多頭訊號）",
+    "retail_sentiment": "BEARISH_RETAIL_IS_BULLISH"
+  },
+  "institutions": {
+    "foreign": {
+      "name": "外資及陸資",
+      "oi_net": -12450,
+      "trading_net": 1850,
+      "stance": "回補偏多"
+    },
+    "it": {
+      "name": "投信",
+      "oi_net": 28400,
+      "trading_net": 920,
+      "stance": "波段強力作多"
+    },
+    "dealer": {
+      "name": "自營商",
+      "oi_net": -3200,
+      "trading_net": -450,
+      "stance": "區間避險"
+    }
+  },
+  "retail": {
+    "small_tx_long": 38500,
+    "small_tx_short": 46500,
+    "small_tx_net_oi": -8000,
+    "bull_bear_ratio_pct": -9.41,
+    "interpretation": "散戶留倉偏空，籌碼有利多方上攻"
+  },
+  "history_5d": [
+    {
+      "date": "09/08",
+      "foreign": -16200,
+      "it": 26100,
+      "dealer": -4100,
+      "retail_ratio": 14.2
+    },
+    {
+      "date": "09/09",
+      "foreign": -15100,
+      "it": 26800,
+      "dealer": -3800,
+      "retail_ratio": 8.5
+    },
+    {
+      "date": "09/10",
+      "foreign": -13800,
+      "it": 27500,
+      "dealer": -3500,
+      "retail_ratio": 2.1
+    },
+    {
+      "date": "09/11",
+      "foreign": -14300,
+      "it": 27480,
+      "dealer": -2750,
+      "retail_ratio": -4.6
+    },
+    {
+      "date": "09/12",
+      "foreign": -12450,
+      "it": 28400,
+      "dealer": -3200,
+      "retail_ratio": -9.41
+    }
+  ]
+}

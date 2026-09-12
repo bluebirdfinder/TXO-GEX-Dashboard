@@ -253,6 +253,39 @@ html, body {
   gap: 8px;
 }
 
+/* Desktop Panel Toggles in Header */
+.desktop-panel-toggles {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-panel-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border: 1px solid var(--panel-border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-panel-toggle:hover {
+  background: rgba(0, 210, 255, 0.15);
+  color: var(--primary-accent);
+  border-color: var(--primary-accent);
+}
+
+.btn-panel-toggle.active {
+  background: rgba(0, 210, 255, 0.2);
+  color: #fff;
+  border-color: var(--primary-accent);
+}
+
 .btn-nav-switch {
   display: flex;
   align-items: center;
@@ -286,15 +319,235 @@ html, body {
   position: relative;
 }
 
-/* Left Panel: Contract & Quote Monitor */
+/* Left Panel: Contract & Quote Monitor with Smooth Collapse */
 .panel-left {
   width: var(--left-width);
+  min-width: var(--left-width);
   background: var(--bg-card);
   border-right: 1px solid var(--panel-border);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   flex-shrink: 0;
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+}
+
+.panel-left.collapsed {
+  width: 0 !important;
+  min-width: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+  border-right: none !important;
+  overflow: hidden !important;
+}
+
+.drawer-header-desktop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(10, 14, 23, 0.95);
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.btn-collapse-panel {
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  border: 1px solid var(--panel-border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-collapse-panel:hover {
+  background: rgba(0, 210, 255, 0.2);
+  color: var(--primary-accent);
+  border-color: var(--primary-accent);
+}
+
+/* Center Panel (Flex 1 Auto Expansion) */
+.panel-center {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-dark);
+  transition: flex 0.28s ease;
+}
+
+/* Right Panel: AI Quant Advisor with Smooth Collapse */
+.panel-right {
+  width: var(--right-width);
+  min-width: var(--right-width);
+  background: var(--bg-card);
+  border-left: 1px solid var(--panel-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+}
+
+.panel-right.collapsed {
+  width: 0 !important;
+  min-width: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Dock Panel Triggers (Visible only when respective sidebars are collapsed) */
+.dock-panel-trigger {
+  display: none;
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  background: rgba(13, 19, 31, 0.95);
+  border: 1px solid var(--primary-accent);
+  color: var(--primary-accent);
+  padding: 10px 5px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 210, 255, 0.35);
+  writing-mode: vertical-lr;
+  letter-spacing: 2px;
+  transition: all 0.2s ease;
+}
+
+.dock-panel-trigger:hover {
+  background: var(--primary-accent);
+  color: #080c14;
+  box-shadow: 0 0 16px var(--primary-glow);
+}
+
+.dock-left {
+  left: 0;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+}
+
+.dock-right {
+  right: 0;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+}
+
+body.left-collapsed .dock-left { display: flex !important; }
+body.right-collapsed .dock-right { display: flex !important; }
+
+/* Hide TV Watermark Links in Chart Containers */
+#tv-main-chart a,
+#tv-sub-chart-1 a,
+#tv-sub-chart-2 a,
+#tv-sub-chart-3 a,
+#tv-sub-chart-4 a,
+.tv-lightweight-charts a {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* Global Smart Floating Tooltip */
+#global-smart-tooltip {
+  position: fixed;
+  z-index: 999999;
+  background: rgba(13, 19, 31, 0.96);
+  backdrop-filter: blur(12px);
+  color: #f0f6fc;
+  border: 1px solid rgba(0, 210, 255, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 12px rgba(0, 210, 255, 0.25);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  white-space: pre-line;
+  max-width: 280px;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  font-weight: 500;
+}
+
+.has-tooltip {
+  cursor: help;
+}
+
+/* Gemini API Key Button */
+.btn-api-key-config {
+  padding: 2px 7px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 4px;
+  background: rgba(255, 215, 0, 0.15);
+  color: var(--gold-accent);
+  border: 1px solid var(--gold-accent);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-api-key-config:hover {
+  background: var(--gold-accent);
+  color: #070a10;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+/* Advisor Image Attachment & Preview */
+.advisor-img-preview-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(0, 210, 255, 0.08);
+  border-top: 1px solid var(--panel-border);
+  font-size: 0.74rem;
+  color: var(--primary-accent);
+}
+
+.advisor-img-preview-container.hidden {
+  display: none !important;
+}
+
+#advisor-img-preview-thumb {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--primary-accent);
+}
+
+.btn-remove-thumb {
+  background: rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+  border: 1px solid #ff4757;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.65rem;
+  margin-left: auto;
+}
+
+.btn-advisor-attach {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-advisor-attach:hover {
+  background: rgba(0, 210, 255, 0.2);
+  color: var(--primary-accent);
+  border-color: var(--primary-accent);
 }
 
 .left-section {
@@ -803,6 +1056,10 @@ html, body {
   z-index: 9999;
   justify-content: center;
   align-items: center;
+}
+
+.settings-modal-overlay.show {
+  display: flex !important;
 }
 
 .settings-modal {

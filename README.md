@@ -7,7 +7,27 @@
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
 [![引擎版本](https://img.shields.io/badge/Engine-v62.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
-## 🌟 v62.0 CBOE VVIX 尾部避險雷達 ✕ 4 級尾部風險矩陣 ✕ 尋鳥戰情室 4 欄式 Macro Risk HUD 升級
+## 🌟 v62.2 尋鳥戰情室 100% 真實數據管線 ✕ 嚴禁偽數據 Self-Audit ✕ Gemini 2.5 Flash 實盤軍師升級
+
+### 🛡️ 1. 100% 真實市場歷史與即時數據管線 (Hard Redline #6 實裝)
+- **拔除所有隨機擬合與假 Tick**：徹底移除布朗運動與正弦波生成器，全面接入 TWSE/TAIFEX/Yahoo Finance 官方真實市場數據庫。
+- **嚴格區分「指數/殖利率」與「期貨/個股」之成交量 (Volume) 真理**：
+  - **價格指數與殖利率 (TAIEX, OTC, US10Y, DXY)**：副圖 1 成交量直方柱嚴格歸零 (`Volume: 0`)，動態標註 `⚪ 價格指數/殖利率無合約成交量 (Volume: 0)`。
+  - **期貨與個股 (TXF, MTX, MXF, CDF, 2330, 2454, 2317, CL)**：完整呈現真實合約口數/股票張數與 **Volume MA 5 / Volume MA 10** 雙均量線。
+
+### 🤖 2. Google Gemini 2.5 Flash 實盤多模態軍師 ✕ 獨立 Key 配置
+- **專屬 Key 本機安全存取**：戰情室右上角 `🔑 Key` 支援本地保存使用者的 Gemini API Key，享有 Google AI Studio 每日 1,500 次獨立請求額度，絕不與大儀表板共用衝突。
+- **多模態截圖即時診斷**：支援直接按 `Ctrl+V` 貼上券商對帳單或 TradingView 圖表截圖，由 Gemini 2.5 Flash 自動辨識走勢、DeMark 9★ 竭盡點與未實現損益體檢。
+- **最高風控鐵律注入**：AI 軍師對話 100% 綁定 `AGENTS.md` 風控鐵律（嚴禁週選拆單、盤中暴衝不追價、自動試算真金白銀部位與 IOC 洗價條件）。
+
+### 🔍 3. 全市場 2,400+ 檔股號搜尋與鍵盤 Enter 直接切換
+- 頂部搜尋框（`Ctrl+K`）支援輸入任意股號/名稱（如 `2330`、`2454`、`TXF`、`台積電`）後 **直接敲 Enter** 或方向鍵選擇，立即切換全系統報價與 5 個連動圖表。
+
+### 📊 4. 老墨/陳玠儒原創 XQ 籌碼指標 ✕ 雙色 ADX Pro V3 面積雲帶 1:1 對齊
+- **Sub-Chart 4 大戶散戶動能**：1:1 復刻陳玠儒/老墨原創之價量籌碼累積量能柱與亮黃大戶線、青色散戶線。
+- **ADX Pro V3**：採用雙色漸層面積雲帶，標註 26.65 頂部、22.37 突破、11.63 打底門檻與頂底背離標籤。
+
+---
 
 ### 🌪️ 1. CBOE 美股 ^VVIX 實時採集與 4 級尾部風險矩陣 (Tail Risk Matrix)
 - **美股 ^VVIX 即時串接**：串接 Yahoo Finance API 實時採集美股 `^VVIX`（即時值 `102.66` / 漲跌 `+1.85` / 幅度 `+1.83%`），解析做市商對沖黑天鵝風險的買盤加速度。

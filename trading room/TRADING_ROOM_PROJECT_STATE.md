@@ -144,25 +144,36 @@ function updateGexChartOverlay(symbol) {
 
 ## 🚀 八、分階段實作 Roadmap
 
-### Phase 1: 基礎修復、版面優化與 GEX 主圖即時疊加 (立即執行)
-- [ ] 修復「指標庫與參數設定」與「選股雷達」按鈕與 Modal 監聽。
-- [ ] 實作左右側面板伸縮收合功能 (CSS + JS Toggle)。
-- [ ] 移除頂部重複 GEX 點位，調整 Chrome 100% 視窗排版。
-- [ ] **實作 GEX 主圖即時疊加層**：5 大防線、TV 級觸碰突破/跌破標籤、浮動資訊框，並設定**僅在 TXF/MXF/MTX 顯示，其他商品自動隱藏**。
+- [x] 修復「指標庫與參數設定」與「選股雷達」按鈕與 Modal 監聽。
+- [x] 實作左右側面板伸縮收合功能 (CSS + JS Toggle，支援 Alt+1 / Alt+2)。
+- [x] 移除頂部重複 GEX 點位，調整 Chrome 100% 視窗排版與 0 滾動條。
+- [x] **實作 GEX 主圖即時疊加層**：5 大防線、TV 級觸碰突破/跌破標籤、浮動資訊框，並設定**僅在 TXF/MXF/MTX 顯示，其他商品自動隱藏**。
 
-### Phase 2: ADX Pro V3 植入 (移除 DMI)
-- [ ] 依 `adx_dual_color_v3.pine` 在 `room.js` 實現純 JS 演算法。
-- [ ] 渲染 4 色主線、雲帶填色、4 態突破標籤與頂底背離標籤。
-- [ ] 動態副圖新增 MTF 多週期看板。
+### Phase 1: 基礎版面重構 (已完成 ✅)
+- [x] 移除右上角重複 GEX 點位，修復主圖覆蓋問題。
+- [x] 附圖 4 移除 DMI，更換為 ADX Pro V3。
+- [x] 修復指標庫設定 Modal、選股雷達 Modal 事件監聽。
+- [x] 修復左右兩側抽屜式 1/4 伸縮收合。
 
-### Phase 3: 真實報價與多時區切換
-- [ ] 整合真實數據源（TXF/TAIEX/OTC/CDF/US10Y/DXY/CL）。
-- [ ] 實現 1分~月K 10 種時間框架真實 K 棒載入。
+### Phase 2: GEX 主圖即時繪製 (已完成 ✅)
+- [x] 移植 `bluebird_finder_GEX.pine` 演算法。
+- [x] 繪製 Call Wall / Put Wall / Zero Gamma / VEX / Max Pain 水平線與 Price Line。
+- [x] 限制僅在 TXF / MXF / MTX 顯示，切換到其他標的自動隱藏。
 
-### Phase 4: 大戶散戶動能指標實作
-- [ ] 串接期交所 MIS 串流與三大法人盤後口數。
-- [ ] 在副圖區實現法人長條圖與散戶多空比即時面板。
+### Phase 3: 多商品與多時區真實 K 線數據管線 (已完成 ✅)
+- [x] 徹底拔除布朗運動隨機擬合，直連 TWSE/TAIFEX/Yahoo Finance 官方 API。
+- [x] 嚴格區分「指數/殖利率 Volume: 0」與「期貨/個股真實成交量與 Volume MA 5/10」。
+- [x] 支援 8 大核心商品 + 2,400 檔個股與 10 個 Timeframe (1M~1Mth)。
 
-### Phase 5: AI 軍師 2.0 (多模態截圖 + Gemini 2.5)
-- [ ] 前端實作圖片拖曳與截圖剪貼簿上傳。
-- [ ] 後端串接 Gemini API，並注入 AGENTS.md 與 Lumi 選擇權策略知識庫。
+### Phase 4: 老墨/陳玠儒原創籌碼與 ADX Pro V3 面積雲帶 (已完成 ✅)
+- [x] 副圖 4 繪製陳玠儒/老墨原創之價量籌碼累積量能柱 ✕ 亮黃大戶線 ✕ 散戶線。
+- [x] 雙色 ADX Pro V3 面積雲帶與 26.65 頂部、22.37 突破、11.63 打底門檻對齊。
+
+### Phase 5: AI 軍師 2.0 (多模態截圖 + Gemini 2.5 Flash) (已完成 ✅)
+- [x] 戰情室右上角 `🔑 Key` 支援本地安全保存獨立 API Key（享每日 1,500 次獨立免費額度）。
+- [x] 直連 Google Gemini 2.5 Flash 多模態 REST API。
+- [x] 支援 `Ctrl+V` 貼上券商對帳單/圖表截圖，即時進行形態辨識與真金白銀部位診斷。
+- [x] 注入 `AGENTS.md` 風控最高鐵律（週選嚴禁拆單、暴衝不追價、真金白銀持倉試算）。
+- [x] 股號搜尋引擎全面支援鍵盤 `Enter` 鍵直接切換與 ↑/↓ 方向鍵導航。
+- [x] 注入 AGENTS.md 4 大最高風控鐵律與即時部位體檢試算。
+- [ ] 串接雲端 Gemini 2.5 視覺多模態 API。

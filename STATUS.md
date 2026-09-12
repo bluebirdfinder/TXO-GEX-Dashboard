@@ -1,7 +1,6 @@
 # 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v62.2)
 
-**當前版本**：`v62.2` (2026-09-11 CBOE VVIX 波動率之波動率即時採集、4級尾部風險矩陣、賣腳安全氣墊與尋鳥戰情室 4 欄式 Macro Risk HUD 升級版)
-**過往版本**：`v61.0` (2026-09-10 台灣 6 檔正統在美 ADR 換股比率與折溢價公式精確對照版)
+**當前版本**：`v62.2` (2026-09-12 戰情室 100% 真實數據管線、Hard Redline #6 嚴禁偽數據、指數 0 成交量自檢校準、老墨/陳玠儒大戶散戶動能與 Gemini 2.5 Flash 多模態軍師發布版)
 **資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v62.2)
 **即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v62.2)
 **系統狀態**：`✅ 100% 運作正常`
@@ -9,7 +8,21 @@
 
 ---
 
-## 🎯 v62.0 核心更新亮點 (CBOE VVIX Tail Risk Radar & 4-Column Macro Risk HUD)
+## 🎯 v62.2 核心更新亮點 (戰情室 100% 真實數據管線 ✕ 嚴禁偽數據 Self-Audit ✕ Gemini 2.5 Flash 軍師)
+
+### 🛡️ 1. 100% 真實市場數據管線 (Hard Redline #6 實裝)
+- 徹底拔除所有隨機布朗運動擬合與正弦波模擬，直連 TWSE/TAIFEX/Yahoo Finance 官方 API。
+- 嚴格區分「指數/殖利率 (Volume: 0)」與「期貨/個股 (真實成交量/雙均量線)」。
+
+### 🤖 2. Google Gemini 2.5 Flash 實盤多模態 AI 軍師
+- 戰情室右上角 `🔑 Key` 支援本地安全保存獨立 API Key，享有每日 1,500 次獨立免費額度。
+- 支援 `Ctrl+V` 貼上對帳單/圖表截圖進行多模態形態辨識與真金白銀部位診斷。
+
+### 🔍 3. 全市場 2,400+ 檔股號搜尋與 Enter 鍵直接切換
+- 支援任意代碼輸入後直接按 Enter 或上下方向鍵快速切換 5 大圖表。
+
+### 📊 4. 老墨/陳玠儒原創 XQ 籌碼指標 ✕ 雙色 ADX Pro V3 面積雲帶 1:1 對齊
+- Sub-Chart 4 復刻老墨價量累積動能量能柱與大戶/散戶線；ADX Pro V3 升級雙色漸層面積雲帶。
 
 ### 🌪️ 1. CBOE 美股 ^VVIX 實時採集與 4 級尾部風險矩陣 (Tail Risk Matrix)
 - 串接 Yahoo Finance API 實時採集美股 `^VVIX`（即時值 `102.66` / 漲跌 `+1.85` / 幅度 `+1.83%`），解析做市商對沖黑天鵝風險的買盤加速度。
