@@ -35,6 +35,7 @@ let cciLineSeries = null;
 let cciMarkers = [];
 
 let activeSub4 = 'adx'; // Default to ADX Pro V3
+let momentumPollTimer = null; // 大戶散戶動能：輪詢 /api/momentum 的計時器
 let leftPanelCollapsed = false;
 let rightPanelCollapsed = false;
 let advisorAttachedImage = null;
@@ -52,7 +53,8 @@ let sub4Series = {
   dmiAdx: null,
   momentumHist: null,
   momentumLine: null,
-  retailLine: null
+  retailLine: null,
+  marketOrderLine: null
 };
 
 // Overlay Series References on Main Chart
@@ -699,39 +701,16 @@ function generateIndicatorsData(tf) {
     });
   }
 
-  // --- 🐂 大戶散戶動能指標 (1:1 對齊老墨 XQ / TradingView 實盤動能柱與動能線) ---
-  const momentumHist = [];
-  const momentumLine = [];
-  const retailLine = [];
-  const flowArr = [];
-
-  for (let i = 0; i < count; i++) {
-    const t = candles[i].time;
-    const c = closes[i];
-    const o = opens[i];
-    const h = highs[i];
-    const l = lows[i];
-    const v = volumes[i].value;
-
-    const range = Math.max(h - l, 1);
-    // 資金流向因子 = ((C - O) / Range) * Volume
-    const flowVal = ((c - o) / range) * v * 0.4;
-    flowArr.push(flowVal);
-
-    // 10 週期平滑大戶動能
-    let sum10 = 0;
-    const len10 = Math.min(i + 1, 10);
-    for (let k = 0; k < len10; k++) sum10 += flowArr[i - k];
-    const smoothFlow = Math.round(sum10 / len10);
-
-    // 紅多綠空柱體 (正值紅柱做多，負值綠柱做空)
-    const isBull = flowVal >= 0;
-    const histColor = isBull ? 'rgba(255, 71, 87, 0.85)' : 'rgba(46, 213, 115, 0.85)';
-
-    momentumHist.push({ time: t, value: Math.round(flowVal), color: histColor });
-    momentumLine.push({ time: t, value: smoothFlow });
-    retailLine.push({ time: t, value: Math.round(-smoothFlow * 0.65) });
-  }
+  // --- 🐂 大戶散戶動能指標 (陳玠儒/股市擺渡人方法論：委託口差 + 成交筆數差) ---
+  // 2026-09-13 self-audit 更正：這裡原本用 K 棒開高低收公式湊出一條假的「大戶動能」與
+  // 「散戶反向線」（散戶=大戶乘負數），跟真實法人/委託簿資料完全無關。已移除。
+  // 真實數據改由 scripts/fubon_api_provider.py 的 Books(五檔)/Trades(逐筆成交) 頻道即時算，
+  // 透過 fetchAndAppendMomentumBar() 用真實資料即時附加最新一根 30 分鐘 bar，見該函式定義。
+  // 這裡刻意留空陣列：對「還沒有真實資料的歷史時段」，寧可不畫，也不假裝有數據。
+  const momentumHist = [];   // 大戶委託口差 (紅柱，即時附加)
+  const momentumLine = [];   // 保留給未來需要的平滑線，目前未使用
+  const retailLine = [];     // 散戶成交筆數差 (綠柱，即時附加)
+  const marketOrderLine = []; // 市場委買委賣口差 (黃線，即時附加)
 
   // --- 🚀 Authentic ADX Pro V3 (Dual Color + 4-State Breakout + Divergence) ---
   // 1:1 對齊 adx_dual_color_v3.pine 演算法
@@ -1028,6 +1007,7 @@ function generateIndicatorsData(tf) {
     momentumHist,
     momentumLine,
     retailLine,
+    marketOrderLine,
     adxLine,
     adxHist,
     adxSignals,
@@ -1106,6 +1086,8 @@ function renderSub4Chart(data) {
   if (sub4Series.momentumHist) { subChart4.removeSeries(sub4Series.momentumHist); sub4Series.momentumHist = null; }
   if (sub4Series.momentumLine) { subChart4.removeSeries(sub4Series.momentumLine); sub4Series.momentumLine = null; }
   if (sub4Series.retailLine) { subChart4.removeSeries(sub4Series.retailLine); sub4Series.retailLine = null; }
+  if (sub4Series.marketOrderLine) { subChart4.removeSeries(sub4Series.marketOrderLine); sub4Series.marketOrderLine = null; }
+  stopMomentumLivePolling();
 
   const badge = document.getElementById('pane-4-badge');
 
@@ -1153,28 +1135,40 @@ function renderSub4Chart(data) {
       title: 'Zero'
     });
   } else if (activeSub4 === 'momentum') {
-    if (badge) badge.innerText = '🐂 大戶散戶動能 (陳玠儒/老墨 實盤籌碼量能柱 & 黃綠動能線)';
-    
-    // 1. 大戶買賣動能量能柱 (紅多綠空 1:1 復刻陳玠儒/老墨實盤)
+    // 2026-09-13 更正：此副圖過去用 K 棒公式湊假數據，已移除。
+    // 現在只畫「這個 session 開始追蹤之後」真正收到的富邦 Books(五檔)/Trades(逐筆成交) 資料，
+    // 30分鐘 bar 由 fetchAndAppendMomentumBar() 即時輪詢附加，見該函式與後端
+    // scripts/fubon_api_provider.py 的 get_momentum_bar_30m()。歷史時段（此 session 開始前）
+    // 沒有真數據可畫，故意留白，不補假資料。
+    const symbolCode = (currentActiveSymbol?.symbol || activeContract || '').toUpperCase();
+    const isMomentumEligible = GEX_SUPPORTED_SYMBOLS.includes(symbolCode); // 目前後端只訂閱了 TXF
+    if (badge) {
+      badge.innerText = isMomentumEligible
+        ? '🐂 大戶散戶動能 (真實 Books/Trades 即時串接，2026-09-13起，僅 TXF 有資料)'
+        : '🐂 大戶散戶動能 (目前僅 TXF/MXF/MTX 有真實委託簿數據，此商品尚未支援)';
+    }
+
+    // 1. 大戶委託口差 (紅柱=偏多掛單較多，綠柱=偏空掛單較多；來源：Books 五檔委買委賣總口數差)
     sub4Series.momentumHist = subChart4.addHistogramSeries({
       priceScaleId: 'right',
-      title: '大戶動能柱'
+      title: '大戶委託口差'
     });
 
-    // 2. 平滑大戶動能累積線 (亮黃多頭/青綠空頭)
-    sub4Series.momentumLine = subChart4.addLineSeries({
-      color: '#FFEB3B',
-      lineWidth: 2,
-      priceScaleId: 'right',
-      title: '大戶動能線'
-    });
-
-    // 3. 散戶反向對做線 (天藍色)
+    // 2. 散戶成交筆數差 (青綠色；來源：Trades 逐筆成交，買筆數-賣筆數，非口數)
     sub4Series.retailLine = subChart4.addLineSeries({
       color: '#00CEC9',
       lineWidth: 1.5,
       priceScaleId: 'right',
-      title: '散戶反向線'
+      title: '散戶成交筆數差'
+    });
+
+    // 3. 市場委買委賣口差 (黃線；目前與大戶委託口差同源，見後端註解說明限制)
+    sub4Series.marketOrderLine = subChart4.addLineSeries({
+      color: '#FFEB3B',
+      lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Dashed,
+      priceScaleId: 'right',
+      title: '市場委買委賣口差'
     });
 
     // 4. 0 基準水平線
@@ -1187,14 +1181,70 @@ function renderSub4Chart(data) {
     });
 
     sub4Series.momentumHist.setData(data.momentumHist);
-    sub4Series.momentumLine.setData(data.momentumLine);
     sub4Series.retailLine.setData(data.retailLine);
+    sub4Series.marketOrderLine.setData(data.marketOrderLine);
+
+    if (isMomentumEligible) startMomentumLivePolling(symbolCode);
   }
 }
 
 /**
  * Render Overlays on Main Chart
  */
+/**
+ * 大戶散戶動能：即時輪詢後端 /api/momentum，把真實的「目前這根 30 分鐘 bar」
+ * 附加到圖表最新一個點（lightweight-charts 的 series.update() 對同一個 time 會覆蓋、
+ * 對新 time 會新增一筆，正好符合「bar 還在進行中就不斷更新最新值」的需求）。
+ * 只有在 Sub-Chart 4 切到 'momentum' 分頁時才會呼叫（見 renderSub4Chart）。
+ */
+async function fetchAndAppendMomentumBar(symbol) {
+  try {
+    const res = await fetch(`http://localhost:8000/api/momentum?symbol=${encodeURIComponent(symbol)}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const payload = await res.json();
+    const bar = payload && payload.bar;
+    if (!bar || activeSub4 !== 'momentum') return;
+
+    const t = Math.floor(bar.bar_start_ts);
+    const isBull = bar.big_order_diff >= 0;
+
+    if (sub4Series.momentumHist) {
+      sub4Series.momentumHist.update({
+        time: t,
+        value: bar.big_order_diff,
+        color: isBull ? 'rgba(255, 71, 87, 0.85)' : 'rgba(46, 213, 115, 0.85)'
+      });
+    }
+    if (sub4Series.retailLine) {
+      sub4Series.retailLine.update({ time: t, value: bar.retail_trade_count_diff });
+    }
+    if (sub4Series.marketOrderLine) {
+      sub4Series.marketOrderLine.update({ time: t, value: bar.market_order_diff });
+    }
+
+    const badge = document.getElementById('pane-4-badge');
+    if (badge && !payload.books_subscribed && !payload.trades_subscribed) {
+      badge.innerText = '🐂 大戶散戶動能 (後端尚未連上富邦 Books/Trades — 檢查 live_price_server.py 是否已啟動)';
+    }
+  } catch (e) {
+    // Gateway server (live_price_server.py) not running locally — fail silently,
+    // this is expected whenever the user isn't running it (e.g. this cloud session).
+  }
+}
+
+function startMomentumLivePolling(symbol) {
+  stopMomentumLivePolling();
+  fetchAndAppendMomentumBar(symbol);
+  momentumPollTimer = setInterval(() => fetchAndAppendMomentumBar(symbol), 5000);
+}
+
+function stopMomentumLivePolling() {
+  if (momentumPollTimer) {
+    clearInterval(momentumPollTimer);
+    momentumPollTimer = null;
+  }
+}
+
 function renderMainOverlays(data) {
   // Clear old series
   if (overlaySeries.ribbons.ma7) { mainChart.removeSeries(overlaySeries.ribbons.ma7); overlaySeries.ribbons.ma7 = null; }
