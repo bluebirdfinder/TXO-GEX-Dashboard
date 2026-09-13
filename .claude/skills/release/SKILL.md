@@ -1,0 +1,41 @@
+---
+name: release
+description: TXO-GEX-Dashboard 專屬發版流程 — 版本號原子升級、8 大關鍵位置同步、HISTORY.md 強制寫入本次變更說明、Git commit & push。當使用者說「發版」「升版」「bump version」「發布 vX.Y」「這次可以發新版了」「版本號改一下」時觸發。
+---
+
+# TXO-GEX-Dashboard 發版 SOP
+
+> 對應規則來源：[AGENTS.md](../../../AGENTS.md) 鐵律 1、[.agents/rules/VERSION_RELEASE.md](../../../.agents/rules/VERSION_RELEASE.md)
+
+## 為什麼要有這個 skill
+
+`scripts/bump_version.py` 已經把「版本號同步」這個機械步驟自動化了（7 個檔案 + 重新編譯數據 + 自動稽核）。但它**不會**幫你寫 HISTORY.md 裡「這次到底改了什麼、為什麼改」的敘事說明——這段之前完全靠 AI 記性，是最常被漏掉的一步。這個 skill 把「寫變更說明」變成執行流程裡**不可跳過**的一步，而不是事後才想起來要補。
+
+## 執行步驟（一步都不能省）
+
+1. **確認新版本號與這次的變更重點**：跟使用者確認（或從對話脈絡整理）要升到哪個版本、這次做了什麼。如果使用者只說「發版」沒給版本號，用現有 `ENGINE_VERSION` 往上加 0.1（次要修正）或整數（重大功能）自行判斷並跟使用者確認一次。
+
+2. **跑原子升級工具**：
+   ```
+   python scripts/bump_version.py <新版次，例如 v63.0>
+   ```
+   這會自動處理：`fetch_and_calc_vision.py` / `index.html` / `STATUS.md` / `PROJECT_HANDOVER.md` / `README.md` / `room.html` / `room.js` 的版本號字串、重新執行數據引擎、8 大位置一致性稽核、現貨與期指方向性 Sanity Check。**稽核沒過（腳本印出 ❌ 或非 0 exit code）就停下來排查，不要硬推。**
+
+3. **手動在 [HISTORY.md](../../../HISTORY.md) 補上這次的敘事條目**（`bump_version.py` 不會做這步，必須自己做）：
+   - 在「## 📅 版本演進總覽時間軸」表格最上方加一列新資料。
+   - 在「## 🎯 各版本詳細更新紀錄」最上方加一個新的 `### 🚀 vX.Y ...標題 (YYYY-MM-DD)` 小節，用跟既有條目相同的詳細程度寫清楚：改了什麼檔案、根因是什麼、驗證結果是什麼——不是一句話帶過，參考上面既有版本條目的寫法深度。
+
+4. **檢查 STATUS.md 是否需要新增功能條目**（不只是版本號，如果這次有新功能，STATUS.md 開頭的核心更新亮點區塊也要加一段——`bump_version.py` 只換版號，不會自動加新內容）。
+
+5. **本地驗證**：確認 `index.html` 在瀏覽器打開後版本號一致、沒有「閃一下跳回舊版」。
+
+6. **Git commit & push**：
+   - `git add` 這次動到的檔案（不要用 `git add -A`，先看過 `git status`）。
+   - commit message 用英文 conventional commit 風格（參考近期 log），結尾照系統附註加上 Co-Authored-By。
+   - **push 前一定要先跟使用者確認**（這是外部可見動作，不可自作主張執行）。
+
+## 不要做的事
+
+- 不要只改版本號字串卻不重跑 `fetch_and_calc_vision.py`（會導致 [AGENTS.md](../../../AGENTS.md) 鐵律 1 講的「版本閃一下又跳回舊版」）。
+- 不要跳過 HISTORY.md 那一步，即使使用者沒提醒——這正是這個 skill 存在的理由。
+- 不要沒問過使用者就 push。

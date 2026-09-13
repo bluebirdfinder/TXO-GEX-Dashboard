@@ -91,4 +91,17 @@ git push origin main
 
 ---
 
+## 🤝 五、Claude Code 交接基礎設施 (2026-09-14)
+
+隨著開發主力從 Antigravity 轉為 Claude Code，加入以下常駐設置：
+
+| 項目 | 位置 | 說明 |
+|---|---|---|
+| **`CLAUDE.md`** | 專案根目錄 | Claude Code 每個 session 開場自動載入，用 `@AGENTS.md` 引入既有 6 大風控鐵律，取代過去只有 `GEMINI.md` 會被讀取的狀況 |
+| **`release` skill** | `.claude/skills/release/SKILL.md` | 專案專屬發版 SOP，把 `scripts/bump_version.py` 的原子升級流程包成可觸發的 skill，並將「補寫 HISTORY.md 變更說明」列為不可省略的一步 |
+| **`antigravity-handover` skill**（全域） | `~/.claude/skills/antigravity-handover/` | 接手其他 Antigravity 舊專案時的交接準備 SOP，不屬於本 repo |
+| **`cloud-automation-pipeline` skill**（全域） | `~/.claude/skills/cloud-automation-pipeline/` | 雲端排程自動化管線通用 SOP（GitHub Actions 排程、資料完整性防呆、防重複發送鎖），不屬於本 repo |
+
+---
+
 *最後更新：2026-08-26 推送版 | 尋鳥 Bluebird Finder | v46.2*
