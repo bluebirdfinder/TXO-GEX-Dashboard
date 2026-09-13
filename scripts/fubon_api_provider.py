@@ -3,6 +3,7 @@ import sys
 import logging
 import datetime
 import time
+from collections import deque
 
 # Set up logging for Fubon Provider
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -61,6 +62,15 @@ class FubonAPIProvider:
         # books_cache[symbol] = {'bids': [{'price':..,'size':..}, ...], 'asks': [...], 'time':.., 'raw': <last raw message dict>}
         self.books_cache = {}
         self._books_subscribed = set()
+
+        # Trades (逐筆成交) WebSocket stream state.
+        # trades_log[symbol] = a bounded deque of {'price','size','side','ts'} — 'side' is
+        # inferred (tick rule) since the trades schema itself is not fully confirmed; see
+        # start_trades_stream()'s docstring for exactly what is and isn't verified.
+        self.trades_log = {}
+        self._trades_subscribed = set()
+        self._trades_logged_raw = set()  # symbols we've logged one raw message for, for schema verification
+        self._TRADES_LOG_MAXLEN = 20000  # ~a session's worth of prints per symbol; bounded so memory can't grow unbounded
 
         self._initialize_sdk()
 
@@ -311,6 +321,199 @@ class FubonAPIProvider:
     def get_book(self, symbol):
         """ Returns the latest cached Books (五檔) snapshot for symbol, or None if never received. """
         return self.books_cache.get(symbol)
+
+    # ------------------------------------------------------------------
+    # Trades (逐筆成交) stream — needed for 散戶成交筆數差 (retail trade-COUNT
+    # differential, per 陳玠儒/股市擺渡人's methodology: count of buy prints
+    # minus count of sell prints, NOT summed volume).
+    # ------------------------------------------------------------------
+
+    def start_trades_stream(self, symbols):
+        """
+        Subscribes to Fubon's futures WebSocket "trades" channel (逐筆成交).
+
+        CONFIRMED (same verified mechanism as start_books_stream — see its
+        docstring): subscribe({'channel': 'trades', 'symbol': ...}) over the
+        same futopt websocket_client, same connect/on/message/disconnect API.
+
+        NOT independently confirmed for the FUTURES trades payload (I could not
+        reach fbs.com.tw or developer.fugle.tw from this sandbox to see a real
+        futopt 'trades' example — only the Books page was hand-verified by the
+        user). What I have instead, from web-search summaries only (weaker
+        evidence, treat as "likely, not certain"):
+          - A general Fugle "trades" schema (this may be the STOCK version,
+            not futopt) showing: symbol, price, size, volume(cumulative),
+            bid, ask, isClose, time, serial.
+          - A separate summary claiming the *futures* trades payload has:
+            symbol, price, size, time (microseconds), serial.
+        Since these two disagree on whether bid/ask/volume are present, this
+        code does NOT assume bid/ask exist. It infers the trade's aggressor
+        side using the tick rule against the Books cache (already confirmed)
+        instead: price >= best ask -> buy print, price <= best bid -> sell
+        print, otherwise inherit the previous print's side. This sidesteps
+        depending on unconfirmed trades-payload fields entirely.
+
+        Like start_books_stream(), the first raw message per symbol is logged
+        at INFO so the parsing can be corrected against a real message.
+        """
+        if not self.is_active or not self.marketdata:
+            logging.warning("start_trades_stream: Fubon SDK not active — cannot subscribe to Trades channel.")
+            return False
+
+        try:
+            futopt_ws = self.marketdata.websocket_client.futopt
+        except Exception as e:
+            logging.warning(f"start_trades_stream: websocket_client.futopt unavailable: {e}")
+            return False
+
+        if not self._trades_subscribed:
+            futopt_ws.on('message', self._handle_trades_message)
+            # Note: Books already wires 'error'/'disconnect' on this same shared
+            # futopt client in start_books_stream(); if Trades is started without
+            # Books ever having run, wire them here too so a Trades-only caller
+            # still gets reconnect behavior.
+            if not self._books_subscribed:
+                futopt_ws.on('error', lambda err: logging.warning(f"Fubon Trades WebSocket error: {err}"))
+                futopt_ws.on('disconnect', lambda code, msg: self._on_trades_disconnect(futopt_ws, code, msg))
+                try:
+                    futopt_ws.connect()
+                except Exception as e:
+                    logging.warning(f"start_trades_stream: connect() failed: {e}")
+                    return False
+
+        for symbol in symbols:
+            if symbol in self._trades_subscribed:
+                continue
+            try:
+                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
+                self._trades_subscribed.add(symbol)
+                logging.info(f"Fubon Trades channel: subscribed to {symbol} (逐筆成交).")
+            except Exception as e:
+                logging.warning(f"start_trades_stream: subscribe({symbol}) failed: {e}")
+
+        return True
+
+    def _on_trades_disconnect(self, futopt_ws, code, msg):
+        logging.warning(f"Fubon Trades WebSocket disconnected ({code}: {msg}). Reconnecting...")
+        try:
+            futopt_ws.connect()
+            for symbol in list(self._trades_subscribed):
+                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
+            for symbol in list(self._books_subscribed):
+                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
+            logging.info("Fubon Trades WebSocket reconnected and re-subscribed.")
+        except Exception as e:
+            logging.warning(f"Fubon Trades WebSocket reconnect failed: {e}")
+
+    def _handle_trades_message(self, raw_message):
+        """ Parses a raw 'message' event from the futopt Trades WebSocket. See start_trades_stream() docstring for what is/isn't confirmed. """
+        try:
+            import json as _json
+            message = _json.loads(raw_message) if isinstance(raw_message, (str, bytes)) else raw_message
+        except Exception as e:
+            logging.debug(f"Trades message JSON parse error: {e}")
+            return
+
+        event = message.get('event')
+        if event == 'subscribed':
+            logging.info(f"Fubon Trades: subscription confirmed — {message.get('data')}")
+            return
+        if event != 'data':
+            return
+
+        data = message.get('data') or {}
+        symbol = data.get('symbol')
+        price = data.get('price')
+        size = data.get('size')
+        if not symbol or price is None or size is None:
+            return
+
+        if symbol not in self._trades_logged_raw:
+            logging.info(f"Fubon Trades RAW sample for {symbol} (verify against this): {data}")
+            self._trades_logged_raw.add(symbol)
+
+        # Tick-rule side inference against the Books cache (confirmed schema) —
+        # deliberately does not depend on an unconfirmed 'bid'/'ask' field on
+        # the trades payload itself.
+        book = self.books_cache.get(symbol)
+        side = None
+        if book and book.get('bids') and book.get('asks'):
+            best_bid = book['bids'][0]['price']
+            best_ask = book['asks'][0]['price']
+            if price >= best_ask:
+                side = 'buy'
+            elif price <= best_bid:
+                side = 'sell'
+        if side is None:
+            log = self.trades_log.get(symbol)
+            side = log[-1]['side'] if log else 'buy'
+
+        if symbol not in self.trades_log:
+            self.trades_log[symbol] = deque(maxlen=self._TRADES_LOG_MAXLEN)
+        self.trades_log[symbol].append({
+            'price': float(price),
+            'size': int(size),
+            'side': side,
+            'ts': time.time()
+        })
+
+    def get_recent_trades(self, symbol, since_ts=None):
+        """ Returns cached trade prints for symbol, optionally only those at/after since_ts (epoch seconds). """
+        log = self.trades_log.get(symbol)
+        if not log:
+            return []
+        if since_ts is None:
+            return list(log)
+        return [t for t in log if t['ts'] >= since_ts]
+
+    def get_momentum_bar_30m(self, symbol):
+        """
+        Aggregates the current (in-progress) 30-minute bar's three momentum
+        lines, per 陳玠儒/股市擺渡人's methodology (see
+        ../trading room/TRADING_ROOM_PROJECT_STATE.md for the full writeup):
+
+          - big_order_diff (大戶委託口差): sum(bid sizes) - sum(ask sizes)
+            from the current top-5 Books snapshot. This is an APPROXIMATION
+            of the original concept (large resting orders specifically) —
+            we only have top-5 depth, not a full order book we could filter
+            by order size, so this uses total top-5 committed size on each
+            side as the proxy. Documented, not hidden.
+          - retail_trade_count_diff (散戶成交筆數差): count of buy-side trade
+            prints minus count of sell-side trade prints in this bar — COUNT
+            of prints, not summed volume, per the methodology.
+          - market_order_diff (市場委買委賣口差): same top-5 Books snapshot as
+            big_order_diff. With only top-5 depth available (not the full
+            market's resting orders), this session has no way to compute a
+            genuinely different "whole market" number from the "big player"
+            number — both currently read the same Books snapshot. Flagged
+            here rather than silently faked into two different-looking lines.
+
+        Returns None if no book/trades data is cached yet for symbol.
+        """
+        book = self.books_cache.get(symbol)
+        if not book:
+            return None
+
+        bid_total = sum(lvl['size'] for lvl in book.get('bids', []))
+        ask_total = sum(lvl['size'] for lvl in book.get('asks', []))
+        big_order_diff = bid_total - ask_total
+
+        now = time.time()
+        bar_start = now - (now % 1800)  # current 30-minute wall-clock bucket
+        recent = self.get_recent_trades(symbol, since_ts=bar_start)
+        buy_count = sum(1 for t in recent if t['side'] == 'buy')
+        sell_count = sum(1 for t in recent if t['side'] == 'sell')
+
+        return {
+            'symbol': symbol,
+            'bar_start_ts': bar_start,
+            'big_order_diff': big_order_diff,
+            'retail_trade_count_diff': buy_count - sell_count,
+            'market_order_diff': big_order_diff,  # see docstring: same source as big_order_diff for now
+            'trade_count_in_bar': len(recent),
+            'is_trial': bool(book.get('is_trial', False)),
+            'updated_ts': now
+        }
 
 
 # Global singleton instance for app-wide access
