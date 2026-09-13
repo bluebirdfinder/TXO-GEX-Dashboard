@@ -9,6 +9,32 @@
 
 ---
 
+## ⚠️ 重要：目前同時有多個 session 在並行處理這個專案，開新對話室前請先確認彼此進度
+
+2026-09-13 深夜發現：除了這個稽核 session、以及正在做大戶散戶動能即時串接的 session，**至少還有兩個其他獨立 session 也在動這個專案**：
+
+1. **「Antigravity 專案交接準備」**：已完成交接工作並推上 `main`（commit `7488a9c`）——新增 `CLAUDE.md`、`.claude/skills/release/SKILL.md`、更新 `PROJECT_HANDOVER.md` 第五節，另外還做了全域的 `antigravity-handover` skill（含「零偽數據範本」）與 `cloud-automation-pipeline` skill（這兩個是全域 skill，不在這個 repo 的 git 樹裡）。這個 session 本身已收工。
+2. **`txo-gex-dashboard-80`**：正在對 `scripts/fetch_and_calc_vision.py` 做真實資料修復（詳見下方「一之一」），自己有 3 項 self-audit 待辦，目前完成 2 項但**故意不 commit**，因為它的規矩是「3 項一起測完、使用者點頭才 commit」。截至記錄當下，這個 session 也已經沒在運作（無法用 `ListAgents` 聯繫到）。
+
+**開新對話室接手這份清單之前，請先確認 `txo-gex-dashboard-80` 那邊 3 項有沒有全部做完並 commit**，避免兩邊改到同一個檔案（`fetch_and_calc_vision.py`）而衝突，也避免重複發現同一個 bug 浪費工。之後每開一個新 session 處理這個專案，都應該先讓它讀這份文件，確保大家看到的是同一份最新清單。
+
+---
+
+## 一之一、`txo-gex-dashboard-80` 發現的真實修復（本機尚未 commit，等 3 項一起測完）
+
+這是另一個 session 對 `scripts/fetch_and_calc_vision.py` 做的修改，2026-09-13 深夜在使用者本機 `git status` 時發現是未 commit 狀態。內容經過檢視，**是真實、高品質的修復**，不是幻覺：
+
+| 修復項目 | 內容 | 狀態 |
+|---|---|---|
+| `fetch_twse_institutional_t86()` | 抓證交所官方 T86 三大法人買賣超日報，取代原本 `stock_futures` 裡 `spot_inst_net`/`spot_foreign`/`spot_trust`/`spot_dealer` 的**佔位假數字**（含原本 `spot_gov = int(-spot_inst_net * 0.18)` 這種瞎猜比例，已移除），查不到時誠實標記 `spot_data_unavailable: true`，不補假數字。 | ✅ 已寫好，待測 |
+| `fetch_taifex_stock_futures_contract_map()` | 抓期交所官方個股期貨合約代碼對照表（`data/taifex_stock_futures_contract_map.json`，250+ 檔真實對照，例如 `"2330": "CD"`），這份剛好也解決了「大戶散戶動能」個股期貨擴充所需的股票代號→期貨合約代碼對照。 | ✅ 已寫好，待測 |
+| `fetch_taifex_stock_futures_large_trader_batch()` | 對每一檔個股期貨查期交所官方大額交易人未平倉，取代原本 `top5_net_oi`/`top10_net_oi` 的佔位假數字。 | ✅ 已寫好，待測 |
+| **5 日法人歷程矩陣，4/5 天寫死** | `txo-gex-dashboard-80` 自己回報的第 3 項待修，尚未完成。**具體是哪個函式/哪個檔案還沒確認**，需要向 `-80` 或後續 session 追問細節。 | ❌ 待修，`-80` 規矩是 3 項一起測完才 commit |
+
+**下一步**：等 `-80` 完成「5日法人歷程矩陣」修復，使用者在本機執行 `python scripts/fetch_and_calc_vision.py` 確認三項一起跑沒問題、沒有報錯，使用者點頭後才 commit + push。這幾份修改跟其他 session（包含這份清單涉及的其餘工作）都沒有碰到同樣的檔案，理論上不會衝突。
+
+---
+
 ## 一、GEX 主儀表板（index.html / app.js / scripts）
 
 ### 🔴 已確認的假資料 / hallucination
