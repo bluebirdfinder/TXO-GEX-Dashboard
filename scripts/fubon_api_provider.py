@@ -53,6 +53,13 @@ class FubonAPIProvider:
             'source': 'Fubon Neo API (Live)'
         }
         self.last_fetch_ts = 0
+
+        # Books (五檔委託簿) WebSocket stream state.
+        # books_cache[symbol] = {'bids': [{'price':..,'size':..}, ...], 'asks': [...], 'time':.., 'raw': <last raw message dict>}
+        self.books_cache = {}
+        self._books_subscribed = set()
+        self._books_logged_raw = set()  # symbols we've already logged one raw message for (for schema verification)
+
         self._initialize_sdk()
 
     def _initialize_sdk(self):
@@ -201,6 +208,118 @@ class FubonAPIProvider:
             logging.debug(f"Fubon live quote fetch error: {e}")
 
         return self.last_cache
+
+    def start_books_stream(self, symbols):
+        """
+        Subscribes to Fubon's futures WebSocket "books" channel (五檔委買委賣簿)
+        for the given symbols (e.g. ['TXFA4', 'MXFA4']).
+
+        Verified against the installed fubon_neo==2.2.8 SDK source
+        (fubon_neo/adapter.py -> WebSocketFutOptClientWrapper, and the underlying
+        fugle_marketdata.WebSocketClient it wraps):
+          - self.marketdata.websocket_client.futopt exposes .on(event, cb),
+            .connect(), .subscribe(params), .unsubscribe(params), .disconnect()
+          - subscribe() sends {"event": "subscribe", "data": params} over the socket;
+            'books' is a real channel name per Fubon's official docs (top-5 bid/ask).
+          - Inbound messages arrive on the 'message' event as a RAW JSON string
+            (the SDK does not hand you a parsed dict) — this must be json.loads()'d.
+
+        NOT verified from source (no live TAIFEX session available to me): the exact
+        field names inside a 'books' data payload (I could not reach fbs.com.tw's
+        docs page or a live sample from this sandbox). _handle_books_message()
+        below tries the field names Fugle's public market-data schema is known to
+        use ('bids'/'asks' lists of {'price','size'}), and logs the first raw
+        message per symbol at INFO level so you can confirm/correct the parsing
+        against a real message the next time the market is open.
+        """
+        if not self.is_active or not self.marketdata:
+            logging.warning("start_books_stream: Fubon SDK not active — cannot subscribe to Books channel.")
+            return False
+
+        try:
+            futopt_ws = self.marketdata.websocket_client.futopt
+        except Exception as e:
+            logging.warning(f"start_books_stream: websocket_client.futopt unavailable: {e}")
+            return False
+
+        # Wire the message handler once.
+        if not self._books_subscribed:
+            futopt_ws.on('message', self._handle_books_message)
+            futopt_ws.on('error', lambda err: logging.warning(f"Fubon Books WebSocket error: {err}"))
+            try:
+                futopt_ws.connect()
+            except Exception as e:
+                logging.warning(f"start_books_stream: connect() failed: {e}")
+                return False
+
+        for symbol in symbols:
+            if symbol in self._books_subscribed:
+                continue
+            try:
+                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
+                self._books_subscribed.add(symbol)
+                logging.info(f"Fubon Books channel: subscribed to {symbol} (五檔委託簿).")
+            except Exception as e:
+                logging.warning(f"start_books_stream: subscribe({symbol}) failed: {e}")
+
+        return True
+
+    def _handle_books_message(self, raw_message):
+        """
+        Parses a raw 'message' event payload from the futopt Books WebSocket.
+        Message envelope confirmed from SDK source: json string of {"event": ..., "data": {...}}.
+        Inner 'data' shape for a books frame is NOT independently verified here —
+        see the docstring on start_books_stream(). Kept defensive on purpose:
+        unknown field names are stored under 'raw' rather than silently dropped,
+        so nothing here can quietly fabricate bid/ask numbers that didn't arrive.
+        """
+        try:
+            import json as _json
+            message = _json.loads(raw_message) if isinstance(raw_message, (str, bytes)) else raw_message
+        except Exception as e:
+            logging.debug(f"Books message JSON parse error: {e}")
+            return
+
+        event = message.get('event')
+        data = message.get('data') or {}
+
+        # Only handle actual market-data frames; ignore auth/subscribe-ack/ping frames.
+        if event not in ('data', 'books', 'quote'):
+            return
+
+        symbol = data.get('symbol')
+        if not symbol:
+            return
+
+        if symbol not in self._books_logged_raw:
+            logging.info(f"Fubon Books RAW sample for {symbol} (verify field names against this): {data}")
+            self._books_logged_raw.add(symbol)
+
+        bids = data.get('bids') or data.get('bid') or []
+        asks = data.get('asks') or data.get('ask') or []
+
+        def _normalize_side(levels):
+            out = []
+            for lvl in levels:
+                if isinstance(lvl, dict):
+                    price = lvl.get('price')
+                    size = lvl.get('size') if lvl.get('size') is not None else lvl.get('volume')
+                    if price is not None and size is not None:
+                        out.append({'price': float(price), 'size': int(size)})
+            return out
+
+        self.books_cache[symbol] = {
+            'bids': _normalize_side(bids),
+            'asks': _normalize_side(asks),
+            'time': data.get('time') or data.get('lastUpdated'),
+            'updated_ts': time.time(),
+            'raw': data
+        }
+
+    def get_book(self, symbol):
+        """ Returns the latest cached Books (五檔) snapshot for symbol, or None if never received. """
+        return self.books_cache.get(symbol)
+
 
 # Global singleton instance for app-wide access
 fubon_provider = FubonAPIProvider()
