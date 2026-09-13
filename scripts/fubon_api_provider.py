@@ -43,7 +43,10 @@ class FubonAPIProvider:
         self.is_active = False
         self.sdk_instance = None
         self.marketdata = None
-        self.txf_symbol = "TXFI6"
+        # Continuous front-month alias (per Fubon's official "商品代碼與連續月別名" docs):
+        # resolves to the current near-month contract and auto-rolls after settlement,
+        # for both REST (/intraday/quote) and WebSocket subscribe — no manual detection needed.
+        self.txf_symbol = "TXF1!"
         self.last_cache = {
             'spot_price': None,
             'otc_price': None,
@@ -58,7 +61,6 @@ class FubonAPIProvider:
         # books_cache[symbol] = {'bids': [{'price':..,'size':..}, ...], 'asks': [...], 'time':.., 'raw': <last raw message dict>}
         self.books_cache = {}
         self._books_subscribed = set()
-        self._books_logged_raw = set()  # symbols we've already logged one raw message for (for schema verification)
 
         self._initialize_sdk()
 
@@ -92,7 +94,6 @@ class FubonAPIProvider:
                         token = sdk.exchange_realtime_token()
                         if token:
                             self.marketdata = MarketData(token, Mode.Normal)
-                            self._detect_txf_symbol()
                             self.is_active = True
                             logging.info(f"SUCCESS: Fubon API Provider Authenticated & MarketData Active! Target Front-Month: {self.txf_symbol}")
                         else:
@@ -114,20 +115,6 @@ class FubonAPIProvider:
         except Exception as e:
             logging.warning(f"Fubon API Initialization error: {e}. Falling back to Web API.")
             self.is_active = False
-
-    def _detect_txf_symbol(self):
-        """ Dynamically resolves current front-month TXF futures symbol from Fugle MarketData """
-        if not self.marketdata:
-            return
-        try:
-            tickers_res = self.marketdata.rest_client.futopt.intraday.tickers(type="FUTURE")
-            data = tickers_res.get("data", []) if isinstance(tickers_res, dict) else []
-            tx_items = [t for t in data if t.get("symbol", "").startswith("TX") and t.get("contractType") == "I"]
-            tx_items.sort(key=lambda x: x.get("settlementDate", ""))
-            if tx_items:
-                self.txf_symbol = tx_items[0]["symbol"]
-        except Exception as e:
-            logging.debug(f"Fubon TXF symbol auto-detect notice: {e}")
 
     def get_live_quotes(self):
         """
@@ -216,21 +203,23 @@ class FubonAPIProvider:
 
         Verified against the installed fubon_neo==2.2.8 SDK source
         (fubon_neo/adapter.py -> WebSocketFutOptClientWrapper, and the underlying
-        fugle_marketdata.WebSocketClient it wraps):
+        fugle_marketdata.WebSocketClient it wraps) AND against the official
+        "期權 WebSocket / Channels / Books" doc page (fbs.com.tw/TradeAPI):
           - self.marketdata.websocket_client.futopt exposes .on(event, cb),
             .connect(), .subscribe(params), .unsubscribe(params), .disconnect()
-          - subscribe() sends {"event": "subscribe", "data": params} over the socket;
-            'books' is a real channel name per Fubon's official docs (top-5 bid/ask).
+          - subscribe() sends {"event": "subscribe", "data": params} over the socket.
           - Inbound messages arrive on the 'message' event as a RAW JSON string
             (the SDK does not hand you a parsed dict) — this must be json.loads()'d.
-
-        NOT verified from source (no live TAIFEX session available to me): the exact
-        field names inside a 'books' data payload (I could not reach fbs.com.tw's
-        docs page or a live sample from this sandbox). _handle_books_message()
-        below tries the field names Fugle's public market-data schema is known to
-        use ('bids'/'asks' lists of {'price','size'}), and logs the first raw
-        message per symbol at INFO level so you can confirm/correct the parsing
-        against a real message the next time the market is open.
+          - A books data frame is exactly:
+              {"event": "data", "channel": "books", "id": "<CHANNEL_ID>",
+               "data": {"symbol", "type", "exchange", "time",
+                        "bids": [{"price","size"}, ...] (top 5),
+                        "asks": [{"price","size"}, ...] (top 5),
+                        "derivedBid": {"price","size"},  # spread-contract only, else 0/0
+                        "derivedAsk": {"price","size"},
+                        "isTrial": bool}}  # only present during call-auction/trial matching
+        _handle_books_message() below parses exactly this shape — no field-name
+        guessing left.
         """
         if not self.is_active or not self.marketdata:
             logging.warning("start_books_stream: Fubon SDK not active — cannot subscribe to Books channel.")
@@ -242,10 +231,11 @@ class FubonAPIProvider:
             logging.warning(f"start_books_stream: websocket_client.futopt unavailable: {e}")
             return False
 
-        # Wire the message handler once.
+        # Wire the message/error/disconnect handlers once.
         if not self._books_subscribed:
             futopt_ws.on('message', self._handle_books_message)
             futopt_ws.on('error', lambda err: logging.warning(f"Fubon Books WebSocket error: {err}"))
+            futopt_ws.on('disconnect', lambda code, msg: self._on_books_disconnect(futopt_ws, code, msg))
             try:
                 futopt_ws.connect()
             except Exception as e:
@@ -264,14 +254,22 @@ class FubonAPIProvider:
 
         return True
 
+    def _on_books_disconnect(self, futopt_ws, code, msg):
+        """ Auto-reconnect + re-subscribe on disconnect, per Fubon's documented reconnect pattern. """
+        logging.warning(f"Fubon Books WebSocket disconnected ({code}: {msg}). Reconnecting...")
+        try:
+            futopt_ws.connect()
+            for symbol in list(self._books_subscribed):
+                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
+            logging.info(f"Fubon Books WebSocket reconnected and re-subscribed to {sorted(self._books_subscribed)}.")
+        except Exception as e:
+            logging.warning(f"Fubon Books WebSocket reconnect failed: {e}")
+
     def _handle_books_message(self, raw_message):
         """
         Parses a raw 'message' event payload from the futopt Books WebSocket.
-        Message envelope confirmed from SDK source: json string of {"event": ..., "data": {...}}.
-        Inner 'data' shape for a books frame is NOT independently verified here —
-        see the docstring on start_books_stream(). Kept defensive on purpose:
-        unknown field names are stored under 'raw' rather than silently dropped,
-        so nothing here can quietly fabricate bid/ask numbers that didn't arrive.
+        Schema confirmed against the official "期權 WebSocket / Channels / Books"
+        doc page — see start_books_stream()'s docstring for the exact shape.
         """
         try:
             import json as _json
@@ -281,39 +279,33 @@ class FubonAPIProvider:
             return
 
         event = message.get('event')
-        data = message.get('data') or {}
 
-        # Only handle actual market-data frames; ignore auth/subscribe-ack/ping frames.
-        if event not in ('data', 'books', 'quote'):
+        if event == 'subscribed':
+            info = message.get('data') or {}
+            logging.info(f"Fubon Books: subscription confirmed — {info}")
             return
+        if event != 'data':
+            return  # ignore auth/heartbeat/pong/error/unsubscribed frames
 
+        data = message.get('data') or {}
         symbol = data.get('symbol')
         if not symbol:
             return
 
-        if symbol not in self._books_logged_raw:
-            logging.info(f"Fubon Books RAW sample for {symbol} (verify field names against this): {data}")
-            self._books_logged_raw.add(symbol)
-
-        bids = data.get('bids') or data.get('bid') or []
-        asks = data.get('asks') or data.get('ask') or []
-
         def _normalize_side(levels):
-            out = []
-            for lvl in levels:
-                if isinstance(lvl, dict):
-                    price = lvl.get('price')
-                    size = lvl.get('size') if lvl.get('size') is not None else lvl.get('volume')
-                    if price is not None and size is not None:
-                        out.append({'price': float(price), 'size': int(size)})
-            return out
+            return [{'price': float(lvl['price']), 'size': int(lvl['size'])} for lvl in (levels or [])]
+
+        derived_bid = data.get('derivedBid') or {'price': 0, 'size': 0}
+        derived_ask = data.get('derivedAsk') or {'price': 0, 'size': 0}
 
         self.books_cache[symbol] = {
-            'bids': _normalize_side(bids),
-            'asks': _normalize_side(asks),
-            'time': data.get('time') or data.get('lastUpdated'),
-            'updated_ts': time.time(),
-            'raw': data
+            'bids': _normalize_side(data.get('bids')),
+            'asks': _normalize_side(data.get('asks')),
+            'derived_bid': {'price': float(derived_bid.get('price', 0)), 'size': int(derived_bid.get('size', 0))},
+            'derived_ask': {'price': float(derived_ask.get('price', 0)), 'size': int(derived_ask.get('size', 0))},
+            'is_trial': bool(data.get('isTrial', False)),
+            'time': data.get('time'),
+            'updated_ts': time.time()
         }
 
     def get_book(self, symbol):
