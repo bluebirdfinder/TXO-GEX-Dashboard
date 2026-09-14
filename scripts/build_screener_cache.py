@@ -115,6 +115,10 @@ def fetch_real_ohlcv_history(symbol, num_bars=30):
     walking back up to 3 months to gather enough bars), then TPEx the same way. Returns
     None (not a fabricated series) if neither official source has data for this symbol —
     e.g. a newly listed stock, an index/futures code that isn't an equity, or a delisted one.
+
+    NOTE: this per-symbol path is now only the fallback for TPEx(OTC)-only stocks — see
+    fetch_twse_all_stocks_day()/build_twse_bulk_history() below for the real fix to TWSE
+    coverage (a single per-date bulk endpoint instead of 1 request per stock).
     """
     today = datetime.today()
     for fetch_month in (fetch_twse_stock_month, fetch_tpex_stock_month):
@@ -131,6 +135,71 @@ def fetch_real_ohlcv_history(symbol, num_bars=30):
         if len(collected) >= 5:  # accept a short-but-real series over nothing; a few bars is still real
             return collected[-num_bars:]
     return None
+
+
+def fetch_twse_all_stocks_day(date_str):
+    """
+    Real OHLCV for EVERY TWSE-listed stock on one date (YYYYMMDD), in a single request —
+    confirmed against a live response that TWSE's MI_INDEX?type=ALLBUT0999 endpoint returns
+    a ~1382-row "每股每日行情" table with every listed stock's open/high/low/close/volume for
+    that day. This replaces the old design of one request per stock per month (1400+ requests,
+    which TWSE/TPEx started rate-limiting hard) with ~20-25 requests total (one per trading
+    day needed), each covering the whole market at once.
+    Column layout verified against a live 2330 row: [0]代號 [1]名稱 [2]成交股數 [5]開盤價
+    [6]最高價 [7]最低價 [8]收盤價. Returns {} on a non-trading day or fetch failure.
+    """
+    url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={date_str}&type=ALLBUT0999&response=json"
+    result = {}
+    try:
+        data = json.loads(_fetch_url(url))
+        for t in data.get('tables', []):
+            rows = t.get('data', [])
+            if len(rows) > 500:  # the full per-stock table; other tables on this page are small summaries
+                for row in rows:
+                    try:
+                        code = row[0].strip()
+                        result[code] = {
+                            "open": float(row[5].replace(',', '')),
+                            "high": float(row[6].replace(',', '')),
+                            "low": float(row[7].replace(',', '')),
+                            "close": float(row[8].replace(',', '')),
+                            "volume": int(row[2].replace(',', '')) // 1000
+                        }
+                    except (ValueError, IndexError):
+                        continue
+                break
+    except Exception as e:
+        print(f"  [WARN] TWSE bulk fetch failed for {date_str}: {e}")
+    return result
+
+
+def build_twse_bulk_history(num_trading_days=25, max_calendar_days_back=45):
+    """
+    Real ~num_trading_days of OHLCV for every TWSE-listed stock, built from
+    fetch_twse_all_stocks_day() walking backward one calendar day at a time (skipping
+    non-trading days, which come back empty and don't count against num_trading_days).
+    Returns {code: [bars ascending by date]}.
+    """
+    history = {}
+    day = datetime.today().date()
+    collected = 0
+    tried = 0
+    while collected < num_trading_days and tried < max_calendar_days_back:
+        date_str = day.strftime('%Y%m%d')
+        day_data = fetch_twse_all_stocks_day(date_str)
+        if day_data:
+            for code, bar in day_data.items():
+                history.setdefault(code, []).append(bar)
+            collected += 1
+            if collected % 5 == 0:
+                print(f"  ...TWSE bulk history: {collected}/{num_trading_days} trading days collected")
+            time.sleep(0.3)
+        tried += 1
+        day -= timedelta(days=1)
+    for code in history:
+        history[code].reverse()  # walked backward, so newest-first -> reverse to oldest-first
+    print(f"[OK] TWSE bulk history built: {collected} trading days x {len(history)} stocks (~{tried} calendar days scanned)")
+    return history
 
 
 def load_ohlcv_cache():
@@ -284,29 +353,47 @@ def main():
     ohlcv_cache = load_ohlcv_cache()
     cache_dirty = False
 
-    results = []
-    print(f"Processing {len(universe)} symbols (real TWSE/TPEx daily history, cached per day)...")
+    # Real TWSE-wide history via the bulk per-date endpoint — covers the large majority of
+    # the universe (TWSE-listed stocks) in ~20-25 requests instead of one per stock. Reused
+    # from today's cache when already fetched today (keyed under "_TWSE_BULK").
+    if "_TWSE_BULK" in ohlcv_cache:
+        twse_bulk = ohlcv_cache["_TWSE_BULK"]
+        print(f"[OK] TWSE bulk history: using today's cache ({len(twse_bulk)} stocks)")
+    else:
+        twse_bulk = build_twse_bulk_history()
+        ohlcv_cache["_TWSE_BULK"] = twse_bulk
+        cache_dirty = True
+        save_ohlcv_cache(ohlcv_cache)
 
-    fetched, cached_hits, unavailable = 0, 0, 0
+    results = []
+    print(f"Processing {len(universe)} symbols (TWSE bulk history + per-symbol TPEx fallback)...")
+
+    bulk_hits, fetched, cached_hits, unavailable = 0, 0, 0, 0
     for i, item in enumerate(universe):
         sym = str(item.get("symbol", ""))
         quote = quotes_data.get(sym, {})
         asset_type = item.get("asset_type", "stock")
 
         if asset_type in ("index_futures", "stock_futures"):
-            # Not an equity — TWSE/TPEx per-stock daily history doesn't apply.
+            # Not an equity — TWSE/TPEx daily history doesn't apply.
             bars = None
+        elif sym in twse_bulk and len(twse_bulk[sym]) >= 5:
+            bars = twse_bulk[sym]
+            bulk_hits += 1
         elif sym in ohlcv_cache:
             bars = ohlcv_cache[sym]
             cached_hits += 1
         else:
+            # TPEx(OTC)-only stocks, or anything the TWSE bulk table didn't include —
+            # fall back to the slower per-symbol fetch (paced to avoid the rate-limit that
+            # a fast 1400-request batch triggered before).
             bars = fetch_real_ohlcv_history(sym)
             ohlcv_cache[sym] = bars if bars else []
             cache_dirty = True
             fetched += 1
-            time.sleep(0.6)  # pace requests — 0.25s + 1 retry still left 970/1383 unavailable, so pacing further out
+            time.sleep(0.6)
             if fetched % 50 == 0:
-                print(f"  ...fetched real history for {fetched} symbols so far ({i + 1}/{len(universe)} processed)")
+                print(f"  ...fetched real history for {fetched} fallback symbols so far ({i + 1}/{len(universe)} processed)")
                 save_ohlcv_cache(ohlcv_cache)  # checkpoint periodically in case of interruption
 
         if not bars:
@@ -317,7 +404,8 @@ def main():
     if cache_dirty:
         save_ohlcv_cache(ohlcv_cache)
 
-    print(f"Real history: {fetched} freshly fetched, {cached_hits} from today's cache, {unavailable} unavailable (no fake fallback).")
+    print(f"Real history: {bulk_hits} from TWSE bulk, {fetched} freshly fetched (TPEx/fallback), "
+          f"{cached_hits} from today's per-symbol cache, {unavailable} unavailable (no fake fallback).")
 
     results.sort(key=lambda x: x["score"], reverse=True)
 
