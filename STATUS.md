@@ -1,12 +1,26 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v62.3)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v62.4)
 
-**當前版本**：`v62.3` (2026-09-14 GEX 核心引擎正式接上 TAIFEX 真實選擇權未沖銷部位、5日歷史真實回補、法人籌碼/選股雷達真數據發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v62.3)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v62.3)
+**當前版本**：`v62.4` (2026-09-15 尋鳥戰情室3個Critical bug修復、ADR真實報價、散戶籌碼日增減真數據、選股快取覆蓋率32%→97%發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v62.4)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v62.4)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v62.4 核心更新亮點 (尋鳥戰情室3個Critical bug修復 ✕ ADR真實報價 ✕ 選股快取97%覆蓋率)
+
+### 🔴 1. 尋鳥戰情室 3 個 Critical bug 修復
+- 假OHLC面板改真實數據（開盤/最高/最低誠實顯示「—」，不再是永遠不變的寫死文字）。
+- ADX Pro V3背離改用真實波段極值相對比較，不再綁定固定價位。
+- 選股雷達改接真實screener_cache.json，不再用股票代號雜湊值捏造訊號。
+
+### 🔧 2. ADR 連動與散戶籌碼真數據
+- ADR變數作用域bug修正+改抓Yahoo Finance真實報價。
+- 散戶籌碼daily_change/prev_ratio/broker_snapshot改真實日對日快照比對。
+
+### 📈 3. 選股快取覆蓋率 32% → 97%
+- 改用TWSE單一日期批量端點取代逐檔查詢，執行時間20-30分鐘→15秒。
 
 ## 🎯 v62.3 核心更新亮點 (GEX 核心引擎真實選擇權未沖銷部位接軌 ✕ 5日歷史真實回補 ✕ 法人籌碼/選股雷達真數據)
 
