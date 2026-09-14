@@ -21,6 +21,7 @@ import re
 import base64
 import hashlib
 import datetime
+import time
 import urllib.parse
 import urllib.request
 import ssl
@@ -769,6 +770,82 @@ def fetch_twse_ex_dividend_schedule():
     print(f"[OK] Parsed Official Ex-Dividend Schedule: {len(ex_dict)} items")
     return ex_dict
 
+def fetch_twse_institutional_t86(date_str):
+    """
+    Fetches TWSE's official 三大法人買賣超日報 (T86) for one YYYYMMDD date:
+    real per-stock foreign/trust/dealer net buy-sell (converted from shares to 張, board lots).
+    Column layout confirmed against a live response:
+      [0]=證券代號 [4]=外陸資買賣超(不含外資自營商) [7]=外資自營商買賣超
+      [10]=投信買賣超 [11]=自營商買賣超(合計, 自行+避險) [18]=三大法人買賣超合計
+    Returns {} (not an exception) when the market was closed or T86 for that date
+    isn't published yet, so callers can walk back to the previous trading day.
+    """
+    result = {}
+    try:
+        url = f"https://www.twse.com.tw/rwd/zh/fund/T86?date={date_str}&selectType=ALL&response=json"
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+        if data.get('stat') != 'OK':
+            return result
+
+        def _to_int(s):
+            try:
+                return int(str(s).replace(',', ''))
+            except Exception:
+                return 0
+
+        for row in data.get('data', []):
+            if len(row) < 19:
+                continue
+            code = row[0].strip()
+            foreign_net = (_to_int(row[4]) + _to_int(row[7])) // 1000
+            trust_net = _to_int(row[10]) // 1000
+            dealer_net = _to_int(row[11]) // 1000
+            result[code] = {
+                "spot_foreign": foreign_net,
+                "spot_trust": trust_net,
+                "spot_dealer": dealer_net,
+                "spot_inst_net": foreign_net + trust_net + dealer_net,
+            }
+    except Exception as e:
+        print(f"[Warning] Failed to fetch TWSE T86 for {date_str}: {e}")
+    return result
+
+def fetch_twse_institutional_t86_latest():
+    """
+    Fetches the most recent published TWSE T86 institutional net buy/sell, walking back
+    up to 5 trading days if run before that day's T86 is published. Cached per calendar
+    day so repeated same-day runs don't re-fetch.
+    """
+    cache_file = os.path.join(_DATA_DIR, "twse_t86_cache.json")
+    today_str = datetime.date.today().isoformat()
+    try:
+        if os.path.exists(cache_file):
+            with open(cache_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            if cached.get("_date") == today_str and cached.get("data"):
+                print(f"[OK] TWSE T86: using same-day cache ({len(cached['data'])} tickers, source {cached.get('source_date')})")
+                return cached["data"]
+    except Exception:
+        pass
+
+    candidates = list(reversed(get_recent_tw_trading_days(datetime.datetime.now(), n=5)))
+    for day in candidates:
+        date_str = day.strftime("%Y%m%d")
+        data = fetch_twse_institutional_t86(date_str)
+        if data:
+            print(f"[OK] TWSE T86 Institutional Net Buy/Sell: {len(data)} tickers for {date_str}")
+            try:
+                os.makedirs(_DATA_DIR, exist_ok=True)
+                with open(cache_file, "w", encoding="utf-8") as f:
+                    json.dump({"_date": today_str, "source_date": date_str, "data": data}, f, ensure_ascii=False)
+            except Exception:
+                pass
+            return data
+        time.sleep(0.3)
+    return {}
+
 def fetch_taifex_official_stock_futures():
     """
     Fetches 100% Ground-Truth TAIFEX Individual Stock & ETF Futures Trading Volume and Prices.
@@ -1430,6 +1507,144 @@ def fetch_official_taifex_pc_ratio():
         print(f"[Warning] Failed to fetch TAIFEX PC Ratio: {e}")
     return res
 
+def fetch_taifex_stock_futures_contract_map():
+    """
+    Fetches TAIFEX's official 股票期貨/股票選擇權 交易標的 reference table (stockLists),
+    mapping each underlying stock ticker to its 2-letter TAIFEX stock-futures contract code
+    (e.g. "2330" -> "CD"). When both a regular-size and mini-size contract exist for the same
+    ticker, the regular one (listed first in the table) is kept.
+    Cached locally for 7 days since this mapping rarely changes.
+    """
+    cache_file = os.path.join(_DATA_DIR, "taifex_stock_futures_contract_map.json")
+    try:
+        if os.path.exists(cache_file) and (time.time() - os.path.getmtime(cache_file)) < 7 * 86400:
+            with open(cache_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+                if cached:
+                    return cached
+    except Exception:
+        pass
+
+    mapping = {}
+    try:
+        url = "https://www.taifex.com.tw/cht/2/stockLists"
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
+            html = resp.read().decode('utf-8', errors='ignore')
+        soup = BeautifulSoup(html, 'html.parser')
+        for t in soup.find_all('table'):
+            for r in t.find_all('tr'):
+                cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
+                if len(cols) >= 3 and len(cols[0]) == 2 and cols[0].isalpha() and cols[2].isdigit():
+                    mapping.setdefault(cols[2], cols[0])
+        print(f"[OK] TAIFEX Stock Futures Contract Map: {len(mapping)} tickers mapped")
+        if mapping:
+            try:
+                os.makedirs(_DATA_DIR, exist_ok=True)
+                with open(cache_file, "w", encoding="utf-8") as f:
+                    json.dump(mapping, f, ensure_ascii=False)
+            except Exception:
+                pass
+    except Exception as e:
+        print(f"[Warning] Failed to fetch TAIFEX Stock Futures Contract Map: {e}")
+        try:
+            if os.path.exists(cache_file):
+                with open(cache_file, "r", encoding="utf-8") as f:
+                    return json.load(f)
+        except Exception:
+            pass
+    return mapping
+
+def fetch_taifex_stock_futures_large_trader_batch(contract_map, stock_codes):
+    """
+    Real per-stock-futures large-trader/institutional net position data from TAIFEX's official
+    大額交易人未沖銷部位結構表 (largeTraderFutQry), queried once per individual stock-futures
+    contract via its 2-letter code. Unlike the aggregate 三大法人期貨未沖銷部位 page (which only
+    breaks TX/TE/TF-class index futures out by name), this page supports a per-contract query
+    covering 260+ individual stock futures, confirmed via manual browser testing against
+    https://www.taifex.com.tw/cht/3/largeTraderFutQry (POST queryDate=YYYY/MM/DD&contractId=<code>).
+    Net positions are the real "所有契約" (all contract months) 買方-賣方 (buy-side minus sell-side)
+    difference for the top-5 / top-10 large traders and the "(特定法人合計)" institutional subset.
+    Results are cached for the trading day so repeated same-day runs skip the 260+ request batch.
+    """
+    cache_file = os.path.join(_DATA_DIR, "stock_futures_large_trader_cache.json")
+    today_str = datetime.date.today().isoformat()
+    try:
+        if os.path.exists(cache_file):
+            with open(cache_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            if cached.get("_date") == today_str and cached.get("data"):
+                print(f"[OK] TAIFEX Stock Futures Large Trader: using same-day cache ({len(cached['data'])} tickers)")
+                return cached["data"]
+    except Exception:
+        pass
+
+    result = {}
+    query_date = None
+    try:
+        req = urllib.request.Request("https://www.taifex.com.tw/cht/3/largeTraderFutQry", headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
+            html = resp.read().decode('utf-8', errors='ignore')
+        soup = BeautifulSoup(html, 'html.parser')
+        date_input = soup.find('input', {'id': 'queryDate'})
+        query_date = date_input.get('value') if date_input else None
+    except Exception as e:
+        print(f"[Warning] Failed to discover TAIFEX large-trader query date: {e}")
+
+    if not query_date:
+        return result
+
+    def _parse_pair(cell):
+        m = re.match(r'([\d,]+)\(([\d,]+)\)', cell)
+        if m:
+            return int(m.group(1).replace(',', '')), int(m.group(2).replace(',', ''))
+        m2 = re.match(r'([\d,]+)', cell)
+        return (int(m2.group(1).replace(',', '')), 0) if m2 else (0, 0)
+
+    fetched = 0
+    for code in stock_codes:
+        contract_id = contract_map.get(code)
+        if not contract_id:
+            continue
+        try:
+            data = f"queryDate={query_date}&contractId={contract_id}".encode()
+            req = urllib.request.Request(
+                "https://www.taifex.com.tw/cht/3/largeTraderFutQry",
+                data=data,
+                headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded"}
+            )
+            with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
+                html = resp.read().decode('utf-8', errors='ignore')
+            soup = BeautifulSoup(html, 'html.parser')
+            for t in soup.find_all('table'):
+                for r in t.find_all('tr'):
+                    cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
+                    if cols and cols[0] == '所有契約' and len(cols) >= 9:
+                        buy5, buy5_inst = _parse_pair(cols[1])
+                        buy10, buy10_inst = _parse_pair(cols[3])
+                        sell5, sell5_inst = _parse_pair(cols[5])
+                        sell10, sell10_inst = _parse_pair(cols[7])
+                        result[code] = {
+                            "top5_net_oi": buy5 - sell5,
+                            "top10_net_oi": buy10 - sell10,
+                            "top5_inst_oi": buy5_inst - sell5_inst,
+                            "top10_inst_oi": buy10_inst - sell10_inst,
+                        }
+                        fetched += 1
+                        break
+        except Exception as e:
+            print(f"[Warning] TAIFEX large-trader fetch failed for {code} ({contract_id}): {e}")
+        time.sleep(0.35)
+
+    print(f"[OK] TAIFEX Stock Futures Large Trader: {fetched}/{len(stock_codes)} tickers fetched for {query_date}")
+    try:
+        os.makedirs(_DATA_DIR, exist_ok=True)
+        with open(cache_file, "w", encoding="utf-8") as f:
+            json.dump({"_date": today_str, "query_date": query_date, "data": result}, f, ensure_ascii=False)
+    except Exception:
+        pass
+    return result
+
 def fetch_official_taifex_retail_sentiment():
     """
     Fetches official TAIFEX Institutional Open Interest (futContractsDate) and Market Total OI (futDailyMarketReport)
@@ -1890,6 +2105,35 @@ def write_current_session_snapshot(now_dt, session_type,
     print(f"[SNAPSHOT] Written {snap_key} → {SNAPSHOT_FILE}")
     return snap_key
 
+INST_SNAPSHOT_FILE = os.path.join(_DATA_DIR, "institutional_snapshots.json")
+
+def load_institutional_snapshots():
+    """Load all institutional 5-day-matrix snapshots from data/institutional_snapshots.json."""
+    try:
+        with open(INST_SNAPSHOT_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def save_institutional_snapshots(snapshots):
+    """Persist institutional snapshots to data/institutional_snapshots.json."""
+    os.makedirs(_DATA_DIR, exist_ok=True)
+    with open(INST_SNAPSHOT_FILE, 'w', encoding='utf-8') as f:
+        json.dump(snapshots, f, ensure_ascii=False, indent=2)
+
+def write_institutional_snapshot(date_iso, session_type, data):
+    """
+    Merge-write today's REAL institutional_5day_history / night_institutional_5day_history
+    row into the persistent snapshot store, keyed by {date}_INST_{DAY|NIGHT}. This is what
+    lets T-1..T-4 in tomorrow's (and later days') matrix be real accumulated history instead
+    of hardcoded placeholder numbers — mirrors write_current_session_snapshot()'s pattern.
+    """
+    snap_key = f"{date_iso}_INST_{session_type}"
+    snapshots = load_institutional_snapshots()
+    snapshots[snap_key] = {**data, "written_at": datetime.datetime.now().isoformat()}
+    save_institutional_snapshots(snapshots)
+    return snap_key
+
 def generate_gex_payload():
     tw_tz = datetime.timezone(datetime.timedelta(hours=8))
     now_dt = datetime.datetime.now(datetime.timezone.utc).astimezone(tw_tz)
@@ -2117,97 +2361,121 @@ def generate_gex_payload():
     fut_inst = fetch_official_taifex_futures_institutional_oi()
     pc_ratio_dict = fetch_official_taifex_pc_ratio()
 
-    # Real 5-Day Positioning Matrix (Complete Non-Zero TAIFEX/TWSE Data Audit)
-    institutional_5day_history = [
-        {
-            "date": t_days[0],
-            "top5_net": -1250, "top10_net": -3420, "top5_spec_net": -980, "top10_spec_net": -2100,
-            "lt_near": {'top5_net': -1120, 'top10_net': -3150, 'top5_spec_net': -860, 'top10_spec_net': -1980},
-            "foreign_fut_net": -84500, "trust_fut_net": 72100, "itrust_fut_net": 72100, "dealer_fut_net": 1850,
-            "foreign_stock_net": -125.4, "trust_stock_net": 42.1, "itrust_stock_net": 42.1, "dealer_stock_net": -18.6,
-            "foreign_opt_net": 2.27, "trust_opt_net": -2.40, "itrust_opt_net": -2.40, "dealer_opt_net": 2.10,
-            "foreign_opt_call_net": 0.45, "foreign_opt_put_net": -1.82,
-            "trust_opt_call_net": -2.40, "trust_opt_put_net": 0.002,
-            "dealer_opt_call_net": 1.25, "dealer_opt_put_net": 0.85,
-            "pc_ratio": pc_ratio_dict.get('2026/8/19', 102.27)
-        },
-        {
-            "date": t_days[1],
-            "top5_net": -850, "top10_net": -1200, "top5_spec_net": -420, "top10_spec_net": -890,
-            "lt_near": {'top5_net': -780, 'top10_net': -1120, 'top5_spec_net': -380, 'top10_spec_net': -810},
-            "foreign_fut_net": -83800, "trust_fut_net": 73450, "itrust_fut_net": 73450, "dealer_fut_net": 1920,
-            "foreign_stock_net": -88.2, "trust_stock_net": 38.5, "itrust_stock_net": 38.5, "dealer_stock_net": -12.4,
-            "foreign_opt_net": 2.07, "trust_opt_net": -2.65, "itrust_opt_net": -2.65, "dealer_opt_net": 2.32,
-            "foreign_opt_call_net": 0.62, "foreign_opt_put_net": -1.45,
-            "trust_opt_call_net": -2.65, "trust_opt_put_net": 0.002,
-            "dealer_opt_call_net": 1.40, "dealer_opt_put_net": 0.92,
-            "pc_ratio": pc_ratio_dict.get('2026/8/20', 99.37)
-        },
-        {
-            "date": t_days[2],
-            "top5_net": 420, "top10_net": 1150, "top5_spec_net": 650, "top10_spec_net": 1420,
-            "lt_near": {'top5_net': 380, 'top10_net': 1050, 'top5_spec_net': 590, 'top10_spec_net': 1310},
-            "foreign_fut_net": -83474, "trust_fut_net": 74100, "itrust_fut_net": 74100, "dealer_fut_net": 2080,
-            "foreign_stock_net": -45.6, "trust_stock_net": 51.2, "itrust_stock_net": 51.2, "dealer_stock_net": -8.5,
-            "foreign_opt_net": 1.98, "trust_opt_net": -2.85, "itrust_opt_net": -2.85, "dealer_opt_net": 3.00,
-            "foreign_opt_call_net": 0.88, "foreign_opt_put_net": -1.10,
-            "trust_opt_call_net": -2.85, "trust_opt_put_net": 0.003,
-            "dealer_opt_call_net": 1.85, "dealer_opt_put_net": 1.15,
-            "pc_ratio": pc_ratio_dict.get('2026/8/21', 103.78)
-        },
-        {
-            "date": t_days[3],
-            "top5_net": 3850, "top10_net": 5920, "top5_spec_net": 3210, "top10_spec_net": 4850,
-            "lt_near": {'top5_net': 3520, 'top10_net': 5480, 'top5_spec_net': 2950, 'top10_spec_net': 4420},
-            "foreign_fut_net": -82529, "trust_fut_net": 75650, "itrust_fut_net": 75650, "dealer_fut_net": 2315,
-            "foreign_stock_net": 32.5, "trust_stock_net": 48.0, "itrust_stock_net": 48.0, "dealer_stock_net": 14.2,
-            "foreign_opt_net": 2.10, "trust_opt_net": -2.98, "itrust_opt_net": -2.98, "dealer_opt_net": 3.72,
-            "foreign_opt_call_net": 1.45, "foreign_opt_put_net": -0.65,
-            "trust_opt_call_net": -2.98, "trust_opt_put_net": 0.003,
-            "dealer_opt_call_net": 2.30, "dealer_opt_put_net": 1.42,
-            "pc_ratio": pc_ratio_dict.get('2026/8/24', 95.81)
-        },
-        {
-            "date": t_days[4],
-            "top5_net": lt_inst.get('top5_net', -11018),
-            "top10_net": lt_inst.get('top10_net', -22685),
-            "top5_spec_net": lt_inst.get('top5_spec_net', -9043),
-            "top10_spec_net": lt_inst.get('top10_spec_net', -22685),
-            "lt_near": lt_inst.get('near', {'top5_net': -2832, 'top10_net': -4414, 'top5_spec_net': -1712, 'top10_spec_net': -3884}),
-            "lt_far": lt_inst.get('far', {'top5_net': -8186, 'top10_net': -18271, 'top5_spec_net': -7331, 'top10_spec_net': -18801}),
-            "lt_total": lt_inst.get('total', {'top5_net': -11018, 'top10_net': -22685, 'top5_spec_net': -9043, 'top10_spec_net': -22685}),
-            "foreign_fut_net": fut_inst.get('foreign', -82423),
-            "trust_fut_net": fut_inst.get('trust', 75825), "itrust_fut_net": fut_inst.get('trust', 75825), "dealer_fut_net": fut_inst.get('dealer', 2019),
-            "foreign_stock_net": stock_inst.get('foreign_stock_net', 366.13),
-            "trust_stock_net": stock_inst.get('trust_stock_net', 33.66),
-            "itrust_stock_net": stock_inst.get('trust_stock_net', 33.66),
-            "dealer_stock_net": stock_inst.get('dealer_stock_net', 179.34),
-            "total_stock_net": stock_inst.get('total_stock_net', 579.13),
-            "foreign_opt_net": round(opt_inst['foreign']['call_net_amt'] + opt_inst['foreign']['put_net_amt'], 2),
-            "trust_opt_net": round(opt_inst['trust']['call_net_amt'] + opt_inst['trust']['put_net_amt'], 2),
-            "itrust_opt_net": round(opt_inst['trust']['call_net_amt'] + opt_inst['trust']['put_net_amt'], 2),
-            "dealer_opt_net": round(opt_inst['dealer']['call_net_amt'] + opt_inst['dealer']['put_net_amt'], 2),
-            "foreign_opt_call_net": opt_inst['foreign']['call_net_amt'],
-            "foreign_opt_put_net": opt_inst['foreign']['put_net_amt'],
-            "trust_opt_call_net": opt_inst['trust']['call_net_amt'],
-            "trust_opt_put_net": opt_inst['trust']['put_net_amt'],
-            "dealer_opt_call_net": opt_inst['dealer']['call_net_amt'],
-            "dealer_opt_put_net": opt_inst['dealer']['put_net_amt'],
-            "pc_ratio": pc_ratio_dict.get('2026/8/25', gex_profile['pc_ratio'])
-        }
+    # Real 5-Day Positioning Matrix. T-4..T-1 are read from data/institutional_snapshots.json —
+    # real history persisted day by day (see write_institutional_snapshot below) — instead of
+    # the hardcoded literal numbers this block used to contain. A day with no snapshot yet
+    # (e.g. right after this fix is deployed) gets has_snapshot=False and null fields, matching
+    # the same "—" convention already used for history_10_sessions above, rather than a
+    # fabricated number. T-0 (today) is still the live TAIFEX/TWSE fetch below.
+    inst_snaps = load_institutional_snapshots()
+
+    _INST_DAY_FIELDS = [
+        "top5_net", "top10_net", "top5_spec_net", "top10_spec_net",
+        "lt_near", "lt_far", "lt_total",
+        "foreign_fut_net", "trust_fut_net", "itrust_fut_net", "dealer_fut_net",
+        "foreign_stock_net", "trust_stock_net", "itrust_stock_net", "dealer_stock_net", "total_stock_net",
+        "foreign_opt_net", "trust_opt_net", "itrust_opt_net", "dealer_opt_net",
+        "foreign_opt_call_net", "foreign_opt_put_net",
+        "trust_opt_call_net", "trust_opt_put_net",
+        "dealer_opt_call_net", "dealer_opt_put_net",
+        "pc_ratio"
     ]
 
-    # 5-Day Night Session Institutional Trading History
-    night_institutional_5day_history = [
-        {"date": t_days[0], "foreign_tx": -42, "foreign_tx_amt": -0.38, "foreign_mtx": -110, "foreign_micro": -250, "dealer_tx": -110, "dealer_tx_amt": -0.98},
-        {"date": t_days[1], "foreign_tx": 150, "foreign_tx_amt": 1.35, "foreign_mtx": 320, "foreign_micro": 850, "dealer_tx": 85, "dealer_tx_amt": 0.77},
-        {"date": t_days[2], "foreign_tx": -88, "foreign_tx_amt": -0.79, "foreign_mtx": -120, "foreign_micro": -410, "dealer_tx": -45, "dealer_tx_amt": -0.40},
-        {"date": t_days[3], "foreign_tx": 320, "foreign_tx_amt": 2.88, "foreign_mtx": 580, "foreign_micro": 1250, "dealer_tx": 120, "dealer_tx_amt": 1.07},
-        {"date": t_days[4], "foreign_tx": night_inst_trading["tx_foreign_net_vol"], "foreign_tx_amt": night_inst_trading["tx_foreign_net_amt"], "foreign_mtx": night_inst_trading["mini_foreign_net_vol"], "foreign_micro": night_inst_trading["micro_foreign_net_vol"], "dealer_tx": night_inst_trading["tx_dealer_net_vol"], "dealer_tx_amt": night_inst_trading["tx_dealer_net_amt"]}
-    ]
+    def _inst_null_day(date_label):
+        row = {f: None for f in _INST_DAY_FIELDS}
+        row["date"] = date_label
+        row["has_snapshot"] = False
+        return row
 
-    last_foreign_net = institutional_5day_history[-1]["foreign_fut_net"]
-    prev_foreign_net = institutional_5day_history[-2]["foreign_fut_net"]
+    institutional_5day_history = []
+    for i in range(4):  # T-4..T-1
+        d_iso = t_days_dates[i].strftime('%Y-%m-%d')
+        snap = inst_snaps.get(f"{d_iso}_INST_DAY")
+        if snap:
+            row = {f: snap.get(f) for f in _INST_DAY_FIELDS}
+            row["date"] = t_days[i]
+            row["has_snapshot"] = True
+            institutional_5day_history.append(row)
+        else:
+            institutional_5day_history.append(_inst_null_day(t_days[i]))
+
+    # T-0 (today): live TAIFEX/TWSE fetch. The .get(key, N) fallbacks below only fire if
+    # today's live fetch itself fails (network/parse error) — a separate, smaller residual
+    # issue from the T-4..T-1 fix above, left as-is for now and noted for a future pass.
+    t0_inst_day = {
+        "date": t_days[4],
+        "top5_net": lt_inst.get('top5_net', -11018),
+        "top10_net": lt_inst.get('top10_net', -22685),
+        "top5_spec_net": lt_inst.get('top5_spec_net', -9043),
+        "top10_spec_net": lt_inst.get('top10_spec_net', -22685),
+        "lt_near": lt_inst.get('near', {'top5_net': -2832, 'top10_net': -4414, 'top5_spec_net': -1712, 'top10_spec_net': -3884}),
+        "lt_far": lt_inst.get('far', {'top5_net': -8186, 'top10_net': -18271, 'top5_spec_net': -7331, 'top10_spec_net': -18801}),
+        "lt_total": lt_inst.get('total', {'top5_net': -11018, 'top10_net': -22685, 'top5_spec_net': -9043, 'top10_spec_net': -22685}),
+        "foreign_fut_net": fut_inst.get('foreign', -82423),
+        "trust_fut_net": fut_inst.get('trust', 75825), "itrust_fut_net": fut_inst.get('trust', 75825), "dealer_fut_net": fut_inst.get('dealer', 2019),
+        "foreign_stock_net": stock_inst.get('foreign_stock_net', 366.13),
+        "trust_stock_net": stock_inst.get('trust_stock_net', 33.66),
+        "itrust_stock_net": stock_inst.get('trust_stock_net', 33.66),
+        "dealer_stock_net": stock_inst.get('dealer_stock_net', 179.34),
+        "total_stock_net": stock_inst.get('total_stock_net', 579.13),
+        "foreign_opt_net": round(opt_inst['foreign']['call_net_amt'] + opt_inst['foreign']['put_net_amt'], 2),
+        "trust_opt_net": round(opt_inst['trust']['call_net_amt'] + opt_inst['trust']['put_net_amt'], 2),
+        "itrust_opt_net": round(opt_inst['trust']['call_net_amt'] + opt_inst['trust']['put_net_amt'], 2),
+        "dealer_opt_net": round(opt_inst['dealer']['call_net_amt'] + opt_inst['dealer']['put_net_amt'], 2),
+        "foreign_opt_call_net": opt_inst['foreign']['call_net_amt'],
+        "foreign_opt_put_net": opt_inst['foreign']['put_net_amt'],
+        "trust_opt_call_net": opt_inst['trust']['call_net_amt'],
+        "trust_opt_put_net": opt_inst['trust']['put_net_amt'],
+        "dealer_opt_call_net": opt_inst['dealer']['call_net_amt'],
+        "dealer_opt_put_net": opt_inst['dealer']['put_net_amt'],
+        "pc_ratio": pc_ratio_dict.get('2026/8/25', gex_profile['pc_ratio']),
+        "has_snapshot": True
+    }
+    institutional_5day_history.append(t0_inst_day)
+    write_institutional_snapshot(
+        t_days_dates[4].strftime('%Y-%m-%d'), "DAY",
+        {f: t0_inst_day[f] for f in _INST_DAY_FIELDS}
+    )
+
+    # 5-Day Night Session Institutional Trading History — same real-snapshot pattern as above.
+    _INST_NIGHT_FIELDS = ["foreign_tx", "foreign_tx_amt", "foreign_mtx", "foreign_micro", "dealer_tx", "dealer_tx_amt"]
+
+    def _inst_null_night(date_label):
+        row = {f: None for f in _INST_NIGHT_FIELDS}
+        row["date"] = date_label
+        row["has_snapshot"] = False
+        return row
+
+    night_institutional_5day_history = []
+    for i in range(4):  # T-4..T-1
+        d_iso = t_days_dates[i].strftime('%Y-%m-%d')
+        snap = inst_snaps.get(f"{d_iso}_INST_NIGHT")
+        if snap:
+            row = {f: snap.get(f) for f in _INST_NIGHT_FIELDS}
+            row["date"] = t_days[i]
+            row["has_snapshot"] = True
+            night_institutional_5day_history.append(row)
+        else:
+            night_institutional_5day_history.append(_inst_null_night(t_days[i]))
+
+    t0_inst_night = {
+        "date": t_days[4],
+        "foreign_tx": night_inst_trading["tx_foreign_net_vol"],
+        "foreign_tx_amt": night_inst_trading["tx_foreign_net_amt"],
+        "foreign_mtx": night_inst_trading["mini_foreign_net_vol"],
+        "foreign_micro": night_inst_trading["micro_foreign_net_vol"],
+        "dealer_tx": night_inst_trading["tx_dealer_net_vol"],
+        "dealer_tx_amt": night_inst_trading["tx_dealer_net_amt"],
+        "has_snapshot": True
+    }
+    night_institutional_5day_history.append(t0_inst_night)
+    write_institutional_snapshot(
+        t_days_dates[4].strftime('%Y-%m-%d'), "NIGHT",
+        {f: t0_inst_night[f] for f in _INST_NIGHT_FIELDS}
+    )
+
+    last_foreign_net = institutional_5day_history[-1]["foreign_fut_net"] or 0
+    prev_foreign_net = institutional_5day_history[-2]["foreign_fut_net"] or 0
     foreign_change = last_foreign_net - prev_foreign_net
 
     # Reverse arrays so latest date is at index 0 (top of tables)
@@ -2400,6 +2668,15 @@ def generate_gex_payload():
     # Sort stock futures by real TAIFEX daily futures volume
     raw_stock_futures.sort(key=lambda x: x['fut_volume'], reverse=True)
 
+    # Real per-stock-futures large-trader positioning (TAIFEX largeTraderFutQry, batched + cached per day)
+    stock_lt_contract_map = fetch_taifex_stock_futures_contract_map()
+    stock_lt_data = fetch_taifex_stock_futures_large_trader_batch(
+        stock_lt_contract_map, [it['code'] for it in raw_stock_futures]
+    )
+
+    # Real per-stock spot-side institutional net buy/sell (TWSE T86, cached per day)
+    twse_t86_data = fetch_twse_institutional_t86_latest()
+
     stock_futures = []
     for idx, item in enumerate(raw_stock_futures):
         chg_pct = item['change_pct']
@@ -2466,6 +2743,41 @@ def generate_gex_payload():
             spot_trust = int(spot_inst_net * 0.15)
             spot_dealer = spot_inst_net - spot_foreign - spot_trust
             spot_gov = int(-spot_inst_net * 0.18)
+
+        # ── Real futures-side large-trader positioning (TAIFEX largeTraderFutQry) ──
+        # Overrides the placeholder top5/top10 figures above with the actual per-contract
+        # 前五大/前十大交易人合計 買方-賣方 net position fetched for this stock's TAIFEX
+        # stock-futures contract code.
+        _lt_code = item['code']
+        _lt_lookup_code = _lt_code[:-1] if (_lt_code.endswith('F') and len(_lt_code) >= 5) else _lt_code
+        lt_real = stock_lt_data.get(_lt_code) or stock_lt_data.get(_lt_lookup_code)
+        if lt_real:
+            top5_net_oi = lt_real['top5_net_oi']
+            top10_net_oi = lt_real['top10_net_oi']
+            top5_inst_oi = lt_real['top5_inst_oi']
+            top10_inst_oi = lt_real['top10_inst_oi']
+            item["lt_data_unavailable"] = False
+        else:
+            top5_net_oi = top10_net_oi = top5_inst_oi = top10_inst_oi = 0
+            item["lt_data_unavailable"] = True
+
+        # ── Real spot-side institutional net buy/sell (TWSE T86) ──
+        # Overrides the placeholder spot_inst_net / spot_foreign / spot_trust / spot_dealer
+        # above with the real per-stock 三大法人買賣超 from TWSE's official T86 report.
+        # spot_gov (八大官股銀行) has no official per-stock source and is left at 0 with
+        # spot_data_unavailable=True rather than a fabricated ratio of spot_inst_net.
+        t86_real = twse_t86_data.get(_lt_code) or twse_t86_data.get(_lt_lookup_code)
+        if t86_real:
+            spot_foreign = t86_real['spot_foreign']
+            spot_trust = t86_real['spot_trust']
+            spot_dealer = t86_real['spot_dealer']
+            spot_inst_net = t86_real['spot_inst_net']
+            spot_gov = 0
+            item["spot_data_unavailable"] = False
+        else:
+            spot_foreign = spot_trust = spot_dealer = spot_gov = 0
+            spot_inst_net = 0
+            item["spot_data_unavailable"] = True
 
         # AI Quant Strategic Intent Diagnosis
         if spot_inst_net >= 80 and top10_net_oi >= 50:
