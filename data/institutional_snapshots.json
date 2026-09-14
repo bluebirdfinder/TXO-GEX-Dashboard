@@ -96,7 +96,7 @@
     "dealer_opt_call_net": 1.95,
     "dealer_opt_put_net": 0.3,
     "pc_ratio": 88.04,
-    "written_at": "2026-09-15T02:16:12.320311"
+    "written_at": "2026-09-15T03:29:11.723577"
   },
   "2026-09-14_INST_NIGHT": {
     "foreign_tx": 1550,
@@ -105,7 +105,7 @@
     "foreign_micro": 6019,
     "dealer_tx": -674,
     "dealer_tx_amt": -62.66,
-    "written_at": "2026-09-15T02:16:12.322056"
+    "written_at": "2026-09-15T03:29:11.736299"
   },
   "2026-09-14_INST_RETAIL": {
     "mtx_net_oi": -1383,
@@ -120,11 +120,70 @@
   "2026-09-15_INST_RETAIL": {
     "mtx_net_oi": -1383,
     "mtx_ratio": -2.53,
+    "mtx_total_ratio": 0.0,
+    "mtx_long_oi": 46044,
+    "mtx_short_oi": 47427,
     "tmf_net_oi": 42567,
     "tmf_ratio": 27.64,
+    "tmf_total_ratio": 0.0,
+    "tmf_long_oi": 129870,
+    "tmf_short_oi": 87303,
     "foreign_tx_net": -82658,
     "foreign_call_net": -1.26,
     "foreign_put_net": 1.33,
-    "written_at": "2026-09-15T02:16:06.197700"
+    "written_at": "2026-09-15T03:29:02.565963"
+  },
+  "FUT_INST_OI_LAST_REAL": {
+    "dealer": 1960,
+    "trust": 74448,
+    "foreign": -82658
+  },
+  "OPT_MATRIX_LAST_REAL": {
+    "dealer": {
+      "call_net_amt": 1.95,
+      "call_net_vol": 11386,
+      "put_net_amt": 0.3,
+      "put_net_vol": -4107
+    },
+    "trust": {
+      "call_net_amt": -2.27,
+      "call_net_vol": -5869,
+      "put_net_amt": 0.0,
+      "put_net_vol": 106
+    },
+    "foreign": {
+      "call_net_amt": -1.26,
+      "call_net_vol": -871,
+      "put_net_amt": 1.33,
+      "put_net_vol": 1964
+    }
+  },
+  "LARGE_TRADER_LAST_REAL": {
+    "near": {
+      "top5_net": -5966,
+      "top10_net": -10867,
+      "top5_spec_net": -3627,
+      "top10_spec_net": -10867
+    },
+    "far": {
+      "top5_net": -1817,
+      "top10_net": -12378,
+      "top5_spec_net": -1304,
+      "top10_spec_net": -12378
+    },
+    "total": {
+      "top5_net": -7783,
+      "top10_net": -23245,
+      "top5_spec_net": -4931,
+      "top10_spec_net": -23245
+    },
+    "top5_net": -7783,
+    "top10_net": -23245,
+    "top5_spec_net": -4931,
+    "top10_spec_net": -23245
+  },
+  "MARGIN_MAINT_EST_20260914": {
+    "margin_maint_market": 160.0,
+    "margin_maint_stock": 145.0
   }
 }

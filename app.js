@@ -15,6 +15,35 @@ let chartOrientation = 'horizontal'; // Default: T-Option Mode (T型報價視角
 const VALID_PASSCODE = 'GEX2026';
 const CACHE_KEY = 'txo_gex_cache_v37';
 
+// Last-resort fallback numbers used only when gexData (or a session/history row within it)
+// is missing a field outright. The backend always computes these for every real payload, so
+// in practice this path is dead code — but 34 separate call sites used to each carry their
+// own independently-typed-in literal for the same logical field (e.g. zero_gamma_level had 6
+// different "default" numbers across different functions), which reads as if someone copied
+// whatever was on screen that day rather than a real fallback. Unified into one constant so
+// there is exactly one number per field instead of many disagreeing ones. Seeded from a real
+// 2026-09-15 pipeline run rather than an arbitrary guess.
+const CHART_DEFAULTS = {
+  spot_price: 45862.52,
+  two_price: 394.67,
+  txf_price: 46588.0,
+  day_txf_price: 45780.0,
+  zero_gamma_level: 45040.4,
+  call_wall_strike: 45700.0,
+  put_wall_strike: 46000.0,
+  max_pain_strike: 45050.0,
+  gex_plus_flip: 45040.4,
+  pc_ratio: 78.12,
+  total_vex: 158.79,
+  date: '2026-09-15',
+  taifex_vix: 27.83, taifex_vix_change: 0.3, taifex_vix_change_pct: 1.09,
+  us_vix: 16.79, us_vix_change: 0.95, us_vix_change_pct: 6.0,
+  us_vvix: 94.08, us_vvix_change: 2.8, us_vvix_change_pct: 3.07,
+  regime_tag: '🔵 常態溫和', regime_color: '#00b0ff',
+  vvix_regime_tag: '🟠 尾部黑天鵝避險潮', vvix_regime_color: '#ff9100',
+  vvix_safety_buffer: '🛡️ 賣腳氣墊: 現價 350~500 點外'
+};
+
 window.togglePasscodeVisibility = function(e) {
   if (e) {
     e.preventDefault();
@@ -526,15 +555,15 @@ function renderDashboard() {
     }
   }
 
-  const spot = gexData.spot_price || 45811.01;
-  const txf = gexData.night_txf_price || gexData.txf_price || 45727.0;
-  const dayTxf = gexData.day_txf_price || 45841.0;
+  const spot = gexData.spot_price || CHART_DEFAULTS.spot_price;
+  const txf = gexData.night_txf_price || gexData.txf_price || CHART_DEFAULTS.txf_price;
+  const dayTxf = gexData.day_txf_price || CHART_DEFAULTS.day_txf_price;
   const shift = gexData.session_shift || {
     day_txf_price: dayTxf,
-    day_zero_gamma: 45661.0,
-    day_call_wall: 46100,
-    day_put_wall: 45500,
-    day_max_pain: 45800,
+    day_zero_gamma: CHART_DEFAULTS.zero_gamma_level,
+    day_call_wall: CHART_DEFAULTS.call_wall_strike,
+    day_put_wall: CHART_DEFAULTS.put_wall_strike,
+    day_max_pain: CHART_DEFAULTS.max_pain_strike,
     txf_shift: txf - dayTxf,
     zero_gamma_shift: 0.0,
     call_wall_shift: 0,
@@ -557,7 +586,7 @@ function renderDashboard() {
   }
 
   const twoEl = document.getElementById('stat-two-price');
-  if (twoEl) twoEl.innerText = (gexData.two_price || 401.64).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  if (twoEl) twoEl.innerText = (gexData.two_price || CHART_DEFAULTS.two_price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
   const otcSubEl = document.getElementById('stat-otc-sub');
   if (otcSubEl) {
@@ -570,7 +599,7 @@ function renderDashboard() {
   }
 
   const dateEl = document.getElementById('data-date');
-  if (dateEl) dateEl.innerText = gexData.date || '2026-08-14';
+  if (dateEl) dateEl.innerText = gexData.date || CHART_DEFAULTS.date;
 
   const sessionBadge = document.getElementById('session-badge');
   updateMarketTradingStatus();
@@ -589,7 +618,7 @@ function renderDashboard() {
   }
 
   // 2. Zero Gamma (日盤 vs 夜盤)
-  const zgDay = shift.day_zero_gamma || 45661.0;
+  const zgDay = shift.day_zero_gamma || CHART_DEFAULTS.zero_gamma_level;
   const zgNight = gexData.zero_gamma_level || zgDay;
   const zgShift = zgNight - zgDay;
 
@@ -604,7 +633,7 @@ function renderDashboard() {
   }
 
   // 3. Call Wall (日盤 vs 夜盤)
-  const cwDay = shift.day_call_wall || 46100;
+  const cwDay = shift.day_call_wall || CHART_DEFAULTS.call_wall_strike;
   const cwNight = gexData.call_wall_strike || cwDay;
   const cwShift = cwNight - cwDay;
 
@@ -619,7 +648,7 @@ function renderDashboard() {
   }
 
   // 4. Put Wall (日盤 vs 夜盤)
-  const pwDay = shift.day_put_wall || 45500;
+  const pwDay = shift.day_put_wall || CHART_DEFAULTS.put_wall_strike;
   const pwNight = gexData.put_wall_strike || pwDay;
   const pwShift = pwNight - pwDay;
 
@@ -634,9 +663,9 @@ function renderDashboard() {
   }
 
   // 5. Max Pain (日盤 vs 夜盤) & 空間籌碼結構拓撲 (Spatial Topology)
-  const mpVal = gexData.max_pain_strike || 44900;
-  const pwVal = gexData.put_wall_strike || 44500;
-  const cwVal = gexData.call_wall_strike || 46100;
+  const mpVal = gexData.max_pain_strike || CHART_DEFAULTS.max_pain_strike;
+  const pwVal = gexData.put_wall_strike || CHART_DEFAULTS.put_wall_strike;
+  const cwVal = gexData.call_wall_strike || CHART_DEFAULTS.call_wall_strike;
 
   const elMpDay = document.getElementById('stat-mp-day');
   if (elMpDay) elMpDay.innerText = (shift.day_max_pain || mpVal).toLocaleString();
@@ -692,16 +721,16 @@ function renderDashboard() {
   // P/C Ratio
   const pcEl = document.getElementById('stat-pc-ratio');
   if (pcEl) {
-    const pcVal = gexData.pc_ratio || 108.5;
+    const pcVal = gexData.pc_ratio || CHART_DEFAULTS.pc_ratio;
     const pcBadge = pcVal > 115 ? '🔴 大勝' : (pcVal > 105 ? '🟠 偏多看撐' : '🟢 偏空看壓');
     pcEl.innerText = `${pcVal.toFixed(1)}% (${pcBadge})`;
   }
 
   // 6. VEX & GEX+ Flip Card (Dual Session Split View)
-  const flipDay = shift.day_gex_plus_flip || (gexData.gex_plus_flip || 44848.0);
+  const flipDay = shift.day_gex_plus_flip || (gexData.gex_plus_flip || CHART_DEFAULTS.gex_plus_flip);
   const flipNight = gexData.gex_plus_flip || flipDay;
 
-  const vexDay = shift.day_total_vex !== undefined ? shift.day_total_vex : (gexData.total_vex !== undefined ? gexData.total_vex : -8.7);
+  const vexDay = shift.day_total_vex !== undefined ? shift.day_total_vex : (gexData.total_vex !== undefined ? gexData.total_vex : CHART_DEFAULTS.total_vex);
   const vexNight = gexData.total_vex !== undefined ? gexData.total_vex : vexDay;
 
   // Day Session
@@ -739,23 +768,28 @@ function renderDashboard() {
   }
 
   // 7. VIX & VVIX Card Data Update
+  // vixInfo itself is always present in a real payload; individual fields inside it can be
+  // null if the backend's own live VIX/VVIX fetch + last-real-snapshot fallback both failed
+  // (an extremely rare bootstrap case) — guarded with `!= null` rather than `||` so a
+  // genuine real 0 value is never mistaken for "missing".
+  const nz = (v, d) => (v !== undefined && v !== null) ? v : d;
   const vixInfo = gexData.vix_info || (gexData.retail_sentiment_details ? gexData.retail_sentiment_details.vix_info : null);
-  const taifexVix = vixInfo ? vixInfo.taifex_vix : (gexData.vix_index || 18.45);
-  const taifexChg = vixInfo ? vixInfo.taifex_vix_change : (gexData.vix_change || 0.25);
-  const taifexPct = vixInfo ? vixInfo.taifex_vix_change_pct : 1.37;
-  const regimeTag = vixInfo ? vixInfo.regime_tag : '🔵 常態溫和';
-  const regimeColor = vixInfo ? vixInfo.regime_color : '#00b0ff';
+  const taifexVix = nz(vixInfo && vixInfo.taifex_vix, CHART_DEFAULTS.taifex_vix);
+  const taifexChg = nz(vixInfo && vixInfo.taifex_vix_change, CHART_DEFAULTS.taifex_vix_change);
+  const taifexPct = nz(vixInfo && vixInfo.taifex_vix_change_pct, CHART_DEFAULTS.taifex_vix_change_pct);
+  const regimeTag = (vixInfo && vixInfo.regime_tag) || CHART_DEFAULTS.regime_tag;
+  const regimeColor = (vixInfo && vixInfo.regime_color) || CHART_DEFAULTS.regime_color;
 
-  const usVix = vixInfo ? vixInfo.us_vix : 15.82;
-  const usChg = vixInfo ? vixInfo.us_vix_change : -0.34;
-  const usPct = vixInfo ? vixInfo.us_vix_change_pct : -2.10;
+  const usVix = nz(vixInfo && vixInfo.us_vix, CHART_DEFAULTS.us_vix);
+  const usChg = nz(vixInfo && vixInfo.us_vix_change, CHART_DEFAULTS.us_vix_change);
+  const usPct = nz(vixInfo && vixInfo.us_vix_change_pct, CHART_DEFAULTS.us_vix_change_pct);
 
-  const usVvix = vixInfo ? (vixInfo.us_vvix || 102.66) : 102.66;
-  const usVvixChg = vixInfo ? (vixInfo.us_vvix_change !== undefined ? vixInfo.us_vvix_change : 1.85) : 1.85;
-  const usVvixPct = vixInfo ? (vixInfo.us_vvix_change_pct !== undefined ? vixInfo.us_vvix_change_pct : 1.83) : 1.83;
-  const vvixRegimeTag = vixInfo ? (vixInfo.vvix_regime_tag || '🟠 尾部黑天鵝避險潮') : '🟠 尾部黑天鵝避險潮';
-  const vvixRegimeColor = vixInfo ? (vixInfo.vvix_regime_color || '#ff9100') : '#ff9100';
-  const vvixSafetyBuffer = vixInfo ? (vixInfo.vvix_safety_buffer || '🛡️ 賣腳氣墊: 現價 350~500 點外') : '🛡️ 賣腳氣墊: 現價 350~500 點外';
+  const usVvix = nz(vixInfo && vixInfo.us_vvix, CHART_DEFAULTS.us_vvix);
+  const usVvixChg = nz(vixInfo && vixInfo.us_vvix_change, CHART_DEFAULTS.us_vvix_change);
+  const usVvixPct = nz(vixInfo && vixInfo.us_vvix_change_pct, CHART_DEFAULTS.us_vvix_change_pct);
+  const vvixRegimeTag = (vixInfo && vixInfo.vvix_regime_tag) || CHART_DEFAULTS.vvix_regime_tag;
+  const vvixRegimeColor = (vixInfo && vixInfo.vvix_regime_color) || CHART_DEFAULTS.vvix_regime_color;
+  const vvixSafetyBuffer = (vixInfo && vixInfo.vvix_safety_buffer) || CHART_DEFAULTS.vvix_safety_buffer;
 
   const elTaifexVix = document.getElementById('stat-taifex-vix');
   if (elTaifexVix) elTaifexVix.innerText = taifexVix.toFixed(2);
@@ -933,7 +967,7 @@ function populateKeyMetrics5Day() {
     }
 
     // 4.5. GEX+ Flip Level (早鳥轉折)
-    const gpVal = s.gex_plus_flip !== undefined ? s.gex_plus_flip : (gexData ? (gexData.gex_plus_flip || (s.zero_gamma_level ? s.zero_gamma_level + 200 : 45216.5)) : 45216.5);
+    const gpVal = s.gex_plus_flip !== undefined ? s.gex_plus_flip : (gexData ? (gexData.gex_plus_flip || (s.zero_gamma_level ? s.zero_gamma_level + 200 : CHART_DEFAULTS.gex_plus_flip)) : CHART_DEFAULTS.gex_plus_flip);
     const gpMain = (gpVal || 0).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
     let gpSub = '';
     if (prevSession) {
@@ -963,7 +997,7 @@ function populateKeyMetrics5Day() {
     }
 
     // 8. P/C Ratio
-    const pcVal = s.pc_ratio !== undefined ? s.pc_ratio : (gexData.pc_ratio || 108.5);
+    const pcVal = s.pc_ratio !== undefined ? s.pc_ratio : (gexData.pc_ratio || CHART_DEFAULTS.pc_ratio);
     const pcStr = typeof pcVal === 'number' ? pcVal.toFixed(1) + '%' : pcVal;
     let pcSub = '';
     if (prevSession && prevSession.pc_ratio !== undefined && typeof pcVal === 'number' && typeof prevSession.pc_ratio === 'number') {
@@ -985,9 +1019,12 @@ function populateKeyMetrics5Day() {
         // 下午 16:00 產出圖卡/網頁時證交所尚未公布
         mmMain = `<span style="font-size: 0.78rem; padding: 2px 6px; border-radius: 4px; background: rgba(255, 215, 0, 0.08); color: #ffd700; font-weight: 600; border: 1px dashed rgba(255, 215, 0, 0.4); display: inline-block; white-space: nowrap;">未公布 <span style="font-size: 0.72rem; opacity: 0.85;">(約20:30~21:00實時連線)</span></span>`;
         mmSub = `<div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 2px;">TWSE 盤後清算中</div>`;
+      } else if (s.margin_maint_market === null || s.margin_maint_market === undefined) {
+        mmMain = `<span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">—</span>`;
+        mmSub = `<div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 2px;">融資餘額數據暫時無法取得</div>`;
       } else {
-        const mmMarket = s.margin_maint_market !== undefined ? s.margin_maint_market : (s.margin_ratio || 155.8);
-        const mmStock = s.margin_maint_stock !== undefined ? s.margin_maint_stock : 141.2;
+        const mmMarket = s.margin_maint_market;
+        const mmStock = s.margin_maint_stock;
         let mmColor = '#00e676';
         let mmBg = 'rgba(0, 230, 118, 0.15)';
         let mmBadgeText = '🟢 安定';
@@ -1008,8 +1045,8 @@ function populateKeyMetrics5Day() {
           mmBg = 'rgba(255, 23, 68, 0.18)';
           mmBadgeText = '🔴 斷頭洗盤';
         }
-        mmMain = `<span style="font-size: 0.82rem; padding: 2px 6px; border-radius: 4px; background: ${mmBg}; color: ${mmColor}; font-weight: 700; border: 1px solid ${mmColor}; display: inline-block; white-space: nowrap;">${mmMarket.toFixed(1)}% <span style="font-size: 0.75rem; margin-left: 2px;">${mmBadgeText}</span></span>`;
-        mmSub = `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">個股 (${mmStock.toFixed(1)}%)</div>`;
+        mmMain = `<span style="font-size: 0.82rem; padding: 2px 6px; border-radius: 4px; background: ${mmBg}; color: ${mmColor}; font-weight: 700; border: 1px solid ${mmColor}; display: inline-block; white-space: nowrap;" title="TWSE未公布全市場整戶維持率，此為依真實融資餘額變動與大盤漲跌幅估算，非官方數據">${mmMarket.toFixed(1)}% <span style="font-size: 0.75rem; margin-left: 2px;">${mmBadgeText}</span></span>`;
+        mmSub = `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">個股 (${mmStock.toFixed(1)}%) · 估算值</div>`;
       }
     }
 
@@ -1329,10 +1366,10 @@ function renderGEXChart() {
 
   const strikes = dataset.map(d => d.strike);
 
-  const spot = activeSession ? (activeSession.spot_price || gexData.spot_price) : (gexData.spot_price || 45811.01);
-  const zeroGamma = activeSession ? (activeSession.zero_gamma_level || gexData.zero_gamma_level) : (gexData.zero_gamma_level || 45661.0);
-  const callWall = activeSession ? (activeSession.call_wall_strike || gexData.call_wall_strike) : (gexData.call_wall_strike || 46100);
-  const putWall = activeSession ? (activeSession.put_wall_strike || gexData.put_wall_strike) : (gexData.put_wall_strike || 45500);
+  const spot = activeSession ? (activeSession.spot_price || gexData.spot_price) : (gexData.spot_price || CHART_DEFAULTS.spot_price);
+  const zeroGamma = activeSession ? (activeSession.zero_gamma_level || gexData.zero_gamma_level) : (gexData.zero_gamma_level || CHART_DEFAULTS.zero_gamma_level);
+  const callWall = activeSession ? (activeSession.call_wall_strike || gexData.call_wall_strike) : (gexData.call_wall_strike || CHART_DEFAULTS.call_wall_strike);
+  const putWall = activeSession ? (activeSession.put_wall_strike || gexData.put_wall_strike) : (gexData.put_wall_strike || CHART_DEFAULTS.put_wall_strike);
 
   const titleEl = document.getElementById('chart-panel-title');
   if (titleEl && activeSession) {
@@ -1621,6 +1658,13 @@ function populateRetailSentiment() {
   const fPutNetSign = snap.foreign_put_net >= 0 ? '+' : '';
   const vixSign = snap.vix_change >= 0 ? '+' : '';
 
+  // null when the backend's large-trader fetch genuinely has no data
+  // (fetch_official_taifex_specific_traders returns an UNAVAILABLE state), not a fabricated
+  // fallback number — rendered as "—" rather than guessing.
+  const specTraders = gexData.specific_traders || {};
+  const specForeignTx = hasVal(specTraders.foreign_tx_net) ? specTraders.foreign_tx_net : null;
+  const specTop5 = hasVal(specTraders.top5_specific_net) ? specTraders.top5_specific_net : null;
+
   container.innerHTML = `
     <!-- Broker Market Snapshot Bar -->
     <div style="background: rgba(0, 210, 255, 0.04); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 12px; padding: 14px 18px; margin-bottom: 18px;">
@@ -1751,22 +1795,22 @@ function populateRetailSentiment() {
       <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255, 215, 0, 0.35); border-radius: 12px; padding: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <span style="font-weight: 700; color: var(--gold-accent); font-size: 1rem;">⚖️ 外資 vs 特法分歧診斷</span>
-          <span class="badge-bull" style="font-size: 0.74rem; background: rgba(255, 215, 0, 0.15); color: var(--gold-accent); border-color: var(--gold-accent);">${(gexData.specific_traders || {}).divergence_tag || '🟡 避險套利分歧'}</span>
+          <span class="badge-bull" style="font-size: 0.74rem; background: rgba(255, 215, 0, 0.15); color: var(--gold-accent); border-color: var(--gold-accent);">${(gexData.specific_traders || {}).divergence_tag || '⚪ 無即時數據'}</span>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
           <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; text-align: center;">
             <div style="font-size: 0.72rem; color: var(--text-muted);">外資台指期淨留倉</div>
-            <div style="font-weight: 700; color: var(--put-color); font-size: 1.1rem;">${((gexData.specific_traders || {}).foreign_tx_net || snap.foreign_tx_net).toLocaleString()} 口</div>
+            <div style="font-weight: 700; color: ${specForeignTx == null ? 'var(--text-muted)' : (specForeignTx >= 0 ? 'var(--call-color)' : 'var(--put-color)')}; font-size: 1.1rem;">${specForeignTx == null ? '—' : (specForeignTx >= 0 ? '+' : '') + specForeignTx.toLocaleString()} 口</div>
           </div>
           <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; text-align: center;">
             <div style="font-size: 0.72rem; color: var(--text-muted);">前五大特法淨留倉</div>
-            <div style="font-weight: 700; color: var(--call-color); font-size: 1.1rem;">+${((gexData.specific_traders || {}).top5_specific_net || 4850).toLocaleString()} 口</div>
+            <div style="font-weight: 700; color: ${specTop5 == null ? 'var(--text-muted)' : (specTop5 >= 0 ? 'var(--call-color)' : 'var(--put-color)')}; font-size: 1.1rem;">${specTop5 == null ? '—' : (specTop5 >= 0 ? '+' : '') + specTop5.toLocaleString()} 口</div>
           </div>
         </div>
 
         <div style="font-size: 0.78rem; line-height: 1.55; color: var(--text-main); background: rgba(255, 215, 0, 0.06); padding: 8px 10px; border-radius: 6px; border-left: 2px solid var(--gold-accent);">
-          ${(gexData.specific_traders || {}).divergence_desc || '💡 外資期貨空單大，但前五大特法淨多單高，為典型現貨一籃子對沖套利，切勿盲目追空！'}
+          ${(gexData.specific_traders || {}).divergence_desc || '大額交易人特定法人部位數據暫時無法取得。'}
         </div>
       </div>
     </div>
@@ -1818,24 +1862,25 @@ function populateNightTrading() {
     night_sentiment: "⚖️ 外資夜盤中性觀望"
   };
 
+  const ntTxt = (v, suffix) => v == null ? '—' : `${v}${suffix || ''}`;
   const elTxVol = document.getElementById('night-foreign-tx-vol');
-  if (elTxVol) elTxVol.innerText = `${nt.tx_foreign_net_vol} 口`;
+  if (elTxVol) elTxVol.innerText = ntTxt(nt.tx_foreign_net_vol, ' 口');
   const elTxAmt = document.getElementById('night-foreign-tx-amt');
-  if (elTxAmt) elTxAmt.innerText = `契約金額: ${nt.tx_foreign_net_amt} 億 TWD`;
+  if (elTxAmt) elTxAmt.innerText = `契約金額: ${ntTxt(nt.tx_foreign_net_amt, ' 億 TWD')}`;
 
   const elMiniVol = document.getElementById('night-mini-vol');
-  if (elMiniVol) elMiniVol.innerText = `${nt.mini_foreign_net_vol} 口`;
+  if (elMiniVol) elMiniVol.innerText = ntTxt(nt.mini_foreign_net_vol, ' 口');
   const elMicroVol = document.getElementById('night-micro-vol');
-  if (elMicroVol) elMicroVol.innerText = `${nt.micro_foreign_net_vol} 口`;
+  if (elMicroVol) elMicroVol.innerText = ntTxt(nt.micro_foreign_net_vol, ' 口');
 
   const elDealerVol = document.getElementById('night-dealer-vol');
-  if (elDealerVol) elDealerVol.innerText = `${nt.tx_dealer_net_vol} 口`;
+  if (elDealerVol) elDealerVol.innerText = ntTxt(nt.tx_dealer_net_vol, ' 口');
   const elDealerAmt = document.getElementById('night-dealer-amt');
-  if (elDealerAmt) elDealerAmt.innerText = `契約金額: ${nt.tx_dealer_net_amt} 億 TWD`;
+  if (elDealerAmt) elDealerAmt.innerText = `契約金額: ${ntTxt(nt.tx_dealer_net_amt, ' 億 TWD')}`;
 
   const summaryEl = document.getElementById('night-trading-summary');
   if (summaryEl) {
-    summaryEl.innerHTML = `🌙 <strong>夜盤法人觀察重點</strong>：${nt.night_sentiment}。外資夜盤台指期交易口數為 <code>${nt.tx_foreign_net_vol} 口</code>，夜盤籌碼動向平穩。`;
+    summaryEl.innerHTML = `🌙 <strong>夜盤法人觀察重點</strong>：${nt.night_sentiment || '⚪ 無即時數據'}。外資夜盤台指期交易口數為 <code>${ntTxt(nt.tx_foreign_net_vol, ' 口')}</code>，夜盤籌碼動向平穩。`;
   }
 
   // Populate 5-Day Night Session Institutional Trading Table
@@ -1844,21 +1889,24 @@ function populateNightTrading() {
     // Explicit descending date sort: Latest date at top
     const list = ensureDescendingByDate(gexData.night_institutional_5day_history);
     let rowsHtml = '';
+    // has_snapshot:false rows (no real data accumulated yet for that day) carry null in
+    // every field — render "—" for those instead of the literal string "null" or treating
+    // null as a positive number (JS quirk: `null >= 0` is true).
+    const cell = (v) => v == null ? { color: 'var(--text-muted)', text: '—' } : { color: v >= 0 ? 'var(--call-color)' : 'var(--put-color)', text: `${v >= 0 ? '+' : ''}${v}` };
     list.forEach(item => {
-      const fTxSign = item.foreign_tx >= 0 ? '+' : '';
-      const fMtxSign = item.foreign_mtx >= 0 ? '+' : '';
-      const fMicroSign = item.foreign_micro >= 0 ? '+' : '';
-      const dTxSign = item.dealer_tx >= 0 ? '+' : '';
-
-      const fTxAmtStr = item.foreign_tx_amt !== undefined ? `${item.foreign_tx_amt} 億` : `${(item.foreign_tx * 45727 * 200 / 1e8).toFixed(2)} 億`;
-      const dTxAmtStr = item.dealer_tx_amt !== undefined ? `${item.dealer_tx_amt} 億` : `${(item.dealer_tx * 45727 * 200 / 1e8).toFixed(2)} 億`;
+      const cTx = cell(item.foreign_tx);
+      const cMtx = cell(item.foreign_mtx);
+      const cMicro = cell(item.foreign_micro);
+      const cDealer = cell(item.dealer_tx);
+      const fTxAmtStr = item.foreign_tx_amt != null ? `${item.foreign_tx_amt} 億` : '—';
+      const dTxAmtStr = item.dealer_tx_amt != null ? `${item.dealer_tx_amt} 億` : '—';
 
       rowsHtml += `<tr>
         <td>${item.date}</td>
-        <td style="color: ${item.foreign_tx >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${fTxSign}${item.foreign_tx} 口 (${fTxAmtStr})</td>
-        <td style="color: ${item.foreign_mtx >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${fMtxSign}${item.foreign_mtx} 口</td>
-        <td style="color: ${item.foreign_micro >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${fMicroSign}${item.foreign_micro} 口</td>
-        <td style="color: ${item.dealer_tx >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${dTxSign}${item.dealer_tx} 口 (${dTxAmtStr})</td>
+        <td style="color: ${cTx.color};">${cTx.text}${item.foreign_tx != null ? ' 口' : ''} (${fTxAmtStr})</td>
+        <td style="color: ${cMtx.color};">${cMtx.text}${item.foreign_mtx != null ? ' 口' : ''}</td>
+        <td style="color: ${cMicro.color};">${cMicro.text}${item.foreign_micro != null ? ' 口' : ''}</td>
+        <td style="color: ${cDealer.color};">${cDealer.text}${item.dealer_tx != null ? ' 口' : ''} (${dTxAmtStr})</td>
       </tr>`;
     });
 
@@ -1893,11 +1941,11 @@ function populateInstitutionalMatrix() {
 
   const digestEl = document.getElementById('executive-digest-content');
   if (digestEl) {
-    const spotP = gexData.spot_price || 45169.46;
-    const cwP = gexData.call_wall_strike || 45200;
-    const pwP = gexData.put_wall_strike || 44800;
-    const zgP = gexData.zero_gamma_level || 45017.6;
-    const pcP = gexData.pc_ratio || 111.8;
+    const spotP = gexData.spot_price || CHART_DEFAULTS.spot_price;
+    const cwP = gexData.call_wall_strike || CHART_DEFAULTS.call_wall_strike;
+    const pwP = gexData.put_wall_strike || CHART_DEFAULTS.put_wall_strike;
+    const zgP = gexData.zero_gamma_level || CHART_DEFAULTS.zero_gamma_level;
+    const pcP = gexData.pc_ratio || CHART_DEFAULTS.pc_ratio;
     const regStr = spotP >= zgP ? '正 Gamma 波動度抑制區' : '負 Gamma 避險助跌警示區';
 
     const defaultFSum = `📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：外資台指期未平倉空單 <code>-85,380 口</code>（單日回補 <code>+1,705 口</code>，約合 <code>+15.6 億 TWD</code> 契約金額），空頭避險賣壓呈現階段性收斂。`;
@@ -1933,7 +1981,7 @@ function populateInstitutionalMatrix() {
       const top5Spec = row.top5_spec_net || 0;
       const top10Spec = row.top10_spec_net || 0;
       const foreignFut = row.foreign_fut_net || 0;
-      const trustFut = row.trust_fut_net !== undefined ? row.trust_fut_net : (row.itrust_fut_net || 0);
+      const trustFut = row.trust_fut_net != null ? row.trust_fut_net : (row.itrust_fut_net || 0);
       const dealerFut = row.dealer_fut_net || 0;
 
       const top5Sign = top5 >= 0 ? '+' : '';
@@ -1968,7 +2016,7 @@ function populateInstitutionalMatrix() {
     let html2 = '';
     history.forEach(row => {
       const foreignStock = row.foreign_stock_net || 0;
-      const trustStock = row.trust_stock_net !== undefined ? row.trust_stock_net : (row.itrust_stock_net || 0);
+      const trustStock = row.trust_stock_net != null ? row.trust_stock_net : (row.itrust_stock_net || 0);
       const dealerStock = row.dealer_stock_net || 0;
 
       const fStockSign = foreignStock >= 0 ? '+' : '';
@@ -1976,28 +2024,28 @@ function populateInstitutionalMatrix() {
       const dStockSign = dealerStock >= 0 ? '+' : '';
 
       // Option Call & Put Breakdown
-      const fCall = row.foreign_opt_call_net !== undefined ? row.foreign_opt_call_net : 0;
-      const fPut = row.foreign_opt_put_net !== undefined ? row.foreign_opt_put_net : 0;
+      const fCall = row.foreign_opt_call_net != null ? row.foreign_opt_call_net : 0;
+      const fPut = row.foreign_opt_put_net != null ? row.foreign_opt_put_net : 0;
       const fCallSign = fCall >= 0 ? '+' : '';
       const fPutSign = fPut >= 0 ? '+' : '';
       const fCallDot = fCall >= 0 ? '🔴' : '🟢';
       const fPutDot = fPut >= 0 ? '🔴' : '🟢';
 
-      const tCall = row.trust_opt_call_net !== undefined ? row.trust_opt_call_net : 0;
-      const tPut = row.trust_opt_put_net !== undefined ? row.trust_opt_put_net : 0;
+      const tCall = row.trust_opt_call_net != null ? row.trust_opt_call_net : 0;
+      const tPut = row.trust_opt_put_net != null ? row.trust_opt_put_net : 0;
       const tCallSign = tCall >= 0 ? '+' : '';
       const tPutSign = tPut >= 0 ? '+' : '';
       const tCallDot = tCall >= 0 ? '🔴' : '🟢';
       const tPutDot = tPut >= 0 ? '🔴' : '🟢';
 
-      const dCall = row.dealer_opt_call_net !== undefined ? row.dealer_opt_call_net : 0;
-      const dPut = row.dealer_opt_put_net !== undefined ? row.dealer_opt_put_net : 0;
+      const dCall = row.dealer_opt_call_net != null ? row.dealer_opt_call_net : 0;
+      const dPut = row.dealer_opt_put_net != null ? row.dealer_opt_put_net : 0;
       const dCallSign = dCall >= 0 ? '+' : '';
       const dPutSign = dPut >= 0 ? '+' : '';
       const dCallDot = dCall >= 0 ? '🔴' : '🟢';
       const dPutDot = dPut >= 0 ? '🔴' : '🟢';
 
-      const pcVal = row.pc_ratio || gexData.pc_ratio || 108.5;
+      const pcVal = row.pc_ratio || gexData.pc_ratio || CHART_DEFAULTS.pc_ratio;
 
       html2 += `<tr>
         <td>${row.date}</td>
@@ -2916,7 +2964,7 @@ function handleLiveTick(data) {
         const baseTxf = isNightSession ? (gexData.night_txf_price || gexData.txf_price) : (gexData.day_txf_price || gexData.txf_price);
         const baseZg = isNightSession ? (gexData._base_zero_gamma) : (gexData.session_shift?.day_zero_gamma || gexData._base_zero_gamma);
         const baseGp = isNightSession ? (gexData._base_gex_plus_flip) : (gexData.session_shift?.day_gex_plus_flip || gexData._base_gex_plus_flip);
-        const dayZg = gexData.session_shift?.day_zero_gamma || 46016.9;
+        const dayZg = gexData.session_shift?.day_zero_gamma || CHART_DEFAULTS.zero_gamma_level;
         
         const priceDelta = data.price - baseTxf;
         const liveZg = Math.round((baseZg + priceDelta * 0.62) * 10) / 10;
@@ -2990,26 +3038,26 @@ function updateMicrostructureExpress(livePrice = null) {
     } else if (activeSession && activeSession.spot_price && activeSession.spot_price > 0) {
       currentP = activeSession.spot_price;
     } else {
-      currentP = gexData.txf_price || gexData.spot_price || 45900;
+      currentP = gexData.txf_price || gexData.spot_price || CHART_DEFAULTS.spot_price;
     }
   }
 
   // 2. Active Zero Gamma, Call Wall, Put Wall, Max Pain
-  const zg = (activeSession && activeSession.zero_gamma_level !== undefined) 
-    ? activeSession.zero_gamma_level 
-    : (gexData.zero_gamma_level || 46317.7);
+  const zg = (activeSession && activeSession.zero_gamma_level !== undefined)
+    ? activeSession.zero_gamma_level
+    : (gexData.zero_gamma_level || CHART_DEFAULTS.zero_gamma_level);
 
-  const cw = (activeSession && activeSession.call_wall_strike !== undefined) 
-    ? activeSession.call_wall_strike 
-    : (gexData.call_wall_strike || 46500);
+  const cw = (activeSession && activeSession.call_wall_strike !== undefined)
+    ? activeSession.call_wall_strike
+    : (gexData.call_wall_strike || CHART_DEFAULTS.call_wall_strike);
 
-  const pw = (activeSession && activeSession.put_wall_strike !== undefined) 
-    ? activeSession.put_wall_strike 
-    : (gexData.put_wall_strike || 46100);
+  const pw = (activeSession && activeSession.put_wall_strike !== undefined)
+    ? activeSession.put_wall_strike
+    : (gexData.put_wall_strike || CHART_DEFAULTS.put_wall_strike);
 
-  const mp = (activeSession && activeSession.max_pain_strike !== undefined) 
-    ? activeSession.max_pain_strike 
-    : (gexData.max_pain_strike || 45700);
+  const mp = (activeSession && activeSession.max_pain_strike !== undefined)
+    ? activeSession.max_pain_strike
+    : (gexData.max_pain_strike || CHART_DEFAULTS.max_pain_strike);
 
   const isPosGamma = currentP >= zg;
   const flipDist = (Math.abs(currentP - zg)).toFixed(1);
