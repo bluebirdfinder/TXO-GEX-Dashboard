@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
   
   // Always load embedded/cached data immediately so dashboard is never empty
-  attemptDecrypt('GEX2026');
+  attemptDecrypt(VALID_PASSCODE);
 
   const isExplicitlyLocked = sessionStorage.getItem('gex_locked') === 'true';
   const passcodeModal = document.getElementById('passcode-modal');
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       passcodeModal.classList.add('hidden');
       sessionStorage.setItem('gex_unlocked', 'true');
       localStorage.setItem('gex_unlocked', 'true');
-      localStorage.setItem('txo_gex_passcode', 'GEX2026');
+      localStorage.setItem('txo_gex_passcode', VALID_PASSCODE);
     }
   }
   initLiveTickPolling();
@@ -270,8 +270,8 @@ async function attemptDecrypt(passcode) {
   }
 
   const cleanPass = (passcode || '').trim().toUpperCase();
-  localStorage.setItem('txo_gex_passcode', cleanPass || 'GEX2026');
-  if (cleanPass === 'GEX2026') {
+  localStorage.setItem('txo_gex_passcode', cleanPass || VALID_PASSCODE);
+  if (cleanPass === VALID_PASSCODE) {
     sessionStorage.setItem('gex_unlocked', 'true');
     localStorage.setItem('gex_unlocked', 'true');
   }
@@ -1141,6 +1141,7 @@ function switchSession(idx, stopAuto = true) {
   currentSessionIndex = idx;
   renderHistorySessionSelector();
   renderGEXChart();
+  populateAiQuantDigest();
 }
 
 function formatWeekdayBracket(dateStr) {
@@ -1416,21 +1417,40 @@ function renderGEXChart() {
   };
   traces.push(netGexTrace);
 
-  // 🔀 Overlay Mode
+  // 🔀 Overlay Mode — real previous-session Net GEX curve, aligned by strike (not a fabricated
+  // transform of today's own curve). Only rendered when a genuine prior session dataset exists.
   if (isOverlayMode) {
-    const prevNetVal = netGexVal.map(v => v * 0.88 - 15.0);
-    const prevTrace = isHoriz ? {
-      y: strikes,
-      x: prevNetVal,
-      name: '🔀 對照盤別 (T-1日盤) 差異對比線',
-      type: 'scatter', mode: 'lines', line: { color: '#ffd700', width: 2.5, dash: 'dot', shape: 'spline' }
-    } : {
-      x: strikes,
-      y: prevNetVal,
-      name: '🔀 對照盤別 (T-1日盤) 差異對比線',
-      type: 'scatter', mode: 'lines', line: { color: '#ffd700', width: 2.5, dash: 'dot', shape: 'spline' }
-    };
-    traces.push(prevTrace);
+    const prevSession = (sessions && currentSessionIndex > 0) ? sessions[currentSessionIndex - 1] : null;
+    let prevDataset = null;
+    if (prevSession) {
+      if (currentTab === 'total-gex') prevDataset = prevSession.total_gex || null;
+      else if (currentTab === 'weekly-gex') prevDataset = prevSession.weekly_gex || null;
+      else if (currentTab === 'friday-gex') prevDataset = prevSession.friday_gex || null;
+      else if (currentTab === 'monthly-gex') prevDataset = prevSession.monthly_gex || null;
+    }
+    if (prevDataset && prevDataset.length > 0) {
+      const prevByStrike = {};
+      prevDataset.forEach(d => {
+        prevByStrike[d.strike] = d.net_gex !== undefined ? d.net_gex : ((d.call_gex || 0) + (d.put_gex || 0));
+      });
+      // null (not 0) for strikes the prior session didn't have — Plotly leaves a gap instead of a misleading line to 0
+      const prevNetVal = strikes.map(s => (prevByStrike[s] !== undefined ? prevByStrike[s] : null));
+      const prevLabel = `🔀 對照盤別 (${prevSession.full_name || prevSession.label || 'T-1'}) 真實 Net GEX 對比線`;
+      const prevTrace = isHoriz ? {
+        y: strikes,
+        x: prevNetVal,
+        name: prevLabel,
+        type: 'scatter', mode: 'lines', line: { color: '#ffd700', width: 2.5, dash: 'dot', shape: 'spline' },
+        connectgaps: false
+      } : {
+        x: strikes,
+        y: prevNetVal,
+        name: prevLabel,
+        type: 'scatter', mode: 'lines', line: { color: '#ffd700', width: 2.5, dash: 'dot', shape: 'spline' },
+        connectgaps: false
+      };
+      traces.push(prevTrace);
+    }
   }
 
   // Adjust container height dynamically for mobile vs desktop (Both modes customized for maximum vertical space)
@@ -1991,9 +2011,13 @@ function populateAiQuantDigest() {
 
   const digest = gexData.ai_ex_dividend_digest || {};
 
-  // Derive current active session numbers to align 100% with top KPI cards
+  // Derive current active session numbers — follow the user's selected history session
+  // (currentSessionIndex, same as renderGEXChart) instead of always the latest, so the AI
+  // narrative text matches whatever session the GEX chart above it is currently showing.
   const sessions = gexData.history_10_sessions || [];
-  const activeSess = (sessions.length > 0) ? sessions[sessions.length - 1] : gexData;
+  const activeSess = (sessions.length > 0 && sessions[currentSessionIndex])
+    ? sessions[currentSessionIndex]
+    : (sessions.length > 0 ? sessions[sessions.length - 1] : gexData);
 
   const curPrice = activeSess.txf_price || activeSess.spot_price || gexData.night_txf_price || gexData.spot_price || 0;
   const curZg = activeSess.zero_gamma_level || gexData.zero_gamma_level || 0;
@@ -2505,15 +2529,15 @@ function initModals() {
     unlockBtn.onclick = function() {
       const inputEl = document.getElementById('passcode-input');
       const code = (inputEl ? inputEl.value : '').trim().toUpperCase();
-      if (code === 'GEX2026') {
+      if (code === VALID_PASSCODE) {
         passcodeModal.style.display = 'none';
         passcodeModal.classList.add('hidden');
         if (passcodeError) passcodeError.style.display = 'none';
         sessionStorage.setItem('gex_unlocked', 'true');
         sessionStorage.removeItem('gex_locked');
         localStorage.setItem('gex_unlocked', 'true');
-        localStorage.setItem('txo_gex_passcode', 'GEX2026');
-        attemptDecrypt('GEX2026');
+        localStorage.setItem('txo_gex_passcode', VALID_PASSCODE);
+        attemptDecrypt(VALID_PASSCODE);
       } else {
         if (passcodeError) passcodeError.style.display = 'block';
         if (inputEl) {

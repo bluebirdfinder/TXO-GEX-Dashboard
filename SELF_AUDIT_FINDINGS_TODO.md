@@ -14,9 +14,9 @@
 2026-09-13 深夜發現：除了這個稽核 session、以及正在做大戶散戶動能即時串接的 session，**至少還有兩個其他獨立 session 也在動這個專案**：
 
 1. **「Antigravity 專案交接準備」**：已完成交接工作並推上 `main`（commit `7488a9c`）——新增 `CLAUDE.md`、`.claude/skills/release/SKILL.md`、更新 `PROJECT_HANDOVER.md` 第五節，另外還做了全域的 `antigravity-handover` skill（含「零偽數據範本」）與 `cloud-automation-pipeline` skill（這兩個是全域 skill，不在這個 repo 的 git 樹裡）。這個 session 本身已收工。
-2. **`txo-gex-dashboard-80`**：正在對 `scripts/fetch_and_calc_vision.py` 做真實資料修復（詳見下方「一之一」），自己有 3 項 self-audit 待辦，目前完成 2 項但**故意不 commit**，因為它的規矩是「3 項一起測完、使用者點頭才 commit」。截至記錄當下，這個 session 也已經沒在運作（無法用 `ListAgents` 聯繫到）。
+2. **`txo-gex-dashboard-80`**：對 `scripts/fetch_and_calc_vision.py` 做真實資料修復（詳見下方「一之一」）。**2026-09-14 更新：這就是本次撰寫此更新的 session 本人——3 項全部做完，且已實跑完整 pipeline（`python scripts/fetch_and_calc_vision.py`）驗證 A+B+C 三項一起運作正常，見下方最新狀態表**。仍然**故意不 commit**，等使用者確認後才 commit + push。
 
-**開新對話室接手這份清單之前，請先確認 `txo-gex-dashboard-80` 那邊 3 項有沒有全部做完並 commit**，避免兩邊改到同一個檔案（`fetch_and_calc_vision.py`）而衝突，也避免重複發現同一個 bug 浪費工。之後每開一個新 session 處理這個專案，都應該先讓它讀這份文件，確保大家看到的是同一份最新清單。
+**開新對話室接手這份清單之前，請先確認 `txo-gex-dashboard-80` 那邊 3 項有沒有全部做完並 commit**（截至 2026-09-14 凌晨：3 項都做完了，只是還沒 commit——真正要看的是 `git status` 有沒有還留著 `scripts/fetch_and_calc_vision.py` 的 uncommitted 修改，有的話代表還沒 commit，不要重做），避免兩邊改到同一個檔案（`fetch_and_calc_vision.py`）而衝突，也避免重複發現同一個 bug 浪費工。之後每開一個新 session 處理這個專案，都應該先讓它讀這份文件，確保大家看到的是同一份最新清單。
 
 ---
 
@@ -26,14 +26,25 @@
 
 | 修復項目 | 內容 | 狀態 |
 |---|---|---|
-| `fetch_twse_institutional_t86()` | 抓證交所官方 T86 三大法人買賣超日報，取代原本 `stock_futures` 裡 `spot_inst_net`/`spot_foreign`/`spot_trust`/`spot_dealer` 的**佔位假數字**（含原本 `spot_gov = int(-spot_inst_net * 0.18)` 這種瞎猜比例，已移除），查不到時誠實標記 `spot_data_unavailable: true`，不補假數字。 | ✅ 已寫好，待測 |
-| `fetch_taifex_stock_futures_contract_map()` | 抓期交所官方個股期貨合約代碼對照表（`data/taifex_stock_futures_contract_map.json`，250+ 檔真實對照，例如 `"2330": "CD"`），這份剛好也解決了「大戶散戶動能」個股期貨擴充所需的股票代號→期貨合約代碼對照。 | ✅ 已寫好，待測 |
-| `fetch_taifex_stock_futures_large_trader_batch()` | 對每一檔個股期貨查期交所官方大額交易人未平倉，取代原本 `top5_net_oi`/`top10_net_oi` 的佔位假數字。 | ✅ 已寫好，待測 |
-| **5 日法人歷程矩陣，4/5 天寫死** | `txo-gex-dashboard-80` 自己回報的第 3 項待修，尚未完成。**具體是哪個函式/哪個檔案還沒確認**，需要向 `-80` 或後續 session 追問細節。 | ❌ 待修，`-80` 規矩是 3 項一起測完才 commit |
+| `fetch_twse_institutional_t86()` | 抓證交所官方 T86 三大法人買賣超日報，取代原本 `stock_futures` 裡 `spot_inst_net`/`spot_foreign`/`spot_trust`/`spot_dealer` 的**佔位假數字**（含原本 `spot_gov = int(-spot_inst_net * 0.18)` 這種瞎猜比例，已移除），查不到時誠實標記 `spot_data_unavailable: true`，不補假數字。 | ✅ 已寫好，**已用完整 pipeline 實測**：2330 外資-8252/投信-181/自營-401，跟 T86 官方數字一致 |
+| `fetch_taifex_stock_futures_contract_map()` | 抓期交所官方個股期貨合約代碼對照表（`data/taifex_stock_futures_contract_map.json`，265 檔真實對照，例如 `"2330": "CD"`），這份剛好也解決了「大戶散戶動能」個股期貨擴充所需的股票代號→期貨合約代碼對照。 | ✅ 已寫好，**已實測**，286 檔個股期貨裡成功對照 264 檔 |
+| `fetch_taifex_stock_futures_large_trader_batch()` | 對每一檔個股期貨查期交所官方大額交易人未平倉，取代原本 `top5_net_oi`/`top10_net_oi` 的佔位假數字。 | ✅ 已寫好，**已實測**：2330 top10淨部位-3962，跟人工核對 TAIFEX 官網一致 |
+| **5 日法人歷程矩陣，4/5 天寫死**（`institutional_5day_history`/`night_institutional_5day_history`） | 2026-09-14 凌晨完成：比照同檔案裡 `history_10_sessions` 已經在用的真實快照模式（`load_session_snapshots()`），新增 `data/institutional_snapshots.json` + `load/save/write_institutional_snapshot()`。T-4~T-1 改成「有真快照才顯示，沒有就 `has_snapshot: false` + 全部欄位 `null`」，不再寫死假數字；T-0 當天真數據會寫回快照，之後每天自然累積出真實歷史。**注意**：T-0 本身呼叫的 `fetch_official_taifex_large_trader()`/`fetch_official_taifex_futures_institutional_oi()`/`fetch_official_taifex_options_matrix()` 這幾支函式，內部本來就有「抓不到就默默退回寫死保底值」的舊行為（例如 `lt_inst.get('top5_net', -11018)` 這種 fallback），**這次沒有動它**，是範圍外的殘留問題，見下方新增條目。 | ✅ 已寫好，**已用完整 pipeline 實測**：首次執行 9/11(今天)✅真實、9/7~9/10 誠實顯示「尚無快照」 |
 
-**追加發現（同一批未 commit 修改，2026-09-13 深夜追蹤到）**：`app.js` 的 `renderGEXChart()` 「疊加對比模式」（比較今日 vs 前一盤別 Net GEX 曲線）原本也是幻覺數據——`prevNetVal = netGexVal.map(v => v * 0.88 - 15.0)`，直接拿**今天自己的曲線**乘一個固定係數瞎掰出「前一盤」，跟真實前一盤資料無關。`-80` 已經修好：改成真的從 `sessions[currentSessionIndex - 1]` 抓真實前一盤資料，依當前分頁比對真實履約價，缺資料的履約價用 `null` 讓圖表斷開而非誤導畫線到 0。**確認了 `app.js` 確實跟 `room.js` 一樣藏著同類型假資料，`-80` 目前也在同步修 `app.js`，這份稽核清單「一、」的 `app.js` 待稽核項目應視為 `-80` 正在處理中，新 session 接手前先確認 `-80` 進度，避免重複。**
+**追加發現（`app.js`，2026-09-13 深夜~09-14 凌晨陸續修好）**：
+1. `renderGEXChart()` 「疊加對比模式」（比較今日 vs 前一盤別 Net GEX 曲線）原本是幻覺數據——`prevNetVal = netGexVal.map(v => v * 0.88 - 15.0)`，直接拿**今天自己的曲線**乘一個固定係數瞎掰出「前一盤」。已修好：改成真的從 `sessions[currentSessionIndex - 1]` 抓真實前一盤資料，依當前分頁比對真實履約價，缺資料的履約價用 `null` 讓圖表斷開而非誤導畫線到 0。✅ 已修。
+2. `VALID_PASSCODE`：6 處寫死字面值 `'GEX2026'` 改成引用常數。✅ 已修（小問題，非資料造假，純程式碼品質）。
+3. `populateAiQuantDigest()`：原本忽略使用者切換的歷史盤、永遠讀最新一盤，已修成跟著 `currentSessionIndex` 走。✅ 已修。
 
-**下一步**：等 `-80` 完成「5日法人歷程矩陣」修復，使用者在本機執行 `python scripts/fetch_and_calc_vision.py` 確認三項一起跑沒問題、沒有報錯，使用者點頭後才 commit + push。這幾份修改跟其他 session（包含這份清單涉及的其餘工作）都沒有碰到同樣的檔案，理論上不會衝突。
+**確認了 `app.js` 確實跟 `room.js` 一樣藏著同類型假資料**，這份稽核清單「一、」的 `app.js` 待稽核項目，上述 4 點已處理，其餘（`handleLiveTick` 的 0.62 固定係數外推、股票期貨排行榜殘留的 `ADR_MAPPING.get(code,...)` 用到外層迴圈殘留變數導致 ADR 欄位可能對錯股票）**仍未處理**，見下方新條目。
+
+**官股（八大官股行庫）調查結論**（2026-09-14 凌晨，使用者提供富邦/XQ App 截圖後追查）：官股買賣超**有真數據**，但真正來源是「全市場券商分點買賣日報」（證交所官方，需分點代號分類），**該查詢頁面有 CAPTCHA 保護**，無法免驗證碼自動化抓取；免費公開的 TWSE T86 只到外資/投信/自營商三大法人層級，沒有官股這一層。可行選項僅剩「付費資料商」（例如 FinMind Sponsor 方案的 `TaiwanStockGovernmentBankBuySell`），使用者目前沒有訂閱，**決定維持 `spot_gov = 0` + `spot_data_unavailable` 標記，不追這個欄位**，之後除非使用者決定付費訂閱資料商，否則不用重查。
+
+**尚未處理的殘留問題（記錄，之後找時間一起處理）**：
+1. `fetch_official_taifex_large_trader()` / `fetch_official_taifex_futures_institutional_oi()` / `fetch_official_taifex_options_matrix()` / `fetch_taifex_night_institutional_trading()` 這幾支函式，抓取失敗時會**默默**退回函式一開始就寫死的保底數字（例如 `res = {'dealer': 2019, 'trust': 75825, 'foreign': -82423}` 這種初始值），不會像本次新增的 5 日矩陣快照系統一樣明確標記「無即時數據」。目前只有在真的抓取失敗時才會顯示這些舊保底值（正常情況下都是抓到真數據），但嚴格來說跟 AGENTS.md 鐵律6「無真實數據時必須明確顯示⚪無即時數據」的要求還有落差，值得之後專門處理一次。
+2. 個股期貨清單裡 `ADR_MAPPING.get(code, ...)` 用到的 `code` 是外層迴圈（`for idx, stk in enumerate(catalog_270)`）跑完後殘留的變數，不是當前這一列股票自己的代號（Python for 迴圈變數不會在迴圈結束後收回作用域），導致每一列的 ADR 連動欄位很可能對到錯的股票。跟本次任務無關，先記錄。
+
+**下一步**：3 項 + app.js 修復都已完成並用完整 pipeline 實測過（exit code 0，無例外），**只差使用者最終點頭 commit + push**。這幾份修改跟其他 session（包含這份清單涉及的其餘工作）都沒有碰到同樣的檔案，理論上不會衝突。
 
 ---
 
