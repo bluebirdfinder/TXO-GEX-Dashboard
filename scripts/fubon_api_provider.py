@@ -72,6 +72,11 @@ class FubonAPIProvider:
         self._trades_logged_raw = set()  # symbols we've logged one raw message for, for schema verification
         self._TRADES_LOG_MAXLEN = 20000  # ~a session's worth of prints per symbol; bounded so memory can't grow unbounded
 
+        # Shared futopt WebSocket connection state (Books + Trades share ONE connection —
+        # see _ensure_futopt_connected() for why this must not be connected twice).
+        self._futopt_ws = None
+        self._futopt_connected = False
+
         self._initialize_sdk()
 
     def _initialize_sdk(self):
@@ -206,6 +211,100 @@ class FubonAPIProvider:
 
         return self.last_cache
 
+    def _ensure_futopt_connected(self):
+        """
+        Connects the shared futopt WebSocket client exactly once and wires a
+        SINGLE unified message handler (_handle_futopt_message) that dispatches
+        by channel. Both start_books_stream() and start_trades_stream() call
+        this instead of each independently calling .on()/.connect().
+
+        Fixes a real bug hit during live testing on 2026-09-14: the two streams
+        used to each call futopt_ws.connect() independently, racing to start a
+        second run_forever() thread on the same socket
+        ("WebSocketException: socket is already opened"). Worse, both handlers
+        were registered as separate 'message' listeners, so EVERY message went
+        to BOTH — a trades 'data' frame has no 'bids'/'asks', so
+        _handle_books_message would silently overwrite books_cache[symbol]
+        with empty bid/ask lists on every trade tick, corrupting
+        big_order_diff. The single dispatcher below only calls the handler for
+        the channel the message actually belongs to.
+        """
+        if self._futopt_connected:
+            return self._futopt_ws
+
+        if not self.is_active or not self.marketdata:
+            return None
+
+        try:
+            futopt_ws = self.marketdata.websocket_client.futopt
+        except Exception as e:
+            logging.warning(f"_ensure_futopt_connected: websocket_client.futopt unavailable: {e}")
+            return None
+
+        futopt_ws.on('message', self._handle_futopt_message)
+        futopt_ws.on('error', lambda err: logging.warning(f"Fubon futopt WebSocket error: {err}"))
+        futopt_ws.on('disconnect', lambda code, msg: self._on_futopt_disconnect(code, msg))
+        try:
+            futopt_ws.connect()
+        except Exception as e:
+            logging.warning(f"_ensure_futopt_connected: connect() failed: {e}")
+            return None
+
+        self._futopt_ws = futopt_ws
+        self._futopt_connected = True
+        return futopt_ws
+
+    def _on_futopt_disconnect(self, code, msg):
+        """ Auto-reconnect + re-subscribe both channels on disconnect, per Fubon's documented reconnect pattern. """
+        logging.warning(f"Fubon futopt WebSocket disconnected ({code}: {msg}). Reconnecting...")
+        self._futopt_connected = False
+        futopt_ws = self._ensure_futopt_connected()
+        if not futopt_ws:
+            logging.warning("Fubon futopt WebSocket reconnect failed: could not re-establish connection.")
+            return
+        try:
+            for symbol in list(self._books_subscribed):
+                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
+            for symbol in list(self._trades_subscribed):
+                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
+            logging.info("Fubon futopt WebSocket reconnected and re-subscribed to all channels.")
+        except Exception as e:
+            logging.warning(f"Fubon futopt WebSocket re-subscribe after reconnect failed: {e}")
+
+    def _handle_futopt_message(self, raw_message):
+        """
+        Single entry point for ALL futopt WebSocket messages (books + trades
+        share one connection). Parses the envelope once, then dispatches to
+        _process_books_data()/_process_trades_data() by the message's own
+        'channel' field — never guesses which stream a message belongs to.
+        """
+        try:
+            import json as _json
+            message = _json.loads(raw_message) if isinstance(raw_message, (str, bytes)) else raw_message
+        except Exception as e:
+            logging.debug(f"futopt message JSON parse error: {e}")
+            return
+
+        event = message.get('event')
+
+        if event == 'subscribed':
+            info = message.get('data') or {}
+            channel = info.get('channel')
+            if channel == 'books':
+                logging.info(f"Fubon Books: subscription confirmed — {info}")
+            elif channel == 'trades':
+                logging.info(f"Fubon Trades: subscription confirmed — {info}")
+            return
+        if event != 'data':
+            return  # ignore auth/heartbeat/pong/error/unsubscribed frames
+
+        channel = message.get('channel')
+        data = message.get('data') or {}
+        if channel == 'books':
+            self._process_books_data(data)
+        elif channel == 'trades':
+            self._process_trades_data(data)
+
     def start_books_stream(self, symbols):
         """
         Subscribes to Fubon's futures WebSocket "books" channel (五檔委買委賣簿)
@@ -228,29 +327,13 @@ class FubonAPIProvider:
                         "derivedBid": {"price","size"},  # spread-contract only, else 0/0
                         "derivedAsk": {"price","size"},
                         "isTrial": bool}}  # only present during call-auction/trial matching
-        _handle_books_message() below parses exactly this shape — no field-name
+        _process_books_data() below parses exactly this shape — no field-name
         guessing left.
         """
-        if not self.is_active or not self.marketdata:
-            logging.warning("start_books_stream: Fubon SDK not active — cannot subscribe to Books channel.")
+        futopt_ws = self._ensure_futopt_connected()
+        if not futopt_ws:
+            logging.warning("start_books_stream: Fubon SDK not active or connection failed — cannot subscribe to Books channel.")
             return False
-
-        try:
-            futopt_ws = self.marketdata.websocket_client.futopt
-        except Exception as e:
-            logging.warning(f"start_books_stream: websocket_client.futopt unavailable: {e}")
-            return False
-
-        # Wire the message/error/disconnect handlers once.
-        if not self._books_subscribed:
-            futopt_ws.on('message', self._handle_books_message)
-            futopt_ws.on('error', lambda err: logging.warning(f"Fubon Books WebSocket error: {err}"))
-            futopt_ws.on('disconnect', lambda code, msg: self._on_books_disconnect(futopt_ws, code, msg))
-            try:
-                futopt_ws.connect()
-            except Exception as e:
-                logging.warning(f"start_books_stream: connect() failed: {e}")
-                return False
 
         for symbol in symbols:
             if symbol in self._books_subscribed:
@@ -264,40 +347,8 @@ class FubonAPIProvider:
 
         return True
 
-    def _on_books_disconnect(self, futopt_ws, code, msg):
-        """ Auto-reconnect + re-subscribe on disconnect, per Fubon's documented reconnect pattern. """
-        logging.warning(f"Fubon Books WebSocket disconnected ({code}: {msg}). Reconnecting...")
-        try:
-            futopt_ws.connect()
-            for symbol in list(self._books_subscribed):
-                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
-            logging.info(f"Fubon Books WebSocket reconnected and re-subscribed to {sorted(self._books_subscribed)}.")
-        except Exception as e:
-            logging.warning(f"Fubon Books WebSocket reconnect failed: {e}")
-
-    def _handle_books_message(self, raw_message):
-        """
-        Parses a raw 'message' event payload from the futopt Books WebSocket.
-        Schema confirmed against the official "期權 WebSocket / Channels / Books"
-        doc page — see start_books_stream()'s docstring for the exact shape.
-        """
-        try:
-            import json as _json
-            message = _json.loads(raw_message) if isinstance(raw_message, (str, bytes)) else raw_message
-        except Exception as e:
-            logging.debug(f"Books message JSON parse error: {e}")
-            return
-
-        event = message.get('event')
-
-        if event == 'subscribed':
-            info = message.get('data') or {}
-            logging.info(f"Fubon Books: subscription confirmed — {info}")
-            return
-        if event != 'data':
-            return  # ignore auth/heartbeat/pong/error/unsubscribed frames
-
-        data = message.get('data') or {}
+    def _process_books_data(self, data):
+        """ Handles one books 'data' payload (already unwrapped from the event envelope). """
         symbol = data.get('symbol')
         if not symbol:
             return
@@ -356,30 +407,10 @@ class FubonAPIProvider:
         Like start_books_stream(), the first raw message per symbol is logged
         at INFO so the parsing can be corrected against a real message.
         """
-        if not self.is_active or not self.marketdata:
-            logging.warning("start_trades_stream: Fubon SDK not active — cannot subscribe to Trades channel.")
+        futopt_ws = self._ensure_futopt_connected()
+        if not futopt_ws:
+            logging.warning("start_trades_stream: Fubon SDK not active or connection failed — cannot subscribe to Trades channel.")
             return False
-
-        try:
-            futopt_ws = self.marketdata.websocket_client.futopt
-        except Exception as e:
-            logging.warning(f"start_trades_stream: websocket_client.futopt unavailable: {e}")
-            return False
-
-        if not self._trades_subscribed:
-            futopt_ws.on('message', self._handle_trades_message)
-            # Note: Books already wires 'error'/'disconnect' on this same shared
-            # futopt client in start_books_stream(); if Trades is started without
-            # Books ever having run, wire them here too so a Trades-only caller
-            # still gets reconnect behavior.
-            if not self._books_subscribed:
-                futopt_ws.on('error', lambda err: logging.warning(f"Fubon Trades WebSocket error: {err}"))
-                futopt_ws.on('disconnect', lambda code, msg: self._on_trades_disconnect(futopt_ws, code, msg))
-                try:
-                    futopt_ws.connect()
-                except Exception as e:
-                    logging.warning(f"start_trades_stream: connect() failed: {e}")
-                    return False
 
         for symbol in symbols:
             if symbol in self._trades_subscribed:
@@ -393,35 +424,8 @@ class FubonAPIProvider:
 
         return True
 
-    def _on_trades_disconnect(self, futopt_ws, code, msg):
-        logging.warning(f"Fubon Trades WebSocket disconnected ({code}: {msg}). Reconnecting...")
-        try:
-            futopt_ws.connect()
-            for symbol in list(self._trades_subscribed):
-                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
-            for symbol in list(self._books_subscribed):
-                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
-            logging.info("Fubon Trades WebSocket reconnected and re-subscribed.")
-        except Exception as e:
-            logging.warning(f"Fubon Trades WebSocket reconnect failed: {e}")
-
-    def _handle_trades_message(self, raw_message):
-        """ Parses a raw 'message' event from the futopt Trades WebSocket. See start_trades_stream() docstring for what is/isn't confirmed. """
-        try:
-            import json as _json
-            message = _json.loads(raw_message) if isinstance(raw_message, (str, bytes)) else raw_message
-        except Exception as e:
-            logging.debug(f"Trades message JSON parse error: {e}")
-            return
-
-        event = message.get('event')
-        if event == 'subscribed':
-            logging.info(f"Fubon Trades: subscription confirmed — {message.get('data')}")
-            return
-        if event != 'data':
-            return
-
-        data = message.get('data') or {}
+    def _process_trades_data(self, data):
+        """ Handles one trades 'data' payload (already unwrapped from the event envelope). See start_trades_stream() docstring for what is/isn't confirmed about its fields. """
         symbol = data.get('symbol')
         price = data.get('price')
         size = data.get('size')
