@@ -1,12 +1,24 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v62.2)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v62.3)
 
-**當前版本**：`v62.2` (2026-09-12 戰情室 100% 真實數據管線、Hard Redline #6 嚴禁偽數據、指數 0 成交量自檢校準、老墨/陳玠儒大戶散戶動能與 Gemini 2.5 Flash 多模態軍師發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v62.2)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v62.2)
+**當前版本**：`v62.3` (2026-09-14 GEX 核心引擎正式接上 TAIFEX 真實選擇權未沖銷部位、5日歷史真實回補、法人籌碼/選股雷達真數據發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v62.3)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v62.3)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v62.3 核心更新亮點 (GEX 核心引擎真實選擇權未沖銷部位接軌 ✕ 5日歷史真實回補 ✕ 法人籌碼/選股雷達真數據)
+
+### 🔴🔴 1. GEX 核心引擎首次接上 TAIFEX 真實選擇權未沖銷部位（Self-Audit 最高優先級發現與修復）
+- `calculate_true_gex_profile()` 移除上線以來一直使用的假高斯曲線 fallback，改為 100% 真實 TAIFEX 選擇權未沖銷契約量（`optDataDown`，免驗證碼，可一次涵蓋整段日期範圍）。
+- Call Wall / Put Wall / Zero Gamma / Max Pain / Net GEX 曲線 / GEX+ 翻轉點，全面由真實籌碼算出；週選 W1/W2 改為各自真實到期天數獨立計算，不再是同一數字硬拆 0.65/0.35。
+- `backfill_snapshots.py` 5 日歷史快照系統同步接上真實 GEX 欄位，並修復 3 個原本因參數/欄位錯誤而從未真正抓到數據的舊 bug（大盤指數、TX期貨價、PC ratio）。
+
+### 📊 2. 法人籌碼與選股雷達真數據升級
+- `fetch_institutional_momentum.py`：改抓 TAIFEX 官方 OpenAPI，外資/投信/自營商籌碼與 5 日歷程全面真實化。
+- `fetch_official_taifex_retail_sentiment()`：修復小台/微台散戶淨部位寫死常數。
+- `build_screener_cache.py`：選股雷達改用 TWSE/TPEx 真實歷史 K 棒取代亂數假歷史，抓不到的股票誠實標記不可用（覆蓋率仍待優化）。
 
 ## 🎯 v62.2 核心更新亮點 (戰情室 100% 真實數據管線 ✕ 嚴禁偽數據 Self-Audit ✕ Gemini 2.5 Flash 軍師)
 

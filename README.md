@@ -1,11 +1,18 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v62.2)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v62.3)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > 🌪️ CBOE 美股 ^VVIX 實時採集 ✦ 4級尾部風險矩陣 ✦ 做市商賣腳安全氣墊 (350~500點外) ✦ 尋鳥戰情室 4 欄式 Macro Risk HUD ✦ 🏛️ TWSE 融資維持率發布狀態日期比對 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v62.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v62.3-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+## 🌟 v62.3 GEX 核心引擎真實選擇權未沖銷部位接軌 ✕ 5日歷史真實回補 ✕ 法人籌碼/選股雷達真數據
+
+### 🔴🔴 0. GEX 核心引擎首次接上 TAIFEX 真實選擇權未沖銷部位
+- **移除上線以來的假高斯曲線**：`calculate_true_gex_profile()` 的選擇權未沖銷部位輸入，改為 100% 真實 TAIFEX 逐履約價數據（`optDataDown`，免驗證碼），Call Wall/Put Wall/Zero Gamma/Max Pain/Net GEX 曲線/GEX+ 翻轉點全面真實化；週選 W1/W2 改為各自真實到期天數獨立計算。
+- **5 日歷史真實回補**：`backfill_snapshots.py` 同步接上真實 GEX 欄位，並修復 3 個原本因參數/欄位錯誤而從未真正抓到數據的舊 bug。
+- **法人籌碼與選股雷達真數據化**：`fetch_institutional_momentum.py` 改抓 TAIFEX 官方 OpenAPI、`fetch_official_taifex_retail_sentiment()` 修復散戶淨部位計算、`build_screener_cache.py` 改用 TWSE/TPEx 真實歷史 K 棒。
 
 ## 🌟 v62.2 尋鳥戰情室 100% 真實數據管線 ✕ 嚴禁偽數據 Self-Audit ✕ Gemini 2.5 Flash 實盤軍師升級
 

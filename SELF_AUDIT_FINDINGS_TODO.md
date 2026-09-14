@@ -44,28 +44,71 @@
 1. `fetch_official_taifex_large_trader()` / `fetch_official_taifex_futures_institutional_oi()` / `fetch_official_taifex_options_matrix()` / `fetch_taifex_night_institutional_trading()` 這幾支函式，抓取失敗時會**默默**退回函式一開始就寫死的保底數字（例如 `res = {'dealer': 2019, 'trust': 75825, 'foreign': -82423}` 這種初始值），不會像本次新增的 5 日矩陣快照系統一樣明確標記「無即時數據」。目前只有在真的抓取失敗時才會顯示這些舊保底值（正常情況下都是抓到真數據），但嚴格來說跟 AGENTS.md 鐵律6「無真實數據時必須明確顯示⚪無即時數據」的要求還有落差，值得之後專門處理一次。
 2. 個股期貨清單裡 `ADR_MAPPING.get(code, ...)` 用到的 `code` 是外層迴圈（`for idx, stk in enumerate(catalog_270)`）跑完後殘留的變數，不是當前這一列股票自己的代號（Python for 迴圈變數不會在迴圈結束後收回作用域），導致每一列的 ADR 連動欄位很可能對到錯的股票。跟本次任務無關，先記錄。
 
-**下一步**：3 項 + app.js 修復都已完成並用完整 pipeline 實測過（exit code 0，無例外），**只差使用者最終點頭 commit + push**。這幾份修改跟其他 session（包含這份清單涉及的其餘工作）都沒有碰到同樣的檔案，理論上不會衝突。
+**2026-09-14 上午更新：已 commit + push**（`claude/bold-galileo-dy1oxb` 分支 commit `284a3e4`）。3 項 + app.js 修復全部上線，使用者已確認。
 
 ---
 
 ## 一、GEX 主儀表板（index.html / app.js / scripts）
 
-### 🔴 已確認的假資料 / hallucination
+### ✅ 已修復（2026-09-14 上午，`txo-gex-dashboard-80`）
 
-| # | 位置 | 問題 |
+**修正**：這兩個檔案的實際消費者查證後是 `trading room/room.js`（尋鳥戰情室），**不是** GEX 主儀表板 `app.js`/`index.html`——原文件把它們歸在「一、GEX主儀表板」章節底下是分類錯誤，但既然已確認是假資料就先修了，不用重複發現。
+
+| # | 位置 | 問題 | 修復內容 |
+|---|---|---|---|
+| 1 | `scripts/fetch_institutional_momentum.py` | docstring 宣稱「Fetches real TAIFEX...」，但**整支程式沒有任何網路請求**，法人未平倉/散戶留倉/近5日籌碼歷程全部是寫死常數（`foreign_oi = -12450` 等），跟真實市況無關，每次執行都輸出一樣的數字。 | 改抓 TAIFEX 官方 OpenAPI CSV（`MarketDataOfMajorInstitutionalTradersGeneralBytheDate`，跟 `room.js` 本身在 `momentum_data.json` 失效時的即時 fallback 用同一個端點，確保兩條路徑數字一致）+ 重用 `fetch_official_taifex_retail_sentiment()` 取得散戶多空比；5日歷程改成 `data/momentum_snapshots.json` 真實快照累積（模式同 `institutional_snapshots.json`），沒真數據的日子誠實顯示 `has_snapshot:false`。已實測：外資-551426/投信84552/自營-277059、散戶多空比2.43%，跟官方數字一致。 |
+| 2 | `scripts/build_screener_cache.py` | 只有「當日收盤價/漲跌/量」是真的（來自 `tw_quotes_latest.json`），但拿去算均線/乖離率/量比/MACD狀態/5K趨勢/DeMark訊號的**過去30根K棒歷史是 `random.Random(股票代號當種子)` 生出來的假歷史**（`generate_synthetic_ohlcv`），所以算出來的訊號全部不可信。 | 改成逐檔抓 TWSE `STOCK_DAY` / TPEx `tradingStock` 官方每日歷史（真實約30根K棒），依交易日快取到 `data/screener_ohlcv_cache.json` 避免每次都重打1400+次請求；抓不到真歷史的（例如 `TXF`/`MXF` 這類期貨代碼、下市股）明確標記 `history_unavailable:true`、訊號留空，不再捏造。**注意**：MACD/5K/DeMark 判斷邏輯本身仍是簡化版近似公式（不是逐行對照 Pine Script 的真實 TD Sequential/MACD），這次只解決「輸入數據是假的」問題，公式本身校正留給「指標源碼逐一校正」那個大項目。首次全量執行約 1400 檔，需要 10-20 分鐘（背景執行中）。 |
+
+### 🔴 新發現的假資料（`fetch_official_taifex_retail_sentiment()`，2026-09-14 上午追查 momentum 修復時發現）
+
+修復上面第1項時，重用 `fetch_official_taifex_retail_sentiment()`（`scripts/fetch_and_calc_vision.py`，本身餵給 GEX 主儀表板的散戶籌碼區塊）過程中，發現這支函式裡還有**其餘寫死假數字**，這次**只修了其中一處**（`mtx_r_net`/`tmf_r_net` 原本是 `9496`/`24932` 寫死常數，已改成用真實 `long-short` 算出）：
+
+| 欄位 | 問題 | 狀態 |
 |---|---|---|
-| 1 | `scripts/fetch_institutional_momentum.py` | docstring 宣稱「Fetches real TAIFEX...」，但**整支程式沒有任何網路請求**，法人未平倉/散戶留倉/近5日籌碼歷程全部是寫死常數（`foreign_oi = -12450` 等），跟真實市況無關，每次執行都輸出一樣的數字。 |
-| 2 | `scripts/build_screener_cache.py` | 只有「當日收盤價/漲跌/量」是真的（來自 `tw_quotes_latest.json`），但拿去算均線/乖離率/量比/MACD狀態/5K趨勢/DeMark訊號的**過去30根K棒歷史是 `random.Random(股票代號當種子)` 生出來的假歷史**（`generate_synthetic_ohlcv`），所以算出來的訊號全部不可信。 |
+| `mtx_r_net` / `tmf_r_net` | 原本寫死 `9496`/`24932`，跟旁邊算出來的真實 `long`/`short` 無關 | ✅ 已修，改成 `long - short` |
+| `retail_sentiment_details.*.daily_change` | `2380`/`17451` 寫死，不是真實日增減 | ❌ 未修，需要歷史留倉比對（類似快照模式） |
+| `retail_sentiment_details.*.prev_ratio` | `19.97`/`9.63` 寫死，不是真實前一日比率 | ❌ 未修，同上 |
+| `retail_sentiment_details.broker_snapshot` | 整個區塊（`foreign_tx_net: -83078`、`foreign_call_net: 2543`等）全部寫死常數 | ❌ 未修，需要另外找真實對應數據源 |
+
+### 🔴🔴 最嚴重發現與修復：核心 GEX 引擎的選擇權未平倉部位，從未接過真數據（2026-09-14）
+
+**這是整份稽核清單目前為止最嚴重的發現**，比個股期貨籌碼或法人5日矩陣都嚴重，因為它是整個「尋鳥 TXO GEX 量化系統」的核心賣點本身：
+
+`calculate_true_gex_profile()`（GEX/VEX 計算的心臟，`scripts/fetch_and_calc_vision.py`）接收一個 `option_chain` 參數，理論上應該裝真實 TAIFEX TXO 各履約價的未沖銷契約量（Open Interest）。**查證後，全部 3 個呼叫點永遠傳入空字典 `{}`**——整支程式從來沒有任何函式去抓 TAIFEX 真實選擇權未沖銷部位。函式內部原本的 fallback 是一個**以現價為中心人工湊出來的高斯鐘形曲線**（`int(3500 * math.exp(-((K-...)/300)**2) + 800)`），跟任何一天的真實選擇權籌碼毫無關係。也就是說：**Call Wall、Put Wall、Zero Gamma、Max Pain、Net GEX 曲線、GEX+ 翻轉點——這個產品從第一天上線至今，所有這些核心數字都是「真實現貨價 + 假選擇權籌碼」算出來的**。連「週選 W1 vs W2」的拆分都是假的，只是把同一個 GEX 數字乘 0.65/0.35 硬拆。
+
+**已確認並徵求使用者同意修復**。真數據源：TAIFEX 官方「選擇權每日交易行情下載」`https://www.taifex.com.tw/cht/3/optDataDown?down_type=1&commodity_id=TXO&queryStartDate=...&queryEndDate=...`，**免驗證碼**，一次請求可涵蓋整段日期範圍（測試過4個交易日一次回傳，不用逐日查）。
+
+| 修復項目 | 內容 |
+|---|---|
+| `fetch_taifex_txo_open_interest()` | 抓真實逐履約價/買賣權/契約月份未沖銷契約量。**注意**：回應宣稱的 charset 是 MS950 但實際要用 `cp950` 解碼，big5/utf-8 都會亂碼。 |
+| `classify_txo_contract_buckets()` | 用每個契約的**真實結算日期**（而非解析代碼字尾字母）分類：無字尾=月選、結算日是週三=Wednesday週選、週五=Friday週選，取最近到期的分別當 w1/w2/fri/mth。 |
+| `build_real_option_chain()` | 把分類好的真實OI組成 `calculate_true_gex_profile()` 要的格式，某履約價沒有真實資料就是真實的0口未平倉，不是預設值。 |
+| `calculate_true_gex_profile()` 改寫 | 移除假高斯曲線 fallback；W1/W2 改成用各自真實到期天數分別算真實 Greeks（不再是同一個數字硬拆65/35）；履約價範圍改成「現價±900內的真實上市履約價」（剛好等於原本37檔的密度，只是資料是真的）；`option_chain` 完全抓不到時才退回舊的合成網格（且OI=0，不再是假高斯）。 |
+| 即時路徑接線 | `generate_gex_payload()` 的 `gex_profile`/`day_profile`/歷史10盤別的即時GEX曲線，全部改吃這個真實 option chain。今天沒有真數據時明確印警告，不是安靜退回假數字。 |
+
+**實測驗證**：Zero Gamma 45696、Call Wall 46500、Put Wall 46000，現價46184.85，走勢跟位階都合理（牆位在現價附近300-500點，不是亂跳）。
+
+**順便修好的舊 bug**（在做歷史回補時發現 `backfill_snapshots.py` 自己也有問題，不是這次新增的）：
+- `fetch_twse_index()` 用錯 `type=MS` 參數（回傳的是大盤成交統計，根本沒有大盤指數這一列）且取值欄位錯用 `row[-1]`（那欄其實是空白註記欄），兩個 bug 疊加導致**這支函式從來沒有真的抓到過歷史大盤指數**。已修正為 `type=IND` + `row[1]`。
+- `fetch_taifex_daily_tx()` 用錯參數名 `Date_From`/`Date_To`（官方要的是 `queryStartDate`/`queryEndDate`），導致官網直接回「日期時間錯誤」錯誤頁，這支函式也從來沒有真的抓到過歷史TX期貨價。已修正。
+- `fetch_taifex_pc_ratio()` 打的 URL `callPutRatioHis` 已經404，改成重用 `fetch_and_calc_vision.py` 裡本來就正常運作的 `fetch_official_taifex_pc_ratio()`。
+
+**5日歷史回補**：`backfill_snapshots.py` 現在會用真實 TXO 未平倉 + 那一天的真實現貨價 + 那一天當下重算的到期天數，把 `session_snapshots.json` 裡 `zero_gamma_level`/`call_wall_strike`/`put_wall_strike`/`max_pain_strike` 也填上真數據（原本 docstring 自己承認「需要歷史OI，目前抓不到」，現在抓得到了）。已實測 09/08~09/11 四天全部填上合理的真實數字，09/14（今天，TAIFEX還沒公布）誠實留空不亂猜。
+
+**尚未做的部分**：過去日子的「完整逐履約價GEX曲線」（`total_gex`/`weekly_gex`等陣列，不是單一數字的zero_gamma/call_wall）沒有一起回補，維持用今天的真實籌碼去套那天的現價（比零值/假數據好，但不是那天當下的真實籌碼)——這是經使用者同意的範圍縮減（「不管歷史數據」），如果之後要做完整歷史曲線回補，做法完全一樣（同一批已抓到的 `_txo_oi_by_date`），只是要多寫一段迴圈。
+
+---
 
 ### ⏳ 尚未稽核（優先順序建議）
 
-1. **`scripts/fetch_and_calc_vision.py`**（3312行，核心 Black-Scholes GEX/VEX 引擎）——只做過關鍵字掃描（有命中 `random`/`mock` 但沒逐一確認是死註解還是活邏輯），**這是最重要、也最大支，下個 session 應該從這裡開始**。
-2. `scripts/fetch_real_quotes.py`——同樣只做過關鍵字掃描，未逐函式核對。
-3. `scripts/fubon_api_provider.py` 裡 `get_live_quotes()` 的 gap period 假保底值（`txf_price = 47207.0` 等，約在原檔案第170行附近，行號可能因本次改動而偏移）——這是「無資料時的保底」還是「常態性覆蓋真數據」需要查清楚。
-4. `scripts/live_price_server.py` 的 `LivePriceState.__init__` 裡同樣寫死了指數保底值（47207.0 / 24530.8 / 278.45）——同上，需確認何時會被觸發、觸發頻率。
-5. `data/session_snapshots.json` 與 `scripts/backfill_snapshots.py` 的快照產生邏輯。
-6. `scripts/generate_social_card.py` 是否真的 100% 吃 `gex_data.json`，還是有獨立寫死的展示數字。
-7. `app.js`（3250行）——尚未比照 `room.js` 那樣逐段檢查是否有類似「`renderLeftPanel()` 式」的凍結假資料或「真數據抓回來卻沒用上」的模式。這是**最容易漏掉、也最該優先查的地方**，因為 `room.js` 已經抓到三次一模一樣的 bug 模式（`momentumData`、`screenerCacheData` 都是抓了真資料但忽略不用），`app.js` 很可能也有。
+1. **`scripts/fetch_and_calc_vision.py`**（3500+行，核心 Black-Scholes GEX/VEX 引擎）——**部分稽核**：個股期貨法人籌碼(A/B)、法人5日矩陣(C)、`fetch_official_taifex_retail_sentiment()`、**核心GEX/VEX計算本體的選擇權未平倉數據（見上方🔴🔴最嚴重發現）** 都已查過並修復，但這是逐線索追出來的，**不是逐函式全文核對**，其餘尚未提及的函式還沒看過。仍是最大支、優先度最高的檔案。
+2. ~~`scripts/fetch_real_quotes.py`~~ **✅ 2026-09-14上午已逐函式核對，乾淨無假資料**——全部走 TWSE/TPEx/TAIFEX 官方 OpenAPI，抓不到的股票誠實標記 `is_real:false`，不編數字。
+3. `scripts/fubon_api_provider.py`／`scripts/live_price_server.py` 的寫死保底值——**不屬於這條清單處理範圍**，使用者已說明這兩支是「大戶散戶動能」的另一個聊天室在處理，這邊不要碰。
+4. ~~`data/session_snapshots.json` 與 `scripts/backfill_snapshots.py`~~ **⚠️ 更正之前的誤判**：先前 session 稽核時看過全文覺得「乾淨」，但那次沒有實際執行測試過。2026-09-14 實際跑過才發現 `fetch_twse_index()`/`fetch_taifex_daily_tx()`/`fetch_taifex_pc_ratio()` 三支函式全部因為參數名/URL/欄位索引錯誤而**從來沒有真的抓到過任何數據**（靜默回傳 None，表面上看代碼邏輯正常但實際上一直失敗）。已於本次修復（見上方）。**教訓：只看代碼判斷「乾淨」不夠，看起來邏輯正確的 fetch 函式也要實際跑一次驗證真的有拿到數據，不能只憑閱讀程式碼判斷。**
+5. ~~`scripts/generate_social_card.py`~~ **✅ 2026-09-14上午已核對，基本乾淨**——100% 吃真實 `gex_data.json` 產生三張社群卡圖，唯一疑點是 `build_card1_html()` 裡兩處極端罕見的 fallback（`data.get("gex_plus_flip", 45217.6)` 這種，只有在 `gex_plus_flip`/`total_vex` 兩個欄位都缺失時才會觸發，正常情況下引擎必定會算出這兩個值），影響機率極低，記錄但不列為優先修復項。
+6. `app.js`（3250+行）——**部分稽核**：已修復 T-1疊加線、`populateAiQuantDigest`、`VALID_PASSCODE`。2026-09-14上午追查完以下兩點，決定先記錄不馬上修：
+   - `handleLiveTick()` 用固定係數 `0.62` 把 tick 價格變動外推成 Zero Gamma/GEX+翻轉點的即時位移（`liveZg = baseZg + priceDelta * 0.62`）。這**不是憑空捏造的展示假數字**，而是「兩次後端完整重算之間，前端做即時內插近似」的工程手法（完整重算要跑整條選擇權鏈的 Black-Scholes，沒辦法每個 tick 都做），但 0.62 這個係數本身看不出是從當天真實選擇權鏈算出來的，比較像是抓一個業界常見經驗值，UI 上也沒有標示「這是即時內插近似值，正式數字以下次完整重算為準」。風險判斷：比起其他找到的「憑空編數字」問題輕微很多，且改動涉及即時報價渲染邏輯，貿然改有讓正式看盤功能出錯的風險，**先記錄，不在這次動**。
+   - `app.js` 裡至少 17 處 `xxx_wall_strike || 數字` / `zero_gamma_level || 數字` 這種「欄位整個缺失時的保底預設值」，同一個欄位（例如 `put_wall_strike`）在不同函式裡寫死的保底數字互不相同（`44500`/`45500`/`44800`/`46100` 都出現過）——這些只有在 `gexData` 完全沒有該欄位時才會觸發（正常情況下後端一定會算出這些值），實務上幾乎不會被觸發，但嚴格來說跟正確版本比對「保底不一致」本身就說明是隨手抄當天螢幕數字寫死，不是有意義的預設。範圍大（17處分散在不同函式）、風險低，先記錄，之後有空一次性清乾淨（建議做法：改成 `|| null`，並讓下游改用「—」顯示取代直接 `.toLocaleString()`，需要逐一確認每個呼叫點不會因為 null 而壞掉）。
 
 ---
 

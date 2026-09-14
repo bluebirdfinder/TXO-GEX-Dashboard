@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v62.2"
+ENGINE_VERSION = "v62.3"
 
 import os
 import sys
@@ -1009,17 +1009,68 @@ def black_scholes_vanna(S, K, T, r, sigma):
     d2 = d1 - sigma * math.sqrt(T)
     return -math.exp(-r * T) * norm_pdf(d1) * d2 / sigma
 
+def compute_days_to_expiries(ref_dt, tw_tz):
+    """
+    Days from ref_dt to the next Wednesday, next Friday, and the front monthly settlement
+    (3rd Wednesday of the month, rolling to next month if already past) — as of ref_dt, not
+    necessarily "now". Used both for the live GEX profile and for historical backfill, where
+    ref_dt is a past trading day so the option Greeks use that day's real time-to-expiry
+    instead of today's.
+    """
+    def days_to_next_weekday(base_dt, target_weekday):
+        d = (target_weekday - base_dt.weekday()) % 7
+        return max(d, 0) if d > 0 else 7
+
+    raw_days_wed = days_to_next_weekday(ref_dt, 2)
+    raw_days_fri = days_to_next_weekday(ref_dt, 4)
+
+    year, month = ref_dt.year, ref_dt.month
+    first_day = datetime.datetime(year, month, 1, tzinfo=tw_tz)
+    third_wed_offset = (2 - first_day.weekday()) % 7 + 14
+    third_wed = datetime.datetime(year, month, 1 + third_wed_offset, tzinfo=tw_tz)
+    if third_wed <= ref_dt:
+        if month == 12:
+            first_next = datetime.datetime(year + 1, 1, 1, tzinfo=tw_tz)
+            offset = (2 - first_next.weekday()) % 7 + 14
+            third_wed = datetime.datetime(year + 1, 1, 1 + offset, tzinfo=tw_tz)
+        else:
+            first_next = datetime.datetime(year, month + 1, 1, tzinfo=tw_tz)
+            offset = (2 - first_next.weekday()) % 7 + 14
+            third_wed = datetime.datetime(year, month + 1, 1 + offset, tzinfo=tw_tz)
+    raw_days_mth = max((third_wed - ref_dt).days, 0)
+    return raw_days_wed, raw_days_fri, raw_days_mth, third_wed
+
+
 def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None):
+    """
+    option_chain: {strike: {"call_oi_w1":n, "put_oi_w1":n, "call_oi_w2":n, "put_oi_w2":n,
+    "call_oi_fri":n, "put_oi_fri":n, "call_oi_mth":n, "put_oi_mth":n}}, built by
+    build_real_option_chain() from fetch_taifex_txo_open_interest() — real TAIFEX open
+    interest, not a synthetic curve. A strike/bucket combination absent from real data means
+    a genuine 0 open interest there (TAIFEX didn't report any), so missing keys default to 0,
+    never a guessed number. When option_chain is empty (the real fetch failed entirely), this
+    correctly degrades to an all-zero GEX profile rather than inventing a curve — the caller
+    is responsible for surfacing that as unavailable rather than trusting a flat profile.
+    """
     base_strike = fixed_base_strike if fixed_base_strike is not None else round(spot_price / 100) * 100
-    strikes = [base_strike - 900 + i * 50 for i in range(37)]
 
     r = 0.015
     sigma = 0.18
 
     MIN_T_DAYS = 0.5
-    T_wed = max(float(days_wed), MIN_T_DAYS) / 365.0
+    T_w1 = max(float(days_wed), MIN_T_DAYS) / 365.0
+    T_w2 = T_w1 + 7.0 / 365.0  # TAIFEX weeklies are 7 days apart; the next Wednesday weekly
     T_fri = max(float(days_fri), MIN_T_DAYS) / 365.0
     T_mth = max(float(days_mth), MIN_T_DAYS) / 365.0
+
+    # Real strikes within ±900 of spot — TXO's real near-the-money strike spacing is 50 points,
+    # so this window holds the same 37 strikes the old synthetic grid always assumed, except
+    # these are the strikes TAIFEX actually listed open interest for, not invented ones. Falls
+    # back to the fixed grid only when option_chain is empty (the real fetch failed entirely).
+    if option_chain:
+        strikes = sorted(k for k in option_chain.keys() if abs(k - base_strike) <= 900)
+    else:
+        strikes = [base_strike - 900 + i * 50 for i in range(37)]
 
     total_gex, weekly_gex, friday_gex, monthly_gex = [], [], [], []
     call_oi_sum, put_oi_sum = 0, 0
@@ -1028,31 +1079,37 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
 
     call_wall_k, call_wall_max = base_strike + 300, -1.0
     put_wall_k, put_wall_max = base_strike - 300, -1.0
-    
+
     strike_losses = {}
 
     for K in strikes:
-        g_wed = black_scholes_gamma(spot_price, K, T_wed, r, sigma)
+        g_w1 = black_scholes_gamma(spot_price, K, T_w1, r, sigma)
+        g_w2 = black_scholes_gamma(spot_price, K, T_w2, r, sigma)
         g_fri = black_scholes_gamma(spot_price, K, T_fri, r, sigma)
         g_mth = black_scholes_gamma(spot_price, K, T_mth, r, sigma)
 
-        v_wed = black_scholes_vanna(spot_price, K, T_wed, r, sigma)
+        v_w1 = black_scholes_vanna(spot_price, K, T_w1, r, sigma)
+        v_w2 = black_scholes_vanna(spot_price, K, T_w2, r, sigma)
         v_fri = black_scholes_vanna(spot_price, K, T_fri, r, sigma)
         v_mth = black_scholes_vanna(spot_price, K, T_mth, r, sigma)
 
         k_data = option_chain.get(K, {})
-        c_oi_w = k_data.get('call_oi_wed', int(3500 * math.exp(-((K - (base_strike + 200))/300)**2) + 800))
-        p_oi_w = k_data.get('put_oi_wed',  int(3800 * math.exp(-((K - (base_strike - 200))/300)**2) + 900))
-        
-        c_oi_f = k_data.get('call_oi_fri', int(2200 * math.exp(-((K - (base_strike + 150))/250)**2) + 500))
-        p_oi_f = k_data.get('put_oi_fri',  int(2400 * math.exp(-((K - (base_strike - 150))/250)**2) + 600))
-        
-        c_oi_m = k_data.get('call_oi_mth', int(6500 * math.exp(-((K - (base_strike + 300))/400)**2) + 1500))
-        p_oi_m = k_data.get('put_oi_mth',  int(7200 * math.exp(-((K - (base_strike - 300))/400)**2) + 1800))
+        c_oi_w1 = k_data.get('call_oi_w1', 0)
+        p_oi_w1 = k_data.get('put_oi_w1', 0)
+        c_oi_w2 = k_data.get('call_oi_w2', 0)
+        p_oi_w2 = k_data.get('put_oi_w2', 0)
+        c_oi_f = k_data.get('call_oi_fri', 0)
+        p_oi_f = k_data.get('put_oi_fri', 0)
+        c_oi_m = k_data.get('call_oi_mth', 0)
+        p_oi_m = k_data.get('put_oi_mth', 0)
 
-        # GEX per strike
-        c_gex_w = (c_oi_w * g_wed * (spot_price ** 2) * 50) / 1e8
-        p_gex_w = -(p_oi_w * g_wed * (spot_price ** 2) * 50) / 1e8
+        # GEX per strike (w1 + w2 real, computed with each bucket's own real time-to-expiry)
+        c_gex_w1 = (c_oi_w1 * g_w1 * (spot_price ** 2) * 50) / 1e8
+        p_gex_w1 = -(p_oi_w1 * g_w1 * (spot_price ** 2) * 50) / 1e8
+        c_gex_w2 = (c_oi_w2 * g_w2 * (spot_price ** 2) * 50) / 1e8
+        p_gex_w2 = -(p_oi_w2 * g_w2 * (spot_price ** 2) * 50) / 1e8
+        c_gex_w = c_gex_w1 + c_gex_w2
+        p_gex_w = p_gex_w1 + p_gex_w2
 
         c_gex_f = (c_oi_f * g_fri * (spot_price ** 2) * 50) / 1e8
         p_gex_f = -(p_oi_f * g_fri * (spot_price ** 2) * 50) / 1e8
@@ -1061,8 +1118,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         p_gex_m = -(p_oi_m * g_mth * (spot_price ** 2) * 50) / 1e8
 
         # VEX (Vanna Exposure) per strike
-        c_vex_tot = ((c_oi_w * v_wed + c_oi_f * v_fri + c_oi_m * v_mth) * spot_price * 50) / 1e8
-        p_vex_tot = -((p_oi_w * v_wed + p_oi_f * v_fri + p_oi_m * v_mth) * spot_price * 50) / 1e8
+        c_vex_tot = ((c_oi_w1 * v_w1 + c_oi_w2 * v_w2 + c_oi_f * v_fri + c_oi_m * v_mth) * spot_price * 50) / 1e8
+        p_vex_tot = -((p_oi_w1 * v_w1 + p_oi_w2 * v_w2 + p_oi_f * v_fri + p_oi_m * v_mth) * spot_price * 50) / 1e8
         vex_net = c_vex_tot + p_vex_tot
         total_vex_sum += vex_net
 
@@ -1074,8 +1131,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         # GEX+ = Net GEX + 1.0 * Net VEX
         gex_plus_val = ng_tot + (1.0 * vex_net)
 
-        call_oi_sum += (c_oi_w + c_oi_f + c_oi_m)
-        put_oi_sum += (p_oi_w + p_oi_f + p_oi_m)
+        call_oi_sum += (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
+        put_oi_sum += (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
 
         if cg_tot > call_wall_max:
             call_wall_max = cg_tot
@@ -1091,10 +1148,10 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
             "net_gex": round(ng_tot, 2),
             "vex": round(vex_net, 2),
             "gex_plus": round(gex_plus_val, 2),
-            "w1_call": round(c_gex_w * 0.65, 2),
-            "w1_put": round(p_gex_w * 0.65, 2),
-            "w2_call": round(c_gex_w * 0.35, 2),
-            "w2_put": round(p_gex_w * 0.35, 2),
+            "w1_call": round(c_gex_w1, 2),
+            "w1_put": round(p_gex_w1, 2),
+            "w2_call": round(c_gex_w2, 2),
+            "w2_put": round(p_gex_w2, 2),
             "mth_call": round(c_gex_m, 2),
             "mth_put": round(p_gex_m, 2),
             "fri_call": round(c_gex_f, 2),
@@ -1106,8 +1163,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
 
         total_loss = 0.0
         for S_target in strikes:
-            c_loss = max(0, S_target - K) * (c_oi_w + c_oi_f + c_oi_m)
-            p_loss = max(0, K - S_target) * (p_oi_w + p_oi_f + p_oi_m)
+            c_loss = max(0, S_target - K) * (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
+            p_loss = max(0, K - S_target) * (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
             total_loss += (c_loss + p_loss)
         strike_losses[K] = total_loss
 
@@ -1324,6 +1381,129 @@ def fetch_official_taifex_vix():
         "regime_desc": regime_desc,
         "strategy_advice": strategy_advice
     }
+
+def fetch_taifex_txo_open_interest(start_date_str, end_date_str):
+    """
+    Real TXO per-strike / per-right / per-contract-month open interest straight from TAIFEX's
+    official 選擇權每日交易行情下載 (optDataDown). One request covers the whole date range
+    (TAIFEX allows up to ~1 month per query) — confirmed via manual testing that a 4-trading-day
+    range returns all days in a single CSV, so backfilling several days costs the same one
+    request as backfilling one.
+
+    NOTE: this response's declared charset (MS950) is wrong for what the bytes actually are —
+    it must be decoded as cp950, not big5/utf-8, or every Chinese header/value comes out as
+    mojibake despite the numeric columns still parsing "successfully" with a bogus encoding.
+
+    Column layout (verified against a live response, decoded as cp950):
+      [0]=交易日期 [2]=到期月份(週別) [3]=履約價 [4]=買賣權 [9]=成交量 [11]=未沖銷契約數(OI)
+      [17]=交易時段(一般/盤後) [20]=契約到期日(YYYYMMDD)
+    Open interest is only populated on the 一般 (regular session) row for a given
+    date/contract/strike/right — the 盤後 (after-hours) row reports its own trading activity
+    but leaves OI as "-", so 盤後 rows are skipped here.
+
+    Returns {date_iso: {contract_code: {"expiry": "YYYYMMDD", "call": {strike: oi}, "put": {strike: oi}}}}
+    — an empty dict on failure (never a fabricated fallback; the caller falls back to
+    "無即時數據" rather than a guessed open-interest curve).
+    """
+    url = (f"https://www.taifex.com.tw/cht/3/optDataDown?down_type=1&commodity_id=TXO"
+           f"&queryStartDate={start_date_str}&queryEndDate={end_date_str}")
+    result = {}
+    try:
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=30) as resp:
+            raw = resp.read()
+        text = raw.decode('cp950', errors='ignore')
+        lines = [l for l in text.split('\n') if l.strip()]
+        for line in lines[1:]:
+            cols = [c.strip() for c in line.split(',')]
+            if len(cols) < 21:
+                continue
+            if cols[17] != '一般':
+                continue
+            try:
+                strike = float(cols[3])
+            except ValueError:
+                continue
+            oi_str = cols[11]
+            try:
+                oi = int(oi_str) if oi_str not in ('-', '') else 0
+            except ValueError:
+                continue
+            right = 'call' if '買' in cols[4] else ('put' if '賣' in cols[4] else None)
+            if right is None:
+                continue
+
+            date_iso = cols[0].replace('/', '-')
+            contract_code = cols[2]
+            expiry = cols[20]
+
+            day_bucket = result.setdefault(date_iso, {})
+            contract_bucket = day_bucket.setdefault(contract_code, {"expiry": expiry, "call": {}, "put": {}})
+            contract_bucket[right][strike] = oi
+        print(f"[OK] TAIFEX TXO Open Interest: {len(result)} trading day(s) parsed for {start_date_str}~{end_date_str}")
+    except Exception as e:
+        print(f"[Warning] Failed to fetch TAIFEX TXO open interest: {e}")
+    return result
+
+
+def classify_txo_contract_buckets(day_data):
+    """
+    Classifies one day's {contract_code: {"expiry": "YYYYMMDD", ...}} into the app's contract
+    buckets using each contract's REAL settlement date (not by parsing the code's letter
+    suffix, which is a presentational label TAIFEX resets monthly): a plain "YYYYMM" code with
+    no suffix is a monthly contract; among weeklies, one that settles on a Wednesday is a
+    "W" weekly, one that settles on a Friday is an "F" weekly. Returns the nearest-expiring
+    code for each of w1 (nearest Wednesday weekly), w2 (the Wednesday weekly after that, if
+    currently listed), fri (nearest Friday weekly), mth (front monthly) — any that aren't
+    currently listed come back as None rather than a guess.
+    """
+    wed_list, fri_list, mth_list = [], [], []
+    for code, info in day_data.items():
+        try:
+            exp = datetime.datetime.strptime(info["expiry"], "%Y%m%d").date()
+        except Exception:
+            continue
+        if len(code.strip()) == 6:  # "YYYYMM" — no weekly-letter suffix
+            mth_list.append((exp, code))
+        elif exp.weekday() == 2:  # Wednesday
+            wed_list.append((exp, code))
+        elif exp.weekday() == 4:  # Friday
+            fri_list.append((exp, code))
+    wed_list.sort()
+    fri_list.sort()
+    mth_list.sort()
+    return {
+        "w1": wed_list[0][1] if len(wed_list) > 0 else None,
+        "w2": wed_list[1][1] if len(wed_list) > 1 else None,
+        "fri": fri_list[0][1] if fri_list else None,
+        "mth": mth_list[0][1] if mth_list else None,
+    }
+
+
+def build_real_option_chain(day_data, buckets):
+    """
+    Builds the {strike: {"call_oi_w1":.., "put_oi_w1":.., ...}} dict calculate_true_gex_profile()
+    expects, from real per-bucket open interest. A strike/right absent from TAIFEX's real data
+    for a bucket means a genuine 0 open interest there — not a placeholder, an actual fact — so
+    the resulting chain never falls back to a fabricated number.
+    """
+    chain = {}
+
+    def _add(bucket_code, call_key, put_key):
+        if not bucket_code or bucket_code not in day_data:
+            return
+        info = day_data[bucket_code]
+        for k, oi in info["call"].items():
+            chain.setdefault(k, {})[call_key] = oi
+        for k, oi in info["put"].items():
+            chain.setdefault(k, {})[put_key] = oi
+
+    _add(buckets.get("w1"), "call_oi_w1", "put_oi_w1")
+    _add(buckets.get("w2"), "call_oi_w2", "put_oi_w2")
+    _add(buckets.get("fri"), "call_oi_fri", "put_oi_fri")
+    _add(buckets.get("mth"), "call_oi_mth", "put_oi_mth")
+    return chain
+
 
 def fetch_official_taifex_options_matrix():
     """
@@ -1718,16 +1898,16 @@ def fetch_official_taifex_retail_sentiment():
     # Near Month Broker Breakdown (SinoPac / Taishin)
     mtx_r_long = 28779 if mtx_near_total == 36258 else max(0, mtx_near_total - mtx_inst_l)
     mtx_r_short = 19283 if mtx_near_total == 36258 else max(0, mtx_near_total - mtx_inst_s)
-    mtx_r_net = 9496
-    
+    mtx_r_net = mtx_r_long - mtx_r_short
+
     mtx_near_ratio = round((mtx_r_net / mtx_near_total) * 100, 2) if mtx_near_total > 0 else 26.19
     mtx_total_ratio = round((mtx_r_net / mtx_total) * 100, 2) if mtx_total > 0 else 4.20
 
     tmf_inst_l, tmf_inst_s = inst['TMF']['long'], inst['TMF']['short']
     tmf_r_long = 67971 if tmf_near_total == 80167 else max(0, tmf_near_total - tmf_inst_l)
     tmf_r_short = 43039 if tmf_near_total == 80167 else max(0, tmf_near_total - tmf_inst_s)
-    tmf_r_net = 24932
-    
+    tmf_r_net = tmf_r_long - tmf_r_short
+
     tmf_near_ratio = round((tmf_r_net / tmf_near_total) * 100, 2) if tmf_near_total > 0 else 31.10
     tmf_total_ratio = round((tmf_r_net / tmf_total) * 100, 2) if tmf_total > 0 else 6.31
 
@@ -2164,28 +2344,7 @@ def generate_gex_payload():
 
     txf_price = night_txf_price if is_night_session else day_txf_price
 
-    # Calculate days to settlements
-    def days_to_next_weekday(base_dt, target_weekday):
-        d = (target_weekday - base_dt.weekday()) % 7
-        return max(d, 0) if d > 0 else 7
-
-    raw_days_wed = days_to_next_weekday(now_dt, 2)
-    raw_days_fri = days_to_next_weekday(now_dt, 4)
-    
-    year, month = now_dt.year, now_dt.month
-    first_day = datetime.datetime(year, month, 1, tzinfo=tw_tz)
-    third_wed_offset = (2 - first_day.weekday()) % 7 + 14
-    third_wed = datetime.datetime(year, month, 1 + third_wed_offset, tzinfo=tw_tz)
-    if third_wed <= now_dt:
-        if month == 12:
-            first_next = datetime.datetime(year + 1, 1, 1, tzinfo=tw_tz)
-            offset = (2 - first_next.weekday()) % 7 + 14
-            third_wed = datetime.datetime(year + 1, 1, 1 + offset, tzinfo=tw_tz)
-        else:
-            first_next = datetime.datetime(year, month + 1, 1, tzinfo=tw_tz)
-            offset = (2 - first_next.weekday()) % 7 + 14
-            third_wed = datetime.datetime(year, month + 1, 1 + offset, tzinfo=tw_tz)
-    raw_days_mth = max((third_wed - now_dt).days, 0)
+    raw_days_wed, raw_days_fri, raw_days_mth, third_wed = compute_days_to_expiries(now_dt, tw_tz)
 
     # Compute exact expiration dates
     w1_dt = now_dt + datetime.timedelta(days=raw_days_wed)
@@ -2206,12 +2365,27 @@ def generate_gex_payload():
         "m1": f"{mth_date_str}結算"
     }
 
+    # Real TXO open interest (the actual options positioning GEX is supposed to measure) —
+    # one request covers the last 5 trading days, which both gives "today" for the live
+    # profile below and lets backfill_snapshots.py reuse the same range for real history.
+    _txo_days = get_recent_tw_trading_days(now_dt, n=5)
+    _txo_oi_by_date = fetch_taifex_txo_open_interest(
+        _txo_days[0].strftime('%Y/%m/%d'), _txo_days[-1].strftime('%Y/%m/%d')
+    )
+    _txo_latest_date = max(_txo_oi_by_date.keys()) if _txo_oi_by_date else None
+    if _txo_latest_date:
+        _txo_buckets = classify_txo_contract_buckets(_txo_oi_by_date[_txo_latest_date])
+        real_option_chain = build_real_option_chain(_txo_oi_by_date[_txo_latest_date], _txo_buckets)
+    else:
+        real_option_chain = {}
+        print("[Warning] No real TAIFEX TXO open interest available — GEX profile will be flat/zero, not a guessed curve.")
+
     # Compute GEX Profile
-    gex_profile = calculate_true_gex_profile(spot_price, {}, raw_days_wed, raw_days_fri, raw_days_mth)
+    gex_profile = calculate_true_gex_profile(spot_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth)
     gex_profile["dte_dates"] = dte_dates
 
     # Day vs Night Session Shift Metrics
-    day_profile = calculate_true_gex_profile(day_txf_price, {}, raw_days_wed, raw_days_fri, raw_days_mth)
+    day_profile = calculate_true_gex_profile(day_txf_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth)
     day_zero_gamma = day_profile['zero_gamma_level']
     day_call_wall = day_profile['call_wall_strike']
     day_put_wall = day_profile['put_wall_strike']
@@ -3049,7 +3223,12 @@ def generate_gex_payload():
             sess_item['friday_gex'] = None
             sess_item['monthly_gex'] = None
             continue
-        sess_prof = calculate_true_gex_profile(s_spot, {}, raw_days_wed, raw_days_fri, raw_days_mth, fixed_base_strike=global_base_strike)
+        # Uses TODAY's real option chain against each session's own real spot price — exactly
+        # correct for the T-0 day/night entries; for older sessions this is real OI (not a
+        # fabricated curve) but not that specific past day's own OI, since per-strike history
+        # backfill is out of scope here (only the scalar zero_gamma/call_wall/etc fields get a
+        # true historical backfill, via backfill_snapshots.py).
+        sess_prof = calculate_true_gex_profile(s_spot, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, fixed_base_strike=global_base_strike)
         sess_item['total_gex'] = sess_prof['total_gex']
         sess_item['weekly_gex'] = sess_prof['weekly_gex']
         sess_item['friday_gex'] = sess_prof['friday_gex']

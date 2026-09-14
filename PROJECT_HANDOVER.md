@@ -1,16 +1,17 @@
-# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v62.2)
+# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v62.3)
 
 本手冊記錄專案現狀、核心功能清單、數據引擎 Self-Audit 熱備援架構、開發 SOP 與個人筆電續接步驟。
 
 ---
 
-## 📌 一、v62.2 完整功能清單與數據引擎架構
+## 📌 一、v62.3 完整功能清單與數據引擎架構
 
 ### 核心分析與視覺化模組
 
 | # | 功能 | 說明 |
 |---|---|---|
-| 0 | **🛡️ 戰情室 100% 真實數據管線 ✕ 嚴禁偽數據 Self-Audit ✕ Gemini 2.5 Flash 軍師 (v62.2)** | 實裝 Hard Redline #6；拔除所有布朗運動擬合與隨機假數據；嚴格區分「指數/殖利率 Volume: 0」與「期貨/個股真實合約量」；股號搜尋 Enter 鍵直接切換；老墨/陳玠儒大戶散戶動能與雙色 ADX Pro V3 面積雲帶；Gemini 2.5 Flash 獨立 Key 本機安全保存與多模態截圖即時診斷 |
+| 0 | **🔴🔴 GEX 核心引擎真實選擇權未沖銷部位接軌 ✕ 5日歷史真實回補 (v62.3)** | Self-Audit 最高優先級發現：`calculate_true_gex_profile()` 上線以來 Call Wall/Put Wall/Zero Gamma/Max Pain 全部由假高斯曲線算出，選擇權籌碼從未接過真數據；已改接 TAIFEX 官方「選擇權每日交易行情下載」真實逐履約價未沖銷契約量，W1/W2 改真實分開算；`backfill_snapshots.py` 同步接上真實歷史 GEX 並修復 3 個從未真正抓到數據的舊 bug；`fetch_institutional_momentum.py`/`fetch_official_taifex_retail_sentiment()`/`build_screener_cache.py` 一併真數據化 |
+| 0.1 | **🛡️ 戰情室 100% 真實數據管線 ✕ 嚴禁偽數據 Self-Audit ✕ Gemini 2.5 Flash 軍師 (v62.2)** | 實裝 Hard Redline #6；拔除所有布朗運動擬合與隨機假數據；嚴格區分「指數/殖利率 Volume: 0」與「期貨/個股真實合約量」；股號搜尋 Enter 鍵直接切換；老墨/陳玠儒大戶散戶動能與雙色 ADX Pro V3 面積雲帶；Gemini 2.5 Flash 獨立 Key 本機安全保存與多模態截圖即時診斷 |
 | 0.1 | **🌪️ CBOE VVIX 尾部避險雷達 ✕ 4級尾部風險矩陣 ✕ 戰情室 4 欄 HUD (v62.0)** | 實時採集 Yahoo Finance `^VVIX` (102.66)；建立 4 級尾部風險矩陣與賣腳氣墊 (350~500點)；VIX/VVIX 隱含波動率加速度背離診斷；戰情室 4 欄式 Macro Risk HUD 連動 |
 | 0.1 | **⏱️ 台股全市場盤後數據公布時程全覽與四大商品籌碼量化 (v61.0)** | 建立 `MARKET_DATA_SCHEDULE.md`，梳理 13:30~05:00 數據流水線；升級台指期、選擇權、個股期、個股四大主力商品量化策略；清理夜盤卡片非官方合成欄位與整合 8 大主題意圖標籤 |
 | 0.1 | **🏛️ TWSE 融資維持率發布狀態嚴格校驗 (v50.7)** | 修正 `pub_date == target_date_str` 日期嚴格校驗，開盤至 20:30 清算前正確顯示「未公布」，杜絕盤中提前渲染前日數據漏洞 |
