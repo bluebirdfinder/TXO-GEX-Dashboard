@@ -1577,15 +1577,31 @@ function populateRetailSentiment() {
   const tmf = det.micro_tmf;
   const snap = det.broker_snapshot;
 
-  const mtxSign = mtx.daily_change >= 0 ? '+' : '';
-  const tmfSign = tmf.daily_change >= 0 ? '+' : '';
+  // daily_change/prev_ratio are null until a real prior-day snapshot has accumulated
+  // (real value, not a placeholder — see fetch_official_taifex_retail_sentiment()) — guard
+  // .toFixed()/sign formatting so that shows as "—" instead of throwing or printing "null".
+  const mtxSign = (mtx.daily_change !== null && mtx.daily_change !== undefined) ? (mtx.daily_change >= 0 ? '+' : '') : '';
+  const tmfSign = (tmf.daily_change !== null && tmf.daily_change !== undefined) ? (tmf.daily_change >= 0 ? '+' : '') : '';
+  const mtxDailyChangeText = (mtx.daily_change !== null && mtx.daily_change !== undefined) ? `${mtxSign}${mtx.daily_change}` : '—';
+  const tmfDailyChangeText = (tmf.daily_change !== null && tmf.daily_change !== undefined) ? `${tmfSign}${tmf.daily_change}` : '—';
+  const mtxPrevRatioText = (mtx.prev_ratio !== null && mtx.prev_ratio !== undefined) ? `${mtx.prev_ratio.toFixed(2)}%` : '—';
+  const tmfPrevRatioText = (tmf.prev_ratio !== null && tmf.prev_ratio !== undefined) ? `${tmf.prev_ratio.toFixed(2)}%` : '—';
 
   const mtxLongPct = ((mtx.long_oi / (mtx.long_oi + mtx.short_oi)) * 100).toFixed(1);
   const tmfLongPct = ((tmf.long_oi / (tmf.long_oi + tmf.short_oi)) * 100).toFixed(1);
 
-  const fTxSign = snap.foreign_tx_change >= 0 ? '+' : '';
-  const fCallSign = snap.foreign_call_change >= 0 ? '+' : '';
-  const fPutSign = snap.foreign_put_change >= 0 ? '+' : '';
+  // *_change fields are null until a real prior-day snapshot exists (see
+  // fetch_official_taifex_retail_sentiment()) — guard sign/toLocaleString so this shows "—"
+  // on day one instead of throwing or printing "null".
+  const hasVal = (v) => v !== null && v !== undefined;
+  const fTxSign = hasVal(snap.foreign_tx_change) ? (snap.foreign_tx_change >= 0 ? '+' : '') : '';
+  const fCallSign = hasVal(snap.foreign_call_change) ? (snap.foreign_call_change >= 0 ? '+' : '') : '';
+  const fPutSign = hasVal(snap.foreign_put_change) ? (snap.foreign_put_change >= 0 ? '+' : '') : '';
+  const fTxChangeText = hasVal(snap.foreign_tx_change) ? `${fTxSign}${snap.foreign_tx_change.toLocaleString()}` : '—';
+  const fCallChangeText = hasVal(snap.foreign_call_change) ? `${fCallSign}${snap.foreign_call_change}` : '—';
+  const fPutChangeText = hasVal(snap.foreign_put_change) ? `${fPutSign}${snap.foreign_put_change}` : '—';
+  const fCallNetSign = snap.foreign_call_net >= 0 ? '+' : '';
+  const fPutNetSign = snap.foreign_put_net >= 0 ? '+' : '';
   const vixSign = snap.vix_change >= 0 ? '+' : '';
 
   container.innerHTML = `
@@ -1600,19 +1616,19 @@ function populateRetailSentiment() {
         <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px;">
           <div style="font-size: 0.75rem; color: var(--text-muted);">外資台指期淨未平倉</div>
           <div style="font-weight: 700; color: ${snap.foreign_tx_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-size: 1.05rem;">${snap.foreign_tx_net.toLocaleString()} 口</div>
-          <div style="font-size: 0.7rem; color: var(--gold-accent);">單日 (${fTxSign}${snap.foreign_tx_change.toLocaleString()} 口)</div>
+          <div style="font-size: 0.7rem; color: var(--gold-accent);">單日 (${fTxChangeText} 口)</div>
         </div>
 
         <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px;">
           <div style="font-size: 0.75rem; color: var(--text-muted);">外資 Call 買權淨未平倉</div>
-          <div style="font-weight: 700; color: var(--call-color); font-size: 1.05rem;">+${snap.foreign_call_net.toLocaleString()} 口</div>
-          <div style="font-size: 0.7rem; color: var(--text-muted);">單日 (${fCallSign}${snap.foreign_call_change} 口)</div>
+          <div style="font-weight: 700; color: ${snap.foreign_call_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-size: 1.05rem;">${fCallNetSign}${snap.foreign_call_net.toLocaleString()} 億</div>
+          <div style="font-size: 0.7rem; color: var(--text-muted);">單日 (${fCallChangeText} 億)</div>
         </div>
 
         <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px;">
           <div style="font-size: 0.75rem; color: var(--text-muted);">外資 Put 賣權淨未平倉</div>
-          <div style="font-weight: 700; color: var(--put-color); font-size: 1.05rem;">+${snap.foreign_put_net.toLocaleString()} 口</div>
-          <div style="font-size: 0.7rem; color: var(--text-muted);">單日 (${fPutSign}${snap.foreign_put_change} 口)</div>
+          <div style="font-weight: 700; color: ${snap.foreign_put_net >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-size: 1.05rem;">${fPutNetSign}${snap.foreign_put_net.toLocaleString()} 億</div>
+          <div style="font-size: 0.7rem; color: var(--text-muted);">單日 (${fPutChangeText} 億)</div>
         </div>
 
         <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px;">
@@ -1636,10 +1652,10 @@ function populateRetailSentiment() {
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
           <div>
             <span style="font-size: 0.78rem; color: var(--text-muted);">散戶多空比率：</span>
-            <strong style="font-size: 1.6rem; color: var(--call-color); font-weight: 700;">+${mtx.ratio.toFixed(2)}%</strong>
+            <strong style="font-size: 1.6rem; color: ${mtx.ratio >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 700;">${mtx.ratio >= 0 ? '+' : ''}${mtx.ratio.toFixed(2)}%</strong>
           </div>
           <div style="font-size: 0.75rem; color: var(--text-muted);">
-            前日 ${mtx.prev_ratio.toFixed(2)}% ➔ 趨勢平穩
+            前日 ${mtxPrevRatioText}
           </div>
         </div>
 
@@ -1655,7 +1671,7 @@ function populateRetailSentiment() {
           </div>
           <div>
             <div style="font-size: 0.72rem; color: var(--gold-accent);">淨部位 (單日增減)</div>
-            <div style="font-weight: 700; color: var(--call-color); font-size: 0.95rem;">+${mtx.net_oi.toLocaleString()} (${mtxSign}${mtx.daily_change})</div>
+            <div style="font-weight: 700; color: ${mtx.net_oi >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-size: 0.95rem;">${mtx.net_oi >= 0 ? '+' : ''}${mtx.net_oi.toLocaleString()} (${mtxDailyChangeText})</div>
           </div>
         </div>
 
@@ -1680,10 +1696,10 @@ function populateRetailSentiment() {
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
           <div>
             <span style="font-size: 0.78rem; color: var(--text-muted);">散戶多空比率：</span>
-            <strong style="font-size: 1.6rem; color: #ffaa00; font-weight: 700;">+${tmf.ratio.toFixed(2)}%</strong>
+            <strong style="font-size: 1.6rem; color: #ffaa00; font-weight: 700;">${tmf.ratio >= 0 ? '+' : ''}${tmf.ratio.toFixed(2)}%</strong>
           </div>
-          <div style="font-size: 0.75rem; color: var(--put-color); font-weight: 600;">
-            📉 前日 ${tmf.prev_ratio.toFixed(2)}% (散戶大平倉 -10.5%)
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">
+            前日 ${tmfPrevRatioText}
           </div>
         </div>
 
@@ -1699,7 +1715,7 @@ function populateRetailSentiment() {
           </div>
           <div>
             <div style="font-size: 0.72rem; color: var(--gold-accent);">淨部位 (單日增減)</div>
-            <div style="font-weight: 700; color: var(--put-color); font-size: 0.95rem;">+${tmf.net_oi.toLocaleString()} (${tmfSign}${tmf.daily_change})</div>
+            <div style="font-weight: 700; color: ${tmf.net_oi >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-size: 0.95rem;">${tmf.net_oi >= 0 ? '+' : ''}${tmf.net_oi.toLocaleString()} (${tmfDailyChangeText})</div>
           </div>
         </div>
 

@@ -42,7 +42,8 @@
 
 **尚未處理的殘留問題（記錄，之後找時間一起處理）**：
 1. `fetch_official_taifex_large_trader()` / `fetch_official_taifex_futures_institutional_oi()` / `fetch_official_taifex_options_matrix()` / `fetch_taifex_night_institutional_trading()` 這幾支函式，抓取失敗時會**默默**退回函式一開始就寫死的保底數字（例如 `res = {'dealer': 2019, 'trust': 75825, 'foreign': -82423}` 這種初始值），不會像本次新增的 5 日矩陣快照系統一樣明確標記「無即時數據」。目前只有在真的抓取失敗時才會顯示這些舊保底值（正常情況下都是抓到真數據），但嚴格來說跟 AGENTS.md 鐵律6「無真實數據時必須明確顯示⚪無即時數據」的要求還有落差，值得之後專門處理一次。
-2. 個股期貨清單裡 `ADR_MAPPING.get(code, ...)` 用到的 `code` 是外層迴圈（`for idx, stk in enumerate(catalog_270)`）跑完後殘留的變數，不是當前這一列股票自己的代號（Python for 迴圈變數不會在迴圈結束後收回作用域），導致每一列的 ADR 連動欄位很可能對到錯的股票。跟本次任務無關，先記錄。
+
+**✅ 2026-09-14 下午已修復**：~~個股期貨清單裡 `ADR_MAPPING.get(code, ...)` 用到的 `code` 是外層迴圈殘留變數，導致每一列的 ADR 連動欄位可能對錯股票~~。已改成用 `item['code']`（這一列自己的代號）查表，且 ADR 漲跌幅改成即時抓 Yahoo Finance 真實報價（原本連漲跌幅本身也是寫死常數）。已實測：2330→TSM ADR +1.22%、2317→HNHPF ADR -0.25%，正確對應。**新發現的小問題**：`CHYYY`（國泰金ADR）、`FUISY`（富邦金ADR）這兩個 ticker 在 Yahoo Finance 查不到（404），可能原本就是編的代號或這兩檔沒有真的在美股掛牌ADR，目前會誠實顯示不可用（不是crash也不是編數字），之後有空可以查證正確ticker或乾脆從清單移除。
 
 **2026-09-14 上午更新：已 commit + push**（`claude/bold-galileo-dy1oxb` 分支 commit `284a3e4`）。3 項 + app.js 修復全部上線，使用者已確認。
 
@@ -57,7 +58,7 @@
 | # | 位置 | 問題 | 修復內容 |
 |---|---|---|---|
 | 1 | `scripts/fetch_institutional_momentum.py` | docstring 宣稱「Fetches real TAIFEX...」，但**整支程式沒有任何網路請求**，法人未平倉/散戶留倉/近5日籌碼歷程全部是寫死常數（`foreign_oi = -12450` 等），跟真實市況無關，每次執行都輸出一樣的數字。 | 改抓 TAIFEX 官方 OpenAPI CSV（`MarketDataOfMajorInstitutionalTradersGeneralBytheDate`，跟 `room.js` 本身在 `momentum_data.json` 失效時的即時 fallback 用同一個端點，確保兩條路徑數字一致）+ 重用 `fetch_official_taifex_retail_sentiment()` 取得散戶多空比；5日歷程改成 `data/momentum_snapshots.json` 真實快照累積（模式同 `institutional_snapshots.json`），沒真數據的日子誠實顯示 `has_snapshot:false`。已實測：外資-551426/投信84552/自營-277059、散戶多空比2.43%，跟官方數字一致。 |
-| 2 | `scripts/build_screener_cache.py` | 只有「當日收盤價/漲跌/量」是真的（來自 `tw_quotes_latest.json`），但拿去算均線/乖離率/量比/MACD狀態/5K趨勢/DeMark訊號的**過去30根K棒歷史是 `random.Random(股票代號當種子)` 生出來的假歷史**（`generate_synthetic_ohlcv`），所以算出來的訊號全部不可信。 | 改成逐檔抓 TWSE `STOCK_DAY` / TPEx `tradingStock` 官方每日歷史（真實約30根K棒），依交易日快取到 `data/screener_ohlcv_cache.json` 避免每次都重打1400+次請求；抓不到真歷史的（例如 `TXF`/`MXF` 這類期貨代碼、下市股）明確標記 `history_unavailable:true`、訊號留空，不再捏造。**注意**：MACD/5K/DeMark 判斷邏輯本身仍是簡化版近似公式（不是逐行對照 Pine Script 的真實 TD Sequential/MACD），這次只解決「輸入數據是假的」問題，公式本身校正留給「指標源碼逐一校正」那個大項目。首次全量執行約 1400 檔，需要 10-20 分鐘（背景執行中）。 |
+| 2 | `scripts/build_screener_cache.py` | 只有「當日收盤價/漲跌/量」是真的（來自 `tw_quotes_latest.json`），但拿去算均線/乖離率/量比/MACD狀態/5K趨勢/DeMark訊號的**過去30根K棒歷史是 `random.Random(股票代號當種子)` 生出來的假歷史**（`generate_synthetic_ohlcv`），所以算出來的訊號全部不可信。 | 改成逐檔抓 TWSE `STOCK_DAY` / TPEx `tradingStock` 官方每日歷史（真實約30根K棒），依交易日快取到 `data/screener_ohlcv_cache.json` 避免每次都重打1400+次請求；抓不到真歷史的（例如 `TXF`/`MXF` 這類期貨代碼、下市股）明確標記 `history_unavailable:true`、訊號留空，不再捏造。**注意**：MACD/5K/DeMark 判斷邏輯本身仍是簡化版近似公式（不是逐行對照 Pine Script 的真實 TD Sequential/MACD），這次只解決「輸入數據是假的」問題，公式本身校正留給「指標源碼逐一校正」那個大項目。**2026-09-14 下午更新**：第一次全量跑完 1383 檔，覆蓋率 453/1423（~32%）；試圖加大請求間隔/重試次數重跑一次想拉高覆蓋率，結果 TWSE/TPEx 限流反而變得更嚴重（跑了很久只處理50檔），懷疑是這台機器今天測試太多次被暫時盯上，已主動中止避免越打越嚴重，**目前先維持 32% 覆蓋率**，之後建議换一天/换更保守的頻率（例如分批、每批間隔更久）再試，不要在同一個 session 裡連續重跑。 |
 
 ### 🔴 新發現的假資料（`fetch_official_taifex_retail_sentiment()`，2026-09-14 上午追查 momentum 修復時發現）
 
@@ -66,9 +67,11 @@
 | 欄位 | 問題 | 狀態 |
 |---|---|---|
 | `mtx_r_net` / `tmf_r_net` | 原本寫死 `9496`/`24932`，跟旁邊算出來的真實 `long`/`short` 無關 | ✅ 已修，改成 `long - short` |
-| `retail_sentiment_details.*.daily_change` | `2380`/`17451` 寫死，不是真實日增減 | ❌ 未修，需要歷史留倉比對（類似快照模式） |
-| `retail_sentiment_details.*.prev_ratio` | `19.97`/`9.63` 寫死，不是真實前一日比率 | ❌ 未修，同上 |
-| `retail_sentiment_details.broker_snapshot` | 整個區塊（`foreign_tx_net: -83078`、`foreign_call_net: 2543`等）全部寫死常數 | ❌ 未修，需要另外找真實對應數據源 |
+| `retail_sentiment_details.*.daily_change` | `2380`/`17451` 寫死，不是真實日增減 | ✅ **2026-09-14下午已修復**：改用 `institutional_snapshots.json` 新增的 `_INST_RETAIL` 快照逐日累積比對，第一天沒有前一日快照時誠實顯示 `null`（app.js對應改成顯示「—」，已處理null不會crash） |
+| `retail_sentiment_details.*.prev_ratio` | `19.97`/`9.63` 寫死，不是真實前一日比率 | ✅ 同上一起修復 |
+| `retail_sentiment_details.broker_snapshot` | 整個區塊（`foreign_tx_net: -83078`、`foreign_call_net: 2543`等）全部寫死常數 | ✅ **2026-09-14下午已修復**：`foreign_tx_net`/`foreign_call_net`/`foreign_put_net` 改重用 `fetch_official_taifex_futures_institutional_oi()`/`fetch_official_taifex_options_matrix()` 已驗證真實的數據；三個 `_change` 欄位比照上面用快照比對；`market_turnover` 找不到可靠對應真實來源，誠實設為 `None` 不亂猜。已實測：外資台指期淨未平倉-82658口、Call淨-1.26億、Put淨1.33億，跟同次執行的官方數字日誌一致。 |
+
+**順便修復（同一函式）**：`app.js` 消費這些欄位的 `populateRetailSentiment()`（約1576-1720行）原本用 `+` 號寫死正負號、對 `null` 直接呼叫 `.toFixed()`/`.toLocaleString()` 會crash——已加上null防護（顯示「—」）並修正正負號改用真實正負值判斷；同時發現「外資Call/Put淨未平倉」單位標籤原本寫「口」但實際數值是「億」（金額），已修正單位標籤。
 
 ### 🔴🔴 最嚴重發現與修復：核心 GEX 引擎的選擇權未平倉部位，從未接過真數據（2026-09-14）
 
@@ -119,9 +122,9 @@
 | # | 位置 | 問題 | 狀態 |
 |---|---|---|---|
 | 1 | room.js:702-734（`大戶散戶動能`副圖） | 「大戶動能柱/線」是拿 K 棒開高低收公式湊出來的（`flowVal = ((收盤-開盤)/振幅) × 量 × 0.4`），「散戶反向線」是 `-大戶線 × 0.65`，跟法人未平倉毫無關係。真數據 `momentum_data.json` 有抓回來（room.js:15,193）但完全沒用上。 | 🔧 **修復中**（另一 session 在建富邦 Books/Trades 即時串接，這裡先不動） |
-| 2 | room.js:2929-3020（選股雷達） | 每檔股票的訊號標籤（🚀強火箭/⭐5K突破/9★轉折等）跟漲跌幅%，全部是拿**股票代號字元的雜湊值**算出來的固定布林值，跟今天盤勢無關，永遠不變。真數據 `screener_cache.json` 有抓回來（room.js:3311,3325）但完全沒用上；而且 `screener_cache.json` 本身底層也是假的（見上方「一、」# 2）。 | ❌ 待修 |
-| 3 | room.js:1507-1553（`renderLeftPanel()`） | 切到 TXF/TAIEX/OTC 時，開高低收、昨收、漲跌點數/幅度是**無條件寫死的固定文字**，永遠不變，沒有任何即時流覆蓋它們。 | ❌ 待修 |
-| 4 | room.js:816-828（ADX Pro V3 背離判定） | 頂/底背離用**寫死絕對價位**（`highs[i]>=47200`/`lows[i]<=46150`）加註解裡寫死的特定歷史日期觸發，不是通用的價格/指標背離演算法，價格永久脫離這個區間後就永久失效。 | ❌ 待修（需 `adx_dual_color_v3.pine` 校正到 1:1） |
+| 2 | room.js（選股雷達 `runBirdQuantScreener()`） | 每檔股票的訊號標籤（🚀強火箭/⭐5K突破/9★轉折等）跟漲跌幅%，全部是拿**股票代號字元的雜湊值**算出來的固定布林值，跟今天盤勢無關，永遠不變。 | ✅ **2026-09-14 已修復**：改成讀真實 `screenerCacheData`（`data/screener_cache.json`，今天稍早已改用真實TWSE/TPEx歷史K棒重建，見上方「一、」#2 對應修復），沒有真實訊號的股票直接跳過不顯示，不編數字。「投信認養」「籌碼偏多」兩個篩選條件目前沒有接上對應真數據（需要串 `gex_data.json` 的 `stock_futures`），暫時設為永遠不觸發（誠實地不匹配，不是編假的），列為後續小型待辦。 |
+| 3 | room.js（`renderLeftPanel()`） | 切到 TXF/TAIEX/OTC 時，開高低收、昨收、漲跌點數/幅度是**無條件寫死的固定文字**，永遠不變，沒有任何即時流覆蓋它們。 | ✅ **2026-09-14 已修復**：漲跌點數/幅度改用真實 `gexData` 換算（TAIEX/OTC 重用已算好的真實值；TXF 用日夜盤真實收盤價價差）；昨收改用真實現價減真實漲跌反推；開盤/最高/最低目前沒有真實逐筆盤中資料源可用（需要 `live_price_server.py` 的即時tick累積高低，屬於另一 session 範圍），改為誠實顯示「—」，不再是凍結假文字。 |
+| 4 | room.js（ADX Pro V3 背離判定） | 頂/底背離用**寫死絕對價位**（`highs[i]>=47200`/`lows[i]<=46150`）加註解裡寫死的特定歷史日期觸發，不是通用的價格/指標背離演算法，價格永久脫離這個區間後就永久失效。 | ✅ **2026-09-14 已修復**：改成比較「本次波段極值」與「上一次波段極值」當下的真實 ADX 值（價格創新高但ADX未創高=頂背離；價格創新低但ADX未創高=底背離），不綁定任何固定價位，價格永久脫離舊區間後依然成立。**注意**：這只修好了「背離判定用固定價位」這個問題，ADX/DI本身的平滑公式是否逐行對齊 `adx_dual_color_v3.pine` 官方指標尚未核對，仍是「指標源碼逐一校正」大項目的一部分。 |
 
 ### 🟠 High
 

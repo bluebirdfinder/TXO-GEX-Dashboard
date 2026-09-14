@@ -1221,6 +1221,29 @@ def encrypt_payload_sha256(plain_json_str, passcode):
     cipher_bytes = bytes([b ^ key[i % len(key)] for i, b in enumerate(data_bytes)])
     return base64.b64encode(cipher_bytes).decode('utf-8')
 
+def fetch_yahoo_finance_quote(ticker):
+    """
+    Real latest price + change% for any Yahoo Finance ticker (used for Taiwan ADRs like TSM,
+    UMC, HNHPF — same endpoint/pattern as the VIX/VVIX fetches below). Returns
+    {'price':, 'change_pct':} or None if the fetch fails — callers should show that as
+    unavailable, not fall back to a guessed number.
+    """
+    try:
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1d"
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+        result = data.get('chart', {}).get('result', [])
+        if result:
+            meta = result[0].get('meta', {})
+            price = meta.get('regularMarketPrice')
+            prev_close = meta.get('chartPreviousClose') or meta.get('previousClose')
+            if price and prev_close:
+                return {'price': round(price, 2), 'change_pct': round((price - prev_close) / prev_close * 100, 2)}
+    except Exception as e:
+        print(f"[Warning] Failed to fetch Yahoo Finance quote for {ticker}: {e}")
+    return None
+
 def fetch_official_taifex_vix():
     """
     Fetches real-time / daily official TAIFEX VIX index & daily change from TAIFEX vixMinNew endpoint,
@@ -1919,6 +1942,39 @@ def fetch_official_taifex_retail_sentiment():
     mtx_ratio = mtx_near_ratio
     tmf_ratio = tmf_near_ratio
 
+    # Real foreign TX OI + real foreign TXO call/put net amounts, reusing the same official
+    # fetchers used elsewhere in this file for the exact same underlying numbers.
+    fut_inst_snap = fetch_official_taifex_futures_institutional_oi()
+    opt_inst_snap = fetch_official_taifex_options_matrix()
+    foreign_tx_net = fut_inst_snap.get('foreign')
+    foreign_call_net = opt_inst_snap.get('foreign', {}).get('call_net_amt')
+    foreign_put_net = opt_inst_snap.get('foreign', {}).get('put_net_amt')
+
+    # Real day-over-day deltas via the same persistent snapshot store used for the
+    # institutional 5-day matrix — yesterday's real values, not a hardcoded number, are what
+    # daily_change/prev_ratio are actually supposed to mean.
+    _retail_snaps = load_institutional_snapshots()
+    _retail_today_key = f"{datetime.date.today().isoformat()}_INST_RETAIL"
+    _retail_prev_key = max(
+        (k for k in _retail_snaps if k.endswith('_INST_RETAIL') and k < _retail_today_key),
+        default=None
+    )
+    _prev = _retail_snaps.get(_retail_prev_key, {}) if _retail_prev_key else {}
+
+    mtx_daily_change = (mtx_r_net - _prev['mtx_net_oi']) if 'mtx_net_oi' in _prev else None
+    mtx_prev_ratio = _prev.get('mtx_ratio')
+    tmf_daily_change = (tmf_r_net - _prev['tmf_net_oi']) if 'tmf_net_oi' in _prev else None
+    tmf_prev_ratio = _prev.get('tmf_ratio')
+    foreign_tx_change = (foreign_tx_net - _prev['foreign_tx_net']) if ('foreign_tx_net' in _prev and foreign_tx_net is not None) else None
+    foreign_call_change = (foreign_call_net - _prev['foreign_call_net']) if ('foreign_call_net' in _prev and foreign_call_net is not None) else None
+    foreign_put_change = (foreign_put_net - _prev['foreign_put_net']) if ('foreign_put_net' in _prev and foreign_put_net is not None) else None
+
+    write_institutional_snapshot(datetime.date.today().isoformat(), 'RETAIL', {
+        'mtx_net_oi': mtx_r_net, 'mtx_ratio': mtx_ratio,
+        'tmf_net_oi': tmf_r_net, 'tmf_ratio': tmf_ratio,
+        'foreign_tx_net': foreign_tx_net, 'foreign_call_net': foreign_call_net, 'foreign_put_net': foreign_put_net
+    })
+
     mtx_sentiment_tag = "🔴 散戶極度做多 (軋空看壓)" if mtx_ratio > 15 else ("🟠 散戶偏多看壓" if mtx_ratio > 5 else ("🟢 散戶極度做空" if mtx_ratio < -15 else ("🟢 散戶偏空看撐" if mtx_ratio < -5 else "⚖️ 散戶多空平衡")))
     tmf_sentiment_tag = "🔴 散戶極度做多 (軋空看壓)" if tmf_ratio > 15 else ("🟠 散戶微幅做多" if tmf_ratio > 5 else ("🟢 散戶極度做空" if tmf_ratio < -15 else ("🟢 散戶偏空看撐" if tmf_ratio < -5 else "⚖️ 散戶多空平衡")))
 
@@ -1941,12 +1997,12 @@ def fetch_official_taifex_retail_sentiment():
                 "long_oi": mtx_r_long,
                 "short_oi": mtx_r_short,
                 "net_oi": mtx_r_net,
-                "daily_change": 2380,
+                "daily_change": mtx_daily_change,
                 "total_oi": mtx_total,
                 "near_oi": mtx_near_total,
                 "ratio": mtx_ratio,
                 "total_ratio": mtx_total_ratio,
-                "prev_ratio": 19.97,
+                "prev_ratio": mtx_prev_ratio,
                 "sentiment_tag": mtx_sentiment_tag
             },
             "micro_tmf": {
@@ -1954,24 +2010,24 @@ def fetch_official_taifex_retail_sentiment():
                 "long_oi": tmf_r_long,
                 "short_oi": tmf_r_short,
                 "net_oi": tmf_r_net,
-                "daily_change": 17451,
+                "daily_change": tmf_daily_change,
                 "total_oi": tmf_total,
                 "near_oi": tmf_near_total,
                 "ratio": tmf_ratio,
                 "total_ratio": tmf_total_ratio,
-                "prev_ratio": 9.63,
+                "prev_ratio": tmf_prev_ratio,
                 "sentiment_tag": tmf_sentiment_tag
             },
             "broker_snapshot": {
-                "foreign_tx_net": -83078,
-                "foreign_tx_change": 396,
-                "foreign_call_net": 2543,
-                "foreign_call_change": 994,
-                "foreign_put_net": 5613,
-                "foreign_put_change": 1892,
+                "foreign_tx_net": foreign_tx_net,
+                "foreign_tx_change": foreign_tx_change,
+                "foreign_call_net": foreign_call_net,
+                "foreign_call_change": foreign_call_change,
+                "foreign_put_net": foreign_put_net,
+                "foreign_put_change": foreign_put_change,
                 "vix_index": vix_idx,
                 "vix_change": vix_chg,
-                "market_turnover": 9976
+                "market_turnover": None
             },
             "sentiment_summary_html": sentiment_summary_html
         }
@@ -2851,6 +2907,8 @@ def generate_gex_payload():
     # Real per-stock spot-side institutional net buy/sell (TWSE T86, cached per day)
     twse_t86_data = fetch_twse_institutional_t86_latest()
 
+    _adr_quote_cache = {}  # avoid re-fetching the same ADR ticker for both "2330" and "2330F" rows
+
     stock_futures = []
     for idx, item in enumerate(raw_stock_futures):
         chg_pct = item['change_pct']
@@ -2976,31 +3034,43 @@ def generate_gex_payload():
         is_it_adopted = (it_ratio >= 0.5 and it_consec_days >= 3)
         it_badge = "🚀 投信波段認養" if is_it_adopted else ("⚡ 投信連買" if it_consec_days >= 3 else "-")
 
-        # Night Stock Futures with ADR linkage (Complete Taiwan ADR Matrix)
-        ADR_MAPPING = {
-            "2330": {"adr_symbol": "TSM (台積電ADR)", "adr_change_pct": 2.15, "adr_basis": "+0.45%"},
-            "2330F": {"adr_symbol": "TSM (台積電ADR)", "adr_change_pct": 2.15, "adr_basis": "+0.45%"},
-            "2303": {"adr_symbol": "UMC (聯電ADR)", "adr_change_pct": 2.77, "adr_basis": "+0.32%"},
-            "2303F": {"adr_symbol": "UMC (聯電ADR)", "adr_change_pct": 2.77, "adr_basis": "+0.32%"},
-            "3711": {"adr_symbol": "ASX (日月光ADR)", "adr_change_pct": 2.81, "adr_basis": "+0.40%"},
-            "3711F": {"adr_symbol": "ASX (日月光ADR)", "adr_change_pct": 2.81, "adr_basis": "+0.40%"},
-            "2317": {"adr_symbol": "HNHPF (鴻海ADR)", "adr_change_pct": 0.69, "adr_basis": "+0.15%"},
-            "2317F": {"adr_symbol": "HNHPF (鴻海ADR)", "adr_change_pct": 0.69, "adr_basis": "+0.15%"},
-            "2409": {"adr_symbol": "AUOTY (友達ADR)", "adr_change_pct": 2.95, "adr_basis": "+0.20%"},
-            "2409F": {"adr_symbol": "AUOTY (友達ADR)", "adr_change_pct": 2.95, "adr_basis": "+0.20%"},
-            "2412": {"adr_symbol": "CHT (中華電ADR)", "adr_change_pct": 0.29, "adr_basis": "+0.05%"},
-            "2412F": {"adr_symbol": "CHT (中華電ADR)", "adr_change_pct": 0.29, "adr_basis": "+0.05%"},
-            "8150": {"adr_symbol": "IMOS (南茂ADR)", "adr_change_pct": 2.07, "adr_basis": "+0.35%"},
-            "8150F": {"adr_symbol": "IMOS (南茂ADR)", "adr_change_pct": 2.07, "adr_basis": "+0.35%"},
-            "2882": {"adr_symbol": "CHYYY (國泰金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
-            "2882F": {"adr_symbol": "CHYYY (國泰金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
-            "2881": {"adr_symbol": "FUISY (富邦金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
-            "2881F": {"adr_symbol": "FUISY (富邦金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
-            "0050": {"adr_symbol": "EWT (MSCI台灣ETF)", "adr_change_pct": 1.40, "adr_basis": "+0.25%"},
-            "0050F": {"adr_symbol": "EWT (MSCI台灣ETF)", "adr_change_pct": 1.40, "adr_basis": "+0.25%"},
-            "00679B": {"adr_symbol": "TLT (美債20Y ETF)", "adr_change_pct": 0.35, "adr_basis": "+0.10%"}
+        # Night Stock Futures with ADR linkage (Complete Taiwan ADR Matrix). Ticker mapping is
+        # static (which US ADR corresponds to which TW stock doesn't change), but the % change
+        # is fetched live per run below — was previously also a frozen historical number.
+        # Also fixed: this used to key off `code`, a stale variable left over from the
+        # catalog_270 loop earlier in this function (Python for-loop variables aren't scoped to
+        # the loop), not this row's own ticker — every row's ADR link was effectively random.
+        ADR_TICKER_MAPPING = {
+            "2330": "TSM", "2330F": "TSM",
+            "2303": "UMC", "2303F": "UMC",
+            "3711": "ASX", "3711F": "ASX",
+            "2317": "HNHPF", "2317F": "HNHPF",
+            "2409": "AUOTY", "2409F": "AUOTY",
+            "2412": "CHT", "2412F": "CHT",
+            "8150": "IMOS", "8150F": "IMOS",
+            "2882": "CHYYY", "2882F": "CHYYY",
+            "2881": "FUISY", "2881F": "FUISY",
+            "0050": "EWT", "0050F": "EWT",
+            "00679B": "TLT"
         }
-        adr_info = ADR_MAPPING.get(code, {"adr_symbol": "-", "adr_change_pct": 0.0, "adr_basis": "-"})
+        ADR_DISPLAY_NAMES = {
+            "TSM": "TSM (台積電ADR)", "UMC": "UMC (聯電ADR)", "ASX": "ASX (日月光ADR)",
+            "HNHPF": "HNHPF (鴻海ADR)", "AUOTY": "AUOTY (友達ADR)", "CHT": "CHT (中華電ADR)",
+            "IMOS": "IMOS (南茂ADR)", "CHYYY": "CHYYY (國泰金ADR)", "FUISY": "FUISY (富邦金ADR)",
+            "EWT": "EWT (MSCI台灣ETF)", "TLT": "TLT (美債20Y ETF)"
+        }
+        adr_ticker = ADR_TICKER_MAPPING.get(item['code'])
+        if adr_ticker:
+            if adr_ticker not in _adr_quote_cache:
+                _adr_quote_cache[adr_ticker] = fetch_yahoo_finance_quote(adr_ticker)
+            adr_quote = _adr_quote_cache[adr_ticker]
+            adr_info = {
+                "adr_symbol": ADR_DISPLAY_NAMES.get(adr_ticker, adr_ticker),
+                "adr_change_pct": adr_quote['change_pct'] if adr_quote else None,
+                "adr_basis": "-"  # real basis needs the ADR conversion ratio + live USD/TWD, not computed yet
+            }
+        else:
+            adr_info = {"adr_symbol": "-", "adr_change_pct": None, "adr_basis": "-"}
 
         item["it_adoption_ratio"] = it_ratio
         item["it_consecutive_buy_days"] = it_consec_days

@@ -38,11 +38,15 @@ SSL_CTX.verify_mode = ssl.CERT_NONE
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
 
 
-def _fetch_url(url, retries=1):
-    """One retry with backoff — TWSE/TPEx intermittently rate-limit under a fast back-to-back
-    batch of 1000+ requests, and a bare failure would otherwise get silently recorded as
-    history_unavailable even though a moment later the same URL fetches fine."""
+def _fetch_url(url, retries=2):
+    """Retry with escalating backoff — TWSE/TPEx rate-limit under a fast back-to-back batch of
+    1000+ requests, and a bare failure would otherwise get silently recorded as
+    history_unavailable even though the same URL fetches fine after backing off. A single
+    quick retry (the first version of this fix) only recovered about a fifth of the failures
+    (1210 -> 970 unavailable out of 1383), so the block outlasts a 1s wait for many of them —
+    this uses longer, increasing waits instead of one short one."""
     last_err = None
+    backoffs = [2.0, 5.0]
     for attempt in range(retries + 1):
         try:
             req = urllib.request.Request(url, headers=HEADERS)
@@ -51,7 +55,7 @@ def _fetch_url(url, retries=1):
         except Exception as e:
             last_err = e
             if attempt < retries:
-                time.sleep(1.0)
+                time.sleep(backoffs[min(attempt, len(backoffs) - 1)])
     raise last_err
 
 
@@ -300,7 +304,7 @@ def main():
             ohlcv_cache[sym] = bars if bars else []
             cache_dirty = True
             fetched += 1
-            time.sleep(0.25)  # pace requests — TWSE/TPEx rate-limit a fast back-to-back 1000+ batch
+            time.sleep(0.6)  # pace requests — 0.25s + 1 retry still left 970/1383 unavailable, so pacing further out
             if fetched % 50 == 0:
                 print(f"  ...fetched real history for {fetched} symbols so far ({i + 1}/{len(universe)} processed)")
                 save_ohlcv_cache(ohlcv_cache)  # checkpoint periodically in case of interruption

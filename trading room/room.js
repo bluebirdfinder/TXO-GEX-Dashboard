@@ -731,6 +731,8 @@ function generateIndicatorsData(tf) {
 
   let lastBoBar = -100;
   let lastBdBar = -100;
+  let lastSwingHigh = null; // {price, adx} of the most recent confirmed swing high — real
+  let lastSwingLow = null;  // reference points for divergence, not a fixed price level
 
   for (let i = 0; i < count; i++) {
     const t = candles[i].time;
@@ -792,17 +794,32 @@ function generateIndicatorsData(tf) {
     adxLine.push({ time: t, value: adx });
     adxHist.push({ time: t, value: adx, color: adxColor });
 
-    // ADX Pro V3 頂背離與底背離判定 (1:1 對齊 TradingView 實盤背離圓點與標籤)
-    if (i >= 15) {
-      // 頂背離: K線在波段頂峰 (8月28-29日 47,400~47,590)，但 ADX 未創新高或走平
-      if (highs[i] >= 47200 && (highs[i] >= highs[i - 1]) && (i - lastBoBar >= 25)) {
-        adxSignals.push({ time: t, position: 'aboveBar', color: '#00E676', shape: 'arrowDown', text: '▼ 頂背離' });
-        lastBoBar = i;
+    // ADX Pro V3 頂背離與底背離判定：比較「本次波段極值」與「上一次波段極值」當下的真實 ADX
+    // 值（真實背離定義：價格創新高但趨勢強度未跟著創高＝頂背離；價格創新低但趨勢強度未跟著
+    // 創高＝底背離），完全依當時真實價格與 ADX 相對關係判斷，不綁定任何固定價位——價格永久
+    // 脫離舊區間後這個判斷依然成立，不會失效。
+    if (i >= 2) {
+      const priorIdx = i - 1;
+      const isConfirmedPeak = highs[priorIdx] > highs[priorIdx - 1] && highs[priorIdx] >= highs[i];
+      const isConfirmedTrough = lows[priorIdx] < lows[priorIdx - 1] && lows[priorIdx] <= lows[i];
+
+      if (isConfirmedPeak) {
+        const peakPrice = highs[priorIdx];
+        const peakAdx = adxValues[priorIdx];
+        if (lastSwingHigh && peakPrice > lastSwingHigh.price && peakAdx < lastSwingHigh.adx && (i - lastBoBar >= 25)) {
+          adxSignals.push({ time: candles[priorIdx].time, position: 'aboveBar', color: '#00E676', shape: 'arrowDown', text: '▼ 頂背離' });
+          lastBoBar = i;
+        }
+        lastSwingHigh = { price: peakPrice, adx: peakAdx };
       }
-      // 底背離: K線在波段相對低檔 (9月9-10日 46,050~46,150 觸碰地板牆)，但 ADX 動能開始翻揚
-      else if (lows[i] <= 46150 && (lows[i] <= lows[i - 1]) && (i - lastBdBar >= 25)) {
-        adxSignals.push({ time: t, position: 'belowBar', color: '#FF5252', shape: 'arrowUp', text: '▲ 底背離' });
-        lastBdBar = i;
+      if (isConfirmedTrough) {
+        const troughPrice = lows[priorIdx];
+        const troughAdx = adxValues[priorIdx];
+        if (lastSwingLow && troughPrice < lastSwingLow.price && troughAdx < lastSwingLow.adx && (i - lastBdBar >= 25)) {
+          adxSignals.push({ time: candles[priorIdx].time, position: 'belowBar', color: '#FF5252', shape: 'arrowUp', text: '▲ 底背離' });
+          lastBdBar = i;
+        }
+        lastSwingLow = { price: troughPrice, adx: troughAdx };
       }
     }
   }
@@ -1554,50 +1571,67 @@ function renderLeftPanel() {
     topChgOtc.style.color = chg >= 0 ? 'var(--call-color)' : 'var(--put-color)';
   }
 
-  // 2. Main Selected Symbol Quotes & Change
+  // 2. Main Selected Symbol Quotes & Change — real values (TAIEX/OTC reuse the same real
+  // change/% already computed above for the header pills; TXF/MTX/MXF uses the real
+  // night-vs-day session close spread, same figure app.js's txf_shift already shows).
   const lDiffEl = document.getElementById('left-price-diff');
   const lPctEl = document.getElementById('left-price-pct');
   if (lDiffEl && lPctEl) {
+    let diff = null, pct = null;
     if (currentActiveSymbol.symbol === 'TXF' || currentActiveSymbol.symbol === 'MTX' || currentActiveSymbol.symbol === 'MXF') {
-      lDiffEl.innerText = '+401';
-      lDiffEl.style.color = 'var(--call-color)';
-      lPctEl.innerText = '(+0.87%)';
-      lPctEl.style.color = 'var(--call-color)';
+      const dayTxf = gexData?.day_txf_price;
+      const nightTxf = gexData?.night_txf_price;
+      if (dayTxf && nightTxf) {
+        diff = nightTxf - dayTxf;
+        pct = (diff / dayTxf) * 100;
+      }
     } else if (currentActiveSymbol.symbol === 'TAIEX') {
-      lDiffEl.innerText = '-755.64';
-      lDiffEl.style.color = 'var(--put-color)';
-      lPctEl.innerText = '(-1.61%)';
-      lPctEl.style.color = 'var(--put-color)';
+      diff = gexData?.spot_change;
+      pct = gexData?.spot_change_pct;
     } else if (currentActiveSymbol.symbol === 'OTC') {
-      lDiffEl.innerText = '-9.72';
-      lDiffEl.style.color = 'var(--put-color)';
-      lPctEl.innerText = '(-2.40%)';
-      lPctEl.style.color = 'var(--put-color)';
+      diff = gexData?.two_change;
+      pct = gexData?.two_change_pct;
+    }
+    if (diff !== null && diff !== undefined && pct !== null && pct !== undefined) {
+      const sign = diff >= 0 ? '+' : '';
+      const color = diff >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+      lDiffEl.innerText = `${sign}${diff.toFixed(diff < 100 ? 2 : 0)}`;
+      lDiffEl.style.color = color;
+      lPctEl.innerText = `(${sign}${pct.toFixed(2)}%)`;
+      lPctEl.style.color = color;
+    } else {
+      lDiffEl.innerText = '—';
+      lPctEl.innerText = '(—)';
+      lDiffEl.style.color = lPctEl.style.color = 'var(--text-muted)';
     }
   }
 
-  // 3. OHLC stats
+  // 3. OHLC stats — 昨收(prev close) is real for all three (derived from real price minus
+  // real change, or the other session's real close for TXF). 開盤/最高/最低 have no real
+  // intraday source wired up yet (that needs the live tick stream's own running high/low,
+  // which lives in live_price_server.py's scope, not touched here) — shown as "—" instead
+  // of a frozen number that was never real to begin with.
   const lOpen = document.getElementById('left-open');
   const lHigh = document.getElementById('left-high');
   const lLow = document.getElementById('left-low');
   const lPrev = document.getElementById('left-prev');
   if (lOpen && lHigh && lLow && lPrev) {
+    let prevClose = null;
     if (currentActiveSymbol.symbol === 'TXF') {
-      lOpen.innerText = '46,537';
-      lHigh.innerText = '46,590';
-      lLow.innerText = '46,505';
-      lPrev.innerText = '46,187';
+      prevClose = gexData?.day_txf_price;
     } else if (currentActiveSymbol.symbol === 'TAIEX') {
-      lOpen.innerText = '46,500.2';
-      lHigh.innerText = '46,588.0';
-      lLow.innerText = '46,120.5';
-      lPrev.innerText = '46,940.49';
+      if (gexData?.spot_price !== undefined && gexData?.spot_change !== undefined) {
+        prevClose = gexData.spot_price - gexData.spot_change;
+      }
     } else if (currentActiveSymbol.symbol === 'OTC') {
-      lOpen.innerText = '401.5';
-      lHigh.innerText = '402.8';
-      lLow.innerText = '394.2';
-      lPrev.innerText = '405.24';
+      if (gexData?.two_price !== undefined && gexData?.two_change !== undefined) {
+        prevClose = gexData.two_price - gexData.two_change;
+      }
     }
+    lOpen.innerText = '—';
+    lHigh.innerText = '—';
+    lLow.innerText = '—';
+    lPrev.innerText = (prevClose !== null && !isNaN(prevClose)) ? prevClose.toLocaleString(undefined, { minimumFractionDigits: prevClose < 500 ? 2 : 1, maximumFractionDigits: prevClose < 500 ? 2 : 1 }) : '—';
   }
 
   // Header Title
@@ -3003,25 +3037,41 @@ function runBirdQuantScreener() {
 
   setTimeout(() => {
     const results = [];
+    // Real per-symbol technical signals from data/screener_cache.json (built by
+    // scripts/build_screener_cache.py off real TWSE/TPEx daily OHLCV) — replaces the
+    // previous hash-of-ticker-string generator that fabricated every flag below regardless
+    // of the actual market. A symbol missing from this cache, or explicitly marked
+    // history_unavailable (no real price history TWSE/TPEx would give up), is skipped
+    // rather than shown with an invented signal.
+    const realScreenerMap = {};
+    if (screenerCacheData && Array.isArray(screenerCacheData.symbols)) {
+      screenerCacheData.symbols.forEach(s => { realScreenerMap[s.symbol] = s; });
+    }
+
     symbolsUniverse.forEach(item => {
-      let hash = 0;
-      for (let c = 0; c < item.symbol.length; c++) hash = (hash * 37 + item.symbol.charCodeAt(c)) % 10000;
-      
-      const hasRocketS = (hash % 3 === 0);
-      const hasBirdS = (hash % 4 === 0);
-      const hasRestartS = (hash % 5 === 0);
-      const hasRestartN = (hash % 4 === 1);
-      const hasRocketW = (hash % 6 === 0);
-      const hasBirdN = (hash % 5 === 2);
-      const isMacdFlip = (hash % 3 === 1);
-      const isMacdGold = (hash % 4 === 2);
-      const isGradeS = (hash % 3 === 0);
-      const isGradeA = (hash % 2 === 0);
-      const hasDemark = (hash % 7 === 0);
-      const has5k = (hash % 5 === 3);
-      const hasVol = (hash % 4 === 3);
-      const hasItAdopt = (hash % 4 === 0);
-      const hasChipBull = (hash % 3 === 2);
+      const real = realScreenerMap[item.symbol];
+      if (!real || real.history_unavailable) return; // no real signal to show — don't invent one
+
+      const sigList = real.signals || [];
+      const hasRocketS = sigList.includes('🚀 強火箭');
+      const hasBirdS = sigList.includes('🐦 強力藍鳥');
+      const hasRestartS = sigList.includes('🛸 動能飛碟');
+      const hasRestartN = sigList.includes('⚡ 動能閃電');
+      const hasRocketW = sigList.includes('✈️ 噴射機');
+      const hasBirdN = sigList.includes('🥚 帶殼鳥');
+      const isMacdFlip = real.macd_state === 'MACD 柱狀體翻紅';
+      const isMacdGold = real.macd_state === '零軸上金叉' || real.macd_state === 'MACD 水下金叉';
+      const isGradeS = real.grade === 'S';
+      const isGradeA = real.grade === 'A';
+      const hasDemark = real.demark_state && real.demark_state !== '無';
+      const has5k = real.k5_state === '5K 創高突破';
+      const hasVol = (real.volume_status || '').includes('爆量');
+      // 投信認養 / 籌碼偏多 need real per-stock institutional flow (stock_futures in
+      // gex_data.json, wired up in Component A/B) cross-referenced by symbol — not wired
+      // into this screener yet, so these two filters honestly never match rather than
+      // reviving a fake hash for just these two.
+      const hasItAdopt = false;
+      const hasChipBull = false;
 
       let score = 0;
       if (fRocketS && hasRocketS) score++;
@@ -3044,30 +3094,17 @@ function runBirdQuantScreener() {
       const isMatch = (activeFiltersCount === 0) || (score >= Math.max(1, Math.ceil(activeFiltersCount * 0.4)));
 
       if (isMatch) {
-        let price = (hash % 800) + 25;
-        if (item.symbol === '2330' || item.symbol === 'CDF') price = 1045;
-        if (item.symbol === '2454' || item.symbol === 'DVF') price = 1430;
-        if (item.symbol === '2317' || item.symbol === 'DHF') price = 215;
-        if (item.symbol === 'TXF') price = 46594;
+        const price = real.price;
+        const changePct = real.pct_change;
 
-        const changePct = ((hash % 70) - 15) / 10;
-        
-        const sigs = [];
-        if (hasRocketS) sigs.push('🚀 強火箭');
-        if (hasItAdopt) sigs.push('⭐ 投信認養');
-        if (hasBirdS) sigs.push('🐦 強力藍鳥');
-        if (hasRestartS) sigs.push('🛸 飛碟再啟');
-        if (hasRestartN) sigs.push('⚡ 動能再啟');
-        if (has5k) sigs.push('⭐ 5K突破');
-        if (hasDemark) sigs.push('9★ 轉折');
-        if (sigs.length === 0) sigs.push('📈 多頭共振');
+        const sigs = sigList.length ? sigList.slice(0, 2) : ['⚖️ 無明顯訊號'];
 
         results.push({
           item,
           price,
           changePct,
-          signals: sigs.slice(0, 2).join(' '),
-          grade: isGradeS ? 'S 強噴' : (isGradeA ? 'A 強勢' : 'B 多頭'),
+          signals: sigs.join(' '),
+          grade: isGradeS ? 'S 強噴' : (isGradeA ? 'A 強勢' : (real.grade ? `${real.grade} 級` : 'B 多頭')),
           score
         });
       }
