@@ -47,6 +47,25 @@
 | 10 | `calculate_macro_events_radar()` 的 `macro_risk_dashboard`／`raw_calendar_items` | 對應「⏳尚未稽核」清單裡的「macro-events-radar」項目，本次已稽核：`macro_risk_dashboard`（DXY/US10Y/VIX卡片）**完全沒有任何 fetch**，是打字寫死的字面值，且跟同一支程式裡別處真的抓到的 VIX（`fetch_official_taifex_vix()`）不一致不同步。`raw_calendar_items`（5筆帶2026年具體日期的總經事件）也是寫死列表，雖有日期過濾但沒有補新事件機制——**以今天(09/15)為準只剩09/16 FOMC這一筆還沒過期，明天過後這個清單會悄悄變成永久空清單，沒有任何錯誤或「無資料」提示**。（同函式裡真正驅動倒數計時器的 `valid_events`/`primary_event` 是動態算的，不受影響，此問題僅限這兩個陪襯用的資訊卡。） |
 | 11 | 「工程近似」判斷題（非造假，但輸入是真的、換算用固定係數） | 個股期貨「指數點數貢獻度」固定乘數（台積電×8.25、聯電×0.85、0050×1.5、其餘個股共用×0.1，跟真實市值權重脫鉤且不隨股本變動更新）；`calculate_true_gex_profile()` 全期權共用同一組固定 `r=0.015`/`sigma=0.18`，沒有依真實成交隱含波動率逐履約價計算；`calculate_dynamic_sector_rotation()` 8大產業占比固定寫死（38.0/16.0/6.5等，加總100，不隨個股權值消長變動）。這三項風險屬性跟已知的 `handleLiveTick` 0.62係數同一類——是否要投入工程換成真實動態計算，是取捨題不是bug。 |
 
+### ✅ 2026-09-15 凌晨：系統性保底值清理 + 總經雷達重建（使用者授權自主完成，趁使用者休息時執行）
+
+使用者針對「零、」章節列出的3個決定點選擇：①維持率先查證其他來源 ②系統性保底值清理一次做完 ③總經雷達現在整個重建，並授權之後的優先順序由我自行判斷、不需逐項再問。完成內容：
+
+| 項目 | 內容 |
+|---|---|
+| 融資維持率查證結果 | 已查證 TWSE 官方從未公布過全市場整戶維持率（帳戶層級概念，官方不彙總揭露），連財經媒體看到的每日大盤維持率都是自己估算。改用真實大盤漲跌幅動態校正估算值（取代寫死158.4/144.1基準值），並在資料裡明確標記 `is_estimated: true`，前端加註「· 估算值」，不再假裝是官方數據。 |
+| 系統性保底值清理（7支後端函式） | `fetch_official_taifex_tx_prices()`(現貨價本身)、`fetch_official_taifex_vix()`(VIX/VVIX)、`fetch_twse_institutional_stock_trading()`、`fetch_official_taifex_large_trader()`、`fetch_official_taifex_futures_institutional_oi()`、`fetch_official_taifex_options_matrix()`、`fetch_taifex_night_institutional_trading()`——全部改成「抓取失敗就退回上一次真實成功抓到的數值」（存於`gex_data.json`或`institutional_snapshots.json`），不再用寫死的舊screenshot數字。另外修復 `fetch_official_taifex_retail_sentiment()` 內 `parse_taifex_fut_oi()` 的「魔術數字比對」鏈式假保底（比對36258/80167判斷抓取是否失敗、失敗就換另一組寫死多空拆分），改成每個欄位獨立退回真實上一筆快照值。 |
+| app.js 34處不一致保底值 | 統一成單一 `CHART_DEFAULTS` 常數物件（含VIX/VVIX相關），過程中額外發現並修復8處原稽核清單沒抓到的同類保底值（`45727`/`45841`/`45900`/`45200`等）。 |
+| **實測時發現並修復的2個真實顯示bug**（唯有在瀏覽器真的跑過才會發現，光看程式碼看不出來） | ①`populateInstitutionalMatrix()`/`populateNightTrading()` 用 `!== undefined` 檢查缺資料，但JSON的null通過這個檢查（`null !== undefined`為true），導致沒有快照的歷史日期直接印出字面文字「null」、且`null >= 0`（JS特性）誤判成正數顏色。②外資特法分歧卡片寫死「+」號前綴，遇到真實負數時顯示「+-4,931」雙重正負號。 |
+| 總經雷達重建 | `macro_risk_dashboard`(DXY/US10Y/VIX卡片)：DXY/US10Y改抓真實Yahoo Finance報價(`DX-Y.NYB`/`%5ETNX`)，VIX重用本檔案已抓到的真實值，移除完全沒算過的假「EMA20」/假趨勢評論。`macro_events_calendar`：不再維護會過期的寫死清單，改成直接重用同函式裡本來就是真實日期運算、永遠不會枯竭的`valid_events`（週/月結算、NFP、CPI、ADP、失業金、富台結算、MSCI調整），解決「日曆會在特定日期後悄悄變成永久空清單」的問題。**額外發現**：`trading room/room.js`讀取這份資料時路徑少了一層(`gexData.macro_risk_dashboard`應為`gexData.macro_events_radar.macro_risk_dashboard`)，導致這個HUD自建立以來從未真正吃到過資料、一直靜默顯示寫死假數字——已一併修復（僅路徑修正，不是重寫邏輯，仍在合理範圍內）。 |
+
+**驗證方式**：這次不只讀程式碼，而是實際架了本機HTTP伺服器（新增 `.claude/launch.json`）在瀏覽器打開儀表板實測，逐一呼叫所有 `populate*`/`render*` 函式並全文掃描頁面文字確認沒有「null」/「undefined」/「NaN」外洩，也跑過全部10個歷史盤別分頁與Ｗ1/W2分頁切換。這個方法論本身值得記錄：**光讀程式碼判斷「應該沒問題」不夠，這次兩個真實bug都是實際點開瀏覽器才發現的**，跟本文件先前教訓（fetch函式要實際跑過驗證）是同一類但延伸到前端渲染層。
+
+**已知殘留、記錄但這次沒修**：
+- `parse_taifex_fut_oi()`「合計」欄位解析本身有bug（抓不到，只有near_oi近月能抓到），目前該欄位在前端未被使用，影響低，之後有空可查證TAIFEX頁面真實表格結構。
+- `trading room/room.js` 的 macro risk HUD 有初始化時機問題：手動帶入真實資料測試證實修復本身正確，但自動觸發時似乎會在資料還沒load時執行一次（測試環境因passcode鎖定未能完整驗證，需要之後開瀏覽器手動輸入通行碼實測）。
+- `trading room/room.js` 本身也有一份 macroData 為null時的舊版hardcoded fallback（99.196/4.784/18.45），現在因為後端一定會回傳真實dict而變成死碼，未清理（低風險，room.js非本次核心範圍）。
+
 ### ✅ 本次確認乾淨（未來稽核可跳過）
 
 `app.js`：`Math.random()`全域0命中、雜湊假訊號未搬入、`VALID_PASSCODE`/ADR對應表/overlay對比線/`populateAiQuantDigest`/`currentTab`分頁邏輯、`populateRetailSentiment`空值防呆——皆複查確認正常。

@@ -28,7 +28,7 @@
 | 8 | 近5日關鍵市場與GEX結構歷程矩陣 | 判斷趨勢延續性、GEX翻轉點逐日位移方向 | `session_snapshots.json`（真實快照累積） | 內部持久化，來源同上各項 | 每日盤後累積 | `write_current_session_snapshot()` / `backfill_snapshots.py` | ✅ 已稽核 | ✅ **今天修好3個抓取bug**（大盤指數/TX期貨價/PC ratio此前從未真的抓到過歷史） | 無 |
 | 9 | 📌日夜盤微觀結構速報 | 極速多空位移、變盤臨界判定 | 即時tick + gexData 內插 | app.js 內部計算 | 即時 | `updateMicrostructureExpress()` | ⏳ 部分稽核 | ❌ **`handleLiveTick`用固定0.62係數外推Zero Gamma，未修**（判斷為低風險工程近似，非憑空造假，故意先不動） | **要不要現在修這個0.62係數？**（風險：牽動即時報價渲染，需要更謹慎測試） |
 | 10 | 國際熱錢動向與5日匯率歷程 | 外資避險成本、資金流向判斷 | TAIFEX 每日外幣參考匯率 | taifex.com.tw/cht/3/dailyFXRate | 盤後公布 | `fetch_5day_exchange_rates()` | 未逐行稽核 | — | 無 |
-| 11 | 國際總經事件雷達 | 避開財報/FOMC等事件前後高波動 | 內部維護的事件日曆演算法 | 程式生成，非外部即時API | — | `renderMacroEventsRadar()` / `calculate_macro_events_radar()` | ✅ 2026-09-15已稽核 | ❌ **未修**：`macro_risk_dashboard`（DXY/US10Y/VIX卡片）完全零fetch、打字寫死，且跟別處真VIX不同步；`raw_calendar_items`寫死5筆2026年事件，09/16 FOMC後會悄悄變永久空清單，無任何提示。倒數計時器真正吃的`valid_events`是動態算的，不受影響 | **要怎麼修？**（見下方彙總） |
+| 11 | 國際總經事件雷達 | 避開財報/FOMC等事件前後高波動 | Yahoo Finance(DXY/US10Y) + 內部真實日期運算(結算/NFP/CPI等) | query1.finance.yahoo.com + 內部calendar運算 | — | `renderMacroEventsRadar()` / `calculate_macro_events_radar()` | ✅ 已稽核 | ✅ **已修正**：DXY/US10Y改真實Yahoo Finance報價，VIX重用真實值；事件日曆改重用永不枯竭的動態計算日期(`valid_events`)取代會過期的寫死清單 | 無 |
 | 12 | 主GEX圖表（Total/週三選/週五選/月選 分頁 + 疊加對比 + 10盤播放器） | **核心：選擇權下單價位、價差單/covered call位置、台指期多空進出場參考** | 同 Card 4-5，TXO未沖銷部位逐履約價分布 | 同上 | 下午3點後 | `calculate_true_gex_profile()` | ✅ 已稽核 | ✅ **已修正**（含「疊加對比」T-1真實前一盤資料，原本是今天曲線亂算） | 無 |
 | 13 | 散戶籌碼與台指快訊（小台MXF/微台TMF） | **反向指標**：散戶極端偏多(>+15%)易被軋、極端偏空(<-15%)易反彈 | TAIFEX 三大法人期貨未平倉 | taifex.com.tw/cht/3/futContractsDate 等 | **15:00~15:45** | `fetch_official_taifex_retail_sentiment()` | ✅ 已稽核 | ✅ **今天修好** `daily_change`/`prev_ratio`/`broker_snapshot` 全部真實化 | 無 |
 | 14 | 夜盤三大法人交易籌碼 | 夜盤外資動向，預判隔日開盤跳空 | TAIFEX futContractsDateAh | taifex.com.tw | 隔日 07:00 盤後定案 | `fetch_taifex_night_institutional_trading()` | ⏳ 部分稽核（抓取失敗時有寫死保底值-422，未強制顯示無數據） | 部分 | **要不要修「抓取失敗時默默用舊保底值」這個殘留問題？** |
@@ -94,16 +94,21 @@
 | 總經事件雷達 | 完全未稽核，不確定是真清單還是有捏造 |
 | 尋鳥戰情室VRVP、商品搜尋、權值貢獻HUD、海外期貨Tick | 完全未稽核 |
 
+### ✅ 2026-09-15 凌晨：系統性保底值清理 + 總經雷達重建完成（使用者授權自主執行）
+
+使用者就寢前對3個決定點做出選擇（維持率查證/保底值一次清理/總經雷達現在重建），並授權之後自行判斷優先順序繼續。完成：7支後端函式的靜默假保底值全部改為「失敗時退回上一次真實成功值」；app.js 34+處不一致常數統一成 `CHART_DEFAULTS`；融資維持率查證後確認TWSE從未公布過官方數據，改為標註`is_estimated`的動態校正估算值；總經事件雷達的DXY/US10Y改真實Yahoo Finance報價，事件日曆改重用永不枯竭的動態計算日期取代會過期的寫死清單。過程中用真實瀏覽器測試（新增 `.claude/launch.json` 本機伺服器設定）發現並修復2個既有前端顯示bug（null值誤判、雙重正負號），以及 `trading room/room.js` 讀取總經雷達資料的路徑少一層的既有bug。詳見 `SELF_AUDIT_FINDINGS_TODO.md`「零、」章節完整記錄。
+
 ### ✅ 2026-09-15：app.js 全文 + fetch_and_calc_vision.py 剩餘函式稽核完成
 
 依「五、建議的下一步優先順序」第1、2項執行，詳細清單見 `SELF_AUDIT_FINDINGS_TODO.md`「零、」章節。已直接修復並實測：`fetch_official_taifex_specific_traders()`（原本抓HTML從未解析、全寫死）、個股期貨列表`it_badge`投信認養假訊號、`fetch_and_calc_vision.py`死代碼65行、`pc_ratio`查表日期bug、app.js`populateStockFutures()`假比例拆分、app.js快取降級死碼。**尚未commit**，等你確認。
 
 ### 🤔 需要你決定的事（彙總，已更新）
 
-1. ~~總經事件雷達優先稽核嗎？~~ **已稽核**：`macro_risk_dashboard`(DXY/US10Y/VIX卡片)零fetch打字寫死且跟真VIX不同步；事件日曆09/16 FOMC後會悄悄變永久空清單。→ 現在就重建成真數據 vs 先只修「會變空清單」這個功能性bug vs 先下架等有真數據
-2. `fetch_twse_margin_maintenance()` 融資維持率——官方API證實沒有真正的維持率欄位，現在用線性外推公式編出來的（連抓取成功都一樣）。→ 標記不可用只顯示餘額 vs 保留公式但標「估算值」vs 花時間查其他官方來源
-3. 系統性靜默假保底值清理——比原本已知多找到3支關鍵函式（含**現貨價本身**、VIX），共7支後端函式+app.js 34處不一致常數(比原估17處多一倍)+5處過時預設區塊。→ 這次一次做完 vs 先做後端7支(核心交易輸入,風險較高) vs 全部記錄另排session
-4. `handleLiveTick` 0.62係數、個股期貨點數貢獻固定乘數(8.25/0.85/1.5/0.1)、GEX引擎固定18%波動率、8大產業固定占比——同一類「工程近似非造假」判斷題，是否要投入時間換真實動態計算？
+1. ~~總經事件雷達優先稽核嗎？~~ **已重建完成**：DXY/US10Y改真實Yahoo Finance報價，事件日曆改重用永不枯竭的動態日期。
+2. ~~`fetch_twse_margin_maintenance()` 融資維持率~~ **已查證並修復**：TWSE從未公布過官方數據，改為標註`is_estimated`的動態校正估算值。
+3. ~~系統性靜默假保底值清理~~ **已完成**：7支後端函式+app.js 34+處不一致常數全部清理完畢，過程中實測還額外發現並修好2個既有前端顯示bug（null值誤判成正數、雙重正負號）與1個room.js既有的資料路徑bug。
+4. `handleLiveTick` 0.62係數、個股期貨點數貢獻固定乘數(8.25/0.85/1.5/0.1)、GEX引擎固定18%波動率、8大產業固定占比——同一類「工程近似非造假」判斷題，維持先前決定：先記錄不處理，是否要投入時間換真實動態計算留待你決定。
+5. **新發現待決**：`trading room/room.js` 的macro risk HUD初始化時機（已修路徑bug，但自動觸發時可能在資料載入前執行一次，測試環境因passcode鎖定未能完整驗證）——需要你開瀏覽器手動測試確認。
 
 ### 📋 接下來建議的執行順序
 

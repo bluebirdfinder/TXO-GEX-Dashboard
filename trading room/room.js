@@ -1696,8 +1696,12 @@ function renderLeftPanel() {
     topVVIX.innerText = `${vvixVal.toFixed(2)} ${badge}`;
   }
 
-  // Update Left Macro Risk HUD
-  updateMacroRiskHUD(gexData.macro_risk_dashboard || null);
+  // Update Left Macro Risk HUD. Path bug fixed 2026-09-15: macro_risk_dashboard is nested
+  // under macro_events_radar in the real payload (see generate_gex_payload()'s
+  // "macro_events_radar": macro_events_data), not at the top level — this HUD had silently
+  // shown its own hardcoded fallback literals forever since gexData.macro_risk_dashboard was
+  // always undefined.
+  updateMacroRiskHUD(gexData.macro_events_radar?.macro_risk_dashboard || null);
 }
 
 /**
@@ -3604,9 +3608,9 @@ function initFubonLivePriceStream() {
         }
       }
 
-      // 4. Live Left Macro Risk HUD Pulsing
+      // 4. Live Left Macro Risk HUD Pulsing (same macro_events_radar nesting fix as above)
       if (data.macro) {
-        updateMacroRiskHUD(gexData?.macro_risk_dashboard || null, data.macro);
+        updateMacroRiskHUD(gexData?.macro_events_radar?.macro_risk_dashboard || null, data.macro);
       }
 
       if (statusTag) {

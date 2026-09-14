@@ -3262,9 +3262,12 @@ def generate_gex_payload():
     prev_day_spot = round(spot_price - spot_change, 2)
     prev_day_otc = round(otc_price - otc_change, 2)
 
+    # Previously had its own hardcoded fallback literals (26.09/15.74) on top of
+    # fetch_official_taifex_vix()'s own internal fallback — removed so a genuine failure
+    # propagates as None instead of a second layer of guessed numbers.
     vix_obj = fetch_official_taifex_vix()
-    latest_t_vix = vix_obj.get("taifex_vix", 26.09)
-    latest_u_vix = vix_obj.get("us_vix", 15.74)
+    latest_t_vix = vix_obj.get("taifex_vix")
+    latest_u_vix = vix_obj.get("us_vix")
 
     # ============================================================
     # 📸 SNAPSHOT-BASED HISTORICAL SESSION MATRIX
@@ -3703,66 +3706,54 @@ def generate_gex_payload():
         valid_events = [e for e in candidates if e["target_epoch"] >= int(curr_twd.timestamp() * 1000)]
         valid_events.sort(key=lambda x: x["target_epoch"])
 
-        # 🌐 圖 1: 全球股市風險儀表板 (DXY, US10Y, VIX 價位、EMA20 與技術面講評)
+        # 🌐 圖 1: 全球股市風險儀表板 (DXY, US10Y, VIX 即時報價)
+        # Previously 100% hardcoded literals (including a 20-day EMA this pipeline never
+        # actually computes) that never updated and disagreed with the real VIX fetched
+        # elsewhere in this same file. DXY/US10Y are real Yahoo Finance quotes (same generic
+        # fetcher used for ADR quotes); VIX reuses the real value already fetched above rather
+        # than a third hardcoded copy. No fabricated "EMA20"/trend narrative — trend_label is
+        # only a same-day real change direction, not a claimed technical indicator.
+        dxy_quote = fetch_yahoo_finance_quote("DX-Y.NYB")
+        us10y_quote = fetch_yahoo_finance_quote("%5ETNX")
+
+        def _risk_entry(name, quote, unit=""):
+            if not quote:
+                return {"name": name, "price": None, "change_pct": None, "trend_label": "⚪ 無即時數據"}
+            trend_label = f"{'▲ 較昨日走升' if quote['change_pct'] >= 0 else '▼ 較昨日走弱'} ({quote['change_pct']:+.2f}%)"
+            return {"name": name, "price": quote['price'], "change_pct": quote['change_pct'], "trend_label": trend_label, "unit": unit}
+
         macro_risk_dashboard = {
-            "summary": "VIX維持低檔有利多頭，但殖利率續升形成壓力，短線偏震盪，宜聚焦 AI 及獲利成長族群。",
-            "dxy": {
-                "name": "美元指數 (DXY)",
-                "price": 99.196,
-                "ema20": 99.434,
-                "trend": "Bearish Below EMA20",
-                "trend_label": "跌落 20 日線 (偏空)",
-                "comments": [
-                    "重新跌落 20 日均線，短線震盪偏空。",
-                    "美元持續走弱，亞股與台股資金壓力暫時解除。"
-                ]
-            },
-            "us10y": {
-                "name": "美殖利率 (10年期 US10Y)",
-                "price": 4.784,
-                "ema20": 4.715,
-                "trend": "Bullish Above EMA20",
-                "trend_label": "站穩 20 日線 (創高)",
-                "comments": [
-                    "持續創近期新高，明顯站穩 20 日均線之上。",
-                    "殖利率上升代表市場要求更高報酬率，也提高企業融資成本。"
-                ]
-            },
+            "summary": (f"台指VIX {latest_t_vix:.1f}、美股VIX {latest_u_vix:.1f}；" if (latest_t_vix is not None and latest_u_vix is not None) else "") +
+                       "DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
+            "dxy": _risk_entry("美元指數 (DXY)", dxy_quote),
+            "us10y": _risk_entry("美殖利率 (10年期 US10Y)", us10y_quote, unit="%"),
             "vix": {
                 "name": "VIX恐慌指標 (CBOE)",
-                "price": 14.53,
-                "ema20": 15.29,
-                "trend": "Low Risk / Bullish Bias",
-                "trend_label": "跌破 20 日線 (低檔)",
-                "comments": [
-                    "位於近半年相對低檔，持續跌破 20 日均線。",
-                    "市場恐慌情緒不高，資金仍願意持有風險資產。"
-                ]
+                "price": latest_u_vix,
+                "trend_label": "⚪ 無即時數據" if latest_u_vix is None else ("🔴 恐慌偏高" if latest_u_vix >= 20 else "🟢 低波安定")
             }
         }
 
-        # 📅 圖 2: 近期重要財經事件日曆 (Macro Economic Calendar) - 自動過濾過期舊數據
-        raw_calendar_items = [
-            {"year": 2026, "month": 9, "day": 7, "weekday": "一", "event": "美國 Labor Day 休市 / 日本 Q2 GDP 終值", "focus": "美股休市，亞歐交易日本成長確認", "impact": "中", "impact_code": "M", "impact_color": "#26a69a"},
-            {"year": 2026, "month": 9, "day": 9, "weekday": "三", "event": "中國 8 月 CPI / PPI", "focus": "通縮風險 vs 溫和回升 (預期 CPI 約 0.7%)", "impact": "中高", "impact_code": "MH", "impact_color": "#ffaa00"},
-            {"year": 2026, "month": 9, "day": 10, "weekday": "四", "event": "ECB 利率決議 / 美國 8 月 PPI", "focus": "升息 25bp 幾乎確定，關注後續路徑與油價影響", "impact": "高", "impact_code": "H", "impact_color": "#ff7043"},
-            {"year": 2026, "month": 9, "day": 11, "weekday": "五", "event": "美國 8 月 CPI / 密西根消費者信心", "focus": "核心通膨走勢決定 Fed 升息機率", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"},
-            {"year": 2026, "month": 9, "day": 16, "weekday": "三", "event": "FOMC 利率決議 / 台指期 09 月結算日", "focus": "升息與否將由本週 CPI 主導點陣圖與結算擺盪", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"}
-        ]
-
-        # Dynamically append future valid_events if not already in raw calendar items
+        # 📅 圖 2: 近期重要財經事件日曆 (Macro Economic Calendar)
+        # Previously a hardcoded list of 5 events with specific 2026 dates that would silently
+        # become a permanently empty table once the last of them passed (no error, no "no
+        # data" message — just nothing, forever). `candidates`/`valid_events` above are
+        # already real, calendar-arithmetic-derived, and extend indefinitely into the future
+        # (weekly/monthly settlements, NFP, CPI, ADP, jobless claims) — reuse that list here
+        # too instead of maintaining a second, separate, finite one.
+        _impact_color_map = {"HIGH": "#ff5252", "MEDIUM": "#ffaa00", "LOW": "#26a69a"}
+        _impact_label_map = {"HIGH": "高", "MEDIUM": "中", "LOW": "低"}
         macro_events_calendar = []
-        for item in raw_calendar_items:
-            item_date = datetime.date(item["year"], item["month"], item["day"])
-            if item_date >= curr_twd.date():
-                macro_events_calendar.append({
-                    "date": f"{item['month']}/{item['day']} ({item['weekday']})",
-                    "event": item["event"],
-                    "focus": item["focus"],
-                    "impact": item["impact"],
-                    "impact_code": item["impact_code"],
-                    "impact_color": item["impact_color"]
-                })
+        for e in valid_events[:8]:
+            ev_dt = datetime.datetime.fromtimestamp(e["target_epoch"] / 1000, tz=tw_tz)
+            macro_events_calendar.append({
+                "date": f"{ev_dt.month}/{ev_dt.day} {_WDAY_CN[ev_dt.weekday()]}",
+                "event": e["name"],
+                "focus": e["gex_advice"],
+                "impact": _impact_label_map.get(e["impact"], e["impact"]),
+                "impact_code": e["impact"],
+                "impact_color": _impact_color_map.get(e["impact"], "#ffaa00")
+            })
 
         return {
             "primary_event": valid_events[0] if valid_events else candidates[0],
