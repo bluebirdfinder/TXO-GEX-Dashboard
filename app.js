@@ -321,6 +321,23 @@ async function attemptDecrypt(passcode) {
     }
   }
 
+  // If both live fetches failed, fall back to the last successfully-fetched real payload
+  // (saved to localStorage below on a prior successful load) rather than jumping straight to
+  // the static snapshot baked in at build time. showCacheNotice() and CACHE_KEY existed
+  // before but were never wired together — reads never happened, so this path was dead and
+  // the build-time snapshot silently stood in for stale-but-real cached data with no warning.
+  if (!dataFromNetwork && !gexData) {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        gexData = JSON.parse(cached);
+        showCacheNotice();
+      }
+    } catch (cacheReadErr) {
+      console.warn('[Cache] Failed to read localStorage cache:', cacheReadErr);
+    }
+  }
+
   if (!gexData) {
     gexData = getFallbackData();
   }
@@ -2305,8 +2322,8 @@ function populateStockFutures() {
     const itBadgeHtml = item.is_it_adopted
       ? `<span class="badge" style="background: rgba(255, 215, 0, 0.2); color: var(--gold-accent); border: 1px solid rgba(255, 215, 0, 0.4); font-weight: 700;">🚀 投信認養 (${item.it_adoption_ratio}% / 連${item.it_consecutive_buy_days}買)</span>`
       : (item.it_consecutive_buy_days >= 3
-        ? `<span style="color: #ffaa00; font-size: 0.76rem;">⚡ 連${item.it_consecutive_buy_days}買 (${item.it_adoption_ratio || 0.3}%)</span>`
-        : `<span style="color: var(--text-muted); font-size: 0.76rem;">${item.it_adoption_ratio ? item.it_adoption_ratio + '%' : '—'}</span>`);
+        ? `<span style="color: #ffaa00; font-size: 0.76rem;">⚡ 連${item.it_consecutive_buy_days}買 (${item.it_adoption_ratio != null ? item.it_adoption_ratio + '%' : '—'})</span>`
+        : `<span style="color: var(--text-muted); font-size: 0.76rem;">${item.it_adoption_ratio != null ? item.it_adoption_ratio + '%' : '—'}</span>`);
 
     const exBadge = item.ex_date && item.ex_date !== '-'
       ? `<span class="badge" style="background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid rgba(255, 170, 0, 0.3); font-weight: 600;">📅 ${item.ex_date} (${item.ex_dividend ? '$' + item.ex_dividend : (item.ex_type || '除息')})</span>`
@@ -2315,28 +2332,38 @@ function populateStockFutures() {
     const spotNetSign = spotInstNet >= 0 ? '+' : '';
     const futNetSign = top10NetOi >= 0 ? '+' : '';
 
-    const spotForeign = item.spot_foreign !== undefined ? item.spot_foreign : Math.round(spotInstNet * 0.7);
-    const spotTrust = item.spot_trust !== undefined ? item.spot_trust : Math.round(spotInstNet * 0.2);
-    const spotDealer = item.spot_dealer !== undefined ? item.spot_dealer : (spotInstNet - spotForeign - spotTrust);
-    const spotGov = item.spot_gov !== undefined ? item.spot_gov : Math.round(-spotInstNet * 0.25);
+    // Backend (fetch_and_calc_vision.py) always populates these fields (real T86 / TAIFEX
+    // large-trader data, or 0 with a *_data_unavailable flag) — there is no legitimate case
+    // where they're missing. This used to silently fabricate a proportional split of the
+    // aggregate number when a field was absent; removed so a genuinely missing field shows
+    // "—" instead of a second layer of made-up data.
+    const hasNum = (v) => v !== undefined && v !== null;
+    const spotForeign = hasNum(item.spot_foreign) ? item.spot_foreign : null;
+    const spotTrust = hasNum(item.spot_trust) ? item.spot_trust : null;
+    const spotDealer = hasNum(item.spot_dealer) ? item.spot_dealer : null;
+    const spotGov = hasNum(item.spot_gov) ? item.spot_gov : null;
 
-    const top5Net = item.top5_net_oi !== undefined ? item.top5_net_oi : Math.round(top10NetOi * 0.65);
-    const top10Inst = item.top10_inst_oi !== undefined ? item.top10_inst_oi : Math.round(top10NetOi * 0.85);
+    const top5Net = hasNum(item.top5_net_oi) ? item.top5_net_oi : null;
+    const top10Inst = hasNum(item.top10_inst_oi) ? item.top10_inst_oi : null;
+
+    const chip = (v) => hasNum(v) ? { color: v >= 0 ? '#ff7043' : '#26a69a', text: `${v >= 0 ? '+' : ''}${v}` } : { color: '#666', text: '—' };
+    const cForeign = chip(spotForeign), cTrust = chip(spotTrust), cDealer = chip(spotDealer), cGov = chip(spotGov);
+    const cTop5 = chip(top5Net), cTop10Inst = chip(top10Inst);
 
     const spotSubChips = `
       <div style="font-size: 0.67rem; margin-top: 3px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; line-height: 1.25;">
-        <span style="color: ${spotForeign >= 0 ? '#ff7043' : '#26a69a'};" title="外資淨買賣張數">外:${spotForeign >= 0 ? '+' : ''}${spotForeign}</span>
-        <span style="color: ${spotTrust >= 0 ? '#ff7043' : '#26a69a'};" title="投信淨買賣張數">投:${spotTrust >= 0 ? '+' : ''}${spotTrust}</span>
-        <span style="color: ${spotDealer >= 0 ? '#ff7043' : '#26a69a'};" title="自營商淨買賣張數">自:${spotDealer >= 0 ? '+' : ''}${spotDealer}</span>
-        <span style="color: ${spotGov >= 0 ? '#ffaa00' : '#888'}; font-weight: 600;" title="八大官股行庫估算張數">官:${spotGov >= 0 ? '+' : ''}${spotGov}</span>
+        <span style="color: ${cForeign.color};" title="外資淨買賣張數">外:${cForeign.text}</span>
+        <span style="color: ${cTrust.color};" title="投信淨買賣張數">投:${cTrust.text}</span>
+        <span style="color: ${cDealer.color};" title="自營商淨買賣張數">自:${cDealer.text}</span>
+        <span style="color: ${hasNum(spotGov) && spotGov !== 0 ? '#ffaa00' : '#888'}; font-weight: 600;" title="八大官股行庫（無官方逐股數據來源，恆為不可用）">官:${hasNum(spotGov) ? cGov.text : '—'}</span>
       </div>
     `;
 
     const futSubChips = `
       <div style="font-size: 0.67rem; margin-top: 3px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; line-height: 1.25;">
-        <span style="color: ${top5Net >= 0 ? '#ff7043' : '#26a69a'};" title="前五大交易人淨口數">前5:${top5Net >= 0 ? '+' : ''}${top5Net}</span>
+        <span style="color: ${cTop5.color};" title="前五大交易人淨口數">前5:${cTop5.text}</span>
         <span style="color: ${top10NetOi >= 0 ? '#ff7043' : '#26a69a'};" title="前十大交易人淨口數">前10:${top10NetOi >= 0 ? '+' : ''}${top10NetOi}</span>
-        <span style="grid-column: 1 / -1; color: ${top10Inst >= 0 ? '#ffaa00' : '#888'}; font-weight: 600;" title="前10大特定法人淨口數">特法:${top10Inst >= 0 ? '+' : ''}${top10Inst}</span>
+        <span style="grid-column: 1 / -1; color: ${cTop10Inst.color === '#ff7043' ? '#ffaa00' : '#888'}; font-weight: 600;" title="前10大特定法人淨口數">特法:${cTop10Inst.text}</span>
       </div>
     `;
 

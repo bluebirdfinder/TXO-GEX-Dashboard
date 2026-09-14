@@ -2033,24 +2033,33 @@ def fetch_official_taifex_retail_sentiment():
         }
     }
 
-def fetch_official_taifex_specific_traders():
+def fetch_official_taifex_specific_traders(lt_inst, fut_inst):
     """
-    Fetches official TAIFEX Large Trader Data (https://www.taifex.com.tw/cht/3/largeTraderFutQry)
-    to calculate Top 5 and Top 10 Specific Institutional Traders vs Foreign Futures Divergence.
+    Derives Top 5 / Top 10 Specific Institutional Traders vs Foreign Futures Divergence
+    diagnosis from already-fetched real TAIFEX data: `lt_inst` (from
+    fetch_official_taifex_large_trader(), which parses largeTraderFutQry and already
+    extracts the specific-institutional-trader sub-figures via extract_spec()) and
+    `fut_inst` (from fetch_official_taifex_futures_institutional_oi()). This used to
+    re-fetch largeTraderFutQry itself but never parsed the response, silently falling
+    back to hardcoded numbers every run regardless of fetch success or failure.
     """
-    top5_specific_net = 4850
-    top10_specific_net = 6920
-    top5_large_net = 3200
-    top10_large_net = 5100
-    foreign_tx_net = -38200
+    top5_specific_net = lt_inst.get('top5_spec_net')
+    top10_specific_net = lt_inst.get('top10_spec_net')
+    top5_large_net = lt_inst.get('top5_net')
+    top10_large_net = lt_inst.get('top10_net')
+    foreign_tx_net = fut_inst.get('foreign')
 
-    try:
-        url = "https://www.taifex.com.tw/cht/3/largeTraderFutQry"
-        req = urllib.request.Request(url, headers=HEADERS)
-        with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
-            html = resp.read().decode('big5', errors='ignore')
-    except Exception as e:
-        print(f"[Warning] TAIFEX large trader fetch note: {e}")
+    if top5_specific_net is None or foreign_tx_net is None:
+        return {
+            "top5_specific_net": None,
+            "top10_specific_net": None,
+            "top5_large_net": None,
+            "top10_large_net": None,
+            "foreign_tx_net": None,
+            "divergence_tag": "⚪ 無即時數據",
+            "divergence_desc": "大額交易人特定法人部位或外資期貨未平倉數據暫時無法取得。",
+            "divergence_state": "UNAVAILABLE"
+        }
 
     # Strategic Divergence Diagnosis
     if foreign_tx_net <= -25000 and top5_specific_net > 0:
@@ -2658,7 +2667,7 @@ def generate_gex_payload():
         "trust_opt_put_net": opt_inst['trust']['put_net_amt'],
         "dealer_opt_call_net": opt_inst['dealer']['call_net_amt'],
         "dealer_opt_put_net": opt_inst['dealer']['put_net_amt'],
-        "pc_ratio": pc_ratio_dict.get('2026/8/25', gex_profile['pc_ratio']),
+        "pc_ratio": pc_ratio_dict.get(f"{t_days_dates[4].year}/{t_days_dates[4].month}/{t_days_dates[4].day}", gex_profile['pc_ratio']),
         "has_snapshot": True
     }
     institutional_5day_history.append(t0_inst_day)
@@ -2914,67 +2923,13 @@ def generate_gex_payload():
         chg_pct = item['change_pct']
         basis = item['basis']
 
-        if idx < 10:
-            is_top10_buy = True
-            is_top10_sell = False
-            top10_net_oi = int((650 + (10 - idx) * 120) * (1.2 if chg_pct >= 0 else 0.7))
-            top5_net_oi = int(top10_net_oi * 0.68)
-            top10_inst_oi = int(top10_net_oi * 0.85)
-            top5_inst_oi = int(top5_net_oi * 0.88)
-
-            spot_inst_net = int((1200 + (10 - idx) * 350) * (1.0 if chg_pct >= 0 else -0.5))
-            spot_foreign = int(spot_inst_net * 0.72)
-            spot_trust = int(spot_inst_net * 0.18)
-            spot_dealer = spot_inst_net - spot_foreign - spot_trust
-            spot_gov = int(-spot_inst_net * 0.25)
-        elif idx < 20:
-            is_top10_buy = False
-            is_top10_sell = True
-            top10_net_oi = int((-480 - (idx - 10) * 110) * (1.1 if chg_pct < 0 else 0.8))
-            top5_net_oi = int(top10_net_oi * 0.70)
-            top10_inst_oi = int(top10_net_oi * 0.82)
-            top5_inst_oi = int(top5_net_oi * 0.85)
-
-            spot_inst_net = int((-850 - (idx - 10) * 280) * (1.0 if chg_pct < 0 else -0.3))
-            spot_foreign = int(spot_inst_net * 0.75)
-            spot_trust = int(spot_inst_net * 0.15)
-            spot_dealer = spot_inst_net - spot_foreign - spot_trust
-            spot_gov = int(-spot_inst_net * 0.30)
-        elif idx < 35:
-            # Hedging/Arbitrage examples in mid-tier volume stocks
-            is_top10_buy = False
-            is_top10_sell = False
-            if idx % 2 == 0: # Hedging: Spot buy + Fut short
-                spot_inst_net = int(450 + (idx * 25))
-                top10_net_oi = int(-320 - (idx * 15))
-            else: # Arbitrage: Spot sell + Fut long
-                spot_inst_net = int(-380 - (idx * 20))
-                top10_net_oi = int(290 + (idx * 18))
-
-            top5_net_oi = int(top10_net_oi * 0.65)
-            top10_inst_oi = int(top10_net_oi * 0.80)
-            top5_inst_oi = int(top5_net_oi * 0.82)
-
-            spot_foreign = int(spot_inst_net * 0.70)
-            spot_trust = int(spot_inst_net * 0.20)
-            spot_dealer = spot_inst_net - spot_foreign - spot_trust
-            spot_gov = int(-spot_inst_net * 0.22)
-        else:
-            is_top10_buy = False
-            is_top10_sell = False
-            f_sign = 1 if ((idx % 3) != 0) else -1
-            d_sign = 1 if ((idx % 2) == 0) else -1
-            spot_inst_net = int(((idx * 47) % 550 - 250) * f_sign)
-            top10_net_oi = int(((idx * 23) % 280 - 140) * d_sign)
-
-            top5_net_oi = int(top10_net_oi * 0.62)
-            top10_inst_oi = int(top10_net_oi * 0.78)
-            top5_inst_oi = int(top5_net_oi * 0.80)
-
-            spot_foreign = int(spot_inst_net * 0.68)
-            spot_trust = int(spot_inst_net * 0.15)
-            spot_dealer = spot_inst_net - spot_foreign - spot_trust
-            spot_gov = int(-spot_inst_net * 0.18)
+        # NOTE: this used to seed is_top10_buy/is_top10_sell/top10_net_oi/top5_net_oi/
+        # top10_inst_oi/top5_inst_oi/spot_inst_net/spot_foreign/spot_trust/spot_dealer/
+        # spot_gov with idx-bucketed fabricated formulas here. Confirmed dead: every one of
+        # those names is unconditionally overwritten below by the real TAIFEX large-trader
+        # data (or 0 + *_data_unavailable=True) and the real TWSE T86 data (or 0 +
+        # spot_data_unavailable=True), and is_top10_buy/is_top10_sell are separately
+        # reassigned again further down from top10_bull_codes/top10_bear_codes. Removed.
 
         # ── Real futures-side large-trader positioning (TAIFEX largeTraderFutQry) ──
         # Overrides the placeholder top5/top10 figures above with the actual per-contract
@@ -3028,11 +2983,16 @@ def generate_gex_payload():
             intent_tag = "⚖️ 觀望分歧"
             intent_desc = "現現與期貨籌碼力道平淡/無顯著趨勢"
 
-        # Investment Trust (投信認養佔比 & 連買天數)
-        it_consec_days = ((idx * 7 + 3) % 6) + 1  # e.g. 1~6 days
-        it_ratio = round((((idx * 13 + 5) % 85) / 100.0) + (0.35 if idx < 12 else 0.05), 2)  # e.g. 0.1% ~ 1.2%
-        is_it_adopted = (it_ratio >= 0.5 and it_consec_days >= 3)
-        it_badge = "🚀 投信波段認養" if is_it_adopted else ("⚡ 投信連買" if it_consec_days >= 3 else "-")
+        # Investment Trust adoption (投信波段認養佔比 & 連買天數): this used to be a fake
+        # idx-modulo formula unrelated to any real data. A genuine multi-day "consecutive
+        # buy" signal needs per-stock historical trust net-buy snapshots, which don't exist
+        # yet (only the market-wide institutional_snapshots.json is tracked, not per-stock).
+        # Left honestly disabled (never triggers) rather than fabricated, matching the same
+        # decision already made for this identical problem in the trading room's screener.
+        it_consec_days = 0
+        it_ratio = None
+        is_it_adopted = False
+        it_badge = "-"
 
         # Night Stock Futures with ADR linkage (Complete Taiwan ADR Matrix). Ticker mapping is
         # static (which US ADR corresponds to which TW stock doesn't change), but the % change
@@ -3821,7 +3781,7 @@ def generate_gex_payload():
         "retail_mini_ratio": retail_data["retail_mini_ratio"],
         "retail_micro_ratio": retail_data["retail_micro_ratio"],
         "retail_sentiment_details": retail_data["retail_sentiment_details"],
-        "specific_traders": fetch_official_taifex_specific_traders(),
+        "specific_traders": fetch_official_taifex_specific_traders(lt_inst, fut_inst),
         "total_vex": gex_profile['total_vex'],
         "total_gex_val": gex_profile['total_gex_val'],
         "total_gex_plus": gex_profile['total_gex_plus'],

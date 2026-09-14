@@ -28,13 +28,13 @@
 | 8 | 近5日關鍵市場與GEX結構歷程矩陣 | 判斷趨勢延續性、GEX翻轉點逐日位移方向 | `session_snapshots.json`（真實快照累積） | 內部持久化，來源同上各項 | 每日盤後累積 | `write_current_session_snapshot()` / `backfill_snapshots.py` | ✅ 已稽核 | ✅ **今天修好3個抓取bug**（大盤指數/TX期貨價/PC ratio此前從未真的抓到過歷史） | 無 |
 | 9 | 📌日夜盤微觀結構速報 | 極速多空位移、變盤臨界判定 | 即時tick + gexData 內插 | app.js 內部計算 | 即時 | `updateMicrostructureExpress()` | ⏳ 部分稽核 | ❌ **`handleLiveTick`用固定0.62係數外推Zero Gamma，未修**（判斷為低風險工程近似，非憑空造假，故意先不動） | **要不要現在修這個0.62係數？**（風險：牽動即時報價渲染，需要更謹慎測試） |
 | 10 | 國際熱錢動向與5日匯率歷程 | 外資避險成本、資金流向判斷 | TAIFEX 每日外幣參考匯率 | taifex.com.tw/cht/3/dailyFXRate | 盤後公布 | `fetch_5day_exchange_rates()` | 未逐行稽核 | — | 無 |
-| 11 | 國際總經事件雷達 | 避開財報/FOMC等事件前後高波動 | 內部維護的事件日曆演算法 | 程式生成，非外部即時API | — | `renderMacroEventsRadar()` / `generate_dynamic_weekly_focus` | ⏳ 未稽核 | — | 需要判斷這塊是手動維護清單還是有捏造成分，下次稽核優先項目 |
+| 11 | 國際總經事件雷達 | 避開財報/FOMC等事件前後高波動 | 內部維護的事件日曆演算法 | 程式生成，非外部即時API | — | `renderMacroEventsRadar()` / `calculate_macro_events_radar()` | ✅ 2026-09-15已稽核 | ❌ **未修**：`macro_risk_dashboard`（DXY/US10Y/VIX卡片）完全零fetch、打字寫死，且跟別處真VIX不同步；`raw_calendar_items`寫死5筆2026年事件，09/16 FOMC後會悄悄變永久空清單，無任何提示。倒數計時器真正吃的`valid_events`是動態算的，不受影響 | **要怎麼修？**（見下方彙總） |
 | 12 | 主GEX圖表（Total/週三選/週五選/月選 分頁 + 疊加對比 + 10盤播放器） | **核心：選擇權下單價位、價差單/covered call位置、台指期多空進出場參考** | 同 Card 4-5，TXO未沖銷部位逐履約價分布 | 同上 | 下午3點後 | `calculate_true_gex_profile()` | ✅ 已稽核 | ✅ **已修正**（含「疊加對比」T-1真實前一盤資料，原本是今天曲線亂算） | 無 |
 | 13 | 散戶籌碼與台指快訊（小台MXF/微台TMF） | **反向指標**：散戶極端偏多(>+15%)易被軋、極端偏空(<-15%)易反彈 | TAIFEX 三大法人期貨未平倉 | taifex.com.tw/cht/3/futContractsDate 等 | **15:00~15:45** | `fetch_official_taifex_retail_sentiment()` | ✅ 已稽核 | ✅ **今天修好** `daily_change`/`prev_ratio`/`broker_snapshot` 全部真實化 | 無 |
 | 14 | 夜盤三大法人交易籌碼 | 夜盤外資動向，預判隔日開盤跳空 | TAIFEX futContractsDateAh | taifex.com.tw | 隔日 07:00 盤後定案 | `fetch_taifex_night_institutional_trading()` | ⏳ 部分稽核（抓取失敗時有寫死保底值-422，未強制顯示無數據） | 部分 | **要不要修「抓取失敗時默默用舊保底值」這個殘留問題？** |
 | 15 | 法人5日期權與籌碼歷程矩陣（執行摘要+期貨未平倉5日+現貨買賣超/選擇權5日） | 判斷法人趨勢連續性、Call/Put籌碼消長 | `institutional_snapshots.json`真實快照 | 內部持久化 | 每日累積 | 相關 snapshot 函式（今天新建） | ✅ 已稽核 | ✅ **已修正**（原本4/5天永遠寫死假數字） | 無 |
 | 16 | Gemini AI籌碼與除權息事件掃描 | AI輔助解讀（明確非投資建議） | gex_data.json彙總 + Gemini API | 內部彙總+Google Gemini | 即時 | `populateAiQuantDigest()` | ⏳ 部分稽核 | ✅ 今天修好「忽略使用者選盤，永遠讀最新」的bug | 無 |
-| 17 | 個股期貨287檔篩選明細（含產業資金輪動、夜盤6檔聚光燈） | **個股期大額交易人判斷主力動向、正逆價差扣除除息判斷真假逆價差、投信認養篩選飆股** | TAIFEX大額交易人未沖銷部位結構表 + TWSE T86三大法人買賣超 | taifex.com.tw/cht/3/largeTraderFutQry + twse.com.tw/rwd/zh/fund/T86 | **17:00~18:30**（大額交易人）／**15:00~15:45**（T86現貨法人） | `fetch_taifex_stock_futures_large_trader_batch()` + `fetch_twse_institutional_t86_latest()` | ✅ 已稽核（Component A/B，本次最早修的） | ✅ 已修正 | 「官股行庫」欄位因無官方逐股數據來源，維持顯示不可用（已跟你確認過） |
+| 17 | 個股期貨287檔篩選明細（含產業資金輪動、夜盤6檔聚光燈） | **個股期大額交易人判斷主力動向、正逆價差扣除除息判斷真假逆價差、投信認養篩選飆股** | TAIFEX大額交易人未沖銷部位結構表 + TWSE T86三大法人買賣超 | taifex.com.tw/cht/3/largeTraderFutQry + twse.com.tw/rwd/zh/fund/T86 | **17:00~18:30**（大額交易人）／**15:00~15:45**（T86現貨法人） | `fetch_taifex_stock_futures_large_trader_batch()` + `fetch_twse_institutional_t86_latest()` | ✅ 已稽核（Component A/B，本次最早修的） | ✅ 已修正 | 「官股行庫」欄位因無官方逐股數據來源，維持顯示不可用（已跟你確認過）。**2026-09-15新發現並已修**：「🚀投信波段認養」徽章原本是idx取模公式假訊號，已改誠實停用（比照選股雷達同款問題的處理方式），真正做到位需要新建逐股多日買超歷史，列入選股雷達真實化大工程 |
 
 ---
 
@@ -94,19 +94,23 @@
 | 總經事件雷達 | 完全未稽核，不確定是真清單還是有捏造 |
 | 尋鳥戰情室VRVP、商品搜尋、權值貢獻HUD、海外期貨Tick | 完全未稽核 |
 
-### 🤔 需要你決定的事（彙總）
+### ✅ 2026-09-15：app.js 全文 + fetch_and_calc_vision.py 剩餘函式稽核完成
 
-1. `handleLiveTick` 0.62係數要不要修？
-2. 夜盤法人交易的靜默假保底值（-422）要不要處理？
-3. 總經事件雷達優先稽核嗎？
-4. app.js 17處不一致保底值，要不要排時間一次清乾淨？
+依「五、建議的下一步優先順序」第1、2項執行，詳細清單見 `SELF_AUDIT_FINDINGS_TODO.md`「零、」章節。已直接修復並實測：`fetch_official_taifex_specific_traders()`（原本抓HTML從未解析、全寫死）、個股期貨列表`it_badge`投信認養假訊號、`fetch_and_calc_vision.py`死代碼65行、`pc_ratio`查表日期bug、app.js`populateStockFutures()`假比例拆分、app.js快取降級死碼。**尚未commit**，等你確認。
+
+### 🤔 需要你決定的事（彙總，已更新）
+
+1. ~~總經事件雷達優先稽核嗎？~~ **已稽核**：`macro_risk_dashboard`(DXY/US10Y/VIX卡片)零fetch打字寫死且跟真VIX不同步；事件日曆09/16 FOMC後會悄悄變永久空清單。→ 現在就重建成真數據 vs 先只修「會變空清單」這個功能性bug vs 先下架等有真數據
+2. `fetch_twse_margin_maintenance()` 融資維持率——官方API證實沒有真正的維持率欄位，現在用線性外推公式編出來的（連抓取成功都一樣）。→ 標記不可用只顯示餘額 vs 保留公式但標「估算值」vs 花時間查其他官方來源
+3. 系統性靜默假保底值清理——比原本已知多找到3支關鍵函式（含**現貨價本身**、VIX），共7支後端函式+app.js 34處不一致常數(比原估17處多一倍)+5處過時預設區塊。→ 這次一次做完 vs 先做後端7支(核心交易輸入,風險較高) vs 全部記錄另排session
+4. `handleLiveTick` 0.62係數、個股期貨點數貢獻固定乘數(8.25/0.85/1.5/0.1)、GEX引擎固定18%波動率、8大產業固定占比——同一類「工程近似非造假」判斷題，是否要投入時間換真實動態計算？
 
 ### 📋 接下來建議的執行順序
 
-1. 總經事件雷達稽核（未知風險，優先排查）
-2. app.js/後端各函式的「靜默假保底值」系統性清理（一次處理完，不要留尾巴）
-3. 指標源碼逐一校正（大工程，需要獨立session專心做）
-4. 尋鳥戰情室剩餘未稽核區塊（VRVP、權值貢獻HUD、海外期貨Tick）
+1. 上述4項決定（用選項讓使用者選）
+2. 指標源碼逐一校正（大工程，需要獨立session專心做）
+3. 尋鳥戰情室剩餘未稽核區塊（VRVP、權值貢獻HUD、海外期貨Tick）
+4. 選股雷達真實化 + JJ鬼爪/5K戰法從零建置（含本次新發現的個股期貨投信認養徽章，一起規劃逐股多日籌碼歷史系統）
 
 ---
 

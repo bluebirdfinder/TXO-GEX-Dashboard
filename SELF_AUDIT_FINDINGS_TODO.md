@@ -20,6 +20,40 @@
 
 ---
 
+## 零、2026-09-15：`app.js` 全文稽核 + `fetch_and_calc_vision.py` 剩餘函式稽核（依「五、」優先順序第1、2項執行）
+
+派出兩個 agent 平行全文稽核（app.js 3290行、fetch_and_calc_vision.py 3873行）。以下是本次**新發現**（不含先前已修復項目）並已直接修復、實測（`python scripts/fetch_and_calc_vision.py` 完整跑過一次）驗證的部分：
+
+### ✅ 已修復並實測
+
+| # | 位置 | 問題 | 修復內容 |
+|---|---|---|---|
+| 1 | `fetch_official_taifex_specific_traders()`（`fetch_and_calc_vision.py`） | **本輪最嚴重發現**：函式抓了 `largeTraderFutQry` 的 HTML，但**從未解析**，直接用一開始寫死的 5 個數字（`top5_specific_net=4850`等）產生看起來很專業的「外資特法背離診斷」文字，每次執行結果都一樣，跟當天籌碼完全無關。 | 好消息：這個網頁其實已經有另一支函式 `fetch_official_taifex_large_trader()` 正確解析過（其 `top5_spec_net`/`top10_spec_net` 就是「特定法人」子數字），改成直接重用該函式與 `fetch_official_taifex_futures_institutional_oi()` 已經抓到的真數據，不必重新開發爬蟲。已實測：`foreign_tx_net=-82658`，跟同次執行日誌裡的官方數字一致。缺資料時明確回傳 `divergence_state: "UNAVAILABLE"`，不再靜默套用舊字面值。 |
+| 2 | 個股期貨列表 `it_badge`/`it_adoption_ratio`/`it_consecutive_buy_days`/`is_it_adopted`（GEX主儀表板，跟「二、」#2 room.js 選股雷達是不同程式碼路徑的同一種問題） | 「🚀投信波段認養」徽章由 `idx` 取模公式湊出來（`it_consec_days = ((idx*7+3)%6)+1` 等），跟投信今天買不買毫無關係，永遠對同一列表位置給同一個判定。 | 比照 room.js 選股雷達同款問題已核准的處理方式：誠實停用（`it_badge` 恆為 `"-"`），不編數字。已實測確認輸出全部欄位正確顯示停用狀態。真正要做到位需要新建「每檔股票的多日投信買超歷史」快照系統（目前只有全市場層級的 `institutional_snapshots.json`，沒有逐股歷史），工程量比照本次已完成的 5 日矩陣系統，列入「三之一 選股雷達真實化」大工程一併考慮。 |
+| 3 | `fetch_and_calc_vision.py` 個股期貨迴圈內 65 行死代碼 | `is_top10_buy`/`top10_net_oi`/`spot_foreign`等一整段依 `idx` 分四段區間湊出來的假公式，追蹤後確認**全部**被後面的真實 TAIFEX大額交易人/TWSE T86 資料覆蓋或歸零，從未真正影響輸出，但極具誤導性（未來維護者可能誤以為這段有作用）。 | 直接刪除，改留一段註解說明為何刪除、覆蓋邏輯在哪裡。 |
+| 4 | `pc_ratio` 查表日期寫死（原2661行附近） | `pc_ratio_dict.get('2026/8/25', ...)` 查表 key 是寫死的過去日期字串，保證每次都查不到，永遠落回備用值（備用值本身是真實計算值，實務影響小，但邏輯是壞的）。 | 改成用當天真實日期動態組字串。 |
+| 5 | `app.js` `populateStockFutures()` 假比例拆分（🔴 Critical） | 外資/投信/自營/官股/前五大/十大細分數字，缺欄位時用另一套魔術比例（0.7/0.2/0.25/0.65/0.85，跟後端自己的拆分邏輯不同套）二次造假。因為後端目前保證會給值所以是死碼，但只要後端未來漏欄位就會靜默端出假數字且無任何「估算值」標示。 | 拿掉比例假拆分，缺欄位時顯示「—」而非二次編數字。 |
+| 6 | `app.js` 快取降級機制是死碼 | `showCacheNotice()`（顯示「⚠️資料載入失敗顯示快取」警示）定義了但沒人呼叫；`CACHE_KEY` 只寫入(`localStorage.setItem`)沒有讀取(`getItem`)。導致網路兩次請求都失敗時，直接跳到**編譯時期打包的靜態快照**，而不是「上次成功抓到的真實資料」，且使用者看不到任何警示。 | 補上 `localStorage.getItem(CACHE_KEY)` 讀取路徑並在該分支呼叫 `showCacheNotice()`，讓失敗降級顯示「上次真實資料 + 警示」取代「靜態舊快照 + 無警示」。 |
+
+**尚未 commit**，等你確認後再 commit + push（本輪修改：`app.js`、`scripts/fetch_and_calc_vision.py`，以及實測產生的 `data/*.json`/`data/embedded_data.js` 真實數據更新）。
+
+### 🔴🔴 新發現、尚未處理（需要你決定，見稽核結論後方的提問）
+
+| # | 位置 | 問題 |
+|---|---|---|
+| 7 | `fetch_twse_margin_maintenance()` | 已直接查證官方 `MI_MARGN` API 回應：**沒有**真正的「整戶維持率」欄位，只有融資餘額數字。現有程式碼即使在抓取成功的路徑，也是用 `158.4 + 變動量×0.03` 這種線性外推公式**編出**維持率數字（不是抓取失敗才這樣，是本來就這樣），158.4/144.1/0.03/0.025 四個係數看不出理論依據。抓取全失敗時另有一組寫死保底值 `567.18億/155.8%/141.2%`。 |
+| 8 | 系統性靜默假保底值（比原本已知的4支多找到3支） | 除了已知的 `fetch_official_taifex_large_trader()`/`fetch_official_taifex_futures_institutional_oi()`/`fetch_official_taifex_options_matrix()`/`fetch_taifex_night_institutional_trading()`（含夜盤-422），本次新發現同一種「fetch失敗就默默退回寫死初始值」模式也出現在：`fetch_official_taifex_tx_prices()`（**現貨價本身**，全GEX引擎輸入的源頭，失敗時退回 45934.0/46870.0/46072.0）、`fetch_official_taifex_vix()`（VIX/VVIX，失敗時退回 18.45/15.82/102.66 等）、`fetch_twse_institutional_stock_trading()`（失敗時退回 366.13/33.66/179.34/579.13）。共 7 支函式，加上下游 `.get(key, N)` 二次擴散到執行摘要文字（約10幾處）。另外 `parse_taifex_fut_oi()` 裡還有殘留的「魔術數字比對」鏈式假保底（`36258`/`80167` 這兩個值本身是保底值，抓取失敗時又用它們去查表選另一組寫死的多空拆分數字）。 |
+| 9 | `app.js` 34 處字面保底值不一致（比原本粗估的「17處」還多一倍） | `zero_gamma_level`/`call_wall_strike`/`put_wall_strike`/`max_pain_strike`/`gex_plus_flip`/`pc_ratio`/`spot_price` 等 9 個欄位家族，同一邏輯欄位在不同函式裡有不同的寫死保底數字（例如 `zero_gamma_level` 在6個函式裡有6種：`45661.0`/`45017.6`/`46317.7`等）。另有 5 處「整包套用」的過時預設物件（含具體到像某天真實快照的數字，例如 `gex_plus_flip` 保底日期寫死 `'2026-08-14'`）。 |
+| 10 | `calculate_macro_events_radar()` 的 `macro_risk_dashboard`／`raw_calendar_items` | 對應「⏳尚未稽核」清單裡的「macro-events-radar」項目，本次已稽核：`macro_risk_dashboard`（DXY/US10Y/VIX卡片）**完全沒有任何 fetch**，是打字寫死的字面值，且跟同一支程式裡別處真的抓到的 VIX（`fetch_official_taifex_vix()`）不一致不同步。`raw_calendar_items`（5筆帶2026年具體日期的總經事件）也是寫死列表，雖有日期過濾但沒有補新事件機制——**以今天(09/15)為準只剩09/16 FOMC這一筆還沒過期，明天過後這個清單會悄悄變成永久空清單，沒有任何錯誤或「無資料」提示**。（同函式裡真正驅動倒數計時器的 `valid_events`/`primary_event` 是動態算的，不受影響，此問題僅限這兩個陪襯用的資訊卡。） |
+| 11 | 「工程近似」判斷題（非造假，但輸入是真的、換算用固定係數） | 個股期貨「指數點數貢獻度」固定乘數（台積電×8.25、聯電×0.85、0050×1.5、其餘個股共用×0.1，跟真實市值權重脫鉤且不隨股本變動更新）；`calculate_true_gex_profile()` 全期權共用同一組固定 `r=0.015`/`sigma=0.18`，沒有依真實成交隱含波動率逐履約價計算；`calculate_dynamic_sector_rotation()` 8大產業占比固定寫死（38.0/16.0/6.5等，加總100，不隨個股權值消長變動）。這三項風險屬性跟已知的 `handleLiveTick` 0.62係數同一類——是否要投入工程換成真實動態計算，是取捨題不是bug。 |
+
+### ✅ 本次確認乾淨（未來稽核可跳過）
+
+`app.js`：`Math.random()`全域0命中、雜湊假訊號未搬入、`VALID_PASSCODE`/ADR對應表/overlay對比線/`populateAiQuantDigest`/`currentTab`分頁邏輯、`populateRetailSentiment`空值防呆——皆複查確認正常。
+`fetch_and_calc_vision.py`：Black-Scholes公式本體、`compute_days_to_expiries`、TXO真實OI抓取與分類、`fetch_yahoo_finance_quote`（失敗誠實回傳None，是本檔案錯誤處理最乾淨的範例）、T86/大額交易人抓取、全部快照讀寫函式——皆逐函式核對確認乾淨。全文搜尋確認沒有真正的死函式（每個`def`都至少被呼叫一次）。
+
+---
+
 ## 一之一、`txo-gex-dashboard-80` 發現的真實修復（本機尚未 commit，等 3 項一起測完）
 
 這是另一個 session 對 `scripts/fetch_and_calc_vision.py` 做的修改，2026-09-13 深夜在使用者本機 `git status` 時發現是未 commit 狀態。內容經過檢視，**是真實、高品質的修復**，不是幻覺：
