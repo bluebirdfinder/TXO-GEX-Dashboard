@@ -3,6 +3,7 @@ import sys
 import logging
 import datetime
 import time
+import threading
 from collections import deque
 
 # Set up logging for Fubon Provider
@@ -74,8 +75,13 @@ class FubonAPIProvider:
 
         # Shared futopt WebSocket connection state (Books + Trades share ONE connection —
         # see _ensure_futopt_connected() for why this must not be connected twice).
+        # fubon_books_worker() and fubon_trades_worker() run as separate OS threads in
+        # live_price_server.py and can both notice is_active flip True within the same
+        # instant, so the connect-once check below needs a real lock, not just a flag —
+        # a bare "if not connected: connect()" is a check-then-act race between threads.
         self._futopt_ws = None
         self._futopt_connected = False
+        self._futopt_connect_lock = threading.Lock()
 
         self._initialize_sdk()
 
@@ -235,24 +241,31 @@ class FubonAPIProvider:
         if not self.is_active or not self.marketdata:
             return None
 
-        try:
-            futopt_ws = self.marketdata.websocket_client.futopt
-        except Exception as e:
-            logging.warning(f"_ensure_futopt_connected: websocket_client.futopt unavailable: {e}")
-            return None
+        # Hold the lock across the whole check-connect-set sequence: without this,
+        # two threads can both pass the "if self._futopt_connected" check above
+        # before either sets it True, and both go on to call futopt_ws.connect().
+        with self._futopt_connect_lock:
+            if self._futopt_connected:  # re-check: another thread may have connected while we waited for the lock
+                return self._futopt_ws
 
-        futopt_ws.on('message', self._handle_futopt_message)
-        futopt_ws.on('error', lambda err: logging.warning(f"Fubon futopt WebSocket error: {err}"))
-        futopt_ws.on('disconnect', lambda code, msg: self._on_futopt_disconnect(code, msg))
-        try:
-            futopt_ws.connect()
-        except Exception as e:
-            logging.warning(f"_ensure_futopt_connected: connect() failed: {e}")
-            return None
+            try:
+                futopt_ws = self.marketdata.websocket_client.futopt
+            except Exception as e:
+                logging.warning(f"_ensure_futopt_connected: websocket_client.futopt unavailable: {e}")
+                return None
 
-        self._futopt_ws = futopt_ws
-        self._futopt_connected = True
-        return futopt_ws
+            futopt_ws.on('message', self._handle_futopt_message)
+            futopt_ws.on('error', lambda err: logging.warning(f"Fubon futopt WebSocket error: {err}"))
+            futopt_ws.on('disconnect', lambda code, msg: self._on_futopt_disconnect(code, msg))
+            try:
+                futopt_ws.connect()
+            except Exception as e:
+                logging.warning(f"_ensure_futopt_connected: connect() failed: {e}")
+                return None
+
+            self._futopt_ws = futopt_ws
+            self._futopt_connected = True
+            return futopt_ws
 
     def _on_futopt_disconnect(self, code, msg):
         """ Auto-reconnect + re-subscribe both channels on disconnect, per Fubon's documented reconnect pattern. """
