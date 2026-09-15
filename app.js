@@ -1975,22 +1975,20 @@ function populateInstitutionalMatrix() {
   const t1Body = document.getElementById('futures-5day-body');
   if (t1Body && history.length > 0) {
     let html1 = '';
+    // No-snapshot days carry null in every field (see _inst_null_day in
+    // fetch_and_calc_vision.py) — render "—" instead of treating null as 0
+    // (which would falsely imply "institutions did zero net trading that day").
+    const cell = (v) => v == null ? { color: 'var(--text-muted)', text: '—' } : { color: v >= 0 ? 'var(--call-color)' : 'var(--put-color)', text: `${v >= 0 ? '+' : ''}${v.toLocaleString()}` };
     history.forEach(row => {
-      const top5 = row.top5_net || 0;
-      const top10 = row.top10_net || 0;
-      const top5Spec = row.top5_spec_net || 0;
-      const top10Spec = row.top10_spec_net || 0;
-      const foreignFut = row.foreign_fut_net || 0;
-      const trustFut = row.trust_fut_net != null ? row.trust_fut_net : (row.itrust_fut_net || 0);
-      const dealerFut = row.dealer_fut_net || 0;
+      const top5 = cell(row.top5_net);
+      const top10 = cell(row.top10_net);
+      const top5Spec = cell(row.top5_spec_net);
+      const top10Spec = cell(row.top10_spec_net);
+      const foreignFut = cell(row.foreign_fut_net);
+      const trustFutVal = row.trust_fut_net != null ? row.trust_fut_net : row.itrust_fut_net;
+      const trustFut = cell(trustFutVal);
+      const dealerFut = cell(row.dealer_fut_net);
 
-      const top5Sign = top5 >= 0 ? '+' : '';
-      const top10Sign = top10 >= 0 ? '+' : '';
-      const top5SpecSign = top5Spec >= 0 ? '+' : '';
-      const top10SpecSign = top10Spec >= 0 ? '+' : '';
-      const foreignFutSign = foreignFut >= 0 ? '+' : '';
-      const trustFutSign = trustFut >= 0 ? '+' : '';
-      const dealerFutSign = dealerFut >= 0 ? '+' : '';
       const nTop5Str = row.lt_near ? `<span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: bold;">[近 ${row.lt_near.top5_net >= 0 ? '+' : ''}${row.lt_near.top5_net.toLocaleString()}]</span> ` : '';
       const nTop10Str = row.lt_near ? `<span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: bold;">[近 ${row.lt_near.top10_net >= 0 ? '+' : ''}${row.lt_near.top10_net.toLocaleString()}]</span> ` : '';
       const nSpec5Str = row.lt_near ? `<span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: bold;">[近 ${row.lt_near.top5_spec_net >= 0 ? '+' : ''}${row.lt_near.top5_spec_net.toLocaleString()}]</span> ` : '';
@@ -1998,13 +1996,13 @@ function populateInstitutionalMatrix() {
 
       html1 += `<tr>
         <td>${row.date}</td>
-        <td>${nTop5Str}<span style="color: ${top5 >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top5Sign}${top5.toLocaleString()}</span></td>
-        <td>${nTop10Str}<span style="color: ${top10 >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top10Sign}${top10.toLocaleString()}</span></td>
-        <td>${nSpec5Str}<span style="color: ${top5Spec >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top5SpecSign}${top5Spec.toLocaleString()}</span></td>
-        <td>${nSpec10Str}<span style="color: ${top10Spec >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${top10SpecSign}${top10Spec.toLocaleString()}</span></td>
-        <td style="color: ${foreignFut >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${foreignFutSign}${foreignFut.toLocaleString()}</td>
-        <td style="color: ${trustFut >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${trustFutSign}${trustFut.toLocaleString()}</td>
-        <td style="color: ${dealerFut >= 0 ? 'var(--call-color)' : 'var(--put-color)'};">${dealerFutSign}${dealerFut.toLocaleString()}</td>
+        <td>${nTop5Str}<span style="color: ${top5.color};">${top5.text}</span></td>
+        <td>${nTop10Str}<span style="color: ${top10.color};">${top10.text}</span></td>
+        <td>${nSpec5Str}<span style="color: ${top5Spec.color};">${top5Spec.text}</span></td>
+        <td>${nSpec10Str}<span style="color: ${top10Spec.color};">${top10Spec.text}</span></td>
+        <td style="color: ${foreignFut.color};">${foreignFut.text}</td>
+        <td style="color: ${trustFut.color};">${trustFut.text}</td>
+        <td style="color: ${dealerFut.color};">${dealerFut.text}</td>
       </tr>`;
     });
     t1Body.innerHTML = html1;
@@ -2014,57 +2012,49 @@ function populateInstitutionalMatrix() {
   const t2Body = document.getElementById('cash-options-5day-body');
   if (t2Body && history.length > 0) {
     let html2 = '';
+    // No-snapshot days carry null in every field — render "—" instead of treating
+    // null as 0 (see same fix applied to Table 1 above).
+    const cellAmt = (v, digits) => v == null
+      ? { color: 'var(--text-muted)', text: '—', dot: '' }
+      : { color: v >= 0 ? 'var(--call-color)' : 'var(--put-color)', text: `${v >= 0 ? '+' : ''}${v.toFixed(digits)} 億`, dot: v >= 0 ? '🔴' : '🟢' };
     history.forEach(row => {
-      const foreignStock = row.foreign_stock_net || 0;
-      const trustStock = row.trust_stock_net != null ? row.trust_stock_net : (row.itrust_stock_net || 0);
-      const dealerStock = row.dealer_stock_net || 0;
-
-      const fStockSign = foreignStock >= 0 ? '+' : '';
-      const tStockSign = trustStock >= 0 ? '+' : '';
-      const dStockSign = dealerStock >= 0 ? '+' : '';
+      const foreignStock = cellAmt(row.foreign_stock_net, 1);
+      const trustStockVal = row.trust_stock_net != null ? row.trust_stock_net : row.itrust_stock_net;
+      const trustStock = cellAmt(trustStockVal, 1);
+      const dealerStock = cellAmt(row.dealer_stock_net, 1);
 
       // Option Call & Put Breakdown
-      const fCall = row.foreign_opt_call_net != null ? row.foreign_opt_call_net : 0;
-      const fPut = row.foreign_opt_put_net != null ? row.foreign_opt_put_net : 0;
-      const fCallSign = fCall >= 0 ? '+' : '';
-      const fPutSign = fPut >= 0 ? '+' : '';
-      const fCallDot = fCall >= 0 ? '🔴' : '🟢';
-      const fPutDot = fPut >= 0 ? '🔴' : '🟢';
+      const fCall = cellAmt(row.foreign_opt_call_net, 2);
+      const fPut = cellAmt(row.foreign_opt_put_net, 2);
+      const tCall = cellAmt(row.trust_opt_call_net, 2);
+      const tPutDigits = row.trust_opt_put_net != null && Math.abs(row.trust_opt_put_net) < 0.01 ? 3 : 2;
+      const tPut = cellAmt(row.trust_opt_put_net, tPutDigits);
+      const dCall = cellAmt(row.dealer_opt_call_net, 2);
+      const dPut = cellAmt(row.dealer_opt_put_net, 2);
 
-      const tCall = row.trust_opt_call_net != null ? row.trust_opt_call_net : 0;
-      const tPut = row.trust_opt_put_net != null ? row.trust_opt_put_net : 0;
-      const tCallSign = tCall >= 0 ? '+' : '';
-      const tPutSign = tPut >= 0 ? '+' : '';
-      const tCallDot = tCall >= 0 ? '🔴' : '🟢';
-      const tPutDot = tPut >= 0 ? '🔴' : '🟢';
-
-      const dCall = row.dealer_opt_call_net != null ? row.dealer_opt_call_net : 0;
-      const dPut = row.dealer_opt_put_net != null ? row.dealer_opt_put_net : 0;
-      const dCallSign = dCall >= 0 ? '+' : '';
-      const dPutSign = dPut >= 0 ? '+' : '';
-      const dCallDot = dCall >= 0 ? '🔴' : '🟢';
-      const dPutDot = dPut >= 0 ? '🔴' : '🟢';
-
-      const pcVal = row.pc_ratio || gexData.pc_ratio || CHART_DEFAULTS.pc_ratio;
+      // pc_ratio is only ever populated for a real snapshot (T-0 live fetch, or a
+      // persisted day). Falling back to today's gexData.pc_ratio for a no-snapshot
+      // past day would misattribute today's P/C ratio to that date — show "—" instead.
+      const pcText = row.pc_ratio != null ? `${row.pc_ratio.toFixed(1)}%` : '—';
 
       html2 += `<tr>
         <td>${row.date}</td>
-        <td style="color: ${foreignStock >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${fStockSign}${foreignStock.toFixed(1)} 億</td>
-        <td style="color: ${trustStock >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${tStockSign}${trustStock.toFixed(1)} 億</td>
-        <td style="color: ${dealerStock >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${dStockSign}${dealerStock.toFixed(1)} 億</td>
+        <td style="color: ${foreignStock.color}; font-weight: 600;">${foreignStock.text}</td>
+        <td style="color: ${trustStock.color}; font-weight: 600;">${trustStock.text}</td>
+        <td style="color: ${dealerStock.color}; font-weight: 600;">${dealerStock.text}</td>
         <td style="font-size: 0.81rem; line-height: 1.45; text-align: center;">
-          <div>Call: <span style="color: ${fCall >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${fCallSign}${fCall.toFixed(2)} 億</span> ${fCallDot}</div>
-          <div>/ Put: <span style="color: ${fPut >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${fPutSign}${fPut.toFixed(2)} 億</span> ${fPutDot}</div>
+          <div>Call: <span style="color: ${fCall.color}; font-weight: 600;">${fCall.text}</span> ${fCall.dot}</div>
+          <div>/ Put: <span style="color: ${fPut.color}; font-weight: 600;">${fPut.text}</span> ${fPut.dot}</div>
         </td>
         <td style="font-size: 0.81rem; line-height: 1.45; text-align: center;">
-          <div>Call: <span style="color: ${tCall >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${tCallSign}${tCall.toFixed(2)} 億</span> ${tCallDot}</div>
-          <div>/ Put: <span style="color: ${tPut >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${tPutSign}${Math.abs(tPut) < 0.01 ? tPut.toFixed(3) : tPut.toFixed(2)} 億</span> ${tPutDot}</div>
+          <div>Call: <span style="color: ${tCall.color}; font-weight: 600;">${tCall.text}</span> ${tCall.dot}</div>
+          <div>/ Put: <span style="color: ${tPut.color}; font-weight: 600;">${tPut.text}</span> ${tPut.dot}</div>
         </td>
         <td style="font-size: 0.81rem; line-height: 1.45; text-align: center;">
-          <div>Call: <span style="color: ${dCall >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${dCallSign}${dCall.toFixed(2)} 億</span> ${dCallDot}</div>
-          <div>/ Put: <span style="color: ${dPut >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 600;">${dPutSign}${dPut.toFixed(2)} 億</span> ${dPutDot}</div>
+          <div>Call: <span style="color: ${dCall.color}; font-weight: 600;">${dCall.text}</span> ${dCall.dot}</div>
+          <div>/ Put: <span style="color: ${dPut.color}; font-weight: 600;">${dPut.text}</span> ${dPut.dot}</div>
         </td>
-        <td style="color: var(--gold-accent); font-weight: 600;">${typeof pcVal === 'number' ? pcVal.toFixed(1) + '%' : pcVal}</td>
+        <td style="color: var(--gold-accent); font-weight: 600;">${pcText}</td>
       </tr>`;
     });
     t2Body.innerHTML = html2;
