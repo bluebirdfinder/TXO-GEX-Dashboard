@@ -1,12 +1,20 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.2)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.3)
 
-**當前版本**：`v63.2` (2026-09-16 5日法人籌碼矩陣「+0」誤顯示修正、DAY session is_live標記發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.2)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.2)
+**當前版本**：`v63.3` (2026-09-16 大額交易人前五大/前十大淨部位公式重大修正發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.3)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.3)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v63.3 核心更新亮點 (大額交易人前五大/前十大淨部位公式重大修正)
+
+### 🔴🔴 1. `fetch_official_taifex_large_trader()` 欄位索引錯誤，算出來的「大額交易人淨部位」從來就不是「淨部位」
+- 使用者截圖 TAIFEX 官方「大額交易人未沖銷部位結構表」原始頁面，比對台新期貨PDF「台指期十大交易人 Futures OI」表格，發現我們的「前五大/前十大交易人淨部位」跟「特定法人淨部位」數字對不起來，不是差一點，是數量級跟正負號都不對。
+- 追查發現：官方表格欄位順序是「[買方前五大, 買方前十大, 賣方前五大, 賣方前十大, 全市場未沖銷]」，正確算法是「買方前五大－賣方前五大＝前五大淨部位」、「買方前十大－賣方前十大＝前十大淨部位」。但原本的程式碼誤用「買方前五大－買方前十大」「賣方前五大－賣方前十大」在做減法——兩個都是同一邊（買方或賣方），根本不是多空淨部位，是兩個無關數字互減，這個bug從這支函式寫出來就存在。
+- 已修正欄位索引，並直接用 TAIFEX 官方查詢頁的「指定日期查詢」功能（`queryDate` 參數）重新抓取 9/11、9/14 兩天的歷史原始資料，用正確公式回填 `data/institutional_snapshots.json` 裡已經被錯誤公式污染的歷史快照，不是只修正「未來新抓的資料」。
+- 驗證：9/15 的「前十大交易人合計」+3,506／「特定法人合計」-785，跟使用者提供的台新PDF截圖逐位數字完全吻合（含近月/遠月/全月共6組數字）。
 
 ## 🎯 v63.2 核心更新亮點 (5日矩陣「+0」誤顯示修正 ✕ DAY session is_live標記)
 

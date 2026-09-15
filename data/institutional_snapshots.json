@@ -1,26 +1,26 @@
 {
   "2026-09-11_INST_DAY": {
-    "top5_net": -8129,
-    "top10_net": -23839,
-    "top5_spec_net": -4642,
-    "top10_spec_net": -23839,
+    "top5_net": 18824,
+    "top10_net": 3114,
+    "top5_spec_net": 18824,
+    "top10_spec_net": -373,
     "lt_near": {
-      "top5_net": -6525,
-      "top10_net": -19185,
-      "top5_spec_net": -4998,
-      "top10_spec_net": -19185
+      "top5_net": 15434,
+      "top10_net": 2774,
+      "top5_spec_net": 15434,
+      "top10_spec_net": 1247
     },
     "lt_far": {
-      "top5_net": -1604,
-      "top10_net": -4654,
-      "top5_spec_net": 356,
-      "top10_spec_net": -4654
+      "top5_net": 3390,
+      "top10_net": 340,
+      "top5_spec_net": 3390,
+      "top10_spec_net": -1620
     },
     "lt_total": {
-      "top5_net": -8129,
-      "top10_net": -23839,
-      "top5_spec_net": -4642,
-      "top10_spec_net": -23839
+      "top5_net": 18824,
+      "top10_net": 3114,
+      "top5_spec_net": 18824,
+      "top10_spec_net": -373
     },
     "foreign_fut_net": -85067,
     "trust_fut_net": 74687,
@@ -54,27 +54,27 @@
     "written_at": "2026-09-14T03:06:43.134464"
   },
   "2026-09-14_INST_DAY": {
-    "top5_net": -7783,
-    "top10_net": -23245,
-    "top5_spec_net": -4931,
-    "top10_spec_net": -23245,
+    "top5_net": 20019,
+    "top10_net": 4557,
+    "top5_spec_net": 20019,
+    "top10_spec_net": 1705,
     "lt_near": {
-      "top5_net": -5966,
-      "top10_net": -10867,
-      "top5_spec_net": -3627,
-      "top10_spec_net": -10867
+      "top5_net": 5450,
+      "top10_net": 549,
+      "top5_spec_net": 5450,
+      "top10_spec_net": -1790
     },
     "lt_far": {
-      "top5_net": -1817,
-      "top10_net": -12378,
-      "top5_spec_net": -1304,
-      "top10_spec_net": -12378
+      "top5_net": 14569,
+      "top10_net": 4008,
+      "top5_spec_net": 14569,
+      "top10_spec_net": 3495
     },
     "lt_total": {
-      "top5_net": -7783,
-      "top10_net": -23245,
-      "top5_spec_net": -4931,
-      "top10_spec_net": -23245
+      "top5_net": 20019,
+      "top10_net": 4557,
+      "top5_spec_net": 20019,
+      "top10_spec_net": 1705
     },
     "foreign_fut_net": -82658,
     "trust_fut_net": 74448,
@@ -162,27 +162,27 @@
   },
   "LARGE_TRADER_LAST_REAL": {
     "near": {
-      "top5_net": -3346,
-      "top10_net": -3996,
-      "top5_spec_net": -1980,
-      "top10_spec_net": -3230
+      "top5_net": -2402,
+      "top10_net": -3052,
+      "top5_spec_net": -6650,
+      "top10_spec_net": -7900
     },
     "far": {
-      "top5_net": -6480,
-      "top10_net": -19514,
-      "top5_spec_net": -3555,
-      "top10_spec_net": -20280
+      "top5_net": 19592,
+      "top10_net": 6558,
+      "top5_spec_net": 23840,
+      "top10_spec_net": 7115
     },
     "total": {
-      "top5_net": -9826,
-      "top10_net": -23510,
-      "top5_spec_net": -5535,
-      "top10_spec_net": -23510
+      "top5_net": 17190,
+      "top10_net": 3506,
+      "top5_spec_net": 17190,
+      "top10_spec_net": -785
     },
-    "top5_net": -9826,
-    "top10_net": -23510,
-    "top5_spec_net": -5535,
-    "top10_spec_net": -23510,
+    "top5_net": 17190,
+    "top10_net": 3506,
+    "top5_spec_net": 17190,
+    "top10_spec_net": -785,
     "is_live": true
   },
   "MARGIN_MAINT_EST_20260914": {
@@ -190,27 +190,27 @@
     "margin_maint_stock": 145.0
   },
   "2026-09-15_INST_DAY": {
-    "top5_net": -9826,
-    "top10_net": -23510,
-    "top5_spec_net": -5535,
-    "top10_spec_net": -23510,
+    "top5_net": 17190,
+    "top10_net": 3506,
+    "top5_spec_net": 17190,
+    "top10_spec_net": -785,
     "lt_near": {
-      "top5_net": -3346,
-      "top10_net": -3996,
-      "top5_spec_net": -1980,
-      "top10_spec_net": -3230
+      "top5_net": -2402,
+      "top10_net": -3052,
+      "top5_spec_net": -6650,
+      "top10_spec_net": -7900
     },
     "lt_far": {
-      "top5_net": -6480,
-      "top10_net": -19514,
-      "top5_spec_net": -3555,
-      "top10_spec_net": -20280
+      "top5_net": 19592,
+      "top10_net": 6558,
+      "top5_spec_net": 23840,
+      "top10_spec_net": 7115
     },
     "lt_total": {
-      "top5_net": -9826,
-      "top10_net": -23510,
-      "top5_spec_net": -5535,
-      "top10_spec_net": -23510
+      "top5_net": 17190,
+      "top10_net": 3506,
+      "top5_spec_net": 17190,
+      "top10_spec_net": -785
     },
     "foreign_fut_net": -83223,
     "trust_fut_net": 72417,
@@ -232,16 +232,16 @@
     "dealer_opt_call_net": 1.61,
     "dealer_opt_put_net": 0.16,
     "pc_ratio": 85.89,
-    "written_at": "2026-09-16T02:07:16.168458"
+    "written_at": "2026-09-16T07:22:40.695829"
   },
   "2026-09-15_INST_NIGHT": {
-    "foreign_tx": -1005,
-    "foreign_tx_amt": -91.25,
-    "foreign_mtx": -2303,
-    "foreign_micro": -364,
-    "dealer_tx": 374,
-    "dealer_tx_amt": 34.01,
-    "written_at": "2026-09-16T02:07:16.170180"
+    "foreign_tx": -510,
+    "foreign_tx_amt": -46.15,
+    "foreign_mtx": 465,
+    "foreign_micro": 152,
+    "dealer_tx": 206,
+    "dealer_tx_amt": 18.82,
+    "written_at": "2026-09-16T07:22:40.696682"
   },
   "MARGIN_MAINT_EST_20260915": {
     "margin_maint_market": 159.2,
@@ -251,16 +251,16 @@
     "mtx_net_oi": -53,
     "mtx_ratio": -0.14,
     "mtx_total_ratio": -0.14,
-    "mtx_long_oi": 15577,
-    "mtx_short_oi": 15630,
-    "tmf_net_oi": 46684,
+    "mtx_long_oi": 36938,
+    "mtx_short_oi": 36991,
+    "tmf_net_oi": 20154,
     "tmf_ratio": 40.95,
     "tmf_total_ratio": 40.95,
-    "tmf_long_oi": 49280,
-    "tmf_short_oi": 2596,
+    "tmf_long_oi": 20154,
+    "tmf_short_oi": 0,
     "foreign_tx_net": -83223,
     "foreign_call_net": -1.05,
     "foreign_put_net": 1.33,
-    "written_at": "2026-09-16T02:07:08.693569"
+    "written_at": "2026-09-16T07:22:34.468333"
   }
 }

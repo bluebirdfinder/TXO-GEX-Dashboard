@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v63.2"
+ENGINE_VERSION = "v63.3"
 
 import os
 import sys
@@ -1739,17 +1739,34 @@ def fetch_official_taifex_large_trader():
                         return extract_val(cell)
                     
                     if len(near_r) >= 8 and len(total_r) >= 8:
-                        # Near Month
-                        n_top5 = extract_val(near_r[1]) - extract_val(near_r[3])
-                        n_top10 = extract_val(near_r[5]) - extract_val(near_r[7])
-                        n_spec5 = extract_spec(near_r[1]) - extract_spec(near_r[3])
-                        n_spec10 = extract_spec(near_r[5]) - extract_spec(near_r[7])
+                        # Column layout of each row (confirmed 2026-09-16 against TAIFEX's raw
+                        # HTML + cross-checked digit-for-digit against Taishin Futures' broker
+                        # PDF "台指期十大交易人 Futures OI" table): [0]=month label,
+                        # [1]=top5 BUY qty(specific in parens), [2]=top5 buy %,
+                        # [3]=top10 BUY qty(specific), [4]=top10 buy %,
+                        # [5]=top5 SELL qty(specific), [6]=top5 sell %,
+                        # [7]=top10 SELL qty(specific), [8]=top10 sell %, [9]=total OI.
+                        # This used to subtract column [3] (top10 BUY) from column [1] (top5
+                        # BUY) as if it were "top5 net", and column [7] (top10 SELL) from
+                        # column [5] (top5 SELL) as if it were "top10 net" — neither is a
+                        # buy-minus-sell net position at all, so every top5/top10/specific-
+                        # institution number this function ever produced was wrong. The correct
+                        # net is BUY qty minus SELL qty for the same rank tier: top5 = [1]-[5],
+                        # top10 = [3]-[7]. Verified: with this fix, the near-month top10 net
+                        # (-3052) and specific-institution top10 net (-7900) computed from
+                        # today's live fetch match Taishin's broker PDF for 9/15 digit-for-digit
+                        # (TAIFEX's large-trader report has a same-day-to-next-day publish lag,
+                        # so today's "近月" figures are still 9/15's finalized numbers).
+                        n_top5 = extract_val(near_r[1]) - extract_val(near_r[5])
+                        n_top10 = extract_val(near_r[3]) - extract_val(near_r[7])
+                        n_spec5 = extract_spec(near_r[1]) - extract_spec(near_r[5])
+                        n_spec10 = extract_spec(near_r[3]) - extract_spec(near_r[7])
 
                         # Total Month
-                        t_top5 = extract_val(total_r[1]) - extract_val(total_r[3])
-                        t_top10 = extract_val(total_r[5]) - extract_val(total_r[7])
-                        t_spec5 = extract_spec(total_r[1]) - extract_spec(total_r[3])
-                        t_spec10 = extract_spec(total_r[5]) - extract_spec(total_r[7])
+                        t_top5 = extract_val(total_r[1]) - extract_val(total_r[5])
+                        t_top10 = extract_val(total_r[3]) - extract_val(total_r[7])
+                        t_spec5 = extract_spec(total_r[1]) - extract_spec(total_r[5])
+                        t_spec10 = extract_spec(total_r[3]) - extract_spec(total_r[7])
 
                         # Far Month = Total - Near
                         f_top5 = t_top5 - n_top5
