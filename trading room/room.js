@@ -14,6 +14,22 @@ let gexData = null;
 let klinesCacheData = null;
 let momentumData = null;
 
+// Last-resort fallback numbers for when gexData is missing a GEX level field outright.
+// Found 2026-09-15: 5 different functions each independently typed in their own disagreeing
+// literal for the same logical field (call_wall_strike alone had 47400/46400/47300 across
+// different functions) — the same "34 inconsistent app.js defaults" pattern audited and
+// unified there the night before, just not yet done for room.js. All of these call sites are
+// actually dead code in practice (the backend always computes these fields), so this exists
+// only to stop disagreeing numbers from being copy-pasted again — seeded from the same real
+// 2026-09-15 pipeline run as app.js's CHART_DEFAULTS.
+const ROOM_CHART_DEFAULTS = {
+  txf_price: 46588.0,
+  zero_gamma_level: 45040.4,
+  call_wall_strike: 45700.0,
+  put_wall_strike: 46000.0,
+  max_pain_strike: 45050.0
+};
+
 // Multi-Chart Instances
 let mainChart = null;
 let subChart1 = null;
@@ -156,13 +172,13 @@ async function loadDashboardData() {
   
   if (!gexData) {
     gexData = {
-      txf_price: 47329,
-      zero_gamma_level: 47217.4,
-      call_wall_strike: 47400,
-      put_wall_strike: 47050,
-      max_pain_strike: 46600,
-      session_shift: { txf_shift: -141 },
-      vix_info: { taifex_vix: 26.09 }
+      txf_price: ROOM_CHART_DEFAULTS.txf_price,
+      zero_gamma_level: ROOM_CHART_DEFAULTS.zero_gamma_level,
+      call_wall_strike: ROOM_CHART_DEFAULTS.call_wall_strike,
+      put_wall_strike: ROOM_CHART_DEFAULTS.put_wall_strike,
+      max_pain_strike: ROOM_CHART_DEFAULTS.max_pain_strike,
+      session_shift: { txf_shift: 0 },
+      vix_info: { taifex_vix: null }
     };
   }
 
@@ -1393,11 +1409,11 @@ function drawGexHorizontalRays(candles) {
   if (!candleSeries || !gexData) return;
   clearGexPriceLines();
 
-  const cw = gexData.call_wall_strike || 47400;
-  const vex = (gexData.zero_gamma_level ? gexData.zero_gamma_level - 0.1 : 47217.3);
-  const zg = gexData.zero_gamma_level || 47217.4;
-  const pw = gexData.put_wall_strike || 47050;
-  const mp = gexData.max_pain_strike || 46600;
+  const cw = gexData.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
+  const vex = (gexData.zero_gamma_level ? gexData.zero_gamma_level - 0.1 : ROOM_CHART_DEFAULTS.zero_gamma_level - 0.1);
+  const zg = gexData.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const pw = gexData.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
 
   // 1. Call Wall (賣權強壓天花板) - 粉紅實線 2px
   priceLines.cw = candleSeries.createPriceLine({
@@ -1537,10 +1553,10 @@ function renderLeftPanel() {
     }
   }
   
-  const cw = gexData?.call_wall_strike || 46400;
-  const zg = gexData?.zero_gamma_level || 46219.6;
-  const pw = gexData?.put_wall_strike || 46000;
-  const mp = gexData?.max_pain_strike || 45600;
+  const cw = gexData?.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
+  const zg = gexData?.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const pw = gexData?.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData?.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
 
   // 1. Triple indices in left panel
   const topTaiex = document.getElementById('top-val-taiex');
@@ -2183,10 +2199,10 @@ function initAdvisorFeed() {
   if (!feed) return;
 
   const txf = gexData ? gexData.txf_price : 47187;
-  const zg = gexData ? gexData.zero_gamma_level : 47118.5;
-  const cw = gexData ? gexData.call_wall_strike : 47300;
-  const pw = gexData ? gexData.put_wall_strike : 46950;
-  const mp = gexData ? gexData.max_pain_strike : 46500;
+  const zg = gexData ? gexData.zero_gamma_level : ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const cw = gexData ? gexData.call_wall_strike : ROOM_CHART_DEFAULTS.call_wall_strike;
+  const pw = gexData ? gexData.put_wall_strike : ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData ? gexData.max_pain_strike : ROOM_CHART_DEFAULTS.max_pain_strike;
 
   const isPosGamma = txf >= zg;
   const distCW = cw - txf;
@@ -2226,10 +2242,10 @@ function handleAdvisorAction(action) {
   if (!feed) return;
 
   const txf = gexData ? gexData.txf_price : 47187;
-  const zg = gexData ? gexData.zero_gamma_level : 47118.5;
-  const cw = gexData ? gexData.call_wall_strike : 47300;
-  const pw = gexData ? gexData.put_wall_strike : 46950;
-  const mp = gexData ? gexData.max_pain_strike : 46500;
+  const zg = gexData ? gexData.zero_gamma_level : ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const cw = gexData ? gexData.call_wall_strike : ROOM_CHART_DEFAULTS.call_wall_strike;
+  const pw = gexData ? gexData.put_wall_strike : ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData ? gexData.max_pain_strike : ROOM_CHART_DEFAULTS.max_pain_strike;
 
   let title = '';
   let content = '';
@@ -2349,10 +2365,10 @@ async function sendAdvisorQuery(query) {
  */
 async function callGeminiApi(apiKey, query, base64Image) {
   const currentPrice = (currentActiveSymbol && currentActiveSymbol.base_price) || gexData?.txf_price || 46594;
-  const cw = gexData?.call_wall_strike || 47400;
-  const zg = gexData?.zero_gamma_level || 47217.4;
-  const pw = gexData?.put_wall_strike || 47050;
-  const mp = gexData?.max_pain_strike || 46600;
+  const cw = gexData?.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
+  const zg = gexData?.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const pw = gexData?.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData?.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
   const vix = gexData?.vix_info?.taifex_vix || 26.09;
   const vvix = gexData?.vix_info?.us_vvix || 102.66;
   const dxy = 98.845;
@@ -2431,10 +2447,10 @@ function formatGeminiMarkdown(md) {
  */
 function generateQuantAdvisorResponse(query, hasImage = false) {
   const txf = gexData ? gexData.txf_price : 47187;
-  const zg = gexData ? gexData.zero_gamma_level : 47118.5;
-  const cw = gexData ? gexData.call_wall_strike : 47300;
-  const pw = gexData ? gexData.put_wall_strike : 46950;
-  const mp = gexData ? gexData.max_pain_strike : 46500;
+  const zg = gexData ? gexData.zero_gamma_level : ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const cw = gexData ? gexData.call_wall_strike : ROOM_CHART_DEFAULTS.call_wall_strike;
+  const pw = gexData ? gexData.put_wall_strike : ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData ? gexData.max_pain_strike : ROOM_CHART_DEFAULTS.max_pain_strike;
   const vvix = gexData?.vix_info?.vvix || 102.66;
 
   const qLower = (query || '').toLowerCase();
