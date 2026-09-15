@@ -1,12 +1,26 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.1)
 
-**當前版本**：`v63.0` (2026-09-15 首次真正部署上線、系統性假保底值清理三部曲、room.js兩張死卡片修復發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.0)
+**當前版本**：`v63.1` (2026-09-16 散戶多空比分母算錯修正、真實FOMC/四巫日日曆、VIX歷史回補、法人籌碼歷史重複bug修復發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.1)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.1)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v63.1 核心更新亮點 (散戶多空比分母修正 ✕ 真實FOMC/四巫日日曆 ✕ 歷史回補 ✕ 重複bug修復)
+
+### 🔴🔴 1. 散戶多空比分母算錯，跟券商數字對不上——已修正並驗證完全一致
+- 近月OI被誤乘2、「合計」列誤抓成交量而非未沖銷契約數，導致比率被稀釋失真。
+- 修正後跟永豐、台新兩家券商的公開報告數字**完全一致**（小台-0.14%、微台40.95%）。
+
+### 🌐 2. 真實FOMC利率決議 + 真實四巫日，取代原本缺漏的事件日曆
+- FOMC直接抓聯準會官網現成HTML（非JSON API），會自動保持最新不會過期。
+- 四巫日純日期算法（3/6/9/12月第三個週五），永不枯竭。
+
+### 📊 3. VIX歷史回補 + 法人籌碼歷史重複bug修復
+- 9/2~9/11的台指VIX/美股VIX歷史數字已補齊；櫃買指數回補卡在Yahoo API問題，待查。
+- 修好「抓取失敗借用舊值卻被永久存成當天真實快照」的重複bug，加上`is_live`標記。
 
 ## 🎯 v63.0 核心更新亮點 (首次真正部署上線 ✕ 系統性假保底值清理三部曲 ✕ room.js死卡片修復)
 
