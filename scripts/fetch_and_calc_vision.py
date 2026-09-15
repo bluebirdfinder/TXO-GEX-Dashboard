@@ -483,7 +483,8 @@ def fetch_taifex_night_institutional_trading():
                 "mini_foreign_net_vol": mini_foreign_net_vol,
                 "micro_foreign_net_vol": micro_foreign_net_vol,
                 "night_sentiment": night_sentiment,
-                "night_summary_text": night_summary_text
+                "night_summary_text": night_summary_text,
+                "is_live": True
             }
     except Exception as e:
         print(f"[Warning] Night Session Institutional parse error: {e}")
@@ -491,6 +492,11 @@ def fetch_taifex_night_institutional_trading():
     # Total parse/fetch failure used to fall back to a hardcoded literal (-422 etc, duplicated
     # in both the try-block's initial values and this except-fallback). Fall back to the last
     # real value from the previous pipeline run instead of a permanently frozen guess.
+    # `is_live: False` is load-bearing, not just informational: the caller must NOT persist
+    # this borrowed value into the permanent 5-day snapshot history under *today's* date key —
+    # found 2026-09-15 that it was doing exactly that, which silently duplicated one real day's
+    # numbers onto a later day forever (indistinguishable from a second, coincidentally
+    # identical, real trading day once written).
     _snap = _load_last_gex_snapshot()
     _last = _snap.get('night_institutional_trading') or {}
     return {
@@ -501,7 +507,8 @@ def fetch_taifex_night_institutional_trading():
         "mini_foreign_net_vol": _last.get('mini_foreign_net_vol'),
         "micro_foreign_net_vol": _last.get('micro_foreign_net_vol'),
         "night_sentiment": "⚪ 無即時數據",
-        "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：夜盤法人數據暫時無法取得。"
+        "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：夜盤法人數據暫時無法取得。",
+        "is_live": False
     }
 
 def fetch_5day_exchange_rates():
@@ -1826,6 +1833,65 @@ def fetch_official_taifex_pc_ratio():
         print(f"[Warning] Failed to fetch TAIFEX PC Ratio: {e}")
     return res
 
+_MONTH_NUM = {
+    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
+    "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12
+}
+
+def fetch_fomc_meeting_dates():
+    """
+    Fetches the real FOMC meeting schedule from the Federal Reserve's own official calendar
+    page (federalreserve.gov/monetarypolicy/fomccalendars.htm). The page looks like an Angular
+    app at first glance, but the meeting list itself is plain server-rendered HTML (div.panel
+    per year, containing div.fomc-meeting__month / div.fomc-meeting__date pairs) — no JSON API
+    needed. Returns a list of {"month_label", "rate_decision_date": date} for every meeting
+    found across every year panel on the page (the Fed keeps ~2 years of past + current +
+    partial next year on this one page), so this project's own calendar never needs a
+    hardcoded, staleness-prone meeting list — it just re-reads the Fed's current publication
+    on every run. The rate decision is always announced on the LAST day of a 1-2 day meeting.
+    """
+    results = []
+    try:
+        url = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
+            soup = BeautifulSoup(resp.read().decode('utf-8', errors='ignore'), 'html.parser')
+
+        for year_anchor in soup.find_all('a', id=True):
+            m = re.match(r'^(\d{4}) FOMC Meetings$', year_anchor.get_text(strip=True))
+            if not m:
+                continue
+            year = int(m.group(1))
+            panel = year_anchor.find_parent('div', class_='panel')
+            if not panel:
+                continue
+            for month_div in panel.find_all('div', class_='fomc-meeting__month'):
+                date_div = month_div.find_next_sibling('div', class_='fomc-meeting__date')
+                if not date_div:
+                    continue
+                month_text = month_div.get_text(strip=True)
+                date_text = re.sub(r'\*|\(.*?\)', '', date_div.get_text(strip=True)).strip()
+                months_in_label = month_text.split('/')
+                try:
+                    start_month = _MONTH_NUM[months_in_label[0].strip().lower()]
+                    end_month = _MONTH_NUM[months_in_label[-1].strip().lower()]
+                except KeyError:
+                    continue
+                day_parts = date_text.split('-')
+                try:
+                    end_day = int(day_parts[-1].strip())
+                except (ValueError, IndexError):
+                    continue
+                try:
+                    decision_date = datetime.date(year, end_month, end_day)
+                except ValueError:
+                    continue
+                results.append({"month_label": month_text, "rate_decision_date": decision_date})
+        print(f"[OK] Official Federal Reserve FOMC Meeting Schedule: {len(results)} meetings parsed")
+    except Exception as e:
+        print(f"[Warning] Failed to fetch Fed FOMC calendar: {e}")
+    return results
+
 def fetch_taifex_stock_futures_contract_map():
     """
     Fetches TAIFEX's official 股票期貨/股票選擇權 交易標的 reference table (stockLists),
@@ -2011,20 +2077,35 @@ def fetch_official_taifex_retail_sentiment():
             with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
                 html = resp.read().decode('big5', errors='ignore')
                 soup = BeautifulSoup(html, 'html.parser')
+                # Column 12 of this table is 未沖銷契約數 (open interest) — confirmed
+                # 2026-09-15 against TAIFEX's raw response (near-month row) AND against two
+                # independent brokers' 散戶多空比 published today (both matched exactly once
+                # this was fixed). This used to (a) multiply the near-month OI by 2 for no
+                # documented reason — real near-month OI is already the whole open-interest
+                # count, not one side of it needing doubling — and (b) take the MAX value
+                # across the entire "合計" totals row to find "total_oi", which actually grabs
+                # 成交量 (trading volume, a much larger unrelated number) instead of column 12's
+                # real total open interest. Both bugs inflated the denominator used everywhere
+                # downstream for 散戶多空比, diluting the reported ratio well below what TAIFEX's
+                # own numbers (and every broker report checked) actually show.
+                # This endpoint's declared/actual charset doesn't match 'big5' cleanly for its
+                # Chinese labels specifically (confirmed 2026-09-15: the "合計"/"小計" text comes
+                # back as mojibake under both big5 and cp950, even though the plain-ASCII
+                # numeric cells decode fine either way) — matching on the label text is
+                # fragile here. Detect the totals row structurally instead: every real
+                # contract-month row starts with the commodity code (e.g. "TMF"/"MTX") in
+                # cols[0] and a date/week code in cols[1], while the totals row has both blank.
                 near_oi, total_oi = 0, 0
                 for t in soup.find_all('table'):
                     for r in t.find_all('tr'):
                         cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
                         if cols and len(cols) >= 13:
-                            if near_oi == 0 and len(cols) >= 13 and re.match(r'^\d{6}$', cols[1] if len(cols) > 1 else ''):
-                                try: near_oi = int(cols[12].replace(',', '')) * 2
+                            if near_oi == 0 and re.match(r'^\d{6}$', cols[1] if len(cols) > 1 else ''):
+                                try: near_oi = int(cols[12].replace(',', ''))
                                 except: pass
-                            if any('小計' in c or '合計' in c for c in cols):
-                                for c in cols:
-                                    try:
-                                        v = int(c.replace(',', ''))
-                                        if v > total_oi: total_oi = v
-                                    except: pass
+                            if total_oi == 0 and cols[0] == '' and cols[1] == '':
+                                try: total_oi = int(cols[12].replace(',', ''))
+                                except: pass
                 return (near_oi or None), (total_oi or None)
         except Exception:
             return None, None
@@ -2081,9 +2162,13 @@ def fetch_official_taifex_retail_sentiment():
     vix_idx = vix_info["taifex_vix"]
     vix_chg = vix_info["taifex_vix_change"]
 
-    # Primary ratio = Broker Standard Near-Month Ratio (+26.19% / +31.10%)
-    mtx_ratio = mtx_near_ratio
-    tmf_ratio = tmf_near_ratio
+    # Primary ratio = 全月合計未沖銷契約數 as the denominator, NOT near-month — verified
+    # 2026-09-15 against two independent brokers' published 散戶多空比 (both matched this
+    # exactly, to the basis point, once the near_oi doubling bug above was fixed; the
+    # near-month-only ratio this used to treat as primary was silently diluted by roughly a
+    # third and never actually matched what any real broker reports).
+    mtx_ratio = mtx_total_ratio
+    tmf_ratio = tmf_total_ratio
 
     # Real foreign TX OI + real foreign TXO call/put net amounts, reusing the same official
     # fetchers used elsewhere in this file for the exact same underlying numbers.
@@ -2126,7 +2211,7 @@ def fetch_official_taifex_retail_sentiment():
     if mtx_ratio is None or tmf_ratio is None:
         mtx_line = "小台/微台散戶多空比數據暫時無法取得。"
     else:
-        mtx_line = f"小台散戶多空比為 <span style=\"color: {mtx_col}; font-weight:700;\">{mtx_ratio:+.2f}%</span>（市場近月標準算式，淨部位 {mtx_r_net:+,} 口／全月基準 {mtx_total_ratio:+.2f}%），微台多空比為 <span style=\"color: {tmf_col}; font-weight:700;\">{tmf_ratio:+.2f}%</span>（淨部位 {tmf_r_net:+,} 口／全月基準 {tmf_total_ratio:+.2f}%）。散戶部位維持強烈偏多姿態。"
+        mtx_line = f"小台散戶多空比為 <span style=\"color: {mtx_col}; font-weight:700;\">{mtx_ratio:+.2f}%</span>（全月合計未沖銷契約數為基準，淨部位 {mtx_r_net:+,} 口／近月單一契約月基準 {mtx_near_ratio:+.2f}%），微台多空比為 <span style=\"color: {tmf_col}; font-weight:700;\">{tmf_ratio:+.2f}%</span>（淨部位 {tmf_r_net:+,} 口／近月單一契約月基準 {tmf_near_ratio:+.2f}%）。散戶部位維持強烈偏多姿態。"
     vix_line = (f"台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">{vix_idx:.2f}</span> ({vix_chg:+.2f})，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。"
                 if vix_idx is not None else "VIX 波動率指數暫時無法取得。")
     sentiment_summary_html = f"""
@@ -2866,6 +2951,13 @@ def generate_gex_payload():
         else:
             night_institutional_5day_history.append(_inst_null_night(t_days[i]))
 
+    # has_snapshot reflects whether tonight's fetch was genuinely live, not just whether we
+    # have *some* number to show. Found 2026-09-15: this used to always write True and always
+    # persist, so a fetch failure's borrowed-from-last-real-run values got permanently baked
+    # into the snapshot store under *today's* date — indistinguishable later from a second,
+    # coincidentally identical, real trading day (that's how 9/11 and 9/14 ended up with byte-
+    # identical numbers). Only persist when the fetch was actually live.
+    _night_is_live = night_inst_trading.get("is_live", False)
     t0_inst_night = {
         "date": t_days[4],
         "foreign_tx": night_inst_trading["tx_foreign_net_vol"],
@@ -2874,13 +2966,14 @@ def generate_gex_payload():
         "foreign_micro": night_inst_trading["micro_foreign_net_vol"],
         "dealer_tx": night_inst_trading["tx_dealer_net_vol"],
         "dealer_tx_amt": night_inst_trading["tx_dealer_net_amt"],
-        "has_snapshot": True
+        "has_snapshot": _night_is_live
     }
     night_institutional_5day_history.append(t0_inst_night)
-    write_institutional_snapshot(
-        t_days_dates[4].strftime('%Y-%m-%d'), "NIGHT",
-        {f: t0_inst_night[f] for f in _INST_NIGHT_FIELDS}
-    )
+    if _night_is_live:
+        write_institutional_snapshot(
+            t_days_dates[4].strftime('%Y-%m-%d'), "NIGHT",
+            {f: t0_inst_night[f] for f in _INST_NIGHT_FIELDS}
+        )
 
     last_foreign_net = institutional_5day_history[-1]["foreign_fut_net"] or 0
     prev_foreign_net = institutional_5day_history[-2]["foreign_fut_net"] or 0
@@ -3558,6 +3651,45 @@ def generate_gex_payload():
                 ld_d -= datetime.timedelta(days=1)
             msci_dt = ld_d
 
+        # 4.5 US Quadruple Witching Day (美股四巫日): 3rd Friday of Mar/Jun/Sep/Dec, pure real
+        # calendar arithmetic (same "Nth weekday of month" pattern as monthly_settlement above)
+        # — no external source needed, so this can never go stale.
+        def third_friday(y, m):
+            first = datetime.date(y, m, 1)
+            first_fri = 1 + (4 - first.weekday()) % 7
+            return datetime.date(y, m, first_fri + 14)
+
+        witching_months = [3, 6, 9, 12]
+        witching_d = None
+        for m in witching_months:
+            wd = third_friday(year, m)
+            wd_dt = datetime.datetime(wd.year, wd.month, wd.day, 21, 30, tzinfo=tw_tz)  # US market close ~4pm ET -> ~21:30-22:30 TWD, kept simple at 21:30
+            if wd_dt > curr_twd:
+                witching_d = wd_dt
+                break
+        if not witching_d:
+            wd = third_friday(year + 1, 3)
+            witching_d = datetime.datetime(wd.year, wd.month, wd.day, 21, 30, tzinfo=tw_tz)
+
+        # 4.6 FOMC Rate Decision (聯準會利率決議): real schedule fetched from the Fed's own
+        # official calendar (see fetch_fomc_meeting_dates()) rather than a hardcoded list —
+        # the Fed publishes the schedule ~1-2 years ahead, so this stays current on its own as
+        # long as this keeps re-fetching, instead of needing someone to type in next year's
+        # dates before this quietly goes stale.
+        def get_fomc_twd_hour():
+            # Rate decision: 2:00pm ET -> 02:00 TWD next day (EDT, summer) / 03:00 TWD (EST, winter)
+            return 2 if (3 < month < 11) else 3
+
+        fomc_dt = None
+        fomc_meetings = fetch_fomc_meeting_dates()
+        for meeting in sorted(fomc_meetings, key=lambda x: x["rate_decision_date"]):
+            d = meeting["rate_decision_date"]
+            twd_hour = 2 if (3 < d.month < 11) else 3
+            candidate_dt = datetime.datetime(d.year, d.month, d.day, tzinfo=tw_tz) + datetime.timedelta(days=1, hours=twd_hour)
+            if candidate_dt > curr_twd:
+                fomc_dt = candidate_dt
+                break
+
         # Helper for US Daylight Saving Time (DST) TWD Time Conversion
         # Summer (Apr-Oct EDT): US 08:30 AM -> 20:30 TWD | Winter (Nov-Mar EST): US 08:30 AM -> 21:30 TWD
         def get_us_twd_hour(m, summer_hour=20):
@@ -3702,6 +3834,36 @@ def generate_gex_payload():
                 "gex_advice": f"每週四夜盤常態數據，觀察 {jobless_dt.strftime('%H:%M')} 公布前夕情緒與美債殖利率聯動。"
             }
         ]
+
+        if witching_d:
+            candidates.append({
+                "id": "us_quad_witching",
+                "name": "美股四巫日 (Quadruple Witching Day)",
+                "category": "跨國結算",
+                "impact": "HIGH",
+                "impact_label": "🔴 跨國衝擊",
+                "pattern_type": "WINDOW_TIME",
+                "warning_lead_hours": 24,
+                "critical_lead_mins": 90,
+                "target_epoch": int(witching_d.timestamp() * 1000),
+                "date_display": witching_d.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": "美股四大衍生性商品(股指期貨/股指選擇權/個股期貨/個股選擇權)同時到期結算，尾盤爆量與美股夜盤波動同步放大，注意跨市場連動。"
+            })
+
+        if fomc_dt:
+            candidates.append({
+                "id": "fomc_rate_decision",
+                "name": "聯準會 FOMC 利率決議",
+                "category": "重磅總經",
+                "impact": "HIGH",
+                "impact_label": "🔴 波動爆發",
+                "pattern_type": "POINT_TIME",
+                "warning_lead_hours": 24,
+                "critical_lead_mins": 120,
+                "target_epoch": int(fomc_dt.timestamp() * 1000),
+                "date_display": fomc_dt.strftime("%m/%d %H:%M (台灣時間)"),
+                "gex_advice": f"發布前 30 分鐘 ({fomc_dt.strftime('%H:%M')} 起) 流動性急遽抽離，利率決議瞬間與隨後記者會期間提防台指期夜盤 50~200 點雙向劇烈刷洗！"
+            })
 
         valid_events = [e for e in candidates if e["target_epoch"] >= int(curr_twd.timestamp() * 1000)]
         valid_events.sort(key=lambda x: x["target_epoch"])
