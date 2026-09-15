@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v63.1"
+ENGINE_VERSION = "v63.2"
 
 import os
 import sys
@@ -299,13 +299,17 @@ def fetch_twse_institutional_stock_trading():
                 "foreign_stock_net": foreign_net,
                 "trust_stock_net": trust_net,
                 "dealer_stock_net": dealer_net,
-                "total_stock_net": total_net
+                "total_stock_net": total_net,
+                "is_live": True
             }
     except Exception as e:
         print(f"[Warning] Failed to fetch TWSE BFI82U: {e}")
     # Total fetch failure used to fall back to a hardcoded literal (366.13/33.66/179.34/
     # 579.13 — some past day's real numbers, frozen forever). Fall back to the last real
-    # T-0 row from the previous pipeline run instead.
+    # T-0 row from the previous pipeline run instead. `is_live: False` lets the DAY-session
+    # 5-day-history writer (see institutional_5day_history below) know this is a borrowed
+    # value and must not be persisted as today's permanent snapshot — same fix as the NIGHT
+    # session's is_live flag, applied here for parity (2026-09-16).
     _snap = _load_last_gex_snapshot()
     _hist = _snap.get('institutional_5day_history') or []
     _last_real = _hist[-1] if _hist else {}
@@ -313,7 +317,8 @@ def fetch_twse_institutional_stock_trading():
         "foreign_stock_net": _last_real.get('foreign_stock_net'),
         "trust_stock_net": _last_real.get('trust_stock_net'),
         "dealer_stock_net": _last_real.get('dealer_stock_net'),
-        "total_stock_net": _last_real.get('total_stock_net')
+        "total_stock_net": _last_real.get('total_stock_net'),
+        "is_live": False
     }
 
 
@@ -1672,7 +1677,8 @@ def fetch_official_taifex_options_matrix():
                             'foreign': {
                                 'call_net_amt': parse_amt(rows[idx+2][-1]), 'call_net_vol': parse_vol(rows[idx+2][-2]),
                                 'put_net_amt': parse_amt(rows[idx+5][-1]), 'put_net_vol': parse_vol(rows[idx+5][-2])
-                            }
+                            },
+                            'is_live': True
                         }
                         print(f"[OK] Official TAIFEX TXO Options Inst Net OI: Foreign Call={opt_inst['foreign']['call_net_vol']} ({opt_inst['foreign']['call_net_amt']}億), Put={opt_inst['foreign']['put_net_vol']} ({opt_inst['foreign']['put_net_amt']}億)")
                         snaps = load_institutional_snapshots()
@@ -1682,12 +1688,17 @@ def fetch_official_taifex_options_matrix():
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Options Trading: {e}")
 
+    # `is_live: False` here means "this snapshot is borrowed from a prior successful run" —
+    # the DAY-session 5-day-history writer must not persist it as today's real snapshot
+    # (same fix as the NIGHT session's is_live flag, applied here for parity, 2026-09-16).
     snaps = load_institutional_snapshots()
-    return snaps.get(OPT_MATRIX_SNAPSHOT_KEY) or {
+    fallback = snaps.get(OPT_MATRIX_SNAPSHOT_KEY) or {
         'foreign': {'call_net_amt': None, 'put_net_amt': None, 'call_net_vol': None, 'put_net_vol': None},
         'trust': {'call_net_amt': None, 'put_net_amt': None, 'call_net_vol': None, 'put_net_vol': None},
         'dealer': {'call_net_amt': None, 'put_net_amt': None, 'call_net_vol': None, 'put_net_vol': None}
     }
+    fallback['is_live'] = False
+    return fallback
 
 LARGE_TRADER_SNAPSHOT_KEY = "LARGE_TRADER_LAST_REAL"
 
@@ -1753,7 +1764,8 @@ def fetch_official_taifex_large_trader():
                             'top5_net': t_top5,
                             'top10_net': t_top10,
                             'top5_spec_net': t_spec5,
-                            'top10_spec_net': t_spec10
+                            'top10_spec_net': t_spec10,
+                            'is_live': True
                         }
                         snaps = load_institutional_snapshots()
                         snaps[LARGE_TRADER_SNAPSHOT_KEY] = lt_inst
@@ -1762,13 +1774,18 @@ def fetch_official_taifex_large_trader():
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Large Trader OI: {e}")
 
+    # `is_live: False` here means "borrowed from a prior successful run" — the DAY-session
+    # 5-day-history writer must not persist it as today's real snapshot (same fix as the
+    # NIGHT session's is_live flag, applied here for parity, 2026-09-16).
     snaps = load_institutional_snapshots()
-    return snaps.get(LARGE_TRADER_SNAPSHOT_KEY) or {
+    fallback = snaps.get(LARGE_TRADER_SNAPSHOT_KEY) or {
         'near': {'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
         'far': {'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
         'total': {'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
         'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None
     }
+    fallback['is_live'] = False
+    return fallback
 
 FUT_INST_OI_SNAPSHOT_KEY = "FUT_INST_OI_LAST_REAL"
 
@@ -1795,7 +1812,8 @@ def fetch_official_taifex_futures_institutional_oi():
                             res = {
                                 'dealer': int(d_row[-2].replace(',', '')),
                                 'trust': int(t_row[-2].replace(',', '')),
-                                'foreign': int(f_row[-2].replace(',', ''))
+                                'foreign': int(f_row[-2].replace(',', '')),
+                                'is_live': True
                             }
                             print(f"[OK] Official TAIFEX TX Futures Inst Net OI: Foreign={res['foreign']}, Trust={res['trust']}, Dealer={res['dealer']}")
                             snaps = load_institutional_snapshots()
@@ -1805,8 +1823,13 @@ def fetch_official_taifex_futures_institutional_oi():
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Futures Inst Net OI: {e}")
 
+    # `is_live: False` here means "borrowed from a prior successful run" — the DAY-session
+    # 5-day-history writer must not persist it as today's real snapshot (same fix as the
+    # NIGHT session's is_live flag, applied here for parity, 2026-09-16).
     snaps = load_institutional_snapshots()
-    return snaps.get(FUT_INST_OI_SNAPSHOT_KEY) or {'dealer': None, 'trust': None, 'foreign': None}
+    fallback = snaps.get(FUT_INST_OI_SNAPSHOT_KEY) or {'dealer': None, 'trust': None, 'foreign': None}
+    fallback['is_live'] = False
+    return fallback
 
 def fetch_official_taifex_pc_ratio():
     """
@@ -2895,6 +2918,18 @@ def generate_gex_payload():
         # runs ever, AND today's live fetch also fails) where these can still be None.
         return round(a + b, 2) if (a is not None and b is not None) else None
 
+    # DAY-session parity fix with the NIGHT session (2026-09-16): each of the 4 underlying
+    # fetches (options matrix, large trader, futures inst OI, TWSE stock trading) falls back
+    # to a *borrowed* last-real value on failure without erroring. Before this fix, t0_inst_day
+    # was always written to data/institutional_snapshots.json under today's date regardless —
+    # so a borrowed value could get permanently duplicated into history exactly like the NIGHT
+    # bug found 2026-09-15 (9/11 and 9/14 ending up byte-identical). Only treat today as a real
+    # snapshot, and only persist it, when ALL four sources were genuinely live this run.
+    _day_is_live = (
+        opt_inst.get('is_live', False) and lt_inst.get('is_live', False) and
+        fut_inst.get('is_live', False) and stock_inst.get('is_live', False)
+    )
+
     t0_inst_day = {
         "date": t_days[4],
         "top5_net": lt_inst.get('top5_net'),
@@ -2922,13 +2957,14 @@ def generate_gex_payload():
         "dealer_opt_call_net": opt_inst['dealer']['call_net_amt'],
         "dealer_opt_put_net": opt_inst['dealer']['put_net_amt'],
         "pc_ratio": pc_ratio_dict.get(f"{t_days_dates[4].year}/{t_days_dates[4].month}/{t_days_dates[4].day}", gex_profile['pc_ratio']),
-        "has_snapshot": True
+        "has_snapshot": _day_is_live
     }
     institutional_5day_history.append(t0_inst_day)
-    write_institutional_snapshot(
-        t_days_dates[4].strftime('%Y-%m-%d'), "DAY",
-        {f: t0_inst_day[f] for f in _INST_DAY_FIELDS}
-    )
+    if _day_is_live:
+        write_institutional_snapshot(
+            t_days_dates[4].strftime('%Y-%m-%d'), "DAY",
+            {f: t0_inst_day[f] for f in _INST_DAY_FIELDS}
+        )
 
     # 5-Day Night Session Institutional Trading History — same real-snapshot pattern as above.
     _INST_NIGHT_FIELDS = ["foreign_tx", "foreign_tx_amt", "foreign_mtx", "foreign_micro", "dealer_tx", "dealer_tx_amt"]

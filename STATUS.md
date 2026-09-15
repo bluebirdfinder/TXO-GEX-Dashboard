@@ -1,12 +1,23 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.1)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.2)
 
-**當前版本**：`v63.1` (2026-09-16 散戶多空比分母算錯修正、真實FOMC/四巫日日曆、VIX歷史回補、法人籌碼歷史重複bug修復發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.1)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.1)
+**當前版本**：`v63.2` (2026-09-16 5日法人籌碼矩陣「+0」誤顯示修正、DAY session is_live標記發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.2)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.2)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v63.2 核心更新亮點 (5日矩陣「+0」誤顯示修正 ✕ DAY session is_live標記)
+
+### 🔴 1. 「期貨未平倉5日歷程」「現貨與選擇權5日歷程」兩張表格「+0」誤顯示修正為「—」
+- 使用者實測親自抓到：沒有快照的日期，`null` 被 `row.top5_net || 0` 誤顯示成「+0」，讓人誤以為法人零進出，而不是沒有資料。
+- 比照先前NIGHT表格的修法，新增 `cell()`/`cellAmt()` helper，10個欄位全部改為 `null` 顯示「—」。
+- 一併修正 `pc_ratio` 欄位借用「今天」數字冒充過去日期資料的問題。
+
+### 🟡 2. DAY session 法人快照補上 `is_live` 標記
+- 比照9/15修過的NIGHT session bug（借用舊值被誤存成永久歷史），DAY session的4支抓取函式風險結構相同，已補上同樣的防呆機制。
+- 只有4個來源這次執行都真正即時抓到，才會把T-0數據寫入永久歷史快照。
 
 ## 🎯 v63.1 核心更新亮點 (散戶多空比分母修正 ✕ 真實FOMC/四巫日日曆 ✕ 歷史回補 ✕ 重複bug修復)
 
