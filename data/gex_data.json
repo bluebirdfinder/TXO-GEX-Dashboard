@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 45558.7,
     "day_total_vex": 221.71
   },
-  "last_updated_time": "2026-09-16 07:26",
+  "last_updated_time": "2026-09-16 07:29",
   "spot_price": 45511.49,
   "spot_change": -351.03,
   "spot_change_pct": -0.77,
@@ -22331,20 +22331,20 @@
     "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤變動 -510 口（約 -46.15 億 TWD），且在小台與微台變動 617 口，籌碼結構維繫中性姿態。",
     "is_live": true
   },
-  "retail_mini_ratio": -0.14,
-  "retail_micro_ratio": 40.95,
+  "retail_mini_ratio": 0.0,
+  "retail_micro_ratio": 0.0,
   "retail_sentiment_details": {
     "mini_mtx": {
       "title": "小台散戶籌碼 (MXF)",
       "long_oi": 36938,
       "short_oi": 36991,
       "net_oi": -53,
-      "daily_change": 0,
+      "daily_change": 1330,
       "total_oi": null,
       "near_oi": 45532,
-      "ratio": -0.14,
-      "total_ratio": -0.14,
-      "prev_ratio": -0.14,
+      "ratio": 0.0,
+      "total_ratio": 0.0,
+      "prev_ratio": -2.53,
       "sentiment_tag": "⚖️ 散戶多空平衡"
     },
     "micro_tmf": {
@@ -22352,26 +22352,26 @@
       "long_oi": 20154,
       "short_oi": 0,
       "net_oi": 20154,
-      "daily_change": -26530,
+      "daily_change": -22413,
       "total_oi": null,
       "near_oi": 45532,
-      "ratio": 40.95,
-      "total_ratio": 40.95,
-      "prev_ratio": 40.95,
-      "sentiment_tag": "🔴 散戶極度做多 (軋空看壓)"
+      "ratio": 0.0,
+      "total_ratio": 0.0,
+      "prev_ratio": 27.64,
+      "sentiment_tag": "⚖️ 散戶多空平衡"
     },
     "broker_snapshot": {
       "foreign_tx_net": -83223,
-      "foreign_tx_change": 0,
+      "foreign_tx_change": -565,
       "foreign_call_net": -1.05,
-      "foreign_call_change": 0.0,
+      "foreign_call_change": 0.20999999999999996,
       "foreign_put_net": 1.33,
       "foreign_put_change": 0.0,
       "vix_index": 27.29,
       "vix_change": -0.54,
       "market_turnover": null
     },
-    "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">&#128161; <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--put-color); font-weight:700;\">-0.14%</span>（全月合計未沖銷契約數為基準，淨部位 -53 口／近月單一契約月基準 -0.12%），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+40.95%</span>（淨部位 +20,154 口／近月單一契約月基準 +44.26%）。散戶部位維持強烈偏多姿態。</p>\n    <p style=\"margin-bottom: 0;\">&#9878; <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">27.29</span> (-0.54)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
+    "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">&#128161; <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+0.00%</span>（全月合計未沖銷契約數為基準，淨部位 -53 口／近月單一契約月基準 -0.12%），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+0.00%</span>（淨部位 +20,154 口／近月單一契約月基準 +44.26%）。散戶部位維持強烈偏多姿態。</p>\n    <p style=\"margin-bottom: 0;\">&#9878; <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">27.29</span> (-0.54)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
   },
   "specific_traders": {
     "top5_specific_net": 17190,
@@ -22388,7 +22388,7 @@
   "total_gex_plus": 10.49,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-16 07:26",
+    "last_updated": "2026-09-16 07:29",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -28367,7 +28367,7 @@
       "ex_date": "08/13",
       "ex_dividend": 1.75,
       "ex_type": "除息",
-      "lt_data_unavailable": false,
+      "lt_data_unavailable": true,
       "spot_data_unavailable": false,
       "it_adoption_ratio": null,
       "it_consecutive_buy_days": 0,
@@ -28381,14 +28381,14 @@
       "spot_trust": 5013,
       "spot_dealer": 109,
       "spot_gov": 0,
-      "top5_net_oi": -70,
-      "top10_net_oi": -87,
-      "top5_inst_oi": -290,
-      "top10_inst_oi": -348,
+      "top5_net_oi": 0,
+      "top10_net_oi": 0,
+      "top5_inst_oi": 0,
+      "top10_inst_oi": 0,
       "foreign_net": 92,
-      "dealer_net": -87,
-      "intent_tag": "🛡️ 對沖避險",
-      "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
+      "dealer_net": 0,
+      "intent_tag": "⚖️ 觀望分歧",
+      "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
       "trend": "Bear"
