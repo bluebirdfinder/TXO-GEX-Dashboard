@@ -14,6 +14,22 @@ let gexData = null;
 let klinesCacheData = null;
 let momentumData = null;
 
+// Last-resort fallback numbers for when gexData is missing a GEX level field outright.
+// Found 2026-09-15: 5 different functions each independently typed in their own disagreeing
+// literal for the same logical field (call_wall_strike alone had 47400/46400/47300 across
+// different functions) — the same "34 inconsistent app.js defaults" pattern audited and
+// unified there the night before, just not yet done for room.js. All of these call sites are
+// actually dead code in practice (the backend always computes these fields), so this exists
+// only to stop disagreeing numbers from being copy-pasted again — seeded from the same real
+// 2026-09-15 pipeline run as app.js's CHART_DEFAULTS.
+const ROOM_CHART_DEFAULTS = {
+  txf_price: 46588.0,
+  zero_gamma_level: 45040.4,
+  call_wall_strike: 45700.0,
+  put_wall_strike: 46000.0,
+  max_pain_strike: 45050.0
+};
+
 // Multi-Chart Instances
 let mainChart = null;
 let subChart1 = null;
@@ -35,6 +51,7 @@ let cciLineSeries = null;
 let cciMarkers = [];
 
 let activeSub4 = 'adx'; // Default to ADX Pro V3
+let momentumPollTimer = null; // 大戶散戶動能：輪詢 /api/momentum 的計時器
 let leftPanelCollapsed = false;
 let rightPanelCollapsed = false;
 let advisorAttachedImage = null;
@@ -52,7 +69,8 @@ let sub4Series = {
   dmiAdx: null,
   momentumHist: null,
   momentumLine: null,
-  retailLine: null
+  retailLine: null,
+  marketOrderLine: null
 };
 
 // Overlay Series References on Main Chart
@@ -154,13 +172,13 @@ async function loadDashboardData() {
   
   if (!gexData) {
     gexData = {
-      txf_price: 47329,
-      zero_gamma_level: 47217.4,
-      call_wall_strike: 47400,
-      put_wall_strike: 47050,
-      max_pain_strike: 46600,
-      session_shift: { txf_shift: -141 },
-      vix_info: { taifex_vix: 26.09 }
+      txf_price: ROOM_CHART_DEFAULTS.txf_price,
+      zero_gamma_level: ROOM_CHART_DEFAULTS.zero_gamma_level,
+      call_wall_strike: ROOM_CHART_DEFAULTS.call_wall_strike,
+      put_wall_strike: ROOM_CHART_DEFAULTS.put_wall_strike,
+      max_pain_strike: ROOM_CHART_DEFAULTS.max_pain_strike,
+      session_shift: { txf_shift: 0 },
+      vix_info: { taifex_vix: null }
     };
   }
 
@@ -699,39 +717,16 @@ function generateIndicatorsData(tf) {
     });
   }
 
-  // --- 🐂 大戶散戶動能指標 (1:1 對齊老墨 XQ / TradingView 實盤動能柱與動能線) ---
-  const momentumHist = [];
-  const momentumLine = [];
-  const retailLine = [];
-  const flowArr = [];
-
-  for (let i = 0; i < count; i++) {
-    const t = candles[i].time;
-    const c = closes[i];
-    const o = opens[i];
-    const h = highs[i];
-    const l = lows[i];
-    const v = volumes[i].value;
-
-    const range = Math.max(h - l, 1);
-    // 資金流向因子 = ((C - O) / Range) * Volume
-    const flowVal = ((c - o) / range) * v * 0.4;
-    flowArr.push(flowVal);
-
-    // 10 週期平滑大戶動能
-    let sum10 = 0;
-    const len10 = Math.min(i + 1, 10);
-    for (let k = 0; k < len10; k++) sum10 += flowArr[i - k];
-    const smoothFlow = Math.round(sum10 / len10);
-
-    // 紅多綠空柱體 (正值紅柱做多，負值綠柱做空)
-    const isBull = flowVal >= 0;
-    const histColor = isBull ? 'rgba(255, 71, 87, 0.85)' : 'rgba(46, 213, 115, 0.85)';
-
-    momentumHist.push({ time: t, value: Math.round(flowVal), color: histColor });
-    momentumLine.push({ time: t, value: smoothFlow });
-    retailLine.push({ time: t, value: Math.round(-smoothFlow * 0.65) });
-  }
+  // --- 🐂 大戶散戶動能指標 (陳玠儒/股市擺渡人方法論：委託口差 + 成交筆數差) ---
+  // 2026-09-13 self-audit 更正：這裡原本用 K 棒開高低收公式湊出一條假的「大戶動能」與
+  // 「散戶反向線」（散戶=大戶乘負數），跟真實法人/委託簿資料完全無關。已移除。
+  // 真實數據改由 scripts/fubon_api_provider.py 的 Books(五檔)/Trades(逐筆成交) 頻道即時算，
+  // 透過 fetchAndAppendMomentumBar() 用真實資料即時附加最新一根 30 分鐘 bar，見該函式定義。
+  // 這裡刻意留空陣列：對「還沒有真實資料的歷史時段」，寧可不畫，也不假裝有數據。
+  const momentumHist = [];   // 大戶委託口差 (紅柱，即時附加)
+  const momentumLine = [];   // 保留給未來需要的平滑線，目前未使用
+  const retailLine = [];     // 散戶成交筆數差 (綠柱，即時附加)
+  const marketOrderLine = []; // 市場委買委賣口差 (黃線，即時附加)
 
   // --- 🚀 Authentic ADX Pro V3 (Dual Color + 4-State Breakout + Divergence) ---
   // 1:1 對齊 adx_dual_color_v3.pine 演算法
@@ -752,6 +747,8 @@ function generateIndicatorsData(tf) {
 
   let lastBoBar = -100;
   let lastBdBar = -100;
+  let lastSwingHigh = null; // {price, adx} of the most recent confirmed swing high — real
+  let lastSwingLow = null;  // reference points for divergence, not a fixed price level
 
   for (let i = 0; i < count; i++) {
     const t = candles[i].time;
@@ -813,17 +810,32 @@ function generateIndicatorsData(tf) {
     adxLine.push({ time: t, value: adx });
     adxHist.push({ time: t, value: adx, color: adxColor });
 
-    // ADX Pro V3 頂背離與底背離判定 (1:1 對齊 TradingView 實盤背離圓點與標籤)
-    if (i >= 15) {
-      // 頂背離: K線在波段頂峰 (8月28-29日 47,400~47,590)，但 ADX 未創新高或走平
-      if (highs[i] >= 47200 && (highs[i] >= highs[i - 1]) && (i - lastBoBar >= 25)) {
-        adxSignals.push({ time: t, position: 'aboveBar', color: '#00E676', shape: 'arrowDown', text: '▼ 頂背離' });
-        lastBoBar = i;
+    // ADX Pro V3 頂背離與底背離判定：比較「本次波段極值」與「上一次波段極值」當下的真實 ADX
+    // 值（真實背離定義：價格創新高但趨勢強度未跟著創高＝頂背離；價格創新低但趨勢強度未跟著
+    // 創高＝底背離），完全依當時真實價格與 ADX 相對關係判斷，不綁定任何固定價位——價格永久
+    // 脫離舊區間後這個判斷依然成立，不會失效。
+    if (i >= 2) {
+      const priorIdx = i - 1;
+      const isConfirmedPeak = highs[priorIdx] > highs[priorIdx - 1] && highs[priorIdx] >= highs[i];
+      const isConfirmedTrough = lows[priorIdx] < lows[priorIdx - 1] && lows[priorIdx] <= lows[i];
+
+      if (isConfirmedPeak) {
+        const peakPrice = highs[priorIdx];
+        const peakAdx = adxValues[priorIdx];
+        if (lastSwingHigh && peakPrice > lastSwingHigh.price && peakAdx < lastSwingHigh.adx && (i - lastBoBar >= 25)) {
+          adxSignals.push({ time: candles[priorIdx].time, position: 'aboveBar', color: '#00E676', shape: 'arrowDown', text: '▼ 頂背離' });
+          lastBoBar = i;
+        }
+        lastSwingHigh = { price: peakPrice, adx: peakAdx };
       }
-      // 底背離: K線在波段相對低檔 (9月9-10日 46,050~46,150 觸碰地板牆)，但 ADX 動能開始翻揚
-      else if (lows[i] <= 46150 && (lows[i] <= lows[i - 1]) && (i - lastBdBar >= 25)) {
-        adxSignals.push({ time: t, position: 'belowBar', color: '#FF5252', shape: 'arrowUp', text: '▲ 底背離' });
-        lastBdBar = i;
+      if (isConfirmedTrough) {
+        const troughPrice = lows[priorIdx];
+        const troughAdx = adxValues[priorIdx];
+        if (lastSwingLow && troughPrice < lastSwingLow.price && troughAdx < lastSwingLow.adx && (i - lastBdBar >= 25)) {
+          adxSignals.push({ time: candles[priorIdx].time, position: 'belowBar', color: '#FF5252', shape: 'arrowUp', text: '▲ 底背離' });
+          lastBdBar = i;
+        }
+        lastSwingLow = { price: troughPrice, adx: troughAdx };
       }
     }
   }
@@ -1028,6 +1040,7 @@ function generateIndicatorsData(tf) {
     momentumHist,
     momentumLine,
     retailLine,
+    marketOrderLine,
     adxLine,
     adxHist,
     adxSignals,
@@ -1106,6 +1119,8 @@ function renderSub4Chart(data) {
   if (sub4Series.momentumHist) { subChart4.removeSeries(sub4Series.momentumHist); sub4Series.momentumHist = null; }
   if (sub4Series.momentumLine) { subChart4.removeSeries(sub4Series.momentumLine); sub4Series.momentumLine = null; }
   if (sub4Series.retailLine) { subChart4.removeSeries(sub4Series.retailLine); sub4Series.retailLine = null; }
+  if (sub4Series.marketOrderLine) { subChart4.removeSeries(sub4Series.marketOrderLine); sub4Series.marketOrderLine = null; }
+  stopMomentumLivePolling();
 
   const badge = document.getElementById('pane-4-badge');
 
@@ -1153,28 +1168,40 @@ function renderSub4Chart(data) {
       title: 'Zero'
     });
   } else if (activeSub4 === 'momentum') {
-    if (badge) badge.innerText = '🐂 大戶散戶動能 (陳玠儒/老墨 實盤籌碼量能柱 & 黃綠動能線)';
-    
-    // 1. 大戶買賣動能量能柱 (紅多綠空 1:1 復刻陳玠儒/老墨實盤)
+    // 2026-09-13 更正：此副圖過去用 K 棒公式湊假數據，已移除。
+    // 現在只畫「這個 session 開始追蹤之後」真正收到的富邦 Books(五檔)/Trades(逐筆成交) 資料，
+    // 30分鐘 bar 由 fetchAndAppendMomentumBar() 即時輪詢附加，見該函式與後端
+    // scripts/fubon_api_provider.py 的 get_momentum_bar_30m()。歷史時段（此 session 開始前）
+    // 沒有真數據可畫，故意留白，不補假資料。
+    const symbolCode = (currentActiveSymbol?.symbol || activeContract || '').toUpperCase();
+    const isMomentumEligible = GEX_SUPPORTED_SYMBOLS.includes(symbolCode); // 目前後端只訂閱了 TXF
+    if (badge) {
+      badge.innerText = isMomentumEligible
+        ? '🐂 大戶散戶動能 (真實 Books/Trades 即時串接，2026-09-13起，僅 TXF 有資料)'
+        : '🐂 大戶散戶動能 (目前僅 TXF/MXF/MTX 有真實委託簿數據，此商品尚未支援)';
+    }
+
+    // 1. 大戶委託口差 (紅柱=偏多掛單較多，綠柱=偏空掛單較多；來源：Books 五檔委買委賣總口數差)
     sub4Series.momentumHist = subChart4.addHistogramSeries({
       priceScaleId: 'right',
-      title: '大戶動能柱'
+      title: '大戶委託口差'
     });
 
-    // 2. 平滑大戶動能累積線 (亮黃多頭/青綠空頭)
-    sub4Series.momentumLine = subChart4.addLineSeries({
-      color: '#FFEB3B',
-      lineWidth: 2,
-      priceScaleId: 'right',
-      title: '大戶動能線'
-    });
-
-    // 3. 散戶反向對做線 (天藍色)
+    // 2. 散戶成交筆數差 (青綠色；來源：Trades 逐筆成交，買筆數-賣筆數，非口數)
     sub4Series.retailLine = subChart4.addLineSeries({
       color: '#00CEC9',
       lineWidth: 1.5,
       priceScaleId: 'right',
-      title: '散戶反向線'
+      title: '散戶成交筆數差'
+    });
+
+    // 3. 市場委買委賣口差 (黃線；目前與大戶委託口差同源，見後端註解說明限制)
+    sub4Series.marketOrderLine = subChart4.addLineSeries({
+      color: '#FFEB3B',
+      lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Dashed,
+      priceScaleId: 'right',
+      title: '市場委買委賣口差'
     });
 
     // 4. 0 基準水平線
@@ -1187,14 +1214,70 @@ function renderSub4Chart(data) {
     });
 
     sub4Series.momentumHist.setData(data.momentumHist);
-    sub4Series.momentumLine.setData(data.momentumLine);
     sub4Series.retailLine.setData(data.retailLine);
+    sub4Series.marketOrderLine.setData(data.marketOrderLine);
+
+    if (isMomentumEligible) startMomentumLivePolling(symbolCode);
   }
 }
 
 /**
  * Render Overlays on Main Chart
  */
+/**
+ * 大戶散戶動能：即時輪詢後端 /api/momentum，把真實的「目前這根 30 分鐘 bar」
+ * 附加到圖表最新一個點（lightweight-charts 的 series.update() 對同一個 time 會覆蓋、
+ * 對新 time 會新增一筆，正好符合「bar 還在進行中就不斷更新最新值」的需求）。
+ * 只有在 Sub-Chart 4 切到 'momentum' 分頁時才會呼叫（見 renderSub4Chart）。
+ */
+async function fetchAndAppendMomentumBar(symbol) {
+  try {
+    const res = await fetch(`http://localhost:8000/api/momentum?symbol=${encodeURIComponent(symbol)}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const payload = await res.json();
+    const bar = payload && payload.bar;
+    if (!bar || activeSub4 !== 'momentum') return;
+
+    const t = Math.floor(bar.bar_start_ts);
+    const isBull = bar.big_order_diff >= 0;
+
+    if (sub4Series.momentumHist) {
+      sub4Series.momentumHist.update({
+        time: t,
+        value: bar.big_order_diff,
+        color: isBull ? 'rgba(255, 71, 87, 0.85)' : 'rgba(46, 213, 115, 0.85)'
+      });
+    }
+    if (sub4Series.retailLine) {
+      sub4Series.retailLine.update({ time: t, value: bar.retail_trade_count_diff });
+    }
+    if (sub4Series.marketOrderLine) {
+      sub4Series.marketOrderLine.update({ time: t, value: bar.market_order_diff });
+    }
+
+    const badge = document.getElementById('pane-4-badge');
+    if (badge && !payload.books_subscribed && !payload.trades_subscribed) {
+      badge.innerText = '🐂 大戶散戶動能 (後端尚未連上富邦 Books/Trades — 檢查 live_price_server.py 是否已啟動)';
+    }
+  } catch (e) {
+    // Gateway server (live_price_server.py) not running locally — fail silently,
+    // this is expected whenever the user isn't running it (e.g. this cloud session).
+  }
+}
+
+function startMomentumLivePolling(symbol) {
+  stopMomentumLivePolling();
+  fetchAndAppendMomentumBar(symbol);
+  momentumPollTimer = setInterval(() => fetchAndAppendMomentumBar(symbol), 5000);
+}
+
+function stopMomentumLivePolling() {
+  if (momentumPollTimer) {
+    clearInterval(momentumPollTimer);
+    momentumPollTimer = null;
+  }
+}
+
 function renderMainOverlays(data) {
   // Clear old series
   if (overlaySeries.ribbons.ma7) { mainChart.removeSeries(overlaySeries.ribbons.ma7); overlaySeries.ribbons.ma7 = null; }
@@ -1326,11 +1409,11 @@ function drawGexHorizontalRays(candles) {
   if (!candleSeries || !gexData) return;
   clearGexPriceLines();
 
-  const cw = gexData.call_wall_strike || 47400;
-  const vex = (gexData.zero_gamma_level ? gexData.zero_gamma_level - 0.1 : 47217.3);
-  const zg = gexData.zero_gamma_level || 47217.4;
-  const pw = gexData.put_wall_strike || 47050;
-  const mp = gexData.max_pain_strike || 46600;
+  const cw = gexData.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
+  const vex = (gexData.zero_gamma_level ? gexData.zero_gamma_level - 0.1 : ROOM_CHART_DEFAULTS.zero_gamma_level - 0.1);
+  const zg = gexData.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const pw = gexData.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
 
   // 1. Call Wall (賣權強壓天花板) - 粉紅實線 2px
   priceLines.cw = candleSeries.createPriceLine({
@@ -1470,10 +1553,10 @@ function renderLeftPanel() {
     }
   }
   
-  const cw = gexData?.call_wall_strike || 46400;
-  const zg = gexData?.zero_gamma_level || 46219.6;
-  const pw = gexData?.put_wall_strike || 46000;
-  const mp = gexData?.max_pain_strike || 45600;
+  const cw = gexData?.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
+  const zg = gexData?.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const pw = gexData?.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData?.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
 
   // 1. Triple indices in left panel
   const topTaiex = document.getElementById('top-val-taiex');
@@ -1504,50 +1587,67 @@ function renderLeftPanel() {
     topChgOtc.style.color = chg >= 0 ? 'var(--call-color)' : 'var(--put-color)';
   }
 
-  // 2. Main Selected Symbol Quotes & Change
+  // 2. Main Selected Symbol Quotes & Change — real values (TAIEX/OTC reuse the same real
+  // change/% already computed above for the header pills; TXF/MTX/MXF uses the real
+  // night-vs-day session close spread, same figure app.js's txf_shift already shows).
   const lDiffEl = document.getElementById('left-price-diff');
   const lPctEl = document.getElementById('left-price-pct');
   if (lDiffEl && lPctEl) {
+    let diff = null, pct = null;
     if (currentActiveSymbol.symbol === 'TXF' || currentActiveSymbol.symbol === 'MTX' || currentActiveSymbol.symbol === 'MXF') {
-      lDiffEl.innerText = '+401';
-      lDiffEl.style.color = 'var(--call-color)';
-      lPctEl.innerText = '(+0.87%)';
-      lPctEl.style.color = 'var(--call-color)';
+      const dayTxf = gexData?.day_txf_price;
+      const nightTxf = gexData?.night_txf_price;
+      if (dayTxf && nightTxf) {
+        diff = nightTxf - dayTxf;
+        pct = (diff / dayTxf) * 100;
+      }
     } else if (currentActiveSymbol.symbol === 'TAIEX') {
-      lDiffEl.innerText = '-755.64';
-      lDiffEl.style.color = 'var(--put-color)';
-      lPctEl.innerText = '(-1.61%)';
-      lPctEl.style.color = 'var(--put-color)';
+      diff = gexData?.spot_change;
+      pct = gexData?.spot_change_pct;
     } else if (currentActiveSymbol.symbol === 'OTC') {
-      lDiffEl.innerText = '-9.72';
-      lDiffEl.style.color = 'var(--put-color)';
-      lPctEl.innerText = '(-2.40%)';
-      lPctEl.style.color = 'var(--put-color)';
+      diff = gexData?.two_change;
+      pct = gexData?.two_change_pct;
+    }
+    if (diff !== null && diff !== undefined && pct !== null && pct !== undefined) {
+      const sign = diff >= 0 ? '+' : '';
+      const color = diff >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+      lDiffEl.innerText = `${sign}${diff.toFixed(diff < 100 ? 2 : 0)}`;
+      lDiffEl.style.color = color;
+      lPctEl.innerText = `(${sign}${pct.toFixed(2)}%)`;
+      lPctEl.style.color = color;
+    } else {
+      lDiffEl.innerText = '—';
+      lPctEl.innerText = '(—)';
+      lDiffEl.style.color = lPctEl.style.color = 'var(--text-muted)';
     }
   }
 
-  // 3. OHLC stats
+  // 3. OHLC stats — 昨收(prev close) is real for all three (derived from real price minus
+  // real change, or the other session's real close for TXF). 開盤/最高/最低 have no real
+  // intraday source wired up yet (that needs the live tick stream's own running high/low,
+  // which lives in live_price_server.py's scope, not touched here) — shown as "—" instead
+  // of a frozen number that was never real to begin with.
   const lOpen = document.getElementById('left-open');
   const lHigh = document.getElementById('left-high');
   const lLow = document.getElementById('left-low');
   const lPrev = document.getElementById('left-prev');
   if (lOpen && lHigh && lLow && lPrev) {
+    let prevClose = null;
     if (currentActiveSymbol.symbol === 'TXF') {
-      lOpen.innerText = '46,537';
-      lHigh.innerText = '46,590';
-      lLow.innerText = '46,505';
-      lPrev.innerText = '46,187';
+      prevClose = gexData?.day_txf_price;
     } else if (currentActiveSymbol.symbol === 'TAIEX') {
-      lOpen.innerText = '46,500.2';
-      lHigh.innerText = '46,588.0';
-      lLow.innerText = '46,120.5';
-      lPrev.innerText = '46,940.49';
+      if (gexData?.spot_price !== undefined && gexData?.spot_change !== undefined) {
+        prevClose = gexData.spot_price - gexData.spot_change;
+      }
     } else if (currentActiveSymbol.symbol === 'OTC') {
-      lOpen.innerText = '401.5';
-      lHigh.innerText = '402.8';
-      lLow.innerText = '394.2';
-      lPrev.innerText = '405.24';
+      if (gexData?.two_price !== undefined && gexData?.two_change !== undefined) {
+        prevClose = gexData.two_price - gexData.two_change;
+      }
     }
+    lOpen.innerText = '—';
+    lHigh.innerText = '—';
+    lLow.innerText = '—';
+    lPrev.innerText = (prevClose !== null && !isNaN(prevClose)) ? prevClose.toLocaleString(undefined, { minimumFractionDigits: prevClose < 500 ? 2 : 1, maximumFractionDigits: prevClose < 500 ? 2 : 1 }) : '—';
   }
 
   // Header Title
@@ -1590,6 +1690,49 @@ function renderLeftPanel() {
     dMPEl.style.color = distMP >= 0 ? 'var(--call-color)' : 'var(--put-color)';
   }
 
+  // Strike levels themselves (🛡️ GEX 造市商五大防線 card). Found 2026-09-15: this whole card
+  // was permanently frozen at whatever numbers were typed into room.html's initial markup —
+  // cw/zg/pw/mp above were already real and used for the *distance* spans right next to these,
+  // but nothing ever wrote the real number into the level display itself.
+  const vex = gexData?.gex_plus_flip !== undefined ? gexData.gex_plus_flip : zg;
+  const sCWEl = document.getElementById('left-strike-cw');
+  if (sCWEl) sCWEl.innerText = Math.round(cw).toLocaleString();
+  const sVexEl = document.getElementById('left-strike-vex');
+  if (sVexEl) sVexEl.innerText = vex.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const sZGEl = document.getElementById('left-strike-zg');
+  if (sZGEl) sZGEl.innerText = zg.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const sPWEl = document.getElementById('left-strike-pw');
+  if (sPWEl) sPWEl.innerText = Math.round(pw).toLocaleString();
+  const sMPEl = document.getElementById('left-strike-mp');
+  if (sMPEl) sMPEl.innerText = Math.round(mp).toLocaleString();
+
+  // 🏛️ 法人籌碼體質 card. Found 2026-09-15: this card had no element ids at all in
+  // room.html — pure static placeholder text ("-12,450 口" etc.), never touched by any JS,
+  // permanently frozen since the feature was built. Wired to the same real fields already
+  // used elsewhere (institutional_sentiment from the futures-institutional-OI fetch, real
+  // pc_ratio, and today's real margin-maintenance estimate from history_10_sessions).
+  const instSent = gexData?.institutional_sentiment;
+  const instTagEl = document.getElementById('left-inst-tag');
+  if (instTagEl) instTagEl.innerText = instSent?.tag || '—';
+  const instForeignEl = document.getElementById('left-inst-foreign');
+  if (instForeignEl && instSent?.foreign_net_oi !== undefined) {
+    const v = instSent.foreign_net_oi;
+    const chgNote = instSent.daily_change >= 0 ? '回補' : '加碼放空';
+    instForeignEl.innerText = `${v >= 0 ? '+' : ''}${v.toLocaleString()} 口 (${chgNote})`;
+    instForeignEl.style.color = v >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+  }
+  const instPcEl = document.getElementById('left-inst-pcratio');
+  if (instPcEl && gexData?.pc_ratio !== undefined) {
+    const pcv = gexData.pc_ratio;
+    instPcEl.innerText = `${pcv.toFixed(1)}% ${pcv > 105 ? '🔴 偏多看撐' : '🟢 偏空看壓'}`;
+  }
+  const instMarginEl = document.getElementById('left-inst-margin');
+  const t0Session = (gexData?.history_10_sessions || []).find(s => s.id === 't0_night' || s.id === 't0_day');
+  if (instMarginEl) {
+    const mm = t0Session?.margin_maint_market;
+    instMarginEl.innerText = (mm == null) ? '—' : `${mm.toFixed(1)}% ${mm >= 150 ? '🟢 安定' : (mm >= 140 ? '🟡 常態' : '🟠 警戒')}`;
+  }
+
   // Header quick pills
   const topZG = document.getElementById('top-stat-zg');
   const topCW = document.getElementById('top-stat-cw');
@@ -1612,8 +1755,12 @@ function renderLeftPanel() {
     topVVIX.innerText = `${vvixVal.toFixed(2)} ${badge}`;
   }
 
-  // Update Left Macro Risk HUD
-  updateMacroRiskHUD(gexData.macro_risk_dashboard || null);
+  // Update Left Macro Risk HUD. Path bug fixed 2026-09-15: macro_risk_dashboard is nested
+  // under macro_events_radar in the real payload (see generate_gex_payload()'s
+  // "macro_events_radar": macro_events_data), not at the top level — this HUD had silently
+  // shown its own hardcoded fallback literals forever since gexData.macro_risk_dashboard was
+  // always undefined.
+  updateMacroRiskHUD(gexData.macro_events_radar?.macro_risk_dashboard || null);
 }
 
 /**
@@ -2052,10 +2199,10 @@ function initAdvisorFeed() {
   if (!feed) return;
 
   const txf = gexData ? gexData.txf_price : 47187;
-  const zg = gexData ? gexData.zero_gamma_level : 47118.5;
-  const cw = gexData ? gexData.call_wall_strike : 47300;
-  const pw = gexData ? gexData.put_wall_strike : 46950;
-  const mp = gexData ? gexData.max_pain_strike : 46500;
+  const zg = gexData ? gexData.zero_gamma_level : ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const cw = gexData ? gexData.call_wall_strike : ROOM_CHART_DEFAULTS.call_wall_strike;
+  const pw = gexData ? gexData.put_wall_strike : ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData ? gexData.max_pain_strike : ROOM_CHART_DEFAULTS.max_pain_strike;
 
   const isPosGamma = txf >= zg;
   const distCW = cw - txf;
@@ -2095,10 +2242,10 @@ function handleAdvisorAction(action) {
   if (!feed) return;
 
   const txf = gexData ? gexData.txf_price : 47187;
-  const zg = gexData ? gexData.zero_gamma_level : 47118.5;
-  const cw = gexData ? gexData.call_wall_strike : 47300;
-  const pw = gexData ? gexData.put_wall_strike : 46950;
-  const mp = gexData ? gexData.max_pain_strike : 46500;
+  const zg = gexData ? gexData.zero_gamma_level : ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const cw = gexData ? gexData.call_wall_strike : ROOM_CHART_DEFAULTS.call_wall_strike;
+  const pw = gexData ? gexData.put_wall_strike : ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData ? gexData.max_pain_strike : ROOM_CHART_DEFAULTS.max_pain_strike;
 
   let title = '';
   let content = '';
@@ -2218,10 +2365,10 @@ async function sendAdvisorQuery(query) {
  */
 async function callGeminiApi(apiKey, query, base64Image) {
   const currentPrice = (currentActiveSymbol && currentActiveSymbol.base_price) || gexData?.txf_price || 46594;
-  const cw = gexData?.call_wall_strike || 47400;
-  const zg = gexData?.zero_gamma_level || 47217.4;
-  const pw = gexData?.put_wall_strike || 47050;
-  const mp = gexData?.max_pain_strike || 46600;
+  const cw = gexData?.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
+  const zg = gexData?.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const pw = gexData?.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData?.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
   const vix = gexData?.vix_info?.taifex_vix || 26.09;
   const vvix = gexData?.vix_info?.us_vvix || 102.66;
   const dxy = 98.845;
@@ -2300,10 +2447,10 @@ function formatGeminiMarkdown(md) {
  */
 function generateQuantAdvisorResponse(query, hasImage = false) {
   const txf = gexData ? gexData.txf_price : 47187;
-  const zg = gexData ? gexData.zero_gamma_level : 47118.5;
-  const cw = gexData ? gexData.call_wall_strike : 47300;
-  const pw = gexData ? gexData.put_wall_strike : 46950;
-  const mp = gexData ? gexData.max_pain_strike : 46500;
+  const zg = gexData ? gexData.zero_gamma_level : ROOM_CHART_DEFAULTS.zero_gamma_level;
+  const cw = gexData ? gexData.call_wall_strike : ROOM_CHART_DEFAULTS.call_wall_strike;
+  const pw = gexData ? gexData.put_wall_strike : ROOM_CHART_DEFAULTS.put_wall_strike;
+  const mp = gexData ? gexData.max_pain_strike : ROOM_CHART_DEFAULTS.max_pain_strike;
   const vvix = gexData?.vix_info?.vvix || 102.66;
 
   const qLower = (query || '').toLowerCase();
@@ -2953,25 +3100,41 @@ function runBirdQuantScreener() {
 
   setTimeout(() => {
     const results = [];
+    // Real per-symbol technical signals from data/screener_cache.json (built by
+    // scripts/build_screener_cache.py off real TWSE/TPEx daily OHLCV) — replaces the
+    // previous hash-of-ticker-string generator that fabricated every flag below regardless
+    // of the actual market. A symbol missing from this cache, or explicitly marked
+    // history_unavailable (no real price history TWSE/TPEx would give up), is skipped
+    // rather than shown with an invented signal.
+    const realScreenerMap = {};
+    if (screenerCacheData && Array.isArray(screenerCacheData.symbols)) {
+      screenerCacheData.symbols.forEach(s => { realScreenerMap[s.symbol] = s; });
+    }
+
     symbolsUniverse.forEach(item => {
-      let hash = 0;
-      for (let c = 0; c < item.symbol.length; c++) hash = (hash * 37 + item.symbol.charCodeAt(c)) % 10000;
-      
-      const hasRocketS = (hash % 3 === 0);
-      const hasBirdS = (hash % 4 === 0);
-      const hasRestartS = (hash % 5 === 0);
-      const hasRestartN = (hash % 4 === 1);
-      const hasRocketW = (hash % 6 === 0);
-      const hasBirdN = (hash % 5 === 2);
-      const isMacdFlip = (hash % 3 === 1);
-      const isMacdGold = (hash % 4 === 2);
-      const isGradeS = (hash % 3 === 0);
-      const isGradeA = (hash % 2 === 0);
-      const hasDemark = (hash % 7 === 0);
-      const has5k = (hash % 5 === 3);
-      const hasVol = (hash % 4 === 3);
-      const hasItAdopt = (hash % 4 === 0);
-      const hasChipBull = (hash % 3 === 2);
+      const real = realScreenerMap[item.symbol];
+      if (!real || real.history_unavailable) return; // no real signal to show — don't invent one
+
+      const sigList = real.signals || [];
+      const hasRocketS = sigList.includes('🚀 強火箭');
+      const hasBirdS = sigList.includes('🐦 強力藍鳥');
+      const hasRestartS = sigList.includes('🛸 動能飛碟');
+      const hasRestartN = sigList.includes('⚡ 動能閃電');
+      const hasRocketW = sigList.includes('✈️ 噴射機');
+      const hasBirdN = sigList.includes('🥚 帶殼鳥');
+      const isMacdFlip = real.macd_state === 'MACD 柱狀體翻紅';
+      const isMacdGold = real.macd_state === '零軸上金叉' || real.macd_state === 'MACD 水下金叉';
+      const isGradeS = real.grade === 'S';
+      const isGradeA = real.grade === 'A';
+      const hasDemark = real.demark_state && real.demark_state !== '無';
+      const has5k = real.k5_state === '5K 創高突破';
+      const hasVol = (real.volume_status || '').includes('爆量');
+      // 投信認養 / 籌碼偏多 need real per-stock institutional flow (stock_futures in
+      // gex_data.json, wired up in Component A/B) cross-referenced by symbol — not wired
+      // into this screener yet, so these two filters honestly never match rather than
+      // reviving a fake hash for just these two.
+      const hasItAdopt = false;
+      const hasChipBull = false;
 
       let score = 0;
       if (fRocketS && hasRocketS) score++;
@@ -2994,30 +3157,17 @@ function runBirdQuantScreener() {
       const isMatch = (activeFiltersCount === 0) || (score >= Math.max(1, Math.ceil(activeFiltersCount * 0.4)));
 
       if (isMatch) {
-        let price = (hash % 800) + 25;
-        if (item.symbol === '2330' || item.symbol === 'CDF') price = 1045;
-        if (item.symbol === '2454' || item.symbol === 'DVF') price = 1430;
-        if (item.symbol === '2317' || item.symbol === 'DHF') price = 215;
-        if (item.symbol === 'TXF') price = 46594;
+        const price = real.price;
+        const changePct = real.pct_change;
 
-        const changePct = ((hash % 70) - 15) / 10;
-        
-        const sigs = [];
-        if (hasRocketS) sigs.push('🚀 強火箭');
-        if (hasItAdopt) sigs.push('⭐ 投信認養');
-        if (hasBirdS) sigs.push('🐦 強力藍鳥');
-        if (hasRestartS) sigs.push('🛸 飛碟再啟');
-        if (hasRestartN) sigs.push('⚡ 動能再啟');
-        if (has5k) sigs.push('⭐ 5K突破');
-        if (hasDemark) sigs.push('9★ 轉折');
-        if (sigs.length === 0) sigs.push('📈 多頭共振');
+        const sigs = sigList.length ? sigList.slice(0, 2) : ['⚖️ 無明顯訊號'];
 
         results.push({
           item,
           price,
           changePct,
-          signals: sigs.slice(0, 2).join(' '),
-          grade: isGradeS ? 'S 強噴' : (isGradeA ? 'A 強勢' : 'B 多頭'),
+          signals: sigs.join(' '),
+          grade: isGradeS ? 'S 強噴' : (isGradeA ? 'A 強勢' : (real.grade ? `${real.grade} 級` : 'B 多頭')),
           score
         });
       }
@@ -3517,9 +3667,9 @@ function initFubonLivePriceStream() {
         }
       }
 
-      // 4. Live Left Macro Risk HUD Pulsing
+      // 4. Live Left Macro Risk HUD Pulsing (same macro_events_radar nesting fix as above)
       if (data.macro) {
-        updateMacroRiskHUD(gexData?.macro_risk_dashboard || null, data.macro);
+        updateMacroRiskHUD(gexData?.macro_events_radar?.macro_risk_dashboard || null, data.macro);
       }
 
       if (statusTag) {

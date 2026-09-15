@@ -9,6 +9,8 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v62.4`** | 2026-09-15 | 🛠️ **尋鳥戰情室3個Critical bug修復（假OHLC面板/ADX背離寫死價位/選股雷達雜湊碼）、ADR真實報價、散戶籌碼日增減真數據、選股快取覆蓋率32%→97%發布版** |
+| **`v62.3`** | 2026-09-14 | 🔴🔴 **GEX 核心引擎正式接上 TAIFEX 真實選擇權未沖銷部位（徹底移除假高斯曲線）、5日歷史真實回補、法人籌碼/選股雷達真數據發布版** |
 | **`v62.2`** | 2026-09-12 | 🛡️ **Hard Redline #6 嚴禁偽數據實裝、戰情室 100% 真實數據管線、指數 0 成交量自檢校準、老墨/陳玠儒大戶散戶動能與 Gemini 2.5 Flash 多模態軍師發布版** |
 | **`v62.1`** | 2026-09-11 | ⚡ **盤中即時台指期 (TXF) TAIFEX MIS Quote 串接升級、5日矩陣多盤別價差全自動精確校正** |
 | **`v62.0`** | 2026-09-11 | 🌪️ **CBOE VVIX (波動率之波動率) 實時採集、4級尾部風險矩陣、賣腳安全氣墊 (350~500點外) 與戰情室 4 欄式 Macro Risk HUD 升級發布版** |
@@ -16,6 +18,36 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🛠️ v62.4 尋鳥戰情室3個Critical bug修復 ✕ ADR真實報價 ✕ 散戶籌碼日增減真數據 ✕ 選股快取97%覆蓋率發布版 (2026-09-15)
+- **🔴 尋鳥戰情室 3 個 Critical bug 修復**：
+  - 假OHLC面板：`renderLeftPanel()` 切換TXF/TAIEX/OTC時漲跌改用真實 `gexData` 換算，昨收改用真實現價減真實漲跌反推；開盤/最高/最低目前無真實逐筆盤中來源，誠實顯示「—」取代原本永遠不變的寫死文字。
+  - ADX Pro V3背離寫死絕對價位：改成比較「本次波段極值」與「上次波段極值」當下的真實ADX值判斷背離，不再綁定任何固定價位，價格永久脫離舊區間後依然成立。
+  - 選股雷達雜湊碼：改接真實 `screener_cache.json`，沒有真實訊號的股票直接跳過不顯示，不再用股票代號雜湊值捏造訊號。
+- **🔧 ADR連動修復**：`ADR_MAPPING` 原本用到外層迴圈殘留變數導致每列對錯股票，已修正為用當列自己的股票代號；ADR漲跌幅改為即時抓取 Yahoo Finance 真實報價，不再是寫死常數。
+- **📊 散戶籌碼日增減真數據**：`fetch_official_taifex_retail_sentiment()` 的 `daily_change`／`prev_ratio`／`broker_snapshot`（外資台指期/選擇權Call/Put淨未平倉）全部改用真實數據與真實日對日快照比對，沒有前一日快照時誠實顯示「—」而非寫死數字。
+- **📈 選股快取覆蓋率 32% → 97%**：發現逐檔查詢（1400+次請求）本身就是觸發TWSE/TPEx限流的根因，改用 TWSE `MI_INDEX?type=ALLBUT0999` 單一日期批量端點（一次回傳全部1382檔股票當天完整OHLCV），只需約20-25次請求即可拼出全市場30天歷史，執行時間從20-30分鐘降到約15秒。
+- **📋 新增 `DASHBOARD_DATA_SOURCE_MAP.md`**：GEX主儀表板與尋鳥戰情室前台區塊 × 交易策略參考 × 數據來源 × 稽核狀態的完整對照表，作為持久參考文件。
+
+### 🔴🔴 v62.3 GEX 核心引擎真實選擇權未沖銷部位接軌 ✕ 5日歷史真實回補 ✕ 法人籌碼/選股雷達真數據發布版 (2026-09-14)
+- **🔴🔴 最高優先級修復：`calculate_true_gex_profile()` 核心 GEX/VEX 引擎首次接上 TAIFEX 真實選擇權未沖銷部位**：
+  - Self-Audit 發現：本引擎自上線以來，Call Wall / Put Wall / Zero Gamma / Max Pain / Net GEX 曲線 / GEX+ 翻轉點，全部由「真實現貨價 + 以現價為中心人工湊出的假高斯鐘形曲線」算出，選擇權籌碼本身從未接過真數據；連「週選 W1 vs W2」拆分都只是把同一數字硬乘 0.65 / 0.35。
+  - 新增 `fetch_taifex_txo_open_interest()` 串接 TAIFEX 官方「選擇權每日交易行情下載」（`optDataDown`，免驗證碼，一次請求可涵蓋整段日期範圍），取得真實逐履約價 / 買賣權 / 契約月份未沖銷契約量。
+  - 新增 `classify_txo_contract_buckets()` 依每個契約的**真實結算日期**（而非解析代碼字尾字母）分類週三選 / 週五選 / 月選，`build_real_option_chain()` 組裝成引擎所需格式。
+  - `calculate_true_gex_profile()` 移除假高斯 fallback；W1/W2 改為各自真實到期天數獨立計算 Greeks（不再是同一數字硬拆）；履約價範圍改為「現價 ±900 內的真實上市履約價」。
+  - 即時路徑（`generate_gex_payload()`）與 5 日歷史盤別的即時 GEX 曲線全面接上真實選擇權鏈；無真實數據時明確印出警告，絕不安靜退回假數字。
+- **📅 `backfill_snapshots.py` 歷史快照系統補上真實 GEX 欄位，並修復 3 個從未真正抓到數據的舊 bug**：
+  - `fetch_twse_index()`：原本用錯 `type=MS` 參數（回傳大盤成交統計，無指數欄位）且取值欄位錯用 `row[-1]`（空白註記欄），改為 `type=IND` + `row[1]`。
+  - `fetch_taifex_daily_tx()`：原本用錯參數名 `Date_From`/`Date_To`（官方要求 `queryStartDate`/`queryEndDate`），官網直接回「日期時間錯誤」，改為正確參數名並修正 `cp950` 編碼解析。
+  - `fetch_taifex_pc_ratio()`：原 URL `callPutRatioHis` 已 404，改為重用 `fetch_and_calc_vision.py` 內已驗證可用的 `fetch_official_taifex_pc_ratio()`。
+  - 三個 bug 修復後，`session_snapshots.json` 的 `zero_gamma_level` / `call_wall_strike` / `put_wall_strike` / `max_pain_strike` 現在對近期交易日全部是真實計算值，取代原本永遠留白的 `null` 佔位。
+- **📊 `scripts/fetch_institutional_momentum.py` 全面改為真實數據**：
+  - 改抓 TAIFEX 官方 OpenAPI（`MarketDataOfMajorInstitutionalTradersGeneralBytheDate`，與 `trading room/room.js` 本身在快取失效時的即時 fallback 用同一端點，確保兩條路徑數字一致），取得真實外資 / 投信 / 自營商交易淨額與留倉淨額。
+  - 5 日歷程改為 `data/momentum_snapshots.json` 真實快照逐日累積，沒有真數據的日子誠實顯示 `has_snapshot:false`，不再是每次執行都輸出同一組寫死常數。
+- **🔧 `fetch_official_taifex_retail_sentiment()` 修復寫死常數**：`mtx_r_net` / `tmf_r_net`（小台 / 微台散戶淨部位）原本是寫死的 `9496` / `24932`，與旁邊算出來的真實 `long`/`short` 無關，已修正為 `long - short` 真實計算。
+- **📈 `scripts/build_screener_cache.py` 選股雷達改用真實歷史 K 棒**：
+  - 移除 `generate_synthetic_ohlcv()`（`random.Random(股票代號當種子)` 生成的假 30 根 K 棒歷史），改為逐檔抓取 TWSE `STOCK_DAY` / TPEx `tradingStock` 官方每日歷史，依交易日快取避免重複請求。
+  - 抓不到真實歷史的股票（部分因 TWSE/TPEx 對高頻批次請求限流）明確標記 `history_unavailable:true`，訊號留空，絕不捏造。已知覆蓋率仍有改善空間，列為後續優化項目。
 
 ### 🚀 v62.2 戰情室 100% 真實數據管線 ✕ 嚴禁偽數據 Self-Audit ✕ Gemini 2.5 Flash 多模態發布版 (2026-09-12)
 - **🛡️ 實裝 Hard Redline #6 最高風控鐵律**：

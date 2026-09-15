@@ -165,9 +165,15 @@ function updateGexChartOverlay(symbol) {
 - [x] 嚴格區分「指數/殖利率 Volume: 0」與「期貨/個股真實成交量與 Volume MA 5/10」。
 - [x] 支援 8 大核心商品 + 2,400 檔個股與 10 個 Timeframe (1M~1Mth)。
 
-### Phase 4: 老墨/陳玠儒原創籌碼與 ADX Pro V3 面積雲帶 (已完成 ✅)
-- [x] 副圖 4 繪製陳玠儒/老墨原創之價量籌碼累積量能柱 ✕ 亮黃大戶線 ✕ 散戶線。
-- [x] 雙色 ADX Pro V3 面積雲帶與 26.65 頂部、22.37 突破、11.63 打底門檻對齊。
+### Phase 4: 老墨/陳玠儒原創籌碼與 ADX Pro V3 面積雲帶 (⚠️ 2026-09-13 Self-Audit 更正：此階段標記不實)
+- [x] 副圖 4 繪製陳玠儒/老墨原創之價量籌碼累積量能柱 ✕ 亮黃大戶線 ✕ 散戶線。（視覺上有畫出來，**但底層公式是假的**——見下方更正說明）
+- [x] 雙色 ADX Pro V3 面積雲帶與 26.65 頂部、22.37 突破、11.63 打底門檻對齊。（面積雲帶有畫出來，**但背離判定與這幾個門檻數字是寫死的，非通用演算法**——見下方更正說明）
+
+> **⚠️ 2026-09-13 Self-Audit 更正**：本階段兩項打勾都只做到「畫得出來」，沒有做到「數據/邏輯正確」：
+> 1. 大戶動能柱/線其實是拿 K 棒開高低收公式湊出來的（跟法人未平倉無關），散戶線是大戶線乘負數的鏡像，`data/momentum_data.json`（本該提供真實法人數據的檔案）本身也是寫死假常數、沒有任何網路請求。
+> 2. ADX Pro V3 的頂/底背離判定是寫死絕對價位＋特定歷史日期觸發，不是通用背離演算法；`26.65/22.37/11.63` 這三個門檻數字跟同段程式碼實際算 ADX 用的門檻（20/30/50/75）對不起來，疑似把某天畫面上剛好出現的數值誤植為標準門檻。
+>
+> 完整清單見 `../SELF_AUDIT_FINDINGS_TODO.md`。修復進度：大戶散戶動能的真實資料管線正在另一個工作階段處理中（見下方「🔧 開發紀錄」）。
 
 ### Phase 5: AI 軍師 2.0 (多模態截圖 + Gemini 2.5 Flash) (已完成 ✅)
 - [x] 戰情室右上角 `🔑 Key` 支援本地安全保存獨立 API Key（享每日 1,500 次獨立免費額度）。
@@ -177,3 +183,45 @@ function updateGexChartOverlay(symbol) {
 - [x] 股號搜尋引擎全面支援鍵盤 `Enter` 鍵直接切換與 ↑/↓ 方向鍵導航。
 - [x] 注入 AGENTS.md 4 大最高風控鐵律與即時部位體檢試算。
 - [ ] 串接雲端 Gemini 2.5 視覺多模態 API。
+
+---
+
+## 🔧 開發紀錄（v62.3，2026-09-13）：大戶散戶動能真實資料管線 — 進行中
+
+### 背景
+2026-09-13 self-audit（`../SELF_AUDIT_FINDINGS_TODO.md`）發現 Phase 4 的「大戶散戶動能」是假數據（見上方更正說明）。使用者確認正確方法論來自陳玠儒/股市擺渡人的「大戶散戶動能指標」（YouTube《股市更生人 特別篇 第四篇》）：用**期貨委託簿深度**（大戶委託口差）+ **成交筆數差**（散戶）+ **市場委買委賣口差**，30分鐘線觀察，適用 TXF + 個股期貨。
+
+### 已完成
+- [x] 確認富邦新一代 API 期貨 WebSocket 有 `books` 頻道（五檔委買委賣），並取得官方文件確認的精確 JSON schema：
+  ```json
+  {"event":"data","channel":"books","id":"...",
+   "data":{"symbol","type","exchange","time",
+           "bids":[{"price","size"}...5檔], "asks":[{"price","size"}...5檔],
+           "derivedBid":{"price","size"}, "derivedAsk":{"price","size"}, "isTrial":bool}}
+  ```
+- [x] `scripts/fubon_api_provider.py`：新增 `start_books_stream()` / `get_book()` / `_handle_books_message()`（精確比對上述 schema，非猜測欄位名）、斷線自動重連+重新訂閱。
+- [x] 改用官方連續月別名 `"TXF1!"` 取代原本自行猜測前月合約的 `_detect_txf_symbol()`（該函式已移除），REST 報價與 WebSocket 訂閱統一吃這個別名，結算後自動轉倉。
+- [x] `scripts/live_price_server.py`：新增 `fubon_books_worker()` 背景執行緒（SDK 啟用後自動訂閱 Books）與 `GET /api/books?symbol=` 端點。
+
+- [x] `trades` 頻道訂閱：`start_trades_stream()` / `get_recent_trades()`，用 tick rule（成交價比對 Books 最佳買賣價）推斷買賣方向，不依賴未經確認的 trades 訊息欄位（futures 版 trades schema 本次未能從官方文件核實，僅有網路搜尋摘要佐證，已在程式碼註解裡誠實標註，非猜測後假裝確定）。
+- [x] 30 分鐘線聚合邏輯：`get_momentum_bar_30m()` 產出「大戶委託口差」（Books 五檔委買委賣總口數差，近似值——只有前五檔深度，無法像原始概念一樣篩「大額掛單」，已在程式碼註解說明此為近似）、「散戶成交筆數差」（Trades 買筆數-賣筆數，非口數）、「市場委買委賣口差」（目前與大戶委託口差同源，因為只有前五檔深度、沒有全市場委託簿，這條線暫時無法獨立算出，已誠實標註而非假裝是不同數據）。
+- [x] `room.js` 接回真實數據：移除 K 棒公式湊的假動能/散戶反向線（原本的假公式），Sub-Chart 4「大戶散戶動能」分頁改為呼叫 `fetchAndAppendMomentumBar()` 輪詢後端 `/api/momentum`（每 5 秒），即時附加真實的「目前這根 30 分鐘 bar」；**此 session 開始前的歷史時段刻意留白，不補假資料**。僅在切到 TXF/MXF/MTX 時啟用（跟 GEX 疊加層用同一個 `GEX_SUPPORTED_SYMBOLS` 限定），其他商品顯示「尚未支援」提示，不會誤導使用者以為有數據。
+
+### 待辦（本次 session 沒做完，原因見下方）
+- [ ] **個股期貨（全部，不是只有前10-20大）的 Books/Trades 訂閱擴充**：目標跟 JJ 的系統一樣，台指期+所有個股期貨都能看這個指標；「前10-20大流動性」只是影片建議「該把交易注意力放在哪幾檔」的訊號品質建議，不是技術上的數量限制。已用 `data/gex_data.json` 的 `stock_futures`（286 檔真實成交量資料，非猜測）算出真實流動性排名（見下方清單）作為之後擴充的參考順序，但**這次沒有接上訂閱**，因為訂閱需要「股票代號 → 期交所期貨合約代碼」的對照表（例如 2330 → 台積電期的實際合約代碼，資料在 `taifex_catalog.json`/`full_270_futures.json`），這個 session 沒有真實開盤環境能實測訂閱是否正確，貿然接上有更高風險出現我這邊沒發現的錯誤，所以先不做，避免又做出一個「看起來接了但沒驗證過」的東西。
+  - 用真實成交量排出來的前 20 名（排除 ETF 期貨，之後擴充全部個股期貨時可參考優先順序）：8044網家期、1565精華期、3552同致期、2303聯電期、2409友達期、3231F小型緯創期、2330台積電期、3481群創期、2317F小型鴻海期、2327國巨*期、2882F小型國泰金期、2344華邦電期、2492華新科期、2308台達電期、3037F小型欣興期、6770力積電期、2382F小型廣達期、2454聯發科期、2881F小型富邦金期、6173信昌電期。
+- [ ] 2026-09-14 台指期 08:45 開盤：實測 Books/Trades 頻道是否真的收到資料（確認富邦帳號有無委託簿/逐筆成交資料權限），並核對 Trades 訊息實際欄位名稱是否跟程式碼假設的一致。
+
+### 2026-09-14 08:45 真實開盤實測結果
+- ✅ 富邦帳密登入成功，`SUCCESS: Fubon API Provider Authenticated & MarketData Active!`。
+- ✅ Books/Trades 訂閱都成功，且收到的 `subscribed` 確認訊息格式跟程式碼假設的 schema 完全一致（`{"id","channel","symbol"}`）。
+- 🔴 **真實連線發現的 bug（已修復）**：`start_books_stream()`/`start_trades_stream()` 原本各自獨立呼叫 `futopt_ws.connect()`，兩個背景執行緒搶著開同一條 socket，觸發 `WebSocketException: socket is already opened`；更嚴重的是兩邊各自註冊了一個 `on('message', ...)` handler，導致**每一則訊息都會同時送給 Books 跟 Trades 兩邊處理**——Trades 的成交訊息沒有 `bids`/`asks` 欄位，結果 `_handle_books_message` 誤判成空的五檔，把 `books_cache` 洗成空值，污染「大戶委託口差」的計算。這個 bug 只有真的兩條 channel 同時連線才會出現，離線模擬測試沒抓到。
+  - **修復方式**：改成 `_ensure_futopt_connected()` 統一管理連線（只連一次），`_handle_futopt_message()` 統一收訊息、依 `channel` 欄位分派給 `_process_books_data()`/`_process_trades_data()`，兩邊訊息不再互相污染。已補離線測試驗證交錯訊息不會互相覆蓋。
+- Trades 訊息實際欄位：`{"symbol","price","size","time"}`，跟程式碼原本假設的一致（沒有 `bid`/`ask`/`serial` 欄位，tick rule 判斷買賣方向的設計是對的、有必要）。
+- [x] **離線驗證（非真實開盤，但排除邏輯錯誤）**：用符合官方 Books schema 的模擬訊息餵給 `_handle_books_message()`/`_handle_trades_message()`，確認五檔加總、tick rule 買賣方向判定、30分鐘 bar 聚合（`get_momentum_bar_30m()`）算出來的數字符合預期；也啟動過一次 `live_price_server.py`（FALLBACK 模式，無真實富邦帳密），確認 `/api/books`、`/api/momentum` 兩個端點都能正常回應（無資料時回傳 `null` 而非報錯或假數字）。這排除了「邏輯寫錯」的風險，但**排除不了「真實 Books/Trades 訊息格式跟假設不同」的風險**，這只有明天真的開盤連上富邦才能知道。
+
+### 順便發現、記錄下來但沒動的問題（不在本次任務範圍）
+- `room.js` 裡有**兩個同名函式 `initFubonLivePriceStream()`**（約在 2565 行與 3442 行），JS 函式宣告會被後面的蓋掉，代表第一個版本（含 `/api/live_price` 輪詢與 `updateLivePriceUI()`）從來沒有真的執行過，是死代碼。留給下一階段清理，本次沒有動它以免影響到已經在跑的 `/api/live_tick` 流程。
+
+### 待確認需求（未排入本階段）
+- [ ] 「分點力度」（籌碼集中度，個股適用，資料源為證交所分點/券商進出，跟本階段的期貨委託簿是不同資料源）——使用者已確認要加，待排入個股籌碼副圖規劃。

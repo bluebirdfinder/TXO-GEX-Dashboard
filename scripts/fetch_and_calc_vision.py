@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v62.2"
+ENGINE_VERSION = "v62.4"
 
 import os
 import sys
@@ -21,6 +21,7 @@ import re
 import base64
 import hashlib
 import datetime
+import time
 import urllib.parse
 import urllib.request
 import ssl
@@ -138,14 +139,21 @@ def fetch_official_taifex_tx_prices():
     today_str = tw_now.strftime("%Y-%m-%d")
     now_hour = tw_now.hour
 
-    if excel_day_date == today_str and now_hour >= 14:
-        today_day_tx = excel_day_close or live_day_tx or 45934.0
-        prev_day_tx = excel_day_close or 46870.0
-    else:
-        today_day_tx = live_day_tx or excel_day_close or 45934.0
-        prev_day_tx = excel_day_close or 46870.0
+    # All 3 real tiers (live MIS / night excel / day excel) failed to produce a price for one
+    # of these three fields — used to fall back to a hardcoded literal (45934.0/46870.0/
+    # 46072.0) that would silently drive the entire GEX engine off a permanently frozen price.
+    # Fall back to the previous successful pipeline run's own real output instead.
+    _need_snap = not (live_day_tx and excel_day_close and night_tx_close)
+    _snap = _load_last_gex_snapshot() if _need_snap else {}
 
-    night_tx = night_tx_close or 46072.0
+    if excel_day_date == today_str and now_hour >= 14:
+        today_day_tx = excel_day_close or live_day_tx or _snap.get('day_txf_price')
+        prev_day_tx = excel_day_close or _snap.get('day_txf_price')
+    else:
+        today_day_tx = live_day_tx or excel_day_close or _snap.get('day_txf_price')
+        prev_day_tx = excel_day_close or _snap.get('day_txf_price')
+
+    night_tx = night_tx_close or _snap.get('night_txf_price')
 
     return today_day_tx, night_tx, prev_day_tx
 
@@ -295,20 +303,53 @@ def fetch_twse_institutional_stock_trading():
             }
     except Exception as e:
         print(f"[Warning] Failed to fetch TWSE BFI82U: {e}")
-    return {"foreign_stock_net": 366.13, "trust_stock_net": 33.66, "dealer_stock_net": 179.34, "total_stock_net": 579.13}
+    # Total fetch failure used to fall back to a hardcoded literal (366.13/33.66/179.34/
+    # 579.13 — some past day's real numbers, frozen forever). Fall back to the last real
+    # T-0 row from the previous pipeline run instead.
+    _snap = _load_last_gex_snapshot()
+    _hist = _snap.get('institutional_5day_history') or []
+    _last_real = _hist[-1] if _hist else {}
+    return {
+        "foreign_stock_net": _last_real.get('foreign_stock_net'),
+        "trust_stock_net": _last_real.get('trust_stock_net'),
+        "dealer_stock_net": _last_real.get('dealer_stock_net'),
+        "total_stock_net": _last_real.get('total_stock_net')
+    }
 
 
-def fetch_twse_margin_maintenance(target_date_str=None):
+MARGIN_MAINT_SNAPSHOT_KEY_PREFIX = "MARGIN_MAINT_EST"
+
+def fetch_twse_margin_maintenance(target_date_str=None, spot_change_pct=None):
     """
-    Fetches official TWSE Credit Trading / Margin Statistics (MI_MARGN).
-    Returns dict with margin maintenance flags, balances, and calculated ratios.
+    Fetches official TWSE Credit Trading / Margin Statistics (MI_MARGN) — this endpoint only
+    has 融資/融券/融資金額 balances, never a maintenance-ratio field. TWSE has never published
+    an aggregate market-wide "整戶擔保維持率" at all (confirmed against public financial-media
+    sources 2026-09-15): the maintenance ratio is an account-level concept requiring each
+    account's own collateral value, which TWSE does not aggregate or disclose. Every "今日大盤
+    維持率" number seen in financial media is itself always someone's own estimate.
+
+    Given that, this returns an explicitly-labeled ESTIMATE (`is_estimated: True`), not a
+    silently-presented real figure. The estimate is anchored to real inputs day over day:
+    collateral value (the numerator) roughly tracks the real TAIEX % change (`spot_change_pct`,
+    the strongest real driver, since most margin collateral is exchange-listed shares), scaled
+    by the real day-over-day margin balance % change (the denominator, from the real MI_MARGN
+    balance figures). Each day's estimate is persisted (data/institutional_snapshots.json,
+    reusing that store's generic load/save) as the next day's anchor, so the estimate rolls
+    forward from real data rather than a fixed literal baseline that would go stale. The very
+    first run (no prior anchor) bootstraps from a documented typical-range starting point.
     """
     url = "https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?response=json"
     now_tw = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
-    is_weekend = (now_tw.weekday() >= 5)
     today_yyyymmdd = now_tw.strftime('%Y%m%d')
     if not target_date_str:
         target_date_str = today_yyyymmdd
+
+    snaps = load_institutional_snapshots()
+    prev_keys = sorted(k for k in snaps if k.startswith(MARGIN_MAINT_SNAPSHOT_KEY_PREFIX) and k < f"{MARGIN_MAINT_SNAPSHOT_KEY_PREFIX}_{target_date_str}")
+    prev_anchor = snaps[prev_keys[-1]] if prev_keys else None
+    anchor_market = prev_anchor["margin_maint_market"] if prev_anchor else 160.0
+    anchor_stock = prev_anchor["margin_maint_stock"] if prev_anchor else 145.0
+    idx_pct = spot_change_pct if spot_change_pct is not None else 0.0
 
     try:
         req = urllib.request.Request(url, headers=HEADERS)
@@ -316,11 +357,11 @@ def fetch_twse_margin_maintenance(target_date_str=None):
             res = json.loads(resp.read().decode('utf-8'))
             stat = res.get('stat', '')
             pub_date = res.get('date', '') # e.g. "20260904"
-            
+
             if stat == 'OK' and pub_date:
                 # Strictly verify if TWSE published data matches the target session date
                 is_published = (pub_date == target_date_str)
-                
+
                 tables = res.get('tables', [])
                 if len(tables) > 0:
                     t0_data = tables[0].get('data', [])
@@ -333,29 +374,40 @@ def fetch_twse_margin_maintenance(target_date_str=None):
                         prev_bal = round(float(margin_row[4].replace(',', '')) / 1e5, 2)  # 億
                         today_bal = round(float(margin_row[5].replace(',', '')) / 1e5, 2) # 億
                         diff_bal = round(today_bal - prev_bal, 2)
-                        
-                        maint_market = round(158.4 + (diff_bal * 0.03), 1)
-                        maint_stock = round(144.1 + (diff_bal * 0.025), 1)
-                        
-                        print(f"[OK] TWSE Official Margin MI_MARGN ({pub_date}): Published={is_published} (Target={target_date_str}), Balance={today_bal}億 ({diff_bal:+}億), Market Maint={maint_market}%")
+                        bal_chg_pct = (diff_bal / prev_bal * 100.0) if prev_bal else 0.0
+
+                        # Collateral value scales with the real index move; a growing margin
+                        # balance (more new debt against the same collateral) thins the ratio.
+                        maint_market = round(anchor_market * (1 + idx_pct / 100.0) / (1 + bal_chg_pct / 100.0), 1)
+                        maint_stock = round(anchor_stock * (1 + idx_pct / 100.0) / (1 + bal_chg_pct / 100.0), 1)
+
+                        snap_key = f"{MARGIN_MAINT_SNAPSHOT_KEY_PREFIX}_{target_date_str}"
+                        snaps[snap_key] = {"margin_maint_market": maint_market, "margin_maint_stock": maint_stock}
+                        save_institutional_snapshots(snaps)
+
+                        print(f"[OK] TWSE Official Margin MI_MARGN ({pub_date}): Published={is_published} (Target={target_date_str}), Balance={today_bal}億 ({diff_bal:+}億), Market Maint(est)={maint_market}%")
                         return {
                             "is_published": is_published,
                             "pub_date": pub_date,
                             "margin_balance_billion": today_bal,
                             "margin_diff_billion": diff_bal,
                             "margin_maint_market": maint_market,
-                            "margin_maint_stock": maint_stock
+                            "margin_maint_stock": maint_stock,
+                            "is_estimated": True,
+                            "estimation_basis": "TWSE不公布全市場整戶維持率，此為依真實融資餘額變動與大盤漲跌幅動態校正的估算值，非官方數據"
                         }
     except Exception as e:
         print(f"[Warning] Failed to fetch TWSE MI_MARGN: {e}")
-        
+
     return {
         "is_published": False,
         "pub_date": "",
-        "margin_balance_billion": 567.18,
-        "margin_diff_billion": 7.26,
-        "margin_maint_market": 155.8,
-        "margin_maint_stock": 141.2
+        "margin_balance_billion": None,
+        "margin_diff_billion": None,
+        "margin_maint_market": None,
+        "margin_maint_stock": None,
+        "is_estimated": True,
+        "estimation_basis": "融資餘額數據暫時無法取得，無法估算維持率"
     }
 
 def fetch_taifex_night_institutional_trading():
@@ -371,12 +423,12 @@ def fetch_taifex_night_institutional_trading():
             html = content.decode('big5', errors='ignore')
             soup = BeautifulSoup(html, 'html.parser')
             
-            tx_foreign_net_vol = -422
-            tx_foreign_net_amt = -3.75
-            tx_dealer_net_vol = 326
-            tx_dealer_net_amt = 2.89
-            mini_foreign_net_vol = -986
-            micro_foreign_net_vol = 2640
+            tx_foreign_net_vol = None
+            tx_foreign_net_amt = None
+            tx_dealer_net_vol = None
+            tx_dealer_net_amt = None
+            mini_foreign_net_vol = None
+            micro_foreign_net_vol = None
 
             rows = []
             for t in soup.find_all('table'):
@@ -405,7 +457,13 @@ def fetch_taifex_night_institutional_trading():
                         try: micro_foreign_net_vol = int(rows[idx+2][-2].replace(',', ''))
                         except (ValueError, IndexError): pass
 
-            comb_mini = mini_foreign_net_vol + micro_foreign_net_vol
+            if tx_foreign_net_vol is None:
+                # The "1 / TX" row itself wasn't found in the parsed table at all — nothing
+                # real to report, not just a partial field miss. Fall through to the
+                # last-real-snapshot fallback below instead of guessing.
+                raise ValueError("TX row not found in futContractsDateAh table")
+
+            comb_mini = (mini_foreign_net_vol or 0) + (micro_foreign_net_vol or 0)
             if tx_foreign_net_vol >= 1500:
                 night_sentiment = "🔥 外資夜盤大幅回補追多"
                 night_summary_text = f"💡 <strong>夜盤籌碼白話解讀</strong>：外資夜盤大台大舉回補 +{tx_foreign_net_vol:,} 口（約 +{tx_foreign_net_amt} 億 TWD），多頭反攻避險賣壓消化。"
@@ -430,15 +488,20 @@ def fetch_taifex_night_institutional_trading():
     except Exception as e:
         print(f"[Warning] Night Session Institutional parse error: {e}")
 
+    # Total parse/fetch failure used to fall back to a hardcoded literal (-422 etc, duplicated
+    # in both the try-block's initial values and this except-fallback). Fall back to the last
+    # real value from the previous pipeline run instead of a permanently frozen guess.
+    _snap = _load_last_gex_snapshot()
+    _last = _snap.get('night_institutional_trading') or {}
     return {
-        "tx_foreign_net_vol": -422,
-        "tx_foreign_net_amt": -3.75,
-        "tx_dealer_net_vol": 326,
-        "tx_dealer_net_amt": 2.89,
-        "mini_foreign_net_vol": -986,
-        "micro_foreign_net_vol": 2640,
-        "night_sentiment": "⚖️ 外資夜盤中性觀望",
-        "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤變動 -422 口（約 -3.75 億 TWD），籌碼結構維繫中性觀望姿態。"
+        "tx_foreign_net_vol": _last.get('tx_foreign_net_vol'),
+        "tx_foreign_net_amt": _last.get('tx_foreign_net_amt'),
+        "tx_dealer_net_vol": _last.get('tx_dealer_net_vol'),
+        "tx_dealer_net_amt": _last.get('tx_dealer_net_amt'),
+        "mini_foreign_net_vol": _last.get('mini_foreign_net_vol'),
+        "micro_foreign_net_vol": _last.get('micro_foreign_net_vol'),
+        "night_sentiment": "⚪ 無即時數據",
+        "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：夜盤法人數據暫時無法取得。"
     }
 
 def fetch_5day_exchange_rates():
@@ -769,6 +832,82 @@ def fetch_twse_ex_dividend_schedule():
     print(f"[OK] Parsed Official Ex-Dividend Schedule: {len(ex_dict)} items")
     return ex_dict
 
+def fetch_twse_institutional_t86(date_str):
+    """
+    Fetches TWSE's official 三大法人買賣超日報 (T86) for one YYYYMMDD date:
+    real per-stock foreign/trust/dealer net buy-sell (converted from shares to 張, board lots).
+    Column layout confirmed against a live response:
+      [0]=證券代號 [4]=外陸資買賣超(不含外資自營商) [7]=外資自營商買賣超
+      [10]=投信買賣超 [11]=自營商買賣超(合計, 自行+避險) [18]=三大法人買賣超合計
+    Returns {} (not an exception) when the market was closed or T86 for that date
+    isn't published yet, so callers can walk back to the previous trading day.
+    """
+    result = {}
+    try:
+        url = f"https://www.twse.com.tw/rwd/zh/fund/T86?date={date_str}&selectType=ALL&response=json"
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+        if data.get('stat') != 'OK':
+            return result
+
+        def _to_int(s):
+            try:
+                return int(str(s).replace(',', ''))
+            except Exception:
+                return 0
+
+        for row in data.get('data', []):
+            if len(row) < 19:
+                continue
+            code = row[0].strip()
+            foreign_net = (_to_int(row[4]) + _to_int(row[7])) // 1000
+            trust_net = _to_int(row[10]) // 1000
+            dealer_net = _to_int(row[11]) // 1000
+            result[code] = {
+                "spot_foreign": foreign_net,
+                "spot_trust": trust_net,
+                "spot_dealer": dealer_net,
+                "spot_inst_net": foreign_net + trust_net + dealer_net,
+            }
+    except Exception as e:
+        print(f"[Warning] Failed to fetch TWSE T86 for {date_str}: {e}")
+    return result
+
+def fetch_twse_institutional_t86_latest():
+    """
+    Fetches the most recent published TWSE T86 institutional net buy/sell, walking back
+    up to 5 trading days if run before that day's T86 is published. Cached per calendar
+    day so repeated same-day runs don't re-fetch.
+    """
+    cache_file = os.path.join(_DATA_DIR, "twse_t86_cache.json")
+    today_str = datetime.date.today().isoformat()
+    try:
+        if os.path.exists(cache_file):
+            with open(cache_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            if cached.get("_date") == today_str and cached.get("data"):
+                print(f"[OK] TWSE T86: using same-day cache ({len(cached['data'])} tickers, source {cached.get('source_date')})")
+                return cached["data"]
+    except Exception:
+        pass
+
+    candidates = list(reversed(get_recent_tw_trading_days(datetime.datetime.now(), n=5)))
+    for day in candidates:
+        date_str = day.strftime("%Y%m%d")
+        data = fetch_twse_institutional_t86(date_str)
+        if data:
+            print(f"[OK] TWSE T86 Institutional Net Buy/Sell: {len(data)} tickers for {date_str}")
+            try:
+                os.makedirs(_DATA_DIR, exist_ok=True)
+                with open(cache_file, "w", encoding="utf-8") as f:
+                    json.dump({"_date": today_str, "source_date": date_str, "data": data}, f, ensure_ascii=False)
+            except Exception:
+                pass
+            return data
+        time.sleep(0.3)
+    return {}
+
 def fetch_taifex_official_stock_futures():
     """
     Fetches 100% Ground-Truth TAIFEX Individual Stock & ETF Futures Trading Volume and Prices.
@@ -932,17 +1071,68 @@ def black_scholes_vanna(S, K, T, r, sigma):
     d2 = d1 - sigma * math.sqrt(T)
     return -math.exp(-r * T) * norm_pdf(d1) * d2 / sigma
 
+def compute_days_to_expiries(ref_dt, tw_tz):
+    """
+    Days from ref_dt to the next Wednesday, next Friday, and the front monthly settlement
+    (3rd Wednesday of the month, rolling to next month if already past) — as of ref_dt, not
+    necessarily "now". Used both for the live GEX profile and for historical backfill, where
+    ref_dt is a past trading day so the option Greeks use that day's real time-to-expiry
+    instead of today's.
+    """
+    def days_to_next_weekday(base_dt, target_weekday):
+        d = (target_weekday - base_dt.weekday()) % 7
+        return max(d, 0) if d > 0 else 7
+
+    raw_days_wed = days_to_next_weekday(ref_dt, 2)
+    raw_days_fri = days_to_next_weekday(ref_dt, 4)
+
+    year, month = ref_dt.year, ref_dt.month
+    first_day = datetime.datetime(year, month, 1, tzinfo=tw_tz)
+    third_wed_offset = (2 - first_day.weekday()) % 7 + 14
+    third_wed = datetime.datetime(year, month, 1 + third_wed_offset, tzinfo=tw_tz)
+    if third_wed <= ref_dt:
+        if month == 12:
+            first_next = datetime.datetime(year + 1, 1, 1, tzinfo=tw_tz)
+            offset = (2 - first_next.weekday()) % 7 + 14
+            third_wed = datetime.datetime(year + 1, 1, 1 + offset, tzinfo=tw_tz)
+        else:
+            first_next = datetime.datetime(year, month + 1, 1, tzinfo=tw_tz)
+            offset = (2 - first_next.weekday()) % 7 + 14
+            third_wed = datetime.datetime(year, month + 1, 1 + offset, tzinfo=tw_tz)
+    raw_days_mth = max((third_wed - ref_dt).days, 0)
+    return raw_days_wed, raw_days_fri, raw_days_mth, third_wed
+
+
 def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None):
+    """
+    option_chain: {strike: {"call_oi_w1":n, "put_oi_w1":n, "call_oi_w2":n, "put_oi_w2":n,
+    "call_oi_fri":n, "put_oi_fri":n, "call_oi_mth":n, "put_oi_mth":n}}, built by
+    build_real_option_chain() from fetch_taifex_txo_open_interest() — real TAIFEX open
+    interest, not a synthetic curve. A strike/bucket combination absent from real data means
+    a genuine 0 open interest there (TAIFEX didn't report any), so missing keys default to 0,
+    never a guessed number. When option_chain is empty (the real fetch failed entirely), this
+    correctly degrades to an all-zero GEX profile rather than inventing a curve — the caller
+    is responsible for surfacing that as unavailable rather than trusting a flat profile.
+    """
     base_strike = fixed_base_strike if fixed_base_strike is not None else round(spot_price / 100) * 100
-    strikes = [base_strike - 900 + i * 50 for i in range(37)]
 
     r = 0.015
     sigma = 0.18
 
     MIN_T_DAYS = 0.5
-    T_wed = max(float(days_wed), MIN_T_DAYS) / 365.0
+    T_w1 = max(float(days_wed), MIN_T_DAYS) / 365.0
+    T_w2 = T_w1 + 7.0 / 365.0  # TAIFEX weeklies are 7 days apart; the next Wednesday weekly
     T_fri = max(float(days_fri), MIN_T_DAYS) / 365.0
     T_mth = max(float(days_mth), MIN_T_DAYS) / 365.0
+
+    # Real strikes within ±900 of spot — TXO's real near-the-money strike spacing is 50 points,
+    # so this window holds the same 37 strikes the old synthetic grid always assumed, except
+    # these are the strikes TAIFEX actually listed open interest for, not invented ones. Falls
+    # back to the fixed grid only when option_chain is empty (the real fetch failed entirely).
+    if option_chain:
+        strikes = sorted(k for k in option_chain.keys() if abs(k - base_strike) <= 900)
+    else:
+        strikes = [base_strike - 900 + i * 50 for i in range(37)]
 
     total_gex, weekly_gex, friday_gex, monthly_gex = [], [], [], []
     call_oi_sum, put_oi_sum = 0, 0
@@ -951,31 +1141,37 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
 
     call_wall_k, call_wall_max = base_strike + 300, -1.0
     put_wall_k, put_wall_max = base_strike - 300, -1.0
-    
+
     strike_losses = {}
 
     for K in strikes:
-        g_wed = black_scholes_gamma(spot_price, K, T_wed, r, sigma)
+        g_w1 = black_scholes_gamma(spot_price, K, T_w1, r, sigma)
+        g_w2 = black_scholes_gamma(spot_price, K, T_w2, r, sigma)
         g_fri = black_scholes_gamma(spot_price, K, T_fri, r, sigma)
         g_mth = black_scholes_gamma(spot_price, K, T_mth, r, sigma)
 
-        v_wed = black_scholes_vanna(spot_price, K, T_wed, r, sigma)
+        v_w1 = black_scholes_vanna(spot_price, K, T_w1, r, sigma)
+        v_w2 = black_scholes_vanna(spot_price, K, T_w2, r, sigma)
         v_fri = black_scholes_vanna(spot_price, K, T_fri, r, sigma)
         v_mth = black_scholes_vanna(spot_price, K, T_mth, r, sigma)
 
         k_data = option_chain.get(K, {})
-        c_oi_w = k_data.get('call_oi_wed', int(3500 * math.exp(-((K - (base_strike + 200))/300)**2) + 800))
-        p_oi_w = k_data.get('put_oi_wed',  int(3800 * math.exp(-((K - (base_strike - 200))/300)**2) + 900))
-        
-        c_oi_f = k_data.get('call_oi_fri', int(2200 * math.exp(-((K - (base_strike + 150))/250)**2) + 500))
-        p_oi_f = k_data.get('put_oi_fri',  int(2400 * math.exp(-((K - (base_strike - 150))/250)**2) + 600))
-        
-        c_oi_m = k_data.get('call_oi_mth', int(6500 * math.exp(-((K - (base_strike + 300))/400)**2) + 1500))
-        p_oi_m = k_data.get('put_oi_mth',  int(7200 * math.exp(-((K - (base_strike - 300))/400)**2) + 1800))
+        c_oi_w1 = k_data.get('call_oi_w1', 0)
+        p_oi_w1 = k_data.get('put_oi_w1', 0)
+        c_oi_w2 = k_data.get('call_oi_w2', 0)
+        p_oi_w2 = k_data.get('put_oi_w2', 0)
+        c_oi_f = k_data.get('call_oi_fri', 0)
+        p_oi_f = k_data.get('put_oi_fri', 0)
+        c_oi_m = k_data.get('call_oi_mth', 0)
+        p_oi_m = k_data.get('put_oi_mth', 0)
 
-        # GEX per strike
-        c_gex_w = (c_oi_w * g_wed * (spot_price ** 2) * 50) / 1e8
-        p_gex_w = -(p_oi_w * g_wed * (spot_price ** 2) * 50) / 1e8
+        # GEX per strike (w1 + w2 real, computed with each bucket's own real time-to-expiry)
+        c_gex_w1 = (c_oi_w1 * g_w1 * (spot_price ** 2) * 50) / 1e8
+        p_gex_w1 = -(p_oi_w1 * g_w1 * (spot_price ** 2) * 50) / 1e8
+        c_gex_w2 = (c_oi_w2 * g_w2 * (spot_price ** 2) * 50) / 1e8
+        p_gex_w2 = -(p_oi_w2 * g_w2 * (spot_price ** 2) * 50) / 1e8
+        c_gex_w = c_gex_w1 + c_gex_w2
+        p_gex_w = p_gex_w1 + p_gex_w2
 
         c_gex_f = (c_oi_f * g_fri * (spot_price ** 2) * 50) / 1e8
         p_gex_f = -(p_oi_f * g_fri * (spot_price ** 2) * 50) / 1e8
@@ -984,8 +1180,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         p_gex_m = -(p_oi_m * g_mth * (spot_price ** 2) * 50) / 1e8
 
         # VEX (Vanna Exposure) per strike
-        c_vex_tot = ((c_oi_w * v_wed + c_oi_f * v_fri + c_oi_m * v_mth) * spot_price * 50) / 1e8
-        p_vex_tot = -((p_oi_w * v_wed + p_oi_f * v_fri + p_oi_m * v_mth) * spot_price * 50) / 1e8
+        c_vex_tot = ((c_oi_w1 * v_w1 + c_oi_w2 * v_w2 + c_oi_f * v_fri + c_oi_m * v_mth) * spot_price * 50) / 1e8
+        p_vex_tot = -((p_oi_w1 * v_w1 + p_oi_w2 * v_w2 + p_oi_f * v_fri + p_oi_m * v_mth) * spot_price * 50) / 1e8
         vex_net = c_vex_tot + p_vex_tot
         total_vex_sum += vex_net
 
@@ -997,8 +1193,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         # GEX+ = Net GEX + 1.0 * Net VEX
         gex_plus_val = ng_tot + (1.0 * vex_net)
 
-        call_oi_sum += (c_oi_w + c_oi_f + c_oi_m)
-        put_oi_sum += (p_oi_w + p_oi_f + p_oi_m)
+        call_oi_sum += (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
+        put_oi_sum += (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
 
         if cg_tot > call_wall_max:
             call_wall_max = cg_tot
@@ -1014,10 +1210,10 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
             "net_gex": round(ng_tot, 2),
             "vex": round(vex_net, 2),
             "gex_plus": round(gex_plus_val, 2),
-            "w1_call": round(c_gex_w * 0.65, 2),
-            "w1_put": round(p_gex_w * 0.65, 2),
-            "w2_call": round(c_gex_w * 0.35, 2),
-            "w2_put": round(p_gex_w * 0.35, 2),
+            "w1_call": round(c_gex_w1, 2),
+            "w1_put": round(p_gex_w1, 2),
+            "w2_call": round(c_gex_w2, 2),
+            "w2_put": round(p_gex_w2, 2),
             "mth_call": round(c_gex_m, 2),
             "mth_put": round(p_gex_m, 2),
             "fri_call": round(c_gex_f, 2),
@@ -1029,8 +1225,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
 
         total_loss = 0.0
         for S_target in strikes:
-            c_loss = max(0, S_target - K) * (c_oi_w + c_oi_f + c_oi_m)
-            p_loss = max(0, K - S_target) * (p_oi_w + p_oi_f + p_oi_m)
+            c_loss = max(0, S_target - K) * (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
+            p_loss = max(0, K - S_target) * (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
             total_loss += (c_loss + p_loss)
         strike_losses[K] = total_loss
 
@@ -1087,15 +1283,38 @@ def encrypt_payload_sha256(plain_json_str, passcode):
     cipher_bytes = bytes([b ^ key[i % len(key)] for i, b in enumerate(data_bytes)])
     return base64.b64encode(cipher_bytes).decode('utf-8')
 
+def fetch_yahoo_finance_quote(ticker):
+    """
+    Real latest price + change% for any Yahoo Finance ticker (used for Taiwan ADRs like TSM,
+    UMC, HNHPF — same endpoint/pattern as the VIX/VVIX fetches below). Returns
+    {'price':, 'change_pct':} or None if the fetch fails — callers should show that as
+    unavailable, not fall back to a guessed number.
+    """
+    try:
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1d"
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+        result = data.get('chart', {}).get('result', [])
+        if result:
+            meta = result[0].get('meta', {})
+            price = meta.get('regularMarketPrice')
+            prev_close = meta.get('chartPreviousClose') or meta.get('previousClose')
+            if price and prev_close:
+                return {'price': round(price, 2), 'change_pct': round((price - prev_close) / prev_close * 100, 2)}
+    except Exception as e:
+        print(f"[Warning] Failed to fetch Yahoo Finance quote for {ticker}: {e}")
+    return None
+
 def fetch_official_taifex_vix():
     """
     Fetches real-time / daily official TAIFEX VIX index & daily change from TAIFEX vixMinNew endpoint,
     as well as US CBOE VIX (^VIX) via Yahoo Finance API with fallback.
     Returns a comprehensive vix_info dictionary.
     """
-    taifex_vix = 18.45
-    taifex_chg = 0.25
-    taifex_pct = 1.37
+    taifex_vix = None
+    taifex_chg = None
+    taifex_pct = None
 
     # 1. Fetch TAIFEX VIX
     try:
@@ -1136,9 +1355,9 @@ def fetch_official_taifex_vix():
         print(f"[Warning] Failed to fetch official TAIFEX VIX: {e}")
 
     # 2. Fetch US CBOE VIX (^VIX) via Yahoo Finance API
-    us_vix = 15.82
-    us_chg = -0.34
-    us_pct = -2.10
+    us_vix = None
+    us_chg = None
+    us_pct = None
     try:
         url_yf = "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d"
         req_yf = urllib.request.Request(url_yf, headers=HEADERS)
@@ -1157,9 +1376,9 @@ def fetch_official_taifex_vix():
         print(f"[Warning] Failed to fetch US CBOE VIX: {e}")
 
     # 2.5. Fetch US CBOE VVIX (^VVIX - Volatility of Volatility) via Yahoo Finance API
-    us_vvix = 102.66
-    us_vvix_chg = 1.85
-    us_vvix_pct = 1.83
+    us_vvix = None
+    us_vvix_chg = None
+    us_vvix_pct = None
     try:
         url_vvix = "https://query1.finance.yahoo.com/v8/finance/chart/%5EVVIX?interval=1d"
         req_vvix = urllib.request.Request(url_vvix, headers=HEADERS)
@@ -1177,8 +1396,32 @@ def fetch_official_taifex_vix():
     except Exception as e:
         print(f"[Warning] Failed to fetch US CBOE VVIX: {e}")
 
+    # Any of the 3 independent sub-fetches above may have failed on its own (each used to
+    # silently keep its own hardcoded literal initial value in that case — 18.45/15.82/102.66
+    # etc, frozen forever). Backfill only the missing ones from the last real snapshot.
+    if taifex_vix is None or us_vix is None or us_vvix is None:
+        _snap = _load_last_gex_snapshot()
+        _last_vix = _snap.get('vix_info') or {}
+        if taifex_vix is None:
+            taifex_vix = _last_vix.get('taifex_vix')
+            taifex_chg = _last_vix.get('taifex_vix_change')
+            taifex_pct = _last_vix.get('taifex_vix_change_pct')
+        if us_vix is None:
+            us_vix = _last_vix.get('us_vix')
+            us_chg = _last_vix.get('us_vix_change')
+            us_pct = _last_vix.get('us_vix_change_pct')
+        if us_vvix is None:
+            us_vvix = _last_vix.get('us_vvix')
+            us_vvix_chg = _last_vix.get('us_vvix_change')
+            us_vvix_pct = _last_vix.get('us_vvix_change_pct')
+
     # 2.6 Determine VVIX Tail Risk Matrix & Safety Buffer
-    if us_vvix < 95.0:
+    if us_vvix is None:
+        vvix_regime_tag = "⚪ 無即時數據"
+        vvix_regime_color = "#888888"
+        vvix_safety_buffer = "—"
+        vvix_desc = "VVIX 數據暫時無法取得。"
+    elif us_vvix < 95.0:
         vvix_regime_tag = "🟢 風穩常態"
         vvix_regime_color = "#00e676"
         vvix_safety_buffer = "🛡️ 氣墊: 250~350 點"
@@ -1200,13 +1443,20 @@ def fetch_official_taifex_vix():
         vvix_desc = "極端黑天鵝避險海嘯，氣墊 500+ 點，嚴禁近端賣腳單腳硬接！"
 
     # Divergence Check: VIX low/normal but VVIX >= 100
-    if (taifex_vix < 20.0 or us_vix < 20.0) and us_vvix >= 100.0:
+    if taifex_vix is None or us_vix is None or us_vvix is None:
+        tail_risk_status = "⚪ VIX/VVIX 數據暫時無法取得，無法判定尾部風險狀態。"
+    elif (taifex_vix < 20.0 or us_vix < 20.0) and us_vvix >= 100.0:
         tail_risk_status = f"⚠️ 隱含波動率加速度背離：VIX 處於低檔 ({taifex_vix:.2f}) 但 VVIX 破百 ({us_vvix:.2f})，顯示主力大資金正在爆買 VIX Call 尾部避險，賣方氣墊需擴大至 350~500 點！"
     else:
         tail_risk_status = f"VIX ({taifex_vix:.2f}) 與 VVIX ({us_vvix:.2f}) 同步對齊，{vvix_regime_tag}"
 
     # 3. Determine Regime Tag & Strategy Recommendation based on TAIFEX VIX
-    if taifex_vix < 14.0:
+    if taifex_vix is None:
+        regime_tag = "⚪ 無即時數據"
+        regime_color = "#888888"
+        regime_desc = "台指選擇權波動率指數暫時無法取得。"
+        strategy_advice = "數據暫時無法取得，暫不提供策略建議。"
+    elif taifex_vix < 14.0:
         regime_tag = "🟢 極度平靜 (Low Vol)"
         regime_color = "#00e676"
         regime_desc = "權利金嚴重壓縮，市場避險需求極低。適合買方 (Long Option) 或單邊趨勢微台。"
@@ -1248,15 +1498,139 @@ def fetch_official_taifex_vix():
         "strategy_advice": strategy_advice
     }
 
+def fetch_taifex_txo_open_interest(start_date_str, end_date_str):
+    """
+    Real TXO per-strike / per-right / per-contract-month open interest straight from TAIFEX's
+    official 選擇權每日交易行情下載 (optDataDown). One request covers the whole date range
+    (TAIFEX allows up to ~1 month per query) — confirmed via manual testing that a 4-trading-day
+    range returns all days in a single CSV, so backfilling several days costs the same one
+    request as backfilling one.
+
+    NOTE: this response's declared charset (MS950) is wrong for what the bytes actually are —
+    it must be decoded as cp950, not big5/utf-8, or every Chinese header/value comes out as
+    mojibake despite the numeric columns still parsing "successfully" with a bogus encoding.
+
+    Column layout (verified against a live response, decoded as cp950):
+      [0]=交易日期 [2]=到期月份(週別) [3]=履約價 [4]=買賣權 [9]=成交量 [11]=未沖銷契約數(OI)
+      [17]=交易時段(一般/盤後) [20]=契約到期日(YYYYMMDD)
+    Open interest is only populated on the 一般 (regular session) row for a given
+    date/contract/strike/right — the 盤後 (after-hours) row reports its own trading activity
+    but leaves OI as "-", so 盤後 rows are skipped here.
+
+    Returns {date_iso: {contract_code: {"expiry": "YYYYMMDD", "call": {strike: oi}, "put": {strike: oi}}}}
+    — an empty dict on failure (never a fabricated fallback; the caller falls back to
+    "無即時數據" rather than a guessed open-interest curve).
+    """
+    url = (f"https://www.taifex.com.tw/cht/3/optDataDown?down_type=1&commodity_id=TXO"
+           f"&queryStartDate={start_date_str}&queryEndDate={end_date_str}")
+    result = {}
+    try:
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=30) as resp:
+            raw = resp.read()
+        text = raw.decode('cp950', errors='ignore')
+        lines = [l for l in text.split('\n') if l.strip()]
+        for line in lines[1:]:
+            cols = [c.strip() for c in line.split(',')]
+            if len(cols) < 21:
+                continue
+            if cols[17] != '一般':
+                continue
+            try:
+                strike = float(cols[3])
+            except ValueError:
+                continue
+            oi_str = cols[11]
+            try:
+                oi = int(oi_str) if oi_str not in ('-', '') else 0
+            except ValueError:
+                continue
+            right = 'call' if '買' in cols[4] else ('put' if '賣' in cols[4] else None)
+            if right is None:
+                continue
+
+            date_iso = cols[0].replace('/', '-')
+            contract_code = cols[2]
+            expiry = cols[20]
+
+            day_bucket = result.setdefault(date_iso, {})
+            contract_bucket = day_bucket.setdefault(contract_code, {"expiry": expiry, "call": {}, "put": {}})
+            contract_bucket[right][strike] = oi
+        print(f"[OK] TAIFEX TXO Open Interest: {len(result)} trading day(s) parsed for {start_date_str}~{end_date_str}")
+    except Exception as e:
+        print(f"[Warning] Failed to fetch TAIFEX TXO open interest: {e}")
+    return result
+
+
+def classify_txo_contract_buckets(day_data):
+    """
+    Classifies one day's {contract_code: {"expiry": "YYYYMMDD", ...}} into the app's contract
+    buckets using each contract's REAL settlement date (not by parsing the code's letter
+    suffix, which is a presentational label TAIFEX resets monthly): a plain "YYYYMM" code with
+    no suffix is a monthly contract; among weeklies, one that settles on a Wednesday is a
+    "W" weekly, one that settles on a Friday is an "F" weekly. Returns the nearest-expiring
+    code for each of w1 (nearest Wednesday weekly), w2 (the Wednesday weekly after that, if
+    currently listed), fri (nearest Friday weekly), mth (front monthly) — any that aren't
+    currently listed come back as None rather than a guess.
+    """
+    wed_list, fri_list, mth_list = [], [], []
+    for code, info in day_data.items():
+        try:
+            exp = datetime.datetime.strptime(info["expiry"], "%Y%m%d").date()
+        except Exception:
+            continue
+        if len(code.strip()) == 6:  # "YYYYMM" — no weekly-letter suffix
+            mth_list.append((exp, code))
+        elif exp.weekday() == 2:  # Wednesday
+            wed_list.append((exp, code))
+        elif exp.weekday() == 4:  # Friday
+            fri_list.append((exp, code))
+    wed_list.sort()
+    fri_list.sort()
+    mth_list.sort()
+    return {
+        "w1": wed_list[0][1] if len(wed_list) > 0 else None,
+        "w2": wed_list[1][1] if len(wed_list) > 1 else None,
+        "fri": fri_list[0][1] if fri_list else None,
+        "mth": mth_list[0][1] if mth_list else None,
+    }
+
+
+def build_real_option_chain(day_data, buckets):
+    """
+    Builds the {strike: {"call_oi_w1":.., "put_oi_w1":.., ...}} dict calculate_true_gex_profile()
+    expects, from real per-bucket open interest. A strike/right absent from TAIFEX's real data
+    for a bucket means a genuine 0 open interest there — not a placeholder, an actual fact — so
+    the resulting chain never falls back to a fabricated number.
+    """
+    chain = {}
+
+    def _add(bucket_code, call_key, put_key):
+        if not bucket_code or bucket_code not in day_data:
+            return
+        info = day_data[bucket_code]
+        for k, oi in info["call"].items():
+            chain.setdefault(k, {})[call_key] = oi
+        for k, oi in info["put"].items():
+            chain.setdefault(k, {})[put_key] = oi
+
+    _add(buckets.get("w1"), "call_oi_w1", "put_oi_w1")
+    _add(buckets.get("w2"), "call_oi_w2", "put_oi_w2")
+    _add(buckets.get("fri"), "call_oi_fri", "put_oi_fri")
+    _add(buckets.get("mth"), "call_oi_mth", "put_oi_mth")
+    return chain
+
+
+OPT_MATRIX_SNAPSHOT_KEY = "OPT_MATRIX_LAST_REAL"
+
 def fetch_official_taifex_options_matrix():
     """
     Parses TAIFEX callsAndPutsDate for TXO Options Institutional Trading (Call & Put Net Amounts and Net Volumes).
+    On total fetch/parse failure, falls back to the last successfully-fetched real result
+    (persisted in data/institutional_snapshots.json) instead of a hardcoded literal that would
+    stay frozen forever regardless of how stale it gets.
     """
-    opt_inst = {
-        'foreign': {'call_net_amt': -2.15, 'put_net_amt': 0.35, 'call_net_vol': -2744, 'put_net_vol': 946},
-        'trust': {'call_net_amt': -2.33, 'put_net_amt': 0.01, 'call_net_vol': -4029, 'put_net_vol': 166},
-        'dealer': {'call_net_amt': 2.43, 'put_net_amt': 0.78, 'call_net_vol': 1402, 'put_net_vol': 1654}
-    }
+    opt_inst = None
     try:
         url_opt = "https://www.taifex.com.tw/cht/3/callsAndPutsDate"
         req = urllib.request.Request(url_opt, headers=HEADERS)
@@ -1279,43 +1653,45 @@ def fetch_official_taifex_options_matrix():
                         except: return 0
 
                     if idx + 5 < len(rows):
-                        opt_inst['dealer']['call_net_amt'] = parse_amt(rows[idx][-1])
-                        opt_inst['dealer']['call_net_vol'] = parse_vol(rows[idx][-2])
-                        
-                        opt_inst['trust']['call_net_amt']  = parse_amt(rows[idx+1][-1])
-                        opt_inst['trust']['call_net_vol']  = parse_vol(rows[idx+1][-2])
-                        
-                        opt_inst['foreign']['call_net_amt'] = parse_amt(rows[idx+2][-1])
-                        opt_inst['foreign']['call_net_vol'] = parse_vol(rows[idx+2][-2])
-                        
-                        opt_inst['dealer']['put_net_amt']  = parse_amt(rows[idx+3][-1])
-                        opt_inst['dealer']['put_net_vol']  = parse_vol(rows[idx+3][-2])
-
-                        opt_inst['trust']['put_net_amt']   = parse_amt(rows[idx+4][-1])
-                        opt_inst['trust']['put_net_vol']   = parse_vol(rows[idx+4][-2])
-
-                        opt_inst['foreign']['put_net_amt'] = parse_amt(rows[idx+5][-1])
-                        opt_inst['foreign']['put_net_vol'] = parse_vol(rows[idx+5][-2])
+                        opt_inst = {
+                            'dealer': {
+                                'call_net_amt': parse_amt(rows[idx][-1]), 'call_net_vol': parse_vol(rows[idx][-2]),
+                                'put_net_amt': parse_amt(rows[idx+3][-1]), 'put_net_vol': parse_vol(rows[idx+3][-2])
+                            },
+                            'trust': {
+                                'call_net_amt': parse_amt(rows[idx+1][-1]), 'call_net_vol': parse_vol(rows[idx+1][-2]),
+                                'put_net_amt': parse_amt(rows[idx+4][-1]), 'put_net_vol': parse_vol(rows[idx+4][-2])
+                            },
+                            'foreign': {
+                                'call_net_amt': parse_amt(rows[idx+2][-1]), 'call_net_vol': parse_vol(rows[idx+2][-2]),
+                                'put_net_amt': parse_amt(rows[idx+5][-1]), 'put_net_vol': parse_vol(rows[idx+5][-2])
+                            }
+                        }
                         print(f"[OK] Official TAIFEX TXO Options Inst Net OI: Foreign Call={opt_inst['foreign']['call_net_vol']} ({opt_inst['foreign']['call_net_amt']}億), Put={opt_inst['foreign']['put_net_vol']} ({opt_inst['foreign']['put_net_amt']}億)")
-                        break
+                        snaps = load_institutional_snapshots()
+                        snaps[OPT_MATRIX_SNAPSHOT_KEY] = opt_inst
+                        save_institutional_snapshots(snaps)
+                        return opt_inst
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Options Trading: {e}")
-    return opt_inst
+
+    snaps = load_institutional_snapshots()
+    return snaps.get(OPT_MATRIX_SNAPSHOT_KEY) or {
+        'foreign': {'call_net_amt': None, 'put_net_amt': None, 'call_net_vol': None, 'put_net_vol': None},
+        'trust': {'call_net_amt': None, 'put_net_amt': None, 'call_net_vol': None, 'put_net_vol': None},
+        'dealer': {'call_net_amt': None, 'put_net_amt': None, 'call_net_vol': None, 'put_net_vol': None}
+    }
+
+LARGE_TRADER_SNAPSHOT_KEY = "LARGE_TRADER_LAST_REAL"
 
 def fetch_official_taifex_large_trader():
     """
     Parses TAIFEX largeTraderFutQry for Top 5 / Top 10 Large Trader and Speculator Net OI
-    across Near Month, Far Month, and Total (All Months).
+    across Near Month, Far Month, and Total (All Months). On total fetch/parse failure, falls
+    back to the last successfully-fetched real result instead of a hardcoded literal that
+    would stay frozen forever.
     """
-    lt_inst = {
-        'near': {'top5_net': -2832, 'top10_net': -4414, 'top5_spec_net': -1712, 'top10_spec_net': -3884},
-        'far': {'top5_net': -8186, 'top10_net': -18271, 'top5_spec_net': -7331, 'top10_spec_net': -18801},
-        'total': {'top5_net': -11018, 'top10_net': -22685, 'top5_spec_net': -9043, 'top10_spec_net': -22685},
-        'top5_net': -11018,
-        'top10_net': -22685,
-        'top5_spec_net': -9043,
-        'top10_spec_net': -22685
-    }
+    lt_inst = None
     try:
         url_lt = "https://www.taifex.com.tw/cht/3/largeTraderFutQry"
         req = urllib.request.Request(url_lt, headers=HEADERS)
@@ -1372,16 +1748,29 @@ def fetch_official_taifex_large_trader():
                             'top5_spec_net': t_spec5,
                             'top10_spec_net': t_spec10
                         }
-                        break
+                        snaps = load_institutional_snapshots()
+                        snaps[LARGE_TRADER_SNAPSHOT_KEY] = lt_inst
+                        save_institutional_snapshots(snaps)
+                        return lt_inst
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Large Trader OI: {e}")
-    return lt_inst
+
+    snaps = load_institutional_snapshots()
+    return snaps.get(LARGE_TRADER_SNAPSHOT_KEY) or {
+        'near': {'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+        'far': {'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+        'total': {'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+        'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None
+    }
+
+FUT_INST_OI_SNAPSHOT_KEY = "FUT_INST_OI_LAST_REAL"
 
 def fetch_official_taifex_futures_institutional_oi():
     """
-    Parses TAIFEX futContractsDate for TX (大台) Three Major Institutional Net Open Interest (Unhedged).
+    Parses TAIFEX futContractsDate for TX (大台) Three Major Institutional Net Open Interest
+    (Unhedged). On total fetch/parse failure, falls back to the last successfully-fetched real
+    result instead of a hardcoded literal that would stay frozen forever.
     """
-    res = {'dealer': 2019, 'trust': 75825, 'foreign': -82423}
     try:
         url = "https://www.taifex.com.tw/cht/3/futContractsDate"
         req = urllib.request.Request(url, headers=HEADERS)
@@ -1396,14 +1785,21 @@ def fetch_official_taifex_futures_institutional_oi():
                             d_row = [c.get_text(strip=True) for c in rows[idx].find_all(['td', 'th'])]
                             t_row = [c.get_text(strip=True) for c in rows[idx+1].find_all(['td', 'th'])]
                             f_row = [c.get_text(strip=True) for c in rows[idx+2].find_all(['td', 'th'])]
-                            res['dealer'] = int(d_row[-2].replace(',', ''))
-                            res['trust'] = int(t_row[-2].replace(',', ''))
-                            res['foreign'] = int(f_row[-2].replace(',', ''))
+                            res = {
+                                'dealer': int(d_row[-2].replace(',', '')),
+                                'trust': int(t_row[-2].replace(',', '')),
+                                'foreign': int(f_row[-2].replace(',', ''))
+                            }
                             print(f"[OK] Official TAIFEX TX Futures Inst Net OI: Foreign={res['foreign']}, Trust={res['trust']}, Dealer={res['dealer']}")
+                            snaps = load_institutional_snapshots()
+                            snaps[FUT_INST_OI_SNAPSHOT_KEY] = res
+                            save_institutional_snapshots(snaps)
                             return res
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Futures Inst Net OI: {e}")
-    return res
+
+    snaps = load_institutional_snapshots()
+    return snaps.get(FUT_INST_OI_SNAPSHOT_KEY) or {'dealer': None, 'trust': None, 'foreign': None}
 
 def fetch_official_taifex_pc_ratio():
     """
@@ -1429,6 +1825,144 @@ def fetch_official_taifex_pc_ratio():
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX PC Ratio: {e}")
     return res
+
+def fetch_taifex_stock_futures_contract_map():
+    """
+    Fetches TAIFEX's official 股票期貨/股票選擇權 交易標的 reference table (stockLists),
+    mapping each underlying stock ticker to its 2-letter TAIFEX stock-futures contract code
+    (e.g. "2330" -> "CD"). When both a regular-size and mini-size contract exist for the same
+    ticker, the regular one (listed first in the table) is kept.
+    Cached locally for 7 days since this mapping rarely changes.
+    """
+    cache_file = os.path.join(_DATA_DIR, "taifex_stock_futures_contract_map.json")
+    try:
+        if os.path.exists(cache_file) and (time.time() - os.path.getmtime(cache_file)) < 7 * 86400:
+            with open(cache_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+                if cached:
+                    return cached
+    except Exception:
+        pass
+
+    mapping = {}
+    try:
+        url = "https://www.taifex.com.tw/cht/2/stockLists"
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
+            html = resp.read().decode('utf-8', errors='ignore')
+        soup = BeautifulSoup(html, 'html.parser')
+        for t in soup.find_all('table'):
+            for r in t.find_all('tr'):
+                cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
+                if len(cols) >= 3 and len(cols[0]) == 2 and cols[0].isalpha() and cols[2].isdigit():
+                    mapping.setdefault(cols[2], cols[0])
+        print(f"[OK] TAIFEX Stock Futures Contract Map: {len(mapping)} tickers mapped")
+        if mapping:
+            try:
+                os.makedirs(_DATA_DIR, exist_ok=True)
+                with open(cache_file, "w", encoding="utf-8") as f:
+                    json.dump(mapping, f, ensure_ascii=False)
+            except Exception:
+                pass
+    except Exception as e:
+        print(f"[Warning] Failed to fetch TAIFEX Stock Futures Contract Map: {e}")
+        try:
+            if os.path.exists(cache_file):
+                with open(cache_file, "r", encoding="utf-8") as f:
+                    return json.load(f)
+        except Exception:
+            pass
+    return mapping
+
+def fetch_taifex_stock_futures_large_trader_batch(contract_map, stock_codes):
+    """
+    Real per-stock-futures large-trader/institutional net position data from TAIFEX's official
+    大額交易人未沖銷部位結構表 (largeTraderFutQry), queried once per individual stock-futures
+    contract via its 2-letter code. Unlike the aggregate 三大法人期貨未沖銷部位 page (which only
+    breaks TX/TE/TF-class index futures out by name), this page supports a per-contract query
+    covering 260+ individual stock futures, confirmed via manual browser testing against
+    https://www.taifex.com.tw/cht/3/largeTraderFutQry (POST queryDate=YYYY/MM/DD&contractId=<code>).
+    Net positions are the real "所有契約" (all contract months) 買方-賣方 (buy-side minus sell-side)
+    difference for the top-5 / top-10 large traders and the "(特定法人合計)" institutional subset.
+    Results are cached for the trading day so repeated same-day runs skip the 260+ request batch.
+    """
+    cache_file = os.path.join(_DATA_DIR, "stock_futures_large_trader_cache.json")
+    today_str = datetime.date.today().isoformat()
+    try:
+        if os.path.exists(cache_file):
+            with open(cache_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            if cached.get("_date") == today_str and cached.get("data"):
+                print(f"[OK] TAIFEX Stock Futures Large Trader: using same-day cache ({len(cached['data'])} tickers)")
+                return cached["data"]
+    except Exception:
+        pass
+
+    result = {}
+    query_date = None
+    try:
+        req = urllib.request.Request("https://www.taifex.com.tw/cht/3/largeTraderFutQry", headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
+            html = resp.read().decode('utf-8', errors='ignore')
+        soup = BeautifulSoup(html, 'html.parser')
+        date_input = soup.find('input', {'id': 'queryDate'})
+        query_date = date_input.get('value') if date_input else None
+    except Exception as e:
+        print(f"[Warning] Failed to discover TAIFEX large-trader query date: {e}")
+
+    if not query_date:
+        return result
+
+    def _parse_pair(cell):
+        m = re.match(r'([\d,]+)\(([\d,]+)\)', cell)
+        if m:
+            return int(m.group(1).replace(',', '')), int(m.group(2).replace(',', ''))
+        m2 = re.match(r'([\d,]+)', cell)
+        return (int(m2.group(1).replace(',', '')), 0) if m2 else (0, 0)
+
+    fetched = 0
+    for code in stock_codes:
+        contract_id = contract_map.get(code)
+        if not contract_id:
+            continue
+        try:
+            data = f"queryDate={query_date}&contractId={contract_id}".encode()
+            req = urllib.request.Request(
+                "https://www.taifex.com.tw/cht/3/largeTraderFutQry",
+                data=data,
+                headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded"}
+            )
+            with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
+                html = resp.read().decode('utf-8', errors='ignore')
+            soup = BeautifulSoup(html, 'html.parser')
+            for t in soup.find_all('table'):
+                for r in t.find_all('tr'):
+                    cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
+                    if cols and cols[0] == '所有契約' and len(cols) >= 9:
+                        buy5, buy5_inst = _parse_pair(cols[1])
+                        buy10, buy10_inst = _parse_pair(cols[3])
+                        sell5, sell5_inst = _parse_pair(cols[5])
+                        sell10, sell10_inst = _parse_pair(cols[7])
+                        result[code] = {
+                            "top5_net_oi": buy5 - sell5,
+                            "top10_net_oi": buy10 - sell10,
+                            "top5_inst_oi": buy5_inst - sell5_inst,
+                            "top10_inst_oi": buy10_inst - sell10_inst,
+                        }
+                        fetched += 1
+                        break
+        except Exception as e:
+            print(f"[Warning] TAIFEX large-trader fetch failed for {code} ({contract_id}): {e}")
+        time.sleep(0.35)
+
+    print(f"[OK] TAIFEX Stock Futures Large Trader: {fetched}/{len(stock_codes)} tickers fetched for {query_date}")
+    try:
+        os.makedirs(_DATA_DIR, exist_ok=True)
+        with open(cache_file, "w", encoding="utf-8") as f:
+            json.dump({"_date": today_str, "query_date": query_date, "data": result}, f, ensure_ascii=False)
+    except Exception:
+        pass
+    return result
 
 def fetch_official_taifex_retail_sentiment():
     """
@@ -1491,30 +2025,57 @@ def fetch_official_taifex_retail_sentiment():
                                         v = int(c.replace(',', ''))
                                         if v > total_oi: total_oi = v
                                     except: pass
-                return near_oi or (36258 if cid == 'MTX' else 80167), total_oi or (225960 if cid == 'MTX' else 395375)
+                return (near_oi or None), (total_oi or None)
         except Exception:
-            return (36258 if cid == 'MTX' else 80167), (225960 if cid == 'MTX' else 395375)
+            return None, None
 
     mtx_near_total, mtx_total = parse_taifex_fut_oi('MTX')
     tmf_near_total, tmf_total = parse_taifex_fut_oi('TMF')
 
+    # Real day-over-day deltas via the same persistent snapshot store used for the
+    # institutional 5-day matrix — yesterday's real values, not a hardcoded number, are what
+    # daily_change/prev_ratio are actually supposed to mean. Loaded early here too so a total
+    # fetch failure below can fall back to yesterday's real derived numbers instead of a
+    # frozen literal sentinel (the app.js renderer does raw arithmetic on these fields, so
+    # they must always be real numbers, not None).
+    _retail_snaps = load_institutional_snapshots()
+    _retail_today_key = f"{datetime.date.today().isoformat()}_INST_RETAIL"
+    _retail_prev_key = max(
+        (k for k in _retail_snaps if k.endswith('_INST_RETAIL') and k < _retail_today_key),
+        default=None
+    )
+    _prev = _retail_snaps.get(_retail_prev_key, {}) if _retail_prev_key else {}
+
+    # near_oi (near-month total OI) and total_oi (all-months "合計" row) are two independent
+    # parse targets within the same page fetch — one can succeed while the other fails. Each
+    # is degraded to yesterday's real persisted value independently, rather than discarding a
+    # perfectly good near_oi just because the unrelated total_oi row wasn't found (which used
+    # to silently fall back to one magic-literal sentinel pair for BOTH at once).
     mtx_inst_l, mtx_inst_s = inst['MTX']['long'], inst['MTX']['short']
-    
-    # Near Month Broker Breakdown (SinoPac / Taishin)
-    mtx_r_long = 28779 if mtx_near_total == 36258 else max(0, mtx_near_total - mtx_inst_l)
-    mtx_r_short = 19283 if mtx_near_total == 36258 else max(0, mtx_near_total - mtx_inst_s)
-    mtx_r_net = 9496
-    
-    mtx_near_ratio = round((mtx_r_net / mtx_near_total) * 100, 2) if mtx_near_total > 0 else 26.19
-    mtx_total_ratio = round((mtx_r_net / mtx_total) * 100, 2) if mtx_total > 0 else 4.20
+    if mtx_near_total is not None:
+        mtx_r_long = max(0, mtx_near_total - mtx_inst_l)
+        mtx_r_short = max(0, mtx_near_total - mtx_inst_s)
+        mtx_r_net = mtx_r_long - mtx_r_short
+        mtx_near_ratio = round((mtx_r_net / mtx_near_total) * 100, 2) if mtx_near_total > 0 else _prev.get('mtx_ratio', 0.0)
+    else:
+        mtx_r_long = _prev.get('mtx_long_oi', 0)
+        mtx_r_short = _prev.get('mtx_short_oi', 0)
+        mtx_r_net = _prev.get('mtx_net_oi', 0)
+        mtx_near_ratio = _prev.get('mtx_ratio', 0.0)
+    mtx_total_ratio = round((mtx_r_net / mtx_total) * 100, 2) if (mtx_total is not None and mtx_total > 0) else _prev.get('mtx_total_ratio', 0.0)
 
     tmf_inst_l, tmf_inst_s = inst['TMF']['long'], inst['TMF']['short']
-    tmf_r_long = 67971 if tmf_near_total == 80167 else max(0, tmf_near_total - tmf_inst_l)
-    tmf_r_short = 43039 if tmf_near_total == 80167 else max(0, tmf_near_total - tmf_inst_s)
-    tmf_r_net = 24932
-    
-    tmf_near_ratio = round((tmf_r_net / tmf_near_total) * 100, 2) if tmf_near_total > 0 else 31.10
-    tmf_total_ratio = round((tmf_r_net / tmf_total) * 100, 2) if tmf_total > 0 else 6.31
+    if tmf_near_total is not None:
+        tmf_r_long = max(0, tmf_near_total - tmf_inst_l)
+        tmf_r_short = max(0, tmf_near_total - tmf_inst_s)
+        tmf_r_net = tmf_r_long - tmf_r_short
+        tmf_near_ratio = round((tmf_r_net / tmf_near_total) * 100, 2) if tmf_near_total > 0 else _prev.get('tmf_ratio', 0.0)
+    else:
+        tmf_r_long = _prev.get('tmf_long_oi', 0)
+        tmf_r_short = _prev.get('tmf_short_oi', 0)
+        tmf_r_net = _prev.get('tmf_net_oi', 0)
+        tmf_near_ratio = _prev.get('tmf_ratio', 0.0)
+    tmf_total_ratio = round((tmf_r_net / tmf_total) * 100, 2) if (tmf_total is not None and tmf_total > 0) else _prev.get('tmf_total_ratio', 0.0)
 
     vix_info = fetch_official_taifex_vix()
     vix_idx = vix_info["taifex_vix"]
@@ -1524,17 +2085,53 @@ def fetch_official_taifex_retail_sentiment():
     mtx_ratio = mtx_near_ratio
     tmf_ratio = tmf_near_ratio
 
-    mtx_sentiment_tag = "🔴 散戶極度做多 (軋空看壓)" if mtx_ratio > 15 else ("🟠 散戶偏多看壓" if mtx_ratio > 5 else ("🟢 散戶極度做空" if mtx_ratio < -15 else ("🟢 散戶偏空看撐" if mtx_ratio < -5 else "⚖️ 散戶多空平衡")))
-    tmf_sentiment_tag = "🔴 散戶極度做多 (軋空看壓)" if tmf_ratio > 15 else ("🟠 散戶微幅做多" if tmf_ratio > 5 else ("🟢 散戶極度做空" if tmf_ratio < -15 else ("🟢 散戶偏空看撐" if tmf_ratio < -5 else "⚖️ 散戶多空平衡")))
+    # Real foreign TX OI + real foreign TXO call/put net amounts, reusing the same official
+    # fetchers used elsewhere in this file for the exact same underlying numbers.
+    fut_inst_snap = fetch_official_taifex_futures_institutional_oi()
+    opt_inst_snap = fetch_official_taifex_options_matrix()
+    foreign_tx_net = fut_inst_snap.get('foreign')
+    foreign_call_net = opt_inst_snap.get('foreign', {}).get('call_net_amt')
+    foreign_put_net = opt_inst_snap.get('foreign', {}).get('put_net_amt')
+
+    mtx_daily_change = (mtx_r_net - _prev['mtx_net_oi']) if (mtx_r_net is not None and _prev.get('mtx_net_oi') is not None) else None
+    mtx_prev_ratio = _prev.get('mtx_ratio')
+    tmf_daily_change = (tmf_r_net - _prev['tmf_net_oi']) if (tmf_r_net is not None and _prev.get('tmf_net_oi') is not None) else None
+    tmf_prev_ratio = _prev.get('tmf_ratio')
+    foreign_tx_change = (foreign_tx_net - _prev['foreign_tx_net']) if ('foreign_tx_net' in _prev and foreign_tx_net is not None) else None
+    foreign_call_change = (foreign_call_net - _prev['foreign_call_net']) if ('foreign_call_net' in _prev and foreign_call_net is not None) else None
+    foreign_put_change = (foreign_put_net - _prev['foreign_put_net']) if ('foreign_put_net' in _prev and foreign_put_net is not None) else None
+
+    write_institutional_snapshot(datetime.date.today().isoformat(), 'RETAIL', {
+        'mtx_net_oi': mtx_r_net, 'mtx_ratio': mtx_ratio, 'mtx_total_ratio': mtx_total_ratio,
+        'mtx_long_oi': mtx_r_long, 'mtx_short_oi': mtx_r_short,
+        'tmf_net_oi': tmf_r_net, 'tmf_ratio': tmf_ratio, 'tmf_total_ratio': tmf_total_ratio,
+        'tmf_long_oi': tmf_r_long, 'tmf_short_oi': tmf_r_short,
+        'foreign_tx_net': foreign_tx_net, 'foreign_call_net': foreign_call_net, 'foreign_put_net': foreign_put_net
+    })
+
+    def _sentiment_tag(ratio):
+        if ratio is None:
+            return "⚪ 無即時數據"
+        return "🔴 散戶極度做多 (軋空看壓)" if ratio > 15 else ("🟠 散戶偏多看壓" if ratio > 5 else ("🟢 散戶極度做空" if ratio < -15 else ("🟢 散戶偏空看撐" if ratio < -5 else "⚖️ 散戶多空平衡")))
+
+    mtx_sentiment_tag = _sentiment_tag(mtx_ratio)
+    tmf_sentiment_tag = _sentiment_tag(tmf_ratio)
 
     call_col = "var(--call-color)"
     put_col = "var(--put-color)"
-    mtx_col = call_col if mtx_ratio >= 0 else put_col
-    tmf_col = call_col if tmf_ratio >= 0 else put_col
+    neutral_col = "#888888"
+    mtx_col = neutral_col if mtx_ratio is None else (call_col if mtx_ratio >= 0 else put_col)
+    tmf_col = neutral_col if tmf_ratio is None else (call_col if tmf_ratio >= 0 else put_col)
 
+    if mtx_ratio is None or tmf_ratio is None:
+        mtx_line = "小台/微台散戶多空比數據暫時無法取得。"
+    else:
+        mtx_line = f"小台散戶多空比為 <span style=\"color: {mtx_col}; font-weight:700;\">{mtx_ratio:+.2f}%</span>（市場近月標準算式，淨部位 {mtx_r_net:+,} 口／全月基準 {mtx_total_ratio:+.2f}%），微台多空比為 <span style=\"color: {tmf_col}; font-weight:700;\">{tmf_ratio:+.2f}%</span>（淨部位 {tmf_r_net:+,} 口／全月基準 {tmf_total_ratio:+.2f}%）。散戶部位維持強烈偏多姿態。"
+    vix_line = (f"台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">{vix_idx:.2f}</span> ({vix_chg:+.2f})，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。"
+                if vix_idx is not None else "VIX 波動率指數暫時無法取得。")
     sentiment_summary_html = f"""
-    <p style="margin-bottom: 6px;">&#128161; <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style="color: {mtx_col}; font-weight:700;">{mtx_ratio:+.2f}%</span>（市場近月標準算式，淨部位 {mtx_r_net:+,} 口／全月基準 {mtx_total_ratio:+.2f}%），微台多空比為 <span style="color: {tmf_col}; font-weight:700;">{tmf_ratio:+.2f}%</span>（淨部位 {tmf_r_net:+,} 口／全月基準 {tmf_total_ratio:+.2f}%）。散戶部位維持強烈偏多姿態。</p>
-    <p style="margin-bottom: 0;">&#9878; <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style="color: #00e676; font-weight:700;">{vix_idx:.2f}</span> ({vix_chg:+.2f})，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>
+    <p style="margin-bottom: 6px;">&#128161; <strong>散戶籌碼動向</strong>：{mtx_line}</p>
+    <p style="margin-bottom: 0;">&#9878; <strong>外資與 VIX 波動度觀測</strong>：{vix_line}</p>
     """
 
     return {
@@ -1546,12 +2143,12 @@ def fetch_official_taifex_retail_sentiment():
                 "long_oi": mtx_r_long,
                 "short_oi": mtx_r_short,
                 "net_oi": mtx_r_net,
-                "daily_change": 2380,
+                "daily_change": mtx_daily_change,
                 "total_oi": mtx_total,
                 "near_oi": mtx_near_total,
                 "ratio": mtx_ratio,
                 "total_ratio": mtx_total_ratio,
-                "prev_ratio": 19.97,
+                "prev_ratio": mtx_prev_ratio,
                 "sentiment_tag": mtx_sentiment_tag
             },
             "micro_tmf": {
@@ -1559,47 +2156,56 @@ def fetch_official_taifex_retail_sentiment():
                 "long_oi": tmf_r_long,
                 "short_oi": tmf_r_short,
                 "net_oi": tmf_r_net,
-                "daily_change": 17451,
+                "daily_change": tmf_daily_change,
                 "total_oi": tmf_total,
                 "near_oi": tmf_near_total,
                 "ratio": tmf_ratio,
                 "total_ratio": tmf_total_ratio,
-                "prev_ratio": 9.63,
+                "prev_ratio": tmf_prev_ratio,
                 "sentiment_tag": tmf_sentiment_tag
             },
             "broker_snapshot": {
-                "foreign_tx_net": -83078,
-                "foreign_tx_change": 396,
-                "foreign_call_net": 2543,
-                "foreign_call_change": 994,
-                "foreign_put_net": 5613,
-                "foreign_put_change": 1892,
+                "foreign_tx_net": foreign_tx_net,
+                "foreign_tx_change": foreign_tx_change,
+                "foreign_call_net": foreign_call_net,
+                "foreign_call_change": foreign_call_change,
+                "foreign_put_net": foreign_put_net,
+                "foreign_put_change": foreign_put_change,
                 "vix_index": vix_idx,
                 "vix_change": vix_chg,
-                "market_turnover": 9976
+                "market_turnover": None
             },
             "sentiment_summary_html": sentiment_summary_html
         }
     }
 
-def fetch_official_taifex_specific_traders():
+def fetch_official_taifex_specific_traders(lt_inst, fut_inst):
     """
-    Fetches official TAIFEX Large Trader Data (https://www.taifex.com.tw/cht/3/largeTraderFutQry)
-    to calculate Top 5 and Top 10 Specific Institutional Traders vs Foreign Futures Divergence.
+    Derives Top 5 / Top 10 Specific Institutional Traders vs Foreign Futures Divergence
+    diagnosis from already-fetched real TAIFEX data: `lt_inst` (from
+    fetch_official_taifex_large_trader(), which parses largeTraderFutQry and already
+    extracts the specific-institutional-trader sub-figures via extract_spec()) and
+    `fut_inst` (from fetch_official_taifex_futures_institutional_oi()). This used to
+    re-fetch largeTraderFutQry itself but never parsed the response, silently falling
+    back to hardcoded numbers every run regardless of fetch success or failure.
     """
-    top5_specific_net = 4850
-    top10_specific_net = 6920
-    top5_large_net = 3200
-    top10_large_net = 5100
-    foreign_tx_net = -38200
+    top5_specific_net = lt_inst.get('top5_spec_net')
+    top10_specific_net = lt_inst.get('top10_spec_net')
+    top5_large_net = lt_inst.get('top5_net')
+    top10_large_net = lt_inst.get('top10_net')
+    foreign_tx_net = fut_inst.get('foreign')
 
-    try:
-        url = "https://www.taifex.com.tw/cht/3/largeTraderFutQry"
-        req = urllib.request.Request(url, headers=HEADERS)
-        with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
-            html = resp.read().decode('big5', errors='ignore')
-    except Exception as e:
-        print(f"[Warning] TAIFEX large trader fetch note: {e}")
+    if top5_specific_net is None or foreign_tx_net is None:
+        return {
+            "top5_specific_net": None,
+            "top10_specific_net": None,
+            "top5_large_net": None,
+            "top10_large_net": None,
+            "foreign_tx_net": None,
+            "divergence_tag": "⚪ 無即時數據",
+            "divergence_desc": "大額交易人特定法人部位或外資期貨未平倉數據暫時無法取得。",
+            "divergence_state": "UNAVAILABLE"
+        }
 
     # Strategic Divergence Diagnosis
     if foreign_tx_net <= -25000 and top5_specific_net > 0:
@@ -1804,6 +2410,24 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
 
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(_SCRIPT_DIR), "data")
+
+def _load_last_gex_snapshot():
+    """
+    Load data/gex_data.json (the previous successful pipeline run's full output), for use as
+    a last-resort "most recently known real value" fallback when a live fetch totally fails.
+    Several fetch functions used to fall back to a hardcoded literal number in this situation
+    (e.g. a spot price or VIX level someone saw on screen once) — those never update and
+    silently go stale forever, no matter how much real market movement happens afterward.
+    Falling back to the last real pipeline run's own output instead means a total-failure
+    fallback is always genuinely real data (just possibly some hours old) rather than a
+    permanently frozen guess. Returns {} if no prior run exists yet (fresh checkout).
+    """
+    try:
+        path = os.path.join(_DATA_DIR, 'gex_data.json')
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
 SNAPSHOT_FILE = os.path.join(_DATA_DIR, "session_snapshots.json")
 TW_HOLIDAYS_FILE = os.path.join(_DATA_DIR, "tw_holidays.json")
 
@@ -1890,6 +2514,35 @@ def write_current_session_snapshot(now_dt, session_type,
     print(f"[SNAPSHOT] Written {snap_key} → {SNAPSHOT_FILE}")
     return snap_key
 
+INST_SNAPSHOT_FILE = os.path.join(_DATA_DIR, "institutional_snapshots.json")
+
+def load_institutional_snapshots():
+    """Load all institutional 5-day-matrix snapshots from data/institutional_snapshots.json."""
+    try:
+        with open(INST_SNAPSHOT_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def save_institutional_snapshots(snapshots):
+    """Persist institutional snapshots to data/institutional_snapshots.json."""
+    os.makedirs(_DATA_DIR, exist_ok=True)
+    with open(INST_SNAPSHOT_FILE, 'w', encoding='utf-8') as f:
+        json.dump(snapshots, f, ensure_ascii=False, indent=2)
+
+def write_institutional_snapshot(date_iso, session_type, data):
+    """
+    Merge-write today's REAL institutional_5day_history / night_institutional_5day_history
+    row into the persistent snapshot store, keyed by {date}_INST_{DAY|NIGHT}. This is what
+    lets T-1..T-4 in tomorrow's (and later days') matrix be real accumulated history instead
+    of hardcoded placeholder numbers — mirrors write_current_session_snapshot()'s pattern.
+    """
+    snap_key = f"{date_iso}_INST_{session_type}"
+    snapshots = load_institutional_snapshots()
+    snapshots[snap_key] = {**data, "written_at": datetime.datetime.now().isoformat()}
+    save_institutional_snapshots(snapshots)
+    return snap_key
+
 def generate_gex_payload():
     tw_tz = datetime.timezone(datetime.timedelta(hours=8))
     now_dt = datetime.datetime.now(datetime.timezone.utc).astimezone(tw_tz)
@@ -1920,28 +2573,7 @@ def generate_gex_payload():
 
     txf_price = night_txf_price if is_night_session else day_txf_price
 
-    # Calculate days to settlements
-    def days_to_next_weekday(base_dt, target_weekday):
-        d = (target_weekday - base_dt.weekday()) % 7
-        return max(d, 0) if d > 0 else 7
-
-    raw_days_wed = days_to_next_weekday(now_dt, 2)
-    raw_days_fri = days_to_next_weekday(now_dt, 4)
-    
-    year, month = now_dt.year, now_dt.month
-    first_day = datetime.datetime(year, month, 1, tzinfo=tw_tz)
-    third_wed_offset = (2 - first_day.weekday()) % 7 + 14
-    third_wed = datetime.datetime(year, month, 1 + third_wed_offset, tzinfo=tw_tz)
-    if third_wed <= now_dt:
-        if month == 12:
-            first_next = datetime.datetime(year + 1, 1, 1, tzinfo=tw_tz)
-            offset = (2 - first_next.weekday()) % 7 + 14
-            third_wed = datetime.datetime(year + 1, 1, 1 + offset, tzinfo=tw_tz)
-        else:
-            first_next = datetime.datetime(year, month + 1, 1, tzinfo=tw_tz)
-            offset = (2 - first_next.weekday()) % 7 + 14
-            third_wed = datetime.datetime(year, month + 1, 1 + offset, tzinfo=tw_tz)
-    raw_days_mth = max((third_wed - now_dt).days, 0)
+    raw_days_wed, raw_days_fri, raw_days_mth, third_wed = compute_days_to_expiries(now_dt, tw_tz)
 
     # Compute exact expiration dates
     w1_dt = now_dt + datetime.timedelta(days=raw_days_wed)
@@ -1962,12 +2594,27 @@ def generate_gex_payload():
         "m1": f"{mth_date_str}結算"
     }
 
+    # Real TXO open interest (the actual options positioning GEX is supposed to measure) —
+    # one request covers the last 5 trading days, which both gives "today" for the live
+    # profile below and lets backfill_snapshots.py reuse the same range for real history.
+    _txo_days = get_recent_tw_trading_days(now_dt, n=5)
+    _txo_oi_by_date = fetch_taifex_txo_open_interest(
+        _txo_days[0].strftime('%Y/%m/%d'), _txo_days[-1].strftime('%Y/%m/%d')
+    )
+    _txo_latest_date = max(_txo_oi_by_date.keys()) if _txo_oi_by_date else None
+    if _txo_latest_date:
+        _txo_buckets = classify_txo_contract_buckets(_txo_oi_by_date[_txo_latest_date])
+        real_option_chain = build_real_option_chain(_txo_oi_by_date[_txo_latest_date], _txo_buckets)
+    else:
+        real_option_chain = {}
+        print("[Warning] No real TAIFEX TXO open interest available — GEX profile will be flat/zero, not a guessed curve.")
+
     # Compute GEX Profile
-    gex_profile = calculate_true_gex_profile(spot_price, {}, raw_days_wed, raw_days_fri, raw_days_mth)
+    gex_profile = calculate_true_gex_profile(spot_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth)
     gex_profile["dte_dates"] = dte_dates
 
     # Day vs Night Session Shift Metrics
-    day_profile = calculate_true_gex_profile(day_txf_price, {}, raw_days_wed, raw_days_fri, raw_days_mth)
+    day_profile = calculate_true_gex_profile(day_txf_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth)
     day_zero_gamma = day_profile['zero_gamma_level']
     day_call_wall = day_profile['call_wall_strike']
     day_put_wall = day_profile['put_wall_strike']
@@ -2117,97 +2764,126 @@ def generate_gex_payload():
     fut_inst = fetch_official_taifex_futures_institutional_oi()
     pc_ratio_dict = fetch_official_taifex_pc_ratio()
 
-    # Real 5-Day Positioning Matrix (Complete Non-Zero TAIFEX/TWSE Data Audit)
-    institutional_5day_history = [
-        {
-            "date": t_days[0],
-            "top5_net": -1250, "top10_net": -3420, "top5_spec_net": -980, "top10_spec_net": -2100,
-            "lt_near": {'top5_net': -1120, 'top10_net': -3150, 'top5_spec_net': -860, 'top10_spec_net': -1980},
-            "foreign_fut_net": -84500, "trust_fut_net": 72100, "itrust_fut_net": 72100, "dealer_fut_net": 1850,
-            "foreign_stock_net": -125.4, "trust_stock_net": 42.1, "itrust_stock_net": 42.1, "dealer_stock_net": -18.6,
-            "foreign_opt_net": 2.27, "trust_opt_net": -2.40, "itrust_opt_net": -2.40, "dealer_opt_net": 2.10,
-            "foreign_opt_call_net": 0.45, "foreign_opt_put_net": -1.82,
-            "trust_opt_call_net": -2.40, "trust_opt_put_net": 0.002,
-            "dealer_opt_call_net": 1.25, "dealer_opt_put_net": 0.85,
-            "pc_ratio": pc_ratio_dict.get('2026/8/19', 102.27)
-        },
-        {
-            "date": t_days[1],
-            "top5_net": -850, "top10_net": -1200, "top5_spec_net": -420, "top10_spec_net": -890,
-            "lt_near": {'top5_net': -780, 'top10_net': -1120, 'top5_spec_net': -380, 'top10_spec_net': -810},
-            "foreign_fut_net": -83800, "trust_fut_net": 73450, "itrust_fut_net": 73450, "dealer_fut_net": 1920,
-            "foreign_stock_net": -88.2, "trust_stock_net": 38.5, "itrust_stock_net": 38.5, "dealer_stock_net": -12.4,
-            "foreign_opt_net": 2.07, "trust_opt_net": -2.65, "itrust_opt_net": -2.65, "dealer_opt_net": 2.32,
-            "foreign_opt_call_net": 0.62, "foreign_opt_put_net": -1.45,
-            "trust_opt_call_net": -2.65, "trust_opt_put_net": 0.002,
-            "dealer_opt_call_net": 1.40, "dealer_opt_put_net": 0.92,
-            "pc_ratio": pc_ratio_dict.get('2026/8/20', 99.37)
-        },
-        {
-            "date": t_days[2],
-            "top5_net": 420, "top10_net": 1150, "top5_spec_net": 650, "top10_spec_net": 1420,
-            "lt_near": {'top5_net': 380, 'top10_net': 1050, 'top5_spec_net': 590, 'top10_spec_net': 1310},
-            "foreign_fut_net": -83474, "trust_fut_net": 74100, "itrust_fut_net": 74100, "dealer_fut_net": 2080,
-            "foreign_stock_net": -45.6, "trust_stock_net": 51.2, "itrust_stock_net": 51.2, "dealer_stock_net": -8.5,
-            "foreign_opt_net": 1.98, "trust_opt_net": -2.85, "itrust_opt_net": -2.85, "dealer_opt_net": 3.00,
-            "foreign_opt_call_net": 0.88, "foreign_opt_put_net": -1.10,
-            "trust_opt_call_net": -2.85, "trust_opt_put_net": 0.003,
-            "dealer_opt_call_net": 1.85, "dealer_opt_put_net": 1.15,
-            "pc_ratio": pc_ratio_dict.get('2026/8/21', 103.78)
-        },
-        {
-            "date": t_days[3],
-            "top5_net": 3850, "top10_net": 5920, "top5_spec_net": 3210, "top10_spec_net": 4850,
-            "lt_near": {'top5_net': 3520, 'top10_net': 5480, 'top5_spec_net': 2950, 'top10_spec_net': 4420},
-            "foreign_fut_net": -82529, "trust_fut_net": 75650, "itrust_fut_net": 75650, "dealer_fut_net": 2315,
-            "foreign_stock_net": 32.5, "trust_stock_net": 48.0, "itrust_stock_net": 48.0, "dealer_stock_net": 14.2,
-            "foreign_opt_net": 2.10, "trust_opt_net": -2.98, "itrust_opt_net": -2.98, "dealer_opt_net": 3.72,
-            "foreign_opt_call_net": 1.45, "foreign_opt_put_net": -0.65,
-            "trust_opt_call_net": -2.98, "trust_opt_put_net": 0.003,
-            "dealer_opt_call_net": 2.30, "dealer_opt_put_net": 1.42,
-            "pc_ratio": pc_ratio_dict.get('2026/8/24', 95.81)
-        },
-        {
-            "date": t_days[4],
-            "top5_net": lt_inst.get('top5_net', -11018),
-            "top10_net": lt_inst.get('top10_net', -22685),
-            "top5_spec_net": lt_inst.get('top5_spec_net', -9043),
-            "top10_spec_net": lt_inst.get('top10_spec_net', -22685),
-            "lt_near": lt_inst.get('near', {'top5_net': -2832, 'top10_net': -4414, 'top5_spec_net': -1712, 'top10_spec_net': -3884}),
-            "lt_far": lt_inst.get('far', {'top5_net': -8186, 'top10_net': -18271, 'top5_spec_net': -7331, 'top10_spec_net': -18801}),
-            "lt_total": lt_inst.get('total', {'top5_net': -11018, 'top10_net': -22685, 'top5_spec_net': -9043, 'top10_spec_net': -22685}),
-            "foreign_fut_net": fut_inst.get('foreign', -82423),
-            "trust_fut_net": fut_inst.get('trust', 75825), "itrust_fut_net": fut_inst.get('trust', 75825), "dealer_fut_net": fut_inst.get('dealer', 2019),
-            "foreign_stock_net": stock_inst.get('foreign_stock_net', 366.13),
-            "trust_stock_net": stock_inst.get('trust_stock_net', 33.66),
-            "itrust_stock_net": stock_inst.get('trust_stock_net', 33.66),
-            "dealer_stock_net": stock_inst.get('dealer_stock_net', 179.34),
-            "total_stock_net": stock_inst.get('total_stock_net', 579.13),
-            "foreign_opt_net": round(opt_inst['foreign']['call_net_amt'] + opt_inst['foreign']['put_net_amt'], 2),
-            "trust_opt_net": round(opt_inst['trust']['call_net_amt'] + opt_inst['trust']['put_net_amt'], 2),
-            "itrust_opt_net": round(opt_inst['trust']['call_net_amt'] + opt_inst['trust']['put_net_amt'], 2),
-            "dealer_opt_net": round(opt_inst['dealer']['call_net_amt'] + opt_inst['dealer']['put_net_amt'], 2),
-            "foreign_opt_call_net": opt_inst['foreign']['call_net_amt'],
-            "foreign_opt_put_net": opt_inst['foreign']['put_net_amt'],
-            "trust_opt_call_net": opt_inst['trust']['call_net_amt'],
-            "trust_opt_put_net": opt_inst['trust']['put_net_amt'],
-            "dealer_opt_call_net": opt_inst['dealer']['call_net_amt'],
-            "dealer_opt_put_net": opt_inst['dealer']['put_net_amt'],
-            "pc_ratio": pc_ratio_dict.get('2026/8/25', gex_profile['pc_ratio'])
-        }
+    # Real 5-Day Positioning Matrix. T-4..T-1 are read from data/institutional_snapshots.json —
+    # real history persisted day by day (see write_institutional_snapshot below) — instead of
+    # the hardcoded literal numbers this block used to contain. A day with no snapshot yet
+    # (e.g. right after this fix is deployed) gets has_snapshot=False and null fields, matching
+    # the same "—" convention already used for history_10_sessions above, rather than a
+    # fabricated number. T-0 (today) is still the live TAIFEX/TWSE fetch below.
+    inst_snaps = load_institutional_snapshots()
+
+    _INST_DAY_FIELDS = [
+        "top5_net", "top10_net", "top5_spec_net", "top10_spec_net",
+        "lt_near", "lt_far", "lt_total",
+        "foreign_fut_net", "trust_fut_net", "itrust_fut_net", "dealer_fut_net",
+        "foreign_stock_net", "trust_stock_net", "itrust_stock_net", "dealer_stock_net", "total_stock_net",
+        "foreign_opt_net", "trust_opt_net", "itrust_opt_net", "dealer_opt_net",
+        "foreign_opt_call_net", "foreign_opt_put_net",
+        "trust_opt_call_net", "trust_opt_put_net",
+        "dealer_opt_call_net", "dealer_opt_put_net",
+        "pc_ratio"
     ]
 
-    # 5-Day Night Session Institutional Trading History
-    night_institutional_5day_history = [
-        {"date": t_days[0], "foreign_tx": -42, "foreign_tx_amt": -0.38, "foreign_mtx": -110, "foreign_micro": -250, "dealer_tx": -110, "dealer_tx_amt": -0.98},
-        {"date": t_days[1], "foreign_tx": 150, "foreign_tx_amt": 1.35, "foreign_mtx": 320, "foreign_micro": 850, "dealer_tx": 85, "dealer_tx_amt": 0.77},
-        {"date": t_days[2], "foreign_tx": -88, "foreign_tx_amt": -0.79, "foreign_mtx": -120, "foreign_micro": -410, "dealer_tx": -45, "dealer_tx_amt": -0.40},
-        {"date": t_days[3], "foreign_tx": 320, "foreign_tx_amt": 2.88, "foreign_mtx": 580, "foreign_micro": 1250, "dealer_tx": 120, "dealer_tx_amt": 1.07},
-        {"date": t_days[4], "foreign_tx": night_inst_trading["tx_foreign_net_vol"], "foreign_tx_amt": night_inst_trading["tx_foreign_net_amt"], "foreign_mtx": night_inst_trading["mini_foreign_net_vol"], "foreign_micro": night_inst_trading["micro_foreign_net_vol"], "dealer_tx": night_inst_trading["tx_dealer_net_vol"], "dealer_tx_amt": night_inst_trading["tx_dealer_net_amt"]}
-    ]
+    def _inst_null_day(date_label):
+        row = {f: None for f in _INST_DAY_FIELDS}
+        row["date"] = date_label
+        row["has_snapshot"] = False
+        return row
 
-    last_foreign_net = institutional_5day_history[-1]["foreign_fut_net"]
-    prev_foreign_net = institutional_5day_history[-2]["foreign_fut_net"]
+    institutional_5day_history = []
+    for i in range(4):  # T-4..T-1
+        d_iso = t_days_dates[i].strftime('%Y-%m-%d')
+        snap = inst_snaps.get(f"{d_iso}_INST_DAY")
+        if snap:
+            row = {f: snap.get(f) for f in _INST_DAY_FIELDS}
+            row["date"] = t_days[i]
+            row["has_snapshot"] = True
+            institutional_5day_history.append(row)
+        else:
+            institutional_5day_history.append(_inst_null_day(t_days[i]))
+
+    # T-0 (today): live TAIFEX/TWSE fetch. The .get(key, N) fallbacks below only fire if
+    # today's live fetch itself fails (network/parse error) — a separate, smaller residual
+    # issue from the T-4..T-1 fix above, left as-is for now and noted for a future pass.
+    def _safe_sum(a, b):
+        # Guards the extremely rare bootstrap case (fresh checkout, zero prior successful
+        # runs ever, AND today's live fetch also fails) where these can still be None.
+        return round(a + b, 2) if (a is not None and b is not None) else None
+
+    t0_inst_day = {
+        "date": t_days[4],
+        "top5_net": lt_inst.get('top5_net'),
+        "top10_net": lt_inst.get('top10_net'),
+        "top5_spec_net": lt_inst.get('top5_spec_net'),
+        "top10_spec_net": lt_inst.get('top10_spec_net'),
+        "lt_near": lt_inst.get('near'),
+        "lt_far": lt_inst.get('far'),
+        "lt_total": lt_inst.get('total'),
+        "foreign_fut_net": fut_inst.get('foreign'),
+        "trust_fut_net": fut_inst.get('trust'), "itrust_fut_net": fut_inst.get('trust'), "dealer_fut_net": fut_inst.get('dealer'),
+        "foreign_stock_net": stock_inst.get('foreign_stock_net'),
+        "trust_stock_net": stock_inst.get('trust_stock_net'),
+        "itrust_stock_net": stock_inst.get('trust_stock_net'),
+        "dealer_stock_net": stock_inst.get('dealer_stock_net'),
+        "total_stock_net": stock_inst.get('total_stock_net'),
+        "foreign_opt_net": _safe_sum(opt_inst['foreign']['call_net_amt'], opt_inst['foreign']['put_net_amt']),
+        "trust_opt_net": _safe_sum(opt_inst['trust']['call_net_amt'], opt_inst['trust']['put_net_amt']),
+        "itrust_opt_net": _safe_sum(opt_inst['trust']['call_net_amt'], opt_inst['trust']['put_net_amt']),
+        "dealer_opt_net": _safe_sum(opt_inst['dealer']['call_net_amt'], opt_inst['dealer']['put_net_amt']),
+        "foreign_opt_call_net": opt_inst['foreign']['call_net_amt'],
+        "foreign_opt_put_net": opt_inst['foreign']['put_net_amt'],
+        "trust_opt_call_net": opt_inst['trust']['call_net_amt'],
+        "trust_opt_put_net": opt_inst['trust']['put_net_amt'],
+        "dealer_opt_call_net": opt_inst['dealer']['call_net_amt'],
+        "dealer_opt_put_net": opt_inst['dealer']['put_net_amt'],
+        "pc_ratio": pc_ratio_dict.get(f"{t_days_dates[4].year}/{t_days_dates[4].month}/{t_days_dates[4].day}", gex_profile['pc_ratio']),
+        "has_snapshot": True
+    }
+    institutional_5day_history.append(t0_inst_day)
+    write_institutional_snapshot(
+        t_days_dates[4].strftime('%Y-%m-%d'), "DAY",
+        {f: t0_inst_day[f] for f in _INST_DAY_FIELDS}
+    )
+
+    # 5-Day Night Session Institutional Trading History — same real-snapshot pattern as above.
+    _INST_NIGHT_FIELDS = ["foreign_tx", "foreign_tx_amt", "foreign_mtx", "foreign_micro", "dealer_tx", "dealer_tx_amt"]
+
+    def _inst_null_night(date_label):
+        row = {f: None for f in _INST_NIGHT_FIELDS}
+        row["date"] = date_label
+        row["has_snapshot"] = False
+        return row
+
+    night_institutional_5day_history = []
+    for i in range(4):  # T-4..T-1
+        d_iso = t_days_dates[i].strftime('%Y-%m-%d')
+        snap = inst_snaps.get(f"{d_iso}_INST_NIGHT")
+        if snap:
+            row = {f: snap.get(f) for f in _INST_NIGHT_FIELDS}
+            row["date"] = t_days[i]
+            row["has_snapshot"] = True
+            night_institutional_5day_history.append(row)
+        else:
+            night_institutional_5day_history.append(_inst_null_night(t_days[i]))
+
+    t0_inst_night = {
+        "date": t_days[4],
+        "foreign_tx": night_inst_trading["tx_foreign_net_vol"],
+        "foreign_tx_amt": night_inst_trading["tx_foreign_net_amt"],
+        "foreign_mtx": night_inst_trading["mini_foreign_net_vol"],
+        "foreign_micro": night_inst_trading["micro_foreign_net_vol"],
+        "dealer_tx": night_inst_trading["tx_dealer_net_vol"],
+        "dealer_tx_amt": night_inst_trading["tx_dealer_net_amt"],
+        "has_snapshot": True
+    }
+    night_institutional_5day_history.append(t0_inst_night)
+    write_institutional_snapshot(
+        t_days_dates[4].strftime('%Y-%m-%d'), "NIGHT",
+        {f: t0_inst_night[f] for f in _INST_NIGHT_FIELDS}
+    )
+
+    last_foreign_net = institutional_5day_history[-1]["foreign_fut_net"] or 0
+    prev_foreign_net = institutional_5day_history[-2]["foreign_fut_net"] or 0
     foreign_change = last_foreign_net - prev_foreign_net
 
     # Reverse arrays so latest date is at index 0 (top of tables)
@@ -2247,49 +2923,60 @@ def generate_gex_payload():
     f_amt_str = f"{contract_notional_billion:.1f}"
 
     regime_str = "正 Gamma 波動度抑制區" if active_price >= gex_profile['zero_gamma_level'] else "負 Gamma 避險助跌警示區"
-    top5_val = lt_inst.get('top5_net', -11018)
-    top10_val = lt_inst.get('top10_net', -22685)
-    spec_val = lt_inst.get('top5_spec_net', -9043)
-    top5_str = f"{top5_val:+,d}"
-    top10_str = f"{top10_val:+,d}"
-    spec_str = f"{spec_val:+,d}"
+    # top5_val/top10_val/spec_val/f_cash/t_cash/d_cash/opt amounts can only be None in the
+    # extremely rare bootstrap case (fresh checkout, no prior real snapshot ever, AND today's
+    # live fetch also fails) — everyday operation always has real numbers here.
+    top5_val = lt_inst.get('top5_net')
+    top10_val = lt_inst.get('top10_net')
+    spec_val = lt_inst.get('top5_spec_net')
+    if top5_val is None or top10_val is None or spec_val is None:
+        futures_summary = "📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：大額交易人未平倉數據暫時無法取得。"
+    else:
+        top5_str = f"{top5_val:+,d}"
+        top10_str = f"{top10_val:+,d}"
+        spec_str = f"{spec_val:+,d}"
+        futures_summary = (
+            f"📈 <strong>期貨籌碼動向 (Futures Audit)</strong>："
+            f"前五大淨部位 <code>{top5_str} 口</code>、前十大 <code>{top10_str} 口</code>，"
+            f"特定法人淨部位 <code>{spec_str} 口</code>。外資台指期未平倉空單 <code>{f_net_str} 口</code>"
+            f"（單日變動 <code>{f_change_str} 口</code>，約合 <code>{f_amt_str} 億 TWD</code> 契約金額）。{sentiment_tag}。"
+        )
 
-    futures_summary = (
-        f"📈 <strong>期貨籌碼動向 (Futures Audit)</strong>："
-        f"前五大淨部位 <code>{top5_str} 口</code>、前十大 <code>{top10_str} 口</code>，"
-        f"特定法人淨部位 <code>{spec_str} 口</code>。外資台指期未平倉空單 <code>{f_net_str} 口</code>"
-        f"（單日變動 <code>{f_change_str} 口</code>，約合 <code>{f_amt_str} 億 TWD</code> 契約金額）。{sentiment_tag}。"
-    )
-
-    f_cash = stock_inst.get('foreign_stock_net', 366.13)
-    t_cash = stock_inst.get('trust_stock_net', 33.66)
-    d_cash = stock_inst.get('dealer_stock_net', 179.34)
-    cash_tot = stock_inst.get('total_stock_net', round(f_cash + t_cash + d_cash, 2))
-    cash_tot_sign = "+" if cash_tot >= 0 else ""
-    f_cash_sign = "+" if f_cash >= 0 else ""
-    t_cash_sign = "+" if t_cash >= 0 else ""
-    d_cash_sign = "+" if d_cash >= 0 else ""
-
-    cash_summary = (
-        f"💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>："
-        f"三大法人現貨合計買賣超 <code>{cash_tot_sign}{cash_tot:.2f} 億 TWD</code>！"
-        f"其中「外資 <code>{f_cash_sign}{f_cash:.2f} 億</code>」、"
-        f"「投信 <code>{t_cash_sign}{t_cash:.2f} 億</code>」與「自營商 <code>{d_cash_sign}{d_cash:.2f} 億</code>」。"
-    )
+    f_cash = stock_inst.get('foreign_stock_net')
+    t_cash = stock_inst.get('trust_stock_net')
+    d_cash = stock_inst.get('dealer_stock_net')
+    cash_tot = stock_inst.get('total_stock_net')
+    if f_cash is None or t_cash is None or d_cash is None:
+        cash_summary = "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨買賣超數據暫時無法取得。"
+    else:
+        if cash_tot is None:
+            cash_tot = round(f_cash + t_cash + d_cash, 2)
+        cash_tot_sign = "+" if cash_tot >= 0 else ""
+        f_cash_sign = "+" if f_cash >= 0 else ""
+        t_cash_sign = "+" if t_cash >= 0 else ""
+        d_cash_sign = "+" if d_cash >= 0 else ""
+        cash_summary = (
+            f"💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>："
+            f"三大法人現貨合計買賣超 <code>{cash_tot_sign}{cash_tot:.2f} 億 TWD</code>！"
+            f"其中「外資 <code>{f_cash_sign}{f_cash:.2f} 億</code>」、"
+            f"「投信 <code>{t_cash_sign}{t_cash:.2f} 億</code>」與「自營商 <code>{d_cash_sign}{d_cash:.2f} 億</code>」。"
+        )
 
     f_opt_call = opt_inst['foreign']['call_net_amt']
     f_opt_put = opt_inst['foreign']['put_net_amt']
-    f_opt_call_sign = "+" if f_opt_call >= 0 else ""
-    f_opt_put_sign = "+" if f_opt_put >= 0 else ""
     t_opt_call = opt_inst['trust']['call_net_amt']
-    t_opt_call_sign = "+" if t_opt_call >= 0 else ""
-
-    options_structure = (
-        f"🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>："
-        f"外資 Call 買權 <code>{f_opt_call_sign}{f_opt_call:.2f} 億</code> 與 Put 賣權 <code>{f_opt_put_sign}{f_opt_put:.2f} 億</code>；"
-        f"投信買權 <code>{t_opt_call_sign}{t_opt_call:.2f} 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>{gex_profile['call_wall_strike']:,} 點</code>，"
-        f"<strong>Put Wall 地板</strong> 固守於 <code>{gex_profile['put_wall_strike']:,} 點</code>。"
-    )
+    if f_opt_call is None or f_opt_put is None or t_opt_call is None:
+        options_structure = "🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：法人選擇權買賣權未平倉數據暫時無法取得。"
+    else:
+        f_opt_call_sign = "+" if f_opt_call >= 0 else ""
+        f_opt_put_sign = "+" if f_opt_put >= 0 else ""
+        t_opt_call_sign = "+" if t_opt_call >= 0 else ""
+        options_structure = (
+            f"🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>："
+            f"外資 Call 買權 <code>{f_opt_call_sign}{f_opt_call:.2f} 億</code> 與 Put 賣權 <code>{f_opt_put_sign}{f_opt_put:.2f} 億</code>；"
+            f"投信買權 <code>{t_opt_call_sign}{t_opt_call:.2f} 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>{gex_profile['call_wall_strike']:,} 點</code>，"
+            f"<strong>Put Wall 地板</strong> 固守於 <code>{gex_profile['put_wall_strike']:,} 點</code>。"
+        )
 
     pc_badge = '🔴 偏多看撐' if gex_profile['pc_ratio'] > 105 else '🟢 偏空看壓'
 
@@ -2400,72 +3087,64 @@ def generate_gex_payload():
     # Sort stock futures by real TAIFEX daily futures volume
     raw_stock_futures.sort(key=lambda x: x['fut_volume'], reverse=True)
 
+    # Real per-stock-futures large-trader positioning (TAIFEX largeTraderFutQry, batched + cached per day)
+    stock_lt_contract_map = fetch_taifex_stock_futures_contract_map()
+    stock_lt_data = fetch_taifex_stock_futures_large_trader_batch(
+        stock_lt_contract_map, [it['code'] for it in raw_stock_futures]
+    )
+
+    # Real per-stock spot-side institutional net buy/sell (TWSE T86, cached per day)
+    twse_t86_data = fetch_twse_institutional_t86_latest()
+
+    _adr_quote_cache = {}  # avoid re-fetching the same ADR ticker for both "2330" and "2330F" rows
+
     stock_futures = []
     for idx, item in enumerate(raw_stock_futures):
         chg_pct = item['change_pct']
         basis = item['basis']
 
-        if idx < 10:
-            is_top10_buy = True
-            is_top10_sell = False
-            top10_net_oi = int((650 + (10 - idx) * 120) * (1.2 if chg_pct >= 0 else 0.7))
-            top5_net_oi = int(top10_net_oi * 0.68)
-            top10_inst_oi = int(top10_net_oi * 0.85)
-            top5_inst_oi = int(top5_net_oi * 0.88)
+        # NOTE: this used to seed is_top10_buy/is_top10_sell/top10_net_oi/top5_net_oi/
+        # top10_inst_oi/top5_inst_oi/spot_inst_net/spot_foreign/spot_trust/spot_dealer/
+        # spot_gov with idx-bucketed fabricated formulas here. Confirmed dead: every one of
+        # those names is unconditionally overwritten below by the real TAIFEX large-trader
+        # data (or 0 + *_data_unavailable=True) and the real TWSE T86 data (or 0 +
+        # spot_data_unavailable=True), and is_top10_buy/is_top10_sell are separately
+        # reassigned again further down from top10_bull_codes/top10_bear_codes. Removed.
 
-            spot_inst_net = int((1200 + (10 - idx) * 350) * (1.0 if chg_pct >= 0 else -0.5))
-            spot_foreign = int(spot_inst_net * 0.72)
-            spot_trust = int(spot_inst_net * 0.18)
-            spot_dealer = spot_inst_net - spot_foreign - spot_trust
-            spot_gov = int(-spot_inst_net * 0.25)
-        elif idx < 20:
-            is_top10_buy = False
-            is_top10_sell = True
-            top10_net_oi = int((-480 - (idx - 10) * 110) * (1.1 if chg_pct < 0 else 0.8))
-            top5_net_oi = int(top10_net_oi * 0.70)
-            top10_inst_oi = int(top10_net_oi * 0.82)
-            top5_inst_oi = int(top5_net_oi * 0.85)
-
-            spot_inst_net = int((-850 - (idx - 10) * 280) * (1.0 if chg_pct < 0 else -0.3))
-            spot_foreign = int(spot_inst_net * 0.75)
-            spot_trust = int(spot_inst_net * 0.15)
-            spot_dealer = spot_inst_net - spot_foreign - spot_trust
-            spot_gov = int(-spot_inst_net * 0.30)
-        elif idx < 35:
-            # Hedging/Arbitrage examples in mid-tier volume stocks
-            is_top10_buy = False
-            is_top10_sell = False
-            if idx % 2 == 0: # Hedging: Spot buy + Fut short
-                spot_inst_net = int(450 + (idx * 25))
-                top10_net_oi = int(-320 - (idx * 15))
-            else: # Arbitrage: Spot sell + Fut long
-                spot_inst_net = int(-380 - (idx * 20))
-                top10_net_oi = int(290 + (idx * 18))
-
-            top5_net_oi = int(top10_net_oi * 0.65)
-            top10_inst_oi = int(top10_net_oi * 0.80)
-            top5_inst_oi = int(top5_net_oi * 0.82)
-
-            spot_foreign = int(spot_inst_net * 0.70)
-            spot_trust = int(spot_inst_net * 0.20)
-            spot_dealer = spot_inst_net - spot_foreign - spot_trust
-            spot_gov = int(-spot_inst_net * 0.22)
+        # ── Real futures-side large-trader positioning (TAIFEX largeTraderFutQry) ──
+        # Overrides the placeholder top5/top10 figures above with the actual per-contract
+        # 前五大/前十大交易人合計 買方-賣方 net position fetched for this stock's TAIFEX
+        # stock-futures contract code.
+        _lt_code = item['code']
+        _lt_lookup_code = _lt_code[:-1] if (_lt_code.endswith('F') and len(_lt_code) >= 5) else _lt_code
+        lt_real = stock_lt_data.get(_lt_code) or stock_lt_data.get(_lt_lookup_code)
+        if lt_real:
+            top5_net_oi = lt_real['top5_net_oi']
+            top10_net_oi = lt_real['top10_net_oi']
+            top5_inst_oi = lt_real['top5_inst_oi']
+            top10_inst_oi = lt_real['top10_inst_oi']
+            item["lt_data_unavailable"] = False
         else:
-            is_top10_buy = False
-            is_top10_sell = False
-            f_sign = 1 if ((idx % 3) != 0) else -1
-            d_sign = 1 if ((idx % 2) == 0) else -1
-            spot_inst_net = int(((idx * 47) % 550 - 250) * f_sign)
-            top10_net_oi = int(((idx * 23) % 280 - 140) * d_sign)
+            top5_net_oi = top10_net_oi = top5_inst_oi = top10_inst_oi = 0
+            item["lt_data_unavailable"] = True
 
-            top5_net_oi = int(top10_net_oi * 0.62)
-            top10_inst_oi = int(top10_net_oi * 0.78)
-            top5_inst_oi = int(top5_net_oi * 0.80)
-
-            spot_foreign = int(spot_inst_net * 0.68)
-            spot_trust = int(spot_inst_net * 0.15)
-            spot_dealer = spot_inst_net - spot_foreign - spot_trust
-            spot_gov = int(-spot_inst_net * 0.18)
+        # ── Real spot-side institutional net buy/sell (TWSE T86) ──
+        # Overrides the placeholder spot_inst_net / spot_foreign / spot_trust / spot_dealer
+        # above with the real per-stock 三大法人買賣超 from TWSE's official T86 report.
+        # spot_gov (八大官股銀行) has no official per-stock source and is left at 0 with
+        # spot_data_unavailable=True rather than a fabricated ratio of spot_inst_net.
+        t86_real = twse_t86_data.get(_lt_code) or twse_t86_data.get(_lt_lookup_code)
+        if t86_real:
+            spot_foreign = t86_real['spot_foreign']
+            spot_trust = t86_real['spot_trust']
+            spot_dealer = t86_real['spot_dealer']
+            spot_inst_net = t86_real['spot_inst_net']
+            spot_gov = 0
+            item["spot_data_unavailable"] = False
+        else:
+            spot_foreign = spot_trust = spot_dealer = spot_gov = 0
+            spot_inst_net = 0
+            item["spot_data_unavailable"] = True
 
         # AI Quant Strategic Intent Diagnosis
         if spot_inst_net >= 80 and top10_net_oi >= 50:
@@ -2484,37 +3163,54 @@ def generate_gex_payload():
             intent_tag = "⚖️ 觀望分歧"
             intent_desc = "現現與期貨籌碼力道平淡/無顯著趨勢"
 
-        # Investment Trust (投信認養佔比 & 連買天數)
-        it_consec_days = ((idx * 7 + 3) % 6) + 1  # e.g. 1~6 days
-        it_ratio = round((((idx * 13 + 5) % 85) / 100.0) + (0.35 if idx < 12 else 0.05), 2)  # e.g. 0.1% ~ 1.2%
-        is_it_adopted = (it_ratio >= 0.5 and it_consec_days >= 3)
-        it_badge = "🚀 投信波段認養" if is_it_adopted else ("⚡ 投信連買" if it_consec_days >= 3 else "-")
+        # Investment Trust adoption (投信波段認養佔比 & 連買天數): this used to be a fake
+        # idx-modulo formula unrelated to any real data. A genuine multi-day "consecutive
+        # buy" signal needs per-stock historical trust net-buy snapshots, which don't exist
+        # yet (only the market-wide institutional_snapshots.json is tracked, not per-stock).
+        # Left honestly disabled (never triggers) rather than fabricated, matching the same
+        # decision already made for this identical problem in the trading room's screener.
+        it_consec_days = 0
+        it_ratio = None
+        is_it_adopted = False
+        it_badge = "-"
 
-        # Night Stock Futures with ADR linkage (Complete Taiwan ADR Matrix)
-        ADR_MAPPING = {
-            "2330": {"adr_symbol": "TSM (台積電ADR)", "adr_change_pct": 2.15, "adr_basis": "+0.45%"},
-            "2330F": {"adr_symbol": "TSM (台積電ADR)", "adr_change_pct": 2.15, "adr_basis": "+0.45%"},
-            "2303": {"adr_symbol": "UMC (聯電ADR)", "adr_change_pct": 2.77, "adr_basis": "+0.32%"},
-            "2303F": {"adr_symbol": "UMC (聯電ADR)", "adr_change_pct": 2.77, "adr_basis": "+0.32%"},
-            "3711": {"adr_symbol": "ASX (日月光ADR)", "adr_change_pct": 2.81, "adr_basis": "+0.40%"},
-            "3711F": {"adr_symbol": "ASX (日月光ADR)", "adr_change_pct": 2.81, "adr_basis": "+0.40%"},
-            "2317": {"adr_symbol": "HNHPF (鴻海ADR)", "adr_change_pct": 0.69, "adr_basis": "+0.15%"},
-            "2317F": {"adr_symbol": "HNHPF (鴻海ADR)", "adr_change_pct": 0.69, "adr_basis": "+0.15%"},
-            "2409": {"adr_symbol": "AUOTY (友達ADR)", "adr_change_pct": 2.95, "adr_basis": "+0.20%"},
-            "2409F": {"adr_symbol": "AUOTY (友達ADR)", "adr_change_pct": 2.95, "adr_basis": "+0.20%"},
-            "2412": {"adr_symbol": "CHT (中華電ADR)", "adr_change_pct": 0.29, "adr_basis": "+0.05%"},
-            "2412F": {"adr_symbol": "CHT (中華電ADR)", "adr_change_pct": 0.29, "adr_basis": "+0.05%"},
-            "8150": {"adr_symbol": "IMOS (南茂ADR)", "adr_change_pct": 2.07, "adr_basis": "+0.35%"},
-            "8150F": {"adr_symbol": "IMOS (南茂ADR)", "adr_change_pct": 2.07, "adr_basis": "+0.35%"},
-            "2882": {"adr_symbol": "CHYYY (國泰金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
-            "2882F": {"adr_symbol": "CHYYY (國泰金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
-            "2881": {"adr_symbol": "FUISY (富邦金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
-            "2881F": {"adr_symbol": "FUISY (富邦金ADR)", "adr_change_pct": 0.00, "adr_basis": "0.00%"},
-            "0050": {"adr_symbol": "EWT (MSCI台灣ETF)", "adr_change_pct": 1.40, "adr_basis": "+0.25%"},
-            "0050F": {"adr_symbol": "EWT (MSCI台灣ETF)", "adr_change_pct": 1.40, "adr_basis": "+0.25%"},
-            "00679B": {"adr_symbol": "TLT (美債20Y ETF)", "adr_change_pct": 0.35, "adr_basis": "+0.10%"}
+        # Night Stock Futures with ADR linkage (Complete Taiwan ADR Matrix). Ticker mapping is
+        # static (which US ADR corresponds to which TW stock doesn't change), but the % change
+        # is fetched live per run below — was previously also a frozen historical number.
+        # Also fixed: this used to key off `code`, a stale variable left over from the
+        # catalog_270 loop earlier in this function (Python for-loop variables aren't scoped to
+        # the loop), not this row's own ticker — every row's ADR link was effectively random.
+        ADR_TICKER_MAPPING = {
+            "2330": "TSM", "2330F": "TSM",
+            "2303": "UMC", "2303F": "UMC",
+            "3711": "ASX", "3711F": "ASX",
+            "2317": "HNHPF", "2317F": "HNHPF",
+            "2409": "AUOTY", "2409F": "AUOTY",
+            "2412": "CHT", "2412F": "CHT",
+            "8150": "IMOS", "8150F": "IMOS",
+            "2882": "CHYYY", "2882F": "CHYYY",
+            "2881": "FUISY", "2881F": "FUISY",
+            "0050": "EWT", "0050F": "EWT",
+            "00679B": "TLT"
         }
-        adr_info = ADR_MAPPING.get(code, {"adr_symbol": "-", "adr_change_pct": 0.0, "adr_basis": "-"})
+        ADR_DISPLAY_NAMES = {
+            "TSM": "TSM (台積電ADR)", "UMC": "UMC (聯電ADR)", "ASX": "ASX (日月光ADR)",
+            "HNHPF": "HNHPF (鴻海ADR)", "AUOTY": "AUOTY (友達ADR)", "CHT": "CHT (中華電ADR)",
+            "IMOS": "IMOS (南茂ADR)", "CHYYY": "CHYYY (國泰金ADR)", "FUISY": "FUISY (富邦金ADR)",
+            "EWT": "EWT (MSCI台灣ETF)", "TLT": "TLT (美債20Y ETF)"
+        }
+        adr_ticker = ADR_TICKER_MAPPING.get(item['code'])
+        if adr_ticker:
+            if adr_ticker not in _adr_quote_cache:
+                _adr_quote_cache[adr_ticker] = fetch_yahoo_finance_quote(adr_ticker)
+            adr_quote = _adr_quote_cache[adr_ticker]
+            adr_info = {
+                "adr_symbol": ADR_DISPLAY_NAMES.get(adr_ticker, adr_ticker),
+                "adr_change_pct": adr_quote['change_pct'] if adr_quote else None,
+                "adr_basis": "-"  # real basis needs the ADR conversion ratio + live USD/TWD, not computed yet
+            }
+        else:
+            adr_info = {"adr_symbol": "-", "adr_change_pct": None, "adr_basis": "-"}
 
         item["it_adoption_ratio"] = it_ratio
         item["it_consecutive_buy_days"] = it_consec_days
@@ -2566,9 +3262,12 @@ def generate_gex_payload():
     prev_day_spot = round(spot_price - spot_change, 2)
     prev_day_otc = round(otc_price - otc_change, 2)
 
+    # Previously had its own hardcoded fallback literals (26.09/15.74) on top of
+    # fetch_official_taifex_vix()'s own internal fallback — removed so a genuine failure
+    # propagates as None instead of a second layer of guessed numbers.
     vix_obj = fetch_official_taifex_vix()
-    latest_t_vix = vix_obj.get("taifex_vix", 26.09)
-    latest_u_vix = vix_obj.get("us_vix", 15.74)
+    latest_t_vix = vix_obj.get("taifex_vix")
+    latest_u_vix = vix_obj.get("us_vix")
 
     # ============================================================
     # 📸 SNAPSHOT-BASED HISTORICAL SESSION MATRIX
@@ -2653,7 +3352,7 @@ def generate_gex_payload():
         night_full_name = f"{t0_disp} 夜盤 (05:00 定案版)" if is_before_open else (f"{t0_disp} T夜盤" + (" (Live 即時動態)" if (now_hour >= 15 or now_hour < 5) else " (05:00 定案版)"))
 
     t_target_yyyymmdd = t0_date.strftime('%Y%m%d')
-    margin_info = fetch_twse_margin_maintenance(target_date_str=t_target_yyyymmdd)
+    margin_info = fetch_twse_margin_maintenance(target_date_str=t_target_yyyymmdd, spot_change_pct=spot_change_pct)
 
     t0_day_shift = round(day_txf_price - (night_txf_price if night_txf_price else prev_day_txf_price), 1)
 
@@ -2669,6 +3368,7 @@ def generate_gex_payload():
         "margin_maint_market": margin_info["margin_maint_market"],
         "margin_maint_stock": margin_info["margin_maint_stock"],
         "margin_maint_published": margin_info["is_published"],
+        "margin_maint_is_estimated": margin_info.get("is_estimated", True),
         "taifex_vix": latest_t_vix, "us_vix": latest_u_vix, "has_snapshot": True
     }
 
@@ -2688,6 +3388,7 @@ def generate_gex_payload():
         "margin_maint_market": margin_info["margin_maint_market"],
         "margin_maint_stock": margin_info["margin_maint_stock"],
         "margin_maint_published": False,
+        "margin_maint_is_estimated": margin_info.get("is_estimated", True),
         "taifex_vix": latest_t_vix, "us_vix": latest_u_vix, "has_snapshot": True
     }
 
@@ -2737,7 +3438,12 @@ def generate_gex_payload():
             sess_item['friday_gex'] = None
             sess_item['monthly_gex'] = None
             continue
-        sess_prof = calculate_true_gex_profile(s_spot, {}, raw_days_wed, raw_days_fri, raw_days_mth, fixed_base_strike=global_base_strike)
+        # Uses TODAY's real option chain against each session's own real spot price — exactly
+        # correct for the T-0 day/night entries; for older sessions this is real OI (not a
+        # fabricated curve) but not that specific past day's own OI, since per-strike history
+        # backfill is out of scope here (only the scalar zero_gamma/call_wall/etc fields get a
+        # true historical backfill, via backfill_snapshots.py).
+        sess_prof = calculate_true_gex_profile(s_spot, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, fixed_base_strike=global_base_strike)
         sess_item['total_gex'] = sess_prof['total_gex']
         sess_item['weekly_gex'] = sess_prof['weekly_gex']
         sess_item['friday_gex'] = sess_prof['friday_gex']
@@ -3000,66 +3706,54 @@ def generate_gex_payload():
         valid_events = [e for e in candidates if e["target_epoch"] >= int(curr_twd.timestamp() * 1000)]
         valid_events.sort(key=lambda x: x["target_epoch"])
 
-        # 🌐 圖 1: 全球股市風險儀表板 (DXY, US10Y, VIX 價位、EMA20 與技術面講評)
+        # 🌐 圖 1: 全球股市風險儀表板 (DXY, US10Y, VIX 即時報價)
+        # Previously 100% hardcoded literals (including a 20-day EMA this pipeline never
+        # actually computes) that never updated and disagreed with the real VIX fetched
+        # elsewhere in this same file. DXY/US10Y are real Yahoo Finance quotes (same generic
+        # fetcher used for ADR quotes); VIX reuses the real value already fetched above rather
+        # than a third hardcoded copy. No fabricated "EMA20"/trend narrative — trend_label is
+        # only a same-day real change direction, not a claimed technical indicator.
+        dxy_quote = fetch_yahoo_finance_quote("DX-Y.NYB")
+        us10y_quote = fetch_yahoo_finance_quote("%5ETNX")
+
+        def _risk_entry(name, quote, unit=""):
+            if not quote:
+                return {"name": name, "price": None, "change_pct": None, "trend_label": "⚪ 無即時數據"}
+            trend_label = f"{'▲ 較昨日走升' if quote['change_pct'] >= 0 else '▼ 較昨日走弱'} ({quote['change_pct']:+.2f}%)"
+            return {"name": name, "price": quote['price'], "change_pct": quote['change_pct'], "trend_label": trend_label, "unit": unit}
+
         macro_risk_dashboard = {
-            "summary": "VIX維持低檔有利多頭，但殖利率續升形成壓力，短線偏震盪，宜聚焦 AI 及獲利成長族群。",
-            "dxy": {
-                "name": "美元指數 (DXY)",
-                "price": 99.196,
-                "ema20": 99.434,
-                "trend": "Bearish Below EMA20",
-                "trend_label": "跌落 20 日線 (偏空)",
-                "comments": [
-                    "重新跌落 20 日均線，短線震盪偏空。",
-                    "美元持續走弱，亞股與台股資金壓力暫時解除。"
-                ]
-            },
-            "us10y": {
-                "name": "美殖利率 (10年期 US10Y)",
-                "price": 4.784,
-                "ema20": 4.715,
-                "trend": "Bullish Above EMA20",
-                "trend_label": "站穩 20 日線 (創高)",
-                "comments": [
-                    "持續創近期新高，明顯站穩 20 日均線之上。",
-                    "殖利率上升代表市場要求更高報酬率，也提高企業融資成本。"
-                ]
-            },
+            "summary": (f"台指VIX {latest_t_vix:.1f}、美股VIX {latest_u_vix:.1f}；" if (latest_t_vix is not None and latest_u_vix is not None) else "") +
+                       "DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
+            "dxy": _risk_entry("美元指數 (DXY)", dxy_quote),
+            "us10y": _risk_entry("美殖利率 (10年期 US10Y)", us10y_quote, unit="%"),
             "vix": {
                 "name": "VIX恐慌指標 (CBOE)",
-                "price": 14.53,
-                "ema20": 15.29,
-                "trend": "Low Risk / Bullish Bias",
-                "trend_label": "跌破 20 日線 (低檔)",
-                "comments": [
-                    "位於近半年相對低檔，持續跌破 20 日均線。",
-                    "市場恐慌情緒不高，資金仍願意持有風險資產。"
-                ]
+                "price": latest_u_vix,
+                "trend_label": "⚪ 無即時數據" if latest_u_vix is None else ("🔴 恐慌偏高" if latest_u_vix >= 20 else "🟢 低波安定")
             }
         }
 
-        # 📅 圖 2: 近期重要財經事件日曆 (Macro Economic Calendar) - 自動過濾過期舊數據
-        raw_calendar_items = [
-            {"year": 2026, "month": 9, "day": 7, "weekday": "一", "event": "美國 Labor Day 休市 / 日本 Q2 GDP 終值", "focus": "美股休市，亞歐交易日本成長確認", "impact": "中", "impact_code": "M", "impact_color": "#26a69a"},
-            {"year": 2026, "month": 9, "day": 9, "weekday": "三", "event": "中國 8 月 CPI / PPI", "focus": "通縮風險 vs 溫和回升 (預期 CPI 約 0.7%)", "impact": "中高", "impact_code": "MH", "impact_color": "#ffaa00"},
-            {"year": 2026, "month": 9, "day": 10, "weekday": "四", "event": "ECB 利率決議 / 美國 8 月 PPI", "focus": "升息 25bp 幾乎確定，關注後續路徑與油價影響", "impact": "高", "impact_code": "H", "impact_color": "#ff7043"},
-            {"year": 2026, "month": 9, "day": 11, "weekday": "五", "event": "美國 8 月 CPI / 密西根消費者信心", "focus": "核心通膨走勢決定 Fed 升息機率", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"},
-            {"year": 2026, "month": 9, "day": 16, "weekday": "三", "event": "FOMC 利率決議 / 台指期 09 月結算日", "focus": "升息與否將由本週 CPI 主導點陣圖與結算擺盪", "impact": "極高", "impact_code": "CRIT", "impact_color": "#ff5252"}
-        ]
-
-        # Dynamically append future valid_events if not already in raw calendar items
+        # 📅 圖 2: 近期重要財經事件日曆 (Macro Economic Calendar)
+        # Previously a hardcoded list of 5 events with specific 2026 dates that would silently
+        # become a permanently empty table once the last of them passed (no error, no "no
+        # data" message — just nothing, forever). `candidates`/`valid_events` above are
+        # already real, calendar-arithmetic-derived, and extend indefinitely into the future
+        # (weekly/monthly settlements, NFP, CPI, ADP, jobless claims) — reuse that list here
+        # too instead of maintaining a second, separate, finite one.
+        _impact_color_map = {"HIGH": "#ff5252", "MEDIUM": "#ffaa00", "LOW": "#26a69a"}
+        _impact_label_map = {"HIGH": "高", "MEDIUM": "中", "LOW": "低"}
         macro_events_calendar = []
-        for item in raw_calendar_items:
-            item_date = datetime.date(item["year"], item["month"], item["day"])
-            if item_date >= curr_twd.date():
-                macro_events_calendar.append({
-                    "date": f"{item['month']}/{item['day']} ({item['weekday']})",
-                    "event": item["event"],
-                    "focus": item["focus"],
-                    "impact": item["impact"],
-                    "impact_code": item["impact_code"],
-                    "impact_color": item["impact_color"]
-                })
+        for e in valid_events[:8]:
+            ev_dt = datetime.datetime.fromtimestamp(e["target_epoch"] / 1000, tz=tw_tz)
+            macro_events_calendar.append({
+                "date": f"{ev_dt.month}/{ev_dt.day} {_WDAY_CN[ev_dt.weekday()]}",
+                "event": e["name"],
+                "focus": e["gex_advice"],
+                "impact": _impact_label_map.get(e["impact"], e["impact"]),
+                "impact_code": e["impact"],
+                "impact_color": _impact_color_map.get(e["impact"], "#ffaa00")
+            })
 
         return {
             "primary_event": valid_events[0] if valid_events else candidates[0],
@@ -3260,7 +3954,7 @@ def generate_gex_payload():
         "retail_mini_ratio": retail_data["retail_mini_ratio"],
         "retail_micro_ratio": retail_data["retail_micro_ratio"],
         "retail_sentiment_details": retail_data["retail_sentiment_details"],
-        "specific_traders": fetch_official_taifex_specific_traders(),
+        "specific_traders": fetch_official_taifex_specific_traders(lt_inst, fut_inst),
         "total_vex": gex_profile['total_vex'],
         "total_gex_val": gex_profile['total_gex_val'],
         "total_gex_plus": gex_profile['total_gex_plus'],

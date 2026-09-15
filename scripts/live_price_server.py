@@ -72,6 +72,51 @@ def fubon_worker():
     except Exception as e:
         print(f"[Gateway] Fubon Worker notice: {e}")
 
+def fubon_books_worker():
+    """
+    Priority 1: Fubon Books (五檔委託簿) WebSocket Worker Thread.
+    Waits for the REST-based fubon_worker() above to bring the SDK active and
+    detect the TXF front-month symbol, then subscribes once. Actual message
+    handling happens on the SDK's own background thread (see
+    FubonAPIProvider._handle_books_message); this loop just keeps the process
+    alive and re-subscribes if the provider flips to active later than us.
+    """
+    try:
+        from scripts.fubon_api_provider import fubon_provider, load_local_env
+        load_local_env()
+        subscribed = False
+        while True:
+            if fubon_provider.is_active and not subscribed:
+                symbol = fubon_provider.txf_symbol
+                ok = fubon_provider.start_books_stream([symbol])
+                if ok:
+                    print(f"[Gateway] Fubon Books Worker subscribed to {symbol} (五檔).")
+                    subscribed = True
+            time.sleep(5.0)
+    except Exception as e:
+        print(f"[Gateway] Fubon Books Worker notice: {e}")
+
+def fubon_trades_worker():
+    """
+    Priority 1: Fubon Trades (逐筆成交) WebSocket Worker Thread.
+    Same pattern as fubon_books_worker() — subscribes once the SDK is active,
+    then the SDK's own background thread handles incoming messages.
+    """
+    try:
+        from scripts.fubon_api_provider import fubon_provider, load_local_env
+        load_local_env()
+        subscribed = False
+        while True:
+            if fubon_provider.is_active and not subscribed:
+                symbol = fubon_provider.txf_symbol
+                ok = fubon_provider.start_trades_stream([symbol])
+                if ok:
+                    print(f"[Gateway] Fubon Trades Worker subscribed to {symbol} (逐筆成交).")
+                    subscribed = True
+            time.sleep(5.0)
+    except Exception as e:
+        print(f"[Gateway] Fubon Trades Worker notice: {e}")
+
 def mis_polling_worker():
     """ Priority 2: Official TAIFEX / TWSE MIS API Polling Worker """
     while True:
@@ -159,6 +204,51 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 self.wfile.flush()
                 return
 
+            # API Endpoint for Books (五檔委託簿) — ?symbol=TXFA4, defaults to current TXF front-month
+            if parsed.path.startswith('/api/books'):
+                from scripts.fubon_api_provider import fubon_provider
+                qs = urllib.parse.parse_qs(parsed.query)
+                symbol = (qs.get('symbol', [None])[0]) or fubon_provider.txf_symbol
+                book = fubon_provider.get_book(symbol)
+                res_data = {
+                    "symbol": symbol,
+                    "book": book,
+                    "subscribed": symbol in fubon_provider._books_subscribed,
+                    "ts": time.time()
+                }
+                body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(body)))
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(body)
+                self.wfile.flush()
+                return
+
+            # API Endpoint for 大戶散戶動能 30-min momentum bar — ?symbol=TXFA4
+            if parsed.path.startswith('/api/momentum'):
+                from scripts.fubon_api_provider import fubon_provider
+                qs = urllib.parse.parse_qs(parsed.query)
+                symbol = (qs.get('symbol', [None])[0]) or fubon_provider.txf_symbol
+                bar = fubon_provider.get_momentum_bar_30m(symbol)
+                res_data = {
+                    "symbol": symbol,
+                    "bar": bar,
+                    "books_subscribed": symbol in fubon_provider._books_subscribed,
+                    "trades_subscribed": symbol in fubon_provider._trades_subscribed,
+                    "ts": time.time()
+                }
+                body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(body)))
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(body)
+                self.wfile.flush()
+                return
+
             # Serve static Dashboard files
             rel_path = parsed.path.lstrip('/')
             if not rel_path or rel_path == '':
@@ -205,6 +295,12 @@ def run_server():
     
     t_mis = threading.Thread(target=mis_polling_worker, daemon=True)
     t_mis.start()
+
+    t_books = threading.Thread(target=fubon_books_worker, daemon=True)
+    t_books.start()
+
+    t_trades = threading.Thread(target=fubon_trades_worker, daemon=True)
+    t_trades.start()
 
     server.serve_forever()
 

@@ -3,6 +3,8 @@ import sys
 import logging
 import datetime
 import time
+import threading
+from collections import deque
 
 # Set up logging for Fubon Provider
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -43,7 +45,10 @@ class FubonAPIProvider:
         self.is_active = False
         self.sdk_instance = None
         self.marketdata = None
-        self.txf_symbol = "TXFI6"
+        # Continuous front-month alias (per Fubon's official "商品代碼與連續月別名" docs):
+        # resolves to the current near-month contract and auto-rolls after settlement,
+        # for both REST (/intraday/quote) and WebSocket subscribe — no manual detection needed.
+        self.txf_symbol = "TXF1!"
         self.last_cache = {
             'spot_price': None,
             'otc_price': None,
@@ -53,6 +58,31 @@ class FubonAPIProvider:
             'source': 'Fubon Neo API (Live)'
         }
         self.last_fetch_ts = 0
+
+        # Books (五檔委託簿) WebSocket stream state.
+        # books_cache[symbol] = {'bids': [{'price':..,'size':..}, ...], 'asks': [...], 'time':.., 'raw': <last raw message dict>}
+        self.books_cache = {}
+        self._books_subscribed = set()
+
+        # Trades (逐筆成交) WebSocket stream state.
+        # trades_log[symbol] = a bounded deque of {'price','size','side','ts'} — 'side' is
+        # inferred (tick rule) since the trades schema itself is not fully confirmed; see
+        # start_trades_stream()'s docstring for exactly what is and isn't verified.
+        self.trades_log = {}
+        self._trades_subscribed = set()
+        self._trades_logged_raw = set()  # symbols we've logged one raw message for, for schema verification
+        self._TRADES_LOG_MAXLEN = 20000  # ~a session's worth of prints per symbol; bounded so memory can't grow unbounded
+
+        # Shared futopt WebSocket connection state (Books + Trades share ONE connection —
+        # see _ensure_futopt_connected() for why this must not be connected twice).
+        # fubon_books_worker() and fubon_trades_worker() run as separate OS threads in
+        # live_price_server.py and can both notice is_active flip True within the same
+        # instant, so the connect-once check below needs a real lock, not just a flag —
+        # a bare "if not connected: connect()" is a check-then-act race between threads.
+        self._futopt_ws = None
+        self._futopt_connected = False
+        self._futopt_connect_lock = threading.Lock()
+
         self._initialize_sdk()
 
     def _initialize_sdk(self):
@@ -85,7 +115,6 @@ class FubonAPIProvider:
                         token = sdk.exchange_realtime_token()
                         if token:
                             self.marketdata = MarketData(token, Mode.Normal)
-                            self._detect_txf_symbol()
                             self.is_active = True
                             logging.info(f"SUCCESS: Fubon API Provider Authenticated & MarketData Active! Target Front-Month: {self.txf_symbol}")
                         else:
@@ -107,20 +136,6 @@ class FubonAPIProvider:
         except Exception as e:
             logging.warning(f"Fubon API Initialization error: {e}. Falling back to Web API.")
             self.is_active = False
-
-    def _detect_txf_symbol(self):
-        """ Dynamically resolves current front-month TXF futures symbol from Fugle MarketData """
-        if not self.marketdata:
-            return
-        try:
-            tickers_res = self.marketdata.rest_client.futopt.intraday.tickers(type="FUTURE")
-            data = tickers_res.get("data", []) if isinstance(tickers_res, dict) else []
-            tx_items = [t for t in data if t.get("symbol", "").startswith("TX") and t.get("contractType") == "I"]
-            tx_items.sort(key=lambda x: x.get("settlementDate", ""))
-            if tx_items:
-                self.txf_symbol = tx_items[0]["symbol"]
-        except Exception as e:
-            logging.debug(f"Fubon TXF symbol auto-detect notice: {e}")
 
     def get_live_quotes(self):
         """
@@ -201,6 +216,322 @@ class FubonAPIProvider:
             logging.debug(f"Fubon live quote fetch error: {e}")
 
         return self.last_cache
+
+    def _ensure_futopt_connected(self):
+        """
+        Connects the shared futopt WebSocket client exactly once and wires a
+        SINGLE unified message handler (_handle_futopt_message) that dispatches
+        by channel. Both start_books_stream() and start_trades_stream() call
+        this instead of each independently calling .on()/.connect().
+
+        Fixes a real bug hit during live testing on 2026-09-14: the two streams
+        used to each call futopt_ws.connect() independently, racing to start a
+        second run_forever() thread on the same socket
+        ("WebSocketException: socket is already opened"). Worse, both handlers
+        were registered as separate 'message' listeners, so EVERY message went
+        to BOTH — a trades 'data' frame has no 'bids'/'asks', so
+        _handle_books_message would silently overwrite books_cache[symbol]
+        with empty bid/ask lists on every trade tick, corrupting
+        big_order_diff. The single dispatcher below only calls the handler for
+        the channel the message actually belongs to.
+        """
+        if self._futopt_connected:
+            return self._futopt_ws
+
+        if not self.is_active or not self.marketdata:
+            return None
+
+        # Hold the lock across the whole check-connect-set sequence: without this,
+        # two threads can both pass the "if self._futopt_connected" check above
+        # before either sets it True, and both go on to call futopt_ws.connect().
+        with self._futopt_connect_lock:
+            if self._futopt_connected:  # re-check: another thread may have connected while we waited for the lock
+                return self._futopt_ws
+
+            try:
+                futopt_ws = self.marketdata.websocket_client.futopt
+            except Exception as e:
+                logging.warning(f"_ensure_futopt_connected: websocket_client.futopt unavailable: {e}")
+                return None
+
+            futopt_ws.on('message', self._handle_futopt_message)
+            futopt_ws.on('error', lambda err: logging.warning(f"Fubon futopt WebSocket error: {err}"))
+            futopt_ws.on('disconnect', lambda code, msg: self._on_futopt_disconnect(code, msg))
+            try:
+                futopt_ws.connect()
+            except Exception as e:
+                logging.warning(f"_ensure_futopt_connected: connect() failed: {e}")
+                return None
+
+            self._futopt_ws = futopt_ws
+            self._futopt_connected = True
+            return futopt_ws
+
+    def _on_futopt_disconnect(self, code, msg):
+        """ Auto-reconnect + re-subscribe both channels on disconnect, per Fubon's documented reconnect pattern. """
+        logging.warning(f"Fubon futopt WebSocket disconnected ({code}: {msg}). Reconnecting...")
+        self._futopt_connected = False
+        futopt_ws = self._ensure_futopt_connected()
+        if not futopt_ws:
+            logging.warning("Fubon futopt WebSocket reconnect failed: could not re-establish connection.")
+            return
+        try:
+            for symbol in list(self._books_subscribed):
+                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
+            for symbol in list(self._trades_subscribed):
+                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
+            logging.info("Fubon futopt WebSocket reconnected and re-subscribed to all channels.")
+        except Exception as e:
+            logging.warning(f"Fubon futopt WebSocket re-subscribe after reconnect failed: {e}")
+
+    def _handle_futopt_message(self, raw_message):
+        """
+        Single entry point for ALL futopt WebSocket messages (books + trades
+        share one connection). Parses the envelope once, then dispatches to
+        _process_books_data()/_process_trades_data() by the message's own
+        'channel' field — never guesses which stream a message belongs to.
+        """
+        try:
+            import json as _json
+            message = _json.loads(raw_message) if isinstance(raw_message, (str, bytes)) else raw_message
+        except Exception as e:
+            logging.debug(f"futopt message JSON parse error: {e}")
+            return
+
+        event = message.get('event')
+
+        if event == 'subscribed':
+            info = message.get('data') or {}
+            channel = info.get('channel')
+            if channel == 'books':
+                logging.info(f"Fubon Books: subscription confirmed — {info}")
+            elif channel == 'trades':
+                logging.info(f"Fubon Trades: subscription confirmed — {info}")
+            return
+        if event != 'data':
+            return  # ignore auth/heartbeat/pong/error/unsubscribed frames
+
+        channel = message.get('channel')
+        data = message.get('data') or {}
+        if channel == 'books':
+            self._process_books_data(data)
+        elif channel == 'trades':
+            self._process_trades_data(data)
+
+    def start_books_stream(self, symbols):
+        """
+        Subscribes to Fubon's futures WebSocket "books" channel (五檔委買委賣簿)
+        for the given symbols (e.g. ['TXFA4', 'MXFA4']).
+
+        Verified against the installed fubon_neo==2.2.8 SDK source
+        (fubon_neo/adapter.py -> WebSocketFutOptClientWrapper, and the underlying
+        fugle_marketdata.WebSocketClient it wraps) AND against the official
+        "期權 WebSocket / Channels / Books" doc page (fbs.com.tw/TradeAPI):
+          - self.marketdata.websocket_client.futopt exposes .on(event, cb),
+            .connect(), .subscribe(params), .unsubscribe(params), .disconnect()
+          - subscribe() sends {"event": "subscribe", "data": params} over the socket.
+          - Inbound messages arrive on the 'message' event as a RAW JSON string
+            (the SDK does not hand you a parsed dict) — this must be json.loads()'d.
+          - A books data frame is exactly:
+              {"event": "data", "channel": "books", "id": "<CHANNEL_ID>",
+               "data": {"symbol", "type", "exchange", "time",
+                        "bids": [{"price","size"}, ...] (top 5),
+                        "asks": [{"price","size"}, ...] (top 5),
+                        "derivedBid": {"price","size"},  # spread-contract only, else 0/0
+                        "derivedAsk": {"price","size"},
+                        "isTrial": bool}}  # only present during call-auction/trial matching
+        _process_books_data() below parses exactly this shape — no field-name
+        guessing left.
+        """
+        futopt_ws = self._ensure_futopt_connected()
+        if not futopt_ws:
+            logging.warning("start_books_stream: Fubon SDK not active or connection failed — cannot subscribe to Books channel.")
+            return False
+
+        for symbol in symbols:
+            if symbol in self._books_subscribed:
+                continue
+            try:
+                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
+                self._books_subscribed.add(symbol)
+                logging.info(f"Fubon Books channel: subscribed to {symbol} (五檔委託簿).")
+            except Exception as e:
+                logging.warning(f"start_books_stream: subscribe({symbol}) failed: {e}")
+
+        return True
+
+    def _process_books_data(self, data):
+        """ Handles one books 'data' payload (already unwrapped from the event envelope). """
+        symbol = data.get('symbol')
+        if not symbol:
+            return
+
+        def _normalize_side(levels):
+            return [{'price': float(lvl['price']), 'size': int(lvl['size'])} for lvl in (levels or [])]
+
+        derived_bid = data.get('derivedBid') or {'price': 0, 'size': 0}
+        derived_ask = data.get('derivedAsk') or {'price': 0, 'size': 0}
+
+        self.books_cache[symbol] = {
+            'bids': _normalize_side(data.get('bids')),
+            'asks': _normalize_side(data.get('asks')),
+            'derived_bid': {'price': float(derived_bid.get('price', 0)), 'size': int(derived_bid.get('size', 0))},
+            'derived_ask': {'price': float(derived_ask.get('price', 0)), 'size': int(derived_ask.get('size', 0))},
+            'is_trial': bool(data.get('isTrial', False)),
+            'time': data.get('time'),
+            'updated_ts': time.time()
+        }
+
+    def get_book(self, symbol):
+        """ Returns the latest cached Books (五檔) snapshot for symbol, or None if never received. """
+        return self.books_cache.get(symbol)
+
+    # ------------------------------------------------------------------
+    # Trades (逐筆成交) stream — needed for 散戶成交筆數差 (retail trade-COUNT
+    # differential, per 陳玠儒/股市擺渡人's methodology: count of buy prints
+    # minus count of sell prints, NOT summed volume).
+    # ------------------------------------------------------------------
+
+    def start_trades_stream(self, symbols):
+        """
+        Subscribes to Fubon's futures WebSocket "trades" channel (逐筆成交).
+
+        CONFIRMED (same verified mechanism as start_books_stream — see its
+        docstring): subscribe({'channel': 'trades', 'symbol': ...}) over the
+        same futopt websocket_client, same connect/on/message/disconnect API.
+
+        NOT independently confirmed for the FUTURES trades payload (I could not
+        reach fbs.com.tw or developer.fugle.tw from this sandbox to see a real
+        futopt 'trades' example — only the Books page was hand-verified by the
+        user). What I have instead, from web-search summaries only (weaker
+        evidence, treat as "likely, not certain"):
+          - A general Fugle "trades" schema (this may be the STOCK version,
+            not futopt) showing: symbol, price, size, volume(cumulative),
+            bid, ask, isClose, time, serial.
+          - A separate summary claiming the *futures* trades payload has:
+            symbol, price, size, time (microseconds), serial.
+        Since these two disagree on whether bid/ask/volume are present, this
+        code does NOT assume bid/ask exist. It infers the trade's aggressor
+        side using the tick rule against the Books cache (already confirmed)
+        instead: price >= best ask -> buy print, price <= best bid -> sell
+        print, otherwise inherit the previous print's side. This sidesteps
+        depending on unconfirmed trades-payload fields entirely.
+
+        Like start_books_stream(), the first raw message per symbol is logged
+        at INFO so the parsing can be corrected against a real message.
+        """
+        futopt_ws = self._ensure_futopt_connected()
+        if not futopt_ws:
+            logging.warning("start_trades_stream: Fubon SDK not active or connection failed — cannot subscribe to Trades channel.")
+            return False
+
+        for symbol in symbols:
+            if symbol in self._trades_subscribed:
+                continue
+            try:
+                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
+                self._trades_subscribed.add(symbol)
+                logging.info(f"Fubon Trades channel: subscribed to {symbol} (逐筆成交).")
+            except Exception as e:
+                logging.warning(f"start_trades_stream: subscribe({symbol}) failed: {e}")
+
+        return True
+
+    def _process_trades_data(self, data):
+        """ Handles one trades 'data' payload (already unwrapped from the event envelope). See start_trades_stream() docstring for what is/isn't confirmed about its fields. """
+        symbol = data.get('symbol')
+        price = data.get('price')
+        size = data.get('size')
+        if not symbol or price is None or size is None:
+            return
+
+        if symbol not in self._trades_logged_raw:
+            logging.info(f"Fubon Trades RAW sample for {symbol} (verify against this): {data}")
+            self._trades_logged_raw.add(symbol)
+
+        # Tick-rule side inference against the Books cache (confirmed schema) —
+        # deliberately does not depend on an unconfirmed 'bid'/'ask' field on
+        # the trades payload itself.
+        book = self.books_cache.get(symbol)
+        side = None
+        if book and book.get('bids') and book.get('asks'):
+            best_bid = book['bids'][0]['price']
+            best_ask = book['asks'][0]['price']
+            if price >= best_ask:
+                side = 'buy'
+            elif price <= best_bid:
+                side = 'sell'
+        if side is None:
+            log = self.trades_log.get(symbol)
+            side = log[-1]['side'] if log else 'buy'
+
+        if symbol not in self.trades_log:
+            self.trades_log[symbol] = deque(maxlen=self._TRADES_LOG_MAXLEN)
+        self.trades_log[symbol].append({
+            'price': float(price),
+            'size': int(size),
+            'side': side,
+            'ts': time.time()
+        })
+
+    def get_recent_trades(self, symbol, since_ts=None):
+        """ Returns cached trade prints for symbol, optionally only those at/after since_ts (epoch seconds). """
+        log = self.trades_log.get(symbol)
+        if not log:
+            return []
+        if since_ts is None:
+            return list(log)
+        return [t for t in log if t['ts'] >= since_ts]
+
+    def get_momentum_bar_30m(self, symbol):
+        """
+        Aggregates the current (in-progress) 30-minute bar's three momentum
+        lines, per 陳玠儒/股市擺渡人's methodology (see
+        ../trading room/TRADING_ROOM_PROJECT_STATE.md for the full writeup):
+
+          - big_order_diff (大戶委託口差): sum(bid sizes) - sum(ask sizes)
+            from the current top-5 Books snapshot. This is an APPROXIMATION
+            of the original concept (large resting orders specifically) —
+            we only have top-5 depth, not a full order book we could filter
+            by order size, so this uses total top-5 committed size on each
+            side as the proxy. Documented, not hidden.
+          - retail_trade_count_diff (散戶成交筆數差): count of buy-side trade
+            prints minus count of sell-side trade prints in this bar — COUNT
+            of prints, not summed volume, per the methodology.
+          - market_order_diff (市場委買委賣口差): same top-5 Books snapshot as
+            big_order_diff. With only top-5 depth available (not the full
+            market's resting orders), this session has no way to compute a
+            genuinely different "whole market" number from the "big player"
+            number — both currently read the same Books snapshot. Flagged
+            here rather than silently faked into two different-looking lines.
+
+        Returns None if no book/trades data is cached yet for symbol.
+        """
+        book = self.books_cache.get(symbol)
+        if not book:
+            return None
+
+        bid_total = sum(lvl['size'] for lvl in book.get('bids', []))
+        ask_total = sum(lvl['size'] for lvl in book.get('asks', []))
+        big_order_diff = bid_total - ask_total
+
+        now = time.time()
+        bar_start = now - (now % 1800)  # current 30-minute wall-clock bucket
+        recent = self.get_recent_trades(symbol, since_ts=bar_start)
+        buy_count = sum(1 for t in recent if t['side'] == 'buy')
+        sell_count = sum(1 for t in recent if t['side'] == 'sell')
+
+        return {
+            'symbol': symbol,
+            'bar_start_ts': bar_start,
+            'big_order_diff': big_order_diff,
+            'retail_trade_count_diff': buy_count - sell_count,
+            'market_order_diff': big_order_diff,  # see docstring: same source as big_order_diff for now
+            'trade_count_in_bar': len(recent),
+            'is_trial': bool(book.get('is_trial', False)),
+            'updated_ts': now
+        }
+
 
 # Global singleton instance for app-wide access
 fubon_provider = FubonAPIProvider()
