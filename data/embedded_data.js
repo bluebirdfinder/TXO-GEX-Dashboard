@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 44755.6,
     "day_total_vex": 345.84
   },
-  "last_updated_time": "2026-09-15 21:15",
+  "last_updated_time": "2026-09-15 21:38",
   "spot_price": 45511.49,
   "spot_change": -351.03,
   "spot_change_pct": -0.77,
@@ -1319,8 +1319,8 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_market": null,
       "margin_maint_stock": null,
       "margin_maint_published": true,
-      "taifex_vix": null,
-      "us_vix": null,
+      "taifex_vix": 26.34,
+      "us_vix": 16.46,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -2607,8 +2607,8 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_market": null,
       "margin_maint_stock": null,
       "margin_maint_published": false,
-      "taifex_vix": null,
-      "us_vix": null,
+      "taifex_vix": 26.34,
+      "us_vix": 16.46,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -3895,8 +3895,8 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_market": null,
       "margin_maint_stock": null,
       "margin_maint_published": true,
-      "taifex_vix": null,
-      "us_vix": null,
+      "taifex_vix": 26.28,
+      "us_vix": 17.84,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -5183,8 +5183,8 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_market": null,
       "margin_maint_stock": null,
       "margin_maint_published": false,
-      "taifex_vix": null,
-      "us_vix": null,
+      "taifex_vix": 26.28,
+      "us_vix": 17.84,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -6471,8 +6471,8 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_market": null,
       "margin_maint_stock": null,
       "margin_maint_published": true,
-      "taifex_vix": null,
-      "us_vix": null,
+      "taifex_vix": 27.53,
+      "us_vix": 15.84,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -7759,8 +7759,8 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_market": null,
       "margin_maint_stock": null,
       "margin_maint_published": false,
-      "taifex_vix": null,
-      "us_vix": null,
+      "taifex_vix": 27.53,
+      "us_vix": 15.84,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -11625,7 +11625,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_published": true,
       "margin_maint_is_estimated": true,
       "taifex_vix": 27.29,
-      "us_vix": 16.89,
+      "us_vix": 16.86,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -12914,7 +12914,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 27.29,
-      "us_vix": 16.89,
+      "us_vix": 16.86,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -14203,8 +14203,8 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_market": null,
       "margin_maint_stock": null,
       "margin_maint_published": true,
-      "taifex_vix": null,
-      "us_vix": null,
+      "taifex_vix": 27.53,
+      "us_vix": 15.84,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -15491,8 +15491,8 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_market": null,
       "margin_maint_stock": null,
       "margin_maint_published": false,
-      "taifex_vix": null,
-      "us_vix": null,
+      "taifex_vix": 27.53,
+      "us_vix": 15.84,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -19357,7 +19357,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_published": true,
       "margin_maint_is_estimated": true,
       "taifex_vix": 27.29,
-      "us_vix": 16.89,
+      "us_vix": 16.86,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -20646,7 +20646,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 27.29,
-      "us_vix": 16.89,
+      "us_vix": 16.86,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -22209,9 +22209,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/15 (二)",
-        "price": 99.57,
-        "change": 0.11,
-        "pct": 0.11
+        "price": 99.61,
+        "change": 0.15,
+        "pct": 0.15
       },
       "usdjpy": {
         "date": "09/15 (二)",
@@ -22312,13 +22312,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/15 (二)",
-          "price": 99.57,
-          "change": 0.11,
-          "pct": 0.11
+          "price": 99.61,
+          "change": 0.15,
+          "pct": 0.15
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.85</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.16 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.57</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>155.1</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.85</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.16 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.61</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>155.1</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -1005,
@@ -22387,7 +22387,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -4477.93,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-15 21:15",
+    "last_updated": "2026-09-15 21:38",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -22565,7 +22565,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "UMC (聯電ADR)",
-      "adr_change_pct": -3.27,
+      "adr_change_pct": -0.21,
       "adr_basis": "-",
       "spot_inst_net": 18209,
       "spot_foreign": 13698,
@@ -22609,7 +22609,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TSM (台積電ADR)",
-      "adr_change_pct": -3.52,
+      "adr_change_pct": -0.24,
       "adr_basis": "-",
       "spot_inst_net": -10464,
       "spot_foreign": -11192,
@@ -23005,7 +23005,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "EWT (MSCI台灣ETF)",
-      "adr_change_pct": -3.34,
+      "adr_change_pct": -0.24,
       "adr_basis": "-",
       "spot_inst_net": -47586,
       "spot_foreign": -48348,
@@ -23929,7 +23929,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TSM (台積電ADR)",
-      "adr_change_pct": -3.52,
+      "adr_change_pct": -0.24,
       "adr_basis": "-",
       "spot_inst_net": -10464,
       "spot_foreign": -11192,
@@ -24501,7 +24501,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TLT (美債20Y ETF)",
-      "adr_change_pct": 0.07,
+      "adr_change_pct": -0.3,
       "adr_basis": "-",
       "spot_inst_net": 0,
       "spot_foreign": 0,
@@ -24589,7 +24589,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "ASX (日月光ADR)",
-      "adr_change_pct": -6.06,
+      "adr_change_pct": 0.89,
       "adr_basis": "-",
       "spot_inst_net": -107,
       "spot_foreign": -9,
@@ -24985,7 +24985,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "EWT (MSCI台灣ETF)",
-      "adr_change_pct": -3.34,
+      "adr_change_pct": -0.24,
       "adr_basis": "-",
       "spot_inst_net": -47586,
       "spot_foreign": -48348,
@@ -35174,21 +35174,21 @@ window.GEX_EMBEDDED_DATA = {
       "summary": "台指VIX 27.3、美股VIX 16.9；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 99.57,
-        "change_pct": 0.18,
-        "trend_label": "▲ 較昨日走升 (+0.18%)",
+        "price": 99.61,
+        "change_pct": 0.22,
+        "trend_label": "▲ 較昨日走升 (+0.22%)",
         "unit": ""
       },
       "us10y": {
         "name": "美殖利率 (10年期 US10Y)",
         "price": 5.0,
-        "change_pct": 0.71,
-        "trend_label": "▲ 較昨日走升 (+0.71%)",
+        "change_pct": 0.75,
+        "trend_label": "▲ 較昨日走升 (+0.75%)",
         "unit": "%"
       },
       "vix": {
         "name": "VIX恐慌指標 (CBOE)",
-        "price": 16.89,
+        "price": 16.86,
         "trend_label": "🟢 低波安定"
       }
     },
@@ -35263,9 +35263,9 @@ window.GEX_EMBEDDED_DATA = {
     "taifex_vix": 27.29,
     "taifex_vix_change": -0.54,
     "taifex_vix_change_pct": -1.94,
-    "us_vix": 16.89,
-    "us_vix_change": -0.21,
-    "us_vix_change_pct": -1.23,
+    "us_vix": 16.86,
+    "us_vix_change": -0.24,
+    "us_vix_change_pct": -1.4,
     "us_vvix": 94.89,
     "us_vvix_change": 3.61,
     "us_vvix_change_pct": 3.95,

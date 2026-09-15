@@ -133,6 +133,56 @@ def fetch_taifex_pc_ratio(date_str):
     key = f"{y}/{int(m)}/{int(d)}"
     return _pc_ratio_cache.get(key)
 
+def fetch_yahoo_historical_range(ticker, start_date, end_date):
+    """
+    Fetch one Yahoo Finance ticker's daily closes for [start_date, end_date] (datetime.date)
+    in a single request, keyed by ISO date string. Used to backfill 櫃買指數 (^TWOII, TPEx
+    doesn't expose a simple public historical-index-by-date endpoint the way TWSE does) and US
+    CBOE VIX (^VIX) for dates before this project started persisting them in
+    write_current_session_snapshot() — those dates are otherwise permanently None (the
+    snapshot store is a forward-only accumulator, never retroactively filled until now).
+    """
+    tw_tz = datetime.timezone(datetime.timedelta(hours=8))
+    p1 = int(datetime.datetime.combine(start_date - datetime.timedelta(days=2), datetime.time(0, 0), tzinfo=tw_tz).timestamp())
+    p2 = int(datetime.datetime.combine(end_date + datetime.timedelta(days=2), datetime.time(0, 0), tzinfo=tw_tz).timestamp())
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?period1={p1}&period2={p2}&interval=1d"
+    txt = fetch_url(url)
+    result = {}
+    if not txt:
+        return result
+    try:
+        data = json.loads(txt)
+        chart_result = data.get("chart", {}).get("result", [{}])[0]
+        timestamps = chart_result.get("timestamp", [])
+        closes = chart_result.get("indicators", {}).get("quote", [{}])[0].get("close", [])
+        for ts, close in zip(timestamps, closes):
+            if close is None:
+                continue
+            d = datetime.datetime.fromtimestamp(ts, tz=tw_tz).date()
+            result[d.strftime("%Y-%m-%d")] = round(close, 2)
+    except Exception as e:
+        print(f"  [WARN] Yahoo historical range {ticker}: {e}")
+    return result
+
+def fetch_taifex_vix_by_date(date_str):
+    """
+    Real TAIFEX VIX (台指VIX) for one date (YYYYMMDD), via the same getVixData endpoint
+    fetch_official_taifex_vix() already uses for "today"/"yesterday" — it accepts an arbitrary
+    date filename, so it works for any past trading day too.
+    """
+    url = f"https://www.taifex.com.tw/cht/7/getVixData?filesname={date_str}"
+    txt = fetch_url(url)
+    if not txt:
+        return None
+    for line in reversed([l.strip() for l in txt.splitlines() if l.strip()]):
+        parts = line.split()
+        if len(parts) >= 2:
+            try:
+                return round(float(parts[-1]), 2)
+            except ValueError:
+                pass
+    return None
+
 def fetch_twse_index(date_str):
     """
     Fetch TWSE TAIEX closing for date YYYYMMDD. type=IND is the 價格指數 table — type=MS (the
@@ -165,6 +215,12 @@ def backfill(n_days=10, overwrite=False):
     range_end = trading_days[0].strftime("%Y/%m/%d")
     txo_oi_by_date = fetch_taifex_txo_open_interest(range_start, range_end)
 
+    # Real 櫃買指數 (OTC) and US VIX for the whole window, one request each (same
+    # already-real Yahoo Finance tickers fetch_and_calc_vision.py's real-time fetchers use:
+    # ^TWOII for OTC's Tier-2 fallback, ^VIX for us_vix).
+    otc_by_date = fetch_yahoo_historical_range("%5ETWOII", trading_days[-1], trading_days[0])
+    us_vix_by_date = fetch_yahoo_historical_range("%5EVIX", trading_days[-1], trading_days[0])
+
     written = 0
     for day in trading_days:
         date_str = day.strftime("%Y%m%d")
@@ -194,16 +250,39 @@ def backfill(n_days=10, overwrite=False):
                 return None
             print(f"  [WARN] No real TXO open interest for {iso_str} — GEX fields stay null (not guessed).")
 
+        taifex_vix_today = None  # fetched at most once per calendar day, shared by DAY/NIGHT
         for sess in ["DAY", "NIGHT"]:
             key = f"{iso_str}_{sess}"
-            if key in snapshots and not overwrite:
-                print(f"  SKIP {key}")
+            existing = snapshots.get(key)
+            if existing and not overwrite:
+                # Merge-fill only the fields this run newly knows how to fetch
+                # (otc_price/taifex_vix/us_vix) rather than re-fetching everything that
+                # already succeeded in an earlier backfill run.
+                missing = [f for f in ("otc_price", "taifex_vix", "us_vix") if existing.get(f) is None]
+                if not missing:
+                    print(f"  SKIP {key} (already complete)")
+                    continue
+                print(f"  Filling {key} missing fields {missing}...", end=" ")
+                if existing.get("otc_price") is None:
+                    existing["otc_price"] = otc_by_date.get(iso_str)
+                if existing.get("taifex_vix") is None:
+                    if taifex_vix_today is None:
+                        taifex_vix_today = fetch_taifex_vix_by_date(date_str) or False
+                        time.sleep(0.3)
+                    existing["taifex_vix"] = taifex_vix_today or None
+                if existing.get("us_vix") is None:
+                    existing["us_vix"] = us_vix_by_date.get(iso_str)
+                print(f"otc={existing['otc_price']}, taifex_vix={existing['taifex_vix']}, us_vix={existing['us_vix']}")
+                written += 1
                 continue
             print(f"  Fetching {key}...", end=" ")
             spot = fetch_twse_index(date_str)
             day_txf, night_txf = fetch_taifex_daily_tx(date_str)
             pc_ratio = fetch_taifex_pc_ratio(date_str)
             txf = day_txf if sess == "DAY" else night_txf
+            if taifex_vix_today is None:
+                taifex_vix_today = fetch_taifex_vix_by_date(date_str) or False
+                time.sleep(0.3)
 
             gex_fields = real_gex_fields(txf) or real_gex_fields(spot) or {
                 "zero_gamma_level": None, "gex_plus_flip": None,
@@ -212,13 +291,13 @@ def backfill(n_days=10, overwrite=False):
 
             snapshots[key] = {
                 "date": iso_str, "session": sess,
-                "spot_price": spot, "otc_price": None, "txf_price": txf,
+                "spot_price": spot, "otc_price": otc_by_date.get(iso_str), "txf_price": txf,
                 **gex_fields,
-                "pc_ratio": pc_ratio, "taifex_vix": None, "us_vix": None,
+                "pc_ratio": pc_ratio, "taifex_vix": (taifex_vix_today or None), "us_vix": us_vix_by_date.get(iso_str),
                 "margin_maint_market": None, "margin_maint_stock": None,
                 "written_at": f"{iso_str}T23:59:00+08:00", "source": "backfill"
             }
-            print(f"spot={spot}, txf={txf}, pc={pc_ratio}, zero_gamma={gex_fields['zero_gamma_level']}")
+            print(f"spot={spot}, txf={txf}, pc={pc_ratio}, zero_gamma={gex_fields['zero_gamma_level']}, otc={snapshots[key]['otc_price']}, taifex_vix={snapshots[key]['taifex_vix']}, us_vix={snapshots[key]['us_vix']}")
             written += 1
             time.sleep(0.4)
     save_snapshots(snapshots)
