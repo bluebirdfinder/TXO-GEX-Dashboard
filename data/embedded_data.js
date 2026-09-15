@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 45620.3,
     "day_total_vex": 4502.12
   },
-  "last_updated_time": "2026-09-15 20:33",
+  "last_updated_time": "2026-09-15 20:49",
   "spot_price": 45511.49,
   "spot_change": -351.03,
   "spot_change_pct": -0.77,
@@ -2786,11 +2786,11 @@ window.GEX_EMBEDDED_DATA = {
       "max_pain_strike": 45000,
       "shift_vs_prev": 51.0,
       "pc_ratio": 113.23,
-      "margin_maint_market": 157.2,
-      "margin_maint_stock": 143.1,
-      "margin_maint_published": false,
+      "margin_maint_market": 157.9,
+      "margin_maint_stock": 143.7,
+      "margin_maint_published": true,
       "taifex_vix": 27.29,
-      "us_vix": 17.02,
+      "us_vix": 17.01,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -4074,11 +4074,11 @@ window.GEX_EMBEDDED_DATA = {
       "max_pain_strike": 44900,
       "shift_vs_prev": -51.0,
       "pc_ratio": 113.23,
-      "margin_maint_market": 157.2,
-      "margin_maint_stock": 143.1,
+      "margin_maint_market": 157.9,
+      "margin_maint_stock": 143.7,
       "margin_maint_published": false,
       "taifex_vix": 27.29,
-      "us_vix": 17.02,
+      "us_vix": 17.01,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -6730,11 +6730,11 @@ window.GEX_EMBEDDED_DATA = {
       "max_pain_strike": 45000,
       "shift_vs_prev": 51.0,
       "pc_ratio": 113.23,
-      "margin_maint_market": 157.2,
-      "margin_maint_stock": 143.1,
-      "margin_maint_published": false,
+      "margin_maint_market": 157.9,
+      "margin_maint_stock": 143.7,
+      "margin_maint_published": true,
       "taifex_vix": 27.29,
-      "us_vix": 17.02,
+      "us_vix": 17.01,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -8018,11 +8018,11 @@ window.GEX_EMBEDDED_DATA = {
       "max_pain_strike": 44900,
       "shift_vs_prev": -51.0,
       "pc_ratio": 113.23,
-      "margin_maint_market": 157.2,
-      "margin_maint_stock": 143.1,
+      "margin_maint_market": 157.9,
+      "margin_maint_stock": 143.7,
       "margin_maint_published": false,
       "taifex_vix": 27.29,
-      "us_vix": 17.02,
+      "us_vix": 17.01,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -9553,9 +9553,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/15 (二)",
-        "price": 99.63,
-        "change": 0.17,
-        "pct": 0.17
+        "price": 99.57,
+        "change": 0.11,
+        "pct": 0.11
       },
       "usdjpy": {
         "date": "09/15 (二)",
@@ -9656,13 +9656,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/15 (二)",
-          "price": 99.63,
-          "change": 0.17,
-          "pct": 0.17
+          "price": 99.57,
+          "change": 0.11,
+          "pct": 0.11
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.85</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.16 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.63</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>155.1</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.85</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.16 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.57</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>155.1</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -1005,
@@ -9731,7 +9731,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": -11446.31,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-15 20:33",
+    "last_updated": "2026-09-15 20:49",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
