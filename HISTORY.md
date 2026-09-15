@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v63.0`** | 2026-09-15 | 🚨 **首次真正部署上線！`main`分支這幾天從未merge過的重大發現、系統性假保底值清理三部曲（後端7支函式/前端CHART_DEFAULTS統一/總經雷達真數據重建）、room.js兩張從建立以來就是死的UI卡片修復發布版** |
 | **`v62.4`** | 2026-09-15 | 🛠️ **尋鳥戰情室3個Critical bug修復（假OHLC面板/ADX背離寫死價位/選股雷達雜湊碼）、ADR真實報價、散戶籌碼日增減真數據、選股快取覆蓋率32%→97%發布版** |
 | **`v62.3`** | 2026-09-14 | 🔴🔴 **GEX 核心引擎正式接上 TAIFEX 真實選擇權未沖銷部位（徹底移除假高斯曲線）、5日歷史真實回補、法人籌碼/選股雷達真數據發布版** |
 | **`v62.2`** | 2026-09-12 | 🛡️ **Hard Redline #6 嚴禁偽數據實裝、戰情室 100% 真實數據管線、指數 0 成交量自檢校準、老墨/陳玠儒大戶散戶動能與 Gemini 2.5 Flash 多模態軍師發布版** |
@@ -18,6 +19,27 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🚨 v63.0 首次真正部署上線 ✕ 系統性假保底值清理三部曲 ✕ room.js死卡片修復發布版 (2026-09-15)
+- **🚨🚨 本次最重大發現：過去3天（v62.2~v62.4）所有修復，從未真正部署到 `bluebirdfinder.github.io` 網站過**：
+  - 稽核發現：這3天所有工作（含v62.3的GEX核心引擎真實選擇權接軌、v62.4的3個Critical bug修復）全部只推到 `claude/bold-galileo-dy1oxb` 這條 feature branch，**從未 merge 進 GitHub Pages 實際讀取的 `main` 分支**。使用者一直看到的線上版本停留在 `main` 上 2026-09-14 凌晨的舊commit（比v62.3還早），版號顯示v62.2，且5日GEX結構歷程矩陣等修復完全沒有反映到線上——不是沒修好，是修好的東西從來沒有上線過。
+  - 根因之二：`.github/workflows/auto_update.yml` 這支定時排程（每天固定時段重跑 `fetch_and_calc_vision.py` 更新盤後資料）是照 GitHub 預設分支（`main`）上的**舊版腳本**在跑，跟這幾天在feature branch上修復的邏輯完全是兩套——網站這幾天「看起來有在動」的假象，其實是舊版有假資料bug的腳本在自動跑。
+  - 已將 `claude/bold-galileo-dy1oxb`（25筆commit）merge進 `main` 並push，`data/gex_data.json`/`embedded_data.js`/`encrypted_gex.json` 三個檔案因為排程機器人這幾天也在main上獨立改動而衝突，已解決衝突後用修好的pipeline重新產出最新真實數據。**這是這幾天所有self-audit修復第一次真正讓真實使用者看到**。
+- **🔴🔴 最嚴重新發現並修復：核心特定法人分歧分析函式抓了網頁卻從未解析**：
+  - `fetch_official_taifex_specific_traders()` 抓了 `largeTraderFutQry` 的HTML，但**從未解析過**，直接用寫死的5個數字產生「外資特法背離診斷」文字，每次執行都一樣。已改為重用 `fetch_official_taifex_large_trader()` 已驗證的真實解析結果，不必重新開發爬蟲；缺資料時明確標記 `UNAVAILABLE`，不再靜默套用舊字面值。
+  - 個股期貨列表「🚀投信波段認養」徽章由 `idx` 取模公式湊出來，跟投信今天買不買毫無關係，已誠實停用（比照 room.js 選股雷達同款問題的處理方式）。
+- **🛡️ 系統性靜默假保底值清理（7支後端函式 + app.js 34+處不一致常數）**：
+  - `fetch_official_taifex_tx_prices()`（現貨價本身，全引擎輸入源頭）、`fetch_official_taifex_vix()`（VIX/VVIX）、`fetch_twse_institutional_stock_trading()`、`fetch_official_taifex_large_trader()`、`fetch_official_taifex_futures_institutional_oi()`、`fetch_official_taifex_options_matrix()`、`fetch_taifex_night_institutional_trading()` 全部改為「抓取失敗就退回上一次真實成功抓到的數值」，取代寫死screenshot數字永遠不變的舊模式。
+  - `parse_taifex_fut_oi()` 內「魔術數字比對」鏈式假保底（比對 `36258`/`80167` 判斷抓取是否失敗，失敗就換另一組寫死多空拆分）已改為每個欄位獨立退回真實上一筆快照值。
+  - `app.js` 新增 `CHART_DEFAULTS` 常數，統一34+處原本互相矛盾的保底字面值（例如 `zero_gamma_level` 原本在6個函式裡有6種不同數字）。
+- **💰 融資維持率查證與重新設計**：實地查證確認 TWSE 從未公布過全市場整戶維持率官方數據（帳戶層級概念，官方不彙總揭露），過去的估算公式（`158.4 + 變動量×0.03`）改為用真實大盤漲跌幅與真實融資餘額變動動態校正，並在資料與畫面上明確標註 `is_estimated: true` / 「估算值」，不再假裝是官方數據。
+- **🌐 總經事件雷達真數據重建**：`macro_risk_dashboard`（DXY/US10Y/VIX卡片）原本完全零fetch、打字寫死，且跟同引擎別處抓到的真VIX不同步，已改為DXY/US10Y抓真實Yahoo Finance報價，VIX重用真實值。`macro_events_calendar` 原本是會過期的寫死5筆事件清單（09/16後悄悄變成永久空清單，無任何提示），已改為重用同函式裡本來就是真實日期運算、永不枯竭的 `valid_events`（週/月結算、NFP、CPI、ADP、失業金、富台結算、MSCI調整）。
+- **🔴🔴 尋鳥戰情室發現2張從功能建立以來就是死的UI卡片，已修復**：
+  - 「GEX造市商五大防線」卡片（Call Wall/VEX轉折/Zero Gamma/Put Wall/Max Pain）：程式碼已經算出真實數值並正確用在旁邊的「距現價」欄位，但從未寫回卡片本身的顯示欄位，永遠顯示room.html裡打字寫死的初始值。
+  - 「法人籌碼體質」卡片（外資期貨淨留倉/大盤P-C Ratio/融資維持率）：連 `id` 屬性都沒有，純靜態HTML文字，room.js從頭到尾沒有引用過。
+  - 兩者已接上真實數據並實測確認正確；同時發現並統一了 room.js 內另外6處對GEX關卡欄位各自寫死不同保底值的問題（新增 `ROOM_CHART_DEFAULTS`）。
+  - **附帶教訓**：`room.js` 的 `<script src="room.js?v=...">` 版本查詢字串長期沒更新，導致瀏覽器無限期快取舊版腳本，測試時容易誤判修復無效——已更新版本字串，並記錄「以後改room.js一定要同步bump版本字串」。
+- **🧪 方法論升級：首次針對這兩個前端檔案做真實瀏覽器測試**（新增 `.claude/launch.json` 本機伺服器設定），而非只憑閱讀程式碼判斷「應該沒問題」——本次修復的2個app.js顯示bug（null值誤判、雙重正負號）與2個room.js死卡片，全部是唯有實際打開瀏覽器才會發現，純讀程式碼看不出來。
 
 ### 🛠️ v62.4 尋鳥戰情室3個Critical bug修復 ✕ ADR真實報價 ✕ 散戶籌碼日增減真數據 ✕ 選股快取97%覆蓋率發布版 (2026-09-15)
 - **🔴 尋鳥戰情室 3 個 Critical bug 修復**：

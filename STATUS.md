@@ -1,12 +1,31 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v62.4)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.0)
 
-**當前版本**：`v62.4` (2026-09-15 尋鳥戰情室3個Critical bug修復、ADR真實報價、散戶籌碼日增減真數據、選股快取覆蓋率32%→97%發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v62.4)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v62.4)
+**當前版本**：`v63.0` (2026-09-15 首次真正部署上線、系統性假保底值清理三部曲、room.js兩張死卡片修復發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.0)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.0)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v63.0 核心更新亮點 (首次真正部署上線 ✕ 系統性假保底值清理三部曲 ✕ room.js死卡片修復)
+
+### 🚨🚨 1. 重大發現：過去3天所有修復從未真正部署到線上
+- `main`（GitHub Pages實際讀取的分支）卡在比v62.3還早的舊commit，這幾天的v62.3/v62.4發布與所有修復只存在於feature branch，從未merge。
+- `auto_update.yml`排程機器人一直用main上的舊版腳本自動跑，造成「網站看起來有在動」的假象。
+- 已merge並push，這是這幾天所有self-audit修復第一次讓真實使用者看到。
+
+### 🔴🔴 2. 最嚴重新發現：`fetch_official_taifex_specific_traders()` 抓網頁卻從未解析
+- 改重用已驗證的 `fetch_official_taifex_large_trader()` 真實解析結果；投信波段認養假訊號已誠實停用。
+
+### 🛡️ 3. 系統性靜默假保底值清理三部曲
+- 後端7支函式（含現貨價本身、VIX）改為「失敗就退回上次真實值」；app.js新增`CHART_DEFAULTS`統一34+處不一致常數；融資維持率查證後改為真實動態校正估算值並明確標註。
+
+### 🌐 4. 總經事件雷達真數據重建
+- DXY/US10Y改真實Yahoo Finance報價；事件日曆改用永不枯竭的動態計算日期取代會過期的寫死清單。
+
+### 🔴🔴 5. room.js 兩張從建立以來就是死的UI卡片修復
+- 「GEX造市商五大防線」與「法人籌碼體質」卡片首次接上真實數據；順帶統一room.js內另外6處GEX關卡保底值不一致問題。
 
 ## 🎯 v62.4 核心更新亮點 (尋鳥戰情室3個Critical bug修復 ✕ ADR真實報價 ✕ 選股快取97%覆蓋率)
 

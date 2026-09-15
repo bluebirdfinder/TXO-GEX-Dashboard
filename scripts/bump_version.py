@@ -96,8 +96,12 @@ def bump_version(new_version, release_note=""):
             f.write(r_content)
         print(f"  ✅ [5/7] 更新 README.md")
 
-    # 6.1 更新 room.html
-    room_html = os.path.join(BASE_DIR, 'room.html')
+    # 6.1 更新 room.html — lives in "trading room/" (a subfolder with a space in its name),
+    # NOT at the project root. The root's own room.html is just a redirect stub to this real
+    # file and contains none of the version-string patterns below, so a wrong path here used
+    # to silently succeed (file exists, .replace() calls are all no-ops) while never touching
+    # the actual trading room page.
+    room_html = os.path.join(BASE_DIR, 'trading room', 'room.html')
     if os.path.exists(room_html):
         with open(room_html, 'r', encoding='utf-8') as f:
             rm_html_content = f.read()
@@ -110,8 +114,8 @@ def bump_version(new_version, release_note=""):
             f.write(rm_html_content)
         print(f"  ✅ [6/7] 更新 room.html")
 
-    # 6.2 更新 room.js
-    room_js = os.path.join(BASE_DIR, 'room.js')
+    # 6.2 更新 room.js — same "trading room/" subfolder as room.html above.
+    room_js = os.path.join(BASE_DIR, 'trading room', 'room.js')
     if os.path.exists(room_js):
         with open(room_js, 'r', encoding='utf-8') as f:
             rm_js_content = f.read()
