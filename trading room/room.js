@@ -1674,6 +1674,49 @@ function renderLeftPanel() {
     dMPEl.style.color = distMP >= 0 ? 'var(--call-color)' : 'var(--put-color)';
   }
 
+  // Strike levels themselves (🛡️ GEX 造市商五大防線 card). Found 2026-09-15: this whole card
+  // was permanently frozen at whatever numbers were typed into room.html's initial markup —
+  // cw/zg/pw/mp above were already real and used for the *distance* spans right next to these,
+  // but nothing ever wrote the real number into the level display itself.
+  const vex = gexData?.gex_plus_flip !== undefined ? gexData.gex_plus_flip : zg;
+  const sCWEl = document.getElementById('left-strike-cw');
+  if (sCWEl) sCWEl.innerText = Math.round(cw).toLocaleString();
+  const sVexEl = document.getElementById('left-strike-vex');
+  if (sVexEl) sVexEl.innerText = vex.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const sZGEl = document.getElementById('left-strike-zg');
+  if (sZGEl) sZGEl.innerText = zg.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const sPWEl = document.getElementById('left-strike-pw');
+  if (sPWEl) sPWEl.innerText = Math.round(pw).toLocaleString();
+  const sMPEl = document.getElementById('left-strike-mp');
+  if (sMPEl) sMPEl.innerText = Math.round(mp).toLocaleString();
+
+  // 🏛️ 法人籌碼體質 card. Found 2026-09-15: this card had no element ids at all in
+  // room.html — pure static placeholder text ("-12,450 口" etc.), never touched by any JS,
+  // permanently frozen since the feature was built. Wired to the same real fields already
+  // used elsewhere (institutional_sentiment from the futures-institutional-OI fetch, real
+  // pc_ratio, and today's real margin-maintenance estimate from history_10_sessions).
+  const instSent = gexData?.institutional_sentiment;
+  const instTagEl = document.getElementById('left-inst-tag');
+  if (instTagEl) instTagEl.innerText = instSent?.tag || '—';
+  const instForeignEl = document.getElementById('left-inst-foreign');
+  if (instForeignEl && instSent?.foreign_net_oi !== undefined) {
+    const v = instSent.foreign_net_oi;
+    const chgNote = instSent.daily_change >= 0 ? '回補' : '加碼放空';
+    instForeignEl.innerText = `${v >= 0 ? '+' : ''}${v.toLocaleString()} 口 (${chgNote})`;
+    instForeignEl.style.color = v >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+  }
+  const instPcEl = document.getElementById('left-inst-pcratio');
+  if (instPcEl && gexData?.pc_ratio !== undefined) {
+    const pcv = gexData.pc_ratio;
+    instPcEl.innerText = `${pcv.toFixed(1)}% ${pcv > 105 ? '🔴 偏多看撐' : '🟢 偏空看壓'}`;
+  }
+  const instMarginEl = document.getElementById('left-inst-margin');
+  const t0Session = (gexData?.history_10_sessions || []).find(s => s.id === 't0_night' || s.id === 't0_day');
+  if (instMarginEl) {
+    const mm = t0Session?.margin_maint_market;
+    instMarginEl.innerText = (mm == null) ? '—' : `${mm.toFixed(1)}% ${mm >= 150 ? '🟢 安定' : (mm >= 140 ? '🟡 常態' : '🟠 警戒')}`;
+  }
+
   // Header quick pills
   const topZG = document.getElementById('top-stat-zg');
   const topCW = document.getElementById('top-stat-cw');

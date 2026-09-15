@@ -46,7 +46,7 @@
 | 2 | 大戶散戶動能副圖 | 大戶（外資/投信/自營期貨）vs散戶方向判斷 | `momentum_data.json` + 富邦Books/Trades（規劃中） | TAIFEX OpenAPI + 富邦Neo API | 15:00後（法人）/即時（Books/Trades） | `loadMomentumData()`；即時串接是**另一聊天室在做** | ⏳ 部分（我修好了momentum_data.json來源；圖表即時串接是另一session範圍） | 部分 | 等另一聊天室的Books/Trades完工後才能100%真實 |
 | 3 | ADX Pro V3副圖 | 趨勢強度、頂/底背離進出場訊號 | 真實K線算出的DI/ADX | 內部計算 | 即時 | room.js ADX計算段落 | ✅ 已稽核 | ✅ **今天修好**背離判定用固定絕對價位（47200/46150）的bug，改成真實相對背離判定 | 無 |
 | 4 | VRVP成交量分布 | 找支撐壓力密集成交區 | 真實K線量能 | 內部計算 | 即時 | room.js VRVP Canvas | ⏳ 未稽核 | — | 無 |
-| 5 | 左側面板報價/GEX距離/OHLC | 看盤、GEX關卡位階距離判斷 | gex_data.json（GEX部分真實）+ OHLC | 內部 | 即時/盤後 | `renderLeftPanel()` | ✅ 已稽核 | ✅ **今天修好**漲跌/昨收假資料；開盤/最高/最低目前無真實來源，誠實顯示「—」 | 無（已是誠實狀態） |
+| 5 | 左側面板報價/GEX距離/OHLC/GEX五大防線/法人籌碼體質 | 看盤、GEX關卡位階距離判斷、外資動向與維持率健檢 | gex_data.json（GEX部分真實）+ OHLC | 內部 | 即時/盤後 | `renderLeftPanel()` | ✅ 已稽核 | ✅ 漲跌/昨收假資料已修；開盤/最高/最低誠實顯示「—」。**2026-09-15上午新發現並修復**：「GEX造市商五大防線」卡片(Call Wall/ZG/Put Wall/Max Pain/VEX)從建立以來從未寫入真數據，永遠顯示打字寫死的初始值；「法人籌碼體質」卡片(外資期貨淨留倉/P-C Ratio/融資維持率)連id屬性都沒有、完全零JS綁定。兩者已接上真數據並實測確認正確 | 無 |
 | 6 | AI量化軍師（Gemini） | AI輔助診斷（非投資建議） | Gemini API + gexData | Google Gemini API | 即時 | room.js AI Advisor Engine | ✅ 已確認乾淨（有Key真呼叫，沒Key清楚標示「本地內建風控引擎」，不偽裝真AI） | 原本就誠實 | 無 |
 | 7 | 選股雷達 Modal | 多因子選股（技術面訊號篩選） | `screener_cache.json`（今天改真實，97%覆蓋率） | TWSE MI_INDEX批量端點 + TPEx | 盤後 | `runBirdQuantScreener()` + `build_screener_cache.py` | ✅ 已稽核 | ✅ **今天修好**雜湊碼假訊號，改真實訊號比對 | 「投信認養」「籌碼偏多」2個篩選條件還沒接真數據，永遠不觸發（誠實不匹配） |
 | 8 | 商品搜尋/自動完成（Ctrl+K） | 快速切換商品 | `symbolsUniverse`真實股票清單 | 內部清單檔 | — | room.js Symbol Search Engine | ⏳ 未稽核 | — | 無 |
@@ -108,7 +108,7 @@
 2. ~~`fetch_twse_margin_maintenance()` 融資維持率~~ **已查證並修復**：TWSE從未公布過官方數據，改為標註`is_estimated`的動態校正估算值。
 3. ~~系統性靜默假保底值清理~~ **已完成**：7支後端函式+app.js 34+處不一致常數全部清理完畢，過程中實測還額外發現並修好2個既有前端顯示bug（null值誤判成正數、雙重正負號）與1個room.js既有的資料路徑bug。
 4. `handleLiveTick` 0.62係數、個股期貨點數貢獻固定乘數(8.25/0.85/1.5/0.1)、GEX引擎固定18%波動率、8大產業固定占比——同一類「工程近似非造假」判斷題，維持先前決定：先記錄不處理，是否要投入時間換真實動態計算留待你決定。
-5. **新發現待決**：`trading room/room.js` 的macro risk HUD初始化時機（已修路徑bug，但自動觸發時可能在資料載入前執行一次，測試環境因passcode鎖定未能完整驗證）——需要你開瀏覽器手動測試確認。
+5. ~~`trading room/room.js` 的macro risk HUD初始化時機~~ **已排除疑慮**：昨晚測試時誤判為passcode鎖定問題，實際上room.js根本沒有passcode機制，是測試方法錯誤（檢查了`window.gexData`而非`gexData`，`let`宣告的頂層變數不會掛到`window`物件上）。今天重新用正確方法測試，自然載入頁面就正確顯示真實DXY(99.450)/US10Y(4.960%)，無殘留問題。
 
 ### 📋 接下來建議的執行順序
 
