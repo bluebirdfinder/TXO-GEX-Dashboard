@@ -133,14 +133,52 @@ def fetch_taifex_pc_ratio(date_str):
     key = f"{y}/{int(m)}/{int(d)}"
     return _pc_ratio_cache.get(key)
 
+def fetch_tpex_otc_index_historical():
+    """
+    Real 櫃買指數 (OTC index) daily OHLC from TPEx's own official OpenAPI
+    (https://www.tpex.org.tw/openapi/v1/tpex_index, tag "指數系列" / "櫃買指數歷史資料").
+    Returns a rolling window of the most recent ~2 weeks of trading days (no date-range query
+    params — confirmed via the endpoint's swagger schema, which only exposes Date/Open/High/
+    Low/Close/Change with no request parameters), keyed by ISO date string.
+
+    Found 2026-09-16: Yahoo Finance's ^TWOII chart endpoint (fetch_yahoo_historical_range below)
+    returns a completely empty `indicators.quote` for any historical range query — its `meta`
+    block shows `regularMarketTime` stuck around Oct 2024, meaning Yahoo's own historical chart
+    data for this specific ticker is stale/broken upstream, not a request-parameter bug on our
+    side (the exact same ticker fetch is what fetch_and_calc_vision.py's live path already used,
+    just without period1/period2 range params — it never surfaced because TWSE MIS is Tier 1 for
+    the live path and always succeeds first). This TPEx endpoint's 2026/9/15 close (388.73)
+    matches that same night's live TWSE MIS reading exactly, confirming it's the real number.
+    """
+    txt = fetch_url("https://www.tpex.org.tw/openapi/v1/tpex_index")
+    result = {}
+    if not txt:
+        return result
+    try:
+        rows = json.loads(txt)
+        for row in rows:
+            date_str = row.get("Date", "")  # YYYYMMDD
+            close = row.get("Close")
+            if len(date_str) != 8 or close is None:
+                continue
+            try:
+                iso = f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:]}"
+                result[iso] = round(float(close), 2)
+            except (ValueError, TypeError):
+                pass
+    except Exception as e:
+        print(f"  [WARN] TPEx OTC index historical: {e}")
+    return result
+
 def fetch_yahoo_historical_range(ticker, start_date, end_date):
     """
     Fetch one Yahoo Finance ticker's daily closes for [start_date, end_date] (datetime.date)
-    in a single request, keyed by ISO date string. Used to backfill 櫃買指數 (^TWOII, TPEx
-    doesn't expose a simple public historical-index-by-date endpoint the way TWSE does) and US
-    CBOE VIX (^VIX) for dates before this project started persisting them in
-    write_current_session_snapshot() — those dates are otherwise permanently None (the
-    snapshot store is a forward-only accumulator, never retroactively filled until now).
+    in a single request, keyed by ISO date string. Used as a fallback for 櫃買指數 (^TWOII —
+    see fetch_tpex_otc_index_historical() above for why TPEx's own endpoint is now tried first)
+    and for US CBOE VIX (^VIX, unaffected by the ^TWOII issue) for dates before this project
+    started persisting them in write_current_session_snapshot() — those dates are otherwise
+    permanently None (the snapshot store is a forward-only accumulator, never retroactively
+    filled until now).
     """
     tw_tz = datetime.timezone(datetime.timedelta(hours=8))
     p1 = int(datetime.datetime.combine(start_date - datetime.timedelta(days=2), datetime.time(0, 0), tzinfo=tw_tz).timestamp())
@@ -215,10 +253,18 @@ def backfill(n_days=10, overwrite=False):
     range_end = trading_days[0].strftime("%Y/%m/%d")
     txo_oi_by_date = fetch_taifex_txo_open_interest(range_start, range_end)
 
-    # Real 櫃買指數 (OTC) and US VIX for the whole window, one request each (same
-    # already-real Yahoo Finance tickers fetch_and_calc_vision.py's real-time fetchers use:
-    # ^TWOII for OTC's Tier-2 fallback, ^VIX for us_vix).
-    otc_by_date = fetch_yahoo_historical_range("%5ETWOII", trading_days[-1], trading_days[0])
+    # Real 櫃買指數 (OTC): TPEx's own official OpenAPI first (real, matches live TWSE MIS
+    # exactly — see fetch_tpex_otc_index_historical() docstring), falling back to Yahoo's
+    # ^TWOII for any date outside TPEx's rolling ~2-week window (that fallback is currently
+    # broken upstream too, but kept in case Yahoo's data comes back for this ticker later).
+    otc_by_date = fetch_tpex_otc_index_historical()
+    missing_otc_days = [d for d in trading_days if d.strftime("%Y-%m-%d") not in otc_by_date]
+    if missing_otc_days:
+        yahoo_otc = fetch_yahoo_historical_range("%5ETWOII", min(missing_otc_days), max(missing_otc_days))
+        otc_by_date = {**yahoo_otc, **otc_by_date}  # TPEx wins on overlapping dates
+
+    # Real US VIX for the whole window, one request (same already-real Yahoo Finance ticker
+    # fetch_and_calc_vision.py's real-time fetcher uses for us_vix).
     us_vix_by_date = fetch_yahoo_historical_range("%5EVIX", trading_days[-1], trading_days[0])
 
     written = 0
