@@ -2384,6 +2384,18 @@ function initAdvisorFeed() {
   const distCW = cw - txf;
   const distPW = txf - pw;
 
+  // Mirrors app.js's live #stat-mp-topology-badge classifier so both surfaces agree.
+  let topologyLabel;
+  if (mp > cw) {
+    topologyLabel = '🚀 型態 D【極端軋空 / 痛點頂天拓撲】';
+  } else if (mp < pw) {
+    topologyLabel = '🔴 型態 A【痛點沉底 / 懸空防守拓撲】';
+  } else if (pw <= mp && mp <= cw) {
+    topologyLabel = '🟡 型態 B【對稱健康箱體拓撲】';
+  } else {
+    topologyLabel = '🟢 型態 C【恐慌避險 / 下檔開天窗拓撲】';
+  }
+
   feed.innerHTML = `
     <div class="advisor-msg ai">
       <div class="msg-meta">
@@ -2393,7 +2405,7 @@ function initAdvisorFeed() {
       <div class="msg-bubble">
         <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v63.7)</h4>
         <p style="font-size: 0.8rem; line-height: 1.55; margin-bottom: 6px;">
-          🔹 <strong>當前空間拓撲</strong>：型態 A【痛點沉底 / 懸空防守拓撲】<br>
+          🔹 <strong>當前空間拓撲</strong>：${topologyLabel}<br>
           ⚡ <strong>GEX 狀態</strong>：台指期 (<strong>${txf}</strong>) 位於 Zero Gamma (<strong>${zg}</strong>) ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。<br>
           ・<strong>上檔天花板 (Call Wall)</strong>：<code>${cw}</code> (距目前 <strong>+${distCW} 點</strong>)<br>
           ・<strong>下檔防守線 (Put Wall)</strong>：<code>${pw}</code> (距目前 <strong>-${distPW} 點</strong>)<br>
