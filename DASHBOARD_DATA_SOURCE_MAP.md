@@ -35,6 +35,7 @@
 | 15 | 法人5日期權與籌碼歷程矩陣（執行摘要+期貨未平倉5日+現貨買賣超/選擇權5日） | 判斷法人趨勢連續性、Call/Put籌碼消長 | `institutional_snapshots.json`真實快照 | 內部持久化 | 每日累積 | 相關 snapshot 函式（今天新建） | ✅ 已稽核 | ✅ **已修正**（原本4/5天永遠寫死假數字） | 無 |
 | 16 | Gemini AI籌碼與除權息事件掃描 | AI輔助解讀（明確非投資建議） | gex_data.json彙總 + Gemini API | 內部彙總+Google Gemini | 即時 | `populateAiQuantDigest()` | ⏳ 部分稽核 | ✅ 今天修好「忽略使用者選盤，永遠讀最新」的bug | 無 |
 | 17 | 個股期貨287檔篩選明細（含產業資金輪動、夜盤6檔聚光燈） | **個股期大額交易人判斷主力動向、正逆價差扣除除息判斷真假逆價差、投信認養篩選飆股** | TAIFEX大額交易人未沖銷部位結構表 + TWSE T86三大法人買賣超 | taifex.com.tw/cht/3/largeTraderFutQry + twse.com.tw/rwd/zh/fund/T86 | **17:00~18:30**（大額交易人）／**15:00~15:45**（T86現貨法人） | `fetch_taifex_stock_futures_large_trader_batch()` + `fetch_twse_institutional_t86_latest()` | ✅ 已稽核（Component A/B，本次最早修的） | ✅ 已修正 | 「官股行庫」欄位因無官方逐股數據來源，維持顯示不可用（已跟你確認過）。**2026-09-15新發現並已修**：「🚀投信波段認養」徽章原本是idx取模公式假訊號，已改誠實停用（比照選股雷達同款問題的處理方式），真正做到位需要新建逐股多日買超歷史，列入選股雷達真實化大工程 |
+| 18 | **（v63.4 新增）** 選擇權大額交易人淨部位表「1.5」＋ Call Wall/Put Wall 交叉印證徽章 | **Call/Put 各自的前五大/前十大大額交易人淨部位，跟 Call Wall/Put Wall（Card 4）交叉印證——淨賣方＝該側有真金白銀收權利金防守，淨買方＝該側有避險/加碼、牆體可能被穿越** | TAIFEX 選擇權大額交易人未沖銷部位結構表 | taifex.com.tw/cht/3/largeTraderOptQry | 比照期貨版大額交易人報表，**T+1 隔日發布延遲** | `fetch_official_taifex_large_trader_options()` | ✅ 首次串接即真數據（非事後補修） | ✅ 全新功能，非修復 | 無，已完成並用真實 fetch 逐碼比對 TAIFEX 官網數字 + 瀏覽器實測 |
 
 ---
 

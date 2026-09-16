@@ -7,6 +7,13 @@
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
 [![引擎版本](https://img.shields.io/badge/Engine-v63.4-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
+## 🌟 v63.4 選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章
+
+### 🆕 0. TAIFEX「選擇權大額交易人未沖銷部位結構表」(`largeTraderOptQry`) 首次串接
+- 新增 `fetch_official_taifex_large_trader_options()`，取得 Call/Put 各自的前五大/前十大交易人淨部位（週約/所有契約），欄位結構經真實 fetch 逐碼核對，套用 v63.3 修好的「買方－賣方＝淨部位」正確公式。
+- 前端新增獨立表格「1.5 選擇權大額交易人淨部位 5 日歷程」，完整比照本專案 `has_snapshot`/`is_live` 防呆模式。
+- Call Wall / Put Wall 卡片新增大額交易人交叉印證徽章：淨賣方（收權利金防守）顯示「防守中」，淨買方（避險/加碼）顯示金色「轉買方避險」警示；無即時資料時明確顯示「⚪ 無大額交易人即時數據」。
+
 ## 🌟 v62.4 尋鳥戰情室3個Critical bug修復 ✕ ADR真實報價 ✕ 選股快取97%覆蓋率
 
 ### 🔴 0. 尋鳥戰情室 3 個 Critical bug 修復
