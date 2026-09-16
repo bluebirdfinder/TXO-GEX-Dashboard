@@ -1,7 +1,10 @@
 /**
  * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v63.4
  * True Multi-Pane Trading Terminal with 10 Timeframes & 4 Sub-Panes
- *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + Supertrend + SAR
+ *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + SAR
+ *     (⚠️ "Supertrend" 曾經寫在這裡但其實從沒真的實作過——checkbox存在、indicatorConfig.supertrend
+ *     會被設定，但從未被任何渲染程式碼讀取，勾了什麼都不會畫。2026-09-16稽核發現，先誠實拿掉這行
+ *     的宣稱，之後有空要嘛真的實作、要嘛把UI上的checkbox也拿掉，不要留著看起來能用實則無效的控制項)
  *   - Sub-Chart 1 (14%): 成交量 Volume + 5MA & 10MA 雙均量線
  *   - Sub-Chart 2 (14%): 戰情雙層 MACD (4 色量柱 + 快慢線)
  *   - Sub-Chart 3 (14%): 波段拐點 CCI (20 通道 & 買賣轉折點)
@@ -120,6 +123,7 @@ let indicatorConfig = {
   vrvpRows: 50,
   vrvpVa: 70,
   sar: false,
+  sarStep: 0.02,
   fvg: false
 };
 
@@ -1021,6 +1025,52 @@ function generateIndicatorsData(tf) {
     });
   }
 
+  // --- Real Parabolic SAR (Wilder, 1978) ---
+  // 2026-09-16: the UI's "🎯 Parabolic SAR" checkbox + Step parameter existed and could be
+  // toggled (indicatorConfig.sar / .sarStep), but nothing ever read that state to actually
+  // compute or draw anything — checking the box silently did nothing. This is the first real
+  // implementation: standard textbook SAR, not an approximation.
+  const sarStep = indicatorConfig.sarStep || 0.02;
+  const sarMaxAf = 0.2;
+  const sarData = [];
+  if (count >= 2) {
+    let sarUp = closes[1] >= closes[0]; // initial trend guess from the first two closes
+    let sar = sarUp ? lows[0] : highs[0];
+    let ep = sarUp ? highs[0] : lows[0]; // extreme point
+    let af = sarStep;
+    sarData.push({ time: candles[0].time, value: sar });
+    for (let i = 1; i < count; i++) {
+      let nextSar = sar + af * (ep - sar);
+      if (sarUp) {
+        const clampLow = i >= 2 ? Math.min(lows[i - 1], lows[i - 2]) : lows[i - 1];
+        nextSar = Math.min(nextSar, clampLow);
+        if (lows[i] < nextSar) {
+          sarUp = false;
+          nextSar = ep;
+          ep = lows[i];
+          af = sarStep;
+        } else if (highs[i] > ep) {
+          ep = highs[i];
+          af = Math.min(af + sarStep, sarMaxAf);
+        }
+      } else {
+        const clampHigh = i >= 2 ? Math.max(highs[i - 1], highs[i - 2]) : highs[i - 1];
+        nextSar = Math.max(nextSar, clampHigh);
+        if (highs[i] > nextSar) {
+          sarUp = true;
+          nextSar = ep;
+          ep = highs[i];
+          af = sarStep;
+        } else if (lows[i] < ep) {
+          ep = lows[i];
+          af = Math.min(af + sarStep, sarMaxAf);
+        }
+      }
+      sar = nextSar;
+      sarData.push({ time: candles[i].time, value: sar });
+    }
+  }
+
   return {
     candles,
     volumes,
@@ -1049,6 +1099,7 @@ function generateIndicatorsData(tf) {
     vwapUpper,
     vwapLower,
     smmaData,
+    sarData,
     vrvpData: {
       bins: vrvpBins,
       poc: pocPrice,
@@ -1312,6 +1363,7 @@ function renderMainOverlays(data) {
   if (overlaySeries.vwap.vwap) { mainChart.removeSeries(overlaySeries.vwap.vwap); overlaySeries.vwap.vwap = null; }
   if (overlaySeries.vwap.upper1) { mainChart.removeSeries(overlaySeries.vwap.upper1); overlaySeries.vwap.upper1 = null; }
   if (overlaySeries.vwap.lower1) { mainChart.removeSeries(overlaySeries.vwap.lower1); overlaySeries.vwap.lower1 = null; }
+  if (overlaySeries.sar) { mainChart.removeSeries(overlaySeries.sar); overlaySeries.sar = null; }
 
   // 1. 尋鳥多空彩帶 (MA7, MA17, MA88, MA200)
   if (indicatorConfig.ribbons) {
@@ -1346,6 +1398,20 @@ function renderMainOverlays(data) {
     overlaySeries.vwap.vwap.setData(data.vwapData);
     overlaySeries.vwap.upper1.setData(data.vwapUpper);
     overlaySeries.vwap.lower1.setData(data.vwapLower);
+  }
+
+  // 3b. Parabolic SAR (real Wilder calc — see generateIndicatorsData() for the math)
+  if (indicatorConfig.sar) {
+    overlaySeries.sar = mainChart.addLineSeries({
+      color: '#FFEB3B',
+      lineVisible: false,
+      pointMarkersVisible: true,
+      pointMarkersRadius: 2,
+      priceLineVisible: false,
+      lastValueVisible: false,
+      title: 'SAR'
+    });
+    overlaySeries.sar.setData(data.sarData);
   }
 
   // 4. VRVP (可見範圍成交量分佈圖: POC, VAH, VAL)
@@ -2014,6 +2080,7 @@ function setupEventListeners() {
       indicatorConfig.vrvpRows = parseInt(document.getElementById('param-vrvp-rows').value) || 50;
       indicatorConfig.vrvpVa = parseInt(document.getElementById('param-vrvp-va').value) || 70;
       indicatorConfig.sar = document.getElementById('chk-sar').checked;
+      indicatorConfig.sarStep = parseFloat(document.getElementById('param-sar-step').value) || 0.02;
       indicatorConfig.fvg = document.getElementById('chk-fvg').checked;
 
       modal.classList.remove('show');
