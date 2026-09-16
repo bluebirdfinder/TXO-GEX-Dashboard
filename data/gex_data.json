@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 45157.9,
     "day_total_vex": 99.78
   },
-  "last_updated_time": "2026-09-16 20:30",
+  "last_updated_time": "2026-09-16 20:45",
   "spot_price": 45848.9,
   "spot_change": 337.41,
   "spot_change_pct": 0.74,
@@ -11659,12 +11659,12 @@
       "max_pain_strike": 44950.0,
       "shift_vs_prev": 203.0,
       "pc_ratio": 81.18,
-      "margin_maint_market": 162.1,
-      "margin_maint_stock": 146.9,
-      "margin_maint_published": false,
+      "margin_maint_market": 160.6,
+      "margin_maint_stock": 145.5,
+      "margin_maint_published": true,
       "margin_maint_is_estimated": true,
       "taifex_vix": 24.47,
-      "us_vix": 16.77,
+      "us_vix": 16.8,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -12948,12 +12948,12 @@
       "max_pain_strike": 44950.0,
       "shift_vs_prev": -230.0,
       "pc_ratio": 81.18,
-      "margin_maint_market": 162.1,
-      "margin_maint_stock": 146.9,
+      "margin_maint_market": 160.6,
+      "margin_maint_stock": 145.5,
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 24.47,
-      "us_vix": 16.77,
+      "us_vix": 16.8,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -19391,12 +19391,12 @@
       "max_pain_strike": 44950.0,
       "shift_vs_prev": 203.0,
       "pc_ratio": 81.18,
-      "margin_maint_market": 162.1,
-      "margin_maint_stock": 146.9,
-      "margin_maint_published": false,
+      "margin_maint_market": 160.6,
+      "margin_maint_stock": 145.5,
+      "margin_maint_published": true,
       "margin_maint_is_estimated": true,
       "taifex_vix": 24.47,
-      "us_vix": 16.77,
+      "us_vix": 16.8,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -20680,12 +20680,12 @@
       "max_pain_strike": 44950.0,
       "shift_vs_prev": -230.0,
       "pc_ratio": 81.18,
-      "margin_maint_market": 162.1,
-      "margin_maint_stock": 146.9,
+      "margin_maint_market": 160.6,
+      "margin_maint_stock": 145.5,
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 24.47,
-      "us_vix": 16.77,
+      "us_vix": 16.8,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -22522,7 +22522,7 @@
   "total_gex_plus": 1059.87,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-16 20:30",
+    "last_updated": "2026-09-16 20:45",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -35309,21 +35309,21 @@
       "summary": "台指VIX 24.5、美股VIX 16.8；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 99.72,
-        "change_pct": 0.1,
-        "trend_label": "▲ 較昨日走升 (+0.10%)",
+        "price": 99.7,
+        "change_pct": 0.09,
+        "trend_label": "▲ 較昨日走升 (+0.09%)",
         "unit": ""
       },
       "us10y": {
         "name": "美殖利率 (10年期 US10Y)",
-        "price": 5.0,
-        "change_pct": 0.0,
-        "trend_label": "▲ 較昨日走升 (+0.00%)",
+        "price": 4.98,
+        "change_pct": -0.3,
+        "trend_label": "▼ 較昨日走弱 (-0.30%)",
         "unit": "%"
       },
       "vix": {
         "name": "VIX恐慌指標 (CBOE)",
-        "price": 16.77,
+        "price": 16.8,
         "trend_label": "🟢 低波安定"
       }
     },
@@ -35398,9 +35398,9 @@
     "taifex_vix": 24.47,
     "taifex_vix_change": -2.82,
     "taifex_vix_change_pct": -10.33,
-    "us_vix": 16.77,
-    "us_vix_change": -0.43,
-    "us_vix_change_pct": -2.5,
+    "us_vix": 16.8,
+    "us_vix_change": -0.4,
+    "us_vix_change_pct": -2.33,
     "us_vvix": 94.91,
     "us_vvix_change": 0.02,
     "us_vvix_change_pct": 0.02,
