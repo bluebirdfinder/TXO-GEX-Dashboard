@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v63.3"
+ENGINE_VERSION = "v63.4"
 
 import os
 import sys
@@ -1804,6 +1804,94 @@ def fetch_official_taifex_large_trader():
     fallback['is_live'] = False
     return fallback
 
+OPT_LARGE_TRADER_SNAPSHOT_KEY = "OPT_LARGE_TRADER_LAST_REAL"
+
+def fetch_official_taifex_large_trader_options():
+    """
+    Parses TAIFEX largeTraderOptQry for TXO (臺指選擇權) Call/Put Top 5 / Top 10 Large Trader
+    and Specific-Institution Net Open Interest, across the nearest weekly contract ("週契約")
+    and All Contracts combined ("所有契約"). Column layout confirmed 2026-09-16 against a live
+    fetch of the page: [0]=label, then for the week row (which repeats the product label in
+    col 0 and puts "週契約" in col 1) values start at col 2; for the "所有契約" row (col 0 is
+    already the row label) values start at col 1 — in both cases the 8 value columns are
+    buy-top5(spec), buy-top5%, buy-top10(spec), buy-top10%, sell-top5(spec), sell-top5%,
+    sell-top10(spec), sell-top10%. Net = buy − sell for the same rank tier (top5 vs top5,
+    top10 vs top10) — the same buy-minus-sell fix already applied to the futures counterpart
+    fetch_official_taifex_large_trader(), applied here from the start since this endpoint has
+    never been parsed before. Unlike largeTraderFutQry (big5), this endpoint's response is
+    genuine UTF-8. A bare GET with no POST body already returns TXO's rows first among all
+    listed option products (臺指買權/臺指賣權 appear before 電子/金融/individual-stock options),
+    so no queryDate/contractId round-trip is needed — same shortcut used for the futures report.
+    On total fetch/parse failure, falls back to the last successfully-fetched real result
+    instead of a hardcoded literal that would stay frozen forever.
+    """
+    try:
+        url = "https://www.taifex.com.tw/cht/3/largeTraderOptQry"
+        req = urllib.request.Request(url, headers=HEADERS)
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
+            html = resp.read().decode('utf-8', errors='ignore')
+        soup = BeautifulSoup(html, 'html.parser')
+        rows = []
+        for t in soup.find_all('table'):
+            for r in t.find_all('tr'):
+                cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
+                if cols:
+                    rows.append(cols)
+
+        def extract_val(cell):
+            m = re.match(r'([\d,]+)', cell)
+            return int(m.group(1).replace(',', '')) if m else 0
+
+        def extract_spec(cell):
+            if '(' in cell:
+                m = re.search(r'\(([\d,]+)\)', cell)
+                return int(m.group(1).replace(',', '')) if m else extract_val(cell)
+            return extract_val(cell)
+
+        def parse_side(cols, start_idx):
+            buy5, sell5 = extract_val(cols[start_idx]), extract_val(cols[start_idx + 4])
+            buy10, sell10 = extract_val(cols[start_idx + 2]), extract_val(cols[start_idx + 6])
+            spec_buy5, spec_sell5 = extract_spec(cols[start_idx]), extract_spec(cols[start_idx + 4])
+            spec_buy10, spec_sell10 = extract_spec(cols[start_idx + 2]), extract_spec(cols[start_idx + 6])
+            return {
+                'top5_net': buy5 - sell5,
+                'top10_net': buy10 - sell10,
+                'top5_spec_net': spec_buy5 - spec_sell5,
+                'top10_spec_net': spec_buy10 - spec_sell10,
+            }
+
+        def parse_product(label):
+            for idx, r in enumerate(rows):
+                if r and r[0] == label and idx + 2 < len(rows):
+                    week_r, total_r = rows[idx], rows[idx + 2]
+                    if len(week_r) >= 11 and len(total_r) >= 10 and total_r[0] == '所有契約':
+                        return {'week': parse_side(week_r, 2), 'total': parse_side(total_r, 1)}
+            return None
+
+        call = parse_product('臺指買權')
+        put = parse_product('臺指賣權')
+        if call and put:
+            result = {
+                'call': {**call, **call['total']},
+                'put': {**put, **put['total']},
+                'is_live': True,
+            }
+            print(f"[OK] Official TAIFEX TXO Option Large Trader OI: Call top10={result['call']['top10_net']}, Put top10={result['put']['top10_net']}")
+            snaps = load_institutional_snapshots()
+            snaps[OPT_LARGE_TRADER_SNAPSHOT_KEY] = result
+            save_institutional_snapshots(snaps)
+            return result
+    except Exception as e:
+        print(f"[Warning] Failed to fetch TAIFEX Option Large Trader OI: {e}")
+
+    snaps = load_institutional_snapshots()
+    fallback = snaps.get(OPT_LARGE_TRADER_SNAPSHOT_KEY) or {
+        'call': {'week': None, 'total': None, 'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+        'put': {'week': None, 'total': None, 'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+    }
+    fallback['is_live'] = False
+    return fallback
+
 FUT_INST_OI_SNAPSHOT_KEY = "FUT_INST_OI_LAST_REAL"
 
 def fetch_official_taifex_futures_institutional_oi():
@@ -2886,6 +2974,7 @@ def generate_gex_payload():
 
     opt_inst = fetch_official_taifex_options_matrix()
     lt_inst = fetch_official_taifex_large_trader()
+    opt_lt_inst = fetch_official_taifex_large_trader_options()
     fut_inst = fetch_official_taifex_futures_institutional_oi()
     pc_ratio_dict = fetch_official_taifex_pc_ratio()
 
@@ -2900,6 +2989,10 @@ def generate_gex_payload():
     _INST_DAY_FIELDS = [
         "top5_net", "top10_net", "top5_spec_net", "top10_spec_net",
         "lt_near", "lt_far", "lt_total",
+        "opt_lt_call_top5_net", "opt_lt_call_top10_net", "opt_lt_call_top5_spec_net", "opt_lt_call_top10_spec_net",
+        "opt_lt_call_week", "opt_lt_call_total",
+        "opt_lt_put_top5_net", "opt_lt_put_top10_net", "opt_lt_put_top5_spec_net", "opt_lt_put_top10_spec_net",
+        "opt_lt_put_week", "opt_lt_put_total",
         "foreign_fut_net", "trust_fut_net", "itrust_fut_net", "dealer_fut_net",
         "foreign_stock_net", "trust_stock_net", "itrust_stock_net", "dealer_stock_net", "total_stock_net",
         "foreign_opt_net", "trust_opt_net", "itrust_opt_net", "dealer_opt_net",
@@ -2944,6 +3037,7 @@ def generate_gex_payload():
     # snapshot, and only persist it, when ALL four sources were genuinely live this run.
     _day_is_live = (
         opt_inst.get('is_live', False) and lt_inst.get('is_live', False) and
+        opt_lt_inst.get('is_live', False) and
         fut_inst.get('is_live', False) and stock_inst.get('is_live', False)
     )
 
@@ -2956,6 +3050,18 @@ def generate_gex_payload():
         "lt_near": lt_inst.get('near'),
         "lt_far": lt_inst.get('far'),
         "lt_total": lt_inst.get('total'),
+        "opt_lt_call_top5_net": opt_lt_inst.get('call', {}).get('top5_net'),
+        "opt_lt_call_top10_net": opt_lt_inst.get('call', {}).get('top10_net'),
+        "opt_lt_call_top5_spec_net": opt_lt_inst.get('call', {}).get('top5_spec_net'),
+        "opt_lt_call_top10_spec_net": opt_lt_inst.get('call', {}).get('top10_spec_net'),
+        "opt_lt_call_week": opt_lt_inst.get('call', {}).get('week'),
+        "opt_lt_call_total": opt_lt_inst.get('call', {}).get('total'),
+        "opt_lt_put_top5_net": opt_lt_inst.get('put', {}).get('top5_net'),
+        "opt_lt_put_top10_net": opt_lt_inst.get('put', {}).get('top10_net'),
+        "opt_lt_put_top5_spec_net": opt_lt_inst.get('put', {}).get('top5_spec_net'),
+        "opt_lt_put_top10_spec_net": opt_lt_inst.get('put', {}).get('top10_spec_net'),
+        "opt_lt_put_week": opt_lt_inst.get('put', {}).get('week'),
+        "opt_lt_put_total": opt_lt_inst.get('put', {}).get('total'),
         "foreign_fut_net": fut_inst.get('foreign'),
         "trust_fut_net": fut_inst.get('trust'), "itrust_fut_net": fut_inst.get('trust'), "dealer_fut_net": fut_inst.get('dealer'),
         "foreign_stock_net": stock_inst.get('foreign_stock_net'),
@@ -4151,6 +4257,7 @@ def generate_gex_payload():
         "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'],
         "max_pain_strike": gex_profile['max_pain_strike'],
+        "opt_large_trader": opt_lt_inst,
         "pc_ratio": gex_profile['pc_ratio'],
         "total_gex": gex_profile['total_gex'],
         "weekly_gex": gex_profile['weekly_gex'],

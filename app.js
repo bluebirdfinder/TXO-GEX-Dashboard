@@ -662,6 +662,29 @@ function renderDashboard() {
     elPwShift.innerText = `(${pwSign}${pwShift} 點)`;
   }
 
+  // 3.5 / 4.5 Call Wall / Put Wall 大額交易人選擇權淨部位交叉印證徽章 (TAIFEX largeTraderOptQry
+  // 前十大交易人合計，所有契約口徑)。淨賣方 (top10_net < 0) 代表大額交易人在該側收權利金防守，
+  // 與牆體方向一致；淨買方代表大額交易人正在避險/加碼，牆體有被穿越風險。opt_large_trader 缺席
+  // 或 is_live===false 時（抓取失敗且無歷史可借用）一律顯示「無即時數據」，不假設任何方向。
+  const optLt = gexData.opt_large_trader;
+  const renderLtBadge = (elId, netObj, defendColor, breakColor) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (!optLt || optLt.is_live === false || !netObj || netObj.top10_net == null) {
+      el.innerHTML = `<span style="font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; background: rgba(148,163,184,0.12); color: var(--text-muted); display: inline-block;">⚪ 無大額交易人即時數據</span>`;
+      return;
+    }
+    const net = netObj.top10_net;
+    const isDefending = net < 0;
+    const color = isDefending ? defendColor : breakColor;
+    const label = isDefending
+      ? `🐋 大額站賣方防守中 ${net.toLocaleString()} 口`
+      : `🐋 大額轉買方避險 +${net.toLocaleString()} 口`;
+    el.innerHTML = `<span style="font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; background: ${color}22; color: ${color}; display: inline-block;">${label}</span>`;
+  };
+  renderLtBadge('stat-cw-lt-badge', optLt && optLt.call, '#ff5252', '#ffd700');
+  renderLtBadge('stat-pw-lt-badge', optLt && optLt.put, '#00e676', '#ffd700');
+
   // 5. Max Pain (日盤 vs 夜盤) & 空間籌碼結構拓撲 (Spatial Topology)
   const mpVal = gexData.max_pain_strike || CHART_DEFAULTS.max_pain_strike;
   const pwVal = gexData.put_wall_strike || CHART_DEFAULTS.put_wall_strike;
@@ -2006,6 +2029,35 @@ function populateInstitutionalMatrix() {
       </tr>`;
     });
     t1Body.innerHTML = html1;
+  }
+
+  // Table 1.5: 選擇權大額交易人淨部位 5 日歷程
+  const t15Body = document.getElementById('opt-large-trader-5day-body');
+  if (t15Body && history.length > 0) {
+    let html15 = '';
+    // Same null-vs-zero convention as Table 1: a no-snapshot day carries null in every
+    // opt_lt_* field, rendered as "—" rather than a fabricated 0.
+    const cell = (v) => v == null ? { color: 'var(--text-muted)', text: '—' } : { color: v >= 0 ? 'var(--call-color)' : 'var(--put-color)', text: `${v >= 0 ? '+' : ''}${v.toLocaleString()}` };
+    const weekTag = (weekObj, field) => {
+      if (!weekObj || weekObj[field] == null) return '';
+      const v = weekObj[field];
+      return `<span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: bold;">[週 ${v >= 0 ? '+' : ''}${v.toLocaleString()}]</span> `;
+    };
+    history.forEach(row => {
+      const cTop5 = cell(row.opt_lt_call_top5_net);
+      const cTop10 = cell(row.opt_lt_call_top10_net);
+      const pTop5 = cell(row.opt_lt_put_top5_net);
+      const pTop10 = cell(row.opt_lt_put_top10_net);
+
+      html15 += `<tr>
+        <td>${row.date}</td>
+        <td>${weekTag(row.opt_lt_call_week, 'top5_net')}<span style="color: ${cTop5.color};">${cTop5.text}</span></td>
+        <td>${weekTag(row.opt_lt_call_week, 'top10_net')}<span style="color: ${cTop10.color};">${cTop10.text}</span></td>
+        <td>${weekTag(row.opt_lt_put_week, 'top5_net')}<span style="color: ${pTop5.color};">${pTop5.text}</span></td>
+        <td>${weekTag(row.opt_lt_put_week, 'top10_net')}<span style="color: ${pTop10.color};">${pTop10.text}</span></td>
+      </tr>`;
+    });
+    t15Body.innerHTML = html15;
   }
 
   // Table 2: 現貨與選擇權 5 日歷程
