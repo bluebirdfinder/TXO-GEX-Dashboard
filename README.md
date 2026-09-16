@@ -1,11 +1,18 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v63.5)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v63.6)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > 🌪️ CBOE 美股 ^VVIX 實時採集 ✦ 4級尾部風險矩陣 ✦ 做市商賣腳安全氣墊 (350~500點外) ✦ 尋鳥戰情室 4 欄式 Macro Risk HUD ✦ 🏛️ TWSE 融資維持率發布狀態日期比對 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v63.5-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v63.6-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+## 🌟 v63.6 週選結算日歷史回補資料同樣中招，已修正
+
+### 🔴🔴 0. `backfill_snapshots.py` 歷史回補路徑同一根因，已回填修正
+- 用真實 TAIFEX 資料驗證2026年9月4個實際週選結算日，證實結算日當天報表同樣列出「剛結算的當週合約」，跟月選結算日是同一種資料源行為。
+- 回頭比對確認 `data/session_snapshots.json` 裡 09-09、09-11 兩天的 DAY/NIGHT 快照都是用已結算歸零的當週合約算出來（09-11 的錯誤數字當時正顯示在網站「5日歷程」表格上）。
+- 已用修正後邏輯重算並回填這4筆快照，重跑引擎確認 `history_10_sessions` 顯示正確數字。
 
 ## 🌟 v63.5 月選結算日「已死合約」誤選重大修正
 

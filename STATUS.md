@@ -1,12 +1,24 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.5)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.6)
 
-**當前版本**：`v63.5` (2026-09-16 月選結算日「已死合約」誤選重大修正發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.5)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.5)
+**當前版本**：`v63.6` (2026-09-16 月選/週選結算日「已死合約」誤選重大修正 ✕ 歷史回補資料同步回填發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.6)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.6)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v63.6 核心更新亮點 (週選結算日歷史回補資料同樣中招，已修正)
+
+### 🔴🔴 1. 用真實 TAIFEX 資料驗證週選結算日，證實 `backfill_snapshots.py` 的歷史回補路徑也中了同一根因的招
+- v63.5 只驗證並修好「今天」即時計算這條路徑（`fetch_and_calc_vision.py` 主流程）。使用者要求一併檢查週選（週三/週五）結算日是否也有同樣問題。
+- 用真實 TAIFEX 資料實測 2026年9月的4個實際週選結算日（09-02週三、09-04週五、09-09週三、09-11週五），證實 TAIFEX 官方報表在每個結算日當天，都同樣列出「剛結算的當週合約」與「下一口合約」並存的情況——跟月選結算日是同一種資料源行為，不是月選獨有的巧合。
+- 修正後的 `classify_txo_contract_buckets(now=...)` 邏輯驗證正確：結算當天13:30前選中即將結算的當週合約（此時仍是真正的前置週，行為正確），13:30後正確轉換到下一口（例如09-09從 `202609W2` 轉 `202609W4`、09-11從 `202609F2` 轉 `202609F3`）。
+- **回頭比對發現：`data/session_snapshots.json` 裡 2026-09-09、2026-09-11 兩天的 DAY/NIGHT 快照，數字跟舊版（無時間檢查）邏輯算出來的結果完全吻合**，證實這4筆歷史快照當初就是用已結算歸零的當週合約算出來的：
+  - `2026-09-09_DAY`／`_NIGHT`：zero_gamma_level 47187.4／47187.5（用已死的`202609W2`）→ 修正為 46556.0／46556.4（改用`202609W4`）
+  - `2026-09-11_DAY`／`_NIGHT`：zero_gamma_level 45694.9／45692.3（用已死的`202609F2`）→ 修正為 45554.2／45242.5（改用`202609F3`）
+  - **09-11 的錯誤數字目前正顯示在網站「5日歷程」表格上**（`history_10_sessions` 直接讀取 `session_snapshots.json`，09-11 落在 T-4~T-1 的顯示區間內），不是只存在歷史檔案裡沒人看到。
+- 已直接用修正後邏輯重算這4筆快照的 `zero_gamma_level`／`gex_plus_flip`／`call_wall_strike`／`put_wall_strike`／`max_pain_strike` 並回填 `data/session_snapshots.json`（其餘欄位如 spot/txf/pc_ratio/vix 維持原值不動，因為輸入價格本身沒有問題，問題只在合約桶選擇），重跑 `fetch_and_calc_vision.py` 後確認 `data/gex_data.json` 的 `history_10_sessions` 已顯示修正後數字。
 
 ## 🎯 v63.5 核心更新亮點 (月選結算日「已死合約」誤選重大修正)
 

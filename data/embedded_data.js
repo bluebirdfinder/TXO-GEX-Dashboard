@@ -1,6 +1,6 @@
 window.GEX_EMBEDDED_DATA = {
   "date": "2026-09-16",
-  "engine_version": "v63.5",
+  "engine_version": "v63.6",
   "session_type": "NIGHT",
   "session_name": "🌙 夜盤動態/收盤校正",
   "session_shift": {
@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 45157.9,
     "day_total_vex": 99.78
   },
-  "last_updated_time": "2026-09-16 17:13",
+  "last_updated_time": "2026-09-16 17:32",
   "spot_price": 45848.9,
   "spot_change": -13.6,
   "spot_change_pct": -0.03,
@@ -3924,11 +3924,11 @@ window.GEX_EMBEDDED_DATA = {
       "spot_price": 46184.85,
       "two_price": 395.52,
       "txf_price": 46218.0,
-      "zero_gamma_level": 45694.9,
-      "gex_plus_flip": 45694.9,
-      "call_wall_strike": 46500.0,
+      "zero_gamma_level": 45554.2,
+      "gex_plus_flip": 45554.1,
+      "call_wall_strike": 45700.0,
       "put_wall_strike": 46000.0,
-      "max_pain_strike": 45450.0,
+      "max_pain_strike": 45350.0,
       "shift_vs_prev": -766.0,
       "pc_ratio": 87.7,
       "margin_maint_market": null,
@@ -5212,9 +5212,9 @@ window.GEX_EMBEDDED_DATA = {
       "spot_price": 46184.85,
       "two_price": 395.52,
       "txf_price": 46072.0,
-      "zero_gamma_level": 45692.3,
-      "gex_plus_flip": 45692.2,
-      "call_wall_strike": 46500.0,
+      "zero_gamma_level": 45242.5,
+      "gex_plus_flip": 45242.5,
+      "call_wall_strike": 45700.0,
       "put_wall_strike": 46000.0,
       "max_pain_strike": 45250.0,
       "shift_vs_prev": -146.0,
@@ -11664,7 +11664,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 24.47,
-      "us_vix": 17.0,
+      "us_vix": 17.08,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -12953,7 +12953,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 24.47,
-      "us_vix": 17.0,
+      "us_vix": 17.08,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -19396,7 +19396,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 24.47,
-      "us_vix": 17.0,
+      "us_vix": 17.08,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -20685,7 +20685,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 24.47,
-      "us_vix": 17.0,
+      "us_vix": 17.08,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -22522,7 +22522,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 1059.87,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-16 17:13",
+    "last_updated": "2026-09-16 17:32",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -35306,7 +35306,7 @@ window.GEX_EMBEDDED_DATA = {
       }
     ],
     "macro_risk_dashboard": {
-      "summary": "台指VIX 24.5、美股VIX 17.0；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
+      "summary": "台指VIX 24.5、美股VIX 17.1；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
         "price": 99.67,
@@ -35323,7 +35323,7 @@ window.GEX_EMBEDDED_DATA = {
       },
       "vix": {
         "name": "VIX恐慌指標 (CBOE)",
-        "price": 17.0,
+        "price": 17.08,
         "trend_label": "🟢 低波安定"
       }
     },
@@ -35398,9 +35398,9 @@ window.GEX_EMBEDDED_DATA = {
     "taifex_vix": 24.47,
     "taifex_vix_change": -2.82,
     "taifex_vix_change_pct": -10.33,
-    "us_vix": 17.0,
-    "us_vix_change": -0.2,
-    "us_vix_change_pct": -1.16,
+    "us_vix": 17.08,
+    "us_vix_change": -0.12,
+    "us_vix_change_pct": -0.7,
     "us_vvix": 94.91,
     "us_vvix_change": 0.02,
     "us_vvix_change_pct": 0.02,
