@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v63.7`** | 2026-09-16 | 📋 **補發版：6項先前判斷「不算重大、不用發版」的修復正式收進歷史紀錄——IP保護架構試點（room.js指標算法改私有Cloudflare Worker）、K棒4H標籤造假bug、K棒抓取排程修復、SAR/Supertrend真實實作、TPEx OTC回補、VEX Early浮點數顯示bug** |
 | **`v63.6`** | 2026-09-16 | 🔴🔴 **週選（週三/週五）結算日驗證出同一根因已影響歷史回補資料，回填修正 `session_snapshots.json` 09-09/09-11 共4筆快照（09-11錯誤數字原本正顯示在網站「5日歷程」表格上）發布版** |
 | **`v63.5`** | 2026-09-16 | 🔴🔴 **月選結算日「已死合約」誤選重大修正（`classify_txo_contract_buckets()` 結算日誤選剛結算歸零的當月合約，Call Wall/Put Wall/Zero Gamma 全部算錯）發布版** |
 | **`v63.4`** | 2026-09-16 | 🆕 **新功能：選擇權大額交易人淨部位（TAIFEX `largeTraderOptQry`）串接與 Call Wall / Put Wall 交叉印證徽章發布版** |
@@ -25,6 +26,17 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 📋 v63.7 補發版：6項「當下判斷不算重大」的修復正式收進歷史紀錄 (2026-09-16)
+- **為什麼要補這一版**：v63.2~v63.6 這一整天的 session 裡，另外還完成了 6 項修復/新功能，但當下每一項都判斷「風險低、不影響核心交易數字、不需要走發版SOP」而直接 commit 上線，沒有更新 `ENGINE_VERSION` 也沒有寫進 HISTORY.md——結果變成只有 git commit 訊息跟 `SELF_AUDIT_FINDINGS_TODO.md` 交接筆記留有紀錄，沒有進到正式的版本歷史。使用者回頭盤點時發現這個落差，要求補一版把它們正式收錄，避免以後查歷史紀錄的人看不到這些工作曾經發生過。以下 6 項全部已經在各自完成當下於瀏覽器/GitHub Pages正式網址實測驗證過，這裡是把敘事補齊，不是重新做一次。
+
+1. **🛡️ IP保護架構第一個試點：室戰情room.js指標算法改用私有Cloudflare Worker**——使用者發現 `TXO-GEX-Dashboard` repo是公開的，擔心 `room.js` 裡的自有指標公式透過瀏覽器「檢視原始碼」被複製走。查證後確認：光把算法從JS搬到Python、放在同一個公開repo（例如`fetch_and_calc_vision.py`）完全沒有保護效果，因為那個檔案一樣是公開可讀的。真正解法是把算法放在瀏覽器與這個公開repo都拿不到的地方，只把「算好的數字」傳回網頁。第一個試點：ADX Pro V3的MTF多週期看板（原本是凍結假字串`15M:21.1 1H:29.9 4H:25.7 1D:11.1`）改接一支新部署的私有 Cloudflare Worker（`bluebird-indicators.bluebird-finder-tw.workers.dev`，原始碼刻意不進這個repo，備份在使用者本機私有資料夾），`room.js`只保留一個`fetch()`呼叫，公式本身完全從瀏覽器消失。
+2. **🔴 `klines_cache.json`「4H」時間週期標籤造假bug**——測試上述Worker時意外發現：`scripts/fetch_market_klines.py`裡「4H」這個時間週期用的Yahoo Finance API interval參數其實是`'60m'`，跟「1H」完全一樣，只是抓的時間範圍比較長，從來沒有真的把4根1小時K棒合併成一根4小時K棒（Yahoo Finance本身沒有原生4小時interval可以直接查）。已修正：新增`aggregate_4h_from_1h()`，用真實抓到的1小時K棒每4根合併一次算出真正的4小時OHLCV，逐一比對驗證合併結果正確無誤。
+3. **⏰ K棒抓取腳本排進自動排程**——`fetch_market_klines.py`原本沒有被排進任何自動排程（只能手動跑），意外發現`data/klines_cache.json`已經連續4天沒更新。已加進`.github/workflows/auto_update.yml`，跟現有的`fetch_and_calc_vision.py`共用同一批收盤結算排程時間點。
+4. **🎯 Parabolic SAR 真實實作**——尋鳥戰情室指標設定裡「Parabolic SAR」的checkbox跟Step參數輸入框存在多時，但`indicatorConfig.sar`只有被checkbox寫入過、從沒被任何運算或渲染程式碼讀取，勾選了什麼都不會畫。已按標準 Wilder (1978) 演算法實作，渲染成價格上下浮動的圓點（`pointMarkersVisible`），瀏覽器實測確認會隨真實K棒的趨勢反轉正確翻面。
+5. **⚡ Supertrend 真實實作**——修SAR時發現Supertrend是一模一樣的「假checkbox」問題：UI有完整的checkbox跟ATR週期/倍數參數欄位，`indicatorConfig.supertrend`卻從沒被讀取過。已按標準ATR通道演算法實作（獨立的Wilder ATR平滑，不跟ADX共用平滑狀態），渲染成兩條疊加的LineSeries（多頭段綠色、空頭段紅色，利用`undefined`造成斷線讓兩條線看起來像一條會變色的線）。
+6. **📈 TPEx OTC指數歷史回補**——回補`session_snapshots.json`裡9/2~9/11這段的真實櫃買指數收盤價（先前顯示「—」）。根因：Yahoo Finance `^TWOII`歷史K棒chart API本身資料源已經壞掉（`meta.regularMarketTime`卡在2024年10月，不是我們request參數的問題，即時報價正常是因為即時路徑走TWSE MIS Tier 1，從沒真的用到Yahoo這個ticker）。改用TPEx官方OpenAPI `https://www.tpex.org.tw/openapi/v1/tpex_index`（「櫃買指數歷史資料」，免金鑰，9/15收盤388.73跟同晚pipeline即時抓到的數字完全吻合）。
+7. **🔧 附帶修復：GEX五大防線「VEX Early」價位標籤浮點數顯示bug**——`room.html`/`room.css`完整版面實測時發現：`vex = zero_gamma_level - 0.1`這個JS減法沒有四捨五入，畫面上直接顯示`45558.700000000004`這種IEEE754浮點數運算誤差，已修正為`Math.round(...*10)/10`。同一輪UI實測也確認手機版375px寬無橫向溢出、抽屜與分頁切換皆正常、大戶散戶動能面板正確顯示誠實的「無資料」狀態。
 
 ### 🔴🔴 v63.6 週選結算日歷史回補資料同樣中招，回填修正發布版 (2026-09-16)
 - **🔴🔴 使用者要求**：v63.5 只用真實資料驗證並修好「今天」這個monthly settlement day的即時計算路徑（`fetch_and_calc_vision.py` 主流程直接呼叫 `classify_txo_contract_buckets()`），使用者接著要求：「週選結算的你也幫我一起檢查和驗證」——因為同一支函式的 w1/w2/fri 桶邏輯完全共用同一段程式碼，理論上週選（每週三/週五結算）也該有一樣的風險，但v63.5沒有拿真實資料驗證過這件事。

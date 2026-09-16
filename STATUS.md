@@ -1,12 +1,31 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.6)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.7)
 
-**當前版本**：`v63.6` (2026-09-16 月選/週選結算日「已死合約」誤選重大修正 ✕ 歷史回補資料同步回填發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.6)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.6)
+**當前版本**：`v63.7` (2026-09-16 補發版：IP保護架構試點 ✕ K棒4H造假bug ✕ SAR/Supertrend真實實作 ✕ OTC回補等6項修復正式收錄)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.7)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.7)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v63.7 核心更新亮點 (補發版：6項先前未正式紀錄的修復)
+
+這一版沒有新的程式碼變動，是把 v63.2~v63.6 這一天裡完成、但當下判斷「不算重大不用發版」的6項工作正式收進版本歷史（詳見 [HISTORY.md](HISTORY.md) v63.7 條目的完整敘事）：
+
+### 🛡️ 1. IP保護架構第一個試點：room.js指標算法改用私有Cloudflare Worker
+- `TXO-GEX-Dashboard` repo本身是公開的，光把算法從JS搬到同一個公開repo的Python檔案完全沒有保護效果。
+- ADX Pro V3的MTF看板（原本是凍結假字串）已改接私有Worker，公式本身從瀏覽器完全消失。
+
+### 🔴 2. K棒「4H」時間週期標籤造假bug + 排程修復
+- 原本「4H」其實是用1小時資料冒充（Yahoo Finance沒有原生4小時interval），已改成真正合併4根1小時K棒。
+- K棒抓取腳本原本沒排進自動排程，已排入，解決連續多日沒更新的問題。
+
+### 🎯 3. Parabolic SAR + Supertrend 真實實作
+- 尋鳥戰情室這兩個指標原本是「UI有checkbox、但完全沒接運算邏輯」的空殼功能，已按標準演算法實作並瀏覽器驗證。
+
+### 📈 4. TPEx OTC指數歷史回補 + VEX Early浮點數顯示bug
+- Yahoo Finance歷史API壞掉，改用TPEx官方OpenAPI回補9/2~9/11真實數字。
+- GEX五大防線「VEX Early」價位標籤的JS浮點數運算誤差（顯示`45558.700000000004`）已修正四捨五入。
 
 ## 🎯 v63.6 核心更新亮點 (週選結算日歷史回補資料同樣中招，已修正)
 
