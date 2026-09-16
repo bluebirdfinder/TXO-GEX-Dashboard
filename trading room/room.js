@@ -1,10 +1,7 @@
 /**
  * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v63.6
  * True Multi-Pane Trading Terminal with 10 Timeframes & 4 Sub-Panes
- *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + SAR
- *     (⚠️ "Supertrend" 曾經寫在這裡但其實從沒真的實作過——checkbox存在、indicatorConfig.supertrend
- *     會被設定，但從未被任何渲染程式碼讀取，勾了什麼都不會畫。2026-09-16稽核發現，先誠實拿掉這行
- *     的宣稱，之後有空要嘛真的實作、要嘛把UI上的checkbox也拿掉，不要留著看起來能用實則無效的控制項)
+ *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + SAR + Supertrend
  *   - Sub-Chart 1 (14%): 成交量 Volume + 5MA & 10MA 雙均量線
  *   - Sub-Chart 2 (14%): 戰情雙層 MACD (4 色量柱 + 快慢線)
  *   - Sub-Chart 3 (14%): 波段拐點 CCI (20 通道 & 買賣轉折點)
@@ -80,7 +77,7 @@ let sub4Series = {
 let overlaySeries = {
   ribbons: { ma7: null, ma17: null, ma88: null, ma200: null },
   smma: null,
-  supertrend: null,
+  supertrend: { up: null, down: null },
   vwap: { vwap: null, upper1: null, lower1: null },
   sar: null
 };
@@ -1071,6 +1068,63 @@ function generateIndicatorsData(tf) {
     }
   }
 
+  // --- Real Supertrend (ATR-based, Wilder smoothing) ---
+  // 2026-09-16: the UI's "Supertrend" checkbox + ATR週期/倍數參數存在（indicatorConfig.supertrend
+  // / .stLen / .stMult），但從未被任何運算或渲染程式碼讀取。這是第一次真的實作:獨立的 Wilder ATR
+  // (跟 ADX Pro V3 那組 trSmooth 平滑狀態各自獨立，不共用)，再算標準 basic/final upper/lower band。
+  const stLen = indicatorConfig.stLen || 10;
+  const stMult = indicatorConfig.stMult || 3.0;
+  const supertrendUp = [];
+  const supertrendDown = [];
+  if (count >= 2) {
+    let stAtr = 0;
+    let stTrSum = 0;
+    let finalUpperPrev = 0;
+    let finalLowerPrev = 0;
+    let stTrendUp = true;
+
+    for (let i = 0; i < count; i++) {
+      const t = candles[i].time;
+      const tr = i === 0
+        ? (highs[i] - lows[i])
+        : Math.max(highs[i] - lows[i], Math.abs(highs[i] - closes[i - 1]), Math.abs(lows[i] - closes[i - 1]));
+
+      if (i < stLen) {
+        stTrSum += tr;
+        stAtr = stTrSum / (i + 1); // 暖機期間用簡單移動平均，滿週期時等同 Wilder 起始值
+      } else {
+        stAtr = (stAtr * (stLen - 1) + tr) / stLen;
+      }
+
+      const mid = (highs[i] + lows[i]) / 2;
+      const basicUpper = mid + stMult * stAtr;
+      const basicLower = mid - stMult * stAtr;
+
+      let finalUpper, finalLower;
+      if (i === 0) {
+        finalUpper = basicUpper;
+        finalLower = basicLower;
+        stTrendUp = closes[i] >= mid;
+      } else {
+        finalUpper = (basicUpper < finalUpperPrev || closes[i - 1] > finalUpperPrev) ? basicUpper : finalUpperPrev;
+        finalLower = (basicLower > finalLowerPrev || closes[i - 1] < finalLowerPrev) ? basicLower : finalLowerPrev;
+
+        if (closes[i] > finalUpperPrev) {
+          stTrendUp = true;
+        } else if (closes[i] < finalLowerPrev) {
+          stTrendUp = false;
+        } // 否則維持前一根的趨勢方向
+      }
+
+      const stValue = Math.round((stTrendUp ? finalLower : finalUpper) * 10) / 10;
+      supertrendUp.push({ time: t, value: stTrendUp ? stValue : undefined });
+      supertrendDown.push({ time: t, value: stTrendUp ? undefined : stValue });
+
+      finalUpperPrev = finalUpper;
+      finalLowerPrev = finalLower;
+    }
+  }
+
   return {
     candles,
     volumes,
@@ -1100,6 +1154,8 @@ function generateIndicatorsData(tf) {
     vwapLower,
     smmaData,
     sarData,
+    supertrendUp,
+    supertrendDown,
     vrvpData: {
       bins: vrvpBins,
       poc: pocPrice,
@@ -1364,6 +1420,8 @@ function renderMainOverlays(data) {
   if (overlaySeries.vwap.upper1) { mainChart.removeSeries(overlaySeries.vwap.upper1); overlaySeries.vwap.upper1 = null; }
   if (overlaySeries.vwap.lower1) { mainChart.removeSeries(overlaySeries.vwap.lower1); overlaySeries.vwap.lower1 = null; }
   if (overlaySeries.sar) { mainChart.removeSeries(overlaySeries.sar); overlaySeries.sar = null; }
+  if (overlaySeries.supertrend.up) { mainChart.removeSeries(overlaySeries.supertrend.up); overlaySeries.supertrend.up = null; }
+  if (overlaySeries.supertrend.down) { mainChart.removeSeries(overlaySeries.supertrend.down); overlaySeries.supertrend.down = null; }
 
   // 1. 尋鳥多空彩帶 (MA7, MA17, MA88, MA200)
   if (indicatorConfig.ribbons) {
@@ -1412,6 +1470,29 @@ function renderMainOverlays(data) {
       title: 'SAR'
     });
     overlaySeries.sar.setData(data.sarData);
+  }
+
+  // 3c. Supertrend (real ATR-band calc — see generateIndicatorsData() for the math). Rendered
+  // as two line series (up-trend segment green, down-trend segment red) since Lightweight
+  // Charts v4 has no native per-point line color; each series has `undefined` for bars outside
+  // its own trend, which renders as a gap, so together they look like one color-flipping line.
+  if (indicatorConfig.supertrend) {
+    overlaySeries.supertrend.up = mainChart.addLineSeries({
+      color: '#26A69A',
+      lineWidth: 2,
+      priceLineVisible: false,
+      lastValueVisible: false,
+      title: 'Supertrend'
+    });
+    overlaySeries.supertrend.down = mainChart.addLineSeries({
+      color: '#EF5350',
+      lineWidth: 2,
+      priceLineVisible: false,
+      lastValueVisible: false,
+      title: 'Supertrend'
+    });
+    overlaySeries.supertrend.up.setData(data.supertrendUp);
+    overlaySeries.supertrend.down.setData(data.supertrendDown);
   }
 
   // 4. VRVP (可見範圍成交量分佈圖: POC, VAH, VAL)
