@@ -41,12 +41,40 @@ TF_MAP = {
     '5M': ('5m', '5d', 300),
     '15M': ('15m', '5d', 900),
     '30M': ('30m', '1mo', 1800),
-    '1H': ('60m', '1mo', 3600),
-    '4H': ('60m', '3mo', 14400),
+    '1H': ('60m', '3mo', 3600),
+    # '4H' is deliberately absent here: Yahoo Finance's chart API has no native 4-hour
+    # interval (only 1m/2m/5m/15m/30m/60m/90m/1d/5d/1wk/1mo/3mo), so it can't be fetched
+    # directly. It used to just re-request '60m' data under a longer '3mo' range and label
+    # it "4H" — that gave more bars, but every bar was still 1-hour spaced, never actually
+    # aggregated into real 4-hour candles (found 2026-09-16 while testing the ADX MTF
+    # Cloudflare Worker: 4H's bar-to-bar gaps were 3600/1800s, identical to 1H's, not 14400s).
+    # Real 4H bars are now synthesized in aggregate_4h_from_1h() below, from this same real
+    # 1H fetch (bumped to '3mo' so there's enough history for a decent 4H view too).
     '1D': ('1d', '1y', 86400),
     '1W': ('1wk', '2y', 604800),
     '1Mth': ('1mo', '5y', 2592000)
 }
+
+def aggregate_4h_from_1h(hourly_bars):
+    """
+    Builds real 4-hour OHLCV candles by grouping every 4 consecutive real 1-hour bars
+    (positional grouping over the actual fetched sequence, not fixed-clock-boundary
+    resampling — TXF/TAIEX trade in specific TW session windows, not continuously, so
+    grouping the real sequential bars we have is more meaningful than forcing alignment to
+    arbitrary UTC 4-hour clock boundaries that would cut across session gaps).
+    """
+    bars = []
+    for i in range(0, len(hourly_bars) - 3, 4):
+        chunk = hourly_bars[i:i + 4]
+        bars.append({
+            'time': chunk[0]['time'],
+            'open': chunk[0]['open'],
+            'high': max(b['high'] for b in chunk),
+            'low': min(b['low'] for b in chunk),
+            'close': chunk[-1]['close'],
+            'volume': sum(b['volume'] for b in chunk)
+        })
+    return bars
 
 def fetch_all_klines():
     out_data = {
@@ -153,6 +181,15 @@ def fetch_all_klines():
                         print(f"  -> {tf_key}: {len(bars)} bars. Non-zero volumes: {non_zero}")
             except Exception as e:
                 print(f"  -> {tf_key} failed: {e}")
+
+        # Synthesize real 4H bars from the real 1H bars just fetched (see TF_MAP comment above
+        # for why 4H can't be requested from Yahoo directly).
+        hourly = out_data['assets'][sym]['timeframes'].get('1H')
+        if hourly:
+            four_h_bars = aggregate_4h_from_1h(hourly)
+            if four_h_bars:
+                out_data['assets'][sym]['timeframes']['4H'] = four_h_bars
+                print(f"  -> 4H: {len(four_h_bars)} bars (aggregated from {len(hourly)} real 1H bars).")
 
     output_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'klines_cache.json')
     with open(output_file, 'w', encoding='utf-8') as f:
