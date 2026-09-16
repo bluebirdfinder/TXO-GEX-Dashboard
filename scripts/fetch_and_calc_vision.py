@@ -3415,6 +3415,32 @@ def generate_gex_payload():
     # Real per-stock spot-side institutional net buy/sell (TWSE T86, cached per day)
     twse_t86_data = fetch_twse_institutional_t86_latest()
 
+    # Real multi-day per-stock T86 history for 投信認養/籌碼偏多 — built and rolled forward by
+    # scripts/build_screener_cache.py (update_inst_history()), read-only here. Falls back to {}
+    # (never fabricated) if that script hasn't run yet on this machine.
+    try:
+        with open(os.path.join(_DATA_DIR, "stock_institutional_history.json"), "r", encoding="utf-8") as f:
+            _stock_inst_history = json.load(f)
+    except Exception:
+        _stock_inst_history = {}
+
+    def _compute_it_flags(code):
+        """Same definition as build_screener_cache.py's compute_inst_flags(): 投信認養 = trust
+        net-buy on 3+ consecutive most-recent trading days on file; 籌碼偏多 = 三大法人合計 net
+        positive on 2+ of the most recent 3 days. Honestly 0/False when fewer than 3 real days
+        exist for this code yet."""
+        dates_desc = sorted(_stock_inst_history.keys(), reverse=True)
+        consec = 0
+        for d in dates_desc:
+            row = _stock_inst_history[d].get(code)
+            if row is None or row.get("trust", 0) <= 0:
+                break
+            consec += 1
+        recent3 = [_stock_inst_history[d].get(code) for d in dates_desc[:3]]
+        recent3 = [r for r in recent3 if r is not None]
+        bull = len(recent3) >= 3 and sum(1 for r in recent3 if r.get("total", 0) > 0) >= 2
+        return consec, bull
+
     _adr_quote_cache = {}  # avoid re-fetching the same ADR ticker for both "2330" and "2330F" rows
 
     stock_futures = []
@@ -3483,15 +3509,15 @@ def generate_gex_payload():
             intent_desc = "現現與期貨籌碼力道平淡/無顯著趨勢"
 
         # Investment Trust adoption (投信波段認養佔比 & 連買天數): this used to be a fake
-        # idx-modulo formula unrelated to any real data. A genuine multi-day "consecutive
-        # buy" signal needs per-stock historical trust net-buy snapshots, which don't exist
-        # yet (only the market-wide institutional_snapshots.json is tracked, not per-stock).
-        # Left honestly disabled (never triggers) rather than fabricated, matching the same
-        # decision already made for this identical problem in the trading room's screener.
-        it_consec_days = 0
+        # idx-modulo formula unrelated to any real data. Now real, from the same rolling
+        # per-stock T86 history data/stock_institutional_history.json feeds the trading room's
+        # screener with (see _compute_it_flags above) — 投信 net-buying 3+ consecutive days.
+        # it_ratio (佔股本比) has no official per-stock source and stays None rather than a
+        # guessed ratio; the badge is based purely on the real consecutive-day count.
+        it_consec_days, _it_chip_bull = _compute_it_flags(_lt_lookup_code)
         it_ratio = None
-        is_it_adopted = False
-        it_badge = "-"
+        is_it_adopted = it_consec_days >= 3
+        it_badge = f"投信{it_consec_days}日連買" if is_it_adopted else "-"
 
         # Night Stock Futures with ADR linkage (Complete Taiwan ADR Matrix). Ticker mapping is
         # static (which US ADR corresponds to which TW stock doesn't change), but the % change

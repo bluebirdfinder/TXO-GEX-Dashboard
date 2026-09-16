@@ -3317,12 +3317,12 @@ function runBirdQuantScreener() {
       const hasDemark = real.demark_state && real.demark_state !== '無';
       const has5k = real.k5_state === '5K 創高突破';
       const hasVol = (real.volume_status || '').includes('爆量');
-      // 投信認養 / 籌碼偏多 need real per-stock institutional flow (stock_futures in
-      // gex_data.json, wired up in Component A/B) cross-referenced by symbol — not wired
-      // into this screener yet, so these two filters honestly never match rather than
-      // reviving a fake hash for just these two.
-      const hasItAdopt = false;
-      const hasChipBull = false;
+      // Real per-stock 投信認養 (trust net-buying 3+ consecutive trading days) / 籌碼偏多
+      // (三大法人合計 net-positive on 2+ of the last 3 trading days), from
+      // data/stock_institutional_history.json via scripts/build_screener_cache.py's
+      // compute_inst_flags() — replaces the previous always-false stub.
+      const hasItAdopt = !!real.it_adopted;
+      const hasChipBull = !!real.chip_bull;
 
       let score = 0;
       if (fRocketS && hasRocketS) score++;
