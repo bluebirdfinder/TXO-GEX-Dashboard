@@ -1105,6 +1105,29 @@ function renderChartData() {
   renderMainOverlays(data);
 }
 
+// 2026-09-16: ADX Pro V3 副圖的 MTF (多週期) 看板文字，原本是凍結的假字串
+// "15M:21.1 1H:29.9 4H:25.7 1D:11.1"，跟畫面上其他即時數據完全脫節。真正的 ADX 算法現在搬到
+// 一個私有 Cloudflare Worker（不在這個公開 repo 裡，也不會傳到瀏覽器），這裡改成呼叫那支 API
+// 拿「已經算好的真實數字」回來，room.js 本身不再包含 ADX 公式——這是保護尋鳥自有指標演算法
+// 不被瀏覽器「檢視原始碼」看走的第一個試點，後續其他指標會陸續比照辦理。
+const ADX_MTF_API = 'https://bluebird-indicators.bluebird-finder-tw.workers.dev/';
+
+async function updateAdxMtfBadge() {
+  const badge = document.getElementById('pane-4-badge');
+  if (!badge) return;
+  try {
+    const resp = await fetch(`${ADX_MTF_API}?symbol=TXF&mtf=1`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const j = await resp.json();
+    const adx = j.adx || {};
+    const fmt = (v) => (v == null ? '—' : v.toFixed(1));
+    badge.innerText = `🔥 ADX Pro V3 雙色趨勢強度 (台指期 EMA14 全時 15M:${fmt(adx['15M'])} 1H:${fmt(adx['1H'])} 4H:${fmt(adx['4H'])} 1D:${fmt(adx['1D'])})`;
+  } catch (e) {
+    console.warn('⚠️ ADX MTF badge fetch failed:', e);
+    badge.innerText = '🔥 ADX Pro V3 雙色趨勢強度 (台指期 EMA14 全時 — 暫時無法取得多週期數據)';
+  }
+}
+
 /**
  * Render Sub-Chart 4 based on Active Tab ('adx' | 'ao' | 'cvd' | 'momentum')
  */
@@ -1125,8 +1148,9 @@ function renderSub4Chart(data) {
   const badge = document.getElementById('pane-4-badge');
 
   if (activeSub4 === 'adx') {
-    if (badge) badge.innerText = '🔥 ADX Pro V3 雙色趨勢強度 (台指期 EMA14 全時 15M:21.1 1H:29.9 4H:25.7 1D:11.1)';
-    
+    if (badge) badge.innerText = '🔥 ADX Pro V3 雙色趨勢強度 (台指期 EMA14 全時 讀取中...)';
+    updateAdxMtfBadge(); // async — fills in real 15M/1H/4H/1D values once the API responds
+
     // 1. ADX Area Series with smooth gradient fill (1:1 對齊 TradingView)
     sub4Series.adx = subChart4.addAreaSeries({
       topColor: 'rgba(239, 83, 80, 0.38)',
