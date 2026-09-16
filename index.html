@@ -23,7 +23,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <!-- Embedded Standalone Data Fallback -->
-  <script src="data/embedded_data.js?v=v63.3"></script>
+  <script src="data/embedded_data.js?v=v63.4"></script>
 </head>
 <body>
 
@@ -951,7 +951,7 @@
         <div class="logo-area">
           <h1 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <span>尋鳥 Bluebird Finder</span>
-            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v63.3</span>
+            <span id="app-header-version-badge" style="font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); border: 1px solid var(--primary-accent); white-space: nowrap;">TXO GEX 量化系統 v63.4</span>
           </h1>
           <div class="tagline">台指選擇權 Gamma / Vanna Exposure 波動度與三大法人期權籌碼量化平台</div>
         </div>
@@ -1050,7 +1050,8 @@
       <!-- Card 5: CALL WALL (天花板) Dual Session Card -->
       <div class="stat-card call-wall">
         <div class="stat-label">CALL WALL (天花板)</div>
-        
+        <div id="stat-cw-lt-badge" style="margin-top: 4px;"></div>
+
         <!-- Day Session Part -->
         <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
           <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
@@ -1074,7 +1075,8 @@
       <!-- Card 6: PUT WALL (地板) Dual Session Card -->
       <div class="stat-card put-wall">
         <div class="stat-label">PUT WALL (地板)</div>
-        
+        <div id="stat-pw-lt-badge" style="margin-top: 4px;"></div>
+
         <!-- Day Session Part -->
         <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
           <div style="font-size: 0.72rem; color: var(--gold-accent); display: flex; justify-content: space-between;">
@@ -1446,6 +1448,26 @@
             </tr>
           </thead>
           <tbody id="futures-5day-body">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+      <div style="text-align: right; margin-top: 4px; margin-bottom: 20px; font-size: 11px; color: rgba(255, 255, 255, 0.28); user-select: none;">© 尋鳥 Bluebird Finder</div>
+
+      <!-- Table 1.5: 選擇權大額交易人淨部位 5 日歷程 (單位：口) -->
+      <h4 style="color: var(--gold-accent); font-size: 0.9rem; margin-bottom: 8px;">1.5 選擇權大額交易人淨部位 5 日歷程 (單位：口，TAIFEX largeTraderOptQry)</h4>
+      <div style="overflow-x: auto; margin-bottom: 12px;">
+        <table class="matrix-table" style="text-align: center;">
+          <thead>
+            <tr style="background: #18202d;">
+              <th style="width: 70px; text-align: center;">日期</th>
+              <th style="text-align: center;">Call 前五大淨部位 <span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: normal;">(週約 / 全約)</span></th>
+              <th style="text-align: center;">Call 前十大淨部位 <span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: normal;">(週約 / 全約)</span></th>
+              <th style="text-align: center;">Put 前五大淨部位 <span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: normal;">(週約 / 全約)</span></th>
+              <th style="text-align: center;">Put 前十大淨部位 <span style="font-size: 0.72rem; color: var(--gold-accent); font-weight: normal;">(週約 / 全約)</span></th>
+            </tr>
+          </thead>
+          <tbody id="opt-large-trader-5day-body">
             <!-- Populated by JavaScript -->
           </tbody>
         </table>
@@ -2011,7 +2033,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=v63.3"></script>
+  <script src="app.js?v=v63.4"></script>
 </body>
 </html>
 

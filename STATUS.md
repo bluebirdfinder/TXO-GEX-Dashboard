@@ -1,12 +1,24 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.3)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.4)
 
-**當前版本**：`v63.3` (2026-09-16 大額交易人前五大/前十大淨部位公式重大修正發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.3)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.3)
+**當前版本**：`v63.4` (2026-09-16 選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.4)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.4)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v63.4 核心更新亮點 (選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章)
+
+### 🆕 1. 新增 TAIFEX「選擇權大額交易人未沖銷部位結構表」(`largeTraderOptQry`) 串接
+- 過去只抓期貨版大額交易人報表，選擇權版（Call/Put 各自的前五大/前十大淨部位）從未串接。新增 `fetch_official_taifex_large_trader_options()`，從一開始就採用 v63.3 修好的「買方－賣方＝淨部位」正確公式，欄位結構經真實 fetch 逐碼核對（非沿用期貨版假設）。
+- 驗證：Call 前十大淨部位 -6,073、Put 前十大淨部位 +11,053，與 TAIFEX 官網原始表格數字完全吻合。
+
+### 📊 2. 前端新增「1.5 選擇權大額交易人淨部位 5 日歷程」獨立表格
+- 緊接「期貨未平倉5日淨部位歷程」下方，完整比照本專案 `has_snapshot`/`is_live` 防呆模式，無快照顯示「—」。
+
+### 🐋 3. Call Wall / Put Wall 卡片新增大額交易人交叉印證徽章
+- 該側前十大淨部位為負（淨賣方防守）顯示「防守中」；為正（淨買方避險）顯示金色「轉買方避險」警示；無資料時顯示「⚪ 無大額交易人即時數據」，絕不假設方向。
 
 ## 🎯 v63.3 核心更新亮點 (大額交易人前五大/前十大淨部位公式重大修正)
 
