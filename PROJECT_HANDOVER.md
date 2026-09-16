@@ -1,16 +1,17 @@
-# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v63.4)
+# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v63.5)
 
 本手冊記錄專案現狀、核心功能清單、數據引擎 Self-Audit 熱備援架構、開發 SOP 與個人筆電續接步驟。
 
 ---
 
-## 📌 一、v63.4 完整功能清單與數據引擎架構
+## 📌 一、v63.5 完整功能清單與數據引擎架構
 
 ### 核心分析與視覺化模組
 
 | # | 功能 | 說明 |
 |---|---|---|
-| 0 | **🆕 選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章 (v63.4)** | 新增 `fetch_official_taifex_large_trader_options()` 串接 TAIFEX「選擇權大額交易人未沖銷部位結構表」(`largeTraderOptQry`)，取得 Call/Put 各自前五大/前十大淨部位（週約/所有契約），欄位結構經真實 fetch 逐碼核對並套用 v63.3 修好的「買方－賣方」正確公式；前端新增獨立表格「1.5 選擇權大額交易人淨部位 5 日歷程」（比照 `has_snapshot`/`is_live` 防呆）；Call Wall/Put Wall 卡片新增大額交易人交叉印證徽章（防守中／轉買方避險／⚪ 無即時數據） |
+| 0 | **🔴🔴 月選結算日「已死合約」誤選重大修正 (v63.5)** | `classify_txo_contract_buckets()` 對6碼月選合約單純用到期日排序取最早一口，完全沒檢查「現在時間 vs 到期日」；TAIFEX 官方 `optDataDown` 報表在結算日當天仍列出剛結算的當月合約（含結算前最終OI），導致函式誤選已結算歸零、對夜盤無避險牽引力的9月合約（202609）而非真正的10月月選（202610）。新增 `now` 參數（預設台北時區當下時間），排除「真實到期日 < 今天」或「到期日=今天且已過13:30結算」的候選合約，同步套用於 w1/w2/fri/mth 四桶；`backfill_snapshots.py` 呼叫端改用該歷史交易日13:30作為 `now` 基準，避免歷史回補把所有過去交易日誤判成「已過期」。驗證：put_wall_strike 45500→45000（-500點）、zero_gamma_level 45765.6→45158.5（-607點） |
+| 0.02 | **🆕 選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章 (v63.4)** | 新增 `fetch_official_taifex_large_trader_options()` 串接 TAIFEX「選擇權大額交易人未沖銷部位結構表」(`largeTraderOptQry`)，取得 Call/Put 各自前五大/前十大淨部位（週約/所有契約），欄位結構經真實 fetch 逐碼核對並套用 v63.3 修好的「買方－賣方」正確公式；前端新增獨立表格「1.5 選擇權大額交易人淨部位 5 日歷程」（比照 `has_snapshot`/`is_live` 防呆）；Call Wall/Put Wall 卡片新增大額交易人交叉印證徽章（防守中／轉買方避險／⚪ 無即時數據） |
 | 0.05 | **🛠️ 尋鳥戰情室3個Critical bug修復 ✕ ADR真實報價 ✕ 選股快取97%覆蓋率 (v62.4)** | 修復假OHLC面板、ADX背離寫死絕對價位、選股雷達雜湊碼假訊號；ADR_MAPPING變數作用域bug+改真實Yahoo Finance報價；散戶籌碼daily_change/prev_ratio/broker_snapshot改真實日對日快照比對；選股快取改用TWSE單日批量端點，覆蓋率32%→97%、執行時間20-30分鐘→15秒；新增 `DASHBOARD_DATA_SOURCE_MAP.md` 前台區塊×策略×數據來源持久對照表 |
 | 0.1 | **🔴🔴 GEX 核心引擎真實選擇權未沖銷部位接軌 ✕ 5日歷史真實回補 (v62.3)** | Self-Audit 最高優先級發現：`calculate_true_gex_profile()` 上線以來 Call Wall/Put Wall/Zero Gamma/Max Pain 全部由假高斯曲線算出，選擇權籌碼從未接過真數據；已改接 TAIFEX 官方「選擇權每日交易行情下載」真實逐履約價未沖銷契約量，W1/W2 改真實分開算；`backfill_snapshots.py` 同步接上真實歷史 GEX 並修復 3 個從未真正抓到數據的舊 bug；`fetch_institutional_momentum.py`/`fetch_official_taifex_retail_sentiment()`/`build_screener_cache.py` 一併真數據化 |
 | 0.2 | **🛡️ 戰情室 100% 真實數據管線 ✕ 嚴禁偽數據 Self-Audit ✕ Gemini 2.5 Flash 軍師 (v62.2)** | 實裝 Hard Redline #6；拔除所有布朗運動擬合與隨機假數據；嚴格區分「指數/殖利率 Volume: 0」與「期貨/個股真實合約量」；股號搜尋 Enter 鍵直接切換；老墨/陳玠儒大戶散戶動能與雙色 ADX Pro V3 面積雲帶；Gemini 2.5 Flash 獨立 Key 本機安全保存與多模態截圖即時診斷 |

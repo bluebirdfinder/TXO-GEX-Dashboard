@@ -1,12 +1,21 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.4)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.5)
 
-**當前版本**：`v63.4` (2026-09-16 選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章發布版)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.4)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.4)
+**當前版本**：`v63.5` (2026-09-16 月選結算日「已死合約」誤選重大修正發布版)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.5)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.5)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
 ---
+
+## 🎯 v63.5 核心更新亮點 (月選結算日「已死合約」誤選重大修正)
+
+### 🔴🔴 1. `classify_txo_contract_buckets()` 結算日當天誤選已結算歸零的月選合約，GEX 全部算錯
+- 背景：2026-09-16 是台指選擇權9月大結算日（每月第三個週三）。使用者收到16:00夜盤快訊後，懷疑月選相關 GEX 點位（Call Wall/Put Wall/Zero Gamma/Max Pain）算錯。
+- 根因：函式對6碼「YYYYMM」月選合約單純按真實到期日排序取最早一口，完全沒檢查「現在時間 vs 到期日」。TAIFEX 官方 `optDataDown` 報表在結算日當天仍會列出剛結算的當月合約（連同結算前最終未平倉量），導致函式選中已經結算歸零、對夜盤沒有避險牽引力的9月合約（`202609`，call OI 93,035／put OI 87,447），而非真正該用的10月月選（`202610`，call OI 8,801／put OI 8,251）。
+- 驗證：直接呼叫 TAIFEX 官方 `optDataDown` 端點抓 2026/09/10~09/16 真實資料，逐一列出所有6碼月選合約與其真實到期日，證實函式選中的 mth 桶到期日=2026-09-16（今天，已於13:30結算）。
+- 修復：新增 `now` 參數（預設台北時區當下時間），排除「真實到期日 < 今天」或「到期日=今天且已過13:30結算時間」的候選合約，此防呆同步套用在 w1/w2/fri/mth 四種桶，避免同根因未來在週選身上重演。同步修正 `backfill_snapshots.py` 呼叫端——改用該歷史交易日的13:30作為 `now` 基準，而非「執行當下的真實時間」，避免歷史回補把所有過去交易日的候選合約全部誤判成「已過期」。
+- 影響數字（同一份即時價格輸入，僅合約桶選擇不同）：`put_wall_strike` 45500→45000（-500點）、`zero_gamma_level`／`gex_plus_flip` 45765.6→45158.5（-607點）；`call_wall_strike`／`max_pain_strike` 不受影響（46000／44950持平）。今晚16:00夜盤快訊使用的舊版月選GEX數字已確認不可信，已用修正後版本重新產生。
 
 ## 🎯 v63.4 核心更新亮點 (選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章)
 

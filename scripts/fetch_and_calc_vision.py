@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v63.4"
+ENGINE_VERSION = "v63.5"
 
 import os
 import sys
@@ -1574,7 +1574,7 @@ def fetch_taifex_txo_open_interest(start_date_str, end_date_str):
     return result
 
 
-def classify_txo_contract_buckets(day_data):
+def classify_txo_contract_buckets(day_data, now=None):
     """
     Classifies one day's {contract_code: {"expiry": "YYYYMMDD", ...}} into the app's contract
     buckets using each contract's REAL settlement date (not by parsing the code's letter
@@ -1584,12 +1584,34 @@ def classify_txo_contract_buckets(day_data):
     code for each of w1 (nearest Wednesday weekly), w2 (the Wednesday weekly after that, if
     currently listed), fri (nearest Friday weekly), mth (front monthly) — any that aren't
     currently listed come back as None rather than a guess.
+
+    TAIFEX's optDataDown report for a given trading day still lists the contract that settled
+    THAT day (with its final pre-settlement OI) right up until the report is regenerated — on
+    settlement day itself (Wed for weeklies/monthly, Fri for Friday weeklies) that dead contract
+    would otherwise sort as the "nearest expiring" one and get picked, even though after 13:30
+    it has zero delta-hedging pull on the market. `now` (a tz-aware datetime; defaults to TW
+    local time) is used to drop any candidate whose real expiry is strictly in the past, or is
+    today but at/after 13:30 settlement — 2026-09-16 fix, see AGENTS.md redline #6.
     """
+    if now is None:
+        now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
+    today = now.date()
+    settlement_cutoff = datetime.time(13, 30)
+
+    def _is_dead(exp):
+        if exp < today:
+            return True
+        if exp == today and now.time() >= settlement_cutoff:
+            return True
+        return False
+
     wed_list, fri_list, mth_list = [], [], []
     for code, info in day_data.items():
         try:
             exp = datetime.datetime.strptime(info["expiry"], "%Y%m%d").date()
         except Exception:
+            continue
+        if _is_dead(exp):
             continue
         if len(code.strip()) == 6:  # "YYYYMM" — no weekly-letter suffix
             mth_list.append((exp, code))
@@ -2816,7 +2838,7 @@ def generate_gex_payload():
     )
     _txo_latest_date = max(_txo_oi_by_date.keys()) if _txo_oi_by_date else None
     if _txo_latest_date:
-        _txo_buckets = classify_txo_contract_buckets(_txo_oi_by_date[_txo_latest_date])
+        _txo_buckets = classify_txo_contract_buckets(_txo_oi_by_date[_txo_latest_date], now=now_dt)
         real_option_chain = build_real_option_chain(_txo_oi_by_date[_txo_latest_date], _txo_buckets)
     else:
         real_option_chain = {}

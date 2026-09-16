@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v63.5`** | 2026-09-16 | 🔴🔴 **月選結算日「已死合約」誤選重大修正（`classify_txo_contract_buckets()` 結算日誤選剛結算歸零的當月合約，Call Wall/Put Wall/Zero Gamma 全部算錯）發布版** |
 | **`v63.4`** | 2026-09-16 | 🆕 **新功能：選擇權大額交易人淨部位（TAIFEX `largeTraderOptQry`）串接與 Call Wall / Put Wall 交叉印證徽章發布版** |
 | **`v63.3`** | 2026-09-16 | 🔴🔴 **大額交易人前五大/前十大淨部位計算公式重大錯誤修正（欄位索引錯，算出來的從來不是淨部位）、含歷史快照回補發布版** |
 | **`v63.2`** | 2026-09-16 | 🔴 **5日法人籌碼矩陣「+0」誤顯示修正為「—」（使用者實測親自抓到）、DAY session 法人快照補上 is_live 標記防止借用值被誤存成永久歷史（比照NIGHT session修法）發布版** |
@@ -23,6 +24,25 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🔴🔴 v63.5 月選結算日「已死合約」誤選重大修正發布版 (2026-09-16)
+- **🔴🔴 發現經過**：2026-09-16 是台指選擇權9月大結算日（每月第三個週三）。使用者收到16:00夜盤快訊後，懷疑其中「月選」相關的 GEX 點位（Call Wall/Put Wall/Zero Gamma/Max Pain）可能算錯，找到一個尚未證實的程式碼疑點：`classify_txo_contract_buckets()`（`scripts/fetch_and_calc_vision.py`）挑選「月選」合約的邏輯是把報表裡所有「6碼無週別後綴」的合約按真實到期日排序，直接取最早到期的那一口——完全沒有檢查「現在時間 vs 到期日」。上一個 session 因為 sandbox 網路白名單擋掉 taifex.com.tw（proxy 回403），無法連到期交所驗證這件事有沒有真的發生；本次 session 網路白名單已開通，得以完整驗證。
+- **🔴🔴 根因確認**：直接呼叫 TAIFEX 官方 `optDataDown` 端點（`https://www.taifex.com.tw/cht/3/optDataDown?down_type=1&commodity_id=TXO`），抓 2026/09/10~2026/09/16 這段真實資料（cp950解碼），發現2026-09-16當天的報表裡，6碼月選合約同時列出：
+  - `202609`（到期日=2026-09-16，即今天，已於13:30結算）：call OI 合計 93,035、put OI 合計 87,447——**結算前最終未平倉量，數字很大，不是空資料，容易被誤判為「有效」**。
+  - `202610`（到期日=2026-10-21，真正的次月合約）：call OI 合計 8,801、put OI 合計 8,251。
+  - 另有 `202611`／`202612`／`202703` 等更遠月份，OI 皆較小。
+  - `classify_txo_contract_buckets()` 對6碼合約按到期日排序取最早一口，**選中已結算歸零的 `202609`**，而非真正該用的 `202610`。w1/w2/fri（`202609W4`/`W5`/`F3`）因到期日本身仍在未來，未受影響。
+- **🔴 修復**：`classify_txo_contract_buckets()` 新增 `now` 參數（預設台北時區當下時間，`datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))`），排除「真實到期日 < 今天」或「到期日=今天且現在已過13:30結算時間」的候選合約，再從剩下的裡面挑最早到期。此防呆同步套用在 w1/w2/fri/mth 四種桶（同一根因，避免未來某週選剛好在結算日當天被誤留在報表裡重演）。呼叫端 `scripts/fetch_and_calc_vision.py` 主流程傳入既有的 `now_dt`（已是台北時區）。
+  - **一併修正 `scripts/backfill_snapshots.py` 的呼叫端**：這支腳本是回補「過去某個歷史交易日」的快照，原本會不帶 `now` 呼叫（預設抓「執行當下的真實時間」），這樣會把所有過去交易日的候選合約全部誤判成「已過期」而清空——是這次加防呆差點引入的新 bug。已改用該歷史交易日當天的13:30（`ref_dt = datetime.datetime(day.year, day.month, day.day, 13, 30, tzinfo=tw_tz)`，原本就是後面才建立，這次提前到 `classify_txo_contract_buckets()` 呼叫之前）作為 `now` 基準，讓歷史回補的判斷跟「回補當天的市場視角」一致，而不是跟「腳本實際執行的今天」混淆。
+- **🧪 驗證方式**：
+  1. 用真實 TAIFEX 資料重跑修正後的 `classify_txo_contract_buckets(day_data, now=模擬15:52台北時間)`，確認 mth 桶正確選到 `202610`（到期2026-10-21，OI 8,801/8,251，非零）。
+  2. 完整重跑 `fetch_and_calc_vision.py`，比對修正前後 `data/gex_data.json`（同一份即時價格輸入：spot 45848.9／txf 45529.0／day_txf 45759.0 完全一致，差異100%來自合約桶選擇，非市場報價漂移）：
+     - `put_wall_strike`：45500 → **45000**（-500點）
+     - `zero_gamma_level`／`gex_plus_flip`：45765.6 → **45158.5**（-607點）
+     - `call_wall_strike`／`max_pain_strike`：46000／44950，不受影響
+     - `total_gex_val`：643.22 → 962.49；`total_vex`：466.4 → 97.38
+  3. 今晚（9/16）16:00夜盤快訊（`last_updated_time` 15:52）使用的舊版月選GEX數字已確認是用已死的9月合約算出來，不可信；已用修正後版本重新產生 `data/gex_data.json`／`encrypted_gex.json`／`embedded_data.js`。
+- **📋 方法論補充**：換月結算日永遠是最容易出現「資料源仍列出剛死合約」這類邊界案例的時間點（週三月結算、週三/週五週選結算皆同理）。之後每逢結算日都該留意一個訊號：`classify_txo_contract_buckets()` 選中的桶，其到期日是不是恰好等於「今天」——如果是，且現在已過13:30，就該懷疑是不是選到了剛死的合約，而不是預設報表資料一定跟得上結算時效。
 
 ### 🆕 v63.4 選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章發布版 (2026-09-16)
 - **🆕 新資料源：TAIFEX「選擇權大額交易人未沖銷部位結構表」(`largeTraderOptQry`)**：v63.3 修好的是期貨版大額交易人報表（`largeTraderFutQry`）；本專案過去從未抓過其選擇權姊妹報表，等於缺了「大額交易人在 Call/Put 分別站在多空哪一邊」這塊籌碼拼圖。新增 `fetch_official_taifex_large_trader_options()`，比照 v63.3 修好的「買方－賣方＝淨部位」公式（而非重犯 v63.3 之前那種同邊互減的錯），從一開始就用正確欄位索引解析。

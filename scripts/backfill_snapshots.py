@@ -275,9 +275,9 @@ def backfill(n_days=10, overwrite=False):
         day_oi = txo_oi_by_date.get(iso_str)
         gex_profile_by_price = {}  # memoize per spot price so DAY/NIGHT sharing a price don't recompute
         if day_oi:
-            buckets = classify_txo_contract_buckets(day_oi)
-            real_chain = build_real_option_chain(day_oi, buckets)
             ref_dt = datetime.datetime(day.year, day.month, day.day, 13, 30, tzinfo=tw_tz)  # TXO settles 13:30
+            buckets = classify_txo_contract_buckets(day_oi, now=ref_dt)
+            real_chain = build_real_option_chain(day_oi, buckets)
             days_wed, days_fri, days_mth, _ = compute_days_to_expiries(ref_dt, tw_tz)
 
             def real_gex_fields(price):

@@ -1,11 +1,18 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v63.4)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v63.5)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > 🌪️ CBOE 美股 ^VVIX 實時採集 ✦ 4級尾部風險矩陣 ✦ 做市商賣腳安全氣墊 (350~500點外) ✦ 尋鳥戰情室 4 欄式 Macro Risk HUD ✦ 🏛️ TWSE 融資維持率發布狀態日期比對 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v63.4-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v63.5-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+## 🌟 v63.5 月選結算日「已死合約」誤選重大修正
+
+### 🔴🔴 0. 結算日當天誤選已結算歸零的月選合約，GEX 全部算錯
+- `classify_txo_contract_buckets()` 對6碼月選合約單純用到期日排序取最早一口，未檢查「現在時間 vs 到期日」；TAIFEX 官方 `optDataDown` 報表在結算日當天仍列出剛結算的當月合約，導致誤選已結算歸零的9月合約而非真正的10月月選。
+- 新增 `now` 參數排除「真實到期日 < 今天」或「到期日=今天且已過13:30結算」的候選合約，同步套用於 w1/w2/fri/mth 四桶；`backfill_snapshots.py` 呼叫端改用歷史交易日13:30作為基準，避免歷史回補全部誤判過期。
+- 驗證：put_wall_strike 45500→45000（-500點）、zero_gamma_level 45765.6→45158.5（-607點）。
 
 ## 🌟 v63.4 選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章
 
