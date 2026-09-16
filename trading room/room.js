@@ -1500,7 +1500,11 @@ function drawGexHorizontalRays(candles) {
   clearGexPriceLines();
 
   const cw = gexData.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
-  const vex = (gexData.zero_gamma_level ? gexData.zero_gamma_level - 0.1 : ROOM_CHART_DEFAULTS.zero_gamma_level - 0.1);
+  // Math.round(...*10)/10 guards against IEEE754 subtraction artifacts (e.g. 45558.8 - 0.1
+  // landing on 45558.699999999997 instead of 45558.7) leaking into the on-chart price label —
+  // found 2026-09-16 during a full room.html UI pass: the label was literally showing
+  // "VEX Early (45558.700000000004)".
+  const vex = Math.round(((gexData.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level) - 0.1) * 10) / 10;
   const zg = gexData.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
   const pw = gexData.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
   const mp = gexData.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
