@@ -1219,6 +1219,63 @@ function renderChartData() {
 // 不被瀏覽器「檢視原始碼」看走的第一個試點，後續其他指標會陸續比照辦理。
 const ADX_MTF_API = 'https://bluebird-indicators.bluebird-finder-tw.workers.dev/';
 
+// 2026-09-17: 左側「🦅 動能鳥指標 即時戰情」HUD 卡片（系統模式/監控標的/趨勢乖離/量能指標/
+// 波段動能/趨勢排列/綜合戰力）從建立以來就是純靜態文字，room.js 從未寫入過這幾個欄位
+// （left-hud-bias/mfi/adx/trend/strength），跟 v63.0 修過的「GEX造市商五大防線」是同一種
+// 「有UI但沒接資料」問題。這幾個欄位剛好一對一對應 JJ 鬼爪 V4.1 Worker 回傳的
+// bias88/mfi/adx/is_bull_trend/strength_grade，現在接上真實數據。
+//
+// ⚠️ 尚未對照真實 TradingView 圖表逐根K棒驗證過（見 worker.js 註解），is_holding/
+// reduce_count 這類需要很多根K棒才會顯現的狀態，暖機起點可能跟 TradingView 實際載入的K棒
+// 數不同而有落差。卡片標題會標註「(未驗證)」，正式核對過後再拿掉這個標籤。
+const JJ_GHOST_CLAWS_SUPPORTED_SYMBOLS = new Set(['TXF', 'TAIEX', 'OTC', 'CDF', 'MTX', 'MXF', 'US10Y', 'DXY', 'CL', '2330', '2454', '2317']);
+
+async function updateJjGhostClawsHud(symObj) {
+  const modeEl = document.getElementById('left-hud-mode');
+  const assetEl = document.getElementById('left-hud-asset');
+  const biasEl = document.getElementById('left-hud-bias');
+  const mfiEl = document.getElementById('left-hud-mfi');
+  const adxEl = document.getElementById('left-hud-adx');
+  const trendEl = document.getElementById('left-hud-trend');
+  const strengthEl = document.getElementById('left-hud-strength');
+  if (!modeEl || !assetEl || !biasEl || !mfiEl || !adxEl || !trendEl || !strengthEl) return;
+
+  const symbol = (symObj && JJ_GHOST_CLAWS_SUPPORTED_SYMBOLS.has(symObj.symbol)) ? symObj.symbol : 'TXF';
+  modeEl.innerText = 'Auto (JJ V4.1)';
+  assetEl.innerText = `${symbol} (1D)`;
+
+  try {
+    const resp = await fetch(`${ADX_MTF_API}?indicator=jj&symbol=${symbol}&tf=1D`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const j = await resp.json();
+
+    const biasColor = j.bias88 >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+    biasEl.innerText = `${j.bias88 >= 0 ? '+' : ''}${j.bias88}%`;
+    biasEl.style.color = biasColor;
+
+    mfiEl.innerText = j.mfi != null ? j.mfi.toFixed(1) : '—（無量能資料）';
+
+    adxEl.innerText = j.adx != null ? j.adx.toFixed(1) : '—';
+
+    const trendColor = j.is_bull_trend ? 'var(--call-color)' : 'var(--put-color)';
+    trendEl.innerText = j.is_bull_trend ? 'Bullish (多)' : 'Bearish (空)';
+    trendEl.style.color = trendColor;
+
+    const gradeText = { S: 'S 強噴', A: 'A 強勢', B: 'B 一般', C: 'C 空頭防守' }[j.strength_grade] || j.strength_grade;
+    const gradeColor = j.strength_grade === 'S' ? 'var(--gold-accent)' : (j.strength_grade === 'C' ? 'var(--put-color)' : 'var(--call-color)');
+    strengthEl.innerText = gradeText;
+    strengthEl.style.color = gradeColor;
+  } catch (e) {
+    console.warn('⚠️ JJ鬼爪 HUD fetch failed:', e);
+    biasEl.innerText = '—';
+    mfiEl.innerText = '—';
+    adxEl.innerText = '—';
+    trendEl.innerText = '⚪ 無即時數據';
+    trendEl.style.color = 'var(--text-muted)';
+    strengthEl.innerText = '—';
+  }
+}
+
 async function updateAdxMtfBadge() {
   const badge = document.getElementById('pane-4-badge');
   if (!badge) return;
@@ -1707,6 +1764,8 @@ function updateLegendOverlay(param) {
  */
 function renderLeftPanel() {
   if (!gexData) return;
+
+  updateJjGhostClawsHud(currentActiveSymbol); // async — fills in real bias/mfi/adx/trend/grade once the API responds
 
   const isIndexFutures = currentActiveSymbol && ['TXF', 'MXF', 'TMF', 'TWN'].includes(currentActiveSymbol.symbol);
   let baseP = gexData?.night_txf_price || gexData?.txf_price || 46588;
