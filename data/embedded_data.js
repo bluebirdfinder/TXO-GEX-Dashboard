@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 45157.9,
     "day_total_vex": 85.79
   },
-  "last_updated_time": "2026-09-17 07:36",
+  "last_updated_time": "2026-09-17 08:16",
   "spot_price": 45848.9,
   "spot_change": 0.0,
   "spot_change_pct": 0.0,
@@ -22342,10 +22342,10 @@ window.GEX_EMBEDDED_DATA = {
         "pct": 0.13
       },
       "dxy": {
-        "date": "09/16 (三)",
-        "price": 100.34,
-        "change": 0.69,
-        "pct": 0.69
+        "date": "09/17 (四)",
+        "price": 100.23,
+        "change": 0.58,
+        "pct": 0.58
       },
       "usdjpy": {
         "date": "09/16 (三)",
@@ -22445,14 +22445,14 @@ window.GEX_EMBEDDED_DATA = {
           "pct": 0.19
         },
         {
-          "date": "09/16 (三)",
-          "price": 100.34,
-          "change": 0.69,
-          "pct": 0.69
+          "date": "09/17 (四)",
+          "price": 100.23,
+          "change": 0.58,
+          "pct": 0.58
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.89</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>100.34</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>155.06</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.89</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>100.23</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>155.06</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -1221,
@@ -22465,47 +22465,47 @@ window.GEX_EMBEDDED_DATA = {
     "night_summary_text": "💡 <strong>夜盤籌碼白話解讀</strong>：外資大台夜盤變動 -1221 口（約 -112.81 億 TWD），且在小台與微台變動 -3,064 口，籌碼結構維繫中性姿態。",
     "is_live": true
   },
-  "retail_mini_ratio": -0.14,
-  "retail_micro_ratio": 40.95,
+  "retail_mini_ratio": 11.65,
+  "retail_micro_ratio": 11.69,
   "retail_sentiment_details": {
     "mini_mtx": {
       "title": "小台散戶籌碼 (MXF)",
       "long_oi": 42839,
       "short_oi": 38998,
       "net_oi": 3841,
-      "daily_change": 3894,
+      "daily_change": 0,
       "total_oi": null,
       "near_oi": 46380,
-      "ratio": -0.14,
-      "total_ratio": -0.14,
-      "prev_ratio": -0.14,
-      "sentiment_tag": "⚖️ 散戶多空平衡"
+      "ratio": 11.65,
+      "total_ratio": 11.65,
+      "prev_ratio": 11.65,
+      "sentiment_tag": "🟠 散戶偏多看壓"
     },
     "micro_tmf": {
       "title": "微台散戶籌碼 (TMF)",
       "long_oi": 43429,
       "short_oi": 32971,
       "net_oi": 10458,
-      "daily_change": -36226,
+      "daily_change": 0,
       "total_oi": null,
       "near_oi": 46381,
-      "ratio": 40.95,
-      "total_ratio": 40.95,
-      "prev_ratio": 40.95,
-      "sentiment_tag": "🔴 散戶極度做多 (軋空看壓)"
+      "ratio": 11.69,
+      "total_ratio": 11.69,
+      "prev_ratio": 11.69,
+      "sentiment_tag": "🟠 散戶偏多看壓"
     },
     "broker_snapshot": {
       "foreign_tx_net": -76351,
-      "foreign_tx_change": 6872,
+      "foreign_tx_change": 0,
       "foreign_call_net": -1.22,
-      "foreign_call_change": -0.16999999999999993,
+      "foreign_call_change": 0.0,
       "foreign_put_net": 0.91,
-      "foreign_put_change": -0.42000000000000004,
+      "foreign_put_change": 0.0,
       "vix_index": 24.47,
       "vix_change": -2.82,
       "market_turnover": null
     },
-    "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">&#128161; <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--put-color); font-weight:700;\">-0.14%</span>（全月合計未沖銷契約數為基準，淨部位 +3,841 口／近月單一契約月基準 +8.28%），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+40.95%</span>（淨部位 +10,458 口／近月單一契約月基準 +22.55%）。散戶部位維持強烈偏多姿態。</p>\n    <p style=\"margin-bottom: 0;\">&#9878; <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">24.47</span> (-2.82)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
+    "sentiment_summary_html": "\n    <p style=\"margin-bottom: 6px;\">&#128161; <strong>散戶籌碼動向</strong>：小台散戶多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+11.65%</span>（全月合計未沖銷契約數為基準，淨部位 +3,841 口／近月單一契約月基準 +8.28%），微台多空比為 <span style=\"color: var(--call-color); font-weight:700;\">+11.69%</span>（淨部位 +10,458 口／近月單一契約月基準 +22.55%）。散戶部位維持強烈偏多姿態。</p>\n    <p style=\"margin-bottom: 0;\">&#9878; <strong>外資與 VIX 波動度觀測</strong>：台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">24.47</span> (-2.82)，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。</p>\n    "
   },
   "specific_traders": {
     "top5_specific_net": 20892,
@@ -22522,7 +22522,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 1131.83,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-17 07:36",
+    "last_updated": "2026-09-17 08:16",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -23969,7 +23969,7 @@ window.GEX_EMBEDDED_DATA = {
       "ex_date": "-",
       "ex_dividend": 0.0,
       "ex_type": "",
-      "lt_data_unavailable": true,
+      "lt_data_unavailable": false,
       "spot_data_unavailable": true,
       "it_adoption_ratio": null,
       "it_consecutive_buy_days": 0,
@@ -23983,12 +23983,12 @@ window.GEX_EMBEDDED_DATA = {
       "spot_trust": 0,
       "spot_dealer": 0,
       "spot_gov": 0,
-      "top5_net_oi": 0,
-      "top10_net_oi": 0,
-      "top5_inst_oi": 0,
-      "top10_inst_oi": 0,
+      "top5_net_oi": -576,
+      "top10_net_oi": -742,
+      "top5_inst_oi": -3040,
+      "top10_inst_oi": -3767,
       "foreign_net": 0,
-      "dealer_net": 0,
+      "dealer_net": -742,
       "intent_tag": "⚖️ 觀望分歧",
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
@@ -32431,12 +32431,12 @@ window.GEX_EMBEDDED_DATA = {
       "spot_trust": 264,
       "spot_dealer": 11,
       "spot_gov": 0,
-      "top5_net_oi": 12701,
-      "top10_net_oi": -340,
-      "top5_inst_oi": 12701,
-      "top10_inst_oi": -1654,
+      "top5_net_oi": -25,
+      "top10_net_oi": -24,
+      "top5_inst_oi": -76,
+      "top10_inst_oi": -100,
       "foreign_net": -4,
-      "dealer_net": -340,
+      "dealer_net": -24,
       "intent_tag": "⚖️ 觀望分歧",
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
@@ -35309,9 +35309,9 @@ window.GEX_EMBEDDED_DATA = {
       "summary": "台指VIX 24.5、美股VIX 17.7；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 100.34,
-        "change_pct": 0.09,
-        "trend_label": "▲ 較昨日走升 (+0.09%)",
+        "price": 100.23,
+        "change_pct": -0.02,
+        "trend_label": "▼ 較昨日走弱 (-0.02%)",
         "unit": ""
       },
       "us10y": {
