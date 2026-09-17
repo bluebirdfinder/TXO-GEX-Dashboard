@@ -1,11 +1,32 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v63.7)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v64.0)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > 🌪️ CBOE 美股 ^VVIX 實時採集 ✦ 4級尾部風險矩陣 ✦ 做市商賣腳安全氣墊 (350~500點外) ✦ 尋鳥戰情室 4 欄式 Macro Risk HUD ✦ 🏛️ TWSE 融資維持率發布狀態日期比對 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v63.7-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v64.0-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+## 🌟 v64.0「隔日重複值」bug家族根除 ✕ Max Pain型態C死碼移除 ✕ JJ鬼爪V4.1上線 ✕ 選股雷達真數據化
+
+### 🚨🚨 0. 4類法人籌碼資料源「今日報表未更新前被誤判成新資料」根因根除
+- 夜盤三大法人、期貨/選擇權大戶、現貨/選擇權法人金額共4類TAIFEX/TWSE來源，都在官方報表隔天才更新的空窗期被誤判成當天真實資料寫進永久歷史（2類使用者截圖抓到、1類回補過程中意外發現正在發生中）。
+- 已幫全部相關fetch函式加上明確`target_date`日期查詢（各端點正確請求格式皆從頁面自身綁定的JS原始碼裡挖出），查不到就誠實回報未發布，不再模糊接受預設頁面。
+- 額外發現「多來源合併成一筆記錄」的既有防呆設計盲點，已改為每個來源各自查證日期。
+
+### 🔴🔴 1. Max Pain「型態C」死碼移除
+- A/B/D三種順序判斷數學上已窮盡所有排列，型態C原本抄同一種寫法永遠執行不到（跟姊妹專案「露米籌碼監控機器人」發現的是同一種bug）。用TXO自己公式拉62天真實歷史資料驗證後移除，不是猜測。
+
+### 🆕 2. JJ鬼爪V4.1指標上線
+- 逐段對照Pine Script移植到Cloudflare Worker，跟既有ADX Pro V3 Worker合併成同一份`worker.js`（`indicator=`參數路由，之後新增指標不用再分開部署）。已接進戰情室左側HUD死卡片並實測正確，標題標示「未對照TradingView驗證」待使用者核對。
+
+### 🆕 3. 選股雷達「投信認養/籌碼偏多」真數據化
+- 新增全市場滾動10日三大法人買賣超歷史，取代永遠false的假功能。1423檔裡52檔投信認養、479檔籌碼偏多。
+
+### 🔴 4. 主儀表板與戰情室即時報價死碼/無備援修復
+- 主儀表板本機富邦網關fetch無逾時保護在部署版卡住導致雲端備援失效已修復；戰情室`initFubonLivePriceStream()`重複宣告導致一半死碼、且無備援機制，已清理並補上期交所MIS備援。
+
+完整根因、驗證方式與後續待辦請見 [HISTORY.md](HISTORY.md) v64.0 條目。
 
 ## 🌟 v63.6 週選結算日歷史回補資料同樣中招，已修正
 

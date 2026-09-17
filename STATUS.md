@@ -1,10 +1,33 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v63.7)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.0)
 
-**當前版本**：`v63.7` (2026-09-16 補發版：IP保護架構試點 ✕ K棒4H造假bug ✕ SAR/Supertrend真實實作 ✕ OTC回補等6項修復正式收錄)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v63.7)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v63.7)
+**當前版本**：`v64.0` (2026-09-17 「隔日重複值」bug家族根除 ✕ Max Pain型態C死碼移除 ✕ JJ鬼爪V4.1上線 ✕ 選股雷達真數據化 ✕ 戰情室即時報價死碼修復)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.0)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.0)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
+
+---
+
+## 🎯 v64.0 核心更新亮點（「隔日重複值」bug家族根除 ✕ JJ鬼爪V4.1上線 ✕ 選股雷達真數據化）
+
+### 🚨🚨 1. 4類法人籌碼資料源「今日報表未更新前被誤判成新資料」根因根除
+- 夜盤三大法人、期貨/選擇權大戶、現貨/選擇權法人金額共4類來源，都在TAIFEX/TWSE官方報表「隔天某時間點才更新」的空窗期被誤判成當天真實資料，其中2類是使用者親自截圖比對抓到、1類是回補過程中意外發現「正在發生中」。已幫全部相關fetch函式加上明確`target_date`日期查詢（各端點正確請求格式皆從頁面自身綁定的JS原始碼裡挖出，非猜測），查不到就誠實回報未發布，不再模糊接受預設頁面。詳見HISTORY.md v64.0條目。
+- 額外發現「多來源合併成一筆記錄」的既有防呆設計盲點：只比對合併後整包資料，抓不到「部分來源新、部分來源舊」的情況，已改為每個來源各自查證日期。
+
+### 🔴🔴 2. Max Pain「型態C」死碼移除（比照露米籌碼監控機器人稽核發現）
+- A/B/D三種順序判斷數學上已窮盡所有排列，型態C原本抄同一種寫法永遠執行不到。用TXO自己公式拉62天真實歷史資料驗證後移除，不是猜測。
+
+### 🆕 3. JJ鬼爪V4.1指標上線（戰情室左側HUD卡片，標示未對照TradingView驗證）
+- 逐段對照Pine Script移植到Cloudflare Worker，跟既有ADX Pro V3 Worker合併成同一份`worker.js`（`indicator=`參數路由，不用每個指標分開部署）。已接進戰情室「動能鳥指標即時戰情」死卡片並實測正確。
+
+### 🆕 4. 選股雷達「投信認養/籌碼偏多」真數據化
+- 新增全市場滾動10日三大法人買賣超歷史，取代永遠false的假功能。1423檔裡52檔投信認養、479檔籌碼偏多。
+
+### 🔴 5. 主儀表板與戰情室即時報價修復
+- 主儀表板：本機富邦網關fetch無逾時保護，在部署版(https)因瀏覽器安全機制卡住導致雲端備援失效，已修復。
+- 戰情室：發現`initFubonLivePriceStream()`被重複宣告導致一半是死碼，且無備援機制，已清理並補上期交所MIS備援。
+
+詳細根因、驗證方式與完整檔案異動請見 [HISTORY.md](HISTORY.md) v64.0 條目。
 
 ---
 
