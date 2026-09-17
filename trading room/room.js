@@ -2957,61 +2957,15 @@ function clearVrvpCanvas() {
 /**
  * 8. Fubon Neo API & Live Gateway WebSocket/HTTP Live Stream
  * Connects to http://localhost:8000/api/live_price (live_price_server.py)
+ *
+ * 2026-09-17: this used to be a SECOND definition of initFubonLivePriceStream() (JS silently
+ * lets the later one in source order win when a function is declared twice at the same scope)
+ * — the one that actually ran was the different implementation further down this file (polling
+ * /api/live_tick, updating top-val-... / left-main-price). This copy polled a DIFFERENT endpoint
+ * (/api/live_price) into DIFFERENT elements (hud-txf-price/hud-txf-change) that don't even
+ * exist in room.html, so it was dead in two ways at once — removed rather than kept as an
+ * unreachable duplicate.
  */
-let liveStreamTimer = null;
-let lastFubonPrice = null;
-
-function initFubonLivePriceStream() {
-  console.log('⚡ Initializing Fubon Neo API & Live Price Gateway Stream...');
-
-  async function fetchLiveTick() {
-    try {
-      const res = await fetch('http://localhost:8000/api/live_price', { cache: 'no-store' });
-      if (!res.ok) return;
-      const data = await res.json();
-      
-      if (data && data.price) {
-        updateLivePriceUI(data);
-      }
-    } catch (e) {
-      // Gateway server not started; fallback cleanly
-    }
-  }
-
-  // Poll gateway every 1200ms
-  if (liveStreamTimer) clearInterval(liveStreamTimer);
-  liveStreamTimer = setInterval(fetchLiveTick, 1200);
-  fetchLiveTick();
-}
-
-function updateLivePriceUI(tick) {
-  const priceEl = document.getElementById('hud-txf-price');
-  const changeEl = document.getElementById('hud-txf-change');
-  if (!priceEl || !tick.price) return;
-
-  const price = tick.price;
-  const change = tick.change || 0;
-  const pct = tick.pct || 0;
-
-  priceEl.textContent = price.toLocaleString();
-  
-  const sign = change >= 0 ? '+' : '';
-  const col = change >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-  
-  if (changeEl) {
-    changeEl.style.color = col;
-    changeEl.textContent = `${sign}${change} (${sign}${pct.toFixed(2)}%)`;
-  }
-
-  // Live Flash Effect on Price change
-  if (lastFubonPrice !== null && lastFubonPrice !== price) {
-    priceEl.style.textShadow = change >= 0 ? '0 0 12px rgba(255, 71, 87, 0.8)' : '0 0 12px rgba(46, 213, 115, 0.8)';
-    setTimeout(() => {
-      priceEl.style.textShadow = 'none';
-    }, 400);
-  }
-  lastFubonPrice = price;
-}
 
 /**
  * 9. Global Symbol Search & Autocomplete Engine (Ctrl+K & Enter Key Support)
@@ -3841,15 +3795,55 @@ function initGlobalSmartTooltips() {
  */
 let lastTxfPrice = null;
 
+// 2026-09-17: an https page (the deployed GitHub Pages site) fetching http://localhost is
+// blocked by Chrome's Private Network Access policy (confirmed via browser testing on the main
+// dashboard's equivalent code) — that fetch can sit pending rather than reject, which without a
+// timeout would silently starve this tier forever. Falls back to TAIFEX's public MIS endpoint
+// (same one the main dashboard's app.js already uses) for TAIEX/TXF when the local Fubon
+// gateway is unreachable, instead of permanently showing "盤後休市" even during live trading.
+async function fetchFubonOrPublicFallback() {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 1000);
+    const resp = await fetch('http://localhost:8000/api/live_tick', { signal: controller.signal });
+    clearTimeout(timeout);
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data) return { data, source: 'fubon' };
+    }
+  } catch (e) {
+    // Local gateway not running, blocked, or timed out — fall through to the public fallback.
+  }
+
+  try {
+    const nowH = new Date().getHours();
+    const isNightSession = (nowH >= 15 || nowH < 8);
+    const misRes = await fetch('https://mis.taifex.com.tw/futures/api/getQuoteList', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ MarketType: isNightSession ? '1' : '0', SymbolType: 'F' })
+    });
+    if (misRes.ok) {
+      const misData = await misRes.json();
+      const quoteList = (misData.RtData && misData.RtData.QuoteList) ? misData.RtData.QuoteList : [];
+      const txItem = quoteList.find(q => q.SymbolID && q.SymbolID.startsWith('TX') && q.CLastPrice && parseFloat(q.CLastPrice) > 0);
+      if (txItem) {
+        const price = parseFloat(txItem.CLastPrice);
+        const change = parseFloat(txItem.NChangeVal || 0);
+        const pct = parseFloat(txItem.NChangeRate || 0);
+        return { data: { txf: { price, change, pct } }, source: 'mis' };
+      }
+    }
+  } catch (e) {
+    // Public fallback also unreachable — genuinely nothing to show.
+  }
+  return { data: null, source: null };
+}
+
 function initFubonLivePriceStream() {
   // Check if trading hours & real server active
   setInterval(async () => {
     try {
-      const resp = await fetch('http://localhost:8000/api/live_tick').catch(() => null);
-      let data = null;
-      if (resp && resp.ok) {
-        data = await resp.json();
-      }
+      const { data, source } = await fetchFubonOrPublicFallback();
 
       const statusTag = document.getElementById('fubon-status-tag');
 
@@ -3919,9 +3913,15 @@ function initFubonLivePriceStream() {
       }
 
       if (statusTag) {
-        statusTag.innerHTML = '🟢 富邦 Neo API (Live)';
-        statusTag.style.borderColor = '#00e676';
-        statusTag.style.color = '#00e676';
+        if (source === 'fubon') {
+          statusTag.innerHTML = '🟢 富邦 Neo API (Live)';
+          statusTag.style.borderColor = '#00e676';
+          statusTag.style.color = '#00e676';
+        } else {
+          statusTag.innerHTML = '🌐 期交所 MIS (備援行情)';
+          statusTag.style.borderColor = 'var(--primary-accent)';
+          statusTag.style.color = 'var(--primary-accent)';
+        }
       }
 
     } catch (e) {
@@ -3931,7 +3931,13 @@ function initFubonLivePriceStream() {
 }
 
 /**
- * 10. Overseas Live Tick Stream (CL Crude Oil, US10Y Yield, DXY Dollar Index)
+ * 10. Overseas contract tab tooltip (CL Crude Oil, US10Y Yield, DXY Dollar Index)
+ *
+ * ⚠️ 2026-09-17: 名稱跟原本的用途不符——這支函式從建立以來就只有設定滑鼠提示文字裡的結算價，
+ * 完全沒有真的抓取這三個標的的即時報價（沒有fetch、沒有setInterval）。CL/US10Y/DXY 目前
+ * 唯一的真實數據來源是 gexData.macro_events_radar.macro_risk_dashboard（後端 fetch_and_
+ * calc_vision.py 抓的，每次頁面重整才會更新一次），還沒有前端即時輪詢的版本。保留原本行為
+ * （只設定提示文字），沒有假裝加上即時性；真正做即時輪詢是後續待辦，不在這次範圍內。
  */
 function initOverseasLiveTickStream() {
   const clTab = document.querySelector('.contract-tab[data-contract="CL"]');
