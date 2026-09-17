@@ -1,10 +1,23 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.0)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.1)
 
-**當前版本**：`v64.0` (2026-09-17 「隔日重複值」bug家族根除 ✕ Max Pain型態C死碼移除 ✕ JJ鬼爪V4.1上線 ✕ 選股雷達真數據化 ✕ 戰情室即時報價死碼修復)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.0)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.0)
+**當前版本**：`v64.1` (2026-09-17 選股雷達 JJ_MACD/JJ_CCI 真指標上線)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.1)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.1)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
+
+---
+
+## 🎯 v64.1 核心更新亮點（選股雷達 JJ_MACD/JJ_CCI 真指標上線）
+
+### 🆕 選股雷達 `macd_state` 從heuristic換成使用者自己的真實Pine Script
+- `JJ_MACD_Sub.pine`（雙層MACD：主軸12/26/9決定柱高、副軸3/15/5決定顏色，可在主MACD還在水下時提早翻紅預警）與`JJ_CCI_Sub.pine`（CCI(20)+±100/±200穿越訊號）真實移植進`scripts/build_screener_cache.py`，取代原本均線+漲跌幅湊出來的簡化heuristic。
+- EMA/CCI數學已對照獨立Python `ta` 函式庫用真實2330近77日資料逐位驗證吻合，才接進生產程式碼；OHLCV回看窗口25→60個交易日補足EMA收斂（60根時種子殘留權重~1%，25根時高達~15%）。
+- 新增`cci_value`／`cci_signal`／`macd_hist_growing`三個全新欄位，`macd_state`既有4個字串值不變（不影響`room.js`既有篩選器）。
+- 順手修好兩個「有UI沒接真資料」死碼：戰情室`sc-macd-grow`死checkbox、選股雷達結果表「MACD/量能」欄位原本只用漲跌幅方向湊假文字。
+- 全市場真實分佈：死叉觀望940／MACD水下金叉241／零軸上金叉195／柱狀體翻紅5（1381檔有效樣本，2026-09-17）。
+
+詳細驗證方式與完整檔案異動請見 [HISTORY.md](HISTORY.md) v64.1 條目。
 
 ---
 

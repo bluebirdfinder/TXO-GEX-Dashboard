@@ -1,5 +1,5 @@
 /**
- * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v64.0
+ * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v64.1
  * True Multi-Pane Trading Terminal with 10 Timeframes & 4 Sub-Panes
  *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + SAR + Supertrend
  *   - Sub-Chart 1 (14%): 成交量 Volume + 5MA & 10MA 雙均量線
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initTradingRoom() {
-  console.log('🦅 Initializing Multi-Pane Bird Trading Room v64.0...');
+  console.log('🦅 Initializing Multi-Pane Bird Trading Room v64.1...');
   
   // 1. Load Data
   await loadDashboardData();
@@ -2461,7 +2461,7 @@ function initAdvisorFeed() {
         <span class="time">${new Date().toLocaleTimeString()}</span>
       </div>
       <div class="msg-bubble">
-        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v64.0)</h4>
+        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v64.1)</h4>
         <p style="font-size: 0.8rem; line-height: 1.55; margin-bottom: 6px;">
           🔹 <strong>當前空間拓撲</strong>：${topologyLabel}<br>
           ⚡ <strong>GEX 狀態</strong>：台指期 (<strong>${txf}</strong>) 位於 Zero Gamma (<strong>${zg}</strong>) ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。<br>
@@ -3288,15 +3288,17 @@ function runBirdQuantScreener() {
   const fBirdN = document.getElementById('sc-bird-n')?.checked;
   const fMacdFlip = document.getElementById('sc-macd-flip')?.checked;
   const fMacdGold = document.getElementById('sc-macd-gold')?.checked;
+  const fMacdGrow = document.getElementById('sc-macd-grow')?.checked;
   const fGradeS = document.getElementById('sc-grade-s')?.checked;
   const fGradeA = document.getElementById('sc-grade-a')?.checked;
   const fDemark = document.getElementById('sc-demark-turn')?.checked;
   const f5k = document.getElementById('sc-5k-break')?.checked;
+  const fCciExtreme = document.getElementById('sc-cci-extreme')?.checked;
   const fVol = document.getElementById('sc-vol-spike')?.checked;
   const fItAdopt = document.getElementById('sc-it-adopt')?.checked;
   const fChipBull = document.getElementById('sc-chip-bull')?.checked;
 
-  const activeFiltersCount = [fRocketS, fBirdS, fRestartS, fRestartN, fRocketW, fBirdN, fMacdFlip, fMacdGold, fGradeS, fGradeA, fDemark, f5k, fVol, fItAdopt, fChipBull].filter(Boolean).length;
+  const activeFiltersCount = [fRocketS, fBirdS, fRestartS, fRestartN, fRocketW, fBirdN, fMacdFlip, fMacdGold, fMacdGrow, fGradeS, fGradeA, fDemark, f5k, fCciExtreme, fVol, fItAdopt, fChipBull].filter(Boolean).length;
 
   setTimeout(() => {
     const results = [];
@@ -3324,6 +3326,12 @@ function runBirdQuantScreener() {
       const hasBirdN = sigList.includes('🥚 帶殼鳥');
       const isMacdFlip = real.macd_state === 'MACD 柱狀體翻紅';
       const isMacdGold = real.macd_state === '零軸上金叉' || real.macd_state === 'MACD 水下金叉';
+      // Real JJ_MACD/JJ_CCI dual-layer signals (scripts/build_screener_cache.py's
+      // compute_jj_macd_and_cci(), ported from the user's own JJ_MACD_Sub.pine /
+      // JJ_CCI_Sub.pine) — isMacdGrow/hasCciExtreme replace two checkboxes that existed in
+      // this filter panel but were never wired to any real field before.
+      const isMacdGrow = !!real.macd_hist_growing;
+      const hasCciExtreme = !!real.cci_signal;
       const isGradeS = real.grade === 'S';
       const isGradeA = real.grade === 'A';
       const hasDemark = real.demark_state && real.demark_state !== '無';
@@ -3345,10 +3353,12 @@ function runBirdQuantScreener() {
       if (fBirdN && hasBirdN) score++;
       if (fMacdFlip && isMacdFlip) score++;
       if (fMacdGold && isMacdGold) score++;
+      if (fMacdGrow && isMacdGrow) score++;
       if (fGradeS && isGradeS) score++;
       if (fGradeA && isGradeA) score++;
       if (fDemark && hasDemark) score++;
       if (f5k && has5k) score++;
+      if (fCciExtreme && hasCciExtreme) score++;
       if (fVol && hasVol) score++;
       if (fItAdopt && hasItAdopt) score++;
       if (fChipBull && hasChipBull) score++;
@@ -3368,7 +3378,9 @@ function runBirdQuantScreener() {
           changePct,
           signals: sigs.join(' '),
           grade: isGradeS ? 'S 強噴' : (isGradeA ? 'A 強勢' : (real.grade ? `${real.grade} 級` : 'B 多頭')),
-          score
+          score,
+          macdState: real.macd_state,
+          cciSignal: real.cci_signal
         });
       }
     });
@@ -3387,7 +3399,25 @@ function runBirdQuantScreener() {
       const sign = r.changePct >= 0 ? '+' : '';
       const col = r.changePct >= 0 ? 'var(--call-color)' : 'var(--put-color)';
       const gradeClass = r.grade.includes('S') ? 'strength-badge-s' : 'signal-badge-chip';
-      
+
+      // Real JJ_MACD/JJ_CCI state for this cell — previously this column showed a fake
+      // "🟢 紅柱擴張" / "🟡 震盪整理" derived purely from today's price direction, unrelated
+      // to any MACD/CCI data at all. cci_signal (rarer, more actionable) takes priority over
+      // the MACD color state when both are present.
+      let macdCell, macdColor;
+      if (r.cciSignal) {
+        macdCell = r.cciSignal;
+        macdColor = r.cciSignal.startsWith('🔴') ? '#ff5252' : '#4fc3f7';
+      } else if (r.macdState === '零軸上金叉') {
+        macdCell = '🔴 零軸上金叉'; macdColor = '#ff5252';
+      } else if (r.macdState === 'MACD 水下金叉') {
+        macdCell = '🔵 水下金叉(領先)'; macdColor = '#4fc3f7';
+      } else if (r.macdState === 'MACD 柱狀體翻紅') {
+        macdCell = '🟠 柱狀翻紅'; macdColor = '#ffb74d';
+      } else {
+        macdCell = '⚪ 死叉觀望'; macdColor = '#888';
+      }
+
       return `
         <tr>
           <td><strong style="color: var(--primary-accent);">${r.item.symbol}</strong></td>
@@ -3397,7 +3427,7 @@ function runBirdQuantScreener() {
           <td style="color: ${col}; font-weight: 700;">${sign}${r.changePct.toFixed(2)}%</td>
           <td><span class="signal-badge-chip">${r.signals}</span></td>
           <td><span class="${gradeClass}">${r.grade}</span></td>
-          <td style="font-size: 0.72rem; color: #00e676;">${r.changePct >= 0 ? '🟢 紅柱擴張' : '🟡 震盪整理'}</td>
+          <td style="font-size: 0.72rem; color: ${macdColor};">${macdCell}</td>
           <td>
             <button class="btn-load-screener-stock" data-sym="${r.item.symbol}">載入圖表</button>
           </td>

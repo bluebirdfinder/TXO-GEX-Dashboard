@@ -3,16 +3,21 @@ build_screener_cache.py
 ======================
 Generates `data/screener_cache.json` for the Multi-Factor Quant Screener (選股雷達).
 Processes all universe symbols using real daily quotes from `data/tw_quotes_latest.json`
-AND real ~30-trading-day OHLCV history fetched per symbol from TWSE/TPEx official daily
+AND real ~60-trading-day OHLCV history fetched per symbol from TWSE/TPEx official daily
 history endpoints (data/screener_ohlcv_cache.json caches it per calendar day so re-runs
-the same day are instant). Computes Momentum Bird signals, MACD states, 5K trends, DeMark
-indicators, and stock grades from that real history.
+the same day are instant). Computes Momentum Bird signals, real dual-layer MACD (JJ_MACD)
+and CCI (JJ_CCI) states, 5K trends, DeMark indicators, and stock grades from that real
+history.
 
-Note: the MACD/5K/DeMark states below are simplified heuristic proxies (moving-average and
-recent-close comparisons), not a literal reimplementation of the true MACD/TD-Sequential
-formulas — that full indicator-accuracy pass is tracked separately in
-SELF_AUDIT_FINDINGS_TODO.md ("指標源碼逐一校正") and deliberately out of scope here. This
-file's job was specifically to stop feeding those heuristics random synthetic price history.
+`macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal` (see compute_jj_macd_and_cci())
+are a line-for-line port of the user's own JJ_MACD_Sub.pine and JJ_CCI_Sub.pine — real
+EMA/CCI math, not an approximation — for symbols with >=35 real bars (2026-09-17). The
+EMA/CCI formulas were cross-checked against the independently-authored Python `ta` library
+on real TWSE 2330 data before being wired in (exact match to several decimals on MACD line/
+signal/histogram and CCI for the last 8 trading days). The 🚀/🐦/5K/DeMark states below are
+still simplified heuristic proxies (moving-average and recent-close comparisons), not a
+literal reimplementation of those indicators' true formulas — tracked separately in
+SELF_AUDIT_FINDINGS_TODO.md ("指標源碼逐一校正") and out of scope for this pass.
 """
 
 import json
@@ -111,12 +116,17 @@ def fetch_tpex_stock_month(symbol, year, month):
         return []
 
 
-def fetch_real_ohlcv_history(symbol, num_bars=30):
+def fetch_real_ohlcv_history(symbol, num_bars=60):
     """
     Real recent daily OHLCV for one symbol, newest last. Tries TWSE first (current month,
-    walking back up to 3 months to gather enough bars), then TPEx the same way. Returns
+    walking back up to 6 months to gather enough bars), then TPEx the same way. Returns
     None (not a fabricated series) if neither official source has data for this symbol —
     e.g. a newly listed stock, an index/futures code that isn't an equity, or a delisted one.
+
+    num_bars defaults to 60 (not 30): the real dual-layer MACD (see compute_jj_macd_and_cci())
+    needs enough warm-up for its EMA26 to converge — at 30 bars the seed value (the first
+    close in the window) still carries ~15% weight into today's EMA, at 60 bars that's down
+    to ~1%, close enough to what a chart with its full history behind it would show.
 
     NOTE: this per-symbol path is now only the fallback for TPEx(OTC)-only stocks — see
     fetch_twse_all_stocks_day()/build_twse_bulk_history() below for the real fix to TWSE
@@ -126,7 +136,7 @@ def fetch_real_ohlcv_history(symbol, num_bars=30):
     for fetch_month in (fetch_twse_stock_month, fetch_tpex_stock_month):
         collected = []
         y, m = today.year, today.month
-        for _ in range(4):  # this month + up to 3 back, enough for ~30 trading days incl. short months
+        for _ in range(6):  # this month + up to 5 back, enough for ~60 trading days incl. short/holiday months
             collected = fetch_month(symbol, y, m) + collected
             if len(collected) >= num_bars:
                 break
@@ -175,7 +185,7 @@ def fetch_twse_all_stocks_day(date_str):
     return result
 
 
-def build_twse_bulk_history(num_trading_days=25, max_calendar_days_back=45):
+def build_twse_bulk_history(num_trading_days=60, max_calendar_days_back=100):
     """
     Real ~num_trading_days of OHLCV for every TWSE-listed stock, built from
     fetch_twse_all_stocks_day() walking backward one calendar day at a time (skipping
@@ -318,6 +328,103 @@ def compute_inst_flags(symbol, inst_history):
     return it_consec_days, is_it_adopted, chip_bull
 
 
+def _ema_series(values, length):
+    """Standard exponential moving average, seeded with the first value — matches Pine
+    Script's ta.ema() (and the independently-authored `ta` Python library, cross-checked
+    against real TWSE data before this was wired in)."""
+    alpha = 2.0 / (length + 1)
+    out = [values[0]]
+    for v in values[1:]:
+        out.append(alpha * v + (1 - alpha) * out[-1])
+    return out
+
+
+def _sma_series(values, length):
+    out = []
+    for i in range(len(values)):
+        window = values[max(0, i + 1 - length):i + 1]
+        out.append(sum(window) / len(window))
+    return out
+
+
+def _mean_dev_series(values, length):
+    """Rolling mean ABSOLUTE deviation — matches Pine Script's ta.dev(), which despite the
+    similar name is not the standard deviation. CCI is defined using this, not stdev."""
+    out = []
+    for i in range(len(values)):
+        window = values[max(0, i + 1 - length):i + 1]
+        m = sum(window) / len(window)
+        out.append(sum(abs(x - m) for x in window) / len(window))
+    return out
+
+
+def compute_jj_macd_and_cci(bars):
+    """
+    Real dual-layer MACD + CCI, ported line-for-line from the user's own JJ_MACD_Sub.pine and
+    JJ_CCI_Sub.pine (C:\\Users\\mingi\\OneDrive\\文件\\TradingView 指標\\我寫的指標\\JJ 指標復刻優化\\).
+
+    JJ_MACD's whole point: a standard main MACD(12,26,9) sets the histogram's HEIGHT, but a
+    faster sub MACD(3,15,5) sets its COLOR — the sub layer can flip bullish (macd_sub > 0)
+    while the main histogram is still underwater, giving an earlier heads-up than a plain
+    single-layer MACD would ("水下出現紅色柱體" in the original Pine comments). Requires
+    >=35 bars for both EMA26 (main) and EMA15 (sub) to have meaningfully converged.
+
+    JJ_CCI is CCI(20) on hlc3 using Pine's ta.dev() (mean absolute deviation, not stdev), with
+    buy/sell markers on crossing ±100/±200 — collapsed here to a single most-extreme label
+    since this feeds one JSON field rather than four independent chart markers.
+
+    Returns (macd_state, hist_growing, cci_value, cci_signal).
+    """
+    closes = [b["close"] for b in bars]
+    highs = [b["high"] for b in bars]
+    lows = [b["low"] for b in bars]
+    hlc3 = [(h + l + c) / 3.0 for h, l, c in zip(highs, lows, closes)]
+
+    ema12, ema26 = _ema_series(closes, 12), _ema_series(closes, 26)
+    macd_main = [a - b for a, b in zip(ema12, ema26)]
+    signal_main = _ema_series(macd_main, 9)
+    hist_main = [a - b for a, b in zip(macd_main, signal_main)]
+
+    ema3, ema15 = _ema_series(closes, 3), _ema_series(closes, 15)
+    macd_sub = [a - b for a, b in zip(ema3, ema15)]
+    signal_sub = _ema_series(macd_sub, 5)
+    hist_sub = [a - b for a, b in zip(macd_sub, signal_sub)]
+
+    is_up = macd_sub[-1] > 0
+    was_up = macd_sub[-2] > 0
+    momentum_up = hist_sub[-1] > hist_sub[-2]
+
+    if is_up and momentum_up:
+        # JJ's color_up_pos (紅) — sub-MACD bullish AND accelerating: genuine confirmed
+        # bullish momentum. "零軸上"/"水下" distinguishes by the MAIN histogram's own sign,
+        # exactly like the original heuristic this replaces.
+        macd_state = "零軸上金叉" if hist_main[-1] > 0 else "MACD 水下金叉"
+    elif is_up and not was_up:
+        # Sub-MACD just crossed bullish this bar — JJ's signature early flip, before the
+        # main MACD histogram necessarily confirms it.
+        macd_state = "MACD 柱狀體翻紅"
+    else:
+        macd_state = "死叉觀望"
+
+    hist_growing = hist_main[-1] > hist_main[-2] and hist_main[-1] > 0
+
+    cci_sma = _sma_series(hlc3, 20)
+    cci_dev = _mean_dev_series(hlc3, 20)
+    cci = [(h - s) / (0.015 * d) if d > 0 else 0.0 for h, s, d in zip(hlc3, cci_sma, cci_dev)]
+
+    cci_signal = None
+    if cci[-2] <= -200 < cci[-1]:
+        cci_signal = "🔴 急殺超賣反彈(穿越-200)"
+    elif cci[-2] <= 200 < cci[-1]:
+        cci_signal = "🟢 極端過熱(穿越+200)"
+    elif cci[-2] <= -100 < cci[-1]:
+        cci_signal = "🔴 轉強買點(穿越-100)"
+    elif cci[-2] <= 100 < cci[-1]:
+        cci_signal = "🟢 過熱賣點(穿越+100)"
+
+    return macd_state, hist_growing, round(cci[-1], 1), cci_signal
+
+
 def load_ohlcv_cache():
     try:
         with open(OHLCV_CACHE_FILE, "r", encoding="utf-8") as f:
@@ -366,7 +473,8 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
         # it_adopted/chip_bull are independent of price history, so they still carry through.
         return {
             **base, "bias_pct": None, "vol_ratio": None, "grade": None, "signals": [],
-            "macd_state": None, "k5_state": None, "demark_state": None,
+            "macd_state": None, "macd_hist_growing": False, "cci_value": None,
+            "cci_signal": None, "k5_state": None, "demark_state": None,
             "volume_status": None, "score": 0, "history_unavailable": True
         }
 
@@ -399,12 +507,19 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
     if abs(bias_pct) <= 1.5 and vol_ratio <= 0.8:
         signals.append("🥚 帶殼鳥")
 
-    if close > ma20 and pct_change > 0:
-        macd_state = "零軸上金叉" if bias_pct > 3.0 else "MACD 水下金叉"
-    elif pct_change > 0:
-        macd_state = "MACD 柱狀體翻紅"
+    if len(closes) >= 35:
+        macd_state, macd_hist_growing, cci_value, cci_signal = compute_jj_macd_and_cci(bars)
     else:
-        macd_state = "死叉觀望"
+        # Too little real history for a converged EMA26/EMA15 (new listing, thin history) —
+        # keep the old price/MA proxy for these edge cases rather than serving an
+        # unconverged, unreliable "real" number under the same field name.
+        if close > ma20 and pct_change > 0:
+            macd_state = "零軸上金叉" if bias_pct > 3.0 else "MACD 水下金叉"
+        elif pct_change > 0:
+            macd_state = "MACD 柱狀體翻紅"
+        else:
+            macd_state = "死叉觀望"
+        macd_hist_growing, cci_value, cci_signal = False, None, None
 
     if len(closes) >= 5 and close >= max(closes[-5:]):
         k5_state = "5K 創高突破"
@@ -437,6 +552,8 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
     if "🛸 動能飛碟" in signals: score += 25
     if "⚡ 動能閃電" in signals: score += 15
     if macd_state in ["零軸上金叉", "MACD 水下金叉"]: score += 20
+    if macd_hist_growing: score += 10
+    if cci_signal and cci_signal.startswith("🔴"): score += 10
     if k5_state in ["5K 創高突破", "5K 多頭發散"]: score += 15
     if pct_change > 0: score += int(pct_change * 5)
 
@@ -451,7 +568,8 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
 
     return {
         **base, "bias_pct": bias_pct, "vol_ratio": vol_ratio, "grade": grade,
-        "signals": signals, "macd_state": macd_state, "k5_state": k5_state,
+        "signals": signals, "macd_state": macd_state, "macd_hist_growing": macd_hist_growing,
+        "cci_value": cci_value, "cci_signal": cci_signal, "k5_state": k5_state,
         "demark_state": demark_state, "volume_status": vol_status, "score": score,
         "history_unavailable": False
     }

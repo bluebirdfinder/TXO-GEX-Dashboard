@@ -1,16 +1,17 @@
-# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.0)
+# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.1)
 
 本手冊記錄專案現狀、核心功能清單、數據引擎 Self-Audit 熱備援架構、開發 SOP 與個人筆電續接步驟。
 
 ---
 
-## 📌 一、v64.0 完整功能清單與數據引擎架構
+## 📌 一、v64.1 完整功能清單與數據引擎架構
 
 ### 核心分析與視覺化模組
 
 | # | 功能 | 說明 |
 |---|---|---|
-| 0 | **🚨🚨 4類法人籌碼資料源「隔日重複值」bug家族根除 ✕ JJ鬼爪V4.1上線 ✕ 選股雷達真數據化 (v64.0)** | 夜盤三大法人/期貨大戶/選擇權大戶/現貨與選擇權法人金額共4類TAIFEX/TWSE來源，都在官方報表「隔天才更新」的空窗期被誤判成當天真實資料寫進永久歷史（2類使用者截圖抓到、1類回補過程意外發現「正在發生中」）；已幫全部相關fetch函式加上明確`target_date`日期查詢，查不到就誠實回報未發布。另外移除Max Pain型態C死碼（62天真實回測驗證，比照露米籌碼監控機器人稽核發現）；JJ鬼爪V4.1指標移植上線（跟ADX Pro V3合併成單一Cloudflare Worker，`indicator=`參數路由）；選股雷達投信認養/籌碼偏多真數據化（全市場滾動10日三大法人歷史）；修復主儀表板與戰情室即時報價死碼/無備援問題。完整根因與驗證方式見 [HISTORY.md](HISTORY.md) v64.0 條目 |
+| 0 | **🆕 選股雷達 JJ_MACD/JJ_CCI 真指標上線 (v64.1)** | 使用者自己另一份私有Pine Script（`JJ_MACD_Sub.pine`／`JJ_CCI_Sub.pine`）真實移植進`scripts/build_screener_cache.py`，取代`macd_state`欄位原本均線+漲跌幅湊出來的heuristic；EMA/CCI數學已對照獨立Python `ta` 函式庫用真實2330資料逐位驗證吻合才接上；OHLCV回看窗口25→60交易日補足EMA收斂；新增`cci_value`/`cci_signal`/`macd_hist_growing`欄位；順手修好戰情室`sc-macd-grow`死checkbox與選股雷達結果表「MACD/量能」欄位原本沒接真資料兩個既有bug。完整驗證方式見 [HISTORY.md](HISTORY.md) v64.1 條目 |
+| 0.002 | **🚨🚨 4類法人籌碼資料源「隔日重複值」bug家族根除 ✕ JJ鬼爪V4.1上線 ✕ 選股雷達真數據化 (v64.0)** | 夜盤三大法人/期貨大戶/選擇權大戶/現貨與選擇權法人金額共4類TAIFEX/TWSE來源，都在官方報表「隔天才更新」的空窗期被誤判成當天真實資料寫進永久歷史（2類使用者截圖抓到、1類回補過程意外發現「正在發生中」）；已幫全部相關fetch函式加上明確`target_date`日期查詢，查不到就誠實回報未發布。另外移除Max Pain型態C死碼（62天真實回測驗證，比照露米籌碼監控機器人稽核發現）；JJ鬼爪V4.1指標移植上線（跟ADX Pro V3合併成單一Cloudflare Worker，`indicator=`參數路由）；選股雷達投信認養/籌碼偏多真數據化（全市場滾動10日三大法人歷史）；修復主儀表板與戰情室即時報價死碼/無備援問題。完整根因與驗證方式見 [HISTORY.md](HISTORY.md) v64.0 條目 |
 | 0.005 | **🔴🔴 週選結算日歷史回補資料同樣中招，已修正 session_snapshots.json (v63.6)** | v63.5 只驗證並修好「今天」即時計算路徑；用真實 TAIFEX 資料回頭驗證 `backfill_snapshots.py` 的歷史回補路徑，證實 2026-09-09（週三週選結算）與 2026-09-11（週五週選結算）兩天的 DAY/NIGHT 快照，當初都是用同一根因的舊版 `classify_txo_contract_buckets()`（無時間檢查）算出來、選到已結算歸零的當週合約，且 09-11 的錯誤數字目前正顯示在網站「5日歷程」表格上。已直接用修正後邏輯重算這4筆快照的 zero_gamma_level/gex_plus_flip/call_wall_strike/put_wall_strike/max_pain_strike 並回填 `data/session_snapshots.json`，重跑引擎後 `history_10_sessions` 已更新為正確數字 |
 | 0.01 | **🔴🔴 月選結算日「已死合約」誤選重大修正 (v63.5)** | `classify_txo_contract_buckets()` 對6碼月選合約單純用到期日排序取最早一口，完全沒檢查「現在時間 vs 到期日」；TAIFEX 官方 `optDataDown` 報表在結算日當天仍列出剛結算的當月合約（含結算前最終OI），導致函式誤選已結算歸零、對夜盤無避險牽引力的9月合約（202609）而非真正的10月月選（202610）。新增 `now` 參數（預設台北時區當下時間），排除「真實到期日 < 今天」或「到期日=今天且已過13:30結算」的候選合約，同步套用於 w1/w2/fri/mth 四桶；`backfill_snapshots.py` 呼叫端改用該歷史交易日13:30作為 `now` 基準，避免歷史回補把所有過去交易日誤判成「已過期」。驗證：put_wall_strike 45500→45000（-500點）、zero_gamma_level 45765.6→45158.5（-607點） |
 | 0.02 | **🆕 選擇權大額交易人淨部位串接 ✕ Call/Put Wall 交叉印證徽章 (v63.4)** | 新增 `fetch_official_taifex_large_trader_options()` 串接 TAIFEX「選擇權大額交易人未沖銷部位結構表」(`largeTraderOptQry`)，取得 Call/Put 各自前五大/前十大淨部位（週約/所有契約），欄位結構經真實 fetch 逐碼核對並套用 v63.3 修好的「買方－賣方」正確公式；前端新增獨立表格「1.5 選擇權大額交易人淨部位 5 日歷程」（比照 `has_snapshot`/`is_live` 防呆）；Call Wall/Put Wall 卡片新增大額交易人交叉印證徽章（防守中／轉買方避險／⚪ 無即時數據） |
