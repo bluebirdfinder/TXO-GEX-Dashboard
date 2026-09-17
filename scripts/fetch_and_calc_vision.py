@@ -266,14 +266,27 @@ def fetch_twse_realtime_indices():
     }
 
 
-def fetch_twse_institutional_stock_trading():
-    """Fetches TWSE BFI82U 三大法人現貨買賣超金額 (億 TWD)."""
-    url = "https://www.twse.com.tw/rwd/zh/fund/BFI82U?response=json"
+def fetch_twse_institutional_stock_trading(target_date=None):
+    """
+    Fetches TWSE BFI82U 三大法人現貨買賣超金額 (億 TWD). `target_date` ("YYYYMMDD") requests
+    that specific historical date via BFI82U's own `dayDate` param instead of "today"; the
+    response echoes back the confirmed date so a mismatch (not-yet-published) is detectable,
+    though in practice a bad date here has simply come back empty in testing.
+    """
+    url = f"https://www.twse.com.tw/rwd/zh/fund/BFI82U?dayDate={target_date}&response=json" if target_date \
+        else "https://www.twse.com.tw/rwd/zh/fund/BFI82U?response=json"
     try:
         req = urllib.request.Request(url, headers=HEADERS)
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
             res = json.loads(resp.read().decode('utf-8'))
             rows = res.get('data', [])
+            # A not-yet-published date still returns HTTP 200 with stat != 'OK' and/or no rows —
+            # this used to fall through the loop untouched and return an all-zero "is_live: True"
+            # result (indistinguishable from a genuinely flat trading day). Requesting a specific
+            # target_date and getting no real rows back means "not available for that date", not
+            # "zero net buying" — report that honestly to the caller instead.
+            if target_date and (res.get('stat') != 'OK' or not rows):
+                return None
             foreign_net, trust_net, dealer_net, total_net = 0.0, 0.0, 0.0, 0.0
             for r in rows:
                 if len(r) < 4:
@@ -1674,13 +1687,66 @@ def build_real_option_chain(day_data, buckets):
 
 OPT_MATRIX_SNAPSHOT_KEY = "OPT_MATRIX_LAST_REAL"
 
-def fetch_official_taifex_options_matrix():
+def fetch_official_taifex_options_matrix(target_date=None):
     """
     Parses TAIFEX callsAndPutsDate for TXO Options Institutional Trading (Call & Put Net Amounts and Net Volumes).
     On total fetch/parse failure, falls back to the last successfully-fetched real result
     (persisted in data/institutional_snapshots.json) instead of a hardcoded literal that would
     stay frozen forever regardless of how stale it gets.
+
+    `target_date` ("YYYY/MM/DD") requests that specific historical date. Confirmed 2026-09-17:
+    unlike futContractsDate, this page needs a real POST with the full hidden-field set (a bare
+    GET with just queryDate silently returns the unrelated default page) — found by reading the
+    page's own form fields (queryType/goDay/doQuery/dateaddcnt/commodityId all present, but
+    empty commodityId still returns the aggregate TXO row first, same shortcut as the live path
+    below). A historical call never touches the "current" snapshot cache and returns None on
+    failure rather than borrowing today's cache.
     """
+    if target_date:
+        opt_inst = None
+        try:
+            body = f"queryDate={target_date}&commodityId=&queryType=&goDay=&doQuery=&dateaddcnt=".encode()
+            req = urllib.request.Request(
+                "https://www.taifex.com.tw/cht/3/callsAndPutsDate", data=body,
+                headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded"}
+            )
+            with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
+                html = resp.read().decode('big5', errors='ignore')
+            soup = BeautifulSoup(html, 'html.parser')
+            rows = []
+            for t in soup.find_all('table'):
+                for r in t.find_all('tr'):
+                    cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
+                    if cols:
+                        rows.append(cols)
+            for idx, r in enumerate(rows):
+                if len(r) >= 2 and ('1' in r[0] or '臺指選擇權' in r[1]):
+                    def parse_amt(col_val):
+                        try: return round(float(col_val.replace(',', '')) / 1e5, 2)
+                        except: return 0.0
+                    def parse_vol(col_val):
+                        try: return int(col_val.replace(',', ''))
+                        except: return 0
+                    if idx + 5 < len(rows):
+                        return {
+                            'dealer': {
+                                'call_net_amt': parse_amt(rows[idx][-1]), 'call_net_vol': parse_vol(rows[idx][-2]),
+                                'put_net_amt': parse_amt(rows[idx + 3][-1]), 'put_net_vol': parse_vol(rows[idx + 3][-2])
+                            },
+                            'trust': {
+                                'call_net_amt': parse_amt(rows[idx + 1][-1]), 'call_net_vol': parse_vol(rows[idx + 1][-2]),
+                                'put_net_amt': parse_amt(rows[idx + 4][-1]), 'put_net_vol': parse_vol(rows[idx + 4][-2])
+                            },
+                            'foreign': {
+                                'call_net_amt': parse_amt(rows[idx + 2][-1]), 'call_net_vol': parse_vol(rows[idx + 2][-2]),
+                                'put_net_amt': parse_amt(rows[idx + 5][-1]), 'put_net_vol': parse_vol(rows[idx + 5][-2])
+                            },
+                            'is_live': True
+                        }
+        except Exception as e:
+            print(f"[Warning] Failed to fetch TAIFEX Options Trading ({target_date}): {e}")
+        return None
+
     opt_inst = None
     try:
         url_opt = "https://www.taifex.com.tw/cht/3/callsAndPutsDate"
@@ -1741,17 +1807,26 @@ def fetch_official_taifex_options_matrix():
 
 LARGE_TRADER_SNAPSHOT_KEY = "LARGE_TRADER_LAST_REAL"
 
-def fetch_official_taifex_large_trader():
+def fetch_official_taifex_large_trader(target_date=None):
     """
     Parses TAIFEX largeTraderFutQry for Top 5 / Top 10 Large Trader and Speculator Net OI
     across Near Month, Far Month, and Total (All Months). On total fetch/parse failure, falls
     back to the last successfully-fetched real result instead of a hardcoded literal that
     would stay frozen forever.
+
+    `target_date` ("YYYY/MM/DD") requests that specific historical date via POST
+    queryDate=<date>&contractId=all — same mechanism confirmed working for the sibling
+    largeTraderOptQry endpoint (2026-09-17). A historical call never touches the "current"
+    snapshot cache and returns None on failure rather than borrowing today's cache.
     """
     lt_inst = None
     try:
         url_lt = "https://www.taifex.com.tw/cht/3/largeTraderFutQry"
-        req = urllib.request.Request(url_lt, headers=HEADERS)
+        if target_date:
+            body = f"queryDate={target_date}&contractId=all".encode()
+            req = urllib.request.Request(url_lt, data=body, headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded"})
+        else:
+            req = urllib.request.Request(url_lt, headers=HEADERS)
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
             html = resp.read().decode('big5', errors='ignore')
             soup = BeautifulSoup(html, 'html.parser')
@@ -1823,12 +1898,16 @@ def fetch_official_taifex_large_trader():
                             'top10_spec_net': t_spec10,
                             'is_live': True
                         }
-                        snaps = load_institutional_snapshots()
-                        snaps[LARGE_TRADER_SNAPSHOT_KEY] = lt_inst
-                        save_institutional_snapshots(snaps)
+                        if target_date is None:
+                            snaps = load_institutional_snapshots()
+                            snaps[LARGE_TRADER_SNAPSHOT_KEY] = lt_inst
+                            save_institutional_snapshots(snaps)
                         return lt_inst
     except Exception as e:
-        print(f"[Warning] Failed to fetch TAIFEX Large Trader OI: {e}")
+        print(f"[Warning] Failed to fetch TAIFEX Large Trader OI ({target_date or 'today'}): {e}")
+
+    if target_date is not None:
+        return None
 
     # `is_live: False` here means "borrowed from a prior successful run" — the DAY-session
     # 5-day-history writer must not persist it as today's real snapshot (same fix as the
@@ -1955,14 +2034,20 @@ def fetch_official_taifex_large_trader_options(target_date=None):
 
 FUT_INST_OI_SNAPSHOT_KEY = "FUT_INST_OI_LAST_REAL"
 
-def fetch_official_taifex_futures_institutional_oi():
+def fetch_official_taifex_futures_institutional_oi(target_date=None):
     """
     Parses TAIFEX futContractsDate for TX (大台) Three Major Institutional Net Open Interest
     (Unhedged). On total fetch/parse failure, falls back to the last successfully-fetched real
     result instead of a hardcoded literal that would stay frozen forever.
+
+    `target_date` ("YYYY/MM/DD") requests that specific historical date via this page's own
+    `queryDate` GET param (confirmed 2026-09-17: a plain GET with this param works, no POST/
+    extra fields needed, unlike the largeTrader*Qry pages). A historical call never touches the
+    "current" snapshot cache and returns None on failure rather than borrowing today's cache.
     """
     try:
-        url = "https://www.taifex.com.tw/cht/3/futContractsDate"
+        url = f"https://www.taifex.com.tw/cht/3/futContractsDate?queryDate={target_date}" if target_date \
+            else "https://www.taifex.com.tw/cht/3/futContractsDate"
         req = urllib.request.Request(url, headers=HEADERS)
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
             soup = BeautifulSoup(resp.read().decode('big5', errors='ignore'), 'html.parser')
@@ -1981,13 +2066,17 @@ def fetch_official_taifex_futures_institutional_oi():
                                 'foreign': int(f_row[-2].replace(',', '')),
                                 'is_live': True
                             }
-                            print(f"[OK] Official TAIFEX TX Futures Inst Net OI: Foreign={res['foreign']}, Trust={res['trust']}, Dealer={res['dealer']}")
-                            snaps = load_institutional_snapshots()
-                            snaps[FUT_INST_OI_SNAPSHOT_KEY] = res
-                            save_institutional_snapshots(snaps)
+                            print(f"[OK] Official TAIFEX TX Futures Inst Net OI ({target_date or 'today'}): Foreign={res['foreign']}, Trust={res['trust']}, Dealer={res['dealer']}")
+                            if target_date is None:
+                                snaps = load_institutional_snapshots()
+                                snaps[FUT_INST_OI_SNAPSHOT_KEY] = res
+                                save_institutional_snapshots(snaps)
                             return res
     except Exception as e:
-        print(f"[Warning] Failed to fetch TAIFEX Futures Inst Net OI: {e}")
+        print(f"[Warning] Failed to fetch TAIFEX Futures Inst Net OI ({target_date or 'today'}): {e}")
+
+    if target_date is not None:
+        return None
 
     # `is_live: False` here means "borrowed from a prior successful run" — the DAY-session
     # 5-day-history writer must not persist it as today's real snapshot (same fix as the
@@ -2858,7 +2947,16 @@ def generate_gex_payload():
     otc_price = indices_info["two_price"]
     otc_change = indices_info["two_change"]
     otc_change_pct = indices_info["two_change_pct"]
-    stock_inst = fetch_twse_institutional_stock_trading()
+    # Same explicit-date staleness fix as the largeTrader*Qry/callsAndPutsDate calls below:
+    # BFI82U doesn't refresh to today's figures until sometime after today's session closes, so
+    # requesting "today" by its own exact date (matching the same day-boundary rule t_days_dates
+    # uses) makes "not published yet" honestly come back empty instead of yesterday's real
+    # numbers silently re-served as today's.
+    _stock_inst_is_before_open = (now_dt.hour < 8 or (now_dt.hour == 8 and now_dt.minute < 45))
+    _stock_inst_target_date = (now_dt - datetime.timedelta(days=1)) if _stock_inst_is_before_open else now_dt
+    stock_inst = fetch_twse_institutional_stock_trading(target_date=_stock_inst_target_date.strftime('%Y%m%d'))
+    if stock_inst is None:
+        stock_inst = {'foreign_stock_net': None, 'trust_stock_net': None, 'dealer_stock_net': None, 'total_stock_net': None, 'is_live': False}
     hot_money_data = fetch_5day_exchange_rates()
     night_inst_trading = fetch_taifex_night_institutional_trading()
     retail_data = fetch_official_taifex_retail_sentiment()
@@ -3057,9 +3155,43 @@ def generate_gex_payload():
     t_days = [f"{d.month}/{d.day} {_WEEKDAYS_CN_LOCAL[d.weekday()]}" for d in t_days_dates]
     ref_matrix_dt = datetime.datetime.combine(t_days_dates[-1], datetime.time(12, 0), tzinfo=now_dt.tzinfo)
 
-    opt_inst = fetch_official_taifex_options_matrix()
-    lt_inst = fetch_official_taifex_large_trader()
-    opt_lt_inst = fetch_official_taifex_large_trader_options()
+    # Found 2026-09-17: these three largeTrader*Qry / callsAndPutsDate pages don't refresh to
+    # today's report until sometime after today's session — the SAME unparameterized-default-
+    # page staleness already fixed for fetch_taifex_night_institutional_trading(). Calling with
+    # no date silently accepted whatever page TAIFEX defaulted to right now (still often
+    # yesterday's), which "succeeded" and got persisted as today's real snapshot — that's how
+    # 2026-09-16/2026-09-17's DAY-session large-trader fields ended up byte-identical (the
+    # write_institutional_snapshot() duplicate guard only catches a fully-identical *combined*
+    # record; this aggregates several independent sources, so one stale sub-source didn't make
+    # the whole record match). Requesting today's exact date explicitly makes "not published
+    # yet" come back as None (verified against a live not-yet-published date) instead of a
+    # different day's real numbers — same fix as classify_txo_contract_buckets's redline #6 fix.
+    _today_date_slash = t_days_dates[-1].strftime('%Y/%m/%d')
+
+    def _fresh_or_last_real(target_date, fetch_fn, snapshot_key, empty_shape):
+        result = fetch_fn(target_date=target_date)
+        if result is not None:
+            return result
+        _snaps = load_institutional_snapshots()
+        fallback = _snaps.get(snapshot_key) or dict(empty_shape)
+        fallback['is_live'] = False
+        return fallback
+
+    opt_inst = _fresh_or_last_real(_today_date_slash, fetch_official_taifex_options_matrix, OPT_MATRIX_SNAPSHOT_KEY, {
+        'foreign': {'call_net_amt': None, 'put_net_amt': None, 'call_net_vol': None, 'put_net_vol': None},
+        'trust': {'call_net_amt': None, 'put_net_amt': None, 'call_net_vol': None, 'put_net_vol': None},
+        'dealer': {'call_net_amt': None, 'put_net_amt': None, 'call_net_vol': None, 'put_net_vol': None},
+    })
+    lt_inst = _fresh_or_last_real(_today_date_slash, fetch_official_taifex_large_trader, LARGE_TRADER_SNAPSHOT_KEY, {
+        'near': {'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+        'far': {'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+        'total': {'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+        'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None,
+    })
+    opt_lt_inst = _fresh_or_last_real(_today_date_slash, fetch_official_taifex_large_trader_options, OPT_LARGE_TRADER_SNAPSHOT_KEY, {
+        'call': {'week': None, 'total': None, 'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+        'put': {'week': None, 'total': None, 'top5_net': None, 'top10_net': None, 'top5_spec_net': None, 'top10_spec_net': None},
+    })
     fut_inst = fetch_official_taifex_futures_institutional_oi()
     pc_ratio_dict = fetch_official_taifex_pc_ratio()
 
