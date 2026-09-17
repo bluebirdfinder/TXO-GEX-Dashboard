@@ -2406,11 +2406,16 @@ function populateStockFutures() {
         ? `<span class="badge" style="background: rgba(0, 210, 255, 0.15); color: var(--primary-accent); margin-left: 4px;">❄️ Top10空</span>` 
         : '');
 
+    // it_adoption_ratio (投信佔股本比) has no official per-stock source and is always null —
+    // only it_consecutive_buy_days (real, from actual T86 history) backs this badge. The
+    // "adopted" branch used to interpolate the ratio unconditionally, which was harmless while
+    // is_it_adopted was always false (dead branch) but started rendering the literal string
+    // "null%" the moment real adoption data made is_it_adopted true for some stocks.
     const itBadgeHtml = item.is_it_adopted
-      ? `<span class="badge" style="background: rgba(255, 215, 0, 0.2); color: var(--gold-accent); border: 1px solid rgba(255, 215, 0, 0.4); font-weight: 700;">🚀 投信認養 (${item.it_adoption_ratio}% / 連${item.it_consecutive_buy_days}買)</span>`
+      ? `<span class="badge" style="background: rgba(255, 215, 0, 0.2); color: var(--gold-accent); border: 1px solid rgba(255, 215, 0, 0.4); font-weight: 700;">🚀 投信認養 (連${item.it_consecutive_buy_days}買)</span>`
       : (item.it_consecutive_buy_days >= 3
-        ? `<span style="color: #ffaa00; font-size: 0.76rem;">⚡ 連${item.it_consecutive_buy_days}買 (${item.it_adoption_ratio != null ? item.it_adoption_ratio + '%' : '—'})</span>`
-        : `<span style="color: var(--text-muted); font-size: 0.76rem;">${item.it_adoption_ratio != null ? item.it_adoption_ratio + '%' : '—'}</span>`);
+        ? `<span style="color: #ffaa00; font-size: 0.76rem;">⚡ 連${item.it_consecutive_buy_days}買</span>`
+        : `<span style="color: var(--text-muted); font-size: 0.76rem;">—</span>`);
 
     const exBadge = item.ex_date && item.ex_date !== '-'
       ? `<span class="badge" style="background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid rgba(255, 170, 0, 0.3); font-weight: 600;">📅 ${item.ex_date} (${item.ex_dividend ? '$' + item.ex_dividend : (item.ex_type || '除息')})</span>`
