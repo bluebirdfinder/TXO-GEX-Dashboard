@@ -415,12 +415,29 @@ def fetch_twse_margin_maintenance(target_date_str=None, spot_change_pct=None):
         "estimation_basis": "融資餘額數據暫時無法取得，無法估算維持率"
     }
 
-def fetch_taifex_night_institutional_trading():
+def fetch_taifex_night_institutional_trading(target_date=None):
     """
     Parses TAIFEX futContractsDateAh (Night Session Institutional Trading) in Big5.
     Item 1: TX (大台), Item 4: MTX (小台), Item 5: Micro (微台).
+
+    `target_date` (a date; defaults to the same T-0 day-boundary rule used for the 5-day
+    matrix elsewhere — before 08:45 use yesterday, else today) is passed as TAIFEX's own
+    `queryDate` param, pinning exactly which night session gets fetched. Found 2026-09-17:
+    the previous unparameterized fetch just took whatever session TAIFEX's page currently
+    defaults to, which does not advance to a new session until ~07:00 the morning after it
+    closes — so a pipeline run between a session's close and that publish time silently got
+    the PREVIOUS night's numbers back as a normal-looking successful parse, and (since nothing
+    checked the date) wrote them under the wrong day's key, producing byte-identical
+    "duplicate" entries days apart (confirmed: 2026-09-11/2026-09-14 and 2026-09-15/2026-09-16
+    each collapsed to one real night's numbers copied onto two calendar dates). Requesting
+    `target_date`'s own queryDate means a not-yet-published session simply returns no "1" row
+    at all, which already correctly falls through to the `is_live: False` branch below instead
+    of masquerading as a different day's real data.
     """
-    url = "https://www.taifex.com.tw/cht/3/futContractsDateAh"
+    if target_date is None:
+        _now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
+        target_date = (_now - datetime.timedelta(days=1)).date() if (_now.hour < 8 or (_now.hour == 8 and _now.minute < 45)) else _now.date()
+    url = f"https://www.taifex.com.tw/cht/3/futContractsDateAh?queryDate={target_date.strftime('%Y/%m/%d')}&commodityId="
     try:
         req = urllib.request.Request(url, headers=HEADERS)
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
@@ -2270,7 +2287,10 @@ def fetch_official_taifex_retail_sentiment():
     # frozen literal sentinel (the app.js renderer does raw arithmetic on these fields, so
     # they must always be real numbers, not None).
     _retail_snaps = load_institutional_snapshots()
-    _retail_today_key = f"{datetime.date.today().isoformat()}_INST_RETAIL"
+    # TW-local date, not datetime.date.today() (the runner's system/UTC date) — between UTC
+    # 16:00-24:00 those disagree by a calendar day, which would key this under the wrong date.
+    _retail_today_tw_date = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).date()
+    _retail_today_key = f"{_retail_today_tw_date.isoformat()}_INST_RETAIL"
     _retail_prev_key = max(
         (k for k in _retail_snaps if k.endswith('_INST_RETAIL') and k < _retail_today_key),
         default=None
@@ -2336,7 +2356,7 @@ def fetch_official_taifex_retail_sentiment():
     foreign_call_change = (foreign_call_net - _prev['foreign_call_net']) if ('foreign_call_net' in _prev and foreign_call_net is not None) else None
     foreign_put_change = (foreign_put_net - _prev['foreign_put_net']) if ('foreign_put_net' in _prev and foreign_put_net is not None) else None
 
-    write_institutional_snapshot(datetime.date.today().isoformat(), 'RETAIL', {
+    write_institutional_snapshot(_retail_today_tw_date.isoformat(), 'RETAIL', {
         'mtx_net_oi': mtx_r_net, 'mtx_ratio': mtx_ratio, 'mtx_total_ratio': mtx_total_ratio,
         'mtx_long_oi': mtx_r_long, 'mtx_short_oi': mtx_r_short,
         'tmf_net_oi': tmf_r_net, 'tmf_ratio': tmf_ratio, 'tmf_total_ratio': tmf_total_ratio,
@@ -2771,9 +2791,30 @@ def write_institutional_snapshot(date_iso, session_type, data):
     row into the persistent snapshot store, keyed by {date}_INST_{DAY|NIGHT}. This is what
     lets T-1..T-4 in tomorrow's (and later days') matrix be real accumulated history instead
     of hardcoded placeholder numbers — mirrors write_current_session_snapshot()'s pattern.
+
+    Refuses to persist (returns None instead of the key) when `data` is byte-identical to the
+    most recent OTHER date's snapshot of the same session_type. Real multi-field TAIFEX
+    institutional/retail data essentially never repeats exactly across two different trading
+    days, so an exact match almost certainly means the source endpoint hadn't published a new
+    report yet at fetch time and silently re-served the previous one, which the caller's own
+    is_live/fetch-success check can't detect since the HTTP request and parse both "succeeded"
+    normally. Confirmed 2026-09-17 as the actual mechanism behind three real incidents: NIGHT
+    session 2026-09-11/2026-09-14 collapsing to one value, NIGHT 2026-09-15/2026-09-16 doing
+    the same, and RETAIL 2026-09-16/2026-09-17 doing the same — in all three the upstream
+    TAIFEX page's own default `queryDate` genuinely hadn't advanced yet when fetched. This is a
+    backstop for every session_type, not a replacement for requesting the exact target date
+    directly where the source supports it (see fetch_taifex_night_institutional_trading).
     """
     snap_key = f"{date_iso}_INST_{session_type}"
     snapshots = load_institutional_snapshots()
+    suffix = f"_INST_{session_type}"
+    other_keys = sorted(k for k in snapshots if k.endswith(suffix) and k != snap_key)
+    if other_keys and data:
+        _cmp = lambda d: {k: v for k, v in d.items() if k not in ("written_at", "date", "has_snapshot")}
+        latest_other_key = other_keys[-1]
+        if _cmp(data) == _cmp(snapshots[latest_other_key]):
+            print(f"[Warning] Refusing to persist {snap_key}: identical to {latest_other_key} — source likely hadn't published a new report yet, not genuinely unchanged data")
+            return None
     snapshots[snap_key] = {**data, "written_at": datetime.datetime.now().isoformat()}
     save_institutional_snapshots(snapshots)
     return snap_key
@@ -3106,10 +3147,12 @@ def generate_gex_payload():
     }
     institutional_5day_history.append(t0_inst_day)
     if _day_is_live:
-        write_institutional_snapshot(
+        _day_write_key = write_institutional_snapshot(
             t_days_dates[4].strftime('%Y-%m-%d'), "DAY",
             {f: t0_inst_day[f] for f in _INST_DAY_FIELDS}
         )
+        if _day_write_key is None:
+            t0_inst_day["has_snapshot"] = False
 
     # 5-Day Night Session Institutional Trading History — same real-snapshot pattern as above.
     _INST_NIGHT_FIELDS = ["foreign_tx", "foreign_tx_amt", "foreign_mtx", "foreign_micro", "dealer_tx", "dealer_tx_amt"]
@@ -3151,10 +3194,12 @@ def generate_gex_payload():
     }
     night_institutional_5day_history.append(t0_inst_night)
     if _night_is_live:
-        write_institutional_snapshot(
+        _night_write_key = write_institutional_snapshot(
             t_days_dates[4].strftime('%Y-%m-%d'), "NIGHT",
             {f: t0_inst_night[f] for f in _INST_NIGHT_FIELDS}
         )
+        if _night_write_key is None:
+            t0_inst_night["has_snapshot"] = False
 
     last_foreign_net = institutional_5day_history[-1]["foreign_fut_net"] or 0
     prev_foreign_net = institutional_5day_history[-2]["foreign_fut_net"] or 0
@@ -3370,6 +3415,32 @@ def generate_gex_payload():
     # Real per-stock spot-side institutional net buy/sell (TWSE T86, cached per day)
     twse_t86_data = fetch_twse_institutional_t86_latest()
 
+    # Real multi-day per-stock T86 history for 投信認養/籌碼偏多 — built and rolled forward by
+    # scripts/build_screener_cache.py (update_inst_history()), read-only here. Falls back to {}
+    # (never fabricated) if that script hasn't run yet on this machine.
+    try:
+        with open(os.path.join(_DATA_DIR, "stock_institutional_history.json"), "r", encoding="utf-8") as f:
+            _stock_inst_history = json.load(f)
+    except Exception:
+        _stock_inst_history = {}
+
+    def _compute_it_flags(code):
+        """Same definition as build_screener_cache.py's compute_inst_flags(): 投信認養 = trust
+        net-buy on 3+ consecutive most-recent trading days on file; 籌碼偏多 = 三大法人合計 net
+        positive on 2+ of the most recent 3 days. Honestly 0/False when fewer than 3 real days
+        exist for this code yet."""
+        dates_desc = sorted(_stock_inst_history.keys(), reverse=True)
+        consec = 0
+        for d in dates_desc:
+            row = _stock_inst_history[d].get(code)
+            if row is None or row.get("trust", 0) <= 0:
+                break
+            consec += 1
+        recent3 = [_stock_inst_history[d].get(code) for d in dates_desc[:3]]
+        recent3 = [r for r in recent3 if r is not None]
+        bull = len(recent3) >= 3 and sum(1 for r in recent3 if r.get("total", 0) > 0) >= 2
+        return consec, bull
+
     _adr_quote_cache = {}  # avoid re-fetching the same ADR ticker for both "2330" and "2330F" rows
 
     stock_futures = []
@@ -3438,15 +3509,15 @@ def generate_gex_payload():
             intent_desc = "現現與期貨籌碼力道平淡/無顯著趨勢"
 
         # Investment Trust adoption (投信波段認養佔比 & 連買天數): this used to be a fake
-        # idx-modulo formula unrelated to any real data. A genuine multi-day "consecutive
-        # buy" signal needs per-stock historical trust net-buy snapshots, which don't exist
-        # yet (only the market-wide institutional_snapshots.json is tracked, not per-stock).
-        # Left honestly disabled (never triggers) rather than fabricated, matching the same
-        # decision already made for this identical problem in the trading room's screener.
-        it_consec_days = 0
+        # idx-modulo formula unrelated to any real data. Now real, from the same rolling
+        # per-stock T86 history data/stock_institutional_history.json feeds the trading room's
+        # screener with (see _compute_it_flags above) — 投信 net-buying 3+ consecutive days.
+        # it_ratio (佔股本比) has no official per-stock source and stays None rather than a
+        # guessed ratio; the badge is based purely on the real consecutive-day count.
+        it_consec_days, _it_chip_bull = _compute_it_flags(_lt_lookup_code)
         it_ratio = None
-        is_it_adopted = False
-        it_badge = "-"
+        is_it_adopted = it_consec_days >= 3
+        it_badge = f"投信{it_consec_days}日連買" if is_it_adopted else "-"
 
         # Night Stock Futures with ADR linkage (Complete Taiwan ADR Matrix). Ticker mapping is
         # static (which US ADR corresponds to which TW stock doesn't change), but the % change
@@ -3759,11 +3830,39 @@ def generate_gex_payload():
         f"展現個股期貨交投熱度與動態資金趨勢。"
     )
 
-    ai_bullet_4 = (
-        f"📅 <strong>近期除權息扣點校正與價差防守</strong>："
-        f"台積電期 (2330) 09/18 季除息 <span style=\"color: var(--gold-accent); font-weight:700;\">$4.0 元</span>，"
-        f"期價逆價差源自常態配息扣點而非看空避險；除息前夕宜對照 TWSE 官方扣點日程表防範價差誤判。"
+    # Nearest upcoming ex-dividend among tracked stock futures — was a hardcoded literal
+    # ("台積電期(2330) 09/18 季除息 $4.0元") that happened to be roughly right only for the one
+    # day this was written, then stays frozen forever pointing at a date that keeps receding
+    # into the past. Built here from each item's real ex_date/ex_dividend/ex_type (already
+    # attached above from fetch_twse_ex_dividend_schedule()) instead.
+    def _ex_date_sort_key(mmdd):
+        try:
+            mm, dd = (int(x) for x in mmdd.split('/'))
+            d = datetime.date(now_dt.year, mm, dd)
+            if d < now_dt.date():
+                d = datetime.date(now_dt.year + 1, mm, dd)
+            return d
+        except Exception:
+            return None
+    _upcoming_ex = sorted(
+        (
+            (_ex_date_sort_key(item["ex_date"]), item)
+            for item in stock_futures
+            if item.get("ex_date") and item["ex_date"] != "-" and item.get("ex_dividend")
+        ),
+        key=lambda pair: pair[0] or datetime.date.max
     )
+    if _upcoming_ex and _upcoming_ex[0][0] is not None:
+        _ex_item = _upcoming_ex[0][1]
+        _ex_name = _ex_item["name"].replace('期貨', '').replace('期', '')
+        ai_bullet_4 = (
+            f"📅 <strong>近期除權息扣點校正與價差防守</strong>："
+            f"{_ex_name}期 ({_ex_item['code']}) {_ex_item['ex_date']} {_ex_item.get('ex_type') or '除權息'} "
+            f"<span style=\"color: var(--gold-accent); font-weight:700;\">${_ex_item['ex_dividend']:.2f} 元</span>，"
+            f"期價逆價差源自常態配息扣點而非看空避險；除息前夕宜對照 TWSE 官方扣點日程表防範價差誤判。"
+        )
+    else:
+        ai_bullet_4 = "📅 <strong>近期除權息扣點校正與價差防守</strong>：目前追蹤個股期貨標的近期無即將除權息事件，暫無扣點價差需特別留意。"
 
     ai_ex_dividend_digest = {
         "title": "🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描",

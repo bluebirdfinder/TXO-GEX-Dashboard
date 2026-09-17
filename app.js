@@ -2796,9 +2796,16 @@ function initLiveTickPolling() {
       }
     } catch(err){}
 
-    // 2. Try Local Python Gateway (Fubon WS / TV Bridge)
+    // 2. Try Local Python Gateway (Fubon WS / TV Bridge). Aborted after 1s rather than left to
+    // the browser's own timeout — an https page fetching http://localhost can sit pending
+    // (not reject) under Chrome's Private Network Access permission prompt/preflight instead of
+    // failing fast, which would otherwise stall every tier below this one behind an `await`
+    // that may never settle.
     try {
-      const res = await fetch('http://localhost:8000/api/live_tick');
+      const localController = new AbortController();
+      const localTimeout = setTimeout(() => localController.abort(), 1000);
+      const res = await fetch('http://localhost:8000/api/live_tick', { signal: localController.signal });
+      clearTimeout(localTimeout);
       if (res.ok) {
         const data = await res.json();
         if (data && data.price > 0) {
@@ -2807,7 +2814,7 @@ function initLiveTickPolling() {
         }
       }
     } catch (e) {
-      // Local server not running
+      // Local server not running, or blocked/timed out — fall through to the next tier
     }
 
     // 2.5 Try Cloudflare Worker Cloud Relay (24/7 Global HTTPS Relay)

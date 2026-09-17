@@ -31,6 +31,8 @@ UNIVERSE_FILE = os.path.join(ROOT_DIR, "data", "tw_symbols_universe.json")
 QUOTES_FILE = os.path.join(ROOT_DIR, "data", "tw_quotes_latest.json")
 OUTPUT_FILE = os.path.join(ROOT_DIR, "data", "screener_cache.json")
 OHLCV_CACHE_FILE = os.path.join(ROOT_DIR, "data", "screener_ohlcv_cache.json")
+INST_HISTORY_FILE = os.path.join(ROOT_DIR, "data", "stock_institutional_history.json")
+INST_HISTORY_TRADING_DAYS = 10
 
 SSL_CTX = ssl.create_default_context()
 SSL_CTX.check_hostname = False
@@ -202,6 +204,120 @@ def build_twse_bulk_history(num_trading_days=25, max_calendar_days_back=45):
     return history
 
 
+def fetch_twse_t86_for_date(date_str):
+    """
+    Real per-stock 三大法人買賣超 (TWSE T86) for one date (YYYYMMDD), or {} if the market was
+    closed or that date isn't published yet. Minimal standalone copy of the same parse already
+    used by scripts/fetch_and_calc_vision.py's fetch_twse_institutional_t86() — duplicated
+    (not imported) so this script stays independently runnable without pulling in that much
+    larger module's own top-level behavior. Column layout: [0]證券代號
+    [4]外陸資買賣超(不含外資自營商) [7]外資自營商買賣超 [10]投信買賣超 [11]自營商買賣超(合計).
+    """
+    url = f"https://www.twse.com.tw/rwd/zh/fund/T86?date={date_str}&selectType=ALL&response=json"
+    result = {}
+    try:
+        data = json.loads(_fetch_url(url))
+        if data.get('stat') != 'OK':
+            return result
+
+        def _to_int(s):
+            try:
+                return int(str(s).replace(',', ''))
+            except Exception:
+                return 0
+
+        for row in data.get('data', []):
+            if len(row) < 19:
+                continue
+            code = row[0].strip()
+            foreign_net = (_to_int(row[4]) + _to_int(row[7])) // 1000
+            trust_net = _to_int(row[10]) // 1000
+            dealer_net = _to_int(row[11]) // 1000
+            result[code] = {
+                "foreign": foreign_net,
+                "trust": trust_net,
+                "dealer": dealer_net,
+                "total": foreign_net + trust_net + dealer_net,
+            }
+    except Exception as e:
+        print(f"  [WARN] TWSE T86 fetch failed for {date_str}: {e}")
+    return result
+
+
+def load_inst_history():
+    try:
+        with open(INST_HISTORY_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def save_inst_history(history):
+    with open(INST_HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False)
+
+
+def update_inst_history(num_trading_days=INST_HISTORY_TRADING_DAYS, max_calendar_days_back=25):
+    """
+    Ensures data/stock_institutional_history.json has real per-stock T86 snapshots for the
+    most recent `num_trading_days` trading days, keyed by ISO date. Walks backward from today
+    one calendar day at a time (skipping non-trading days, which come back empty), fetching
+    only the dates not already cached — so this is a no-op single-file-read most days once the
+    window is full, not a full re-backfill every run. Also prunes dates older than the window
+    so this file doesn't grow forever.
+    """
+    history = load_inst_history()
+    day = datetime.today().date()
+    collected_dates = []
+    tried = 0
+    while len(collected_dates) < num_trading_days and tried < max_calendar_days_back:
+        date_iso = day.isoformat()
+        if date_iso in history:
+            collected_dates.append(date_iso)
+        else:
+            day_data = fetch_twse_t86_for_date(day.strftime('%Y%m%d'))
+            if day_data:
+                history[date_iso] = day_data
+                collected_dates.append(date_iso)
+                time.sleep(0.3)
+        tried += 1
+        day -= timedelta(days=1)
+    # Prune anything outside the window so the file doesn't grow unbounded.
+    keep = set(collected_dates)
+    for k in list(history.keys()):
+        if k not in keep:
+            del history[k]
+    save_inst_history(history)
+    print(f"[OK] Stock institutional T86 history: {len(collected_dates)}/{num_trading_days} trading days on file")
+    return history
+
+
+def compute_inst_flags(symbol, inst_history):
+    """
+    Real 投信認養 (investment-trust adoption) / 籌碼偏多 (institutionally bullish) flags from
+    inst_history (date_iso -> {code: {foreign, trust, dealer, total}}), newest date last once
+    sorted. Adoption = trust net-buy on 3+ consecutive most-recent trading days (the common
+    practitioner definition). Chip-bullish = the combined foreign+trust+dealer net was
+    positive on at least 2 of the most recent 3 trading days. Returns (it_consec_days,
+    is_it_adopted, chip_bull) — honestly False/0 when fewer than 3 real days exist yet for
+    this symbol, never guessed.
+    """
+    dates_desc = sorted(inst_history.keys(), reverse=True)
+    it_consec_days = 0
+    for d in dates_desc:
+        row = inst_history[d].get(symbol)
+        if row is None or row.get("trust", 0) <= 0:
+            break
+        it_consec_days += 1
+
+    recent3 = [inst_history[d].get(symbol) for d in dates_desc[:3]]
+    recent3 = [r for r in recent3 if r is not None]
+    chip_bull = len(recent3) >= 3 and sum(1 for r in recent3 if r.get("total", 0) > 0) >= 2
+
+    is_it_adopted = it_consec_days >= 3
+    return it_consec_days, is_it_adopted, chip_bull
+
+
 def load_ohlcv_cache():
     try:
         with open(OHLCV_CACHE_FILE, "r", encoding="utf-8") as f:
@@ -218,7 +334,7 @@ def save_ohlcv_cache(data):
         json.dump({"_date": datetime.today().strftime("%Y-%m-%d"), "data": data}, f, ensure_ascii=False)
 
 
-def compute_symbol_metrics(item, quote, bars):
+def compute_symbol_metrics(item, quote, bars, inst_history):
     symbol = str(item.get("symbol", ""))
     name = item.get("name", symbol)
     market = item.get("market", "TWSE")
@@ -234,16 +350,20 @@ def compute_symbol_metrics(item, quote, bars):
     volume = quote.get("volume", 0)
     amount = quote.get("amount", 0)
 
+    it_consec_days, is_it_adopted, chip_bull = compute_inst_flags(symbol, inst_history)
+
     base = {
         "symbol": symbol, "name": name, "market": market, "category": category,
         "asset_type": asset_type, "price": close, "open": open_p, "high": high_p,
         "low": low_p, "change": change, "pct_change": pct_change, "volume": volume,
-        "amount": amount
+        "amount": amount, "it_consec_days": it_consec_days, "it_adopted": is_it_adopted,
+        "chip_bull": chip_bull
     }
 
     if not bars or len(bars) < 5:
         # No real history available for this symbol (e.g. a futures/index code, or newly
         # listed) — report it honestly instead of inventing a signal from fake history.
+        # it_adopted/chip_bull are independent of price history, so they still carry through.
         return {
             **base, "bias_pct": None, "vol_ratio": None, "grade": None, "signals": [],
             "macd_state": None, "k5_state": None, "demark_state": None,
@@ -353,6 +473,10 @@ def main():
     ohlcv_cache = load_ohlcv_cache()
     cache_dirty = False
 
+    # Real per-stock 三大法人買賣超 history for 投信認養/籌碼偏多 — self-maintaining rolling
+    # window (see update_inst_history), independent of the OHLCV cache above.
+    inst_history = update_inst_history()
+
     # Real TWSE-wide history via the bulk per-date endpoint — covers the large majority of
     # the universe (TWSE-listed stocks) in ~20-25 requests instead of one per stock. Reused
     # from today's cache when already fetched today (keyed under "_TWSE_BULK").
@@ -398,7 +522,7 @@ def main():
 
         if not bars:
             unavailable += 1
-        metrics = compute_symbol_metrics(item, quote, bars)
+        metrics = compute_symbol_metrics(item, quote, bars, inst_history)
         results.append(metrics)
 
     if cache_dirty:
