@@ -1,3 +1,26 @@
+## 🔄 2026-09-17 交接：v64.0 已上線main，使用者要開新聊天室，以下是接手待辦（取代下方交接區塊的「待辦」部分，皆保留當歷史記錄）
+
+**現況**：v64.0已發版並push到main（本機與GitHub一致）。今天完成的內容（4類法人籌碼資料源「隔日重複值」bug根除、Max Pain型態C死碼移除、JJ鬼爪V4.1上線、選股雷達真數據化、主儀表板/戰情室即時報價死碼修復）完整根因與驗證方式見 [HISTORY.md](HISTORY.md) v64.0條目，這裡不重複，新session應該先讀那個條目建立上下文，不要重新猜測或探索。
+
+### ⏳ 還沒做、新session按優先順序處理
+
+| 優先度 | 項目 | 細節 |
+|---|---|---|
+| 🟡 中 | JJ鬼爪V4.1對照TradingView驗證 | Cloudflare Worker（`bluebird-indicators`，`indicator=jj`）已部署且本機/線上測試數字合理，但**沒有拿真實TradingView圖表逐根K棒核對過**。`is_holding`/`reduce_count`這類需要很多根K棒才顯現的持倉狀態，最容易因為Worker暖機起點跟TradingView實際載入K棒數不同而有落差。需要使用者在場，開一張真實掛著JJ鬼爪的TradingView圖表，比對戰情室左側「動能鳥指標即時戰情」卡片跟TradingView畫面幾天的訊號時間點。核對通過後把該卡片標題的「⚠️未對照TradingView驗證」字樣拿掉（`trading room/room.html`裡搜尋這串文字）。 |
+| 🟡 中 | Smart Money Concept指標移植 | 評估過難度明顯比JJ鬼爪高（Swing/Internal結構判斷+Order Blocks+Fair Value Gap等多組互相牽動的物件狀態，且有樞轉點延遲確認邏輯，最容易跟真實圖表對不起來）。原始碼在使用者私有資料夾`TradingView 指標\合併好用公開指標\Merged_Indicators.md`。建議使用者在場、能隨時對照真實圖表的session再做，不要在使用者不在場時獨立完成。部署架構比照JJ鬼爪：合併進同一份`worker.js`（`bluebird-indicators`），用新的`indicator=`值路由，不要另開新Worker。 |
+| 🟢 低 | EMA/雙層MACD/CCI/AO/DeMark/CVD/大戶散戶動能搬去Cloudflare Worker | 目前還是`trading room/room.js`本地JavaScript算，演算法在瀏覽器「檢視原始碼」看得到。長期規劃，非緊急。 |
+| 🟢 低 | 戰情室原油/美債殖利率/美元指數(CL/US10Y/DXY)即時報價 | `initOverseasLiveTickStream()`目前只設定一次滑鼠提示文字，完全不是真的即時輪詢，函式名稱名不符實。這幾個標的目前唯一真實數據來源是`gexData.macro_events_radar.macro_risk_dashboard`（後端每次頁面重整才更新一次），還沒有前端即時輪詢版本。 |
+| 🟢 低 | `data-pipeline-integrity` 全域skill正式測試迴圈 | 已建立在`~/.claude/skills/data-pipeline-integrity`，用2個測試案例質化比較過有/無skill的差異（差異不大，skill主要價值是「保證每次都會想到」而非解鎖新能力），但沒跑過skill-creator正式的量化評分+瀏覽器互動介面那套完整流程。使用者在電腦前有空才值得跑。 |
+| 🟢 低（已知限制，非bug） | 選股雷達🚀強火箭/🐦強力藍鳥/MACD狀態/5K突破/神奇九轉訊號 | `build_screener_cache.py`文件裡誠實記載：這些是均線+成交量比率湊出來的簡化版公式，不是嚴格的MACD/TD-Sequential教科書算法。真數據（不是假數據），只是精確度是近似版。 |
+| 🟢 低 | `futDailyMarketReport`中文標籤編碼問題是否影響其他解析點 | 很早期就列為待查（v63.x交接就有），這個TAIFEX端點的中文標籤（合計/小計）big5/cp950都無法正確解碼，`parse_taifex_fut_oi()`已改用結構特徵判斷解決，但還沒全面搜過程式裡是否有其他地方也解析同一個端點、用文字比對中文標籤會踩到一樣的坑。 |
+| 🟢 低 | `bump_version.py`會盲目字串替換`PROJECT_HANDOVER.md`第一列版本標籤 | v64.0發版時再次確認這個問題還在——腳本只換版號數字，不管內容是否真的對應。這次已手動在PROJECT_HANDOVER.md插入正確的新版row 0、把舊內容降級成row 0.005，但腳本本身沒有修，下次發版一樣會需要手動處理這一步。 |
+| 🟢 低 | `.claude/worktrees/`底下的空worktree清理 | 一直是低優先，未確認目前是否還存在，不清也不影響運作。 |
+
+### 🗣️ 給接手新session的提醒
+使用者這個專案的溝通風格：進度彙報用表格、真正需要決定的分岔點用結構化選項問（不要只寫在段落裡）、完成會影響交易判斷的重大修復後主動觸發發版流程不用等使用者說「發版」、push一律要先問過使用者。使用者非常重視「不要斷言正確性沒驗證過」——多次強調不要像Gemini那樣不查證就說沒問題，稽核類任務務必實際去查證官方資料源或瀏覽器實測，不能只讀程式碼覺得邏輯合理就結案。
+
+---
+
 ## 🔄 2026-09-16 上午（續）交接：v63.4 已上線，使用者出門上班中，AI 依指示繼續獨立處理尋鳥戰情室待辦（取代下方交接區塊的「待辦」部分，皆保留當歷史記錄）
 
 **現況**：使用者早上出門上班前明確授權「繼續做,有需要我決定的地方留言在文件裡」，AI 在使用者不在場的狀態下持續工作。這段期間：
