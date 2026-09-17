@@ -722,22 +722,19 @@ function renderDashboard() {
         : (isBullish
           ? '🔥【A1: 踩牆軋空爆發】籌碼偏多 ✕ 痛點沉底：近端 Put Wall 護盤固若金湯，踩穩即爆發軋空！'
           : '【A2: 懸空防守震盪】上方大額 Call 累積極重，痛點沉於低位；首防 Put Wall 建立 Bull Put Spread，跌破提防下檔磁吸下探');
-    } else if (pwVal <= mpVal && mpVal <= cwVal) {
+    } else {
       // 🟡 型態 B：對稱健康箱體 (Put Wall <= Max Pain <= Call Wall)
+      // 型態 C（恐慌避險）已移除：A/D 用的是「順序」邊界，跟 B 一起窮盡了 mp 相對 pw/cw 的
+      // 所有排列，原本的 C 只是複製同一組順序條件，數學上永遠執行不到（跟露米籌碼監控機器人
+      // 稽核發現的同一種死碼）。用 TXO 自己的公式拉 62 天真實歷史資料重算過（2026-09-17），
+      // 就算幫「痛點貼近 Call Wall」這個真正的距離定義去補一個門檻，62 天裡最多也只有 1~2
+      // 天會落在裡面——樣本數小到無法驗證，不值得為此重新設計一條判斷邏輯，直接跟 A/B/D
+      // 一起維護即可。
       mpBadgeEl.innerText = '🟡 【型態 B：對稱健康箱體】';
       mpBadgeEl.style.background = 'rgba(255, 215, 0, 0.18)';
       mpBadgeEl.style.color = '#ffd700';
       mpBadgeEl.style.border = '1px solid #ffd700';
       mpBadgeEl.title = '【型態 B: 對稱健康箱體】Put Wall <= Max Pain <= Call Wall：多空對稱，Max Pain 居中央，週三結算日具強烈結算引力吸附，適合 Iron Condor 雙賣鐵鷹 (4腳)';
-    } else {
-      // 🟢 型態 C：恐慌避險 / 下檔開天窗 (Put Wall << Max Pain)
-      mpBadgeEl.innerText = '🟢 【型態 C：恐慌避險 / 下檔開天窗】';
-      mpBadgeEl.style.background = 'rgba(0, 230, 118, 0.18)';
-      mpBadgeEl.style.color = '#00e676';
-      mpBadgeEl.style.border = '1px solid #00e676';
-      mpBadgeEl.title = isBearish
-        ? '⚠️【C3: 順風避險大崩盤】外資大倒貨 ✕ 下檔開天窗，做市商負 Gamma 踩踏追殺，嚴禁摸底接刀！'
-        : '【型態 C: 恐慌避險/下檔開天窗】深價外 Put 避險強烈，下檔波動率升，建議 Bear Call Spread 防禦或微台順勢空';
     }
   }
 

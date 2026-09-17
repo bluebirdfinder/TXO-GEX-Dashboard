@@ -1845,7 +1845,7 @@ def fetch_official_taifex_large_trader():
 
 OPT_LARGE_TRADER_SNAPSHOT_KEY = "OPT_LARGE_TRADER_LAST_REAL"
 
-def fetch_official_taifex_large_trader_options():
+def fetch_official_taifex_large_trader_options(target_date=None):
     """
     Parses TAIFEX largeTraderOptQry for TXO (臺指選擇權) Call/Put Top 5 / Top 10 Large Trader
     and Specific-Institution Net Open Interest, across the nearest weekly contract ("週契約")
@@ -1863,10 +1863,24 @@ def fetch_official_taifex_large_trader_options():
     so no queryDate/contractId round-trip is needed — same shortcut used for the futures report.
     On total fetch/parse failure, falls back to the last successfully-fetched real result
     instead of a hardcoded literal that would stay frozen forever.
+
+    `target_date` (a "YYYY/MM/DD" string) requests a specific historical date instead of
+    today's default page — confirmed 2026-09-17 by reading this page's own bound JS
+    ($("#submitButton").click(...) in the page source): the real submission is
+    POST queryDate=<date>&contractId=all&datecount=&contractId2= (the plain GET-with-queryDate
+    guess tried earlier silently returns today's default page unchanged — contractId=all is
+    required, it's not optional despite looking like it in the empty server-rendered <select>).
+    When target_date is given, this never falls back to the cached snapshot on failure (that
+    cache only ever holds "today"'s data) — callers should treat a None/empty return as "not
+    available for that date" and move on.
     """
     try:
         url = "https://www.taifex.com.tw/cht/3/largeTraderOptQry"
-        req = urllib.request.Request(url, headers=HEADERS)
+        if target_date:
+            body = f"queryDate={target_date}&contractId=all&datecount=&contractId2=".encode()
+            req = urllib.request.Request(url, data=body, headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded"})
+        else:
+            req = urllib.request.Request(url, headers=HEADERS)
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
             html = resp.read().decode('utf-8', errors='ignore')
         soup = BeautifulSoup(html, 'html.parser')
@@ -1916,12 +1930,20 @@ def fetch_official_taifex_large_trader_options():
                 'is_live': True,
             }
             print(f"[OK] Official TAIFEX TXO Option Large Trader OI: Call top10={result['call']['top10_net']}, Put top10={result['put']['top10_net']}")
-            snaps = load_institutional_snapshots()
-            snaps[OPT_LARGE_TRADER_SNAPSHOT_KEY] = result
-            save_institutional_snapshots(snaps)
+            if target_date is None:
+                # This cache key means "current/latest", not an archive — a historical backfill
+                # call must never overwrite it with an old date's numbers.
+                snaps = load_institutional_snapshots()
+                snaps[OPT_LARGE_TRADER_SNAPSHOT_KEY] = result
+                save_institutional_snapshots(snaps)
             return result
     except Exception as e:
-        print(f"[Warning] Failed to fetch TAIFEX Option Large Trader OI: {e}")
+        print(f"[Warning] Failed to fetch TAIFEX Option Large Trader OI ({target_date or 'today'}): {e}")
+
+    if target_date is not None:
+        # A historical backfill call has no "last real" snapshot to borrow — that cache only
+        # ever holds today's data — so honestly report unavailable for this date instead.
+        return None
 
     snaps = load_institutional_snapshots()
     fallback = snaps.get(OPT_LARGE_TRADER_SNAPSHOT_KEY) or {

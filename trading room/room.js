@@ -2385,15 +2385,14 @@ function initAdvisorFeed() {
   const distPW = txf - pw;
 
   // Mirrors app.js's live #stat-mp-topology-badge classifier so both surfaces agree.
+  // 型態C已移除（死碼+62天真實回測最多只抓到1~2天，見app.js同一段註解）。
   let topologyLabel;
   if (mp > cw) {
     topologyLabel = '🚀 型態 D【極端軋空 / 痛點頂天拓撲】';
   } else if (mp < pw) {
     topologyLabel = '🔴 型態 A【痛點沉底 / 懸空防守拓撲】';
-  } else if (pw <= mp && mp <= cw) {
-    topologyLabel = '🟡 型態 B【對稱健康箱體拓撲】';
   } else {
-    topologyLabel = '🟢 型態 C【恐慌避險 / 下檔開天窗拓撲】';
+    topologyLabel = '🟡 型態 B【對稱健康箱體拓撲】';
   }
 
   feed.innerHTML = `

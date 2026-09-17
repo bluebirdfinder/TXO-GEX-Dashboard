@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 45157.9,
     "day_total_vex": 85.79
   },
-  "last_updated_time": "2026-09-17 08:21",
+  "last_updated_time": "2026-09-17 08:37",
   "spot_price": 45848.9,
   "spot_change": 0.0,
   "spot_change_pct": 0.0,
@@ -22063,18 +22063,38 @@ window.GEX_EMBEDDED_DATA = {
         "top5_spec_net": 17190,
         "top10_spec_net": -785
       },
-      "opt_lt_call_top5_net": null,
-      "opt_lt_call_top10_net": null,
-      "opt_lt_call_top5_spec_net": null,
-      "opt_lt_call_top10_spec_net": null,
-      "opt_lt_call_week": null,
-      "opt_lt_call_total": null,
-      "opt_lt_put_top5_net": null,
-      "opt_lt_put_top10_net": null,
-      "opt_lt_put_top5_spec_net": null,
-      "opt_lt_put_top10_spec_net": null,
-      "opt_lt_put_week": null,
-      "opt_lt_put_total": null,
+      "opt_lt_call_top5_net": -7164,
+      "opt_lt_call_top10_net": -6073,
+      "opt_lt_call_top5_spec_net": -1001,
+      "opt_lt_call_top10_spec_net": -4625,
+      "opt_lt_call_week": {
+        "top5_net": -739,
+        "top10_net": -359,
+        "top5_spec_net": -1960,
+        "top10_spec_net": -1803
+      },
+      "opt_lt_call_total": {
+        "top5_net": -7164,
+        "top10_net": -6073,
+        "top5_spec_net": -1001,
+        "top10_spec_net": -4625
+      },
+      "opt_lt_put_top5_net": 10236,
+      "opt_lt_put_top10_net": 11053,
+      "opt_lt_put_top5_spec_net": -2753,
+      "opt_lt_put_top10_spec_net": -1218,
+      "opt_lt_put_week": {
+        "top5_net": 492,
+        "top10_net": 359,
+        "top5_spec_net": -410,
+        "top10_spec_net": -671
+      },
+      "opt_lt_put_total": {
+        "top5_net": 10236,
+        "top10_net": 11053,
+        "top5_spec_net": -2753,
+        "top10_spec_net": -1218
+      },
       "foreign_fut_net": -83223,
       "trust_fut_net": 72417,
       "itrust_fut_net": 72417,
@@ -22121,18 +22141,38 @@ window.GEX_EMBEDDED_DATA = {
         "top5_spec_net": 20019,
         "top10_spec_net": 1705
       },
-      "opt_lt_call_top5_net": null,
-      "opt_lt_call_top10_net": null,
-      "opt_lt_call_top5_spec_net": null,
-      "opt_lt_call_top10_spec_net": null,
-      "opt_lt_call_week": null,
-      "opt_lt_call_total": null,
-      "opt_lt_put_top5_net": null,
-      "opt_lt_put_top10_net": null,
-      "opt_lt_put_top5_spec_net": null,
-      "opt_lt_put_top10_spec_net": null,
-      "opt_lt_put_week": null,
-      "opt_lt_put_total": null,
+      "opt_lt_call_top5_net": -679,
+      "opt_lt_call_top10_net": -323,
+      "opt_lt_call_top5_spec_net": -2121,
+      "opt_lt_call_top10_spec_net": -4669,
+      "opt_lt_call_week": {
+        "top5_net": 64,
+        "top10_net": 139,
+        "top5_spec_net": -1290,
+        "top10_spec_net": -1211
+      },
+      "opt_lt_call_total": {
+        "top5_net": -679,
+        "top10_net": -323,
+        "top5_spec_net": -2121,
+        "top10_spec_net": -4669
+      },
+      "opt_lt_put_top5_net": 5552,
+      "opt_lt_put_top10_net": 6421,
+      "opt_lt_put_top5_spec_net": -2733,
+      "opt_lt_put_top10_spec_net": -1199,
+      "opt_lt_put_week": {
+        "top5_net": 208,
+        "top10_net": 44,
+        "top5_spec_net": -367,
+        "top10_spec_net": -550
+      },
+      "opt_lt_put_total": {
+        "top5_net": 5552,
+        "top10_net": 6421,
+        "top5_spec_net": -2733,
+        "top10_spec_net": -1199
+      },
       "foreign_fut_net": -82658,
       "trust_fut_net": 74448,
       "itrust_fut_net": 74448,
@@ -22179,18 +22219,38 @@ window.GEX_EMBEDDED_DATA = {
         "top5_spec_net": 18824,
         "top10_spec_net": -373
       },
-      "opt_lt_call_top5_net": null,
-      "opt_lt_call_top10_net": null,
-      "opt_lt_call_top5_spec_net": null,
-      "opt_lt_call_top10_spec_net": null,
-      "opt_lt_call_week": null,
-      "opt_lt_call_total": null,
-      "opt_lt_put_top5_net": null,
-      "opt_lt_put_top10_net": null,
-      "opt_lt_put_top5_spec_net": null,
-      "opt_lt_put_top10_spec_net": null,
-      "opt_lt_put_week": null,
-      "opt_lt_put_total": null,
+      "opt_lt_call_top5_net": 626,
+      "opt_lt_call_top10_net": 42,
+      "opt_lt_call_top5_spec_net": -2323,
+      "opt_lt_call_top10_spec_net": -4258,
+      "opt_lt_call_week": {
+        "top5_net": 9,
+        "top10_net": 54,
+        "top5_spec_net": -1290,
+        "top10_spec_net": -1280
+      },
+      "opt_lt_call_total": {
+        "top5_net": 626,
+        "top10_net": 42,
+        "top5_spec_net": -2323,
+        "top10_spec_net": -4258
+      },
+      "opt_lt_put_top5_net": 2452,
+      "opt_lt_put_top10_net": 2707,
+      "opt_lt_put_top5_spec_net": -1387,
+      "opt_lt_put_top10_spec_net": -1331,
+      "opt_lt_put_week": {
+        "top5_net": 4,
+        "top10_net": -143,
+        "top5_spec_net": -481,
+        "top10_spec_net": -541
+      },
+      "opt_lt_put_total": {
+        "top5_net": 2452,
+        "top10_net": 2707,
+        "top5_spec_net": -1387,
+        "top10_spec_net": -1331
+      },
       "foreign_fut_net": -85067,
       "trust_fut_net": 74687,
       "itrust_fut_net": 74687,
@@ -22222,18 +22282,38 @@ window.GEX_EMBEDDED_DATA = {
       "lt_near": null,
       "lt_far": null,
       "lt_total": null,
-      "opt_lt_call_top5_net": null,
-      "opt_lt_call_top10_net": null,
-      "opt_lt_call_top5_spec_net": null,
-      "opt_lt_call_top10_spec_net": null,
-      "opt_lt_call_week": null,
-      "opt_lt_call_total": null,
-      "opt_lt_put_top5_net": null,
-      "opt_lt_put_top10_net": null,
-      "opt_lt_put_top5_spec_net": null,
-      "opt_lt_put_top10_spec_net": null,
-      "opt_lt_put_week": null,
-      "opt_lt_put_total": null,
+      "opt_lt_call_top5_net": -6256,
+      "opt_lt_call_top10_net": -5563,
+      "opt_lt_call_top5_spec_net": -2563,
+      "opt_lt_call_top10_spec_net": -4625,
+      "opt_lt_call_week": {
+        "top5_net": -8632,
+        "top10_net": -8555,
+        "top5_spec_net": -3280,
+        "top10_spec_net": -3303
+      },
+      "opt_lt_call_total": {
+        "top5_net": -6256,
+        "top10_net": -5563,
+        "top5_spec_net": -2563,
+        "top10_spec_net": -4625
+      },
+      "opt_lt_put_top5_net": 47,
+      "opt_lt_put_top10_net": 1481,
+      "opt_lt_put_top5_spec_net": 48,
+      "opt_lt_put_top10_spec_net": 407,
+      "opt_lt_put_week": {
+        "top5_net": 687,
+        "top10_net": 425,
+        "top5_spec_net": -1468,
+        "top10_spec_net": -1172
+      },
+      "opt_lt_put_total": {
+        "top5_net": 47,
+        "top10_net": 1481,
+        "top5_spec_net": 48,
+        "top10_spec_net": 407
+      },
       "foreign_fut_net": null,
       "trust_fut_net": null,
       "itrust_fut_net": null,
@@ -22255,7 +22335,7 @@ window.GEX_EMBEDDED_DATA = {
       "dealer_opt_put_net": null,
       "pc_ratio": null,
       "date": "9/10 (四)",
-      "has_snapshot": false
+      "has_snapshot": true
     }
   ],
   "night_institutional_5day_history": [
@@ -22343,9 +22423,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/17 (四)",
-        "price": 100.23,
-        "change": 0.58,
-        "pct": 0.58
+        "price": 100.27,
+        "change": 0.62,
+        "pct": 0.62
       },
       "usdjpy": {
         "date": "09/16 (三)",
@@ -22446,13 +22526,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/17 (四)",
-          "price": 100.23,
-          "change": 0.58,
-          "pct": 0.58
+          "price": 100.27,
+          "change": 0.62,
+          "pct": 0.62
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.89</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>100.23</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>155.06</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.89</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>100.27</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>155.06</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -510,
@@ -22522,7 +22602,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 1131.83,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-17 08:21",
+    "last_updated": "2026-09-17 08:37",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -35309,9 +35389,9 @@ window.GEX_EMBEDDED_DATA = {
       "summary": "台指VIX 24.5、美股VIX 17.7；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 100.22,
-        "change_pct": -0.03,
-        "trend_label": "▼ 較昨日走弱 (-0.03%)",
+        "price": 100.27,
+        "change_pct": 0.02,
+        "trend_label": "▲ 較昨日走升 (+0.02%)",
         "unit": ""
       },
       "us10y": {
