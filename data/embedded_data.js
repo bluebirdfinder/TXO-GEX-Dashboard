@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47268.9,
     "day_total_vex": 163.65
   },
-  "last_updated_time": "2026-09-22 08:14",
+  "last_updated_time": "2026-09-22 08:43",
   "spot_price": 47718.84,
   "spot_change": 0.0,
   "spot_change_pct": 0.0,
@@ -17355,9 +17355,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/22 (二)",
-        "price": 100.4,
-        "change": 0.18,
-        "pct": 0.18
+        "price": 100.38,
+        "change": 0.16,
+        "pct": 0.16
       },
       "usdjpy": {
         "date": "09/21 (一)",
@@ -17458,13 +17458,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/22 (二)",
-          "price": 100.4,
-          "change": 0.18,
-          "pct": 0.18
+          "price": 100.38,
+          "change": 0.16,
+          "pct": 0.16
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.76</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>100.4</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>157.17</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.76</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>100.38</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>157.17</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -1196,
@@ -17534,7 +17534,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 5451.12,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-22 08:14",
+    "last_updated": "2026-09-22 08:43",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -30321,7 +30321,7 @@ window.GEX_EMBEDDED_DATA = {
       "summary": "台指VIX 21.8、美股VIX 14.9；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 100.39,
+        "price": 100.38,
         "change_pct": -0.04,
         "trend_label": "▼ 較昨日走弱 (-0.04%)",
         "unit": ""
