@@ -18,7 +18,7 @@
     "day_gex_plus_flip": 47562.5,
     "day_total_vex": 41.28
   },
-  "last_updated_time": "2026-09-23 20:56",
+  "last_updated_time": "2026-09-23 21:35",
   "spot_price": 48157.29,
   "spot_change": 357.12,
   "spot_change_pct": 0.75,
@@ -4092,7 +4092,7 @@
       "margin_maint_published": true,
       "margin_maint_is_estimated": true,
       "taifex_vix": 21.83,
-      "us_vix": 14.31,
+      "us_vix": 14.28,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -5381,7 +5381,7 @@
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 21.83,
-      "us_vix": 14.31,
+      "us_vix": 14.28,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -6776,7 +6776,7 @@
       "margin_maint_published": true,
       "margin_maint_is_estimated": true,
       "taifex_vix": 21.83,
-      "us_vix": 14.31,
+      "us_vix": 14.28,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -8065,7 +8065,7 @@
       "margin_maint_published": false,
       "margin_maint_is_estimated": true,
       "taifex_vix": 21.83,
-      "us_vix": 14.31,
+      "us_vix": 14.28,
       "has_snapshot": true,
       "total_gex": [
         {
@@ -9713,9 +9713,9 @@
       },
       "dxy": {
         "date": "09/23 (三)",
-        "price": 100.96,
-        "change": 0.53,
-        "pct": 0.53
+        "price": 100.9,
+        "change": 0.47,
+        "pct": 0.47
       },
       "usdjpy": {
         "date": "09/23 (三)",
@@ -9816,13 +9816,13 @@
         },
         {
           "date": "09/23 (三)",
-          "price": 100.96,
-          "change": 0.53,
-          "pct": 0.53
+          "price": 100.9,
+          "change": 0.47,
+          "pct": 0.47
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.72</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>100.96</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>157.82</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.72</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>100.9</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>157.82</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": 203,
@@ -9892,7 +9892,7 @@
   "total_gex_plus": 574.08,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-23 20:56",
+    "last_updated": "2026-09-23 21:35",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -10466,7 +10466,7 @@
       "is_it_adopted": true,
       "it_badge": "投信10日連買",
       "adr_symbol": "UMC (聯電ADR)",
-      "adr_change_pct": 1.34,
+      "adr_change_pct": -2.72,
       "adr_basis": "-",
       "spot_inst_net": -10135,
       "spot_foreign": -10354,
@@ -10774,7 +10774,7 @@
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TSM (台積電ADR)",
-      "adr_change_pct": 1.54,
+      "adr_change_pct": -0.77,
       "adr_basis": "-",
       "spot_inst_net": 6304,
       "spot_foreign": 7123,
@@ -11346,7 +11346,7 @@
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TSM (台積電ADR)",
-      "adr_change_pct": 1.54,
+      "adr_change_pct": -0.77,
       "adr_basis": "-",
       "spot_inst_net": 6304,
       "spot_foreign": 7123,
@@ -11522,7 +11522,7 @@
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "IMOS (南茂ADR)",
-      "adr_change_pct": 4.2,
+      "adr_change_pct": -0.7,
       "adr_basis": "-",
       "spot_inst_net": 8266,
       "spot_foreign": 9255,
@@ -11830,7 +11830,7 @@
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "EWT (MSCI台灣ETF)",
-      "adr_change_pct": -0.46,
+      "adr_change_pct": -1.39,
       "adr_basis": "-",
       "spot_inst_net": -2217,
       "spot_foreign": -11052,
@@ -12314,7 +12314,7 @@
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "EWT (MSCI台灣ETF)",
-      "adr_change_pct": -0.46,
+      "adr_change_pct": -1.39,
       "adr_basis": "-",
       "spot_inst_net": -2217,
       "spot_foreign": -11052,
@@ -13370,7 +13370,7 @@
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "ASX (日月光ADR)",
-      "adr_change_pct": 3.36,
+      "adr_change_pct": -2.32,
       "adr_basis": "-",
       "spot_inst_net": 1906,
       "spot_foreign": 4008,
@@ -17550,7 +17550,7 @@
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "CHT (中華電ADR)",
-      "adr_change_pct": 0.46,
+      "adr_change_pct": -0.33,
       "adr_basis": "-",
       "spot_inst_net": 4591,
       "spot_foreign": 3633,
@@ -19530,7 +19530,7 @@
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TLT (美債20Y ETF)",
-      "adr_change_pct": -0.06,
+      "adr_change_pct": -0.45,
       "adr_basis": "-",
       "spot_inst_net": 0,
       "spot_foreign": 0,
@@ -22679,9 +22679,9 @@
       "summary": "台指VIX 21.8、美股VIX 14.3；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 100.93,
-        "change_pct": 0.33,
-        "trend_label": "▲ 較昨日走升 (+0.33%)",
+        "price": 100.84,
+        "change_pct": 0.24,
+        "trend_label": "▲ 較昨日走升 (+0.24%)",
         "unit": ""
       },
       "us10y": {
@@ -22693,7 +22693,7 @@
       },
       "vix": {
         "name": "VIX恐慌指標 (CBOE)",
-        "price": 14.31,
+        "price": 14.28,
         "trend_label": "🟢 低波安定"
       }
     },
@@ -22768,9 +22768,9 @@
     "taifex_vix": 21.83,
     "taifex_vix_change": -0.22,
     "taifex_vix_change_pct": -1.0,
-    "us_vix": 14.31,
-    "us_vix_change": 0.1,
-    "us_vix_change_pct": 0.7,
+    "us_vix": 14.28,
+    "us_vix_change": 0.07,
+    "us_vix_change_pct": 0.49,
     "us_vvix": 83.17,
     "us_vvix_change": -2.6,
     "us_vvix_change_pct": -3.03,
