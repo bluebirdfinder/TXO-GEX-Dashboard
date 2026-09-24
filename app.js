@@ -1067,6 +1067,17 @@ function populateKeyMetrics5Day() {
         }
         mmMain = `<span style="font-size: 0.82rem; padding: 2px 6px; border-radius: 4px; background: ${mmBg}; color: ${mmColor}; font-weight: 700; border: 1px solid ${mmColor}; display: inline-block; white-space: nowrap;" title="TWSE未公布全市場整戶維持率，此為依真實融資餘額變動與大盤漲跌幅估算，非官方數據">${mmMarket.toFixed(1)}% <span style="font-size: 0.75rem; margin-left: 2px;">${mmBadgeText}</span></span>`;
         mmSub = `<div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 2px;">個股 (${mmStock.toFixed(1)}%) · 估算值</div>`;
+
+        // 融資餘額變化速度 (real TWSE MI_MARGN balance, day-over-day / N-day) — reference only
+        if (typeof s.margin_bal_1d_chg_pct === 'number') {
+          const d1 = s.margin_bal_1d_chg_pct;
+          const dN = s.margin_bal_Nd_chg_pct;
+          const nDays = s.margin_bal_n_days || 0;
+          const d1Icon = d1 > 0.5 ? '📈' : (d1 < -0.5 ? '📉' : '➡️');
+          const d1Str = `${d1 >= 0 ? '+' : ''}${d1.toFixed(1)}%`;
+          const dNStr = (typeof dN === 'number' && nDays > 0) ? ` (近${nDays}日 ${dN >= 0 ? '+' : ''}${dN.toFixed(1)}%)` : '';
+          mmSub += `<div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;" title="真實TWSE融資餘額日增減率，速度指標，非官方維持率的一部分">${d1Icon} 餘額${d1Str}${dNStr}</div>`;
+        }
       }
     }
 

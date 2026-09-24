@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v64.3"
+ENGINE_VERSION = "v64.4"
 
 import os
 import sys
@@ -2850,7 +2850,8 @@ def write_current_session_snapshot(now_dt, session_type,
                                    zero_gamma, gex_plus_flip,
                                    call_wall, put_wall, max_pain,
                                    pc_ratio, taifex_vix, us_vix,
-                                   margin_market, margin_stock):
+                                   margin_market, margin_stock,
+                                   margin_balance_billion=None):
     """
     Merge-write the current session's real data into the snapshot store.
     Key: YYYY-MM-DD_DAY or YYYY-MM-DD_NIGHT (absolute date, not T-n offset).
@@ -2874,6 +2875,7 @@ def write_current_session_snapshot(now_dt, session_type,
         "us_vix":           us_vix,
         "margin_maint_market": margin_market,
         "margin_maint_stock":  margin_stock,
+        "margin_balance_billion": margin_balance_billion,
         "written_at":       now_dt.isoformat()
     }
     save_session_snapshots(snapshots)
@@ -3791,6 +3793,7 @@ def generate_gex_payload():
             "call_wall_strike": None, "put_wall_strike": None, "max_pain_strike": None,
             "shift_vs_prev": None, "pc_ratio": None,
             "margin_maint_market": None, "margin_maint_stock": None, "margin_maint_published": False,
+            "margin_balance_billion": None,
             "taifex_vix": None, "us_vix": None, "has_snapshot": False
         }
 
@@ -3809,6 +3812,7 @@ def generate_gex_payload():
             "pc_ratio": snap.get("pc_ratio"),
             "margin_maint_market": snap.get("margin_maint_market"), "margin_maint_stock": snap.get("margin_maint_stock"),
             "margin_maint_published": sess_type == "DAY",
+            "margin_balance_billion": snap.get("margin_balance_billion"),
             "taifex_vix": snap.get("taifex_vix"), "us_vix": snap.get("us_vix"), "has_snapshot": True
         }
 
@@ -3868,6 +3872,7 @@ def generate_gex_payload():
         "margin_maint_stock": margin_info["margin_maint_stock"],
         "margin_maint_published": margin_info["is_published"],
         "margin_maint_is_estimated": margin_info.get("is_estimated", True),
+        "margin_balance_billion": margin_info.get("margin_balance_billion"),
         "taifex_vix": latest_t_vix, "us_vix": latest_u_vix, "has_snapshot": True
     }
 
@@ -3888,6 +3893,7 @@ def generate_gex_payload():
         "margin_maint_stock": margin_info["margin_maint_stock"],
         "margin_maint_published": False,
         "margin_maint_is_estimated": margin_info.get("is_estimated", True),
+        "margin_balance_billion": margin_info.get("margin_balance_billion"),
         "taifex_vix": latest_t_vix, "us_vix": latest_u_vix, "has_snapshot": True
     }
 
@@ -3906,7 +3912,8 @@ def generate_gex_payload():
         pc_ratio=gex_profile['pc_ratio'],
         taifex_vix=latest_t_vix, us_vix=latest_u_vix,
         margin_market=margin_info["margin_maint_market"],
-        margin_stock=margin_info["margin_maint_stock"]
+        margin_stock=margin_info["margin_maint_stock"],
+        margin_balance_billion=margin_info.get("margin_balance_billion")
     )
 
     # Compute shift_vs_prev (TXF delta between consecutive sessions)
@@ -3918,6 +3925,22 @@ def generate_gex_payload():
         _prv = _all_sess[_si-1].get('txf_price')
         if _cur is not None and _prv is not None:
             _all_sess[_si]['shift_vs_prev'] = round(_cur - _prv, 1)
+
+    # 融資餘額變化速度 (margin balance rate-of-change) — reference indicator, not fed into GEX
+    # calc. Only DAY sessions carry a real 融資餘額 (MI_MARGN publishes once/day; night reuses
+    # the same day's figure like margin_maint already does). Built from real persisted balances
+    # only (session_snapshots.json) — never interpolated — so it silently reports fewer days
+    # rather than guessing when history is short (e.g. right after this feature ships).
+    _day_bal_series = [row.get('margin_balance_billion') for row in _all_sess if row.get('id', '').endswith('_day')]
+    _real_bal_series = [b for b in _day_bal_series if b is not None]
+    _margin_bal_trend = {"margin_bal_1d_chg_pct": None, "margin_bal_Nd_chg_pct": None, "margin_bal_n_days": 0}
+    if len(_real_bal_series) >= 2:
+        _today_bal, _prev_bal, _oldest_bal = _real_bal_series[-1], _real_bal_series[-2], _real_bal_series[0]
+        _margin_bal_trend["margin_bal_1d_chg_pct"] = round((_today_bal - _prev_bal) / _prev_bal * 100, 2) if _prev_bal else None
+        _margin_bal_trend["margin_bal_Nd_chg_pct"] = round((_today_bal - _oldest_bal) / _oldest_bal * 100, 2) if _oldest_bal else None
+        _margin_bal_trend["margin_bal_n_days"] = len(_real_bal_series) - 1
+    t0_day_item.update(_margin_bal_trend)
+    t0_night_item.update(_margin_bal_trend)
 
     # Add T-0 day session
     history_10_sessions.append(t0_day_item)

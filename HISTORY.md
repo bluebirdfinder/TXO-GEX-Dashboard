@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v64.4`** | 2026-09-25 | 🔴🔴 **CI 自動化流程漏寫 `session_snapshots.json`/`institutional_snapshots.json` 重大修正（自v62.3起每日快照從未真正存回repo，5日歷程矩陣自9/17起靜默回歸空殼，使用者親自截圖抓到）✕ 官方真實資料回補9/18~9/23 ✕ 融資餘額變化速度新參考指標上線** |
 | **`v64.3`** | 2026-09-24 | 🛡️ **戰情室 AO/雙層MACD/CCI 搬遷至 Cloudflare Worker 做 IP 保護（第二個試點，比照ADX Pro V3/JJ鬼爪）：本機Node.js逐點比對搬遷前後1458個數據點零誤差；主圖🚀🐦🛸💰箭頭改用Worker真實雙層配色重算（含節流互動邏輯）；順手修復卡在2026-09-16的room.js版本快取字串陳年bug（8天內每次發版的自動置換悄悄失敗）；main分支合併時發現並正確處理46次自動排程資料更新，避免誤蓋** |
 | **`v64.2`** | 2026-09-24 | 🆕 **選股雷達「5K真突破」✕「神奇九轉」真指標上線：5K_Strategy_Master_v5.pine進場觸發邏輯（不含停損停利）與demark_sequential_v3_equities.pine完整Setup/Countdown狀態機+7大過濾器武器庫真實移植，RSI/Stoch/ATR數學逐位對照獨立`ta`函式庫驗證，兩者皆手動追蹤過整段運算過程確認邏輯正確** |
 | **`v64.1`** | 2026-09-17 | 🆕 **選股雷達 JJ_MACD/JJ_CCI 真指標上線：`macd_state` 從均線+漲跌幅heuristic換成使用者自己的雙層MACD/CCI Pine Script真實移植（EMA/CCI數學已對照獨立`ta`函式庫逐位驗證），OHLCV回看窗口25→60個交易日補足EMA收斂；順手發現並修復戰情室選股雷達結果表「MACD/量能」欄位完全沒接真實資料、以及`sc-macd-grow`死checkbox兩個問題** |
@@ -30,6 +31,23 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🔴🔴 v64.4 CI 自動化流程漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標發布版 (2026-09-25)
+
+- **背景**：使用者在正式站（`bluebirdfinder.github.io`）「近5日關鍵市場指數與GEX結構歷程矩陣」表格親自截圖抓到 T-4~T-1（9/18、9/21、9/22、9/23）四天全部顯示 `0.0`/`null`/`未公布`/「快照建立中」的空殼分支，質疑「剛稽核完也重新核對過」怎麼還會壞、會不會其他區塊的資料也是假的。逐步排查後確認**這不是資料造假，是一個貨真價實、從功能一開始就存在的CI設定遺漏**。
+
+- **🔴🔴 根因：`.github/workflows/auto_update.yml` 的 commit 步驟從未把 `session_snapshots.json`/`institutional_snapshots.json` 加進 `git add` 清單**：
+  - `fetch_and_calc_vision.py` 每次雲端排程執行時，`write_current_session_snapshot()` 都**有**把當天的日/夜盤快照正確寫進這兩個檔案——但只寫在 GitHub Actions 那台「用完即丟」的暫時虛擬機本機硬碟，commit 步驟第66行 `git add data/gex_data.json data/encrypted_gex.json data/embedded_data.js data/social_card_*.png data/klines_cache.json` 沒有涵蓋這兩個檔案，寫好的資料從來沒有真的存回 repo，虛擬機一銷毀就消失。
+  - 用 `git log`/`git show` 逐一核對這兩個檔案在 repo 上的實際內容，證實從**v62.3（2026-09-11，這個5日快照矩陣功能剛上線的那個commit）開始就是這個狀態**，`session_snapshots.json` 在 repo 上停在 9/17 之後就再也沒有更新過，即使中間 `.github/workflows/auto_update.yml` 本身在9/16被動過一次（新增`klines_cache.json`進git add清單）也沒發現這個既有的遺漏。也就是說T-4~T-1矩陣其實已經靜默壞了超過一週，只是`gex_data.json`裡T-0（當天）欄位是每次都重新即時運算、不依賴這個持久化存檔，所以主要即時數字一直是對的，沒人發現歷史矩陣已經凍結。
+  - 釐清這是Antigravity/Gemini（9/11，切換到Claude Code的前一天）埋下的原始遺漏，但9/16 Claude Code接手後那次順手改同一行卻沒抓到，之前的稽核也只核對程式邏輯、沒去對CI的git add清單跟腳本實際寫出的檔案是否一致——這個查核盲點列入之後稽核SOP。
+
+- **✅ 修復**：`.github/workflows/auto_update.yml` 第66行補上 `data/session_snapshots.json data/institutional_snapshots.json`，之後每天排程執行都會把快照真正存回 repo。
+
+- **✅ 回補9/18、9/21、9/22、9/23四天真實歷史**：用專案既有的 `scripts/backfill_snapshots.py`（真實TAIFEX TXO未沖銷部位、TWSE現貨指數、TAIFEX台指期日夜盤、Official PC Ratio、TPEx OTC指數、Yahoo Finance美股VIX等官方來源，不是編數字）跑 `--days 10`，成功補回這四天的現貨/台指期/Zero Gamma/Call Wall/Put Wall/Max Pain/P-C Ratio，回補時融資維持率（`margin_maint_market`/`margin_maint_stock`）誠實留空`None`（回補腳本本身不算這個估算值，不是新坑）。驗證：重跑`fetch_and_calc_vision.py`後讀取`gex_data.json`的`history_10_sessions`，T-4~T-1全部`has_snapshot=True`且現貨/台指期/P-C Ratio為對應真實數字，不再是空殼分支。
+
+- **🆕 融資餘額變化速度參考指標（`margin_bal_1d_chg_pct`/`margin_bal_Nd_chg_pct`）**：使用者討論證交所新版「投資人違約概況」儀表板（`twse.com.tw/dashboard/zh/credit/`，注意這是證交所不是期交所，個股違約揭露資料跟GEX選擇權籌碼無直接關聯，判斷不值得整合）過程中，延伸出「融資餘額變化速度」這個既有 `MI_MARGN` 真實官方資料裡本來就有、但只被拿去當維持率估算中間變數、沒有單獨呈現的欄位。比照既有`institutional_5day_history`模式，把每日真實融資餘額（`margin_balance_billion`）存進`session_snapshots.json`，在T0欄位新增日增減%與N日累計增減%（只用真實持久化的餘額點位計算，資料不足時誠實回傳`None`，不內插也不亂猜），前端於「融資維持率」欄位下方新增一行小字參考徽章（📈/📉/➡️圖示）。**現況**：這次上線當下歷史餘額點位才剛開始累積，欄位會先顯示為空，需要往後連續兩天以上的真實排程執行才會開始出現數字——這是誠實的空窗期，不是新bug。
+
+- **範圍聲明**：這次未觸碰「戰情室CVD真實化」（`scripts/fubon_api_provider.py`/`trading room/room.js`另一個尚在進行中的獨立修改，屬於不同工作範圍，未混進本次commit）。
 
 ### 🛡️ v64.3 戰情室 AO/雙層MACD/CCI 搬遷 Cloudflare Worker 發布版 (2026-09-24)
 

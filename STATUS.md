@@ -1,10 +1,23 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.3)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.4)
 
-**當前版本**：`v64.3` (2026-09-24 戰情室 AO/雙層MACD/CCI 搬遷 Cloudflare Worker)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.3)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.3)
+**當前版本**：`v64.4` (2026-09-25 CI 自動化流程漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.4)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.4)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
+
+---
+
+## 🎯 v64.4 核心更新亮點（CI 自動化流程漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標）
+
+### 🔴🔴 根治「5日歷程矩陣」靜默回歸空殼的CI設定遺漏
+- 使用者在正式站親自截圖抓到 T-4~T-1（9/18、9/21~9/23）全部顯示`0.0`/`null`/「快照建立中」。根因是`.github/workflows/auto_update.yml`的commit步驟從v62.3（2026-09-11，功能剛上線那次）就從未把`data/session_snapshots.json`/`data/institutional_snapshots.json`加進`git add`清單——排程每天都有正確寫入這兩個檔案，但只寫在GitHub Actions用完即丟的虛擬機本機硬碟，從來沒有真的存回repo，已超過一週靜默壞掉沒人發現（T-0當天欄位是即時運算不依賴這個存檔，才沒被注意到）。
+- 已修正`git add`清單，並用專案既有`backfill_snapshots.py`（真實TAIFEX/TWSE官方來源，不是編數字）回補9/18~9/23四天真實歷史，回補後融資維持率誠實留空（回補腳本本身不算這個估算值）。
+
+### 🆕 融資餘額變化速度參考指標
+- 既有`MI_MARGN`真實官方融資餘額資料，新增日增減%/N日累計增減%呈現於「融資維持率」欄位下方，資料不足時誠實顯示為空，不內插不亂猜。
+
+詳細根因、修復與驗證方式請見 [HISTORY.md](HISTORY.md) v64.4 條目。
 
 ---
 
