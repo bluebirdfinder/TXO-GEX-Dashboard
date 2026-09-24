@@ -1,11 +1,38 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v64.2)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v64.3)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > 🌪️ CBOE 美股 ^VVIX 實時採集 ✦ 4級尾部風險矩陣 ✦ 做市商賣腳安全氣墊 (350~500點外) ✦ 尋鳥戰情室 4 欄式 Macro Risk HUD ✦ 🏛️ TWSE 融資維持率發布狀態日期比對 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v64.2-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v64.3-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+
+## 🌟 v64.3 戰情室 AO/雙層MACD/CCI 搬遷 Cloudflare Worker
+
+### 🛡️ 0. IP保護第二個試點：AO/雙層MACD/CCI 搬去 Cloudflare Worker
+- `trading room/room.js`自己給圖表面板用的雙層MACD/CCI/AO（跟選股雷達的JJ_MACD/JJ_CCI是不同一份，2026-09-10起就是真公式）搬去`bluebird-indicators` Worker新增的`indicator=momentum`端點，跟既有ADX Pro V3/JJ鬼爪V4.1同一支Worker、同一套路由模式。
+- 驗證：本機Node.js逐點比對搬遷前後算法，1458個數據點0誤差，CCI訊號筆數也一致。
+- 主圖🚀🐦🛸💰箭頭（獨立於JJ鬼爪V4.1的小功能）改用Worker真實雙層配色，且四個訊號共用的節流機制一併正確重算。
+
+### 🔧 1. 順手修復
+- `room.html`卡在2026-09-16的`room.js?v=...`版本快取字串陳年bug，8天內每次發版自動置換都悄悄失敗，已修正對齊版本號格式。
+- main分支合併時發現並正確處理46次GitHub Actions自動排程資料更新，避免誤蓋。
+
+完整驗證方式請見 [HISTORY.md](HISTORY.md) v64.3 條目。
+
+## 🌟 v64.2 選股雷達「5K真突破」✕「神奇九轉」真指標上線
+
+### 🆕 0. 5K戰法真進場觸發邏輯 ✕ 神奇九轉全狀態機真移植
+- `5K_Strategy_Master_v5.pine`進場觸發邏輯（不含停損停利）與`demark_sequential_v3_equities.pine`完整Setup/Countdown狀態機+7大過濾器武器庫真實移植進選股雷達，RSI/Stochastic/ATR數學對照獨立`ta`函式庫逐位驗證。
+
+完整驗證方式請見 [HISTORY.md](HISTORY.md) v64.2 條目。
+
+## 🌟 v64.1 選股雷達 JJ_MACD/JJ_CCI 真指標上線
+
+### 🆕 0. macd_state 從heuristic換成真實Pine Script
+- `JJ_MACD_Sub.pine`/`JJ_CCI_Sub.pine`真實移植進選股雷達，取代原本均線+漲跌幅湊出來的簡化heuristic，EMA/CCI數學對照獨立`ta`函式庫逐位驗證。
+
+完整驗證方式請見 [HISTORY.md](HISTORY.md) v64.1 條目。
 
 ## 🌟 v64.0「隔日重複值」bug家族根除 ✕ Max Pain型態C死碼移除 ✕ JJ鬼爪V4.1上線 ✕ 選股雷達真數據化
 

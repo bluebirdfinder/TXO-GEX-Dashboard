@@ -1,16 +1,17 @@
-# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.2)
+# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.3)
 
 本手冊記錄專案現狀、核心功能清單、數據引擎 Self-Audit 熱備援架構、開發 SOP 與個人筆電續接步驟。
 
 ---
 
-## 📌 一、v64.2 完整功能清單與數據引擎架構
+## 📌 一、v64.3 完整功能清單與數據引擎架構
 
 ### 核心分析與視覺化模組
 
 | # | 功能 | 說明 |
 |---|---|---|
-| 0 | **🆕 選股雷達「5K真突破」✕「神奇九轉」真指標上線 (v64.2)** | `5K_Strategy_Master_v5.pine`進場觸發邏輯（急殺確認+局部低點偵測+防雙刷壓制+突破確認K棒+均線濾網，不含停損停利）與`demark_sequential_v3_equities.pine`完整Setup/Countdown狀態機+7大過濾器武器庫（成交量/Squeeze/均線斜率/MACD/AO/RSI/KD）真實移植進`scripts/build_screener_cache.py`；RSI/Stochastic/ATR數學對照獨立Python `ta` 函式庫逐位驗證；新增`signals`陣列「📐真5K突破」項目與獨立`demark_buy_state`/`demark_sell_state`欄位（皆不覆蓋既有的不同概念欄位）；抓真實觸發的股票逐日核對Setup生命週期與9天計數不中斷，證實邏輯正確非巧合。完整驗證方式見 [HISTORY.md](HISTORY.md) v64.2 條目 |
+| 0 | **🛡️ 戰情室 AO/雙層MACD/CCI 搬遷 Cloudflare Worker (v64.3)** | `trading room/room.js`自己給Sub-Chart 2/3/4用的雙層MACD/CCI/AO（跟選股雷達JJ_MACD/JJ_CCI是不同一份，2026-09-10起就是真公式）搬去`bluebird-indicators` Worker新增的`indicator=momentum`端點，本機Node.js逐點比對搬遷前後1458個數據點0誤差；主圖🚀🐦🛸💰箭頭（獨立於JJ鬼爪V4.1的4-emoji小功能）改用Worker真實雙層配色+共用節流機制正確重算；順手修好`room.html`卡在2026-09-16的`room.js?v=...`版本快取字串陳年bug；合併main時正確處理46次自動排程資料更新未誤蓋。完整驗證方式見 [HISTORY.md](HISTORY.md) v64.3 條目 |
+| 0.0005 | **🆕 選股雷達「5K真突破」✕「神奇九轉」真指標上線 (v64.2)** | `5K_Strategy_Master_v5.pine`進場觸發邏輯（急殺確認+局部低點偵測+防雙刷壓制+突破確認K棒+均線濾網，不含停損停利）與`demark_sequential_v3_equities.pine`完整Setup/Countdown狀態機+7大過濾器武器庫（成交量/Squeeze/均線斜率/MACD/AO/RSI/KD）真實移植進`scripts/build_screener_cache.py`；RSI/Stochastic/ATR數學對照獨立Python `ta` 函式庫逐位驗證；新增`signals`陣列「📐真5K突破」項目與獨立`demark_buy_state`/`demark_sell_state`欄位（皆不覆蓋既有的不同概念欄位）；抓真實觸發的股票逐日核對Setup生命週期與9天計數不中斷，證實邏輯正確非巧合。完整驗證方式見 [HISTORY.md](HISTORY.md) v64.2 條目 |
 | 0.001 | **🆕 選股雷達 JJ_MACD/JJ_CCI 真指標上線 (v64.1)** | 使用者自己另一份私有Pine Script（`JJ_MACD_Sub.pine`／`JJ_CCI_Sub.pine`）真實移植進`scripts/build_screener_cache.py`，取代`macd_state`欄位原本均線+漲跌幅湊出來的heuristic；EMA/CCI數學已對照獨立Python `ta` 函式庫用真實2330資料逐位驗證吻合才接上；OHLCV回看窗口25→60交易日補足EMA收斂；新增`cci_value`/`cci_signal`/`macd_hist_growing`欄位；順手修好戰情室`sc-macd-grow`死checkbox與選股雷達結果表「MACD/量能」欄位原本沒接真資料兩個既有bug。完整驗證方式見 [HISTORY.md](HISTORY.md) v64.1 條目 |
 | 0.002 | **🚨🚨 4類法人籌碼資料源「隔日重複值」bug家族根除 ✕ JJ鬼爪V4.1上線 ✕ 選股雷達真數據化 (v64.0)** | 夜盤三大法人/期貨大戶/選擇權大戶/現貨與選擇權法人金額共4類TAIFEX/TWSE來源，都在官方報表「隔天才更新」的空窗期被誤判成當天真實資料寫進永久歷史（2類使用者截圖抓到、1類回補過程意外發現「正在發生中」）；已幫全部相關fetch函式加上明確`target_date`日期查詢，查不到就誠實回報未發布。另外移除Max Pain型態C死碼（62天真實回測驗證，比照露米籌碼監控機器人稽核發現）；JJ鬼爪V4.1指標移植上線（跟ADX Pro V3合併成單一Cloudflare Worker，`indicator=`參數路由）；選股雷達投信認養/籌碼偏多真數據化（全市場滾動10日三大法人歷史）；修復主儀表板與戰情室即時報價死碼/無備援問題。完整根因與驗證方式見 [HISTORY.md](HISTORY.md) v64.0 條目 |
 | 0.005 | **🔴🔴 週選結算日歷史回補資料同樣中招，已修正 session_snapshots.json (v63.6)** | v63.5 只驗證並修好「今天」即時計算路徑；用真實 TAIFEX 資料回頭驗證 `backfill_snapshots.py` 的歷史回補路徑，證實 2026-09-09（週三週選結算）與 2026-09-11（週五週選結算）兩天的 DAY/NIGHT 快照，當初都是用同一根因的舊版 `classify_txo_contract_buckets()`（無時間檢查）算出來、選到已結算歸零的當週合約，且 09-11 的錯誤數字目前正顯示在網站「5日歷程」表格上。已直接用修正後邏輯重算這4筆快照的 zero_gamma_level/gex_plus_flip/call_wall_strike/put_wall_strike/max_pain_strike 並回填 `data/session_snapshots.json`，重跑引擎後 `history_10_sessions` 已更新為正確數字 |

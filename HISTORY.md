@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v64.3`** | 2026-09-24 | 🛡️ **戰情室 AO/雙層MACD/CCI 搬遷至 Cloudflare Worker 做 IP 保護（第二個試點，比照ADX Pro V3/JJ鬼爪）：本機Node.js逐點比對搬遷前後1458個數據點零誤差；主圖🚀🐦🛸💰箭頭改用Worker真實雙層配色重算（含節流互動邏輯）；順手修復卡在2026-09-16的room.js版本快取字串陳年bug（8天內每次發版的自動置換悄悄失敗）；main分支合併時發現並正確處理46次自動排程資料更新，避免誤蓋** |
 | **`v64.2`** | 2026-09-24 | 🆕 **選股雷達「5K真突破」✕「神奇九轉」真指標上線：5K_Strategy_Master_v5.pine進場觸發邏輯（不含停損停利）與demark_sequential_v3_equities.pine完整Setup/Countdown狀態機+7大過濾器武器庫真實移植，RSI/Stoch/ATR數學逐位對照獨立`ta`函式庫驗證，兩者皆手動追蹤過整段運算過程確認邏輯正確** |
 | **`v64.1`** | 2026-09-17 | 🆕 **選股雷達 JJ_MACD/JJ_CCI 真指標上線：`macd_state` 從均線+漲跌幅heuristic換成使用者自己的雙層MACD/CCI Pine Script真實移植（EMA/CCI數學已對照獨立`ta`函式庫逐位驗證），OHLCV回看窗口25→60個交易日補足EMA收斂；順手發現並修復戰情室選股雷達結果表「MACD/量能」欄位完全沒接真實資料、以及`sc-macd-grow`死checkbox兩個問題** |
 | **`v64.0`** | 2026-09-17 | 🚨🚨 **正在發生中的「隔日重複值」bug家族根除：夜盤/散戶/大戶交易人/選擇權法人共4類資料源同一種「今日報表未更新前被誤判成新資料」根因，新增跨日期防呆＋明確日期查詢；Max Pain型態C死碼比照露米移除（62天真實回測驗證）；JJ鬼爪V4.1指標上線；選股雷達投信認養/籌碼偏多真數據化；戰情室即時報價死碼與無備援修復發布版** |
@@ -29,6 +30,26 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🛡️ v64.3 戰情室 AO/雙層MACD/CCI 搬遷 Cloudflare Worker 發布版 (2026-09-24)
+
+- **背景**：v64.2完成選股雷達的4大真指標移植後，接續使用者原訂優先順序「AO→CVD→大戶散戶動能」的Worker搬遷項目。CVD目前是本地OHLC近似公式（不是真實逐筆買賣方向分類），維持先前討論的結論暫緩處理；大戶散戶動能的真實資料本來就在後端（`fubon_api_provider.py`），沒有公式好保護，不需要搬遷。所以這次實際完成的是AO＋戰情室自己的雙層MACD＋CCI三個——這三個不是選股雷達那組（build_screener_cache.py用的JJ_MACD/JJ_CCI），是`trading room/room.js`自己算給Sub-Chart 2/3圖表面板用的獨立一份，2026-09-10就已經是真公式，這次純粹是把算法從瀏覽器搬到Cloudflare Worker保護，不是修正正確性。
+
+- **🆕 Worker新增`indicator=momentum`端點**：跟既有ADX Pro V3/JJ鬼爪V4.1同一支`bluebird-indicators` Worker，用同一套`indicator=`參數路由模式擴充（不另開新Worker）。新增`computeDualMacdSeries()`/`computeCciSeries()`/`computeAoSeries()`三個函式，回傳完整時間序列（給Sub-Chart 2/3/4畫線用，不是像JJ鬼爪HUD那樣只回傳最後一根K棒的單一數值）。
+
+- **🔴🔴 驗證方式：本機Node.js逐點比對，不是「看起來合理」就上線**：寫了一支獨立Node測試腳本，同時載入「搬遷前room.js的本地版算法」跟「搬遷後Worker的新版算法」，餵同一批真實TXF K棒（`data/klines_cache.json`），逐點比對兩邊算出來的MACD柱體/快線/慢線/顏色、CCI數值/訊號、AO數值/顏色。**1458個數據點，0個不一致**，CCI訊號筆數也完全一樣（26筆）。確認數字零誤差後才把本地公式從room.js刪除。
+
+- **🔴 主圖🚀強火箭/🐦強藍鳥/🛸動能再啟/💰減碼箭頭連帶修復**：這是`trading room/room.js`裡另一個獨立的、比JJ鬼爪V4.1規模小很多的既有功能（只有4個emoji，不是JJ鬼爪完整的8個），直接畫在主K棒圖上，跟Sub-Chart 2/3的雙層MACD面板共用同一批`mainDif`/`mainDea`變數。搬遷時第一次瀏覽器實測就直接抓到這個功能爆掉（`mainDif is not defined`）——這是這次驗證流程真正抓到問題的地方，不是憑空猜測。
+  - **第一步修復**：🚀跟🐦本來就只需要標準單層MACD(12,26,9)/CCI(20)比大小，不需要JJ的雙層配色秘方（這兩個是1979/1980年就公開的教科書公式，不是IP），補一份最簡單版本local計算讓功能不壞掉，行為完全不變。🛸原本是「柱體顏色是不是雙層配色裡最強的純紅」，暫時先改用「主軸柱體為正且比昨天長」這個近似判斷。
+  - **使用者要求更精準**：使用者確認初衷是「把TradingView指標搬到網頁上」，要求🛸也比照AO改成非同步拿Worker真資料，不要用近似版將就。由於🚀/🐦/🛸/💰四個訊號共用同一個「14根K棒節流」機制（其中一個觸發後14根內不會再判斷其他三個），🛸的觸發時機一變，會連鎖影響到其他三個訊號的觸發時機——不能只單獨補🛸，必須Worker真資料回來後**四個一起重新計算**，才能完全還原「如果一開始就有真資料」的結果。抽出`computeMomentumBirdMarkers()`共用函式，`generateIndicatorsData()`起手用本地簡化版畫一次（不卡畫面），`updateMomentumSeries()`收到Worker真實回應後再用真資料整批重算替換掉。
+  - **驗證方式**：寫合成K棒資料的Node測試腳本，分別用「本地簡化版顏色來源」跟「模擬雙層配色顏色來源」各跑一次`computeMomentumBirdMarkers()`，確認🚀/🐦/💰在兩種情況下**觸發條件本身逐位相同**（畢竟主軸MACD/CCI公式不管本地版還是Worker版都一樣），只有🛸的觸發次數不同（3次 vs 8次），且因為共用節流機制，連帶影響到其他三個訊號的觸發時機分布——這是預期中「4選1+共用冷卻」設計的正確結果，不是bug。
+
+- **🔴 順手修復的陳年bug：`room.html`的`room.js?v=...`版本快取字串卡死**：測試搬遷過程中，瀏覽器反覆載入到舊版room.js，追查發現`room.html`的`<script src="room.js?v=20260916_supertrend">`是一個2026-09-16設的手動字串，跟`bump_version.py`第112行期待的`room.js?v={old_version}`格式（例如`v64.1`）完全對不起來，導致**這8天內（v64.1→v64.2）每次發版腳本嘗試置換這個字串時都靜默失敗**，room.js的瀏覽器快取版本可能一直沒有真正跟著版本號滾動更新。已改成`room.js?v=v64.2`對齊格式，之後每次`bump_version.py`都能正常置換。
+
+- **🔴🔴 合併回main時的意外發現：自動排程已經獨立跑了46次資料更新**：這個session橫跨6天（2026-09-18～09-24），準備`git merge`回main時發現main分支已經比本機紀錄的上次同步點（v64.1）超前46個commit，全部是`.github/workflows/auto_update.yml`排程自動產生的「🏛️ [Official] TAIFEX Day/Night Session Positioning & GEX Baseline」資料快照。原本一個直覺的`git merge --ff-only`差點把這46次自動更新整批蓋掉（本機分支落後但沒偵測到，改用fast-forward到本機分支反而是往回跳）——中途發現不對勁緊急停下，改用正確流程：`git reset --hard origin/main`拿到最新自動更新基準，再`git merge --no-ff`合併這次的程式碼分支，資料類檔案（`gex_data.json`/`embedded_data.js`/`encrypted_gex.json`/social卡片圖）衝突時保留自動更新的較新版本，程式碼類檔案（`build_screener_cache.py`/`room.html`/`room.js`/文件類）全部乾淨自動合併無衝突。合併完成後發現`gex_data.json`裡`engine_version`還停在自動更新遺留的`v64.1`字串（自動排程只跑`fetch_and_calc_vision.py`重新產生資料，不會呼叫`bump_version.py`同步版本號），重新完整跑一次pipeline校正為`v64.2`才push，避免版本號跟實際程式碼對不起來。
+  - **方法論補充**：這是本專案第一次出現「AI手動session」跟「GitHub Actions自動排程」在同一個main分支上並行推進的情境。之後任何多天沒有同步的session，`git checkout main`前務必先`git fetch origin main`確認落後commit數，不能直接假設本機main就是最新的。
+
+- **範圍聲明**：CVD真實化（改用`fubon_api_provider.py`已有的tick rule買賣方向判斷取代目前的OHLC近似公式）跟戰情室CL/US10Y/DXY即時輪詢，維持待辦未做。JJ鬼爪V4.1對照TradingView驗證、Smart Money Concept指標移植，仍需要使用者在場逐根K棒核對，未在這次範圍內。
 
 ### 🆕 v64.2 選股雷達「5K真突破」✕「神奇九轉」真指標上線發布版 (2026-09-24)
 

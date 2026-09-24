@@ -1,10 +1,25 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.2)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.3)
 
-**當前版本**：`v64.2` (2026-09-24 選股雷達「5K真突破」✕「神奇九轉」真指標上線)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.2)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.2)
+**當前版本**：`v64.3` (2026-09-24 戰情室 AO/雙層MACD/CCI 搬遷 Cloudflare Worker)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.3)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.3)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
+
+---
+
+## 🎯 v64.3 核心更新亮點（戰情室 AO/雙層MACD/CCI 搬遷 Cloudflare Worker）
+
+### 🛡️ IP保護第二個試點：AO/雙層MACD/CCI 搬去 `bluebird-indicators` Worker
+- 這三個是`trading room/room.js`自己給Sub-Chart 2/3/4圖表面板用的獨立真公式（2026-09-10就有，跟選股雷達的JJ_MACD/JJ_CCI是不同的一份），比照ADX Pro V3/JJ鬼爪V4.1的既有模式，新增`indicator=momentum`端點，同一支Worker不另開新的。
+- 驗證：本機Node.js逐點比對搬遷前後算法，1458個數據點0誤差，CCI訊號筆數也一致（26筆）。
+- 主圖🚀🐦🛸💰箭頭（獨立於JJ鬼爪V4.1的8-emoji完整版，只有4個）連帶改用Worker真實雙層配色，且四個訊號共用的14根K棒節流機制也一併正確重算，不是只補單一訊號。
+- 順手修好`room.html`卡在2026-09-16的`room.js?v=...`版本快取字串陳年bug（8天內每次發版自動置換都悄悄失敗）。
+
+### 🔧 Git維運：正確合併46次自動排程資料更新
+- main分支6天內被`.github/workflows/auto_update.yml`自動跑了46次資料快照，合併時差點被誤蓋，已改用正確流程（保留自動更新資料+合併本次程式碼+重跑pipeline校正版本號）處理，未來多天沒同步的session會先`git fetch`確認落後進度再動作。
+
+詳細驗證方式與完整檔案異動請見 [HISTORY.md](HISTORY.md) v64.3 條目。
 
 ---
 
