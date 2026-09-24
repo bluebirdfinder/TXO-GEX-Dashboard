@@ -1,3 +1,29 @@
+## 🔄 2026-09-24 交接：v64.3 已上線main，使用者要開新聊天室，以下是接手待辦（取代下方交接區塊的「待辦」部分，皆保留當歷史記錄）
+
+**現況**：v64.1（選股雷達JJ_MACD/JJ_CCI真指標）、v64.2（選股雷達5K真突破/神奇九轉真指標）、v64.3（戰情室AO/雙層MACD/CCI搬遷Cloudflare Worker）皆已發版並push到main（本機與GitHub一致，8大版次位置稽核通過）。完整根因與驗證方式見 [HISTORY.md](HISTORY.md) v64.1/v64.2/v64.3三個條目，這裡不重複，新session應該先讀那三個條目建立上下文，不要重新猜測或探索。
+
+**⚠️ 這次session橫跨6天（09-18～09-24），期間main分支被`.github/workflows/auto_update.yml`自動排程獨立跑了46次資料更新——新session開始前，`git checkout main`之前務必先`git fetch origin main`確認本機main有沒有落後，不能假設本機main就是最新，否則有蓋掉自動更新的風險（這次session中途發現並正確處理過一次，見HISTORY.md v64.3條目「合併回main時的意外發現」）。**
+
+### ⏳ 還沒做、新session按優先順序處理
+
+| 優先度 | 項目 | 細節 | 需要使用者在場嗎 |
+|---|---|---|---|
+| 🟡 中 | JJ鬼爪V4.1對照TradingView驗證 | 已上線但卡片標題仍標示「⚠️未對照TradingView驗證」，需要開真實TradingView圖表逐根K棒核對戰情室左側「動能鳥指標即時戰情」卡片的訊號時間點，核對通過後把`trading room/room.html`裡這串警告文字拿掉 | ✅ 需要 |
+| 🟡 中 | Smart Money Concept指標移植 | 完全沒做，源碼在使用者私有資料夾`TradingView 指標\合併好用公開指標\Merged_Indicators.md`，難度比JJ鬼爪高很多（Swing/Internal結構+Order Blocks+Fair Value Gap等多組互相牽動的狀態），部署架構比照JJ鬼爪合併進同一份`worker.js` | ✅ 需要 |
+| 🟢 低 | CVD累積量差真實化 | `trading room/room.js`目前CVD是用單根K棒開高低收比例湊出來的近似公式（`*0.4`/`+20`/`*0.2`等人工調整常數），不是真實逐筆買賣方向分類。好消息：`scripts/fubon_api_provider.py`的`_process_trades_data()`已經有真實tick rule買賣方向判斷（拿來做大戶散戶動能用），理論上可以重用同一組真實資料做出真正的CVD——但只有TXF/MXF/MTX有這個真實數據源，且只能從連線當下即時累積，無法回補歷史。使用者尚未決定要不要做，新session應該先問 | ❌ 不用，但要問使用者要不要做 |
+| 🟢 低 | 戰情室CL原油/US10Y美債/DXY美元即時輪詢 | `initOverseasLiveTickStream()`函式名稱說是即時串流，實際上只設定一次滑鼠提示文字，從未真正輪詢過。唯一真實數據來源是`gexData.macro_events_radar.macro_risk_dashboard`（後端每次整頁重整才更新一次） | ❌ 不用 |
+| 🟢 低 | 選股雷達🛸動能飛碟/⚡動能閃電/✈️噴射機/🥚帶殼鳥 | `scripts/build_screener_cache.py`裡仍是均線+成交量比率湊出來的簡化版，跟這次已完成的🚀強火箭/🐦強力藍鳥（v64.1沿用JJ鬼爪真公式）、📐真5K突破/神奇九轉（v64.2）是同一批遺留heuristic，檔頭註解已誠實記載範圍邊界 | ❌ 不用，但要問使用者有沒有對應源碼 |
+| 🟢 低 | JJ鬼爪🐣一般藍鳥/✈️弱火箭（選股雷達版） | v64.1只移植了強版本（🚀強火箭/🐦強力藍鳥＝`is_strong_rocket`/`is_strong_bird`），弱版本（`is_weak_rocket`/`is_normal_bird`）用同一套`ghost_claws_v4.1.pine`公式、同一批已抓好的120日OHLCV，零額外資料成本，之後可以直接加進`compute_jj_rocket_and_bird()` | ❌ 不用 |
+| 🟢 低 | `bump_version.py`不會自動插入新版本內容區塊 | 連續3個版本(v64.1/v64.2/v64.3)都遇到同一個根因：腳本只做版本號字串置換，不會在HISTORY.md/STATUS.md/PROJECT_HANDOVER.md/README.md插入新的一節內容，導致PROJECT_HANDOVER.md「row 0」跟README.md「最新消息」區塊反覆卡著舊版本的內容、只有版號被換成新的。這次都是session中手動發現並修正，值得把腳本本身改成能正確處理插入新內容區塊，而不是每次發版都要重新手動抓 | ❌ 不用 |
+| 🟢 低 | `futDailyMarketReport`編碼問題全面搜尋 | 已知這個TAIFEX端點中文標籤編碼異常，只有`parse_taifex_fut_oi()`一個使用點解過，還沒全面搜過程式裡其他解析點是否有同樣問題 | ❌ 不用 |
+| 🟢 低 | `data-pipeline-integrity` skill正式測試迴圈 | 已建立在`~/.claude/skills/data-pipeline-integrity`，還沒跑過skill-creator正式量化評分+瀏覽器互動介面流程 | ❌ 不用 |
+| 🟢 低 | `.claude/worktrees/`底下4個空worktree | `bold-snyder-f34572`/`dazzling-jemison-4bca31`/`elegant-heisenberg-b65af4`/`peaceful-bartik-e63056`，清理與否不影響運作，一直沒清 | ❌ 不用 |
+
+### 🗣️ 給接手新session的提醒
+使用者這個專案的溝通風格：進度彙報用表格、真正需要決定的分岔點用結構化選項問（不要只寫在段落裡）、完成會影響交易判斷的重大修復後主動觸發發版流程不用等使用者說「發版」、push一律要先問過使用者。技術概念要用白話先解釋一句再帶術語（使用者這次session明確反饋過，久沒碰專案時記憶會模糊，需要白話帶入）。使用者非常重視「不要斷言正確性沒驗證過」——多次強調不要不查證就說沒問題，稽核類任務務必實際查證官方資料源、獨立函式庫比對，或瀏覽器實測，不能只讀程式碼覺得邏輯合理就結案。這次session移植JJ_MACD/JJ_CCI/5K戰法/神奇九轉/AO/雙層MACD/CCI時，每一個都有拿真實資料對照獨立Python `ta` 函式庫或手動追蹤運算過程驗證過，這是使用者認可的驗證標準，新session應該延續同樣的嚴謹度，不要因為前面做過就降低驗證標準。
+
+---
+
 ## 🔄 2026-09-17 交接：v64.0 已上線main，使用者要開新聊天室，以下是接手待辦（取代下方交接區塊的「待辦」部分，皆保留當歷史記錄）
 
 **現況**：v64.0已發版並push到main（本機與GitHub一致）。今天完成的內容（4類法人籌碼資料源「隔日重複值」bug根除、Max Pain型態C死碼移除、JJ鬼爪V4.1上線、選股雷達真數據化、主儀表板/戰情室即時報價死碼修復）完整根因與驗證方式見 [HISTORY.md](HISTORY.md) v64.0條目，這裡不重複，新session應該先讀那個條目建立上下文，不要重新猜測或探索。
