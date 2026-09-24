@@ -400,6 +400,69 @@ function handleChartResize() {
  * Anchors strictly on current real market price (gexData.txf_price / stock quote)
  * Computes authentic MA, SMMA, VWAP, Dual MACD (4-color), CCI(20), AO, DMI/ADX, DeMark 9★/13★ & Momentum Birds
  */
+
+// 主圖K棒上的 🚀強火箭/🐦強藍鳥/🛸動能再啟/💰減碼 箭頭——跟Sub-Chart 2/3的雙層MACD/CCI是兩個獨立
+// 功能，共用同一套「4選1 + 14根K棒節流」判斷順序。抽成獨立函式是因為需要呼叫兩次：
+// generateIndicatorsData() 起手先用本地簡化版柱色畫一次（不用等API），Worker真實雙層配色
+// 回來後 updateMomentumSeries() 再呼叫一次拿真資料重算、整批替換掉，讓節流判斷是根據「單一套
+// 一致的資料」跑完整個歷史算出來的，不是本地版跟真實版兩批各自獨立節流再湊在一起。
+// difArr/deaArr是主軸MACD(12,26,9)快慢線——不管本地簡化版還是Worker真實版，主軸公式完全一樣
+// （雙層配色只影響「顏色」，不影響主軸dif/dea本身），所以🚀不需要特別分真假版本。
+// histColorAt(t, idx) 回傳當下這根K棒的柱體顏色字串（或null），只有🛸需要真的判斷是不是
+// '#ff3b30'（JJ雙層配色裡「強多加速」的純紅）——本地簡化版沒有真配色可查，呼叫端傳一個近似的
+// 判斷式進來，Worker真資料回來後傳真正的顏色進來，兩次呼叫共用同一份邏輯，差別只在這個參數。
+function computeMomentumBirdMarkers(candles, opens, closes, highs, lows, volumes, volMa5, ma7, difArr, deaArr, cciArr, histColorAt) {
+  const markers = [];
+  const count = candles.length;
+  let bullSetupCount = 0;
+  let bearSetupCount = 0;
+  let lastSignalIdx = -30;
+
+  for (let i = 4; i < count; i++) {
+    const t = candles[i].time;
+
+    if (closes[i] < closes[i - 4]) {
+      bullSetupCount++; bearSetupCount = 0;
+    } else if (closes[i] > closes[i - 4]) {
+      bearSetupCount++; bullSetupCount = 0;
+    } else {
+      bullSetupCount = 0; bearSetupCount = 0;
+    }
+
+    if (i >= 20 && (i - lastSignalIdx >= 14)) {
+      const curClose = closes[i];
+      const curOpen = opens[i];
+      const curVol = volumes[i].value;
+      const ma5v = volMa5.find(v => v.time === t)?.value || 1000;
+      const cciV = cciArr[i] || 0;
+      const macdDifV = difArr[i];
+      const macdDeaV = deaArr[i];
+      const color = histColorAt(t, i);
+
+      // 🚀 強火箭 (帶量突破主均線與前高)
+      if (curClose > curOpen && curClose > highs[i - 1] && curVol > ma5v * 1.6 && macdDifV > macdDeaV) {
+        markers.push({ time: t, position: 'belowBar', color: '#ffd600', shape: 'arrowUp', text: '🚀 強火箭' });
+        lastSignalIdx = i;
+      }
+      // 🐦 強藍鳥 (超跌起漲 + 抄底結構)
+      else if (cciV < -110 && (bullSetupCount >= 6 || curClose > curOpen) && curVol > ma5v * 1.1) {
+        markers.push({ time: t, position: 'belowBar', color: '#00b0ff', shape: 'arrowUp', text: '🐦 強藍鳥' });
+        lastSignalIdx = i;
+      }
+      // 🛸 動能再啟 (回測均線後強勢彈升 + 雙層配色轉為「強多加速」純紅)
+      else if (curClose > curOpen && lows[i] <= (ma7.find(m => m.time === t)?.value || curClose) && color === '#ff3b30') {
+        markers.push({ time: t, position: 'belowBar', color: '#ffd700', shape: 'circle', text: '🛸 動能再啟' });
+        lastSignalIdx = i;
+      }
+      // 💰 減碼 / ⚠️ 出清 (漲幅過大或跌破關鍵支撐)
+      else if (bearSetupCount >= 8 || (cciV > 165 && curClose < curOpen)) {
+        markers.push({ time: t, position: 'aboveBar', color: '#ff9800', shape: 'arrowDown', text: '💰 減碼' });
+        lastSignalIdx = i;
+      }
+    }
+  }
+  return markers;
+}
 function generateIndicatorsData(tf) {
   let basePrice = 46588;
   let isYield = false;
@@ -759,67 +822,39 @@ function generateIndicatorsData(tf) {
     bareCci[i] = (currTp - meanTp) / (0.015 * meanDev);
   }
 
-  const markers = [];
-  let bullSetupCount = 0;
-  let bearSetupCount = 0;
-  let lastSignalIdx = -30;
-
-  for (let i = 4; i < count; i++) {
-    const t = candles[i].time;
-    
-    // TD Setup counting against close[i-4]
-    if (closes[i] < closes[i - 4]) {
-      bullSetupCount++;
-      bearSetupCount = 0;
-    } else if (closes[i] > closes[i - 4]) {
-      bearSetupCount++;
-      bullSetupCount = 0;
-    } else {
-      bullSetupCount = 0;
-      bearSetupCount = 0;
-    }
-
-    // TD DeMark 9★ (抄底/逃頂)
-    if (bullSetupCount === 9) {
-      markers.push({ time: t, position: 'belowBar', color: '#2ed573', shape: 'circle', text: '9★抄底' });
-    } else if (bearSetupCount === 9) {
-      markers.push({ time: t, position: 'aboveBar', color: '#ff4757', shape: 'circle', text: '9★逃頂' });
-    }
-
-    // Multi-factor Momentum Bird signals (Strict filtering to prevent icon clutter)
-    if (i >= 20 && (i - lastSignalIdx >= 14)) {
-      const curClose = closes[i];
-      const curOpen = opens[i];
-      const curVol = volumes[i].value;
-      const ma5v = volMa5.find(v => v.time === t)?.value || 1000;
-      const cciV = bareCci[i] || 0;
-      const macdDifV = mainDif[i];
-      const macdDeaV = mainDea[i];
-      const histNow = mainDif[i] - mainDea[i];
-      const histPrev = i > 0 ? (mainDif[i - 1] - mainDea[i - 1]) : histNow;
-
-      // 🚀 強火箭 (帶量突破主均線與前高)
-      if (curClose > curOpen && curClose > highs[i - 1] && curVol > ma5v * 1.6 && macdDifV > macdDeaV) {
-        markers.push({ time: t, position: 'belowBar', color: '#ffd600', shape: 'arrowUp', text: '🚀 強火箭' });
-        lastSignalIdx = i;
+  const demarkMarkers = [];
+  {
+    let bullSetupCount = 0;
+    let bearSetupCount = 0;
+    for (let i = 4; i < count; i++) {
+      const t = candles[i].time;
+      if (closes[i] < closes[i - 4]) {
+        bullSetupCount++; bearSetupCount = 0;
+      } else if (closes[i] > closes[i - 4]) {
+        bearSetupCount++; bullSetupCount = 0;
+      } else {
+        bullSetupCount = 0; bearSetupCount = 0;
       }
-      // 🐦 強藍鳥 (超跌起漲 + 抄底結構)
-      else if (cciV < -110 && (bullSetupCount >= 6 || curClose > curOpen) && curVol > ma5v * 1.1) {
-        markers.push({ time: t, position: 'belowBar', color: '#00b0ff', shape: 'arrowUp', text: '🐦 強藍鳥' });
-        lastSignalIdx = i;
-      }
-      // 🛸 動能再啟 (回測均線後強勢彈升、MACD柱體轉強加速)
-      else if (curClose > curOpen && lows[i] <= (ma7.find(m => m.time === t)?.value || curClose) && histNow > 0 && histNow > histPrev) {
-        markers.push({ time: t, position: 'belowBar', color: '#ffd700', shape: 'circle', text: '🛸 動能再啟' });
-        lastSignalIdx = i;
-      }
-      // 💰 減碼 / ⚠️ 出清 (漲幅過大或跌破關鍵支撐)
-      else if (bearSetupCount >= 8 || (cciV > 165 && curClose < curOpen)) {
-        markers.push({ time: t, position: 'aboveBar', color: '#ff9800', shape: 'arrowDown', text: '💰 減碼' });
-        lastSignalIdx = i;
+      if (bullSetupCount === 9) {
+        demarkMarkers.push({ time: t, position: 'belowBar', color: '#2ed573', shape: 'circle', text: '9★抄底' });
+      } else if (bearSetupCount === 9) {
+        demarkMarkers.push({ time: t, position: 'aboveBar', color: '#ff4757', shape: 'circle', text: '9★逃頂' });
       }
     }
   }
+
+  // 🚀強火箭/🐦強藍鳥/🛸動能再啟/💰減碼——用本地簡化版MACD柱色（見上方bareEma/mainDif/mainDea）
+  // 起手畫一次讓畫面不用等API，Worker的雙層真配色回來後 updateMomentumSeries() 會用
+  // computeMomentumBirdMarkers() 拿真資料重算一次替換掉這批，見該函式與 fetchMomentumFromWorker()。
+  const bareHistColorAt = (t, idx) => {
+    const histNow = mainDif[idx] - mainDea[idx];
+    const histPrev = idx > 0 ? (mainDif[idx - 1] - mainDea[idx - 1]) : histNow;
+    return (histNow > 0 && histNow > histPrev) ? '#ff3b30' : null; // 只需要能不能判斷「純紅」這個狀態
+  };
+  const momentumBirdMarkers = computeMomentumBirdMarkers(
+    candles, opens, closes, highs, lows, volumes, volMa5, ma7, mainDif, mainDea, bareCci, bareHistColorAt
+  );
+  const markers = [...demarkMarkers, ...momentumBirdMarkers];
 
   // --- Real VWAP & SMMA ---
   const vwapData = [];
@@ -1068,6 +1103,7 @@ function generateIndicatorsData(tf) {
     adxHist,
     adxSignals,
     markers,
+    demarkMarkers,
     vwapData,
     vwapUpper,
     vwapLower,
@@ -1123,7 +1159,7 @@ function renderChartData() {
   macdDeaSeries.setData([]);
   cciLineSeries.setData([]);
   cciLineSeries.setMarkers([]);
-  updateMomentumSeries(sym, currentTf);
+  updateMomentumSeries(sym, currentTf, data);
 
   // 5. Sub-Chart 4: ADX Pro V3 / AO / CVD Candlesticks / Momentum
   renderSub4Chart(data);
@@ -1222,7 +1258,7 @@ async function fetchMomentumFromWorker(symbol, tf) {
 // 更新 Sub-Chart 2 (雙層MACD) / Sub-Chart 3 (CCI) —— 這兩個一直都顯示，不像AO是分頁式。
 // 非同步：renderChartData() 呼叫這個之後不等它，candles/volume等其他同步資料照常先畫出來，
 // MACD/CCI 晚一點點才跟著真數字出現，比整個畫面卡住等API回應體驗好。
-async function updateMomentumSeries(symbol, tf) {
+async function updateMomentumSeries(symbol, tf, data) {
   const result = await fetchMomentumFromWorker(symbol, tf);
   // 使用者可能在API回應之前就切換了商品或時框，這時候這批數字已經過期，不能覆蓋畫面
   if ((currentActiveSymbol?.symbol || 'TXF') !== symbol || currentTf !== tf) return;
@@ -1232,6 +1268,31 @@ async function updateMomentumSeries(symbol, tf) {
     macdDeaSeries.setData(result.macd.dea);
     cciLineSeries.setData(result.cci.line);
     cciLineSeries.setMarkers(result.cci.signals.map(s => ({ time: s.time, position: 'inBar', color: s.color, shape: 'circle', text: s.text })));
+
+    // 主圖🚀/🐦/🛸/💰箭頭：用Worker回傳的真實雙層配色重算一次，取代generateIndicatorsData()起手
+    // 用本地簡化版畫的那批（尤其🛸「動能再啟」，本地版只是近似值，見computeMomentumBirdMarkers()
+    // 註解）。真實柱體顏色資料用時間對應（Worker跟本地candles是同一份klines_cache.json，時間戳
+    // 應該完全對得上），對不上的（例如本地是平盤假K棒的未覆蓋商品）該根就沒有顏色可判斷，🛸自然
+    // 不會誤觸發。GEX覆蓋線開啟時主圖箭頭本來就會被GEX突破箭頭取代，這裡不用重複畫。
+    const isGexEligible = GEX_SUPPORTED_SYMBOLS.includes((currentActiveSymbol?.symbol || activeContract || '').toUpperCase());
+    if (data && !(indicatorConfig.gex && gexData && isGexEligible)) {
+      const opens = data.candles.map(c => c.open);
+      const closes = data.candles.map(c => c.close);
+      const highs = data.candles.map(c => c.high);
+      const lows = data.candles.map(c => c.low);
+      const difByTime = new Map(result.macd.dif.map(d => [d.time, d.value]));
+      const deaByTime = new Map(result.macd.dea.map(d => [d.time, d.value]));
+      const cciByTime = new Map(result.cci.line.map(c => [c.time, c.value]));
+      const colorByTime = new Map(result.macd.hist.map(h => [h.time, h.color]));
+      const difArr = data.candles.map(c => difByTime.get(c.time));
+      const deaArr = data.candles.map(c => deaByTime.get(c.time));
+      const cciArr = data.candles.map(c => cciByTime.get(c.time) || 0);
+      const realMomentumBirdMarkers = computeMomentumBirdMarkers(
+        data.candles, opens, closes, highs, lows, data.volumes, data.volMa5, data.ma7,
+        difArr, deaArr, cciArr, (t) => colorByTime.get(t) ?? null
+      );
+      candleSeries.setMarkers([...data.demarkMarkers, ...realMomentumBirdMarkers]);
+    }
   } else {
     macdHistSeries.setData([]);
     macdDifSeries.setData([]);
