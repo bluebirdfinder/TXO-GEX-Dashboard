@@ -1,5 +1,5 @@
 /**
- * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v64.1
+ * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v64.2
  * True Multi-Pane Trading Terminal with 10 Timeframes & 4 Sub-Panes
  *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + SAR + Supertrend
  *   - Sub-Chart 1 (14%): 成交量 Volume + 5MA & 10MA 雙均量線
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initTradingRoom() {
-  console.log('🦅 Initializing Multi-Pane Bird Trading Room v64.1...');
+  console.log('🦅 Initializing Multi-Pane Bird Trading Room v64.2...');
   
   // 1. Load Data
   await loadDashboardData();
@@ -400,6 +400,69 @@ function handleChartResize() {
  * Anchors strictly on current real market price (gexData.txf_price / stock quote)
  * Computes authentic MA, SMMA, VWAP, Dual MACD (4-color), CCI(20), AO, DMI/ADX, DeMark 9★/13★ & Momentum Birds
  */
+
+// 主圖K棒上的 🚀強火箭/🐦強藍鳥/🛸動能再啟/💰減碼 箭頭——跟Sub-Chart 2/3的雙層MACD/CCI是兩個獨立
+// 功能，共用同一套「4選1 + 14根K棒節流」判斷順序。抽成獨立函式是因為需要呼叫兩次：
+// generateIndicatorsData() 起手先用本地簡化版柱色畫一次（不用等API），Worker真實雙層配色
+// 回來後 updateMomentumSeries() 再呼叫一次拿真資料重算、整批替換掉，讓節流判斷是根據「單一套
+// 一致的資料」跑完整個歷史算出來的，不是本地版跟真實版兩批各自獨立節流再湊在一起。
+// difArr/deaArr是主軸MACD(12,26,9)快慢線——不管本地簡化版還是Worker真實版，主軸公式完全一樣
+// （雙層配色只影響「顏色」，不影響主軸dif/dea本身），所以🚀不需要特別分真假版本。
+// histColorAt(t, idx) 回傳當下這根K棒的柱體顏色字串（或null），只有🛸需要真的判斷是不是
+// '#ff3b30'（JJ雙層配色裡「強多加速」的純紅）——本地簡化版沒有真配色可查，呼叫端傳一個近似的
+// 判斷式進來，Worker真資料回來後傳真正的顏色進來，兩次呼叫共用同一份邏輯，差別只在這個參數。
+function computeMomentumBirdMarkers(candles, opens, closes, highs, lows, volumes, volMa5, ma7, difArr, deaArr, cciArr, histColorAt) {
+  const markers = [];
+  const count = candles.length;
+  let bullSetupCount = 0;
+  let bearSetupCount = 0;
+  let lastSignalIdx = -30;
+
+  for (let i = 4; i < count; i++) {
+    const t = candles[i].time;
+
+    if (closes[i] < closes[i - 4]) {
+      bullSetupCount++; bearSetupCount = 0;
+    } else if (closes[i] > closes[i - 4]) {
+      bearSetupCount++; bullSetupCount = 0;
+    } else {
+      bullSetupCount = 0; bearSetupCount = 0;
+    }
+
+    if (i >= 20 && (i - lastSignalIdx >= 14)) {
+      const curClose = closes[i];
+      const curOpen = opens[i];
+      const curVol = volumes[i].value;
+      const ma5v = volMa5.find(v => v.time === t)?.value || 1000;
+      const cciV = cciArr[i] || 0;
+      const macdDifV = difArr[i];
+      const macdDeaV = deaArr[i];
+      const color = histColorAt(t, i);
+
+      // 🚀 強火箭 (帶量突破主均線與前高)
+      if (curClose > curOpen && curClose > highs[i - 1] && curVol > ma5v * 1.6 && macdDifV > macdDeaV) {
+        markers.push({ time: t, position: 'belowBar', color: '#ffd600', shape: 'arrowUp', text: '🚀 強火箭' });
+        lastSignalIdx = i;
+      }
+      // 🐦 強藍鳥 (超跌起漲 + 抄底結構)
+      else if (cciV < -110 && (bullSetupCount >= 6 || curClose > curOpen) && curVol > ma5v * 1.1) {
+        markers.push({ time: t, position: 'belowBar', color: '#00b0ff', shape: 'arrowUp', text: '🐦 強藍鳥' });
+        lastSignalIdx = i;
+      }
+      // 🛸 動能再啟 (回測均線後強勢彈升 + 雙層配色轉為「強多加速」純紅)
+      else if (curClose > curOpen && lows[i] <= (ma7.find(m => m.time === t)?.value || curClose) && color === '#ff3b30') {
+        markers.push({ time: t, position: 'belowBar', color: '#ffd700', shape: 'circle', text: '🛸 動能再啟' });
+        lastSignalIdx = i;
+      }
+      // 💰 減碼 / ⚠️ 出清 (漲幅過大或跌破關鍵支撐)
+      else if (bearSetupCount >= 8 || (cciV > 165 && curClose < curOpen)) {
+        markers.push({ time: t, position: 'aboveBar', color: '#ff9800', shape: 'arrowDown', text: '💰 減碼' });
+        lastSignalIdx = i;
+      }
+    }
+  }
+  return markers;
+}
 function generateIndicatorsData(tf) {
   let basePrice = 46588;
   let isYield = false;
@@ -556,150 +619,29 @@ function generateIndicatorsData(tf) {
   const ma88 = calcSMA(Math.min(88, Math.floor(count * 0.7)));
   const ma200 = calcSMA(Math.min(200, Math.floor(count * 0.85)));
 
-  // --- Real EMA Helper ---
-  function computeEMA(src, period) {
-    const k = 2 / (period + 1);
-    const ema = [];
-    let prev = src[0];
-    for (let i = 0; i < src.length; i++) {
-      if (i === 0) {
-        prev = src[0];
-      } else {
-        prev = src[i] * k + prev * (1 - k);
-      }
-      ema.push(prev);
-    }
-    return ema;
-  }
-
-  // --- Real 戰情雙層 MACD (Main: 12/26/9, Sub: 3/15/5 with 4-color acceleration) ---
-  const ema12 = computeEMA(closes, 12);
-  const ema26 = computeEMA(closes, 26);
-  const mainDif = ema12.map((val, idx) => val - ema26[idx]);
-  const mainDea = computeEMA(mainDif, 9);
-  
-  const subEma3 = computeEMA(closes, 3);
-  const subEma15 = computeEMA(closes, 15);
-  const subDifArr = subEma3.map((val, idx) => val - subEma15[idx]);
-  const subDeaArr = computeEMA(subDifArr, 5);
-
+  // 2026-09-24: 戰情雙層MACD/波段拐點CCI/AO 這三個原本在這裡算的真公式已經搬去
+  // bluebird-indicators Cloudflare Worker（indicator=momentum）做IP保護，瀏覽器「檢視原始碼」
+  // 不再看得到算法本身。這裡故意留空陣列而不是留著公式當「萬一Worker掛掉的備援」——留著公式
+  // 就等於白搬，一樣看得到。真正的數值由 updateMomentumSeries()/renderSub4Chart() 的 'ao'
+  // 分支非同步呼叫 fetchMomentumFromWorker() 取得後，直接呼叫對應 series 的 setData()，不經過
+  // 這個函式的同步回傳值。Worker 目前只覆蓋 klines_cache.json 現有12個標的，其他商品會誠實
+  // 顯示「暫無真實數據」而不是空白公式湊出來的假數字。
   const macdData = [];
   const difData = [];
   const deaData = [];
-
-  for (let i = 0; i < count; i++) {
-    const t = candles[i].time;
-    const difVal = mainDif[i];
-    const deaVal = mainDea[i];
-    const histVal = (difVal - deaVal) * 2;
-    
-    // Sub MACD 4-color momentum acceleration
-    const subDif = subDifArr[i];
-    const subDea = subDeaArr[i];
-    const subHistCurr = subDif - subDea;
-    const subHistPrev = i > 0 ? (subDifArr[i - 1] - subDeaArr[i - 1]) : subHistCurr;
-    
-    const isSubBull = subDif > 0;
-    const isExpanding = subHistCurr >= subHistPrev;
-    
-    let histColor;
-    if (isSubBull) {
-      histColor = isExpanding ? '#ff3b30' : '#007aff'; // 🔴 強多加速 / 🔵 多頭收斂減碼
-    } else {
-      histColor = isExpanding ? '#007aff' : '#34c759'; // 🔵 水下翻紅早鳥預警 / 🟢 空頭主跌加速
-    }
-
-    difData.push({ time: t, value: Math.round(difVal * 10) / 10 });
-    deaData.push({ time: t, value: Math.round(deaVal * 10) / 10 });
-    macdData.push({ time: t, value: Math.round(histVal * 10) / 10, color: histColor });
-  }
-
-  // --- Real 波段拐點 CCI (20) & 4色買賣轉折圓點 (Only on true threshold crossing) ---
   const cciData = [];
   const cciSignals = [];
-  const cciPeriod = 20;
-
-  for (let i = 0; i < count; i++) {
-    const t = candles[i].time;
-    if (i < cciPeriod - 1) {
-      cciData.push({ time: t, value: 0 });
-      continue;
-    }
-
-    // Typical Price TP = (H + L + C) / 3
-    let sumTp = 0;
-    const tpSlice = [];
-    for (let k = 0; k < cciPeriod; k++) {
-      const idx = i - k;
-      const tp = (highs[idx] + lows[idx] + closes[idx]) / 3.0;
-      tpSlice.push(tp);
-      sumTp += tp;
-    }
-    const meanTp = sumTp / cciPeriod;
-
-    let sumMd = 0;
-    for (let k = 0; k < cciPeriod; k++) {
-      sumMd += Math.abs(tpSlice[k] - meanTp);
-    }
-    const meanDev = sumMd / cciPeriod || 0.001;
-    const currTp = (highs[i] + lows[i] + closes[i]) / 3.0;
-    const cciVal = (currTp - meanTp) / (0.015 * meanDev);
-    const roundedCci = Math.round(cciVal * 10) / 10;
-    cciData.push({ time: t, value: roundedCci });
-
-    // Threshold crossing detection
-    if (i > cciPeriod) {
-      const prevCci = cciData[i - 1].value;
-      const currCci = roundedCci;
-
-      // 買點1: 由下往上穿過 -200 (深紅圓點)
-      if (prevCci <= -200 && currCci > -200) {
-        cciSignals.push({ time: t, position: 'inBar', color: '#FF0000', shape: 'circle', text: '-200' });
-      }
-      // 買點2: 由下往上穿過 -100 (粉紅圓點)
-      else if (prevCci <= -100 && currCci > -100) {
-        cciSignals.push({ time: t, position: 'inBar', color: '#FF8080', shape: 'circle', text: '-100' });
-      }
-      // 賣點1: 由下往上穿過 +100 (淺綠圓點)
-      else if (prevCci <= 100 && currCci > 100) {
-        cciSignals.push({ time: t, position: 'inBar', color: '#00FF00', shape: 'circle', text: '+100' });
-      }
-      // 賣點2: 由下往上穿過 +200 (青綠圓點)
-      else if (prevCci <= 200 && currCci > 200) {
-        cciSignals.push({ time: t, position: 'inBar', color: '#00CEC9', shape: 'circle', text: '+200' });
-      }
-    }
-  }
-
-  // --- Real AO (Awesome Oscillator) = SMA(hl2, 5) - SMA(hl2, 34) ---
-  const hl2Arr = [];
-  for (let i = 0; i < count; i++) {
-    hl2Arr.push((highs[i] + lows[i]) / 2.0);
-  }
-
   const aoData = [];
+
+  // --- CVD (Cumulative Volume Delta) — 目前仍是本地OHLC近似公式，尚未搬遷，見
+  // SELF_AUDIT_FINDINGS_TODO.md：跟真實逐筆買賣方向分類（scripts/fubon_api_provider.py 的
+  // Trades頻道tick rule）比起來，這是用單根K棒開高低收比例湊出來的近似值，不是真實累積量差，
+  // 之後要嘛換成真實tick資料重做，要嘛在UI上更明確標示是近似值 ---
   const cvdCandles = [];
   let cumDelta = 0;
 
   for (let i = 0; i < count; i++) {
     const t = candles[i].time;
-    let sum5 = 0;
-    const len5 = Math.min(i + 1, 5);
-    for (let k = 0; k < len5; k++) sum5 += hl2Arr[i - k];
-    const sma5 = sum5 / len5;
-
-    let sum34 = 0;
-    const len34 = Math.min(i + 1, 34);
-    for (let k = 0; k < len34; k++) sum34 += hl2Arr[i - k];
-    const sma34 = sum34 / len34;
-
-    const aoVal = sma5 - sma34;
-    const prevAo = i > 0 ? aoData[i - 1].value : aoVal;
-    const diff = aoVal - prevAo;
-    const aoColor = diff >= 0 ? '#009688' : '#F44336';
-    aoData.push({ time: t, value: Math.round(aoVal * 10) / 10, color: aoColor });
-
-    // CVD Candlesticks (Accumulated Volume Delta)
     const barSpread = (highs[i] - lows[i]) || 1;
     const deltaRatio = (closes[i] - opens[i]) / barSpread;
     const barDelta = Math.round(volumes[i].value * deltaRatio * 0.4);
@@ -842,65 +784,77 @@ function generateIndicatorsData(tf) {
   }
 
   // --- Real TD Sequential DeMark 9★ / 13★ Setup & Multi-Factor Filtered Momentum Birds ---
-  const markers = [];
-  let bullSetupCount = 0;
-  let bearSetupCount = 0;
-  let lastSignalIdx = -30;
-
-  for (let i = 4; i < count; i++) {
-    const t = candles[i].time;
-    
-    // TD Setup counting against close[i-4]
-    if (closes[i] < closes[i - 4]) {
-      bullSetupCount++;
-      bearSetupCount = 0;
-    } else if (closes[i] > closes[i - 4]) {
-      bearSetupCount++;
-      bullSetupCount = 0;
-    } else {
-      bullSetupCount = 0;
-      bearSetupCount = 0;
+  // 這裡的🚀/🐦/🛸/💰主圖箭頭跟Sub-Chart 2/3的「戰情雙層MACD」是兩套不同的既有功能——
+  // 這組只需要標準單層MACD(12,26,9)判斷方向，不是JJ的雙層/四色配色那套需要保護的獨門邏輯，
+  // 標準MACD公式本身是1979年就公開的教科書公式，不算IP，所以在這裡留一份最簡單版本純粹是為了
+  // 讓這個既有箭頭功能不因為雙層版搬去Worker而跟著壞掉，跟Sub-Chart 2/3看到的真雙層MACD無關。
+  const bareEma = (src, period) => {
+    const k = 2 / (period + 1);
+    const out = [];
+    let prev = src[0];
+    for (let i = 0; i < src.length; i++) {
+      prev = i === 0 ? src[0] : src[i] * k + prev * (1 - k);
+      out.push(prev);
     }
+    return out;
+  };
+  const bareEma12 = bareEma(closes, 12);
+  const bareEma26 = bareEma(closes, 26);
+  const mainDif = bareEma12.map((v, idx) => v - bareEma26[idx]);
+  const mainDea = bareEma(mainDif, 9);
 
-    // TD DeMark 9★ (抄底/逃頂)
-    if (bullSetupCount === 9) {
-      markers.push({ time: t, position: 'belowBar', color: '#2ed573', shape: 'circle', text: '9★抄底' });
-    } else if (bearSetupCount === 9) {
-      markers.push({ time: t, position: 'aboveBar', color: '#ff4757', shape: 'circle', text: '9★逃頂' });
+  // 同理：這裡也只需要標準CCI(20)判斷超賣區，不是JJ_CCI的±100/±200穿越+MACD濾網那套。
+  const bareCci = new Array(count).fill(0);
+  for (let i = 19; i < count; i++) {
+    let sumTp = 0;
+    const tpSlice = [];
+    for (let k = 0; k < 20; k++) {
+      const idx = i - k;
+      const tp = (highs[idx] + lows[idx] + closes[idx]) / 3.0;
+      tpSlice.push(tp);
+      sumTp += tp;
     }
+    const meanTp = sumTp / 20;
+    let sumMd = 0;
+    for (let k = 0; k < 20; k++) sumMd += Math.abs(tpSlice[k] - meanTp);
+    const meanDev = sumMd / 20 || 0.001;
+    const currTp = (highs[i] + lows[i] + closes[i]) / 3.0;
+    bareCci[i] = (currTp - meanTp) / (0.015 * meanDev);
+  }
 
-    // Multi-factor Momentum Bird signals (Strict filtering to prevent icon clutter)
-    if (i >= 20 && (i - lastSignalIdx >= 14)) {
-      const curClose = closes[i];
-      const curOpen = opens[i];
-      const curVol = volumes[i].value;
-      const ma5v = volMa5.find(v => v.time === t)?.value || 1000;
-      const cciV = cciData[i]?.value || 0;
-      const macdDifV = mainDif[i];
-      const macdDeaV = mainDea[i];
-
-      // 🚀 強火箭 (帶量突破主均線與前高)
-      if (curClose > curOpen && curClose > highs[i - 1] && curVol > ma5v * 1.6 && macdDifV > macdDeaV) {
-        markers.push({ time: t, position: 'belowBar', color: '#ffd600', shape: 'arrowUp', text: '🚀 強火箭' });
-        lastSignalIdx = i;
+  const demarkMarkers = [];
+  {
+    let bullSetupCount = 0;
+    let bearSetupCount = 0;
+    for (let i = 4; i < count; i++) {
+      const t = candles[i].time;
+      if (closes[i] < closes[i - 4]) {
+        bullSetupCount++; bearSetupCount = 0;
+      } else if (closes[i] > closes[i - 4]) {
+        bearSetupCount++; bullSetupCount = 0;
+      } else {
+        bullSetupCount = 0; bearSetupCount = 0;
       }
-      // 🐦 強藍鳥 (超跌起漲 + 抄底結構)
-      else if (cciV < -110 && (bullSetupCount >= 6 || curClose > curOpen) && curVol > ma5v * 1.1) {
-        markers.push({ time: t, position: 'belowBar', color: '#00b0ff', shape: 'arrowUp', text: '🐦 強藍鳥' });
-        lastSignalIdx = i;
-      }
-      // 🛸 動能再啟 (回測均線後強勢彈升)
-      else if (curClose > curOpen && lows[i] <= (ma7.find(m => m.time === t)?.value || curClose) && macdData[i]?.color === '#ff3b30') {
-        markers.push({ time: t, position: 'belowBar', color: '#ffd700', shape: 'circle', text: '🛸 動能再啟' });
-        lastSignalIdx = i;
-      }
-      // 💰 減碼 / ⚠️ 出清 (漲幅過大或跌破關鍵支撐)
-      else if (bearSetupCount >= 8 || (cciV > 165 && curClose < curOpen)) {
-        markers.push({ time: t, position: 'aboveBar', color: '#ff9800', shape: 'arrowDown', text: '💰 減碼' });
-        lastSignalIdx = i;
+      if (bullSetupCount === 9) {
+        demarkMarkers.push({ time: t, position: 'belowBar', color: '#2ed573', shape: 'circle', text: '9★抄底' });
+      } else if (bearSetupCount === 9) {
+        demarkMarkers.push({ time: t, position: 'aboveBar', color: '#ff4757', shape: 'circle', text: '9★逃頂' });
       }
     }
   }
+
+  // 🚀強火箭/🐦強藍鳥/🛸動能再啟/💰減碼——用本地簡化版MACD柱色（見上方bareEma/mainDif/mainDea）
+  // 起手畫一次讓畫面不用等API，Worker的雙層真配色回來後 updateMomentumSeries() 會用
+  // computeMomentumBirdMarkers() 拿真資料重算一次替換掉這批，見該函式與 fetchMomentumFromWorker()。
+  const bareHistColorAt = (t, idx) => {
+    const histNow = mainDif[idx] - mainDea[idx];
+    const histPrev = idx > 0 ? (mainDif[idx - 1] - mainDea[idx - 1]) : histNow;
+    return (histNow > 0 && histNow > histPrev) ? '#ff3b30' : null; // 只需要能不能判斷「純紅」這個狀態
+  };
+  const momentumBirdMarkers = computeMomentumBirdMarkers(
+    candles, opens, closes, highs, lows, volumes, volMa5, ma7, mainDif, mainDea, bareCci, bareHistColorAt
+  );
+  const markers = [...demarkMarkers, ...momentumBirdMarkers];
 
   // --- Real VWAP & SMMA ---
   const vwapData = [];
@@ -1149,6 +1103,7 @@ function generateIndicatorsData(tf) {
     adxHist,
     adxSignals,
     markers,
+    demarkMarkers,
     vwapData,
     vwapUpper,
     vwapLower,
@@ -1196,14 +1151,15 @@ function renderChartData() {
     }
   }
 
-  // 3. Sub-Chart 2: 戰情雙層 MACD
-  macdHistSeries.setData(data.macdData);
-  macdDifSeries.setData(data.difData);
-  macdDeaSeries.setData(data.deaData);
-
-  // 4. Sub-Chart 3: 波段拐點 CCI + 4 色買賣轉折圓點 (紅/粉紅/淺綠/深綠)
-  cciLineSeries.setData(data.cciData);
-  cciLineSeries.setMarkers(data.cciSignals);
+  // 3./4. Sub-Chart 2 (戰情雙層MACD) / Sub-Chart 3 (波段拐點CCI) —— 真公式已搬去Cloudflare
+  // Worker（見 fetchMomentumFromWorker()），這裡先用空值起手不卡住其他同步渲染，真數字非同步
+  // 抵達後由 updateMomentumSeries() 自己呼叫 setData()。
+  macdHistSeries.setData([]);
+  macdDifSeries.setData([]);
+  macdDeaSeries.setData([]);
+  cciLineSeries.setData([]);
+  cciLineSeries.setMarkers([]);
+  updateMomentumSeries(sym, currentTf, data);
 
   // 5. Sub-Chart 4: ADX Pro V3 / AO / CVD Candlesticks / Momentum
   renderSub4Chart(data);
@@ -1276,6 +1232,76 @@ async function updateJjGhostClawsHud(symObj) {
   }
 }
 
+// 2026-09-24: 戰情雙層MACD/波段拐點CCI/AO 搬去同一個 bluebird-indicators Worker
+// （indicator=momentum）——跟 ADX/JJ鬼爪同一套模式，同一個symbol+tf在短時間內重複render
+// （例如切換分頁再切回來）不用重複打API，用這個簡單快取存最近一次的in-flight/已完成promise。
+let _momentumCacheKey = null;
+let _momentumCachePromise = null;
+
+async function fetchMomentumFromWorker(symbol, tf) {
+  const key = `${symbol}|${tf}`;
+  if (_momentumCacheKey === key && _momentumCachePromise) return _momentumCachePromise;
+  _momentumCacheKey = key;
+  _momentumCachePromise = (async () => {
+    try {
+      const resp = await fetch(`${ADX_MTF_API}?indicator=momentum&symbol=${symbol}&tf=${tf}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      return await resp.json();
+    } catch (e) {
+      console.warn('⚠️ 戰情雙層MACD/CCI/AO Worker fetch failed:', e);
+      return null;
+    }
+  })();
+  return _momentumCachePromise;
+}
+
+// 更新 Sub-Chart 2 (雙層MACD) / Sub-Chart 3 (CCI) —— 這兩個一直都顯示，不像AO是分頁式。
+// 非同步：renderChartData() 呼叫這個之後不等它，candles/volume等其他同步資料照常先畫出來，
+// MACD/CCI 晚一點點才跟著真數字出現，比整個畫面卡住等API回應體驗好。
+async function updateMomentumSeries(symbol, tf, data) {
+  const result = await fetchMomentumFromWorker(symbol, tf);
+  // 使用者可能在API回應之前就切換了商品或時框，這時候這批數字已經過期，不能覆蓋畫面
+  if ((currentActiveSymbol?.symbol || 'TXF') !== symbol || currentTf !== tf) return;
+  if (result && result.macd && result.cci) {
+    macdHistSeries.setData(result.macd.hist);
+    macdDifSeries.setData(result.macd.dif);
+    macdDeaSeries.setData(result.macd.dea);
+    cciLineSeries.setData(result.cci.line);
+    cciLineSeries.setMarkers(result.cci.signals.map(s => ({ time: s.time, position: 'inBar', color: s.color, shape: 'circle', text: s.text })));
+
+    // 主圖🚀/🐦/🛸/💰箭頭：用Worker回傳的真實雙層配色重算一次，取代generateIndicatorsData()起手
+    // 用本地簡化版畫的那批（尤其🛸「動能再啟」，本地版只是近似值，見computeMomentumBirdMarkers()
+    // 註解）。真實柱體顏色資料用時間對應（Worker跟本地candles是同一份klines_cache.json，時間戳
+    // 應該完全對得上），對不上的（例如本地是平盤假K棒的未覆蓋商品）該根就沒有顏色可判斷，🛸自然
+    // 不會誤觸發。GEX覆蓋線開啟時主圖箭頭本來就會被GEX突破箭頭取代，這裡不用重複畫。
+    const isGexEligible = GEX_SUPPORTED_SYMBOLS.includes((currentActiveSymbol?.symbol || activeContract || '').toUpperCase());
+    if (data && !(indicatorConfig.gex && gexData && isGexEligible)) {
+      const opens = data.candles.map(c => c.open);
+      const closes = data.candles.map(c => c.close);
+      const highs = data.candles.map(c => c.high);
+      const lows = data.candles.map(c => c.low);
+      const difByTime = new Map(result.macd.dif.map(d => [d.time, d.value]));
+      const deaByTime = new Map(result.macd.dea.map(d => [d.time, d.value]));
+      const cciByTime = new Map(result.cci.line.map(c => [c.time, c.value]));
+      const colorByTime = new Map(result.macd.hist.map(h => [h.time, h.color]));
+      const difArr = data.candles.map(c => difByTime.get(c.time));
+      const deaArr = data.candles.map(c => deaByTime.get(c.time));
+      const cciArr = data.candles.map(c => cciByTime.get(c.time) || 0);
+      const realMomentumBirdMarkers = computeMomentumBirdMarkers(
+        data.candles, opens, closes, highs, lows, data.volumes, data.volMa5, data.ma7,
+        difArr, deaArr, cciArr, (t) => colorByTime.get(t) ?? null
+      );
+      candleSeries.setMarkers([...data.demarkMarkers, ...realMomentumBirdMarkers]);
+    }
+  } else {
+    macdHistSeries.setData([]);
+    macdDifSeries.setData([]);
+    macdDeaSeries.setData([]);
+    cciLineSeries.setData([]);
+    cciLineSeries.setMarkers([]);
+  }
+}
+
 async function updateAdxMtfBadge() {
   const badge = document.getElementById('pane-4-badge');
   if (!badge) return;
@@ -1334,9 +1360,23 @@ function renderSub4Chart(data) {
     sub4Series.adx.setData(data.adxLine);
     sub4Series.adx.setMarkers(data.adxSignals);
   } else if (activeSub4 === 'ao') {
-    if (badge) badge.innerText = '⚡ AO 震盪指標 (Awesome Oscillator)';
+    // 真公式已搬去Cloudflare Worker（見 fetchMomentumFromWorker()），非同步抵達
+    if (badge) badge.innerText = '⚡ AO 震盪指標 (Awesome Oscillator，讀取中...)';
     sub4Series.ao = subChart4.addHistogramSeries({ priceScaleId: 'right' });
-    sub4Series.ao.setData(data.aoData);
+    const aoSeriesRef = sub4Series.ao;
+    const aoSymbol = currentActiveSymbol?.symbol || 'TXF';
+    const aoTf = currentTf;
+    fetchMomentumFromWorker(aoSymbol, aoTf).then(result => {
+      // series可能已經被移除/換掉（使用者切走分頁或切換商品/時框），舊的回應不要寫進新畫面
+      if (sub4Series.ao !== aoSeriesRef || activeSub4 !== 'ao') return;
+      if (result && result.ao) {
+        aoSeriesRef.setData(result.ao);
+        if (badge) badge.innerText = '⚡ AO 震盪指標 (Awesome Oscillator)';
+      } else {
+        aoSeriesRef.setData([]);
+        if (badge) badge.innerText = '⚡ AO 震盪指標 (此標的暫無真實數據)';
+      }
+    });
   } else if (activeSub4 === 'cvd') {
     if (badge) badge.innerText = '🎯 CVD (Cumulative Volume Delta 累積量差 K 線)';
     sub4Series.cvd = subChart4.addCandlestickSeries({
@@ -2461,7 +2501,7 @@ function initAdvisorFeed() {
         <span class="time">${new Date().toLocaleTimeString()}</span>
       </div>
       <div class="msg-bubble">
-        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v64.1)</h4>
+        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v64.2)</h4>
         <p style="font-size: 0.8rem; line-height: 1.55; margin-bottom: 6px;">
           🔹 <strong>當前空間拓撲</strong>：${topologyLabel}<br>
           ⚡ <strong>GEX 狀態</strong>：台指期 (<strong>${txf}</strong>) 位於 Zero Gamma (<strong>${zg}</strong>) ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。<br>

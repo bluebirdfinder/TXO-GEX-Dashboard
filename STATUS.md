@@ -1,10 +1,27 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.1)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.2)
 
-**當前版本**：`v64.1` (2026-09-17 選股雷達 JJ_MACD/JJ_CCI 真指標上線)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.1)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.1)
+**當前版本**：`v64.2` (2026-09-24 選股雷達「5K真突破」✕「神奇九轉」真指標上線)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.2)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.2)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
+
+---
+
+## 🎯 v64.2 核心更新亮點（選股雷達「5K真突破」✕「神奇九轉」真指標上線）
+
+### 🆕 5K戰法真進場觸發邏輯（`compute_5k_breakout()`，不含停損停利）
+- 源碼`5K_Strategy_Master_v5.pine`：急殺確認(ATR(5)×1.5)+局部低點偵測+防雙刷壓制(10根K棒)+突破確認K棒(收陽+收上半部)+17MA>88MA濾網，全程逐根K棒重播Setup存活狀態（不是只看最後兩根）。
+- 跟既有`k5_state`的「5K創高突破」是不同概念（反轉型態 vs 趨勢延續），新增獨立`signals`項目「📐真5K突破」不覆蓋舊欄位。
+- 誠實揭露：原始碼對台股個股沒有專屬校準參數，套用的是原始碼自己的通用預設值。
+- 全市場1363檔測試無錯誤，77檔觸發（~5.6%），並逐步印出一檔真實觸發股票的完整Setup生命週期驗證邏輯正確。
+
+### 🆕 神奇九轉全狀態機真移植（`compute_demark_v3()`，含7大過濾器武器庫）
+- 源碼`demark_sequential_v3_equities.pine`「個股專武版」（確認V4未升級此分支，V3即最新）：Setup(9)+Countdown(13)計數器、TDST線、Perfection判斷、Recycle(22)靜默重置、反向Setup/TDST雙重取消規則，全部7大過濾器（成交量/Squeeze/均線斜率/MACD/AO/RSI/KD）真實接上並套用原始碼「通用版」預設情境。
+- 新增獨立`demark_buy_state`／`demark_sell_state`兩欄位（既有`demark_state`沒有方向性，不覆蓋）。
+- RSI/Stochastic/ATR數學對照獨立`ta`函式庫逐位驗證；抓一檔真實出現「9★」完美九轉的股票，手動確認9天`close<close[i-4]`連續成立無中斷，證實不是bug。全市場1361檔測試無錯誤，狀態分佈符合真實TD Sequential型態。
+
+詳細驗證方式與完整檔案異動請見 [HISTORY.md](HISTORY.md) v64.2 條目。
 
 ---
 
