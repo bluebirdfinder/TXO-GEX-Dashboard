@@ -800,6 +800,10 @@
     "foreign_tx_net": -77031,
     "foreign_call_net": -1.8,
     "foreign_put_net": 0.26,
-    "written_at": "2026-09-25T00:24:43.454765"
+    "written_at": "2026-09-25T12:39:54.440021"
+  },
+  "MARGIN_MAINT_EST_20260925": {
+    "margin_maint_market": 154.6,
+    "margin_maint_stock": 140.1
   }
 }
