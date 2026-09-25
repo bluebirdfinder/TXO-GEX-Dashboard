@@ -18,7 +18,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47229.5,
     "day_total_vex": 76.83
   },
-  "last_updated_time": "2026-09-25 20:39",
+  "last_updated_time": "2026-09-25 20:53",
   "spot_price": 48024.6,
   "spot_change": -132.69,
   "spot_change_pct": -0.28,
@@ -11673,7 +11673,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_is_estimated": true,
       "margin_balance_billion": 6151.03,
       "taifex_vix": 23.12,
-      "us_vix": 15.1,
+      "us_vix": 15.17,
       "has_snapshot": true,
       "margin_bal_1d_chg_pct": null,
       "margin_bal_Nd_chg_pct": null,
@@ -12966,7 +12966,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_is_estimated": true,
       "margin_balance_billion": 6151.03,
       "taifex_vix": 23.12,
-      "us_vix": 15.1,
+      "us_vix": 15.17,
       "has_snapshot": true,
       "margin_bal_1d_chg_pct": null,
       "margin_bal_Nd_chg_pct": null,
@@ -19417,7 +19417,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_is_estimated": true,
       "margin_balance_billion": 6151.03,
       "taifex_vix": 23.12,
-      "us_vix": 15.1,
+      "us_vix": 15.17,
       "has_snapshot": true,
       "margin_bal_1d_chg_pct": null,
       "margin_bal_Nd_chg_pct": null,
@@ -20710,7 +20710,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_is_estimated": true,
       "margin_balance_billion": 6151.03,
       "taifex_vix": 23.12,
-      "us_vix": 15.1,
+      "us_vix": 15.17,
       "has_snapshot": true,
       "margin_bal_1d_chg_pct": null,
       "margin_bal_Nd_chg_pct": null,
@@ -22361,9 +22361,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/25 (五)",
-        "price": 100.97,
-        "change": -0.32,
-        "pct": -0.32
+        "price": 101.01,
+        "change": -0.28,
+        "pct": -0.28
       },
       "usdjpy": {
         "date": "09/24 (四)",
@@ -22439,22 +22439,22 @@ window.GEX_EMBEDDED_DATA = {
       ],
       "dxy": [
         {
-          "date": "09/18 (五)",
-          "price": 100.22,
-          "change": 0.0,
-          "pct": 0.0
-        },
-        {
           "date": "09/21 (一)",
           "price": 100.43,
           "change": 0.21,
           "pct": 0.21
         },
         {
+          "date": "09/22 (二)",
+          "price": 100.6,
+          "change": 0.17,
+          "pct": 0.17
+        },
+        {
           "date": "09/23 (三)",
           "price": 101.1,
-          "change": 0.67,
-          "pct": 0.67
+          "change": 0.5,
+          "pct": 0.5
         },
         {
           "date": "09/24 (四)",
@@ -22464,13 +22464,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/25 (五)",
-          "price": 100.97,
-          "change": -0.32,
-          "pct": -0.32
+          "price": 101.01,
+          "change": -0.28,
+          "pct": -0.28
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.78</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.06 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>100.97</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.28</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.78</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.06 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>101.01</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.28</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -910,
@@ -22540,7 +22540,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 582.46,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-25 20:39",
+    "last_updated": "2026-09-25 20:53",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -35324,24 +35324,24 @@ window.GEX_EMBEDDED_DATA = {
       }
     ],
     "macro_risk_dashboard": {
-      "summary": "台指VIX 23.1、美股VIX 15.1；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
+      "summary": "台指VIX 23.1、美股VIX 15.2；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 100.99,
-        "change_pct": -0.29,
-        "trend_label": "▼ 較昨日走弱 (-0.29%)",
+        "price": 101.01,
+        "change_pct": -0.27,
+        "trend_label": "▼ 較昨日走弱 (-0.27%)",
         "unit": ""
       },
       "us10y": {
         "name": "美殖利率 (10年期 US10Y)",
         "price": 5.18,
-        "change_pct": 0.33,
-        "trend_label": "▲ 較昨日走升 (+0.33%)",
+        "change_pct": 0.37,
+        "trend_label": "▲ 較昨日走升 (+0.37%)",
         "unit": "%"
       },
       "vix": {
         "name": "VIX恐慌指標 (CBOE)",
-        "price": 15.1,
+        "price": 15.17,
         "trend_label": "🟢 低波安定"
       }
     },
@@ -35416,9 +35416,9 @@ window.GEX_EMBEDDED_DATA = {
     "taifex_vix": 23.12,
     "taifex_vix_change": 1.29,
     "taifex_vix_change_pct": 5.91,
-    "us_vix": 15.1,
-    "us_vix_change": -0.57,
-    "us_vix_change_pct": -3.64,
+    "us_vix": 15.17,
+    "us_vix_change": -0.5,
+    "us_vix_change_pct": -3.19,
     "us_vvix": 90.57,
     "us_vvix_change": 1.97,
     "us_vvix_change_pct": 2.22,
