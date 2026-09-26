@@ -60,6 +60,12 @@
 
 **已決定並實作（v64.7）**：夜盤依期交所定義（標記日=收盤交易日）；融資維持率無官方值時以「融資餘額對前一交易日增減＋大盤漲跌」估算（仍標估算）。**v64.9 已處理**：戰情室 `base_price` 過期價、櫃買指數 K 線（改官方）。**v64.10 已處理**：期貨 K 線改期交所日線＋富邦日內。**需使用者動作**：收盤後執行 `python scripts/fetch_fubon_futures_klines.py`（先關 live_price_server）並 commit `data/klines_cache.json`，日內 K 才會有資料（富邦無歷史端點，只能每天累積）。**v64.8 已處理**：匯率備援假資料、戰情室總經 HUD 預設、2025 休市日曆。**仍待處理**：主引擎 SSL（CI）；2027 休市日曆（待官方公布）；CL/US10Y/DXY 即時輪詢（需 Cloudflare Worker 端點）；殘留 worktree 登記（OneDrive 權限）。
 
+## 1.6 富邦期貨日內 K 排程（2026-09-27 已啟用）
+
+- Windows 工作排程 `TXO-Fubon-Futures-Klines`：每天 05:30 與 14:00 執行（錯過開機會在下次開機後補跑，`StartWhenAvailable`）。獨立執行副本 `C:\Users\mingi\txo-klines-runner`（OneDrive 之外），包裝腳本 `scripts/run_fubon_klines_task.ps1 -EnvFile <共用資料夾的 .env> -Push`：`git pull --rebase` → 執行 `scripts/fetch_fubon_futures_klines.py` → 只 commit `data/klines_cache.json`、`data/klines_gap_report.json` → 自動推送。日誌 `txo-klines-runner\logs\fubon_klines.log`。若 `live_price_server.py` 正在跑會跳過（避免重複登入）。
+- 富邦只提供「最近一個場次」，錯過的場次**補不回來**；每次執行更新 `data/klines_gap_report.json`（缺漏／不完整場次）。**接手時第一件事：讀這份報告並告知使用者**。
+- 停用排程：`Unregister-ScheduledTask -TaskName TXO-Fubon-Futures-Klines -Confirm:$false`。
+
 ## 2. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除／順手 commit）
 
 > ⚠️ v64.5 推上 main 後，共用資料夾內舊視窗的 `scripts/build_screener_cache.py` 未 commit 版本已被 main 上更完整的版本取代（含失敗重試、過期報價修正）；`trading room/room.js` 的 CVD 修改與 main 上同檔（弱火箭接線、版本字串）將在未來 `git pull`/merge 時出現衝突，須由使用者決定處理方式，AI 不要自行覆蓋。

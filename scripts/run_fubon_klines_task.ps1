@@ -32,6 +32,7 @@ foreach ($line in Get-Content -LiteralPath $EnvFile -Encoding UTF8) {
     }
 }
 $env:PYTHONIOENCODING = 'utf-8'
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8  # read python's UTF-8 output correctly in the log
 python scripts/fetch_fubon_futures_klines.py 2>&1 | ForEach-Object { Log "py: $_" }
 if ($LASTEXITCODE -ne 0) { Log "ERROR: fetch script exit code $LASTEXITCODE"; exit 1 }
 
