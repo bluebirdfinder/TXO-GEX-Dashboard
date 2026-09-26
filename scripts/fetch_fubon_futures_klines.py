@@ -44,6 +44,69 @@ def merge(old, new, cap):
     return [by_time[t] for t in sorted(by_time)][-cap:]
 
 
+
+def _trading_days_set():
+    """Trading-day test from data/tw_holidays.json (weekends + listed holidays are closed)."""
+    import re
+    path = os.path.join(os.path.dirname(CACHE), "tw_holidays.json")
+    hol = set(re.findall(r"20\d\d-\d\d-\d\d", open(path, encoding="utf-8-sig").read()))
+    return lambda d: d.weekday() < 5 and d.isoformat() not in hol
+
+
+def gap_report(cache):
+    """
+    Which sessions are missing or partial in the accumulated 15M bars? Fubon only serves the latest session, so a
+    session that was never captured cannot be recovered later — this makes such holes visible.
+    Sessions follow TAIFEX dating: day session D = 08:45-13:45 of D; night session labeled with the trading day it
+    closes into (15:00 of the previous trading day -> 05:00 of D).
+    """
+    is_td = _trading_days_set()
+    tz = datetime.timezone(datetime.timedelta(hours=8))
+    one = datetime.timedelta(days=1)
+
+    def next_td(d):
+        while not is_td(d):
+            d += one
+        return d
+
+    report = {"generated_at": datetime.datetime.now(tz).isoformat(timespec="seconds"), "assets": {}}
+    for sym in FUTURES_ASSETS:
+        bars = (cache["assets"].get(sym, {}).get("timeframes", {}) or {}).get("15M", [])
+        day, night = {}, {}
+        for b in bars:
+            t = datetime.datetime.fromtimestamp(b["time"], tz)
+            if 8 <= t.hour < 14:
+                day[t.date()] = day.get(t.date(), 0) + 1
+            elif t.hour >= 15:
+                lab = next_td(t.date() + one)
+                night[lab] = night.get(lab, 0) + 1
+            elif t.hour < 8:
+                lab = next_td(t.date())
+                night[lab] = night.get(lab, 0) + 1
+        if not day:
+            continue
+        first, last_day = min(day), max(day)
+        last_night = max(night) if night else last_day
+        exp_days, d = [], first
+        while d <= last_day:
+            if is_td(d):
+                exp_days.append(d)
+            d += one
+        exp_nights, d = [], first + one
+        while d <= max(last_night, last_day):  # night D precedes day D, so a captured day D implies night D existed
+            if is_td(d):
+                exp_nights.append(d)
+            d += one
+        # ~19 bars per 15M day session, ~56 per night session; below 85% = captured mid-session and never completed.
+        res = {"missing_day": [x.isoformat() for x in exp_days if x not in day],
+               "missing_night": [x.isoformat() for x in exp_nights if x not in night],
+               "partial_day": [x.isoformat() for x in exp_days if x in day and x != last_day and day[x] < 16],
+               "partial_night": [x.isoformat() for x in exp_nights if x in night and x != last_night and night[x] < 48],
+               "first_captured_day": first.isoformat(), "latest_day": last_day.isoformat(), "latest_night": last_night.isoformat()}
+        report["assets"][sym] = res
+    return report
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     dry = "--dry-run" in sys.argv
@@ -92,6 +155,18 @@ def main():
     if dry:
         print("dry-run: nothing written")
         return
+    rep = gap_report(cache)
+    bad = {k: v for k, v in rep["assets"].items() if any(v[x] for x in ("missing_day", "missing_night", "partial_day", "partial_night"))}
+    if bad:
+        print("!! 缺場次／不完整（富邦只提供最近一個場次，過去的無法補回）:")
+        for sym, v in bad.items():
+            for x in ("missing_day", "missing_night", "partial_day", "partial_night"):
+                if v[x]:
+                    print(f"   {sym} {x}: {', '.join(v[x])}")
+    else:
+        print("場次完整：沒有缺漏。")
+    with open(os.path.join(os.path.dirname(CACHE), "klines_gap_report.json"), "w", encoding="utf-8") as f:
+        json.dump(rep, f, ensure_ascii=False, indent=2)
     cache["updated_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with open(CACHE, "w", encoding="utf-8") as f:
         json.dump(cache, f, ensure_ascii=False, indent=2)
