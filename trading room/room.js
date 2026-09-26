@@ -183,7 +183,7 @@ async function loadDashboardData() {
     };
   }
 
-  // Load Full Symbol Universe (1,400+ Stocks & Futures)
+  // Load Full Symbol Universe (1,423 entries: 1,383 stocks/ETFs with real history + 40 index/stock-futures codes)
   try {
     const uniRes = await fetch('../data/tw_symbols_universe.json');
     if (uniRes.ok) {
@@ -3317,7 +3317,7 @@ function runBirdQuantScreener() {
     symbolsUniverse = defaultUniverse;
   }
 
-  tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 20px; color: var(--primary-accent);">⚡ 正在掃描全市場 1,400+ 檔標的量化指標中...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 20px; color: var(--primary-accent);">⚡ 正在掃描全市場 1,380+ 檔標的量化指標中...</td></tr>`;
 
   // Read filter checkboxes
   const fRocketS = document.getElementById('sc-rocket-s')?.checked;
@@ -3362,8 +3362,8 @@ function runBirdQuantScreener() {
       const hasBirdS = sigList.includes('🐦 強力藍鳥');
       const hasRestartS = sigList.includes('🛸 動能飛碟');
       const hasRestartN = sigList.includes('⚡ 動能閃電');
-      const hasRocketW = sigList.includes('✈️ 噴射機');
-      const hasBirdN = sigList.includes('🥚 帶殼鳥');
+      const hasRocketW = sigList.includes('✈️ 火箭'); // real JJ鬼爪V4.1 is_weak_rocket (build_screener_cache.py); NOT the heuristic '✈️ 噴射機'
+      const hasBirdN = sigList.includes('🐣 藍鳥'); // real JJ鬼爪V4.1 is_normal_bird; NOT the heuristic '🥚 帶殼鳥'
       const isMacdFlip = real.macd_state === 'MACD 柱狀體翻紅';
       const isMacdGold = real.macd_state === '零軸上金叉' || real.macd_state === 'MACD 水下金叉';
       // Real JJ_MACD/JJ_CCI dual-layer signals (scripts/build_screener_cache.py's
