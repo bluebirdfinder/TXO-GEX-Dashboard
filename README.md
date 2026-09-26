@@ -1,11 +1,11 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v64.8)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v64.9)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > 🌪️ CBOE 美股 ^VVIX 實時採集 ✦ 4級尾部風險矩陣 ✦ 做市商賣腳安全氣墊 (350~500點外) ✦ 尋鳥戰情室 4 欄式 Macro Risk HUD ✦ 🏛️ TWSE 融資維持率發布狀態日期比對 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v64.8-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v64.9-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ## 📋 2026-09-26 選股雷達現況盤點（文件同步，未升版）
 
@@ -14,6 +14,15 @@
 - **仍是簡化近似**：🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state`。
 - `scripts/build_screener_cache.py:56-58` 全域關閉 SSL 驗證（`CERT_NONE`），已評估、僅回報未修改。
 - 詳見 [HISTORY.md](HISTORY.md) 2026-09-26 條目與 [DASHBOARD_DATA_SOURCE_MAP.md](DASHBOARD_DATA_SOURCE_MAP.md) 第7列。
+
+## 🌟 v64.9 戰情室真實價格 ✕ 櫃買官方K線
+
+- **戰情室價格只用真實來源**：移除過期寫死的 `base_price`（TXF 46,588 等）——左側報價、AI 顧問提示詞、圖表起點都改用 `realPriceFor()`；沒有真實價顯示「—」。
+- **櫃買指數 K 線改用櫃買中心官方資料**（原本是 006201 ETF，價位差 9 倍）：日／週／月 K；日內級別誠實顯示「暫無真實K線數據」。
+- **K 線缺成交量不再填 500／沿用前值**（改為 0）。
+- 已發現但待決定：TXF/MTX/MXF K 線來源為現貨 `^TWII` 且成交量為公式推算（詳見 HISTORY v64.9）。
+
+完整內容請見 [HISTORY.md](HISTORY.md) v64.9 條目。
 
 ## 🌟 v64.8 移除寫死假資料 ✕ 2025休市日曆
 

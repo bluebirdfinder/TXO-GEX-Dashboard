@@ -1,15 +1,16 @@
-# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.8)
+# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.9)
 
 本手冊記錄專案現狀、核心功能清單、數據引擎 Self-Audit 熱備援架構、開發 SOP 與個人筆電續接步驟。
 
 ---
 
-## 📌 一、v64.8 完整功能清單與數據引擎架構
+## 📌 一、v64.9 完整功能清單與數據引擎架構
 
 ### 核心分析與視覺化模組
 
 | # | 功能 | 說明 |
 |---|---|---|
+| -6 | **🔴 戰情室價格只用真實來源 ✕ 櫃買指數官方K線 ✕ K線缺量不填假值 (v64.9)** | `trading room/room.js`（`realPriceFor()`、`base_price=null`、無真實K線提示）、`scripts/fetch_market_klines.py`（OTC 改櫃買中心官方日線；缺量填 0；可 `python scripts/fetch_market_klines.py OTC` 單獨更新）、`data/klines_cache.json`。**待決定**：TXF/MTX/MXF K線來源為現貨 ^TWII 且成交量為公式推算。詳見 HISTORY.md v64.9。 |
 | -5 | **🛠️ 移除寫死假資料（匯率備援、戰情室總經HUD）✕ 2025休市日曆校正 (v64.8)** | `scripts/fetch_and_calc_vision.py`（`fetch_5day_exchange_rates()` 失敗回 None/[]）、`app.js`（熱錢面板無預設）、`trading room/room.js`（`updateMacroRiskHUD()` 缺值顯示「—」）、`data/tw_holidays.json`（2025 依實際成交日重建）。詳見 HISTORY.md v64.8。 |
 | -4 | **🔴 夜盤定義對齊期交所 ✕ 散戶多空比價格污染修正 ✕ P/C 官方化 ✕ 融資維持率估算鏈重建 (v64.7)** | `scripts/fetch_and_calc_vision.py`（`taifex_night_label_date()`、歷史列夜盤先於日盤、夜盤快照鍵=期交所標記日、日盤後進行中夜盤另列 `t0_night`、`t0_night_pre`；散戶多空比帶 `queryDate` 並依表頭找欄位；P/C 用官方值；`chip_base_date`）、`app.js`、`scripts/backfill_margin_maint_estimates.py`（估算鏈重建）。詳見 HISTORY.md v64.7。 |
 | -3 | **🛠️ 融資餘額變化速度指標真實回補 ✕ 休市日誤寫防護 ✕ 選股腳本SSL驗證 (v64.6)** | `scripts/backfill_margin_balance.py`（證交所 MI_MARGN 逐日真實餘額回補）、`scripts/fetch_and_calc_vision.py`（只在 MI_MARGN 日期＝場次日期時才寫入融資餘額）、`scripts/build_screener_cache.py`/`fetch_real_quotes.py`（保留憑證驗證，僅關 VERIFY_X509_STRICT）、`scripts/bump_version.py`（戰情室版號 regex）。詳見 HISTORY.md v64.6。 |

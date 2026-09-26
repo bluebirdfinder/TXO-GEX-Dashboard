@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.8)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.9)
 
-**當前版本**：`v64.8` (2026-09-27 移除寫死假資料（匯率備援、戰情室總經HUD）✕ 2025休市日曆校正；前版 v64.7：夜盤依期交所定義重排 ✕ 散戶多空比價格污染修正 ✕ 官方P/C對齊 ✕ 融資維持率估算鏈重建)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.8)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.8)
+**當前版本**：`v64.9` (2026-09-27 戰情室價格只用真實來源 ✕ 櫃買指數改用櫃買中心官方K線 ✕ K線缺量不再填假值)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.9)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.9)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,17 @@
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.9 核心更新亮點（戰情室真實價格 ✕ 櫃買官方K線）
+
+- **戰情室價格只用真實來源**：移除過期寫死的 `base_price`（TXF 46,588 等）——左側報價、AI 顧問提示詞、圖表起點都改用 `realPriceFor()`；沒有真實價顯示「—」。
+- **櫃買指數 K 線改用櫃買中心官方資料**（原本是 006201 ETF，價位差 9 倍）：日／週／月 K；日內級別誠實顯示「暫無真實K線數據」。
+- **K 線缺成交量不再填 500／沿用前值**（改為 0）。
+- 已發現但待決定：TXF/MTX/MXF K 線來源為現貨 `^TWII` 且成交量為公式推算（詳見 HISTORY v64.9）。
+
+詳細請見 [HISTORY.md](HISTORY.md) v64.9 條目。
 
 ---
 
