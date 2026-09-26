@@ -1261,52 +1261,10 @@ function renderHotMoneyDigest() {
   const panel = document.getElementById('hot-money-express-panel');
   if (!panel) return;
 
-  const defaultHm = {
-    current_fx: {
-      usdtwd: { price: 32.00, change: -0.12, pct: -0.37 },
-      dxy: { price: 99.67, change: -0.29, pct: -0.29 },
-      usdjpy: { price: 159.30, change: -0.13, pct: -0.08 }
-    },
-    fx_5day_history: {
-      usdtwd: [
-        { date: '08/16 (日)', price: 32.00, change: -0.12, pct: -0.37 },
-        { date: '08/14 (五)', price: 32.12, change: -0.08, pct: -0.25 },
-        { date: '08/13 (四)', price: 32.20, change: -0.01, pct: -0.03 },
-        { date: '08/12 (三)', price: 32.21, change: -0.02, pct: -0.06 },
-        { date: '08/11 (二)', price: 32.23, change: -0.01, pct: -0.03 }
-      ],
-      dxy: [
-        { date: '08/14 (五)', price: 99.67, change: -0.29, pct: -0.29 },
-        { date: '08/13 (四)', price: 99.96, change: -0.05, pct: -0.05 },
-        { date: '08/12 (三)', price: 100.01, change: 0.19, pct: 0.19 },
-        { date: '08/11 (二)', price: 99.82, change: 0.01, pct: 0.01 },
-        { date: '08/10 (一)', price: 99.81, change: 0.00, pct: 0.00 }
-      ],
-      usdjpy: [
-        { date: '08/16 (日)', price: 159.30, change: -0.13, pct: -0.08 },
-        { date: '08/14 (五)', price: 159.43, change: 0.10, pct: 0.06 },
-        { date: '08/13 (四)', price: 159.33, change: 0.07, pct: 0.04 },
-        { date: '08/12 (三)', price: 159.26, change: 0.10, pct: 0.06 },
-        { date: '08/11 (二)', price: 159.16, change: 1.27, pct: 0.80 }
-      ]
-    },
-    hot_money_summary_html: `
-      <div class="hot-money-card bull" style="padding: 14px 18px;">
-          <h4 style="margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
-              <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>
-          </h4>
-          <p style="margin-bottom: 6px; font-size: 0.95rem;"><strong>🔥 台幣呈現升值（熱錢強勢匯入）</strong></p>
-          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-sub); margin-bottom: 12px;">美元/台幣目前為 <code>32.0</code>（單日升值 <code>0.12</code> 元）。外資正拿美金兌換台幣進場，台股資金面動能強勁！</p>
-          <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;">
-              <span>💵 <strong>美元指數 (DXY)</strong>: <code>99.67</code> (全球資金吸鐵石)</span>
-              <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>159.3</code> (套利平倉風險指標)</span>
-          </div>
-      </div>
-    `
-  };
-
-  const hm = (gexData && gexData.hot_money_digest) ? gexData.hot_money_digest : defaultHm;
-  const historyMap = hm.fx_5day_history || defaultHm.fx_5day_history;
+  // No fabricated defaults: missing data renders as "無即時數據" (AGENTS.md redline #6).
+  const hm = (gexData && gexData.hot_money_digest) ? gexData.hot_money_digest
+    : { fx_5day_history: {}, hot_money_summary_html: '<p style="margin:0;">⚪ <strong>無即時數據</strong>：匯率資料暫時無法取得。</p>' };
+  const historyMap = hm.fx_5day_history || {};
   // Explicit descending date sort: Latest date at top
   const twdList = ensureDescendingByDate(historyMap.usdtwd);
   const dxyList = ensureDescendingByDate(historyMap.dxy);
@@ -1316,26 +1274,20 @@ function renderHotMoneyDigest() {
   const len = Math.max(twdList.length, dxyList.length, jpyList.length);
 
   for (let i = 0; i < len; i++) {
-    const twdItem = twdList[i] || { date: '', price: 32.0, change: 0, pct: 0 };
-    const dxyItem = dxyList[i] || { date: '', price: 100.0, change: 0, pct: 0 };
-    const jpyItem = jpyList[i] || { date: '', price: 150.0, change: 0, pct: 0 };
+    const twdItem = twdList[i] || null;
+    const dxyItem = dxyList[i] || null;
+    const jpyItem = jpyList[i] || null;
+    const fxCell = (it) => it
+      ? `<td style="color: ${it.change > 0 ? 'var(--call-color)' : (it.change < 0 ? 'var(--put-color)' : '#aaa')};">${it.price.toFixed(2)} (${it.change >= 0 ? '+' : ''}${it.change.toFixed(2)}, ${it.change >= 0 ? '+' : ''}${it.pct.toFixed(2)}%)</td>`
+      : `<td style="color: var(--text-muted);">⚪ 無資料</td>`;
 
-    const rawDt = twdItem.date || dxyItem.date || jpyItem.date || '';
+    const rawDt = (twdItem && twdItem.date) || (dxyItem && dxyItem.date) || (jpyItem && jpyItem.date) || '';
     const dt = formatWeekdayBracket(rawDt);
-
-    const twdSign = twdItem.change >= 0 ? '+' : '';
-    const dxySign = dxyItem.change >= 0 ? '+' : '';
-    const jpySign = jpyItem.change >= 0 ? '+' : '';
-
-    const twdColor = twdItem.change > 0 ? 'var(--call-color)' : (twdItem.change < 0 ? 'var(--put-color)' : '#aaa');
-    const dxyColor = dxyItem.change > 0 ? 'var(--call-color)' : (dxyItem.change < 0 ? 'var(--put-color)' : '#aaa');
-    const jpyColor = jpyItem.change > 0 ? 'var(--call-color)' : (jpyItem.change < 0 ? 'var(--put-color)' : '#aaa');
-
     historyRowsHtml += `<tr>
       <td>${dt}</td>
-      <td style="color: ${twdColor};">${twdItem.price.toFixed(2)} (${twdSign}${twdItem.change.toFixed(2)}, ${twdSign}${twdItem.pct.toFixed(2)}%)</td>
-      <td style="color: ${dxyColor};">${dxyItem.price.toFixed(2)} (${dxySign}${dxyItem.change.toFixed(2)}, ${dxySign}${dxyItem.pct.toFixed(2)}%)</td>
-      <td style="color: ${jpyColor};">${jpyItem.price.toFixed(2)} (${jpySign}${jpyItem.change.toFixed(2)}, ${jpySign}${jpyItem.pct.toFixed(2)}%)</td>
+      ${fxCell(twdItem)}
+      ${fxCell(dxyItem)}
+      ${fxCell(jpyItem)}
     </tr>`;
   }
 

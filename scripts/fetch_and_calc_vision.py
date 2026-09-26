@@ -553,11 +553,9 @@ def fetch_5day_exchange_rates():
     and official ICE DXY Futures closing benchmark for DXY.
     """
     fx_5day_history = {}
-    current_fx = {
-        "usdtwd": {"price": 31.88, "change": 0.03, "pct": 0.09},
-        "dxy": {"price": 98.90, "change": -0.03, "pct": -0.03},
-        "usdjpy": {"price": 159.48, "change": 0.24, "pct": 0.15}
-    }
+    # No hard-coded stand-in numbers: a source that fails stays None / [] and the page shows
+    # "⚪ 無即時數據" (AGENTS.md redline #6 — never present old or invented figures as current).
+    current_fx = {"usdtwd": None, "dxy": None, "usdjpy": None}
 
     # 1. Fetch Official TAIFEX Daily FX Reference Rates (USD/TWD & USD/JPY)
     taifex_records = []
@@ -613,21 +611,8 @@ def fetch_5day_exchange_rates():
         fx_5day_history['usdjpy'] = jpy_hist
         current_fx['usdjpy'] = jpy_hist[-1]
     else:
-        # Fallback TAIFEX FX Official Rates
-        fx_5day_history['usdtwd'] = [
-            {"date": "08/19 (三)", "price": 31.94, "change": 0.03, "pct": 0.09},
-            {"date": "08/20 (四)", "price": 31.93, "change": -0.01, "pct": -0.04},
-            {"date": "08/21 (五)", "price": 31.85, "change": -0.08, "pct": -0.24},
-            {"date": "08/24 (一)", "price": 31.85, "change": 0.01, "pct": 0.02},
-            {"date": "08/25 (二)", "price": 31.88, "change": 0.03, "pct": 0.09}
-        ]
-        fx_5day_history['usdjpy'] = [
-            {"date": "08/19 (三)", "price": 159.10, "change": 0.21, "pct": 0.13},
-            {"date": "08/20 (四)", "price": 158.40, "change": -0.70, "pct": -0.44},
-            {"date": "08/21 (五)", "price": 158.83, "change": 0.43, "pct": 0.27},
-            {"date": "08/24 (一)", "price": 159.24, "change": 0.41, "pct": 0.26},
-            {"date": "08/25 (二)", "price": 159.48, "change": 0.24, "pct": 0.15}
-        ]
+        fx_5day_history['usdtwd'] = []
+        fx_5day_history['usdjpy'] = []
 
     # 2. DXY (Dollar Index) Futures Closing Benchmark (Matching Investing.com ICE DXY Futures)
     dxy_hist = []
@@ -663,17 +648,20 @@ def fetch_5day_exchange_rates():
     except Exception as e:
         print(f"[Warning] DXY Yahoo fetch error: {e}")
 
-    if not dxy_hist:
-        dxy_hist = [
-            {"date": "08/19 (三)", "price": 98.73, "change": -0.82, "pct": -0.83},
-            {"date": "08/20 (四)", "price": 98.81, "change": 0.08, "pct": 0.08},
-            {"date": "08/21 (五)", "price": 98.73, "change": -0.08, "pct": -0.09},
-            {"date": "08/24 (一)", "price": 98.93, "change": 0.20, "pct": 0.20},
-            {"date": "08/25 (二)", "price": 98.90, "change": -0.03, "pct": -0.03}
-        ]
-
     fx_5day_history['dxy'] = dxy_hist
-    current_fx['dxy'] = dxy_hist[-1]
+    if dxy_hist:
+        current_fx['dxy'] = dxy_hist[-1]
+
+    if not all(current_fx.values()):
+        _missing = [k for k, v in current_fx.items() if not v]
+        return {
+            "current_fx": current_fx,
+            "fx_5day_history": fx_5day_history,
+            "hot_money_summary_html": (
+                '<div class="hot-money-card neutral" style="padding: 14px 18px;"><p style="margin:0;">⚪ <strong>無即時數據</strong>：'
+                + '、'.join(_missing) + ' 官方匯率暫時無法取得，不顯示舊資料或估計值。</p></div>'
+            )
+        }
 
     # Build Hot Money Trend Summary
     twd_chg = current_fx['usdtwd']['change']
