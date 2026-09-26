@@ -7,6 +7,14 @@
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
 [![引擎版本](https://img.shields.io/badge/Engine-v64.4-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
+## 📋 2026-09-26 選股雷達現況盤點（文件同步，未升版）
+
+- 實測涵蓋：universe 1,423 筆＝**1,383 檔**上市股票/ETF（100% 有真實120日歷史）＋40 筆 TAIFEX 指數/股期代碼（設計上不適用日K）。畫面「1,400+ 檔」略為誇大；舊文件「97%」是把這40筆算進分母。
+- **真實移植（Pine 原始碼）**：JJ_MACD/JJ_CCI、🚀強火箭/🐦強力藍鳥、📐真5K突破、神奇九轉（`demark_buy_state`/`demark_sell_state`）；**投信認養／籌碼偏多自 v64.0 起已是真資料**（舊文件寫「未接」已更正）。
+- **仍是簡化近似**：🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state`。
+- `scripts/build_screener_cache.py:56-58` 全域關閉 SSL 驗證（`CERT_NONE`），已評估、僅回報未修改。
+- 詳見 [HISTORY.md](HISTORY.md) 2026-09-26 條目與 [DASHBOARD_DATA_SOURCE_MAP.md](DASHBOARD_DATA_SOURCE_MAP.md) 第7列。
+
 ## 🌟 v64.4 CI 自動化流程漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標
 
 ### 🔴🔴 0. 根治「5日歷程矩陣」靜默回歸空殼的CI設定遺漏
