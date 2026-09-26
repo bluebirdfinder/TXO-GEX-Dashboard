@@ -13,8 +13,11 @@ Real, line-for-line Pine ports (2026-09-17/18/24), each verified against the
 independently-authored Python `ta` library on real TWSE 2330 data before being wired in:
   - `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal` — compute_jj_macd_and_cci(),
     from JJ_MACD_Sub.pine/JJ_CCI_Sub.pine, symbols with >=35 real bars.
-  - 🚀強火箭/🐦強力藍鳥 in `signals` — compute_jj_rocket_and_bird(), from ghost_claws_v4.1.pine,
-    symbols with >=89 real bars (a true SMA88 needs that many, no approximation exists).
+  - 🚀強火箭/🐦強力藍鳥/✈️火箭/🐣藍鳥 in `signals` — compute_jj_rocket_and_bird(), from
+    ghost_claws_v4.1.pine, symbols with >=89 real bars (a true SMA88 needs that many, no
+    approximation exists). NOTE: ✈️火箭 here is the REAL JJ鬼爪 weak-rocket state and is a
+    different signal from the heuristic ✈️噴射機 below despite sharing the plane emoji — the
+    two are visually distinguished by their trailing text, not the emoji alone.
   - 📐真5K突破 in `signals` — compute_5k_breakout(), from 5K_Strategy_Master_v5.pine's entry
     logic only (no stop-loss/take-profit — a daily scan has no open position to manage), a
     DIFFERENT concept from the pre-existing `k5_state` heuristic below (see that function's
@@ -24,10 +27,11 @@ independently-authored Python `ta` library on real TWSE 2330 data before being w
     a NEW, separate pair of fields from the pre-existing `demark_state` heuristic below (see
     that function's docstring for why). Symbols with >=65 real bars.
 
-🛸/⚡/✈️/🥚 in `signals`, `k5_state`, and `demark_state` are still simplified heuristic
-proxies (moving-average and recent-close comparisons), not a literal reimplementation of
-those indicators' true formulas — tracked separately in SELF_AUDIT_FINDINGS_TODO.md
-("指標源碼逐一校正") and out of scope for this pass.
+🛸動能飛碟/⚡動能閃電/✈️噴射機/🥚帶殼鳥 in `signals`, `k5_state`, and `demark_state` are still
+simplified heuristic proxies (moving-average and recent-close comparisons), not a literal
+reimplementation of those indicators' true formulas — tracked separately in
+SELF_AUDIT_FINDINGS_TODO.md ("指標源碼逐一校正") and out of scope for this pass. (✈️火箭 is a
+different, real signal from ✈️噴射機 — see the note above.)
 """
 
 import json
@@ -170,7 +174,11 @@ def fetch_twse_all_stocks_day(date_str):
     which TWSE/TPEx started rate-limiting hard) with ~20-25 requests total (one per trading
     day needed), each covering the whole market at once.
     Column layout verified against a live 2330 row: [0]代號 [1]名稱 [2]成交股數 [5]開盤價
-    [6]最高價 [7]最低價 [8]收盤價. Returns {} on a non-trading day or fetch failure.
+    [6]最高價 [7]最低價 [8]收盤價. Returns {} for a genuinely empty answer (non-trading day: the
+    request succeeded but carries no per-stock table) and None when the request itself FAILED
+    (HTTP error such as TWSE's WAF 307, timeout, unparseable body) — the two must never be
+    conflated: a failed trading day silently treated as a holiday drops one bar from every
+    stock's history (found 2026-09-26: 2026-04-10 and 2026-05-11 vanished this way).
     """
     url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={date_str}&type=ALLBUT0999&response=json"
     result = {}
@@ -194,6 +202,7 @@ def fetch_twse_all_stocks_day(date_str):
                 break
     except Exception as e:
         print(f"  [WARN] TWSE bulk fetch failed for {date_str}: {e}")
+        return None
     return result
 
 
@@ -211,6 +220,20 @@ def build_twse_bulk_history(num_trading_days=120, max_calendar_days_back=180):
     while collected < num_trading_days and tried < max_calendar_days_back:
         date_str = day.strftime('%Y%m%d')
         day_data = fetch_twse_all_stocks_day(date_str)
+        # None = the request failed (rate limit / WAF), NOT a holiday. Back off and retry; a day
+        # that still fails after all retries aborts the whole build so a history with a silent
+        # hole is never written as if it were complete.
+        for wait in (15, 45, 90):
+            if day_data is not None:
+                break
+            print(f"  [RETRY] {date_str}: waiting {wait}s before retrying TWSE bulk fetch")
+            time.sleep(wait)
+            day_data = fetch_twse_all_stocks_day(date_str)
+        if day_data is None:
+            raise RuntimeError(
+                f"TWSE bulk history: {date_str} still failing after retries — refusing to build a "
+                f"history with a possibly-missing trading day. Wait a few minutes (WAF cooldown) and rerun; "
+                f"do not run other TWSE-hitting scripts at the same time.")
         if day_data:
             for code, bar in day_data.items():
                 history.setdefault(code, []).append(bar)
@@ -457,25 +480,29 @@ def _mfi_series(highs, lows, closes, volumes, length=14):
 
 def compute_jj_rocket_and_bird(bars):
     """
-    Real 🚀強火箭/🐦強力藍鳥, ported line-for-line from the user's own ghost_claws_v4.1.pine
-    (JJ鬼爪V4.1 — same indicator already live on the Cloudflare Worker for the trading room's
-    own momentum HUD), using its "台股個股與一般ETF" auto-parameter branch: bias_neg=8.0,
-    mfi_thresh=52.0. Only the STRONG variants are ported here — screener's 🚀強火箭/🐦強力藍鳥
-    map exactly to JJ鬼爪's is_strong_rocket/is_strong_bird (same emoji, same Chinese name).
-    The weak variants (✈️弱火箭/🐣一般藍鳥) and the stateful 🛸強力再啟/⚡動能再啟 signals (which
-    require replaying is_holding across the ENTIRE bar history, not just the last two bars)
-    are out of scope for this pass — screener's existing 🛸動能飛碟/⚡動能閃電/✈️噴射機/🥚帶殼鳥
-    heuristics are untouched.
+    Real 🚀強火箭/🐦強力藍鳥/✈️弱火箭/🐣一般藍鳥, ported line-for-line from the user's own
+    ghost_claws_v4.1.pine (JJ鬼爪V4.1 — same indicator already live on the Cloudflare Worker
+    for the trading room's own momentum HUD), using its "台股個股與一般ETF" auto-parameter
+    branch: bias_neg=8.0, mfi_thresh=52.0. Screener's 🚀強火箭/🐦強力藍鳥/✈️弱火箭/🐣一般藍鳥
+    map exactly to JJ鬼爪's is_strong_rocket/is_strong_bird/is_weak_rocket/is_normal_bird (same
+    emoji, same Chinese name, matching the markers already drawn in
+    scripts/tv_indicators_engine.py's own port of the same script). The stateful
+    🛸強力再啟/⚡動能再啟 signals (which require replaying is_holding across the ENTIRE bar
+    history, not just the last two bars) are still out of scope for this pass — screener's
+    existing 🛸動能飛碟/⚡動能閃電/✈️噴射機/🥚帶殼鳥 heuristics are untouched.
 
     Pine definitions (ghost_claws_v4.1.pine):
       cond_bird   = crossover(hist, 0) and (ma17 > ma88) and (close > bb_basis)
       is_strong_bird   = cond_bird and bias88 <= -8.0
+      is_normal_bird   = cond_bird and bias88 >  -8.0
       cond_rocket = crossover(ma17, ma88) and hist > 0
       is_strong_rocket = cond_rocket and mfi > 52.0
+      is_weak_rocket   = cond_rocket and mfi <= 52.0
 
     Requires >=89 real bars: an 88-day SMA has no "approximation" the way an EMA does — it is
     simply undefined below 88 real closes, and the crossover check needs it at two consecutive
-    bars. Returns (is_strong_rocket, is_strong_bird) — False, False if not computable.
+    bars. Returns (is_strong_rocket, is_strong_bird, is_weak_rocket, is_normal_bird) —
+    False x4 if not computable.
     """
     closes = [b["close"] for b in bars]
     highs = [b["high"] for b in bars]
@@ -500,11 +527,13 @@ def compute_jj_rocket_and_bird(bars):
 
     cond_bird = (hist[-2] <= 0 < hist[-1]) and is_bull_trend and is_above_bb
     is_strong_bird = cond_bird and bias88 <= -8.0
+    is_normal_bird = cond_bird and bias88 > -8.0
 
     cond_rocket = (ma17[-2] <= ma88[-2]) and (ma17[-1] > ma88[-1]) and hist[-1] > 0
     is_strong_rocket = cond_rocket and mfi[-1] > 52.0
+    is_weak_rocket = cond_rocket and mfi[-1] <= 52.0
 
-    return is_strong_rocket, is_strong_bird
+    return is_strong_rocket, is_strong_bird, is_weak_rocket, is_normal_bird
 
 
 def _twse_tick_size(price):
@@ -954,16 +983,20 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
 
     signals = []
     if len(closes) >= 89:
-        # Real JJ鬼爪V4.1 is_strong_rocket/is_strong_bird (compute_jj_rocket_and_bird()) —
-        # replaces the price/volume-ratio proxy below for symbols with enough history for a
-        # true SMA88 (see that function's docstring for why 89 is a hard floor, not a tuning
-        # choice). Thinner-history symbols keep the old heuristic so they still get a signal
-        # rather than none at all.
-        is_strong_rocket, is_strong_bird = compute_jj_rocket_and_bird(bars)
+        # Real JJ鬼爪V4.1 is_strong_rocket/is_strong_bird/is_weak_rocket/is_normal_bird
+        # (compute_jj_rocket_and_bird()) — replaces the price/volume-ratio proxy below for
+        # symbols with enough history for a true SMA88 (see that function's docstring for why
+        # 89 is a hard floor, not a tuning choice). Thinner-history symbols keep the old
+        # heuristic so they still get a signal rather than none at all.
+        is_strong_rocket, is_strong_bird, is_weak_rocket, is_normal_bird = compute_jj_rocket_and_bird(bars)
         if is_strong_rocket:
             signals.append("🚀 強火箭")
+        elif is_weak_rocket:
+            signals.append("✈️ 火箭")
         if is_strong_bird:
             signals.append("🐦 強力藍鳥")
+        elif is_normal_bird:
+            signals.append("🐣 藍鳥")
     else:
         if pct_change >= 2.5 and vol_ratio >= 1.5 and close > ma5:
             signals.append("🚀 強火箭")
