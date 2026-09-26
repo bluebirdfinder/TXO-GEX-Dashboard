@@ -133,6 +133,76 @@ def fetch_tpex_otc_daily(months=14):
     }
 
 
+def aggregate_daily_to_wm(days):
+    """days: ascending [{'time','open','high','low','close','volume','_d'(date)}] -> {'1D','1W','1Mth'} (real aggregation)."""
+    def agg(key_fn):
+        out, cur, cur_key = [], None, None
+        for b in days:
+            k = key_fn(b['_d'])
+            if k != cur_key:
+                if cur: out.append(cur)
+                cur, cur_key = {'time': b['time'], 'open': b['open'], 'high': b['high'], 'low': b['low'], 'close': b['close'], 'volume': b['volume']}, k
+            else:
+                cur['high'] = max(cur['high'], b['high']); cur['low'] = min(cur['low'], b['low'])
+                cur['close'] = b['close']; cur['volume'] += b['volume']
+        if cur: out.append(cur)
+        return out
+    strip = lambda bars: [{k: v for k, v in b.items() if k != '_d'} for b in bars]
+    return {'1D': strip(days), '1W': agg(lambda d: d.isocalendar()[:2]), '1Mth': agg(lambda d: (d.year, d.month))}
+
+
+# Dashboard asset -> (TAIFEX commodity id, Fubon alias). The dashboard's "MTX" is 微台 (TMF) and "MXF" is 小台 (TAIFEX id MTX).
+FUTURES_ASSETS = {
+    'TXF': ('TX', 'TXF1!'),
+    'MXF': ('MTX', 'MXF1!'),
+    'MTX': ('TMF', 'TMF1!'),
+    'CDF': ('CDF', 'CDF1!'),
+}
+INTRADAY_KEYS = ('1M', '3M', '5M', '15M', '30M', '1H', '4H')
+
+
+def fetch_taifex_futures_daily(commodity_id, months=14):
+    """
+    REAL futures daily bars (day session "一般", front month) with real volume from TAIFEX's official
+    futDataDown (期貨每日交易行情). Replaces the old Yahoo ^TWII (spot index!) series with formula-made
+    volume. Front month = the first plain YYYYMM contract listed for the date (weekly contracts skipped).
+    """
+    tz = datetime.timezone(datetime.timedelta(hours=8))
+    today = datetime.datetime.now(tz).date()
+    y, m = today.year, today.month
+    days = []
+    for _ in range(months):
+        first = datetime.date(y, m, 1)
+        last = datetime.date(y + (m == 12), (m % 12) + 1, 1) - datetime.timedelta(days=1)
+        url = (f"https://www.taifex.com.tw/cht/3/futDataDown?down_type=1&commodity_id={commodity_id}"
+               f"&queryStartDate={first:%Y/%m/%d}&queryEndDate={min(last, today):%Y/%m/%d}")
+        try:
+            req = urllib.request.Request(url, headers=HEADERS)
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                text = resp.read().decode('cp950', errors='ignore')
+            seen = set()
+            for line in text.splitlines()[1:]:
+                c = [x.strip() for x in line.split(',')]
+                if len(c) < 18 or c[17] != '一般' or c[0] in seen or not (len(c[2]) == 6 and c[2].isdigit()):
+                    continue
+                try:
+                    o, h, l, cl = (float(c[i].replace(',', '')) for i in (3, 4, 5, 6))
+                    vol = int(c[9].replace(',', ''))
+                except ValueError:
+                    continue
+                seen.add(c[0])  # first listed 6-digit contract of the date = front month
+                dt = datetime.datetime.strptime(c[0], '%Y/%m/%d').replace(hour=9, tzinfo=tz)
+                days.append({'time': int(dt.timestamp()), 'open': o, 'high': h, 'low': l, 'close': cl, 'volume': vol, '_d': dt.date()})
+        except Exception as e:
+            print(f"  [TAIFEX {commodity_id}] {y}-{m:02d} failed: {e}")
+        m -= 1
+        if m == 0:
+            m, y = 12, y - 1
+        time.sleep(0.6)
+    days.sort(key=lambda b: b['time'])
+    return aggregate_daily_to_wm(days)
+
+
 def fetch_all_klines(only=None):
     output_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'klines_cache.json')
     out_data = {
@@ -142,9 +212,12 @@ def fetch_all_klines(only=None):
         'assets': {}
     }
 
-    if only:  # refresh just some assets, keep the rest of the existing cache untouched
+    try:
         with open(output_file, 'r', encoding='utf-8') as f:
             prev = json.load(f)
+    except Exception:
+        prev = {'assets': {}}
+    if only:  # refresh just some assets, keep the rest of the existing cache untouched
         out_data['assets'] = prev.get('assets', {})
         out_data['version'] = prev.get('version', out_data['version'])
 
@@ -182,6 +255,19 @@ def fetch_all_klines(only=None):
             'timeframes': {}
         }
         
+        if sym in FUTURES_ASSETS:
+            # Futures NEVER come from Yahoo (its series here was the spot index ^TWII / a stock, with a
+            # formula-made volume). Daily/weekly/monthly = TAIFEX official; intraday = Fubon Neo bars that
+            # scripts/fetch_fubon_futures_klines.py accumulates locally and which are preserved here.
+            prev_asset = (prev.get('assets') or {}).get(sym, {})
+            keep = {}
+            if str(prev_asset.get('intraday_source', '')).startswith('Fubon'):
+                keep = {k: v for k, v in (prev_asset.get('timeframes') or {}).items() if k in INTRADAY_KEYS}
+                out_data['assets'][sym]['intraday_source'] = prev_asset['intraday_source']
+            out_data['assets'][sym]['daily_source'] = 'TAIFEX futDataDown (day session, front month)'
+            out_data['assets'][sym]['timeframes'] = {**keep, **fetch_taifex_futures_daily(FUTURES_ASSETS[sym][0])}
+            print(f"  -> {sym} futures: " + ", ".join(f"{k}={len(v)}" for k, v in out_data['assets'][sym]['timeframes'].items()))
+            continue
         q = meta['query']
         if q is None:  # OTC: official TPEx daily bars only
             out_data['assets'][sym]['timeframes'] = fetch_tpex_otc_daily()
@@ -254,7 +340,7 @@ def fetch_all_klines(only=None):
 
         # Synthesize real 4H bars from the real 1H bars just fetched (see TF_MAP comment above
         # for why 4H can't be requested from Yahoo directly).
-        hourly = out_data['assets'][sym]['timeframes'].get('1H')
+        hourly = None if sym in FUTURES_ASSETS else out_data['assets'][sym]['timeframes'].get('1H')
         if hourly:
             four_h_bars = aggregate_4h_from_1h(hourly)
             if four_h_bars:
