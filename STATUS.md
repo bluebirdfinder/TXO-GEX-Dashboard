@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.7)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.8)
 
-P26-09-26 夜盤依期交所定義重排 ✕ 散戶多空比價格污染修正 ✕ 官方P/C對齊 ✕ 融資維持率估算鏈重建)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.7)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.7)
+**當前版本**：`v64.8` (2026-09-27 移除寫死假資料（匯率備援、戰情室總經HUD）✕ 2025休市日曆校正；前版 v64.7：夜盤依期交所定義重排 ✕ 散戶多空比價格污染修正 ✕ 官方P/C對齊 ✕ 融資維持率估算鏈重建)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.8)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.8)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,16 @@ P26-09-26 夜盤依期交所定義重排 ✕ 散戶多空比價格污染修正 �
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.8 核心更新亮點（移除寫死假資料 ✕ 2025休市日曆）
+
+- **移除匯率區塊寫死的 8/19~8/25 假資料**：抓取失敗時顯示「⚪ 無即時數據」，不再冒充當日匯率；前端第二層寫死預設一併移除。
+- **戰情室總經 HUD 移除寫死預設**（DXY／US10Y／VIX／VVIX／CL 提示價）：缺值顯示「—」，並修正價格為 null 時的錯誤。
+- **2025 年休市日曆**依證交所實際成交日重建（原誤列 2/3、6/2、9/19，漏 1/23–24、9/29、10/6、10/24、12/25）。
+
+詳細請見 [HISTORY.md](HISTORY.md) v64.8 條目。
 
 ---
 
