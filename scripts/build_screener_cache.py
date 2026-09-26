@@ -52,6 +52,7 @@ OUTPUT_FILE = os.path.join(ROOT_DIR, "data", "screener_cache.json")
 OHLCV_CACHE_FILE = os.path.join(ROOT_DIR, "data", "screener_ohlcv_cache.json")
 INST_HISTORY_FILE = os.path.join(ROOT_DIR, "data", "stock_institutional_history.json")
 INST_HISTORY_TRADING_DAYS = 10
+BULK_LATEST_DATE = None  # YYYYMMDD of the newest trading day in the TWSE bulk history (set at build/load time)
 
 SSL_CTX = ssl.create_default_context()
 SSL_CTX.check_hostname = False
@@ -213,6 +214,7 @@ def build_twse_bulk_history(num_trading_days=120, max_calendar_days_back=180):
     non-trading days, which come back empty and don't count against num_trading_days).
     Returns {code: [bars ascending by date]}.
     """
+    global BULK_LATEST_DATE
     history = {}
     day = datetime.today().date()
     collected = 0
@@ -235,6 +237,8 @@ def build_twse_bulk_history(num_trading_days=120, max_calendar_days_back=180):
                 f"history with a possibly-missing trading day. Wait a few minutes (WAF cooldown) and rerun; "
                 f"do not run other TWSE-hitting scripts at the same time.")
         if day_data:
+            if collected == 0:
+                BULK_LATEST_DATE = date_str  # first success walking backward = newest trading day
             for code, bar in day_data.items():
                 history.setdefault(code, []).append(bar)
             collected += 1
@@ -928,6 +932,17 @@ def save_ohlcv_cache(data):
         json.dump({"_date": datetime.today().strftime("%Y-%m-%d"), "data": data}, f, ensure_ascii=False)
 
 
+def _normalize_quote_date(raw):
+    """tw_quotes_latest.json mixes ROC dates ('1150924', TWSE/TPEx OpenAPI) and Gregorian
+    ('20260924', TAIFEX). Return YYYYMMDD, or '' if unrecognised (never appended as a bar)."""
+    d = str(raw or "").strip().replace("/", "").replace("-", "")
+    if len(d) == 7 and d.isdigit():
+        return str(int(d[:3]) + 1911) + d[3:]
+    if len(d) == 8 and d.isdigit():
+        return d
+    return ""
+
+
 def compute_symbol_metrics(item, quote, bars, inst_history):
     symbol = str(item.get("symbol", ""))
     name = item.get("name", symbol)
@@ -968,7 +983,13 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
 
     # Ensure the series ends at today's real quote (the fetched history may lag by a day
     # depending on when this script runs relative to TWSE/TPEx publishing today's bar).
-    if close > 0 and (not bars or abs(bars[-1]["close"] - close) > 0.001):
+    # Only append a quote that is verifiably NEWER than the newest bar in the history. Found
+    # 2026-09-26: data/tw_quotes_latest.json was 17 days stale (2026-09-09) and the old
+    # "close differs -> append" rule tacked that stale quote onto every stock's series as a fake
+    # newest bar, corrupting every indicator. A quote with no/older date is never appended.
+    quote_date = _normalize_quote_date(quote.get("date"))
+    if (close > 0 and BULK_LATEST_DATE and quote_date > BULK_LATEST_DATE
+            and (not bars or abs(bars[-1]["close"] - close) > 0.001)):
         bars = bars + [{"open": open_p, "high": high_p, "low": low_p, "close": close, "volume": volume}]
 
     closes = [b["close"] for b in bars]
@@ -1102,6 +1123,7 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
 
 
 def main():
+    global BULK_LATEST_DATE
     print(f"=== Building Quant Screener Cache [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ===")
 
     if not os.path.exists(UNIVERSE_FILE) or not os.path.exists(QUOTES_FILE):
@@ -1126,10 +1148,12 @@ def main():
     # from today's cache when already fetched today (keyed under "_TWSE_BULK").
     if "_TWSE_BULK" in ohlcv_cache:
         twse_bulk = ohlcv_cache["_TWSE_BULK"]
+        BULK_LATEST_DATE = ohlcv_cache.get("_TWSE_BULK_LATEST")
         print(f"[OK] TWSE bulk history: using today's cache ({len(twse_bulk)} stocks)")
     else:
         twse_bulk = build_twse_bulk_history()
         ohlcv_cache["_TWSE_BULK"] = twse_bulk
+        ohlcv_cache["_TWSE_BULK_LATEST"] = BULK_LATEST_DATE
         cache_dirty = True
         save_ohlcv_cache(ohlcv_cache)
 
