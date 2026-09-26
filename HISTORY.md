@@ -32,6 +32,15 @@
 
 ## 🎯 各版本詳細更新紀錄
 
+### 📋 2026-09-26 選股雷達真實狀態盤點與文件同步（純文件，未升版、未改任何選股邏輯）
+
+- **起因**：另一個聊天室的AI回報 `DASHBOARD_DATA_SOURCE_MAP.md` 寫「投信認養／籌碼偏多還沒接真資料」，但 `runBirdQuantScreener()` 早已讀 `real.it_adopted`/`real.chip_bull`（來源 `compute_inst_flags()`，`scripts/build_screener_cache.py:317-339`）。本次實跑數字核對、逐項比對程式碼後同步文件（`DASHBOARD_DATA_SOURCE_MAP.md` 第7列與過期待辦列、`STATUS.md` 新增盤點表）。
+- **涵蓋率（實測，2026-09-24 快取）**：universe 1,423 筆；有真實歷史 1,383 筆；`history_unavailable` 40 筆，**全部是 TAIFEX 指數/股期代碼（4 index_futures＋36 stock_futures），股票/ETF 1,383 檔涵蓋率 100%**。舊文件的「97%」是把這40筆算進分母，並非限流造成的缺漏。畫面「全市場 1,400+ 檔」（`trading room/room.html:793`、`room.js:216,3403`）不精確——實際可掃描 1,383 檔股票/ETF，建議之後改寫為「1,380+ 檔」（本次未改UI）。
+- **各訊號所需K棒數涵蓋**（`data/screener_ohlcv_cache.json` `_TWSE_BULK`）：≥35根 1,373 檔；≥60根 1,362 檔；≥65根 1,362 檔；≥89根 1,344 檔。不足89根者（例如 00408A 52根、00409A 17根，皆新掛牌ETF）🚀/🐦退回舊近似版，是誠實保守設計而非缺資料。
+- **真實 vs 近似（以程式碼為準，HEAD 版 `build_screener_cache.py`）**：真實移植——`compute_jj_macd_and_cci`（:373）、`compute_jj_rocket_and_bird`（:458）、`compute_5k_breakout`（:538）、`compute_demark_v3`（:670）、`compute_inst_flags`（:317）；簡化近似——🛸動能飛碟（:973）、⚡動能閃電（:975）、✈️噴射機（:977）、🥚帶殼鳥（:979）、`k5_state`（:1005-1011）、`demark_state`（:1013-1018，與真九轉 `demark_buy/sell_state` 為不同欄位）。另：工作目錄有**他人未commit的變更**（`compute_jj_rocket_and_bird` 擴充回傳弱火箭/一般藍鳥），不在本次盤點的 HEAD 範圍內。
+- **涵蓋率改善建議（涵蓋率其實不低，僅列風險，未動手）**：①`fetch_twse_all_stocks_day()` 失敗只印 WARN 並回傳 `{}`，與「休市日」無法區分，若某個交易日請求失敗會讓全市場少一天K棒卻無聲；建議回傳失敗旗標、對「應開市卻空」的日期重試。②`_fetch_url`（:58-75）重試 2 次、退避 2s/5s，批量端點每日一次請求＋`time.sleep(0.3)`（:220），實測約 3.5 分鐘完成、無限流失敗。③快取以日期為鍵（`load_ohlcv_cache`），同日重跑秒回，不會重複打官方端點。
+- **SSL 驗證評估（只回報，未修改）**：`scripts/build_screener_cache.py:56-58` 對所有請求關閉憑證與主機名驗證（`CERT_NONE`）。資料是 TWSE/TPEx 公開資訊、無登入/金鑰，洩密風險低，但中間人可竄改回傳的 OHLCV 而不被發現，與 AGENTS.md 鐵律6（禁偽資料）精神衝突。建議：先改用預設驗證＋`certifi`，若 TWSE/TPEx 憑證鏈在使用者 Windows 環境驗證失敗，再僅對這兩個網域降級並在程式碼註明原因，不要全域關閉。
+
 ### 🔴🔴 v64.4 CI 自動化流程漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標發布版 (2026-09-25)
 
 - **背景**：使用者在正式站（`bluebirdfinder.github.io`）「近5日關鍵市場指數與GEX結構歷程矩陣」表格親自截圖抓到 T-4~T-1（9/18、9/21、9/22、9/23）四天全部顯示 `0.0`/`null`/`未公布`/「快照建立中」的空殼分支，質疑「剛稽核完也重新核對過」怎麼還會壞、會不會其他區塊的資料也是假的。逐步排查後確認**這不是資料造假，是一個貨真價實、從功能一開始就存在的CI設定遺漏**。

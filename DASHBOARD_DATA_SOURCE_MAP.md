@@ -49,7 +49,7 @@
 | 4 | VRVP成交量分布 | 找支撐壓力密集成交區 | 真實K線量能 | 內部計算 | 即時 | room.js VRVP Canvas | ⏳ 未稽核 | — | 無 |
 | 5 | 左側面板報價/GEX距離/OHLC/GEX五大防線/法人籌碼體質 | 看盤、GEX關卡位階距離判斷、外資動向與維持率健檢 | gex_data.json（GEX部分真實）+ OHLC | 內部 | 即時/盤後 | `renderLeftPanel()` | ✅ 已稽核 | ✅ 漲跌/昨收假資料已修；開盤/最高/最低誠實顯示「—」。**2026-09-15上午新發現並修復**：「GEX造市商五大防線」卡片(Call Wall/ZG/Put Wall/Max Pain/VEX)從建立以來從未寫入真數據，永遠顯示打字寫死的初始值；「法人籌碼體質」卡片(外資期貨淨留倉/P-C Ratio/融資維持率)連id屬性都沒有、完全零JS綁定。兩者已接上真數據並實測確認正確 | 無 |
 | 6 | AI量化軍師（Gemini） | AI輔助診斷（非投資建議） | Gemini API + gexData | Google Gemini API | 即時 | room.js AI Advisor Engine | ✅ 已確認乾淨（有Key真呼叫，沒Key清楚標示「本地內建風控引擎」，不偽裝真AI） | 原本就誠實 | 無 |
-| 7 | 選股雷達 Modal | 多因子選股（技術面訊號篩選） | `screener_cache.json`（今天改真實，97%覆蓋率） | TWSE MI_INDEX批量端點 + TPEx | 盤後 | `runBirdQuantScreener()` + `build_screener_cache.py` | ✅ 已稽核 | ✅ **今天修好**雜湊碼假訊號，改真實訊號比對 | 「投信認養」「籌碼偏多」2個篩選條件還沒接真數據，永遠不觸發（誠實不匹配） |
+| 7 | 選股雷達 Modal | 多因子選股（技術面訊號篩選） | `screener_cache.json`（**2026-09-26盤點**：universe 1,423 筆＝1,383 檔上市股票/ETF（100%有真實120日歷史）＋40 筆 TAIFEX 指數/股期代碼（`history_unavailable`，設計上不適用日K歷史，非抓取失敗）；畫面寫「1,400+ 檔」略為誇大，實際可掃描為 1,383 檔） | TWSE MI_INDEX批量端點（TWSE）＋TWSE T86（三大法人）＋逐股TPEx備援 | 盤後 | `runBirdQuantScreener()` + `build_screener_cache.py` | ✅ 已稽核（2026-09-26逐項核對，見 HISTORY.md） | ✅ 雜湊碼假訊號已改真實；**「投信認養」「籌碼偏多」自 v64.0 起已接真資料**（`compute_inst_flags()`，T86 滾動10日；2026-09-24：投信認養36檔、籌碼偏多613檔） | **真實移植自使用者 Pine 原始碼**：`macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`（JJ_MACD/JJ_CCI，≥35根）、🚀強火箭/🐦強力藍鳥（JJ鬼爪V4.1，≥89根，1,344檔；不足89根的39檔退回舊近似版）、📐真5K突破（≥60根，僅進場邏輯不含停損停利）、`demark_buy_state`/`demark_sell_state`（神奇九轉v3_equities全狀態機＋7過濾器，≥65根）。**仍是簡化近似**：🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`（5日新高類）、`demark_state`（舊版粗略近似，與真九轉是不同欄位）。詳見檔頭註解與 HISTORY.md v64.4 之後的盤點條目 |
 | 8 | 商品搜尋/自動完成（Ctrl+K） | 快速切換商品 | `symbolsUniverse`真實股票清單 | 內部清單檔 | — | room.js Symbol Search Engine | ⏳ 未稽核 | — | 無 |
 | 9 | 法人動能 Modal（另一個彈窗，非副圖） | 三大法人多空方向、留倉淨額判斷 | TAIFEX OpenAPI（即時fallback）+ momentum_data.json | openapi.taifex.com.tw | 15:00後 | `loadMomentumData()` | ✅ 已稽核 | ✅ 今天修好 | 無 |
 | 10 | 權值貢獻HUD | 台積電等權值股對大盤點數貢獻判斷 | 內部依市值权重估算 | 內部計算 | 即時 | `point_contrib`算法（fetch_and_calc_vision.py） | ⏳ 未逐行稽核（權重倍數如台積電×8.25疑似寫死經驗值） | — | 是否要改用真實流通市值即時算權重，還是維持經驗值 |
@@ -91,7 +91,7 @@
 | `fetch_official_taifex_large_trader()`等4支函式的靜默假保底值 | 記錄待處理 |
 | 官股行庫(spot_gov)真實數據 | 已確認無免費官方逐股來源，你已同意維持不可用 |
 | 夜盤法人交易的-422保底值 | 今天新發現，還沒處理 |
-| 選股雷達「投信認養」「籌碼偏多」篩選 | 需要額外串接institutional資料，還沒做 |
+| ~~選股雷達「投信認養」「籌碼偏多」篩選~~ | ✅ 已完成（v64.0，T86滾動10日歷史；2026-09-26文件同步更正，原本此列已過期） |
 | 總經事件雷達 | 完全未稽核，不確定是真清單還是有捏造 |
 | 尋鳥戰情室VRVP、商品搜尋、權值貢獻HUD、海外期貨Tick | 完全未稽核 |
 

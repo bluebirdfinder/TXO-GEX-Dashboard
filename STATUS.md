@@ -8,6 +8,20 @@
 
 ---
 
+## 📋 選股雷達現況盤點（2026-09-26，文件同步，未升版、未改任何選股邏輯）
+
+| 項目 | 實測結果（`data/screener_cache.json`、`data/screener_ohlcv_cache.json`，2026-09-24 資料） |
+|---|---|
+| universe | 1,423 筆＝1,383 檔上市股票/ETF ＋ 40 筆 TAIFEX 指數/股期代碼；畫面「全市場 1,400+ 檔」（`trading room/room.html:793`）略為誇大，實際可掃描 **1,383 檔** |
+| 真實歷史涵蓋 | 1,383/1,383（**100%**）股票/ETF 有真實日K；40 筆 TAIFEX 代碼 `history_unavailable`＝設計上不適用（非限流失敗）。舊文件「97%」是把這 40 筆算進分母 |
+| 各訊號所需K棒數涵蓋 | ≥35根 1,373 檔（JJ_MACD/CCI）；≥60根 1,362 檔（5K）；≥65根 1,362 檔（九轉）；≥89根 1,344 檔（真🚀🐦，其餘39檔為新掛牌ETF，退回舊近似版） |
+| 投信認養／籌碼偏多 | 真資料（`compute_inst_flags()`，T86 滾動10日）：36 檔／613 檔；舊文件寫「還沒接」已更正 |
+| **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
+| **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
+| SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
 ## 🎯 v64.4 核心更新亮點（CI 自動化流程漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標）
 
 ### 🔴🔴 根治「5日歷程矩陣」靜默回歸空殼的CI設定遺漏
