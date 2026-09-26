@@ -565,7 +565,9 @@ function generateIndicatorsData(tf) {
     count = candles.length;
   } else {
     // Baseline flat bars for un-cached symbol (never synthesize fake random waves)
-    if (!hasRealPrice) count = 0;
+    // A symbol that IS in klines_cache.json but has no bars for this timeframe (e.g. OTC intraday: TPEx
+    // publishes daily index bars only) gets no bars — a flat line at today's price would look like data.
+    if (!hasRealPrice || klinesCacheData?.assets?.[sym]) count = 0;
     for (let i = 0; i < count; i++) {
       const t = startTime + (i * intervalSec);
       const p = roundDec(basePrice);
@@ -1120,6 +1122,23 @@ function generateIndicatorsData(tf) {
  */
 function renderChartData() {
   const data = generateIndicatorsData(currentTf);
+  // Explain an intentionally empty chart (no real bars for this symbol/timeframe) instead of leaving it blank.
+  {
+    const _pane = document.getElementById('main-chart-pane');
+    if (_pane) {
+      let _n = document.getElementById('no-real-kline-notice');
+      if (!_n) {
+        _n = document.createElement('div');
+        _n.id = 'no-real-kline-notice';
+        _n.style.cssText = 'position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);z-index:20;padding:10px 16px;border-radius:8px;background:rgba(13,17,23,0.85);border:1px dashed rgba(255,215,0,0.45);color:#ffd700;font-size:0.85rem;pointer-events:none;text-align:center;';
+        if (getComputedStyle(_pane).position === 'static') _pane.style.position = 'relative';
+        _pane.appendChild(_n);
+      }
+      const empty = !data.candles || data.candles.length === 0;
+      _n.style.display = empty ? 'block' : 'none';
+      if (empty) _n.textContent = `⚪ ${currentActiveSymbol?.name || ''} ${currentTf} 暫無真實K線數據（官方來源未提供此時間級別）`;
+    }
+  }
 
   // 1. Candlesticks on Main Chart
   candleSeries.setData(data.candles);
