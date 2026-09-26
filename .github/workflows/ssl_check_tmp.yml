@@ -1,0 +1,25 @@
+name: SSL verify check (temporary)
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Verify official hosts with certificate verification ON
+        run: |
+          python - <<'PY'
+          import ssl, urllib.request, urllib.error
+          urls = ["https://www.taifex.com.tw/cht/3/pcRatio","https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX","https://www.twse.com.tw/rwd/zh/fund/BFI82U?response=json","https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw","https://mis.taifex.com.tw/futures/api/getQuoteList","https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm","https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL","https://www.tpex.org.tw/openapi/v1/tpex_index"]
+          for off in (False, True):
+              c = ssl.create_default_context()
+              if off: c.verify_flags &= ~ssl.VERIFY_X509_STRICT
+              print("== strict flag cleared:", off, "| python", __import__("sys").version.split()[0])
+              for u in urls:
+                  try:
+                      urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), context=c, timeout=20); r = "OK"
+                  except urllib.error.HTTPError as e: r = "HTTP%d" % e.code
+                  except Exception as e: r = "FAIL " + str(e)[:80]
+                  print(u[:58].ljust(60), r)
+          PY
