@@ -139,22 +139,22 @@ def bump_version(new_version, release_note=""):
     # file and contains none of the version-string patterns below, so a wrong path here used
     # to silently succeed (file exists, .replace() calls are all no-ops) while never touching
     # the actual trading room page.
+    # The room files can lag behind the engine version (they were still v64.3 while the engine was
+    # v64.4), so an exact old_version match silently leaves them stale. Match ANY version instead.
+    VER = r'v\d+\.\d+(?:\.\d+)?'
     room_html = os.path.join(BASE_DIR, 'trading room', 'room.html')
     if os.path.exists(room_html):
-        rm_html_content = _read(room_html)
-        rm_html_content = rm_html_content.replace(f'Bird Trading Room {old_version}', f'Bird Trading Room {new_version}')
-        rm_html_content = rm_html_content.replace(f'badge-version">{old_version}<', f'badge-version">{new_version}<')
-        rm_html_content = rm_html_content.replace(f'room.css?v={old_version}', f'room.css?v={new_version}')
-        rm_html_content = rm_html_content.replace(f'embedded_data.js?v={old_version}', f'embedded_data.js?v={new_version}')
-        rm_html_content = rm_html_content.replace(f'room.js?v={old_version}', f'room.js?v={new_version}')
-        _write(room_html, rm_html_content)
+        rm = _read(room_html)
+        for pat in (rf'(Bird Trading Room ){VER}', rf'(badge-version">){VER}(<)', rf'(room\.css\?v=){VER}',
+                    rf'(embedded_data\.js\?v=){VER}', rf'(room\.js\?v=){VER}'):
+            rm = re.sub(pat, lambda m: m.group(1) + new_version + (m.group(2) if m.lastindex and m.lastindex >= 2 else ''), rm)
+        _write(room_html, rm)
     room_js = os.path.join(BASE_DIR, 'trading room', 'room.js')
     if os.path.exists(room_js):
-        rm_js_content = _read(room_js)
-        rm_js_content = rm_js_content.replace(f'Core Engine {old_version}', f'Core Engine {new_version}')
-        rm_js_content = rm_js_content.replace(f'Trading Room {old_version}', f'Trading Room {new_version}')
-        rm_js_content = rm_js_content.replace(f'即時全域量化診斷 ({old_version})', f'即時全域量化診斷 ({new_version})')
-        _write(room_js, rm_js_content)
+        rj = _read(room_js)
+        for pat in (rf'(Core Engine ){VER}', rf'(Trading Room ){VER}', rf'(即時全域量化診斷 \(){VER}(\))'):
+            rj = re.sub(pat, lambda m: m.group(1) + new_version + (m.group(2) if m.lastindex and m.lastindex >= 2 else ''), rj)
+        _write(room_js, rj)
     done("更新 trading room/room.html 與 room.js")
 
     # 8. 在 HISTORY.md 最上方插入本版條目骨架（時間軸一列＋詳細紀錄小節）；已有條目則不重複插入

@@ -16,7 +16,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-11T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 5878.71
   },
   "2026-09-11_DAY": {
     "date": "2026-09-11",
@@ -35,7 +36,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-11T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 5878.71
   },
   "2026-09-10_DAY": {
     "date": "2026-09-10",
@@ -489,7 +491,8 @@
     "us_vix": 17.82,
     "margin_maint_market": 157.2,
     "margin_maint_stock": 143.1,
-    "written_at": "2026-09-14T20:52:06.381498+08:00"
+    "written_at": "2026-09-14T20:52:06.381498+08:00",
+    "margin_balance_billion": 5838.78
   },
   "2026-09-14_DAY": {
     "date": "2026-09-14",
@@ -507,7 +510,8 @@
     "us_vix": 15.84,
     "margin_maint_market": 157.2,
     "margin_maint_stock": 143.1,
-    "written_at": "2026-09-14T12:17:28.593777+08:00"
+    "written_at": "2026-09-14T12:17:28.593777+08:00",
+    "margin_balance_billion": 5838.78
   },
   "2026-09-15_NIGHT": {
     "date": "2026-09-15",
@@ -525,7 +529,8 @@
     "us_vix": 17.01,
     "margin_maint_market": 159.2,
     "margin_maint_stock": 144.3,
-    "written_at": "2026-09-15T22:15:51.408016+08:00"
+    "written_at": "2026-09-15T22:15:51.408016+08:00",
+    "margin_balance_billion": 5822.4
   },
   "2026-09-15_DAY": {
     "date": "2026-09-15",
@@ -544,7 +549,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-15T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 5822.4
   },
   "2026-09-16_NIGHT": {
     "date": "2026-09-16",
@@ -562,7 +568,8 @@
     "us_vix": 16.7,
     "margin_maint_market": 159.4,
     "margin_maint_stock": 144.4,
-    "written_at": "2026-09-16T23:58:03.897661+08:00"
+    "written_at": "2026-09-16T23:58:03.897661+08:00",
+    "margin_balance_billion": 5861.67
   },
   "2026-09-16_DAY": {
     "date": "2026-09-16",
@@ -580,7 +587,8 @@
     "us_vix": 17.2,
     "margin_maint_market": 161.6,
     "margin_maint_stock": 146.4,
-    "written_at": "2026-09-16T09:03:44.691504+08:00"
+    "written_at": "2026-09-16T09:03:44.691504+08:00",
+    "margin_balance_billion": 5861.67
   },
   "2026-09-17_NIGHT": {
     "date": "2026-09-17",
@@ -598,7 +606,8 @@
     "us_vix": 15.67,
     "margin_maint_market": 160.0,
     "margin_maint_stock": 145.0,
-    "written_at": "2026-09-17T23:00:06.720689+08:00"
+    "written_at": "2026-09-17T23:00:06.720689+08:00",
+    "margin_balance_billion": 5893.97
   },
   "2026-09-17_DAY": {
     "date": "2026-09-17",
@@ -616,7 +625,8 @@
     "us_vix": 17.71,
     "margin_maint_market": 160.2,
     "margin_maint_stock": 145.1,
-    "written_at": "2026-09-17T11:14:46.959950+08:00"
+    "written_at": "2026-09-17T11:14:46.959950+08:00",
+    "margin_balance_billion": 5893.97
   },
   "2026-09-24_NIGHT": {
     "date": "2026-09-24",
@@ -634,7 +644,8 @@
     "us_vix": 16.05,
     "margin_maint_market": 159.2,
     "margin_maint_stock": 144.2,
-    "written_at": "2026-09-24T20:29:26.855735+08:00"
+    "written_at": "2026-09-24T20:29:26.855735+08:00",
+    "margin_balance_billion": 6151.03
   },
   "2026-09-25_NIGHT": {
     "date": "2026-09-25",
@@ -652,7 +663,7 @@
     "us_vix": 15.25,
     "margin_maint_market": 154.6,
     "margin_maint_stock": 140.1,
-    "margin_balance_billion": 6151.03,
+    "margin_balance_billion": null,
     "written_at": "2026-09-25T21:38:36.402006+08:00"
   },
   "2026-09-25_DAY": {
@@ -691,7 +702,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-24T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 6151.03
   },
   "2026-09-23_DAY": {
     "date": "2026-09-23",
@@ -710,7 +722,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-23T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 6063.68
   },
   "2026-09-23_NIGHT": {
     "date": "2026-09-23",
@@ -729,7 +742,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-23T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 6063.68
   },
   "2026-09-22_DAY": {
     "date": "2026-09-22",
@@ -748,7 +762,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-22T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 6048.61
   },
   "2026-09-22_NIGHT": {
     "date": "2026-09-22",
@@ -767,7 +782,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-22T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 6048.61
   },
   "2026-09-21_DAY": {
     "date": "2026-09-21",
@@ -786,7 +802,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-21T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 6030.38
   },
   "2026-09-21_NIGHT": {
     "date": "2026-09-21",
@@ -805,7 +822,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-21T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 6030.38
   },
   "2026-09-18_DAY": {
     "date": "2026-09-18",
@@ -824,7 +842,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-18T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 5940.39
   },
   "2026-09-18_NIGHT": {
     "date": "2026-09-18",
@@ -843,7 +862,8 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "written_at": "2026-09-18T23:59:00+08:00",
-    "source": "backfill"
+    "source": "backfill",
+    "margin_balance_billion": 5940.39
   },
   "2026-09-26_NIGHT": {
     "date": "2026-09-26",
@@ -861,7 +881,7 @@
     "us_vix": 14.87,
     "margin_maint_market": 157.3,
     "margin_maint_stock": 142.5,
-    "margin_balance_billion": 6151.03,
+    "margin_balance_billion": null,
     "written_at": "2026-09-26T18:56:43.918548+08:00"
   }
 }

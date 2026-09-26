@@ -18,8 +18,9 @@ from datetime import datetime
 
 # Disable SSL verification for TWSE/TPEx/TAIFEX government endpoints on Windows
 SSL_CTX = ssl.create_default_context()
-SSL_CTX.check_hostname = False
-SSL_CTX.verify_mode = ssl.CERT_NONE
+# Full certificate-chain + hostname verification stays ON. TWSE/TPEx certificates lack a Subject Key
+# Identifier, which Python 3.13's strict X.509 flag rejects, so only that one flag is relaxed.
+SSL_CTX.verify_flags &= ~ssl.VERIFY_X509_STRICT
 
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "tw_quotes_latest.json")
 UNIVERSE_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "tw_symbols_universe.json")
