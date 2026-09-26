@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.9)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.10)
 
-**當前版本**：`v64.9` (2026-09-27 戰情室價格只用真實來源 ✕ 櫃買指數改用櫃買中心官方K線 ✕ K線缺量不再填假值)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.9)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.9)
+**當前版本**：`v64.10` (2026-09-27 期貨K線改用期交所日線＋富邦日內，不再使用 Yahoo 現貨/公式量)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.10)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.10)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,15 @@
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.10 核心更新亮點（期貨K線真實化）
+
+- **期貨 K 線不再用 Yahoo**：原本 TXF/MXF/MTX 是加權現貨 ^TWII＋公式推算的假成交量、CDF 是 2330 股票。日／週／月 K 改用期交所官方期貨日資料（真實價量，與期交所一致）。
+- **日內 K 改用富邦 Neo API 真實資料**（含真實成交量）：富邦只提供最近一個場次、沒有歷史端點，新增本機腳本 `scripts/fetch_fubon_futures_klines.py` 每次收盤後執行一次、逐日累積。首次執行前期貨日內級別顯示「暫無真實K線數據」。
+
+詳細請見 [HISTORY.md](HISTORY.md) v64.10 條目。
 
 ---
 

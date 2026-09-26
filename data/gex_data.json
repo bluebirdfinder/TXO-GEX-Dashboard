@@ -1,7 +1,7 @@
 {
   "date": "2026-09-27",
   "chip_base_date": "2026-09-24",
-  "engine_version": "v64.9",
+  "engine_version": "v64.10",
   "session_type": "NIGHT",
   "session_name": "🌙 夜盤動態/收盤校正",
   "session_shift": {
@@ -19,7 +19,7 @@
     "day_gex_plus_flip": 47230.2,
     "day_total_vex": 82.45
   },
-  "last_updated_time": "2026-09-27 02:26",
+  "last_updated_time": "2026-09-27 02:46",
   "spot_price": 48024.6,
   "spot_change": -132.69,
   "spot_change_pct": -0.28,
@@ -23935,7 +23935,7 @@
   "total_gex_plus": 658.68,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-27 02:26",
+    "last_updated": "2026-09-27 02:46",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
