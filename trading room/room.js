@@ -2052,31 +2052,32 @@ function updateMacroRiskHUD(macroData, liveTick) {
   const overallBadgeEl = document.getElementById('risk-overall-badge');
   const summaryEl = document.getElementById('risk-macro-summary');
 
-  // Default / Parsed Macro Indicators
-  const dxy = macroData?.dxy || { price: 99.196, trend_label: '跌落 20 日線 (偏多台股)' };
-  const us10y = macroData?.us10y || { price: 4.784, trend_label: '站穩 20 日線 (創高承壓)' };
-  const vix = macroData?.vix || { price: (gexData?.vix_info?.taifex_vix || 18.45), trend_label: '低波安定' };
-  const vvixVal = (gexData?.vix_info?.us_vvix || 102.66);
+  // Real values only (AGENTS.md redline #6): the backend sends null when a quote failed, and there are
+  // no stand-in defaults — a missing value renders as "—" / "無數據" instead of an invented number.
+  const num = (v) => (typeof v === 'number' && isFinite(v)) ? v : null;
+  const dxyPrice = num(liveTick?.dxy) ?? num(macroData?.dxy?.price);
+  const us10yPrice = num(liveTick?.us10y) ?? num(macroData?.us10y?.price);
+  const vixPrice = num(liveTick?.vix) ?? num(macroData?.vix?.price) ?? num(gexData?.vix_info?.us_vix);
+  const vvixPrice = num(liveTick?.vvix) ?? num(gexData?.vix_info?.us_vvix);
   const tailStatus = gexData?.vix_info?.tail_risk_status || '';
-  const summary = macroData?.summary || (tailStatus ? `💡 ${tailStatus}` : '💡 VIX 維持低檔有利多頭，美元走弱亞股資金無虞，聚焦突破與量化動能標的。');
+  const summary = macroData?.summary || (tailStatus ? `💡 ${tailStatus}` : '💡 總經資料暫時無法取得');
 
-  const dxyPrice = liveTick?.dxy || dxy.price;
-  const us10yPrice = liveTick?.us10y || us10y.price;
-  const vixPrice = liveTick?.vix || vix.price;
-  const vvixPrice = liveTick?.vvix || vvixVal;
+  if (dxyValEl) dxyValEl.textContent = dxyPrice === null ? '—' : dxyPrice.toFixed(3);
+  if (dxyBadgeEl) dxyBadgeEl.textContent = dxyPrice === null ? '無數據' : (dxyPrice < 100.5 ? '破20MA(多)' : '站20MA(壓)');
 
-  if (dxyValEl) dxyValEl.textContent = dxyPrice.toFixed(3);
-  if (dxyBadgeEl) dxyBadgeEl.textContent = dxyPrice < 100.5 ? '破20MA(多)' : '站20MA(壓)';
-  
-  if (us10yValEl) us10yValEl.textContent = `${us10yPrice.toFixed(3)}%`;
-  if (us10yBadgeEl) us10yBadgeEl.textContent = us10yPrice >= 4.7 ? '站20MA(壓)' : '破20MA(多)';
-  
-  if (vixValEl) vixValEl.textContent = vixPrice.toFixed(2);
-  if (vixBadgeEl) vixBadgeEl.textContent = vixPrice < 20 ? '低波安定' : '恐慌升溫';
+  if (us10yValEl) us10yValEl.textContent = us10yPrice === null ? '—' : `${us10yPrice.toFixed(3)}%`;
+  if (us10yBadgeEl) us10yBadgeEl.textContent = us10yPrice === null ? '無數據' : (us10yPrice >= 4.7 ? '站20MA(壓)' : '破20MA(多)');
 
-  if (vvixValEl) vvixValEl.textContent = vvixPrice.toFixed(2);
+  if (vixValEl) vixValEl.textContent = vixPrice === null ? '—' : vixPrice.toFixed(2);
+  if (vixBadgeEl) vixBadgeEl.textContent = vixPrice === null ? '無數據' : (vixPrice < 20 ? '低波安定' : '恐慌升溫');
+
+  if (vvixValEl) vvixValEl.textContent = vvixPrice === null ? '—' : vvixPrice.toFixed(2);
   if (vvixBadgeEl) {
-    if (vvixPrice >= 110) {
+    if (vvixPrice === null) {
+      vvixBadgeEl.textContent = '無數據';
+      vvixBadgeEl.style.color = 'var(--text-muted)';
+      vvixBadgeEl.style.background = 'rgba(255,255,255,0.06)';
+    } else if (vvixPrice >= 110) {
       vvixBadgeEl.textContent = '極端暴衝';
       vvixBadgeEl.style.color = '#ff5252';
       vvixBadgeEl.style.background = 'rgba(255,82,82,0.15)';
@@ -2097,9 +2098,14 @@ function updateMacroRiskHUD(macroData, liveTick) {
 
   if (summaryEl) summaryEl.textContent = summary.startsWith('💡') ? summary : `💡 ${summary}`;
   if (overallBadgeEl) {
-    const isTailRisk = vvixPrice >= 100;
-    const isGood = vixPrice < 20 && dxyPrice < 102 && !isTailRisk;
-    if (isTailRisk) {
+    const isTailRisk = vvixPrice !== null && vvixPrice >= 100;
+    const isGood = vixPrice !== null && dxyPrice !== null && vixPrice < 20 && dxyPrice < 102 && !isTailRisk;
+    if (vixPrice === null || dxyPrice === null) {
+      overallBadgeEl.textContent = '⚪ 資料不足';
+      overallBadgeEl.style.color = 'var(--text-muted)';
+      overallBadgeEl.style.borderColor = 'var(--text-muted)';
+      overallBadgeEl.style.background = 'rgba(255,255,255,0.06)';
+    } else if (isTailRisk) {
       overallBadgeEl.textContent = '🟠 尾部避險';
       overallBadgeEl.style.color = '#ff9100';
       overallBadgeEl.style.borderColor = '#ff9100';
@@ -4012,7 +4018,7 @@ function initFubonLivePriceStream() {
 function initOverseasLiveTickStream() {
   const clTab = document.querySelector('.contract-tab[data-contract="CL"]');
   if (clTab) {
-    clTab.title = `紐約輕原油期貨 (結算: $${CORE_PRESET_ASSETS['CL'].base_price.toFixed(2)})`;
+    clTab.title = '紐約輕原油期貨（本頁尚無即時報價）';  // was a hard-coded "結算" price that never updated
   }
 }
 
