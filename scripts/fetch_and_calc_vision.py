@@ -2314,8 +2314,16 @@ def fetch_official_taifex_retail_sentiment():
     to calculate exact Retail Long/Short Ratios for MTX (Small MTX) and TMF (Micro MTX).
     """
     inst = {'MTX': {'long': 0, 'short': 0}, 'TMF': {'long': 0, 'short': 0}}
+    inst_ok = {'MTX': False, 'TMF': False}
+    # Pin BOTH TAIFEX pages to the same explicit trading date. Without a date, futDailyMarketReport
+    # defaults (evenings/weekends) to the in-progress session's 15-column layout whose 未沖銷契約量
+    # is in column 10 and still '-', while this code read column 12 = 最後最佳賣價 (a ~48,000 PRICE)
+    # as open interest — found 2026-09-26 (the 9/25 snapshot's long/short were inflated by 19,212).
+    _tw_now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
+    _ref = _tw_now - datetime.timedelta(days=1) if (_tw_now.hour < 8 or (_tw_now.hour == 8 and _tw_now.minute < 45)) else _tw_now
+    _q_date = get_recent_tw_trading_days(_ref, n=1)[-1].strftime('%Y/%m/%d')
     try:
-        url_inst = "https://www.taifex.com.tw/cht/3/futContractsDate"
+        url_inst = f"https://www.taifex.com.tw/cht/3/futContractsDate?queryDate={_q_date}"
         req = urllib.request.Request(url_inst, headers=HEADERS)
         with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
             html = resp.read().decode('big5', errors='ignore')
@@ -2344,16 +2352,17 @@ def fetch_official_taifex_retail_sentiment():
                         if len(f_nums) >= 6 and len(t_nums) >= 6 and len(d_nums) >= 6:
                             inst[comm]['long'] = f_nums[-6] + t_nums[-6] + d_nums[-6]
                             inst[comm]['short'] = f_nums[-4] + t_nums[-4] + d_nums[-4]
+                            inst_ok[comm] = True
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Institutional Futures OI: {e}")
     
     def parse_taifex_fut_oi(cid):
         url = "https://www.taifex.com.tw/cht/3/futDailyMarketReport"
-        params = urllib.parse.urlencode({'queryType': '2', 'marketCode': '0', 'commodity_id': cid}).encode('utf-8')
+        params = urllib.parse.urlencode({'queryType': '2', 'marketCode': '0', 'commodity_id': cid, 'queryDate': _q_date}).encode('utf-8')
         try:
             req = urllib.request.Request(url, data=params, headers=HEADERS)
             with urllib.request.urlopen(req, context=SSL_CTX, timeout=10) as resp:
-                html = resp.read().decode('big5', errors='ignore')
+                html = resp.read().decode('utf-8', errors='ignore')  # this page is served as UTF-8 (big5 turned the Chinese labels into mojibake)
                 soup = BeautifulSoup(html, 'html.parser')
                 # Column 12 of this table is 未沖銷契約數 (open interest) — confirmed
                 # 2026-09-15 against TAIFEX's raw response (near-month row) AND against two
@@ -2374,22 +2383,33 @@ def fetch_official_taifex_retail_sentiment():
                 # contract-month row starts with the commodity code (e.g. "TMF"/"MTX") in
                 # cols[0] and a date/week code in cols[1], while the totals row has both blank.
                 near_oi, total_oi = 0, 0
+                oi_idx = None  # located from the header text, never hard-coded: layout is 17 cols with an explicit date, 15 without
                 for t in soup.find_all('table'):
                     for r in t.find_all('tr'):
                         cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
-                        if cols and len(cols) >= 13:
-                            if near_oi == 0 and re.match(r'^\d{6}$', cols[1] if len(cols) > 1 else ''):
-                                try: near_oi = int(cols[12].replace(',', ''))
-                                except: pass
-                            if total_oi == 0 and cols[0] == '' and cols[1] == '':
-                                try: total_oi = int(cols[12].replace(',', ''))
-                                except: pass
+                        if oi_idx is None and '*未沖銷契約量' in cols:
+                            oi_idx = cols.index('*未沖銷契約量')
+                            continue
+                        if oi_idx is None or len(cols) <= oi_idx:
+                            continue
+                        if near_oi == 0 and re.match(r'^\d{6}$', cols[1] if len(cols) > 1 else ''):
+                            try: near_oi = int(cols[oi_idx].replace(',', ''))
+                            except: pass  # '-' = not published yet -> None -> caller falls back to the previous real value
+                        if total_oi == 0 and cols[0] == '' and cols[1] == '':
+                            try: total_oi = int(cols[oi_idx].replace(',', ''))
+                            except: pass
                 return (near_oi or None), (total_oi or None)
         except Exception:
             return None, None
 
     mtx_near_total, mtx_total = parse_taifex_fut_oi('MTX')
     tmf_near_total, tmf_total = parse_taifex_fut_oi('TMF')
+    # No institutional long/short for the pinned date (not published yet) -> the retail derivation
+    # (near_oi - institutional) would be meaningless; degrade to the previous real value instead.
+    if not inst_ok['MTX']:
+        mtx_near_total = mtx_total = None
+    if not inst_ok['TMF']:
+        tmf_near_total = tmf_total = None
 
     # Real day-over-day deltas via the same persistent snapshot store used for the
     # institutional 5-day matrix — yesterday's real values, not a hardcoded number, are what
