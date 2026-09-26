@@ -2003,14 +2003,18 @@ function renderLeftPanel() {
   if (topPW) topPW.innerText = pw.toLocaleString();
   if (topMP) topMP.innerText = mp.toLocaleString();
   if (topVIX) {
-    const vixVal = (gexData.vix_info && gexData.vix_info.taifex_vix) ? gexData.vix_info.taifex_vix : 26.09;
-    topVIX.innerText = `${vixVal} 🔴`;
+    const vixVal = gexData.vix_info ? gexData.vix_info.taifex_vix : null;  // no stand-in number when missing
+    topVIX.innerText = (typeof vixVal === 'number') ? `${vixVal} ${vixVal >= 22 ? '🔴' : (vixVal >= 18 ? '🟠' : '🟢')}` : '—';
   }
   const topVVIX = document.getElementById('top-stat-vvix');
   if (topVVIX) {
-    const vvixVal = (gexData.vix_info && gexData.vix_info.us_vvix) ? gexData.vix_info.us_vvix : 102.66;
-    const badge = vvixVal >= 110 ? '🔴' : (vvixVal >= 100 ? '🟠' : (vvixVal >= 95 ? '🟡' : '🟢'));
-    topVVIX.innerText = `${vvixVal.toFixed(2)} ${badge}`;
+    const vvixVal = gexData.vix_info ? gexData.vix_info.us_vvix : null;
+    if (typeof vvixVal === 'number') {
+      const badge = vvixVal >= 110 ? '🔴' : (vvixVal >= 100 ? '🟠' : (vvixVal >= 95 ? '🟡' : '🟢'));
+      topVVIX.innerText = `${vvixVal.toFixed(2)} ${badge}`;
+    } else {
+      topVVIX.innerText = '—';
+    }
   }
 
   // Update Left Macro Risk HUD. Path bug fixed 2026-09-15: macro_risk_dashboard is nested
@@ -2645,8 +2649,8 @@ async function callGeminiApi(apiKey, query, base64Image) {
   const zg = gexData?.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
   const pw = gexData?.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
   const mp = gexData?.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
-  const vix = gexData?.vix_info?.taifex_vix || 26.09;
-  const vvix = gexData?.vix_info?.us_vvix || 102.66;
+  const vix = gexData?.vix_info?.taifex_vix ?? '無資料';
+  const vvix = gexData?.vix_info?.us_vvix ?? '無資料';
   const dxy = 98.845;
   const us10y = 4.940;
 
