@@ -89,17 +89,36 @@ let activeContract = 'TXF';
 let symbolsUniverse = [];
 
 // 8 Core Curated Preset Assets for Instant 1-Click Verification
+// base_price is intentionally null: prices come from realPriceFor() (live gexData / real quotes / real klines).
+// The old hard-coded numbers (e.g. TXF 46588, DXY 98.845) went stale and were shown as if current.
 const CORE_PRESET_ASSETS = {
-  'TXF': { symbol: 'TXF', name: '台指期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'TXF', base_price: 46588, is_yield: false },
-  'TAIEX': { symbol: 'TAIEX', name: '加權指數', category: '大盤現貨', market: 'TWSE', has_futures: true, futures_code: 'TXF', base_price: 46184.85, is_yield: false },
-  'OTC': { symbol: 'OTC', name: '櫃買指數', category: '中小型股', market: 'TPEx', has_futures: true, futures_code: 'GDF', base_price: 395.52, is_yield: false },
-  'CDF': { symbol: 'CDF', name: '台積電期貨', category: '個股期貨', market: 'TAIFEX', has_futures: true, futures_code: 'CDF', base_price: 2434, is_yield: false },
-  'MTX': { symbol: 'MTX', name: '微台期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'TMF', base_price: 46588, is_yield: false },
-  'MXF': { symbol: 'MXF', name: '小台期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'MXF', base_price: 46588, is_yield: false },
-  'US10Y': { symbol: 'US10Y', name: '美國10年公債殖利率', category: '總經公債', market: 'GLOBAL', has_futures: false, futures_code: 'ZN', base_price: 4.940, is_yield: true },
-  'DXY': { symbol: 'DXY', name: '美元指數 (DXY)', category: '總經外匯', market: 'ICE', has_futures: false, futures_code: 'DX', base_price: 98.845, is_yield: false },
-  'CL': { symbol: 'CL', name: '紐約輕原油期貨', category: '大宗商品', market: 'NYMEX', has_futures: true, futures_code: 'CL', base_price: 99.58, is_yield: false }
+  'TXF': { symbol: 'TXF', name: '台指期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'TXF', base_price: null, is_yield: false },
+  'TAIEX': { symbol: 'TAIEX', name: '加權指數', category: '大盤現貨', market: 'TWSE', has_futures: true, futures_code: 'TXF', base_price: null, is_yield: false },
+  'OTC': { symbol: 'OTC', name: '櫃買指數', category: '中小型股', market: 'TPEx', has_futures: true, futures_code: 'GDF', base_price: null, is_yield: false },
+  'CDF': { symbol: 'CDF', name: '台積電期貨', category: '個股期貨', market: 'TAIFEX', has_futures: true, futures_code: 'CDF', base_price: null, is_yield: false },
+  'MTX': { symbol: 'MTX', name: '微台期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'TMF', base_price: null, is_yield: false },
+  'MXF': { symbol: 'MXF', name: '小台期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'MXF', base_price: null, is_yield: false },
+  'US10Y': { symbol: 'US10Y', name: '美國10年公債殖利率', category: '總經公債', market: 'GLOBAL', has_futures: false, futures_code: 'ZN', base_price: null, is_yield: true },
+  'DXY': { symbol: 'DXY', name: '美元指數 (DXY)', category: '總經外匯', market: 'ICE', has_futures: false, futures_code: 'DX', base_price: null, is_yield: false },
+  'CL': { symbol: 'CL', name: '紐約輕原油期貨', category: '大宗商品', market: 'NYMEX', has_futures: true, futures_code: 'CL', base_price: null, is_yield: false }
 };
+
+/**
+ * Latest REAL price for a symbol, or null. Sources, in order: live gexData (index futures / TAIEX / OTC),
+ * real daily quotes, the last real candle in klines_cache.json. Never a hard-coded or synthesized number.
+ */
+function realPriceFor(sym) {
+  if (!sym) return null;
+  const num = (v) => (typeof v === 'number' && isFinite(v) && v > 0) ? v : null;
+  if (sym === 'TXF' || sym === 'MTX' || sym === 'MXF' || sym === 'TMF') return num(gexData?.night_txf_price) ?? num(gexData?.txf_price);
+  if (sym === 'TAIEX') return num(gexData?.spot_price);
+  if (sym === 'OTC') return num(gexData?.two_price);
+  const q = num(realQuotesData?.[sym]?.close);
+  if (q !== null) return q;
+  const tfs = klinesCacheData?.assets?.[sym]?.timeframes;
+  const c = tfs && (tfs['1D'] || tfs['15M'] || tfs['1M']);
+  return (c && c.length) ? num(c[c.length - 1].close) : null;
+}
 
 let currentActiveSymbol = CORE_PRESET_ASSETS['TXF'];
 
@@ -464,46 +483,20 @@ function computeMomentumBirdMarkers(candles, opens, closes, highs, lows, volumes
   return markers;
 }
 function generateIndicatorsData(tf) {
-  let basePrice = 46588;
+  let basePrice = null;
   let isYield = false;
 
   if (currentActiveSymbol) {
-    const sym = currentActiveSymbol.symbol;
     isYield = !!currentActiveSymbol.is_yield;
-
-    if (sym === 'TXF' || sym === 'MTX' || sym === 'MXF') {
-      basePrice = gexData?.night_txf_price || gexData?.txf_price || 46588;
-    } else if (sym === 'TAIEX') {
-      basePrice = gexData?.spot_price || 46184.85;
-    } else if (sym === 'OTC') {
-      basePrice = gexData?.two_price || 395.52;
-    } else if (CORE_PRESET_ASSETS[sym]) {
-      basePrice = CORE_PRESET_ASSETS[sym].base_price;
-    } else if (realQuotesData && realQuotesData[sym] && realQuotesData[sym].close) {
-      basePrice = realQuotesData[sym].close;
-    } else if (sym === '2330' || sym === 'CDF') {
-      basePrice = 2434;
-    } else if (sym === '2454' || sym === 'DVF') {
-      basePrice = 1430;
-    } else if (sym === '2317' || sym === 'RVF') {
-      basePrice = 1621;
-    } else if (sym === '2382' || sym === 'PUF') {
-      basePrice = 4605;
-    } else if (sym === '2603' || sym === 'CCF') {
-      basePrice = 144.5;
-    } else if (sym === '0050' || sym === 'NYF') {
-      basePrice = 188;
-    } else if (sym === '00631L' || sym === 'QAF') {
-      basePrice = 265;
-    } else {
-      let hash = 0;
-      for (let c = 0; c < sym.length; c++) hash = (hash * 31 + sym.charCodeAt(c)) % 1000;
-      basePrice = 45 + (hash % 500);
-    }
-  } else if (gexData && gexData.txf_price) {
-    basePrice = gexData.txf_price;
+    basePrice = realPriceFor(currentActiveSymbol.symbol);
+  } else {
+    basePrice = realPriceFor('TXF');
   }
-  
+  // Only used to size ATR/rounding for the flat placeholder of an un-cached symbol; a symbol with no
+  // real price at all gets NO bars (count = 0 below) instead of an invented level.
+  const hasRealPrice = basePrice !== null;
+  if (!hasRealPrice) basePrice = 100;
+
   let count = 120;
   let intervalSec = 900; // 15M default
   let atrBase = 55;
@@ -572,6 +565,7 @@ function generateIndicatorsData(tf) {
     count = candles.length;
   } else {
     // Baseline flat bars for un-cached symbol (never synthesize fake random waves)
+    if (!hasRealPrice) count = 0;
     for (let i = 0; i < count; i++) {
       const t = startTime + (i * intervalSec);
       const p = roundDec(basePrice);
@@ -1775,7 +1769,8 @@ function updateLegendOverlay(param) {
   if (!candle) return;
 
   const isYield = currentActiveSymbol && currentActiveSymbol.is_yield;
-  const isSmall = currentActiveSymbol && currentActiveSymbol.base_price < 500;
+  const _lp = currentActiveSymbol ? realPriceFor(currentActiveSymbol.symbol) : null;
+  const isSmall = _lp !== null && _lp < 500;
 
   const fmt = (v) => isYield ? v.toFixed(3) + '%' : (isSmall ? v.toFixed(2) : v.toLocaleString());
 
@@ -1808,24 +1803,7 @@ function renderLeftPanel() {
   updateJjGhostClawsHud(currentActiveSymbol); // async — fills in real bias/mfi/adx/trend/grade once the API responds
 
   const isIndexFutures = currentActiveSymbol && ['TXF', 'MXF', 'TMF', 'TWN'].includes(currentActiveSymbol.symbol);
-  let baseP = gexData?.night_txf_price || gexData?.txf_price || 46588;
-
-  if (currentActiveSymbol) {
-    if (CORE_PRESET_ASSETS[currentActiveSymbol.symbol]) {
-      baseP = CORE_PRESET_ASSETS[currentActiveSymbol.symbol].base_price;
-      if (currentActiveSymbol.symbol === 'TXF') {
-        baseP = gexData?.night_txf_price || gexData?.txf_price || 46588;
-      }
-    } else if (isIndexFutures) {
-      baseP = gexData?.night_txf_price || gexData?.txf_price || 46588;
-    } else if (currentActiveSymbol.symbol === '2330' || currentActiveSymbol.symbol === 'CDF') {
-      baseP = 1045;
-    } else if (currentActiveSymbol.symbol === '2454') {
-      baseP = 1430;
-    } else {
-      baseP = 215;
-    }
-  }
+  const baseP = realPriceFor(currentActiveSymbol?.symbol || 'TXF');  // null => shown as '—', never a stale constant
   
   const cw = gexData?.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
   const zg = gexData?.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
@@ -1931,38 +1909,25 @@ function renderLeftPanel() {
   // Quotes
   const pEl = document.getElementById('left-main-price');
   if (pEl) {
-    pEl.innerText = currentActiveSymbol.is_yield ? `${baseP.toFixed(3)}%` : (baseP < 500 ? baseP.toFixed(2) : baseP.toLocaleString());
+    pEl.innerText = baseP === null ? '—' : (currentActiveSymbol.is_yield ? `${baseP.toFixed(3)}%` : (baseP < 500 ? baseP.toFixed(2) : baseP.toLocaleString()));
   }
 
   // Distances
-  const distCW = baseP - cw;
-  const distZG = baseP - zg;
-  const distPW = baseP - pw;
-  const distMP = baseP - mp;
-
-  const dCWEl = document.getElementById('left-dist-cw');
-  if (dCWEl) {
-    dCWEl.innerText = `${distCW >= 0 ? '+' : ''}${Math.round(distCW)} 點`;
-    dCWEl.style.color = distCW >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-  }
-
-  const dZGEl = document.getElementById('left-dist-zg');
-  if (dZGEl) {
-    dZGEl.innerText = `${distZG >= 0 ? '+' : ''}${distZG.toFixed(1)} 點`;
-    dZGEl.style.color = distZG >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-  }
-
-  const dPWEl = document.getElementById('left-dist-pw');
-  if (dPWEl) {
-    dPWEl.innerText = `${distPW >= 0 ? '+' : ''}${Math.round(distPW)} 點`;
-    dPWEl.style.color = distPW >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-  }
-
-  const dMPEl = document.getElementById('left-dist-mp');
-  if (dMPEl) {
-    dMPEl.innerText = `${distMP >= 0 ? '+' : ''}${Math.round(distMP)} 點`;
-    dMPEl.style.color = distMP >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-  }
+  // The GEX levels are TXO strikes in TAIEX/TXF index points, so a distance is only meaningful for the
+  // index-point family and only when a real price exists; anything else shows "—" (not DXY 98.8 - 48,000).
+  const gexApplicable = baseP !== null && ['TXF', 'MTX', 'MXF', 'TMF', 'TWN', 'TAIEX'].includes(currentActiveSymbol?.symbol || 'TXF');
+  const setDist = (id, level, digits) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!gexApplicable) { el.innerText = '—'; el.style.color = 'var(--text-muted)'; return; }
+    const d = baseP - level;
+    el.innerText = `${d >= 0 ? '+' : ''}${digits ? d.toFixed(digits) : Math.round(d)} 點`;
+    el.style.color = d >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+  };
+  setDist('left-dist-cw', cw, 0);
+  setDist('left-dist-zg', zg, 1);
+  setDist('left-dist-pw', pw, 0);
+  setDist('left-dist-mp', mp, 0);
 
   // Strike levels themselves (🛡️ GEX 造市商五大防線 card). Found 2026-09-15: this whole card
   // was permanently frozen at whatever numbers were typed into room.html's initial markup —
@@ -2656,7 +2621,7 @@ async function sendAdvisorQuery(query) {
  * Call Google Gemini 2.5 Multi-Modal REST API
  */
 async function callGeminiApi(apiKey, query, base64Image) {
-  const currentPrice = (currentActiveSymbol && currentActiveSymbol.base_price) || gexData?.txf_price || 46594;
+  const currentPrice = realPriceFor(currentActiveSymbol?.symbol || 'TXF') ?? gexData?.txf_price ?? null;
   const cw = gexData?.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
   const zg = gexData?.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
   const pw = gexData?.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
@@ -2672,7 +2637,7 @@ async function callGeminiApi(apiKey, query, base64Image) {
 2. 盤中價格暴衝/急殺時嚴禁建議追價，等待 15M/30M DeMark 9★ 買賣盤竭盡。
 3. 診斷實盤真金白銀部位時，檢查賣腳安全邊際、未實現損益、IOC 洗價點數。
 當前即時盤面數據：
-- 當前監控商品：${currentActiveSymbol?.name || '台指期'} (${currentActiveSymbol?.symbol || 'TXF'})，即時報價：${currentPrice}
+- 當前監控商品：${currentActiveSymbol?.name || '台指期'} (${currentActiveSymbol?.symbol || 'TXF'})，即時報價：${currentPrice === null ? '無即時報價' : currentPrice}
 - GEX 造市商五大防線：Call Wall: ${cw}, Zero Gamma: ${zg}, Put Wall: ${pw}, Max Pain: ${mp}
 - 波動率與宏觀雷達：VIX: ${vix}, VVIX: ${vvix}, DXY: ${dxy}, 美債10Y: ${us10y}%
 請以專業、精準、結構化的繁體中文 Markdown 回覆，重點條列空間拓撲與實戰建議。`;
@@ -3164,7 +3129,7 @@ function initSymbolSearchAndAutocomplete() {
             market: 'TWSE',
             has_futures: true,
             futures_code: qUpper,
-            base_price: 100
+            base_price: null
           };
         }
         selectAndApplySymbol(found);
