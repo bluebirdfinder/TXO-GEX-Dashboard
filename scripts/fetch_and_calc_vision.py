@@ -3216,6 +3216,14 @@ def generate_gex_payload():
     })
     fut_inst = fetch_official_taifex_futures_institutional_oi()
     pc_ratio_dict = fetch_official_taifex_pc_ratio()
+    # Align the headline P/C Ratio (top card + matrix T-0 + snapshot) with TAIFEX's OFFICIAL
+    # 買賣權未平倉量比率 for the T-0 trading day. gex_profile['pc_ratio'] is a self-computed figure
+    # over the chain used for GEX math (9/24: 61.5% vs official 85.33%), which contradicted both the
+    # official number and the lower 5-day table on the same page. Falls back to self-computed only
+    # when TAIFEX has no row for that date.
+    _off_pc_t0 = pc_ratio_dict.get(f"{t_days_dates[4].year}/{t_days_dates[4].month}/{t_days_dates[4].day}")
+    if _off_pc_t0 is not None:
+        gex_profile['pc_ratio'] = _off_pc_t0
 
     # Real 5-Day Positioning Matrix. T-4..T-1 are read from data/institutional_snapshots.json —
     # real history persisted day by day (see write_institutional_snapshot below) — instead of
@@ -3321,6 +3329,18 @@ def generate_gex_payload():
         "pc_ratio": pc_ratio_dict.get(f"{t_days_dates[4].year}/{t_days_dates[4].month}/{t_days_dates[4].day}", gex_profile['pc_ratio']),
         "has_snapshot": _day_is_live
     }
+    # If today's live fetch of some source failed (e.g. TWSE's WAF answering 307 to the BFI82U call)
+    # but a REAL snapshot for this very trading date was already persisted by an earlier run, fill
+    # only the missing fields from it rather than showing "—" (seen 2026-09-26: 9/24 cash net
+    # buy/sell blank although the 9/24 snapshot held it). Same date, same official source; never
+    # another day's numbers.
+    if not _day_is_live:
+        _t0_snap = inst_snaps.get(f"{t_days_dates[4].strftime('%Y-%m-%d')}_INST_DAY")
+        if _t0_snap:
+            for _f in _INST_DAY_FIELDS:
+                if t0_inst_day.get(_f) is None and _t0_snap.get(_f) is not None:
+                    t0_inst_day[_f] = _t0_snap[_f]
+            t0_inst_day["has_snapshot"] = True
     institutional_5day_history.append(t0_inst_day)
     if _day_is_live:
         _day_write_key = write_institutional_snapshot(
@@ -4563,6 +4583,7 @@ def generate_gex_payload():
 
     return {
         "date": today_str,
+        "chip_base_date": t0_date.strftime("%Y-%m-%d"),  # the trading day the chip/OI data actually belongs to (today_str is the run date, e.g. a Saturday)
         "engine_version": ENGINE_VERSION,
         "session_type": session_type,
         "session_name": session_name,

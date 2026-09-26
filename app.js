@@ -599,7 +599,7 @@ function renderDashboard() {
   }
 
   const dateEl = document.getElementById('data-date');
-  if (dateEl) dateEl.innerText = gexData.date || CHART_DEFAULTS.date;
+  if (dateEl) dateEl.innerText = gexData.chip_base_date || gexData.date || CHART_DEFAULTS.date;
 
   const sessionBadge = document.getElementById('session-badge');
   updateMarketTradingStatus();
