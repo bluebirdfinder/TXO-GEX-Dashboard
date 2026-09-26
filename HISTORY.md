@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v64.11`** | 2026-09-27 | 主引擎SSL憑證驗證全面啟用（雲端實測）✕ 散戶快照改以交易日為鍵 |
 | **`v64.10`** | 2026-09-27 | 期貨K線改用期交所日線＋富邦日內（不再用Yahoo現貨/公式量） |
 | **`v64.9`** | 2026-09-27 | 戰情室價格只用真實來源（移除過期base_price）✕ 櫃買指數改用櫃買中心官方K線 ✕ K線缺量不再填假值 |
 | **`v64.8`** | 2026-09-27 | 移除寫死假資料（匯率備援、戰情室總經HUD）✕ 2025休市日曆校正 |
@@ -37,6 +38,16 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🛡️ v64.11 主引擎SSL憑證驗證全面啟用（雲端實測）✕ 散戶快照改以交易日為鍵 (2026-09-27)
+
+- **背景**：延續待辦「主引擎 SSL 仍為 `CERT_NONE`（不驗證憑證與主機名）」。此前不敢動，是因為雲端排程環境本機驗不了。
+
+- **🛡️ 1. 全面啟用憑證驗證（雲端實測後才改）**：先推一個一次性測試 workflow（`workflow_dispatch`，Ubuntu／Python 3.10）連線引擎用到的 8 個網域（期交所、證交所 www／MIS／OpenAPI、櫃買中心、Yahoo、聯準會）：憑證驗證全部通過（期交所回 403 是伺服器對簡化請求標頭的回應，非 SSL 問題）。本機 Python 3.13 則需要只關閉 `VERIFY_X509_STRICT`（證交所／櫃買中心憑證缺 Subject Key Identifier 被嚴格模式拒絕），**憑證鏈與主機名驗證仍保持開啟**。已套用：`fetch_and_calc_vision.py`（雲端主引擎）、`backfill_snapshots.py`、`fetch_institutional_momentum.py`、`fetch_tw_universe.py`（另有 `build_screener_cache.py`、`fetch_real_quotes.py`、`fetch_market_klines.py`、回補腳本於前幾版完成）。**驗證**：本機主引擎完整執行零 SSL 錯誤；測試 workflow 已移除。未動：`scripts/live_price_server.py`（本機即時行情服務，未逐一驗證其所有連線網域，避免影響盤中使用）。
+
+- **🟠 2. 散戶快照以交易日為鍵**：`fetch_official_taifex_retail_sentiment()` 原以「今天日期」（台灣時間）寫入 `YYYY-MM-DD_INST_RETAIL`，週末／休市日執行會產生非交易日的鍵（例如 9/26、9/27，內容是借用前一日資料，靠重複值防護才沒寫入）。改用該函式已釘住的交易日（`_q_date`）；並移除先前已寫入的 `2026-09-26_INST_RETAIL`（週六產生）。
+
+- **📋 仍待辦**：`live_price_server.py` SSL；2027 休市日曆（待官方公布）；CL/US10Y/DXY 前端即時輪詢（需 Cloudflare Worker 報價端點）；需使用者在場：CVD 夜盤驗證、JJ鬼爪對照 TradingView、SMC 移植、其餘 4 個近似訊號（需 Pine 源碼）。
 
 ### 🔴 v64.10 期貨K線改用期交所日線＋富邦日內（不再用Yahoo現貨/公式量） (2026-09-27)
 

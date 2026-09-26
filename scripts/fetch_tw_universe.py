@@ -17,8 +17,10 @@ if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
 SSL_CTX = ssl.create_default_context()
-SSL_CTX.check_hostname = False
-SSL_CTX.verify_mode = ssl.CERT_NONE
+# Certificate chain + hostname verification stay ON. TWSE/TPEx certificates lack a Subject Key Identifier, which
+# Python 3.13's strict X.509 mode rejects, so only that one flag is relaxed (verified against every host this script
+# uses, locally on 3.13 and on GitHub Actions ubuntu / Python 3.10).
+SSL_CTX.verify_flags &= ~ssl.VERIFY_X509_STRICT
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'

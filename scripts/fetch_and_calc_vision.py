@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v64.10"
+ENGINE_VERSION = "v64.11"
 
 import os
 import sys
@@ -35,8 +35,10 @@ PASSCODE = "GEX2026"
 
 # SSL Context for HTTPS requests
 SSL_CTX = ssl.create_default_context()
-SSL_CTX.check_hostname = False
-SSL_CTX.verify_mode = ssl.CERT_NONE
+# Certificate chain + hostname verification stay ON. TWSE/TPEx certificates lack a Subject Key Identifier, which
+# Python 3.13's strict X.509 mode rejects, so only that one flag is relaxed (verified against every host this script
+# uses, locally on 3.13 and on GitHub Actions ubuntu / Python 3.10).
+SSL_CTX.verify_flags &= ~ssl.VERIFY_X509_STRICT
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -2408,7 +2410,9 @@ def fetch_official_taifex_retail_sentiment():
     _retail_snaps = load_institutional_snapshots()
     # TW-local date, not datetime.date.today() (the runner's system/UTC date) — between UTC
     # 16:00-24:00 those disagree by a calendar day, which would key this under the wrong date.
-    _retail_today_tw_date = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).date()
+    # Key by the TRADING day the TAIFEX pages were pinned to (_q_date), not the calendar date: a weekend/holiday run
+    # used to write e.g. 2026-09-27_INST_RETAIL (or 2026-09-25 on a holiday) — a non-trading day with borrowed numbers.
+    _retail_today_tw_date = datetime.datetime.strptime(_q_date, '%Y/%m/%d').date()
     _retail_today_key = f"{_retail_today_tw_date.isoformat()}_INST_RETAIL"
     _retail_prev_key = max(
         (k for k in _retail_snaps if k.endswith('_INST_RETAIL') and k < _retail_today_key),

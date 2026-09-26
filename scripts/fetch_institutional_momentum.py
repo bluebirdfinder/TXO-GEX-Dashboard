@@ -38,8 +38,10 @@ _DATA_DIR = os.path.join(os.path.dirname(_SCRIPT_DIR), "data")
 SNAPSHOT_FILE = os.path.join(_DATA_DIR, "momentum_snapshots.json")
 
 SSL_CTX = ssl.create_default_context()
-SSL_CTX.check_hostname = False
-SSL_CTX.verify_mode = ssl.CERT_NONE
+# Certificate chain + hostname verification stay ON. TWSE/TPEx certificates lack a Subject Key Identifier, which
+# Python 3.13's strict X.509 mode rejects, so only that one flag is relaxed (verified against every host this script
+# uses, locally on 3.13 and on GitHub Actions ubuntu / Python 3.10).
+SSL_CTX.verify_flags &= ~ssl.VERIFY_X509_STRICT
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
 
 sys.path.insert(0, _SCRIPT_DIR)
