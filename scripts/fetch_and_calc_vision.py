@@ -3913,10 +3913,14 @@ def generate_gex_payload():
         taifex_vix=latest_t_vix, us_vix=latest_u_vix,
         margin_market=margin_info["margin_maint_market"],
         margin_stock=margin_info["margin_maint_stock"],
-        # Persist the balance only when TWSE's MI_MARGN date matches this session's own date;
+        # Persist the balance only when TWSE's MI_MARGN date matches this session's own date AND the
+        # snapshot key's date (the run date — on a weekend the key is that Saturday/Sunday while the
+        # balance is Friday's);
         # otherwise it is a different (earlier) day's figure and would be stored under the wrong
         # key (seen 2026-09-26: 9/24's 6151.03 written under the 9/25 holiday and 9/26 keys).
-        margin_balance_billion=margin_info.get("margin_balance_billion") if margin_info.get("is_published") else None
+        margin_balance_billion=(margin_info.get("margin_balance_billion")
+                                if margin_info.get("is_published") and margin_info.get("pub_date") == now_dt.strftime('%Y%m%d')
+                                else None)
     )
 
     # Compute shift_vs_prev (TXF delta between consecutive sessions)
