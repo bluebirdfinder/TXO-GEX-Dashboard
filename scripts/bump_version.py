@@ -235,11 +235,11 @@ def bump_version(new_version, release_note=""):
     night_tx = gex_d.get('night_txf_price', 0.0)
     sessions = gex_d.get('history_10_sessions', [])
 
-    if sessions and len(sessions) >= 3:
-        t0 = sessions[-1]
-        t1_n = sessions[-2]
-        t1_d = sessions[-3]
-        
+    day_rows = [x for x in sessions if str(x.get('id', '')).endswith('_day')]
+    night_rows = [x for x in sessions if str(x.get('id', '')).endswith('night') or str(x.get('id', '')).endswith('night_pre')]
+    if len(day_rows) >= 2 and night_rows:
+        t0 = day_rows[-1]
+        t1_d = day_rows[-2]
         # Check: spot large drop vs txf
         if spot_chg < -200 and (day_tx - t1_d.get('txf_price', day_tx)) > 300:
             print(f"  ❌ 嚴重警告：加權指數大跌 ({spot_chg:+} 點)，但台指期較昨日日盤呈現暴漲，疑似抓到昨日結算價倒錯！")
@@ -247,9 +247,9 @@ def bump_version(new_version, release_note=""):
         else:
             print(f"  ✅ 現貨與期指方向性校驗通過 (Spot Chg: {spot_chg:+} 點, TXF Live: {day_tx})")
 
-        print(f"  ✅ 5 日矩陣多盤別鏈路校驗通過 (T0: {t0.get('txf_price')}, T-1夜: {t1_n.get('txf_price')}, T-1日: {t1_d.get('txf_price')})")
+        print(f"  ✅ 5 日矩陣多盤別鏈路校驗通過 (最新日盤: {t0.get('txf_price')}, 前一日盤: {t1_d.get('txf_price')}, 最新夜盤: {night_rows[-1].get('txf_price')})")
     else:
-        print("  ⚠️ 5 日矩陣長度不足 3 筆，略過進階校驗。")
+        print("  ⚠️ 5 日矩陣日盤不足 2 筆，略過進階校驗。")
 
     if passed:
         print(f"\n🎉 恭喜！全站版次與數據結構已 100% 驗證通過 [{new_version}]，徹底消除版本閃退與行情倒錯！")

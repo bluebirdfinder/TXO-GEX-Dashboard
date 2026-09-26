@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.6)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.7)
 
-**當前版本**：`v64.6` (2026-09-26 融資餘額變化速度指標真實回補 ✕ 休市日誤寫防護 ✕ 選股腳本SSL驗證；含 v64.5 選股雷達資料正確性修復)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.6)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.6)
+P26-09-26 夜盤依期交所定義重排 ✕ 散戶多空比價格污染修正 ✕ 官方P/C對齊 ✕ 融資維持率估算鏈重建)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.7)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.7)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,18 @@
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.7 核心更新亮點（夜盤定義對齊期交所 ✕ 散戶多空比修正 ✕ P/C 官方化 ✕ 融資維持率估算鏈）
+
+- **夜盤依期交所定義重排**：夜盤標記為「收盤所屬交易日」（9/14 15:00 的夜盤 = 9/15）；每個交易日「夜盤先、日盤後」；日盤後進行中的夜盤另列一列（例：9/29 夜盤）。9/18~9/24 日夜盤 TXF 收盤逐日與期交所一致。
+- **散戶多空比修正**：期交所頁面沒帶日期時，程式把「最佳賣價」當未沖銷量；改帶同一 `queryDate` 並依表頭定位欄位。
+- **P/C Ratio 對齊官方**（9/24：85.33%，原自算 61.5%）；「籌碼基準日期」改顯示交易日；現貨買賣超失敗時用同日真實快照補值。
+- **融資維持率估算鏈重建**：以官方逐日融資餘額增減與大盤漲跌估算（仍標「估算值」），歷史列不再空白。
+- 美股 VIX 歷史、9/17 加權指數、休市日快照鍵一併校正。
+
+詳細請見 [HISTORY.md](HISTORY.md) v64.7 條目。
 
 ---
 

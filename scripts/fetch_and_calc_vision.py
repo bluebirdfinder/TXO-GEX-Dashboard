@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v64.6"
+ENGINE_VERSION = "v64.7"
 
 import os
 import sys
@@ -2835,6 +2835,24 @@ def is_tw_trading_day(d):
         return False
     return True
 
+def taifex_night_label_date(now_dt):
+    """
+    TAIFEX labels an after-hours (盤後, 15:00 -> 05:00) session by the TRADING DAY it closes into,
+    not the calendar day it opens: the night starting Monday 15:00 is labeled Tuesday; the night
+    starting Thursday 15:00 before a holiday weekend is labeled the next trading day (confirmed
+    2026-09-26 on futDailyMarketReport: default page = trading date 2026/09/29, close 47,956, the
+    session that ran Thursday 9/24 evening; futDataDown "2026/09/24 盤後" = 9/23 evening -> 9/24 05:00).
+    So the label of the current/most recent night = first trading day >= (today if before 15:00,
+    else tomorrow).
+    """
+    d = now_dt.date() if hasattr(now_dt, 'date') else now_dt
+    if getattr(now_dt, 'hour', 0) >= 15:
+        d += datetime.timedelta(days=1)
+    while not is_tw_trading_day(d):
+        d += datetime.timedelta(days=1)
+    return d
+
+
 def get_recent_tw_trading_days(ref_dt, n=5):
     """
     Return the n most recent Taiwan trading days up to and including ref_dt.
@@ -2871,16 +2889,19 @@ def write_current_session_snapshot(now_dt, session_type,
                                    call_wall, put_wall, max_pain,
                                    pc_ratio, taifex_vix, us_vix,
                                    margin_market, margin_stock,
-                                   margin_balance_billion=None):
+                                   margin_balance_billion=None, key_date=None):
     """
     Merge-write the current session's real data into the snapshot store.
     Key: YYYY-MM-DD_DAY or YYYY-MM-DD_NIGHT (absolute date, not T-n offset).
     Rule: always overwrite with the latest run (more data = better).
     """
-    snap_key = f"{now_dt.strftime('%Y-%m-%d')}_{session_type}"
+    # NIGHT snapshots are keyed by TAIFEX's label date (the trading day the night closes into), passed
+    # in as key_date; DAY snapshots default to the run date (== the day session's own date).
+    _key_date = key_date or now_dt.date()
+    snap_key = f"{_key_date.strftime('%Y-%m-%d')}_{session_type}"
     snapshots = load_session_snapshots()
     snapshots[snap_key] = {
-        "date":             now_dt.strftime('%Y-%m-%d'),
+        "date":             _key_date.strftime('%Y-%m-%d'),
         "session":          session_type,
         "spot_price":       spot_price,
         "otc_price":        otc_price,
@@ -2980,7 +3001,10 @@ def generate_gex_payload():
     if stock_inst is None:
         stock_inst = {'foreign_stock_net': None, 'trust_stock_net': None, 'dealer_stock_net': None, 'total_stock_net': None, 'is_live': False}
     hot_money_data = fetch_5day_exchange_rates()
-    night_inst_trading = fetch_taifex_night_institutional_trading()
+    # Pin to the T-0 trading day (same day-boundary rule as the 5-day matrix). The function's own
+    # default is the calendar date, which on a weekend/holiday asks TAIFEX for a non-trading day.
+    _ni_ref = now_dt - datetime.timedelta(days=1) if (now_dt.hour < 8 or (now_dt.hour == 8 and now_dt.minute < 45)) else now_dt
+    night_inst_trading = fetch_taifex_night_institutional_trading(target_date=get_recent_tw_trading_days(_ni_ref, n=1)[-1])
     retail_data = fetch_official_taifex_retail_sentiment()
 
     # Determine Session Type in Taiwan Time (UTC+8):
@@ -3865,7 +3889,7 @@ def generate_gex_payload():
     for i in range(4):  # T-4, T-3, T-2, T-1
         d = t_days_dates[i]
         d_str = d.strftime('%Y-%m-%d')
-        for sess_type_h, sid in [("DAY", _t_ids_day[i]), ("NIGHT", _t_ids_ngt[i])]:
+        for sess_type_h, sid in [("NIGHT", _t_ids_ngt[i]), ("DAY", _t_ids_day[i])]:  # TAIFEX order: the night labeled D closes into D, BEFORE D's day session
             snap_k = f"{d_str}_{sess_type_h}"
             snap   = snapshots.get(snap_k)
             if snap:
@@ -3937,6 +3961,19 @@ def generate_gex_payload():
         "taifex_vix": latest_t_vix, "us_vix": latest_u_vix, "has_snapshot": True
     }
 
+    # ---- TAIFEX night-session dating (see taifex_night_label_date) ----
+    _night_label_date = taifex_night_label_date(now_dt)
+    _night_is_t0 = (_night_label_date == t0_date)
+    if not _night_is_t0:
+        # The live/most recent night closes into a LATER trading day than the last day session
+        # (evening after the day session, or a weekend/holiday gap): it is that day's night, shown
+        # as its own trailing row instead of being glued onto t0_date.
+        _n_disp = f"{_night_label_date.month}/{_night_label_date.day} {_WDAY_CN[_night_label_date.weekday()]}"
+        _n_live = (now_hour >= 15 or now_hour < 5) and not is_weekend
+        t0_night_item["label"] = "🔥 夜盤 (Live 即時)" if _n_live else "🌙 夜盤 (05:00 定案)"
+        t0_night_item["date_display"] = f"{_n_disp} 🌙"
+        t0_night_item["full_name"] = f"{_n_disp} 夜盤" + (" (Live 即時動態)" if _n_live else " (05:00 定案版)")
+
     # 📸 Persist T-0 real snapshot to disk (merge, always latest wins)
     _snap_txf  = day_txf_price  if session_type == "DAY" else night_txf_price
     _snap_zg   = day_zero_gamma if session_type == "DAY" else gex_profile['zero_gamma_level']
@@ -3946,6 +3983,7 @@ def generate_gex_payload():
     _snap_mp   = day_max_pain   if session_type == "DAY" else gex_profile['max_pain_strike']
     write_current_session_snapshot(
         now_dt=now_dt, session_type=session_type,
+        key_date=(_night_label_date if session_type == "NIGHT" else None),
         spot_price=spot_price, otc_price=otc_price, txf_price=_snap_txf,
         zero_gamma=_snap_zg, gex_plus_flip=_snap_gpf,
         call_wall=_snap_cw, put_wall=_snap_pw, max_pain=_snap_mp,
@@ -3964,7 +4002,14 @@ def generate_gex_payload():
     )
 
     # Compute shift_vs_prev (TXF delta between consecutive sessions)
-    _all_sess = history_10_sessions + [t0_day_item, t0_night_item]
+    if _night_is_t0:
+        _t0_rows = [t0_night_item, t0_day_item]
+    else:
+        _pre_snap = snapshots.get(f"{t0_date.strftime('%Y-%m-%d')}_NIGHT")
+        _pre_item = (_make_snap_session("t0_night_pre", "T", t0_date, "NIGHT", _pre_snap) if _pre_snap
+                     else _make_null_session("t0_night_pre", "T", t0_date, "NIGHT"))
+        _t0_rows = [_pre_item, t0_day_item, t0_night_item]
+    _all_sess = history_10_sessions + _t0_rows
     if _all_sess:
         _all_sess[0]['shift_vs_prev'] = 0
     for _si in range(1, len(_all_sess)):
@@ -3990,11 +4035,7 @@ def generate_gex_payload():
     t0_night_item.update(_margin_bal_trend)
 
     # Add T-0 day session
-    history_10_sessions.append(t0_day_item)
-
-    # Only append night session if night trading is active, before morning open, or on weekend
-    if is_weekend or is_before_open or now_hour >= 15 or now_hour < 8:
-        history_10_sessions.append(t0_night_item)
+    history_10_sessions.extend(_t0_rows)
 
     # Compute exact GEX bar distribution for each historical session on a fixed global strike grid
     # Skip sessions without snapshot data (spot_price is None) to avoid TypeError
