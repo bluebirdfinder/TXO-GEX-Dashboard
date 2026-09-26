@@ -21,11 +21,12 @@ description: TXO-GEX-Dashboard 專屬發版流程 — 版本號原子升級、8 
 
 2. **跑原子升級工具**：
    ```
-   python scripts/bump_version.py <新版次，例如 v63.0>
+   python scripts/bump_version.py <新版次，例如 v63.0> "<本版核心主題>"
    ```
+   第二個參數會被寫進 HISTORY.md（時間軸一列＋詳細紀錄骨架）；HISTORY.md 尚無該版條目又沒給說明時，腳本會在改任何檔案前就中止。版號只會替換文件「標題行」與抬頭欄位，不會動到功能表格裡的歷史版號。
    這會自動處理：`fetch_and_calc_vision.py` / `index.html` / `STATUS.md` / `PROJECT_HANDOVER.md` / `README.md` / `room.html` / `room.js` 的版本號字串、重新執行數據引擎、8 大位置一致性稽核、現貨與期指方向性 Sanity Check。**稽核沒過（腳本印出 ❌ 或非 0 exit code）就停下來排查，不要硬推。**
 
-3. **手動在 [HISTORY.md](../../../HISTORY.md) 補上這次的敘事條目**（`bump_version.py` 不會做這步，必須自己做）：
+3. **在 [HISTORY.md](../../../HISTORY.md) 把 `bump_version.py` 建好的骨架補成完整敘事**（腳本只建時間軸一列與空骨架，根因與驗證結果必須自己寫）。稽核輸出若出現「⚠️ 不在 auto_update.yml 的 git add 清單」，要判斷該檔是否應存回 repo（v64.4 就是快照檔被寫出卻從沒 git add）：
    - 在「## 📅 版本演進總覽時間軸」表格最上方加一列新資料。
    - 在「## 🎯 各版本詳細更新紀錄」最上方加一個新的 `### 🚀 vX.Y ...標題 (YYYY-MM-DD)` 小節，用跟既有條目相同的詳細程度寫清楚：改了什麼檔案、根因是什麼、驗證結果是什麼——不是一句話帶過，參考上面既有版本條目的寫法深度。
 
