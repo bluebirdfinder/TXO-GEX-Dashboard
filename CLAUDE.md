@@ -28,3 +28,14 @@
 ## Git
 
 `origin` 指向 `github.com/bluebirdfinder/TXO-GEX-Dashboard`，push 憑證已透過 Windows Credential Manager 快取生效，不需要額外安裝或設定。`git push` 屬於外部可見動作，執行前一律先跟使用者確認。
+
+## 多視窗守則（2026-09-26，實際踩過的坑）
+
+同一個專案常有多個 Claude 視窗共用**同一個實體資料夾**（不是各自隔離的 worktree），同時 GitHub Actions 每天自動推資料 commit 到 main。曾發生：不明作者 commit、別人未 commit 的檔案分不出主人、差點用 `--ff-only` 蓋掉 46 次自動更新。所有視窗開工前都要遵守：
+
+1. **開工先看**：`git fetch origin`，確認本機落後 `origin/main` 多少；`git status` 看有沒有別人未 commit 的檔案。
+2. **別人未 commit 的檔案一律不碰**：不 stash、不覆蓋、不刪除、不順手 commit。分不清主人時，用 `list_sessions` 查同資料夾的其他視窗並詢問，不要猜。
+3. **要 commit／合併／push 時，用獨立暫時 worktree**（步驟見 `multi-session-safety` skill），不在共用資料夾動 git 狀態。
+4. **寫完的工作要 commit 到自己的分支**，不要讓未 commit 的檔案長期躺在共用資料夾。
+5. **交接完成就關舊視窗**，避免被誤喚醒又寫檔。
+6. `git push` 一律先問使用者。
