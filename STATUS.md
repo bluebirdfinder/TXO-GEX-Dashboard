@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.5)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.6)
 
-**當前版本**：`v64.5` (2026-09-26 選股雷達過期報價污染修正 ✕ 弱火箭/一般藍鳥真訊號 ✕ 法人歷史回補 ✕ 2026休市日曆校正)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.5)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.5)
+**當前版本**：`v64.6` (2026-09-26 融資餘額變化速度指標真實回補 ✕ 休市日誤寫防護 ✕ 選股腳本SSL驗證；含 v64.5 選股雷達資料正確性修復)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.6)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.6)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,17 @@
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.6 核心更新亮點（融資速度指標回補 ✕ 休市日誤寫防護 ✕ SSL 驗證）
+
+- **融資餘額變化速度指標終於出數字**：新增 `backfill_margin_balance.py` 以證交所 MI_MARGN 逐日真實餘額回補 9/11~9/24（1日 +1.44%、4日累計 +3.55%，手算核對）。
+- **修正休市日／週末把前一日融資餘額寫進錯誤日期**（9/25 中秋、9/26 週六），並清除錯誤資料。
+- **選股腳本 SSL 改為保留憑證與主機名驗證**（僅關閉 Python 3.13 嚴格 X.509 旗標，TWSE/TPEx 憑證缺 Subject Key Identifier 所致）。
+- **`bump_version.py` 戰情室版號防落後**：以不限版本的 regex 更新 room.html/js。
+
+詳細請見 [HISTORY.md](HISTORY.md) v64.6 條目。
 
 ---
 

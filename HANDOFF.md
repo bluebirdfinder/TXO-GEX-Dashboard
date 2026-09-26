@@ -13,7 +13,7 @@
 
 ## 1. 待辦
 
-> **2026-09-26 進度（接手視窗）**：以下項目已合併並隨 **v64.5** 發布（分支 `claude/release-v64.5` 推上 main）；詳見 HISTORY.md v64.5。
+> **2026-09-26 進度（接手視窗）**：以下項目已合併並隨 **v64.5** 發布（分支 `claude/release-v64.5` 推上 main）；v64.6 補：融資速度指標回補、休市日誤寫防護、選股腳本 SSL、bump_version 戰情室版號。SSL 全域 `CERT_NONE` 僅剩主引擎與其他腳本；詳見 HISTORY.md v64.5。
 > | 項目 | 狀態 | 分支 |
 > |---|---|---|
 > | 1 修 `bump_version.py` ＋ 2 稽核 SOP | ✅ 完成（release skill 已補「寫出檔案 vs CI git add」步驟，腳本自動警告） | `claude/fix-bump-version` |
