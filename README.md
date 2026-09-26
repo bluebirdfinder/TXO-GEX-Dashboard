@@ -1,11 +1,11 @@
-# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v64.4)
+# 🐦 尋鳥 Bluebird Finder — TXO GEX 量化系統 (v64.5)
 
 > **台指選擇權 Gamma Exposure 波動度與三大法人期權籌碼量化分析平台**
 > 🌪️ CBOE 美股 ^VVIX 實時採集 ✦ 4級尾部風險矩陣 ✦ 做市商賣腳安全氣墊 (350~500點外) ✦ 尋鳥戰情室 4 欄式 Macro Risk HUD ✦ 🏛️ TWSE 融資維持率發布狀態日期比對 ✦ 🧲 Max Pain 4 大空間幾何拓撲 ✕ 3 大籌碼強度 二維共振 12 種全情境實戰矩陣 ✦ 🦅 台指選擇權造市商 21 章量化實戰手冊 ✦ 5口微台 Covered Call 動態避險 ✦ 5 日歷程矩陣 ⚡ VIX 恐慌指數 (台/美) 雙軌欄位 ✦ 📌 日夜盤微觀結構速報 VIX 實時警報 ✦ 熱門股票期貨對照矩陣 ✦ GEX ✕ VIX 雙指標實戰共振矩陣 ✦ 通行碼彈窗自動通關
 
 [![GitHub Actions 自動更新](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml/badge.svg)](https://github.com/bluebirdfinder/TXO-GEX-Dashboard/actions/workflows/auto_update.yml)
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
-[![引擎版本](https://img.shields.io/badge/Engine-v64.4-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
+[![引擎版本](https://img.shields.io/badge/Engine-v64.5-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
 ## 📋 2026-09-26 選股雷達現況盤點（文件同步，未升版）
 
@@ -14,6 +14,17 @@
 - **仍是簡化近似**：🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state`。
 - `scripts/build_screener_cache.py:56-58` 全域關閉 SSL 驗證（`CERT_NONE`），已評估、僅回報未修改。
 - 詳見 [HISTORY.md](HISTORY.md) 2026-09-26 條目與 [DASHBOARD_DATA_SOURCE_MAP.md](DASHBOARD_DATA_SOURCE_MAP.md) 第7列。
+
+## 🌟 v64.5 選股雷達資料正確性修復 ✕ 弱火箭/一般藍鳥真訊號 ✕ 法人歷史回補 ✕ 休市日曆校正
+
+- **選股雷達過期報價污染修正**：`tw_quotes_latest.json` 過期17天，被當成最新K棒附加在每檔股票後面，所有訊號受影響（🥚帶殼鳥 23→391、✈️噴射機 704→29）。改為報價日期較新才附加。
+- **TWSE 抓取失敗不再被當休市**：失敗回 `None`、退避重試、仍失敗中止建置（曾讓 4/10、5/11 兩個交易日靜默消失）。
+- **✈️弱火箭／🐣一般藍鳥真訊號上線**：JJ鬼爪V4.1 逐行移植，戰情室勾選框原本比對的是舊近似訊號，已改接；與獨立 `ta` 函式庫比對 1,345 檔 0 不一致。
+- **法人 5 日矩陣 T-1~T-4 回補**：新增 `scripts/backfill_institutional_snapshots.py`，補 9/18、9/21~9/23 日夜盤（欄位對映用已存檔日期重抓逐欄比對一致）。
+- **2026 休市日曆對照證交所官方校正**：漏 9/25 中秋、春節 2/12–2/20 等，誤列 1/26–1/30、10/01。
+- **`bump_version.py` 修復**：會寫入 HISTORY.md 條目骨架、不再誤改歷史版號、新增 CI `git add` 清單稽核。
+
+完整根因與驗證方式請見 [HISTORY.md](HISTORY.md) v64.5 條目。
 
 ## 🌟 v64.4 CI 自動化流程漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標
 

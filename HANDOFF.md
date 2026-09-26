@@ -13,11 +13,11 @@
 
 ## 1. 待辦
 
-> **2026-09-26 進度（接手視窗）**：第一批項目狀態如下，各在獨立分支、**均未 push**（等使用者同意）。
+> **2026-09-26 進度（接手視窗）**：以下項目已合併並隨 **v64.5** 發布（分支 `claude/release-v64.5` 推上 main）；詳見 HISTORY.md v64.5。
 > | 項目 | 狀態 | 分支 |
 > |---|---|---|
 > | 1 修 `bump_version.py` ＋ 2 稽核 SOP | ✅ 完成（release skill 已補「寫出檔案 vs CI git add」步驟，腳本自動警告） | `claude/fix-bump-version` |
-> | 3 弱火箭／一般藍鳥 | ✅ 後端＋**前端接線**＋快取重生；獨立 `ta` 比對 1,345 檔 0 不一致。**尚未發版**（room.html/js 版本字串未動） | `claude/screener-weak-rocket` |
+> | 3 弱火箭／一般藍鳥 | ✅ 後端＋**前端接線**＋快取重生；獨立 `ta` 比對 1,345 檔 0 不一致。已隨 v64.5 發版 | `claude/screener-weak-rocket` |
 > | 4 「1,400+」→「1,380+」 | ✅ | 同上 |
 > | 5 fetch 失敗旗標＋重試 | ✅（失敗回 None、退避重試、仍失敗中止建置） | 同上 |
 > | 額外發現 | 選股腳本曾把過期 17 天的 `tw_quotes_latest.json` 當「最新 K 棒」附加 → 已修（僅在報價日期較新時附加）；舊快取所有訊號受污染 | 同上 |
@@ -30,7 +30,7 @@
 |---|---|---|---|
 | 1 | 修 `scripts/bump_version.py` | ①不會插入新版本內容區塊（`release_note` 參數收了沒用）②全域字串置換會把舊條目「(v64.3)」標籤也改成新版 ③進度計數 [1/5]…[5/7] 不一致 | 舊視窗「9/26 交接續作」已開始處理，先確認它做到哪 |
 | 2 | 稽核 SOP 補一步 | 核對「腳本實際寫出的檔案」與「CI `.github/workflows/auto_update.yml` 的 `git add` 清單」是否一致 | v64.4 就是漏了這一步 |
-| 3 | 弱火箭✈️／一般藍鳥🐣（選股雷達） | `compute_jj_rocket_and_bird()` 回傳 4 值，程式完成、離線驗證（自述：1,336 檔回放 40,918 次、強弱互斥 0 違規）；**尚未重生 `data/screener_cache.json`、未發版** | 檔案在未 commit 清單內 |
+| 3 | 弱火箭✈️／一般藍鳥🐣（選股雷達） | `compute_jj_rocket_and_bird()` 回傳 4 值，程式完成、離線驗證（自述：1,336 檔回放 40,918 次、強弱互斥 0 違規）；**✅ 已重生快取並隨 v64.5 發版（見上方進度表）** | 共用資料夾內舊視窗的同名未 commit 檔已被取代 |
 | 4 | 選股畫面「1,400+ 檔」改實際數字 | 實際可掃描 1,383 檔股票/ETF（`trading room/room.html:793`、`room.js:216,3403`） | 只是文字，UI 未改 |
 | 5 | `fetch_twse_all_stocks_day()` 失敗旗標與重試 | 失敗只印 WARN 回 `{}`，與休市日無法區分，會讓全市場少一天 K 棒卻無聲（`build_screener_cache.py`） | 只是建議，未動 |
 | 6 | `build_screener_cache.py:56-58` SSL 驗證 | 全域 `CERT_NONE`；建議改預設驗證＋certifi，TWSE/TPEx 憑證鏈驗證失敗才對這兩網域降級並註明原因 | 已評估、未改 |
@@ -48,6 +48,8 @@
 | 14 | 使用者的 TradingView 分頁 | 卡在「離開此網站？」原生對話框，AI 關不掉 | 使用者手動關 |
 
 ## 2. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除／順手 commit）
+
+> ⚠️ v64.5 推上 main 後，共用資料夾內舊視窗的 `scripts/build_screener_cache.py` 未 commit 版本已被 main 上更完整的版本取代（含失敗重試、過期報價修正）；`trading room/room.js` 的 CVD 修改與 main 上同檔（弱火箭接線、版本字串）將在未來 `git pull`/merge 時出現衝突，須由使用者決定處理方式，AI 不要自行覆蓋。
 | 檔案 | 主人／性質 |
 |---|---|
 | `scripts/fubon_api_provider.py`、`scripts/live_price_server.py`、`trading room/room.js` | 舊視窗「TXO-GEX-Dashboard 交接續作」的 CVD 真實化。`room.js` 的 diff 比它當初記錄多 6 行，發版前先看實際 diff |

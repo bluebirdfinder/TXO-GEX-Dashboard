@@ -1,15 +1,16 @@
-# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.4)
+# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.5)
 
 本手冊記錄專案現狀、核心功能清單、數據引擎 Self-Audit 熱備援架構、開發 SOP 與個人筆電續接步驟。
 
 ---
 
-## 📌 一、v64.4 完整功能清單與數據引擎架構
+## 📌 一、v64.5 完整功能清單與數據引擎架構
 
 ### 核心分析與視覺化模組
 
 | # | 功能 | 說明 |
 |---|---|---|
+| -2 | **🔴 選股雷達資料正確性修復 ✕ 弱火箭/一般藍鳥真訊號 ✕ 法人歷史回補 ✕ 2026休市日曆校正 (v64.5)** | `scripts/build_screener_cache.py`（過期報價不再附加為最新K棒、TWSE失敗回None+重試、`compute_jj_rocket_and_bird()` 回傳4值）、`trading room/room.js`（弱火箭/一般藍鳥勾選框改讀 `✈️ 火箭`/`🐣 藍鳥`）、`scripts/backfill_institutional_snapshots.py`（法人5日矩陣歷史回補）、`data/tw_holidays.json`（2026對照證交所官方）、`scripts/bump_version.py`（寫入HISTORY骨架、只改標題行、CI git add 稽核）。詳見 HISTORY.md v64.5。 |
 | -1 | **🔴🔴 CI 自動化流程漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標 (v64.4)** | `.github/workflows/auto_update.yml`的commit步驟自v62.3（2026-09-11，5日快照矩陣功能上線當下）就從未把`data/session_snapshots.json`/`data/institutional_snapshots.json`加進`git add`清單，導致每天排程正確寫入的快照從未真正存回repo，5日歷程矩陣T-4~T-1自9/17起靜默回歸空殼（`0.0`/`null`），使用者截圖親自抓到；已修正CI清單並用`backfill_snapshots.py`從官方TAIFEX/TWSE真實來源回補9/18~9/23四天歷史；新增融資餘額變化速度（日增減%/N日累計增減%）參考指標，資料不足時誠實留空。完整根因與驗證方式見 [HISTORY.md](HISTORY.md) v64.4 條目 |
 | 0 | **🔴🔴 CI 自動化漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標 (v64.4)** | `.github/workflows/auto_update.yml` 的 `git add` 清單從 v62.3（2026-09-11）起就漏掉 `data/session_snapshots.json`/`data/institutional_snapshots.json`，每日快照只寫在 GitHub Actions 用完即丟的虛擬機、從未存回 repo，5日歷程矩陣 T-4~T-1 自 9/17 起靜默退化為空殼（使用者在正式站截圖抓到；T-0 為即時運算故未受影響）。已補上這兩個檔案進 `git add`，並用 `scripts/backfill_snapshots.py` 以官方真實來源回補 9/18、9/21、9/22、9/23 四天（融資維持率誠實留 `None`）；新增融資餘額變化速度參考指標 `margin_bal_1d_chg_pct`/`margin_bal_Nd_chg_pct`（既有 `MI_MARGN` 真實資料，存進 `session_snapshots.json` 的 `margin_balance_billion`）。未觸碰戰情室 CVD 真實化（另一進行中的獨立修改）。完整根因與驗證見 [HISTORY.md](HISTORY.md) v64.4 條目 |
 | 0.00005 | **📋 選股雷達現況盤點與文件同步（2026-09-26，未升版）** | 實測1,383檔股票/ETF涵蓋100%（另40筆為TAIFEX代碼，設計上不適用）；真實移植：JJ_MACD/CCI、🚀🐦、📐真5K、神奇九轉、投信認養/籌碼偏多；仍近似：🛸⚡✈️噴射機🥚、`k5_state`、`demark_state`；`build_screener_cache.py:56-58` 關閉SSL驗證僅回報。詳見 [HISTORY.md](HISTORY.md) 2026-09-26 條目、[DASHBOARD_DATA_SOURCE_MAP.md](DASHBOARD_DATA_SOURCE_MAP.md) 第7列。備註：本表目前缺 v64.4 列（版號標題已是v64.4），內容見 HISTORY.md v64.4 |

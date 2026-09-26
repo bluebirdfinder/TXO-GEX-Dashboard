@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.4)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.5)
 
-**當前版本**：`v64.4` (2026-09-25 CI 自動化流程漏寫快照重大修正 ✕ 官方資料回補 ✕ 融資餘額變化速度新指標)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.4)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.4)
+**當前版本**：`v64.5` (2026-09-26 選股雷達過期報價污染修正 ✕ 弱火箭/一般藍鳥真訊號 ✕ 法人歷史回補 ✕ 2026休市日曆校正)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.5)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.5)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,19 @@
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.5 核心更新亮點（選股雷達資料正確性修復 ✕ 弱火箭/一般藍鳥 ✕ 法人歷史回補 ✕ 休市日曆校正）
+
+- **選股雷達過期報價污染修正**：`tw_quotes_latest.json` 過期17天，被當成最新K棒附加在每檔股票後面，所有訊號受影響（🥚帶殼鳥 23→391、✈️噴射機 704→29）。改為報價日期較新才附加。
+- **TWSE 抓取失敗不再被當休市**：失敗回 `None`、退避重試、仍失敗中止建置（曾讓 4/10、5/11 兩個交易日靜默消失）。
+- **✈️弱火箭／🐣一般藍鳥真訊號上線**：JJ鬼爪V4.1 逐行移植，戰情室勾選框原本比對的是舊近似訊號，已改接；與獨立 `ta` 函式庫比對 1,345 檔 0 不一致。
+- **法人 5 日矩陣 T-1~T-4 回補**：新增 `scripts/backfill_institutional_snapshots.py`，補 9/18、9/21~9/23 日夜盤（欄位對映用已存檔日期重抓逐欄比對一致）。
+- **2026 休市日曆對照證交所官方校正**：漏 9/25 中秋、春節 2/12–2/20 等，誤列 1/26–1/30、10/01。
+- **`bump_version.py` 修復**：會寫入 HISTORY.md 條目骨架、不再誤改歷史版號、新增 CI `git add` 清單稽核。
+
+詳細根因、修復與驗證方式請見 [HISTORY.md](HISTORY.md) v64.5 條目。
 
 ---
 
