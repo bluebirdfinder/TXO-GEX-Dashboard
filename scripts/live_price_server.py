@@ -202,7 +202,11 @@ def mis_polling_worker():
             with urllib.request.urlopen(req, context=SSL_CTX, timeout=5) as resp:
                 res = json.loads(resp.read().decode('utf-8'))
                 q_list = res.get('RtData', {}).get('QuoteList', [])
-                tx_items = [q for q in q_list if q.get('SymbolID', '').startswith('TX') and q.get('CLastPrice')]
+                # Futures contracts only (day '-F', night '-M'), nearest month first as TAIFEX lists them. The old filter
+                # startswith('TX') also matched 'TXF-S' (臺指現貨, the SPOT index), which comes first in the day list, so the
+                # spot index was published as the TXF futures price (and its previous close as the reference).
+                tx_items = [q for q in q_list
+                            if q.get('SymbolID', '').startswith('TXF') and q.get('SymbolID', '').endswith(('-F', '-M')) and q.get('CLastPrice')]
                 if tx_items:
                     main_tx = tx_items[0]
                     last_p = float(main_tx.get('CLastPrice', 0))
