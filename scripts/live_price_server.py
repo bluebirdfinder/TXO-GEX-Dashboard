@@ -79,6 +79,49 @@ def macro_polling_worker(interval=30):
         time.sleep(interval)
 
 
+def _tw_open_days():
+    import re
+    try:
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "tw_holidays.json")
+        hol = set(re.findall(r"20\d\d-\d\d-\d\d", open(path, encoding="utf-8-sig").read()))
+    except Exception:
+        hol = set()
+    return lambda d: d.weekday() < 5 and d.isoformat() not in hol
+
+
+def watchdog_worker():
+    """Keeps the Fubon connection healthy without a manual restart:
+    - a fresh login shortly before each session (08:30 and 14:55) and once at start-up of the night session;
+    - if a session is open (day 08:45-13:45, night 15:00-05:00 of a trading day) and no quote arrived for 120 s,
+      log in again (at most once per 5 minutes)."""
+    import datetime
+    is_td = _tw_open_days()
+    last_relogin, done_today = 0.0, set()
+    while True:
+        time.sleep(20)
+        try:
+            from scripts.fubon_api_provider import fubon_provider
+            if not fubon_provider.is_active:
+                continue
+            now = datetime.datetime.now()
+            hm = now.hour * 60 + now.minute
+            today, yday = now.date(), now.date() - datetime.timedelta(days=1)
+            day_open = is_td(today) and (8 * 60 + 45) <= hm <= (13 * 60 + 45)
+            night_open = (now.hour >= 15 and is_td(today)) or (now.hour < 5 and is_td(yday))
+            for tag, at in (("pre-day", 8 * 60 + 30), ("pre-night", 14 * 60 + 55)):
+                key = (today, tag)
+                if hm >= at and hm < at + 5 and key not in done_today and is_td(today):
+                    done_today.add(key)
+                    print(f"[Watchdog] scheduled {tag} re-login")
+                    fubon_provider.relogin(); last_relogin = time.time()
+            stale = time.time() - state.last_update
+            if (day_open or night_open) and stale > 120 and time.time() - last_relogin > 300:
+                print(f"[Watchdog] no quote for {int(stale)}s during an open session -> re-login")
+                fubon_provider.relogin(); last_relogin = time.time()
+        except Exception as e:  # noqa: BLE001
+            print(f"[Watchdog] error: {e}")
+
+
 def fubon_worker():
     """ Priority 1: Fubon Neo API Worker Thread """
     try:
@@ -214,6 +257,7 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                     "active_provider": state.active_provider,
                     "provider_name": "🟢 富邦 API 極速專線" if state.active_provider == "FUBON" else ("🌐 官方行情備援" if state.active_provider == "OFFICIAL" else "⚪ 無即時數據"),
                     "indices": state.indices,
+                    "age_sec": round(time.time() - state.last_update, 1),  # seconds since the last real quote (front end can flag stale data)
                     "ts": time.time()
                 }
                 for _k in ("txf", "taiex", "otc"):
@@ -318,6 +362,7 @@ def run_server():
     
     # Start worker threads
     threading.Thread(target=macro_polling_worker, daemon=True).start()
+    threading.Thread(target=watchdog_worker, daemon=True).start()
     t_fubon = threading.Thread(target=fubon_worker, daemon=True)
     t_fubon.start()
     

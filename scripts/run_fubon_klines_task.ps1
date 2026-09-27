@@ -18,11 +18,8 @@ function Log($m) { "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $m" | Out-File -Fi
 
 Set-Location $Repo
 Log '--- start ---'
-# One active login per API key may be enforced: skip if the live price server is running.
-if (Get-CimInstance Win32_Process -Filter "name='python.exe'" | Where-Object { $_.CommandLine -like '*live_price_server*' }) {
-    Log 'SKIP: live_price_server.py is running (would double-login). Retry at the next scheduled time.'
-    exit 0
-}
+# Two simultaneous logins with the same API key were tested on 2026-09-27: both REST sessions worked, neither was kicked,
+# so this task runs even while live_price_server.py is up.
 git pull --rebase --autostash origin main 2>&1 | ForEach-Object { Log "git: $_" }
 foreach ($line in Get-Content -LiteralPath $EnvFile -Encoding UTF8) {
     $t = $line.Trim()

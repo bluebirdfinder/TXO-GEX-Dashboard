@@ -264,6 +264,15 @@ class FubonAPIProvider:
             self._futopt_connected = True
             return futopt_ws
 
+    def relogin(self):
+        """Fresh login + market-data token, then re-establish the futopt WebSocket and its subscriptions. The SDK gives
+        the REST token once at login and nothing here refreshed it, so a long-running server could end up serving
+        stale data silently; live_price_server's watchdog calls this."""
+        self._initialize_sdk()
+        if self.is_active:
+            self._on_futopt_disconnect("relogin", "watchdog / pre-session refresh")
+        return self.is_active
+
     def _on_futopt_disconnect(self, code, msg):
         """ Auto-reconnect + re-subscribe both channels on disconnect, per Fubon's documented reconnect pattern. """
         logging.warning(f"Fubon futopt WebSocket disconnected ({code}: {msg}). Reconnecting...")
