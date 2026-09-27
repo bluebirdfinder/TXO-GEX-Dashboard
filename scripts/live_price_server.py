@@ -236,10 +236,31 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
         # Suppress standard HTTP request logging to clean stdout/stderr
         pass
 
+    _ALLOWED_ORIGINS = ("https://bluebirdfinder.github.io",)
+
+    def _origin_allowed(self, origin):
+        import urllib.parse
+        if origin in self._ALLOWED_ORIGINS:
+            return True
+        try:
+            u = urllib.parse.urlparse(origin)
+            return u.scheme in ("http", "https") and u.hostname in ("localhost", "127.0.0.1")
+        except Exception:
+            return False
+
     def _send_cors(self):
-        self.send_header('Access-Control-Allow-Origin', '*')
+        # Was 'Access-Control-Allow-Origin: *' (any website could read this server from the user's browser).
+        origin = self.headers.get('Origin', '')
+        if origin and self._origin_allowed(origin):
+            self.send_header('Access-Control-Allow-Origin', origin)
+            self.send_header('Vary', 'Origin')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+
+    def _host_ok(self):
+        # DNS-rebinding guard: only answer requests addressed to the loopback name/IP.
+        host = (self.headers.get('Host') or '').split(':')[0].lower()
+        return host in ('localhost', '127.0.0.1', '[::1]', '')
 
     def do_OPTIONS(self):
         self.send_response(200)
@@ -250,6 +271,8 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
         try:
             import urllib.parse, mimetypes
             parsed = urllib.parse.urlparse(self.path)
+            if not self._host_ok():
+                self.send_response(403); self.end_headers(); return
             
             # API Endpoint for Live Indices (TXF, TAIEX, OTC)
             if parsed.path.startswith('/api/live_tick') or parsed.path.startswith('/api/live_price'):
@@ -326,8 +349,21 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 rel_path = 'index.html'
             
             project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            file_path = os.path.join(project_root, rel_path)
-            
+            file_path = os.path.normpath(os.path.join(project_root, urllib.parse.unquote(rel_path)))
+
+            # Static files: ONLY public dashboard assets. The project root also holds .env (Fubon API key + certificate
+            # password), scripts, logs and .git — none of that may ever be served (this used to serve everything:
+            # GET /.env returned the secrets, and ../ walked out of the folder).
+            real_root, real_file = os.path.realpath(project_root), os.path.realpath(file_path)
+            rel_parts = os.path.relpath(real_file, real_root).replace(os.sep, '/').split('/')
+            ext_ok = os.path.splitext(real_file)[1].lower() in (
+                '.html', '.js', '.css', '.json', '.png', '.jpg', '.jpeg', '.svg', '.ico', '.webp', '.woff', '.woff2', '.map')
+            bad_name = any(k in os.path.basename(real_file).lower() for k in ('env', 'secret', 'cert', 'password', 'credential', 'token'))
+            blocked_dir = rel_parts[0] in ('scripts', 'logs', 'docs', 'memory', '__pycache__', 'node_modules') or any(seg.startswith('.') for seg in rel_parts)
+            inside = os.path.commonpath([real_root, real_file]) == real_root
+            if not (inside and ext_ok and not bad_name and not blocked_dir):
+                self.send_response(404); self.end_headers(); return
+
             if os.path.isfile(file_path):
                 ctype, _ = mimetypes.guess_type(file_path)
                 if not ctype:
@@ -357,7 +393,9 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 pass
 
 def run_server():
-    server = ThreadingHTTPServer(('0.0.0.0', PORT), PriceGatewayHandler)
+    # Loopback only: this process serves market data and the dashboard files to a browser on THIS machine. Binding 0.0.0.0
+    # (what it used to do) exposed it to the whole LAN. Set TXO_GATEWAY_HOST to override on purpose.
+    server = ThreadingHTTPServer((os.environ.get('TXO_GATEWAY_HOST', '127.0.0.1'), PORT), PriceGatewayHandler)
     print(f"=== 🦅 尋鳥戰情室 — 實時行情 Server 啟動於 http://localhost:{PORT} ===")
     
     # Start worker threads

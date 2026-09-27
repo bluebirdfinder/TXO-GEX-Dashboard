@@ -650,7 +650,7 @@
 pip install beautifulsoup4 requests websockets
 python scripts/fetch_and_calc_vision.py
 python -c "import json; data=json.load(open('data/gex_data.json',encoding='utf-8')); open('data/embedded_data.js','w',encoding='utf-8').write('window.GEX_EMBEDDED_DATA = ' + json.dumps(data, ensure_ascii=False) + ';')"
-python -m http.server 8080
+python -m http.server 8080 --bind 127.0.0.1
 # 瀏覽器：http://localhost:8080/index.html （通行碼：GEX2026）
 ```
 
