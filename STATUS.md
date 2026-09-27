@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.13)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.14)
 
-**當前版本**：`v64.13` (2026-09-27 即時報價台指期誤取現貨指數修正；前版 v64.12 即時伺服器資安修補)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.13)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.13)
+**當前版本**：`v64.14` (2026-09-27 選股雷達 JJ鬼爪 8 訊號改用 Pine 忠實移植)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.14)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.14)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,16 @@
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.14 核心更新亮點（JJ鬼爪 8 訊號）
+
+- **選股雷達 JJ鬼爪 8 訊號改用你 Pine 的 1:1 忠實移植**（`scripts/jj_ghost_claws.py`）：🚀🐦✈️🐣🛸⚡💰⚠️；狀態機逐根 K 棒與獨立實作比對 0 不一致，ADX 與 Wilder 獨立實作一致。
+- 移除 4 個近似訊號（🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥），舊快取被它們灌水的訊號數消失。
+- 查出 `tv_indicators_engine.py` 的 JJ 移植與 Pine 不一致（ADX、出清觸發、強度等級、參數）且無人使用，勿當計算來源。
+
+詳細請見 [HISTORY.md](HISTORY.md) v64.14 條目。
 
 ---
 

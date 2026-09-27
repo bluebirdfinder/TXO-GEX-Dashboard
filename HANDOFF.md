@@ -44,7 +44,7 @@
 | 10 | JJ鬼爪V4.1 對照 TradingView | 卡片標題仍標「⚠️未對照 TradingView 驗證」；Chrome 擴充功能讀不到 canvas 圖表，無法自動比對 | 使用者在場逐根 K 棒核對，通過後拿掉 `room.html` 內警告字樣 |
 | 11 | Smart Money Concept 移植 | 未開始；源碼在使用者私有資料夾 `TradingView 指標\合併好用公開指標\Merged_Indicators.md`；部署架構比照 JJ鬼爪，合併進同一份 Cloudflare `worker.js`（`indicator=` 路由） | 使用者在場 |
 | 12 | 三大法人 5 日矩陣 T-1~T-4 歷史缺口 | 期貨未平倉／選擇權大額／現貨買賣超／夜盤法人，存在 `institutional_snapshots.json`，回補腳本不補，CI 修好後只往後累積 | 使用者決定補不補（需逐日查官方資料，工程量中等） |
-| 13 | 選股雷達剩餘近似訊號 | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` 仍是簡化近似 | 先問使用者有沒有對應 Pine 源碼 |
+| 13 | 選股雷達剩餘近似訊號 | ✅ 🛸⚡✈️🥚 已於 v64.14 改為 JJ鬼爪 Pine 忠實移植（見 HISTORY v64.14）；`k5_state`、`demark_state` 仍是簡化近似 | 需要對應 Pine 源碼 |
 | 14 | 使用者的 TradingView 分頁 | 卡在「離開此網站？」原生對話框，AI 關不掉 | 使用者手動關 |
 
 ## 1.5 網頁對帳（2026-09-26 晚）— 未推送的修正與待使用者決定
