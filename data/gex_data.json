@@ -1,7 +1,7 @@
 {
   "date": "2026-09-27",
   "chip_base_date": "2026-09-24",
-  "engine_version": "v64.10",
+  "engine_version": "v64.11",
   "session_type": "DAY",
   "session_name": "☀️ 日盤即時動態/結算籌碼",
   "session_shift": {
@@ -19,7 +19,7 @@
     "day_gex_plus_flip": 47230.2,
     "day_total_vex": 82.45
   },
-  "last_updated_time": "2026-09-27 11:02",
+  "last_updated_time": "2026-09-27 11:10",
   "spot_price": 48024.6,
   "spot_change": -132.69,
   "spot_change_pct": -0.28,
@@ -23886,12 +23886,12 @@
       "long_oi": 25440,
       "short_oi": 18025,
       "net_oi": 7415,
-      "daily_change": 0,
+      "daily_change": -542,
       "total_oi": 32790,
       "near_oi": 28744,
       "ratio": 22.61,
       "total_ratio": 22.61,
-      "prev_ratio": 22.61,
+      "prev_ratio": 26.17,
       "sentiment_tag": "🔴 散戶極度做多 (軋空看壓)"
     },
     "micro_tmf": {
@@ -23899,21 +23899,21 @@
       "long_oi": 48613,
       "short_oi": 41894,
       "net_oi": 6719,
-      "daily_change": 0,
+      "daily_change": -2117,
       "total_oi": 70436,
       "near_oi": 55000,
       "ratio": 9.54,
       "total_ratio": 9.54,
-      "prev_ratio": 9.54,
+      "prev_ratio": 14.54,
       "sentiment_tag": "🟠 散戶偏多看壓"
     },
     "broker_snapshot": {
       "foreign_tx_net": -77031,
-      "foreign_tx_change": 0,
+      "foreign_tx_change": 1643,
       "foreign_call_net": -1.8,
-      "foreign_call_change": 0.0,
+      "foreign_call_change": -0.72,
       "foreign_put_net": 0.26,
-      "foreign_put_change": 0.0,
+      "foreign_put_change": -0.07,
       "vix_index": 23.12,
       "vix_change": 1.29,
       "market_turnover": null
@@ -23935,7 +23935,7 @@
   "total_gex_plus": 658.68,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-27 11:02",
+    "last_updated": "2026-09-27 11:10",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
