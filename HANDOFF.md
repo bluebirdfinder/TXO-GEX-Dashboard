@@ -84,6 +84,11 @@
 - 演算法（Python 參考版＋Worker 用 JS 版）與部署說明在 `C:\Users\mingi\txo-private\smc\`（**不在 git，勿放進公開 repo**；`README_SMC.md` 有部署到 `bluebird-indicators` Worker 的步驟與 TradingView 核對清單）。前端「🧠 SMC」按鈕已上線，**Worker 尚未加入 `indicator=smc` 前不會畫圖**（需使用者貼上並部署）。
 - 待使用者：①把 `C:\Users\mingi\OneDrive\文件\TradingView 指標\我寫的指標\ADX MTF 後端運算 (Cloudflare Worker)\worker.js` 全文貼到 Cloudflare 並 Deploy（已含 `indicator=smc`，原檔備份 `worker.js.bak_before_smc_20260927`）；②用 TradingView 核對 `README_SMC.md` 的事件清單。
 
+## 1.10 指標 IP 保護：未完成事項（2026-09-27，需使用者決定）
+
+- 網頁稱呼已改「動能鳥」。Worker 私有檔已加 `indicator=bird`；**使用者重新部署 Worker 後，請移除 `room.js` 中對 `indicator=jj` 的暫時備援**。
+- 公開 repo 仍含個人指標邏輯：`scripts/jj_ghost_claws.py`、`scripts/build_screener_cache.py`（動能鳥 MACD/CCI、5K、DeMark 移植）、`scripts/tv_indicators_engine.py`（未使用）；`room.js` 仍有本地的主圖動能鳥標記、DeMark、DMI、CVD 近似。這些在 git 歷史中已公開。處理方案見使用者的決定。
+
 ## 2. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除／順手 commit）
 
 > ⚠️ v64.5 推上 main 後，共用資料夾內舊視窗的 `scripts/build_screener_cache.py` 未 commit 版本已被 main 上更完整的版本取代（含失敗重試、過期報價修正）；`trading room/room.js` 的 CVD 修改與 main 上同檔（弱火箭接線、版本字串）將在未來 `git pull`/merge 時出現衝突，須由使用者決定處理方式，AI 不要自行覆蓋。

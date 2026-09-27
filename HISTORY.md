@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v64.17`** | 2026-09-27 | 網頁一律稱動能鳥（移除JJ稱呼）✕ 指標IP保護現況盤點 |
 | **`v64.16`** | 2026-09-27 | 指標庫FVG/OrderBlocks勾選框接上SMC（原本沒畫任何東西） |
 | **`v64.15`** | 2026-09-27 | 戰情室SMC開關（畫圖端；演算法在私有Worker） |
 | **`v64.14`** | 2026-09-27 | 選股雷達JJ鬼爪8訊號改用Pine忠實移植（移除4個近似訊號） |
@@ -43,6 +44,16 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🚀 v64.17 網頁一律稱動能鳥（移除JJ稱呼）✕ 指標IP保護現況盤點 (2026-09-27)
+
+- **背景**：使用者說明「動能鳥」就是自己的 Ghost Claws 指標，不想讓網頁出現個人 IP 的稱呼「JJ」；並詢問「技術指標公式搬到 Cloudflare、網頁不暴露程式碼」是否做完。
+- **✅ 網頁上的稱呼統一為「動能鳥」**：`room.html` 標題與「波段CCI」勾選說明、`room.js` 內所有字串／註解／函式與常數名（`updateMomentumBirdHud`、`MOMENTUM_BIRD_SUPPORTED_SYMBOLS`）、HUD 模式文字改為 `Auto (動能鳥)`；勾選框元素 id `chk-claws`／`col-claws-*` 改為 `chk-ribbons`／`col-ribbons-*`。Worker 新增 `indicator=bird` 路由（與 `jj` 同一支處理，舊呼叫端不受影響，327 個既有請求輸出與舊版相同）；前端先請求 `bird`，失敗才退回 `jj`（**暫時性備援，使用者重新部署 Worker 後移除**）。**已知**：舊版 HISTORY／STATUS 等文件與 `scripts/*.py` 檔名仍有「JJ」字樣，這輪只處理網頁本身。
+- **⚠️ 「指標運算搬到 Cloudflare」尚未完成，實際狀況如下**：
+  - 已在私有 Worker：ADX Pro V3、雙層 MACD、波段 CCI、AO、動能鳥 HUD（最後一根狀態）、SMC。
+  - **仍在瀏覽器可見的 `room.js`**：主圖動能鳥標記（`computeMomentumBirdMarkers`，簡化版）、神奇九轉 DeMark、SMMA、Supertrend、Parabolic SAR、VWAP、VRVP、DMI、CVD（舊近似公式）。其中 SMMA／Supertrend／SAR／VWAP／VRVP 為公開標準公式，不算個人 IP。
+  - **公開 repo 內含個人指標邏輯的 Python 檔**：`scripts/jj_ghost_claws.py`（v64.14 由我新增，1:1 移植使用者的 Pine，**我當時沒有提醒這會讓個人指標邏輯公開，是我的疏失**）、`scripts/build_screener_cache.py` 內的 `compute_jj_macd_and_cci`／`compute_5k_breakout`／`compute_demark_v3`、未被引用且與 Pine 不一致的 `scripts/tv_indicators_engine.py`。這些也存在於 git 歷史中，只刪除最新版無法讓已公開的內容消失。
+  - 待使用者決定處理方式（見 HANDOFF）。
 
 ### 🛠️ v64.16 指標庫FVG/OrderBlocks勾選框接上SMC（原本沒畫任何東西） (2026-09-27)
 
