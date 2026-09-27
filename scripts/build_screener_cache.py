@@ -13,11 +13,12 @@ Real, line-for-line Pine ports (2026-09-17/18/24), each verified against the
 independently-authored Python `ta` library on real TWSE 2330 data before being wired in:
   - `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal` — compute_jj_macd_and_cci(),
     from JJ_MACD_Sub.pine/JJ_CCI_Sub.pine, symbols with >=35 real bars.
-  - 🚀強火箭/🐦強力藍鳥/✈️火箭/🐣藍鳥 in `signals` — compute_jj_rocket_and_bird(), from
-    ghost_claws_v4.1.pine, symbols with >=89 real bars (a true SMA88 needs that many, no
-    approximation exists). NOTE: ✈️火箭 here is the REAL JJ鬼爪 weak-rocket state and is a
-    different signal from the heuristic ✈️噴射機 below despite sharing the plane emoji — the
-    two are visually distinguished by their trailing text, not the emoji alone.
+  - all 8 JJ鬼爪V4.1 signals (🚀強火箭 🐦強力藍鳥 ✈️火箭 🐣藍鳥 🛸強力再啟 ⚡動能再啟 💰減碼 ⚠️出清) in
+    `signals` — scripts/jj_ghost_claws.py, a 1:1 port of the user's own "JJ Indicator V4.1 - Ghost
+    Claws Master" Pine (pasted 2026-09-27), symbols with >=89 real bars (a true SMA88 needs that many;
+    below that NO JJ signal is produced — no proxy). ADX/MFI/EMA follow Pine's ta.* semantics; the
+    再啟/減碼/出清 state machine replays over the ~120 available bars, so it may differ from
+    TradingView's much longer replay.
   - 📐真5K突破 in `signals` — compute_5k_breakout(), from 5K_Strategy_Master_v5.pine's entry
     logic only (no stop-loss/take-profit — a daily scan has no open position to manage), a
     DIFFERENT concept from the pre-existing `k5_state` heuristic below (see that function's
@@ -27,11 +28,10 @@ independently-authored Python `ta` library on real TWSE 2330 data before being w
     a NEW, separate pair of fields from the pre-existing `demark_state` heuristic below (see
     that function's docstring for why). Symbols with >=65 real bars.
 
-🛸動能飛碟/⚡動能閃電/✈️噴射機/🥚帶殼鳥 in `signals`, `k5_state`, and `demark_state` are still
-simplified heuristic proxies (moving-average and recent-close comparisons), not a literal
-reimplementation of those indicators' true formulas — tracked separately in
-SELF_AUDIT_FINDINGS_TODO.md ("指標源碼逐一校正") and out of scope for this pass. (✈️火箭 is a
-different, real signal from ✈️噴射機 — see the note above.)
+`k5_state` and `demark_state` are still simplified heuristic proxies (moving-average and recent-close
+comparisons), not a literal reimplementation of those indicators' true formulas — tracked separately in
+SELF_AUDIT_FINDINGS_TODO.md ("指標源碼逐一校正"). The old heuristic signals 🛸動能飛碟/⚡動能閃電/✈️噴射機/🥚帶殼鳥
+were removed: they were rough stand-ins for 🛸強力再啟/⚡動能再啟/✈️弱火箭/🐣一般藍鳥, which are now real.
 """
 
 import json
@@ -41,6 +41,9 @@ import sys
 import time
 import urllib.request
 from datetime import datetime, timedelta
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import jj_ghost_claws as jj  # 1:1 port of the user's Pine "JJ Indicator V4.1 - Ghost Claws Master" (all 8 signals)
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -139,7 +142,7 @@ def fetch_real_ohlcv_history(symbol, num_bars=120):
     None (not a fabricated series) if neither official source has data for this symbol —
     e.g. a newly listed stock, an index/futures code that isn't an equity, or a delisted one.
 
-    num_bars defaults to 120, not 60: compute_jj_rocket_and_bird() (JJ鬼爪's real 🚀強火箭/
+    num_bars defaults to 120, not 60: jj_ghost_claws.py (JJ鬼爪's real 🚀強火箭/
     🐦強力藍鳥) needs a true SMA88 — unlike an EMA, an 88-day simple moving average literally
     cannot be computed from fewer than 88 real closes, there is no "approximation" available,
     and its crossover check (今天 vs 昨天) needs that SMA88 at two consecutive bars, so the
@@ -481,64 +484,6 @@ def _mfi_series(highs, lows, closes, volumes, length=14):
                 neg += rmf
         out.append(100.0 if neg == 0 else 100 - 100 / (1 + pos / neg))
     return out
-
-
-def compute_jj_rocket_and_bird(bars):
-    """
-    Real 🚀強火箭/🐦強力藍鳥/✈️弱火箭/🐣一般藍鳥, ported line-for-line from the user's own
-    ghost_claws_v4.1.pine (JJ鬼爪V4.1 — same indicator already live on the Cloudflare Worker
-    for the trading room's own momentum HUD), using its "台股個股與一般ETF" auto-parameter
-    branch: bias_neg=8.0, mfi_thresh=52.0. Screener's 🚀強火箭/🐦強力藍鳥/✈️弱火箭/🐣一般藍鳥
-    map exactly to JJ鬼爪's is_strong_rocket/is_strong_bird/is_weak_rocket/is_normal_bird (same
-    emoji, same Chinese name, matching the markers already drawn in
-    scripts/tv_indicators_engine.py's own port of the same script). The stateful
-    🛸強力再啟/⚡動能再啟 signals (which require replaying is_holding across the ENTIRE bar
-    history, not just the last two bars) are still out of scope for this pass — screener's
-    existing 🛸動能飛碟/⚡動能閃電/✈️噴射機/🥚帶殼鳥 heuristics are untouched.
-
-    Pine definitions (ghost_claws_v4.1.pine):
-      cond_bird   = crossover(hist, 0) and (ma17 > ma88) and (close > bb_basis)
-      is_strong_bird   = cond_bird and bias88 <= -8.0
-      is_normal_bird   = cond_bird and bias88 >  -8.0
-      cond_rocket = crossover(ma17, ma88) and hist > 0
-      is_strong_rocket = cond_rocket and mfi > 52.0
-      is_weak_rocket   = cond_rocket and mfi <= 52.0
-
-    Requires >=89 real bars: an 88-day SMA has no "approximation" the way an EMA does — it is
-    simply undefined below 88 real closes, and the crossover check needs it at two consecutive
-    bars. Returns (is_strong_rocket, is_strong_bird, is_weak_rocket, is_normal_bird) —
-    False x4 if not computable.
-    """
-    closes = [b["close"] for b in bars]
-    highs = [b["high"] for b in bars]
-    lows = [b["low"] for b in bars]
-    volumes = [b["volume"] for b in bars]
-
-    ma7 = _sma_series(closes, 7)
-    ma17 = _sma_series(closes, 17)
-    ma88 = _sma_series(closes, 88)
-    bb_basis = _sma_series(closes, 20)
-    bias88 = (closes[-1] - ma88[-1]) / ma88[-1] * 100.0 if ma88[-1] else 0.0
-
-    ema12, ema26 = _ema_series(closes, 12), _ema_series(closes, 26)
-    macd_line = [a - b for a, b in zip(ema12, ema26)]
-    signal_line = _ema_series(macd_line, 9)
-    hist = [a - b for a, b in zip(macd_line, signal_line)]
-
-    mfi = _mfi_series(highs, lows, closes, volumes, 14)
-
-    is_bull_trend = ma17[-1] > ma88[-1]
-    is_above_bb = closes[-1] > bb_basis[-1]
-
-    cond_bird = (hist[-2] <= 0 < hist[-1]) and is_bull_trend and is_above_bb
-    is_strong_bird = cond_bird and bias88 <= -8.0
-    is_normal_bird = cond_bird and bias88 > -8.0
-
-    cond_rocket = (ma17[-2] <= ma88[-2]) and (ma17[-1] > ma88[-1]) and hist[-1] > 0
-    is_strong_rocket = cond_rocket and mfi[-1] > 52.0
-    is_weak_rocket = cond_rocket and mfi[-1] <= 52.0
-
-    return is_strong_rocket, is_strong_bird, is_weak_rocket, is_normal_bird
 
 
 def _twse_tick_size(price):
@@ -1004,34 +949,30 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
     vol_ratio = round((vols[-1] / avg_vol_5), 2) if avg_vol_5 > 0 else 1.0
 
     signals = []
+    jj_last = None
     if len(closes) >= 89:
-        # Real JJ鬼爪V4.1 is_strong_rocket/is_strong_bird/is_weak_rocket/is_normal_bird
-        # (compute_jj_rocket_and_bird()) — replaces the price/volume-ratio proxy below for
-        # symbols with enough history for a true SMA88 (see that function's docstring for why
-        # 89 is a hard floor, not a tuning choice). Thinner-history symbols keep the old
-        # heuristic so they still get a signal rather than none at all.
-        is_strong_rocket, is_strong_bird, is_weak_rocket, is_normal_bird = compute_jj_rocket_and_bird(bars)
-        if is_strong_rocket:
+        # All 8 JJ鬼爪V4.1 signals from scripts/jj_ghost_claws.py (line-by-line port of the user's Pine; the state-machine
+        # ones — 再啟/減碼/出清 — replay is_holding over the whole ~120-bar history, so they can differ from TradingView's
+        # longer replay). Per-asset auto thresholds follow the Pine `asset_class` router (ETF suffix L/R/U/A/B).
+        # A symbol with < 89 real bars gets NO JJ signal (a true SMA88 does not exist) — no proxy substitute any more.
+        jj_last = jj.compute_jj_last(bars, jj.jj_params(symbol, asset_type))
+    if jj_last:
+        if jj_last["strong_rocket"]:
             signals.append("🚀 強火箭")
-        elif is_weak_rocket:
+        elif jj_last["weak_rocket"]:
             signals.append("✈️ 火箭")
-        if is_strong_bird:
+        if jj_last["strong_bird"]:
             signals.append("🐦 強力藍鳥")
-        elif is_normal_bird:
+        elif jj_last["normal_bird"]:
             signals.append("🐣 藍鳥")
-    else:
-        if pct_change >= 2.5 and vol_ratio >= 1.5 and close > ma5:
-            signals.append("🚀 強火箭")
-        if bias_pct >= 4.0 and pct_change > 1.0 and close > ma20:
-            signals.append("🐦 強力藍鳥")
-    if vol_ratio >= 2.0 and pct_change >= 3.0:
-        signals.append("🛸 動能飛碟")
-    if close > ma5 and ma5 > ma20 and pct_change > 0.5:
-        signals.append("⚡ 動能閃電")
-    if vol_ratio >= 2.2 and len(closes) >= 10 and high_p >= max(closes[-10:]):
-        signals.append("✈️ 噴射機")
-    if abs(bias_pct) <= 1.5 and vol_ratio <= 0.8:
-        signals.append("🥚 帶殼鳥")
+        if jj_last["restart_strong"]:
+            signals.append("🛸 強力再啟")
+        elif jj_last["restart_normal"]:
+            signals.append("⚡ 動能再啟")
+        if jj_last["reduce"]:
+            signals.append("💰 減碼")
+        if jj_last["exit"]:
+            signals.append("⚠️ 出清")
 
     # Real "5K突破" (5K_Strategy_Master_v5.pine entry-trigger only — see compute_5k_breakout()
     # docstring). Deliberately a NEW, separate signal rather than overwriting k5_state's
@@ -1094,8 +1035,8 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
     score = 0
     if "🚀 強火箭" in signals: score += 30
     if "🐦 強力藍鳥" in signals: score += 25
-    if "🛸 動能飛碟" in signals: score += 25
-    if "⚡ 動能閃電" in signals: score += 15
+    if "🛸 強力再啟" in signals: score += 25
+    if "⚡ 動能再啟" in signals: score += 15
     if macd_state in ["零軸上金叉", "MACD 水下金叉"]: score += 20
     if macd_hist_growing: score += 10
     if cci_signal and cci_signal.startswith("🔴"): score += 10
@@ -1115,7 +1056,10 @@ def compute_symbol_metrics(item, quote, bars, inst_history):
 
     return {
         **base, "bias_pct": bias_pct, "vol_ratio": vol_ratio, "grade": grade,
-        "signals": signals, "macd_state": macd_state, "macd_hist_growing": macd_hist_growing,
+        "signals": signals,
+        "jj_grade": jj_last["grade"] if jj_last else None,  # JJ強度 S/A/B/C (Pine strength_grade)
+        "jj_adx": round(jj_last["adx"], 1) if jj_last and jj_last.get("adx") is not None else None,
+        "macd_state": macd_state, "macd_hist_growing": macd_hist_growing,
         "cci_value": cci_value, "cci_signal": cci_signal, "k5_state": k5_state,
         "demark_state": demark_state, "demark_buy_state": demark_buy_state,
         "demark_sell_state": demark_sell_state, "volume_status": vol_status, "score": score,

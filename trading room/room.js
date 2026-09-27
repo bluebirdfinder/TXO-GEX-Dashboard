@@ -3354,8 +3354,8 @@ function runBirdQuantScreener() {
       const sigList = real.signals || [];
       const hasRocketS = sigList.includes('🚀 強火箭');
       const hasBirdS = sigList.includes('🐦 強力藍鳥');
-      const hasRestartS = sigList.includes('🛸 動能飛碟');
-      const hasRestartN = sigList.includes('⚡ 動能閃電');
+      const hasRestartS = sigList.includes('🛸 強力再啟'); // real JJ鬼爪V4.1 is_restart_strong (scripts/jj_ghost_claws.py)
+      const hasRestartN = sigList.includes('⚡ 動能再啟'); // real JJ鬼爪V4.1 is_restart_normal
       const hasRocketW = sigList.includes('✈️ 火箭'); // real JJ鬼爪V4.1 is_weak_rocket (build_screener_cache.py); NOT the heuristic '✈️ 噴射機'
       const hasBirdN = sigList.includes('🐣 藍鳥'); // real JJ鬼爪V4.1 is_normal_bird; NOT the heuristic '🥚 帶殼鳥'
       const isMacdFlip = real.macd_state === 'MACD 柱狀體翻紅';
