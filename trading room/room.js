@@ -1179,6 +1179,10 @@ function renderChartData() {
 
   // 6. Main Chart Overlays (GEX + Ribbons + VWAP + SMMA)
   renderMainOverlays(data);
+
+  // 7. Smart Money Concepts overlay (optional; computed by the private Worker)
+  smcCandleTimes = (data.candles || []).map(c => c.time);
+  renderSmcOverlay();
 }
 
 // 2026-09-16: ADX Pro V3 副圖的 MTF (多週期) 看板文字，原本是凍結的假字串
@@ -1186,6 +1190,120 @@ function renderChartData() {
 // 一個私有 Cloudflare Worker（不在這個公開 repo 裡，也不會傳到瀏覽器），這裡改成呼叫那支 API
 // 拿「已經算好的真實數字」回來，room.js 本身不再包含 ADX 公式——這是保護尋鳥自有指標演算法
 // 不被瀏覽器「檢視原始碼」看走的第一個試點，後續其他指標會陸續比照辦理。
+// ===== Smart Money Concepts overlay =====================================================================================
+// Concept & algorithm: "Smart Money Concepts [LuxAlgo]" © LuxAlgo, CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/).
+// The calculation runs in the owner's PRIVATE Cloudflare Worker (indicator=smc) — this page only draws the returned events
+// (personal, non-commercial use). Colors follow the Taiwan convention: bullish = red, bearish = green.
+const SMC_BULL = '#ff4757', SMC_BEAR = '#2ed573';
+let smcEnabled = false;
+try { smcEnabled = localStorage.getItem('txo_smc_on') === '1'; } catch (e) { /* storage may be blocked */ }
+let smcSeries = [];
+let smcSeq = 0;
+let smcCandleTimes = [];
+const _smcCache = {};
+
+function clearSmcOverlay() {
+  smcSeries.forEach(s => { try { mainChart.removeSeries(s); } catch (e) { /* already gone */ } });
+  smcSeries = [];
+}
+
+async function fetchSmcFromWorker(symbol, tf) {
+  const key = `${symbol}|${tf}`;
+  const hit = _smcCache[key];
+  if (hit && Date.now() - hit.at < 60000) return hit.value;
+  let value = null;
+  try {
+    const resp = await fetch(`${ADX_MTF_API}?indicator=smc&symbol=${encodeURIComponent(symbol)}&tf=${encodeURIComponent(tf)}`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const json = await resp.json();
+    if (json && Array.isArray(json.events)) value = json;
+  } catch (e) {
+    console.warn('⚠️ SMC Worker fetch failed (has the Worker been updated with indicator=smc?):', e);
+  }
+  _smcCache[key] = { at: Date.now(), value };
+  return value;
+}
+
+function _smcNearestTime(t) {
+  // nearest candle time on the chart (markers must sit on an existing data point)
+  const a = smcCandleTimes;
+  if (!a.length) return t;
+  let lo = 0, hi = a.length - 1;
+  while (lo < hi) { const mid = (lo + hi) >> 1; if (a[mid] < t) lo = mid + 1; else hi = mid; }
+  if (lo > 0 && Math.abs(a[lo - 1] - t) <= Math.abs(a[lo] - t)) lo -= 1;
+  return a[lo];
+}
+
+function _smcAddLine(points, color, style, width, markers) {
+  const pts = points.filter(p => p && p.time != null && p.value != null).sort((x, y) => x.time - y.time)
+    .filter((p, i, arr) => i === 0 || p.time !== arr[i - 1].time);
+  if (pts.length < 2) return;
+  const s = mainChart.addLineSeries({ color, lineWidth: width || 1, lineStyle: style || 0, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
+  s.setData(pts);
+  if (markers && markers.length) s.setMarkers(markers);
+  smcSeries.push(s);
+}
+
+async function renderSmcOverlay() {
+  clearSmcOverlay();
+  const mySeq = ++smcSeq;
+  const btn = document.getElementById('smc-toggle-btn');
+  if (btn) btn.classList.toggle('active', smcEnabled);
+  if (!smcEnabled || !mainChart || !smcCandleTimes.length) return;
+  const sym = currentActiveSymbol?.symbol || 'TXF';
+  const res = await fetchSmcFromWorker(sym, currentTf);
+  if (mySeq !== smcSeq) return;           // a newer render superseded this one
+  if (btn) btn.dataset.smcStatus = res ? 'ok' : 'no-data';
+  if (!res) return;
+  const lastT = smcCandleTimes[smcCandleTimes.length - 1];
+  const col = dir => (dir === 'bull' || dir === 1) ? SMC_BULL : SMC_BEAR;
+  const alpha = (hex, a) => `${hex}${Math.round(a * 255).toString(16).padStart(2, '0')}`;
+
+  // market structure: BOS / CHoCH (internal = dashed, swing = solid)
+  (res.events || []).forEach(e => {
+    const mid = _smcNearestTime(Math.round((e.t0 + e.t1) / 2));
+    _smcAddLine([{ time: e.t0, value: e.level }, { time: mid, value: e.level }, { time: e.t1, value: e.level }], col(e.dir), e.internal ? 2 : 0, 1,
+      [{ time: mid, position: e.dir === 'bull' ? 'aboveBar' : 'belowBar', color: col(e.dir), shape: 'square', text: e.kind }]);
+  });
+  // equal highs / lows
+  (res.eq || []).forEach(q => {
+    const c = q.type === 'EQH' ? SMC_BEAR : SMC_BULL;
+    _smcAddLine([{ time: q.t0, value: q.level0 }, { time: q.t1, value: q.level1 }], c, 1, 1,
+      [{ time: q.t1, position: q.type === 'EQH' ? 'aboveBar' : 'belowBar', color: c, shape: 'circle', text: q.type }]);
+  });
+  // order blocks: top & bottom edge from the block's bar to the latest bar
+  const drawObs = (list, label, a) => (list || []).forEach(ob => {
+    const bull = ob.bias === 1;
+    const c = alpha(col(bull ? 'bull' : 'bear'), a);
+    const t0 = _smcNearestTime(ob.time);
+    _smcAddLine([{ time: t0, value: ob.top }, { time: lastT, value: ob.top }], c, 0, 1,
+      [{ time: t0, position: bull ? 'belowBar' : 'aboveBar', color: col(bull ? 'bull' : 'bear'), shape: 'arrowUp', text: label }]);
+    _smcAddLine([{ time: t0, value: ob.bottom }, { time: lastT, value: ob.bottom }], c, 0, 1);
+  });
+  drawObs(res.internal_order_blocks, 'iOB', 0.75);
+  drawObs(res.swing_order_blocks, 'OB', 1);
+  // fair value gaps
+  (res.fvg || []).forEach(g => {
+    const c = alpha(g.bias === 1 ? SMC_BULL : SMC_BEAR, 0.6);
+    _smcAddLine([{ time: g.t0, value: g.top }, { time: Math.max(g.t1, g.t0 + 1), value: g.top }], c, 1, 1);
+    _smcAddLine([{ time: g.t0, value: g.bottom }, { time: Math.max(g.t1, g.t0 + 1), value: g.bottom }], c, 1, 1);
+  });
+  // strong / weak high & low
+  if (res.trailing) {
+    const tr = res.trailing;
+    _smcAddLine([{ time: _smcNearestTime(tr.top_time), value: tr.top }, { time: lastT, value: tr.top }], SMC_BEAR, 0, 1,
+      [{ time: lastT, position: 'aboveBar', color: SMC_BEAR, shape: 'square', text: tr.top_label }]);
+    _smcAddLine([{ time: _smcNearestTime(tr.bottom_time), value: tr.bottom }, { time: lastT, value: tr.bottom }], SMC_BULL, 0, 1,
+      [{ time: lastT, position: 'belowBar', color: SMC_BULL, shape: 'square', text: tr.bottom_label }]);
+  }
+}
+
+function toggleSmcOverlay() {
+  smcEnabled = !smcEnabled;
+  try { localStorage.setItem('txo_smc_on', smcEnabled ? '1' : '0'); } catch (e) { /* ignore */ }
+  renderSmcOverlay();
+}
+
 const ADX_MTF_API = 'https://bluebird-indicators.bluebird-finder-tw.workers.dev/';
 
 // 2026-09-17: 左側「🦅 動能鳥指標 即時戰情」HUD 卡片（系統模式/監控標的/趨勢乖離/量能指標/
@@ -2122,6 +2240,9 @@ function updateMacroRiskHUD(macroData, liveTick) {
  * 5. Event Listeners & Modals
  */
 function setupEventListeners() {
+  const smcBtn = document.getElementById('smc-toggle-btn');
+  if (smcBtn) { smcBtn.classList.toggle('active', smcEnabled); smcBtn.addEventListener('click', toggleSmcOverlay); }
+
   // Timeframe Buttons (10 TFs)
   const tfBtns = document.querySelectorAll('.btn-tf');
   tfBtns.forEach(btn => {
