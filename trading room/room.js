@@ -1208,12 +1208,14 @@ function clearSmcOverlay() {
 }
 
 async function fetchSmcFromWorker(symbol, tf) {
-  const key = `${symbol}|${tf}`;
+  // the indicator-library checkbox 'FVG / Order Blocks (SMC)' adds fair value gaps and swing order blocks
+  const extra = (typeof indicatorConfig !== 'undefined' && indicatorConfig.fvg) ? '&fvg=1&swingob=1' : '';
+  const key = `${symbol}|${tf}|${extra}`;
   const hit = _smcCache[key];
   if (hit && Date.now() - hit.at < 60000) return hit.value;
   let value = null;
   try {
-    const resp = await fetch(`${ADX_MTF_API}?indicator=smc&symbol=${encodeURIComponent(symbol)}&tf=${encodeURIComponent(tf)}`);
+    const resp = await fetch(`${ADX_MTF_API}?indicator=smc&symbol=${encodeURIComponent(symbol)}&tf=${encodeURIComponent(tf)}${extra}`);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const json = await resp.json();
     if (json && Array.isArray(json.events)) value = json;
@@ -1249,7 +1251,8 @@ async function renderSmcOverlay() {
   const mySeq = ++smcSeq;
   const btn = document.getElementById('smc-toggle-btn');
   if (btn) btn.classList.toggle('active', smcEnabled);
-  if (!smcEnabled || !mainChart || !smcCandleTimes.length) return;
+  const smcWanted = smcEnabled || (typeof indicatorConfig !== 'undefined' && indicatorConfig.fvg);
+  if (!smcWanted || !mainChart || !smcCandleTimes.length) return;
   const sym = currentActiveSymbol?.symbol || 'TXF';
   const res = await fetchSmcFromWorker(sym, currentTf);
   if (mySeq !== smcSeq) return;           // a newer render superseded this one
