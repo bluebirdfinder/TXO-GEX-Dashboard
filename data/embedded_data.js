@@ -2,8 +2,8 @@ window.GEX_EMBEDDED_DATA = {
   "date": "2026-09-27",
   "chip_base_date": "2026-09-24",
   "engine_version": "v64.10",
-  "session_type": "NIGHT",
-  "session_name": "🌙 夜盤動態/收盤校正",
+  "session_type": "DAY",
+  "session_name": "☀️ 日盤即時動態/結算籌碼",
   "session_shift": {
     "txf_shift": -167.0,
     "call_wall_shift": 0.0,
@@ -19,7 +19,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47230.2,
     "day_total_vex": 82.45
   },
-  "last_updated_time": "2026-09-27 02:46",
+  "last_updated_time": "2026-09-27 11:02",
   "spot_price": 48024.6,
   "spot_change": -132.69,
   "spot_change_pct": -0.28,
@@ -28,7 +28,7 @@ window.GEX_EMBEDDED_DATA = {
   "two_change_pct": -0.19,
   "day_txf_price": 48123.0,
   "night_txf_price": 47956.0,
-  "txf_price": 47956.0,
+  "txf_price": 48123.0,
   "zero_gamma_level": 47137.8,
   "gex_plus_flip": 47137.7,
   "call_wall_strike": 48000.0,
@@ -23727,11 +23727,11 @@ window.GEX_EMBEDDED_DATA = {
     "tag": "⚖️ 中性觀望 / 微幅調整",
     "foreign_net_oi": -77031,
     "daily_change": -947,
-    "notional_billion": 90.8,
-    "description": "外資單日微幅變動 -947 口（約 90.8 億 TWD），法人維持既有防守姿態。"
+    "notional_billion": 91.1,
+    "description": "外資單日微幅變動 -947 口（約 91.1 億 TWD），法人維持既有防守姿態。"
   },
   "executive_digest": {
-    "futures_summary": "📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：前五大淨部位 <code>+19,625 口</code>、前十大 <code>+5,941 口</code>，特定法人淨部位 <code>+19,625 口</code>。外資台指期未平倉空單 <code>-77,031 口</code>（單日變動 <code>-947 口</code>，約合 <code>90.8 億 TWD</code> 契約金額）。⚖️ 中性觀望 / 微幅調整。",
+    "futures_summary": "📈 <strong>期貨籌碼動向 (Futures Audit)</strong>：前五大淨部位 <code>+19,625 口</code>、前十大 <code>+5,941 口</code>，特定法人淨部位 <code>+19,625 口</code>。外資台指期未平倉空單 <code>-77,031 口</code>（單日變動 <code>-947 口</code>，約合 <code>91.1 億 TWD</code> 契約金額）。⚖️ 中性觀望 / 微幅調整。",
     "cash_summary": "💰 <strong>現貨買賣超動向 (Cash Market Audit)</strong>：三大法人現貨買賣超數據暫時無法取得。",
     "options_structure": "🎯 <strong>選擇權莊家結構 (Options Matrix)</strong>：外資 Call 買權 <code>-1.80 億</code> 與 Put 賣權 <code>+0.26 億</code>；投信買權 <code>-5.05 億</code>。全場 <strong>Call Wall 天花板</strong> 鎖在 <code>48,000.0 點</code>，<strong>Put Wall 地板</strong> 固守於 <code>47,500.0 點</code>。",
     "sentiment_audit": "📊 <strong>籌碼體質與散戶比率 (Sentiment Audit)</strong>：小台與微台散戶指標維繫避險運作。全市場 P/C Ratio 站在 <code>85.3%</code> (🟢 偏空看壓)，莊家下檔防守支撐力道尚存。",
@@ -23935,7 +23935,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 658.68,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-27 02:46",
+    "last_updated": "2026-09-27 11:02",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
