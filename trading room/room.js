@@ -428,7 +428,7 @@ function handleChartResize() {
 // difArr/deaArr是主軸MACD(12,26,9)快慢線——不管本地簡化版還是Worker真實版，主軸公式完全一樣
 // （雙層配色只影響「顏色」，不影響主軸dif/dea本身），所以🚀不需要特別分真假版本。
 // histColorAt(t, idx) 回傳當下這根K棒的柱體顏色字串（或null），只有🛸需要真的判斷是不是
-// '#ff3b30'（JJ雙層配色裡「強多加速」的純紅）——本地簡化版沒有真配色可查，呼叫端傳一個近似的
+// '#ff3b30'（動能鳥雙層配色裡「強多加速」的純紅）——本地簡化版沒有真配色可查，呼叫端傳一個近似的
 // 判斷式進來，Worker真資料回來後傳真正的顏色進來，兩次呼叫共用同一份邏輯，差別只在這個參數。
 function computeMomentumBirdMarkers(candles, opens, closes, highs, lows, volumes, volMa5, ma7, difArr, deaArr, cciArr, histColorAt) {
   const markers = [];
@@ -781,7 +781,7 @@ function generateIndicatorsData(tf) {
 
   // --- Real TD Sequential DeMark 9★ / 13★ Setup & Multi-Factor Filtered Momentum Birds ---
   // 這裡的🚀/🐦/🛸/💰主圖箭頭跟Sub-Chart 2/3的「戰情雙層MACD」是兩套不同的既有功能——
-  // 這組只需要標準單層MACD(12,26,9)判斷方向，不是JJ的雙層/四色配色那套需要保護的獨門邏輯，
+  // 這組只需要標準單層MACD(12,26,9)判斷方向，不是動能鳥的雙層/四色配色那套需要保護的獨門邏輯，
   // 標準MACD公式本身是1979年就公開的教科書公式，不算IP，所以在這裡留一份最簡單版本純粹是為了
   // 讓這個既有箭頭功能不因為雙層版搬去Worker而跟著壞掉，跟Sub-Chart 2/3看到的真雙層MACD無關。
   const bareEma = (src, period) => {
@@ -799,7 +799,7 @@ function generateIndicatorsData(tf) {
   const mainDif = bareEma12.map((v, idx) => v - bareEma26[idx]);
   const mainDea = bareEma(mainDif, 9);
 
-  // 同理：這裡也只需要標準CCI(20)判斷超賣區，不是JJ_CCI的±100/±200穿越+MACD濾網那套。
+  // 同理：這裡也只需要標準CCI(20)判斷超賣區，不是波段CCI的±100/±200穿越+MACD濾網那套。
   const bareCci = new Array(count).fill(0);
   for (let i = 19; i < count; i++) {
     let sumTp = 0;
@@ -1312,15 +1312,15 @@ const ADX_MTF_API = 'https://bluebird-indicators.bluebird-finder-tw.workers.dev/
 // 2026-09-17: 左側「🦅 動能鳥指標 即時戰情」HUD 卡片（系統模式/監控標的/趨勢乖離/量能指標/
 // 波段動能/趨勢排列/綜合戰力）從建立以來就是純靜態文字，room.js 從未寫入過這幾個欄位
 // （left-hud-bias/mfi/adx/trend/strength），跟 v63.0 修過的「GEX造市商五大防線」是同一種
-// 「有UI但沒接資料」問題。這幾個欄位剛好一對一對應 JJ 鬼爪 V4.1 Worker 回傳的
+// 「有UI但沒接資料」問題。這幾個欄位剛好一對一對應 動能鳥 Worker 回傳的
 // bias88/mfi/adx/is_bull_trend/strength_grade，現在接上真實數據。
 //
 // ⚠️ 尚未對照真實 TradingView 圖表逐根K棒驗證過（見 worker.js 註解），is_holding/
 // reduce_count 這類需要很多根K棒才會顯現的狀態，暖機起點可能跟 TradingView 實際載入的K棒
 // 數不同而有落差。卡片標題會標註「(未驗證)」，正式核對過後再拿掉這個標籤。
-const JJ_GHOST_CLAWS_SUPPORTED_SYMBOLS = new Set(['TXF', 'TAIEX', 'OTC', 'CDF', 'MTX', 'MXF', 'US10Y', 'DXY', 'CL', '2330', '2454', '2317']);
+const MOMENTUM_BIRD_SUPPORTED_SYMBOLS = new Set(['TXF', 'TAIEX', 'OTC', 'CDF', 'MTX', 'MXF', 'US10Y', 'DXY', 'CL', '2330', '2454', '2317']);
 
-async function updateJjGhostClawsHud(symObj) {
+async function updateMomentumBirdHud(symObj) {
   const modeEl = document.getElementById('left-hud-mode');
   const assetEl = document.getElementById('left-hud-asset');
   const biasEl = document.getElementById('left-hud-bias');
@@ -1330,12 +1330,13 @@ async function updateJjGhostClawsHud(symObj) {
   const strengthEl = document.getElementById('left-hud-strength');
   if (!modeEl || !assetEl || !biasEl || !mfiEl || !adxEl || !trendEl || !strengthEl) return;
 
-  const symbol = (symObj && JJ_GHOST_CLAWS_SUPPORTED_SYMBOLS.has(symObj.symbol)) ? symObj.symbol : 'TXF';
-  modeEl.innerText = 'Auto (JJ V4.1)';
+  const symbol = (symObj && MOMENTUM_BIRD_SUPPORTED_SYMBOLS.has(symObj.symbol)) ? symObj.symbol : 'TXF';
+  modeEl.innerText = 'Auto (動能鳥)';
   assetEl.innerText = `${symbol} (1D)`;
 
   try {
-    const resp = await fetch(`${ADX_MTF_API}?indicator=jj&symbol=${symbol}&tf=1D`);
+    let resp = await fetch(`${ADX_MTF_API}?indicator=bird&symbol=${symbol}&tf=1D`);
+    if (!resp.ok) resp = await fetch(`${ADX_MTF_API}?indicator=jj&symbol=${symbol}&tf=1D`);  // TEMP fallback until the Worker is redeployed with the 'bird' route
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const j = await resp.json();
 
@@ -1356,7 +1357,7 @@ async function updateJjGhostClawsHud(symObj) {
     strengthEl.innerText = gradeText;
     strengthEl.style.color = gradeColor;
   } catch (e) {
-    console.warn('⚠️ JJ鬼爪 HUD fetch failed:', e);
+    console.warn('⚠️ 動能鳥 HUD fetch failed:', e);
     biasEl.innerText = '—';
     mfiEl.innerText = '—';
     adxEl.innerText = '—';
@@ -1367,7 +1368,7 @@ async function updateJjGhostClawsHud(symObj) {
 }
 
 // 2026-09-24: 戰情雙層MACD/波段拐點CCI/AO 搬去同一個 bluebird-indicators Worker
-// （indicator=momentum）——跟 ADX/JJ鬼爪同一套模式，同一個symbol+tf在短時間內重複render
+// （indicator=momentum）——跟 ADX/動能鳥同一套模式，同一個symbol+tf在短時間內重複render
 // （例如切換分頁再切回來）不用重複打API，用這個簡單快取存最近一次的in-flight/已完成promise。
 let _momentumCacheKey = null;
 let _momentumCachePromise = null;
@@ -1940,7 +1941,7 @@ function updateLegendOverlay(param) {
 function renderLeftPanel() {
   if (!gexData) return;
 
-  updateJjGhostClawsHud(currentActiveSymbol); // async — fills in real bias/mfi/adx/trend/grade once the API responds
+  updateMomentumBirdHud(currentActiveSymbol); // async — fills in real bias/mfi/adx/trend/grade once the API responds
 
   const isIndexFutures = currentActiveSymbol && ['TXF', 'MXF', 'TMF', 'TWN'].includes(currentActiveSymbol.symbol);
   const baseP = realPriceFor(currentActiveSymbol?.symbol || 'TXF');  // null => shown as '—', never a stale constant
@@ -2370,7 +2371,7 @@ function setupEventListeners() {
   if (applySettingsBtn && modal) {
     applySettingsBtn.addEventListener('click', () => {
       indicatorConfig.gex = document.getElementById('chk-gex').checked;
-      indicatorConfig.ribbons = document.getElementById('chk-claws').checked;
+      indicatorConfig.ribbons = document.getElementById('chk-ribbons').checked;
       indicatorConfig.demark = document.getElementById('chk-demark').checked;
       indicatorConfig.smma = document.getElementById('chk-smma').checked;
       indicatorConfig.smmaLen = parseInt(document.getElementById('param-smma-len').value) || 200;
@@ -3478,15 +3479,14 @@ function runBirdQuantScreener() {
       const sigList = real.signals || [];
       const hasRocketS = sigList.includes('🚀 強火箭');
       const hasBirdS = sigList.includes('🐦 強力藍鳥');
-      const hasRestartS = sigList.includes('🛸 強力再啟'); // real JJ鬼爪V4.1 is_restart_strong (scripts/jj_ghost_claws.py)
-      const hasRestartN = sigList.includes('⚡ 動能再啟'); // real JJ鬼爪V4.1 is_restart_normal
-      const hasRocketW = sigList.includes('✈️ 火箭'); // real JJ鬼爪V4.1 is_weak_rocket (build_screener_cache.py); NOT the heuristic '✈️ 噴射機'
-      const hasBirdN = sigList.includes('🐣 藍鳥'); // real JJ鬼爪V4.1 is_normal_bird; NOT the heuristic '🥚 帶殼鳥'
+      const hasRestartS = sigList.includes('🛸 強力再啟'); // real 動能鳥 is_restart_strong
+      const hasRestartN = sigList.includes('⚡ 動能再啟'); // real 動能鳥 is_restart_normal
+      const hasRocketW = sigList.includes('✈️ 火箭'); // real 動能鳥 is_weak_rocket; NOT the heuristic '✈️ 噴射機'
+      const hasBirdN = sigList.includes('🐣 藍鳥'); // real 動能鳥 is_normal_bird; NOT the heuristic '🥚 帶殼鳥'
       const isMacdFlip = real.macd_state === 'MACD 柱狀體翻紅';
       const isMacdGold = real.macd_state === '零軸上金叉' || real.macd_state === 'MACD 水下金叉';
-      // Real JJ_MACD/JJ_CCI dual-layer signals (scripts/build_screener_cache.py's
-      // compute_jj_macd_and_cci(), ported from the user's own JJ_MACD_Sub.pine /
-      // JJ_CCI_Sub.pine) — isMacdGrow/hasCciExtreme replace two checkboxes that existed in
+      // Real dual-layer MACD / swing-CCI signals (scripts/build_screener_cache.py's
+      // the screener back end, ported from the user's own Pine) — isMacdGrow/hasCciExtreme replace two checkboxes that existed in
       // this filter panel but were never wired to any real field before.
       const isMacdGrow = !!real.macd_hist_growing;
       const hasCciExtreme = !!real.cci_signal;
@@ -3558,7 +3558,7 @@ function runBirdQuantScreener() {
       const col = r.changePct >= 0 ? 'var(--call-color)' : 'var(--put-color)';
       const gradeClass = r.grade.includes('S') ? 'strength-badge-s' : 'signal-badge-chip';
 
-      // Real JJ_MACD/JJ_CCI state for this cell — previously this column showed a fake
+      // Real dual-layer MACD / swing-CCI state for this cell — previously this column showed a fake
       // "🟢 紅柱擴張" / "🟡 震盪整理" derived purely from today's price direction, unrelated
       // to any MACD/CCI data at all. cci_signal (rarer, more actionable) takes priority over
       // the MACD color state when both are present.
