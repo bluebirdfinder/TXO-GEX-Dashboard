@@ -19,7 +19,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47232.4,
     "day_total_vex": 82.81
   },
-  "last_updated_time": "2026-09-28 07:44",
+  "last_updated_time": "2026-09-28 07:53",
   "spot_price": 48024.6,
   "spot_change": -132.69,
   "spot_change_pct": -0.28,
@@ -23935,13 +23935,13 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 726.08,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-28 07:44",
+    "last_updated": "2026-09-28 07:53",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
         "code": "semicon_tech",
         "share_pct": 38.0,
-        "change_pct": "+0.7%",
+        "change_pct": "+0.8%",
         "status": "📈 買盤點火吸金",
         "color": "var(--call-color)",
         "top_stocks": [
@@ -24668,12 +24668,12 @@ window.GEX_EMBEDDED_DATA = {
       "liquidity": "中",
       "spot_price": 2475.0,
       "spot_volume": 14557,
-      "fut_price": 2408.0,
+      "fut_price": 2505.0,
       "fut_volume": 19061,
-      "basis": -67.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.86,
-      "point_contrib": -175.6,
+      "basis": 30.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": 0.4,
+      "point_contrib": 81.7,
       "volume": 19061,
       "ex_date": "09/16",
       "ex_dividend": 7.00000137,
@@ -24702,7 +24702,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3037F",
