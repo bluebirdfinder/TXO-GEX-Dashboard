@@ -72,6 +72,13 @@
 - 假日／場次切換不需重啟；看門狗每天 08:30、14:55 重新登入，交易時段 120 秒沒報價也會重新登入。
 - 分支 `claude/cvd-real-tick` 內含 CVD 真實化（尚未發版，待夜盤驗證）。
 
+## 1.8 通行碼與 SMC 決定（2026-09-27）
+
+- **通行碼**：已依使用者決定只從 README／STATUS 文字移除（碼不換）。**碼仍寫在公開程式**：`app.js`（`VALID_PASSCODE`）、`scripts/encrypt.py`、`scripts/fetch_and_calc_vision.py`，且頁面預設自動通關，所以這不是實質保護，僅文件層面；git 歷史也仍有舊文字。
+- **SMC（LuxAlgo，CC BY-NC-SA 4.0）**：使用者確認純個人／非商業，決定**放私有 Worker、程式碼不進公開 repo**、UI 與說明標示 LuxAlgo 出處；顏色用台灣習慣（多方紅、空方綠）。私有程式碼放在使用者電腦 `C:\Users\mingi\txo-private\smc\`（不在 git，需自行備份）。
+- 富邦金鑰：使用者只在家裡網路開過即時伺服器，決定不換（舊版伺服器曾對區網提供 `.env`，已於 v64.12 修補）。
+- CVD：分支 `claude/cvd-real-tick` 待週二 9/29 15:00 後夜盤與使用者一起驗證再發版。
+
 ## 2. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除／順手 commit）
 
 > ⚠️ v64.5 推上 main 後，共用資料夾內舊視窗的 `scripts/build_screener_cache.py` 未 commit 版本已被 main 上更完整的版本取代（含失敗重試、過期報價修正）；`trading room/room.js` 的 CVD 修改與 main 上同檔（弱火箭接線、版本字串）將在未來 `git pull`/merge 時出現衝突，須由使用者決定處理方式，AI 不要自行覆蓋。
