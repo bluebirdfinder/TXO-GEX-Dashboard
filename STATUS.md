@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.12)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.13)
 
-**當前版本**：`v64.12` (2026-09-27 即時伺服器資安修補 ✕ 總經即時行情 ✕ 不再送假價 ✕ 看門狗)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.12)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.12)
+**當前版本**：`v64.13` (2026-09-27 即時報價台指期誤取現貨指數修正；前版 v64.12 即時伺服器資安修補)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.13)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.13)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,14 @@
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.13 核心更新亮點
+
+- **修正即時伺服器備援行情把「臺指現貨」當成台指期報價**（只在沒有富邦即時資料時發生），改取近月期貨合約，並與期交所核對一致。
+
+詳細請見 [HISTORY.md](HISTORY.md) v64.13 條目。
 
 ---
 
