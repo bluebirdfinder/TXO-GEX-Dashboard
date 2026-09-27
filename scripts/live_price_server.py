@@ -249,6 +249,28 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 self.wfile.flush()
                 return
 
+            # API Endpoint for real tick-rule CVD (Cumulative Volume Delta) — ?symbol=TXFA4
+            if parsed.path.startswith('/api/cvd'):
+                from scripts.fubon_api_provider import fubon_provider
+                qs = urllib.parse.parse_qs(parsed.query)
+                symbol = (qs.get('symbol', [None])[0]) or fubon_provider.txf_symbol
+                series = fubon_provider.get_cvd_series(symbol)
+                res_data = {
+                    "symbol": symbol,
+                    "series": series,
+                    "trades_subscribed": symbol in fubon_provider._trades_subscribed,
+                    "ts": time.time()
+                }
+                body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(body)))
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(body)
+                self.wfile.flush()
+                return
+
             # Serve static Dashboard files
             rel_path = parsed.path.lstrip('/')
             if not rel_path or rel_path == '':
