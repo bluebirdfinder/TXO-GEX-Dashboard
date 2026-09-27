@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.15)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.16)
 
-**當前版本**：`v64.15` (2026-09-27 戰情室 SMC 開關（畫圖端；演算法在私有 Worker）)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.15)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.15)
+**當前版本**：`v64.16` (2026-09-27 指標庫 FVG/Order Blocks 勾選框接上 SMC)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.16)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.16)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：（不在文件中公開；不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,15 @@
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.16 核心更新亮點
+
+- 指標庫「FVG／Order Blocks (SMC)」勾選框原本沒接任何繪圖，現接上 SMC 覆蓋層（勾選＝多顯示 FVG 與波段訂單塊）。
+- Worker（`bluebird-indicators`）原始碼位置與 `indicator=smc` 路由已就緒（私有資料夾，待使用者部署）。
+
+詳細請見 [HISTORY.md](HISTORY.md) v64.16 條目。
 
 ---
 

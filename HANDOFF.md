@@ -82,7 +82,7 @@
 ## 1.9 SMC 已實作（2026-09-27，v64.15）
 
 - 演算法（Python 參考版＋Worker 用 JS 版）與部署說明在 `C:\Users\mingi\txo-private\smc\`（**不在 git，勿放進公開 repo**；`README_SMC.md` 有部署到 `bluebird-indicators` Worker 的步驟與 TradingView 核對清單）。前端「🧠 SMC」按鈕已上線，**Worker 尚未加入 `indicator=smc` 前不會畫圖**（需使用者貼上並部署）。
-- 待使用者：①部署 Worker；②用 TradingView 核對 `README_SMC.md` 的事件清單。
+- 待使用者：①把 `C:\Users\mingi\OneDrive\文件\TradingView 指標\我寫的指標\ADX MTF 後端運算 (Cloudflare Worker)\worker.js` 全文貼到 Cloudflare 並 Deploy（已含 `indicator=smc`，原檔備份 `worker.js.bak_before_smc_20260927`）；②用 TradingView 核對 `README_SMC.md` 的事件清單。
 
 ## 2. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除／順手 commit）
 

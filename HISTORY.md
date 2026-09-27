@@ -9,6 +9,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v64.16`** | 2026-09-27 | 指標庫FVG/OrderBlocks勾選框接上SMC（原本沒畫任何東西） |
 | **`v64.15`** | 2026-09-27 | 戰情室SMC開關（畫圖端；演算法在私有Worker） |
 | **`v64.14`** | 2026-09-27 | 選股雷達JJ鬼爪8訊號改用Pine忠實移植（移除4個近似訊號） |
 | **`v64.13`** | 2026-09-27 | 即時報價台指期誤取現貨指數修正 |
@@ -42,6 +43,13 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🛠️ v64.16 指標庫FVG/OrderBlocks勾選框接上SMC（原本沒畫任何東西） (2026-09-27)
+
+- **背景**：使用者問「全部技術指標都弄到戰情室了嗎？」與「bluebird-indicators 的完整程式碼放哪裡」。盤點後發現指標庫的「📦 FVG 價格失衡 Order Blocks (SMC 結構)」勾選框只記錄設定（`indicatorConfig.fvg`），**從來沒有任何繪圖程式**。
+- **修正**：勾選框接上 v64.15 的 SMC 覆蓋層——勾選時向 Worker 多要 `fvg=1&swingob=1`（公平價值缺口＋波段訂單塊），即使「🧠 SMC」按鈕未開也會顯示。**驗證**：本機模擬 Worker 實測請求參數（勾選帶參數、不勾不帶）、繪圖、無主控台錯誤。
+- **📁 Worker 原始碼位置**：`bluebird-indicators` 的完整程式在使用者電腦 `C:\Users\mingi\OneDrive\文件\TradingView 指標\我寫的指標\ADX MTF 後端運算 (Cloudflare Worker)\worker.js`（該資料夾自己的 README 明訂**不可放進公開 repo**）。已在該檔加入 `indicator=smc` 路由（原檔備份為 `worker.js.bak_before_smc_20260927`）。合併後在本機以假 `fetch` 餵真實 K 線測試：adx／jj／momentum 三條既有路由對舊版 **327 個請求輸出完全相同**；smc 路由與 Python 參考版 **91 條序列完全相同**；錯誤路徑（未知商品、K 棒不足）回 404。SMC 程式包在獨立作用域內，不會與 Worker 既有名稱衝突。**尚需使用者：把該 `worker.js` 全文貼到 Cloudflare 線上編輯器並 Deploy。**
+- **📋 盤點：戰情室指標現況**（誠實列出）：真實且在 Worker——ADX Pro V3、雙層 MACD、波段 CCI、AO；GEX 五大防線、大戶散戶動能為真實資料；本地 JS 標準公式——SMMA、Supertrend、VWAP、VRVP、Parabolic SAR、神奇九轉 DeMark（公開 repo 可見原始碼）；**動能鳥主圖標記只有 4 個訊號且部分為本地簡化，完整 JJ鬼爪 8 訊號逐根標記尚未畫在戰情室（Worker `indicator=jj` 目前只回傳最後一根狀態給 HUD）**；**CVD 主線仍是舊的 K 棒近似公式**（真實逐筆版在分支 `claude/cvd-real-tick`，等 9/29 夜盤驗證）；DMI 為本地實作；5K 戰法只在選股雷達。
 
 ### 🆕 v64.15 戰情室SMC開關（畫圖端；演算法在私有Worker） (2026-09-27)
 

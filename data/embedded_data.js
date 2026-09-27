@@ -1,7 +1,7 @@
 window.GEX_EMBEDDED_DATA = {
   "date": "2026-09-27",
   "chip_base_date": "2026-09-24",
-  "engine_version": "v64.15",
+  "engine_version": "v64.16",
   "session_type": "DAY",
   "session_name": "☀️ 日盤即時動態/結算籌碼",
   "session_shift": {
@@ -19,7 +19,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47230.2,
     "day_total_vex": 82.45
   },
-  "last_updated_time": "2026-09-27 13:06",
+  "last_updated_time": "2026-09-27 13:24",
   "spot_price": 48024.6,
   "spot_change": -132.69,
   "spot_change_pct": -0.28,
@@ -23935,7 +23935,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 658.68,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-27 13:06",
+    "last_updated": "2026-09-27 13:24",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -24370,7 +24370,7 @@ window.GEX_EMBEDDED_DATA = {
       "ex_date": "10/12",
       "ex_dividend": 5.8,
       "ex_type": "除息",
-      "lt_data_unavailable": true,
+      "lt_data_unavailable": false,
       "spot_data_unavailable": true,
       "it_adoption_ratio": null,
       "it_consecutive_buy_days": 0,
