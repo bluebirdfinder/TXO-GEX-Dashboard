@@ -662,7 +662,7 @@
 | **圖表引擎** | Plotly.js v2.27.0 (雙方向橫條/豎條 + 樣條 S 曲線) |
 | **資料與視覺引擎** | Python 3.12, BeautifulSoup4, Pandas |
 | **即時報價網關** | Python WebSockets / Asyncio |
-| **加密與權限** | SHA-256 XOR 加密（通行碼：GEX2026） |
+| **加密與權限** | SHA-256 XOR 加密（通行碼不在文件中公開） |
 | **自動化部署** | GitHub Actions Cron（每日 14:00 日盤定案 & 05:00 夜盤定案） |
 
 ---
@@ -674,7 +674,7 @@ pip install beautifulsoup4 requests websockets
 python scripts/fetch_and_calc_vision.py
 python -c "import json; data=json.load(open('data/gex_data.json',encoding='utf-8')); open('data/embedded_data.js','w',encoding='utf-8').write('window.GEX_EMBEDDED_DATA = ' + json.dumps(data, ensure_ascii=False) + ';')"
 python -m http.server 8080 --bind 127.0.0.1
-# 瀏覽器：http://localhost:8080/index.html （通行碼：GEX2026）
+# 瀏覽器：http://localhost:8080/index.html
 ```
 
 ---

@@ -4,7 +4,7 @@
 **資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.14)
 **即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.14)
 **系統狀態**：`✅ 100% 運作正常`
-**網頁通行碼**：`GEX2026`（不區分大小寫，預設自動通關解鎖）
+**網頁通行碼**：（不在文件中公開；不區分大小寫，預設自動通關解鎖）
 
 ---
 
@@ -485,7 +485,7 @@
 
 ### 🔑 2. 通行碼防護遮罩自動通關與作用域修復 (Passcode Modal Auto-Bypass & Scope Hotfix)
 - **休市作用域修復**：修正 `app.js` 在市場休市時段 `isMarketClosed` 的 `liveZg` 作用域問題。
-- **預設通關優化**：優化 `passcode-modal` 預設通行碼 (`GEX2026`) 自動通關邏輯，徹底解決開頁出現全螢幕黑色遮罩擋住內容之問題。
+- **預設通關優化**：優化 `passcode-modal` 預設通行碼自動通關邏輯，徹底解決開頁出現全螢幕黑色遮罩擋住內容之問題。
 
 ### ⏰ 1. GitHub Actions 離峰 Cron 排程錯開 (Cron Schedule Shift)
 - **避開全球整點塞車**：將 `.github/workflows/auto_update.yml` 中的自動觸發時間由原整點（如 `:00` / `:30`）調為離峰時間（如 `:03` / `:33`），徹底解決 GitHub 官方伺服器整點排隊延遲問題。
