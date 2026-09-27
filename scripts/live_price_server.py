@@ -27,17 +27,17 @@ except Exception:
 
 PORT = 8000
 SSL_CTX = ssl.create_default_context()
-SSL_CTX.check_hostname = False
-SSL_CTX.verify_mode = ssl.CERT_NONE
+# Certificate chain + hostname verification ON; only Python 3.13's strict X.509 flag is relaxed (TWSE/TPEx certs lack a Subject Key Identifier).
+SSL_CTX.verify_flags &= ~ssl.VERIFY_X509_STRICT
 
 class LivePriceState:
     def __init__(self):
-        self.indices = {
-            "txf": {"price": 47207.0, "change": 252.0, "pct": 0.54, "provider": "FUBON", "name": "台指期 (TXF)"},
-            "taiex": {"price": 24530.8, "change": 185.2, "pct": 0.76, "provider": "TWSE", "name": "加權指數 (TAIEX)"},
-            "otc": {"price": 278.45, "change": 1.85, "pct": 0.67, "provider": "TPEx", "name": "櫃買指數 (OTC)"}
-        }
-        self.active_provider = "FUBON"
+        # No stand-in prices: an index appears here only after a real quote arrived (AGENTS.md redline #6).
+        self.indices = {}
+        # Macro quotes (Yahoo, fetched server-side so the browser needs no CORS proxy): {"dxy": 101.03, "us10y": 5.18, "cl": 92.2, "vix": ...}
+        self.macro = {}
+        self.macro_ts = 0.0
+        self.active_provider = "NONE"  # set by update_index() from the source that actually delivered a quote
         self.last_update = time.time()
 
     def update_index(self, key, price, change=0.0, pct=0.0, provider="FUBON"):
@@ -49,9 +49,35 @@ class LivePriceState:
                 "provider": provider,
                 "ts": time.time()
             }
+            self.active_provider = "FUBON" if str(provider).upper() == "FUBON" else "OFFICIAL"
             self.last_update = time.time()
 
 state = LivePriceState()
+
+MACRO_TICKERS = {"dxy": "DX-Y.NYB", "us10y": "%5ETNX", "cl": "CL=F", "vix": "%5EVIX", "vvix": "%5EVVIX"}
+
+
+def macro_polling_worker(interval=30):
+    """Real DXY / US10Y / CL / VIX / VVIX from Yahoo every `interval` seconds (Fubon Neo has TAIFEX products only). If a
+    fetch fails the key is simply absent and the room keeps showing the cloud-built snapshot (fallback)."""
+    while True:
+        got = {}
+        for key, tk in MACRO_TICKERS.items():
+            try:
+                req = urllib.request.Request(f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=1d",
+                                             headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, context=SSL_CTX, timeout=8) as r:
+                    meta = json.loads(r.read().decode("utf-8"))["chart"]["result"][0]["meta"]
+                price = meta.get("regularMarketPrice")
+                if isinstance(price, (int, float)) and price > 0:
+                    got[key] = float(price)
+            except Exception as e:  # noqa: BLE001
+                print(f"[Macro] {key} fetch failed: {e}")
+        if got:
+            state.macro = {**state.macro, **got}
+            state.macro_ts = time.time()
+        time.sleep(interval)
+
 
 def fubon_worker():
     """ Priority 1: Fubon Neo API Worker Thread """
@@ -63,11 +89,10 @@ def fubon_worker():
             state.active_provider = "FUBON"
             while True:
                 quotes = fubon_provider.get_live_quotes()
-                tx_price = (quotes and quotes.get('txf_price')) or 47207.0
-                tx_chg = (quotes and quotes.get('change')) or 252.0
-                tx_pct = (quotes and quotes.get('pct')) or 0.54
-                state.update_index('txf', tx_price, tx_chg, tx_pct, provider="FUBON")
-                state.active_provider = "FUBON"
+                # Publish only what Fubon really returned. (This used to fall back to 47207.0 / +252 / +0.54 — a stale
+                # made-up quote presented as a live Fubon tick whenever the quote call came back empty.)
+                if quotes and quotes.get('txf_price'):
+                    state.update_index('txf', quotes['txf_price'], quotes.get('change') or 0.0, quotes.get('pct') or 0.0, provider="FUBON")
                 time.sleep(1.0)
     except Exception as e:
         print(f"[Gateway] Fubon Worker notice: {e}")
@@ -187,13 +212,15 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
             if parsed.path.startswith('/api/live_tick') or parsed.path.startswith('/api/live_price'):
                 res_data = {
                     "active_provider": state.active_provider,
-                    "provider_name": "🟢 富邦 API 極速專線" if state.active_provider == "FUBON" else "🌐 官方行情備援",
+                    "provider_name": "🟢 富邦 API 極速專線" if state.active_provider == "FUBON" else ("🌐 官方行情備援" if state.active_provider == "OFFICIAL" else "⚪ 無即時數據"),
                     "indices": state.indices,
-                    "txf": state.indices["txf"],
-                    "taiex": state.indices["taiex"],
-                    "otc": state.indices["otc"],
                     "ts": time.time()
                 }
+                for _k in ("txf", "taiex", "otc"):
+                    if _k in state.indices:  # only real quotes; the front end skips missing ones
+                        res_data[_k] = state.indices[_k]
+                if state.macro:
+                    res_data["macro"] = {**state.macro, "ts": state.macro_ts}
                 body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json; charset=utf-8')
@@ -312,6 +339,7 @@ def run_server():
     print(f"=== 🦅 尋鳥戰情室 — 實時行情 Server 啟動於 http://localhost:{PORT} ===")
     
     # Start worker threads
+    threading.Thread(target=macro_polling_worker, daemon=True).start()
     t_fubon = threading.Thread(target=fubon_worker, daemon=True)
     t_fubon.start()
     
