@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.14)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.15)
 
-**當前版本**：`v64.14` (2026-09-27 選股雷達 JJ鬼爪 8 訊號改用 Pine 忠實移植)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.14)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.14)
+**當前版本**：`v64.15` (2026-09-27 戰情室 SMC 開關（畫圖端；演算法在私有 Worker）)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.15)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.15)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：（不在文件中公開；不區分大小寫，預設自動通關解鎖）
 
@@ -19,6 +19,14 @@
 | **真實移植（Pine 原始碼）** | `macd_state`/`macd_hist_growing`/`cci_value`/`cci_signal`、🚀強火箭/🐦強力藍鳥、📐真5K突破、`demark_buy_state`/`demark_sell_state` |
 | **簡化近似（尚未真實化）** | 🛸動能飛碟、⚡動能閃電、✈️噴射機、🥚帶殼鳥、`k5_state`、`demark_state` |
 | SSL 驗證 | `scripts/build_screener_cache.py:56-58` 全域關閉憑證驗證（`CERT_NONE`），只回報未修改，見 HISTORY.md |
+
+---
+
+## 🎯 v64.15 核心更新亮點（SMC）
+
+- **戰情室新增「🧠 SMC」開關**（LuxAlgo Smart Money Concepts，CC BY-NC-SA 4.0，個人非商業）：畫市場結構 BOS／CHoCH、訂單塊、EQH／EQL、FVG、強弱高低點，多方紅、空方綠。演算法在使用者私有 Worker／私有資料夾（不進公開 repo），公開 repo 只有畫圖程式。預設關閉。
+
+詳細請見 [HISTORY.md](HISTORY.md) v64.15 條目。
 
 ---
 

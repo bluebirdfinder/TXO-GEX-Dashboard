@@ -79,6 +79,11 @@
 - 富邦金鑰：使用者只在家裡網路開過即時伺服器，決定不換（舊版伺服器曾對區網提供 `.env`，已於 v64.12 修補）。
 - CVD：分支 `claude/cvd-real-tick` 待週二 9/29 15:00 後夜盤與使用者一起驗證再發版。
 
+## 1.9 SMC 已實作（2026-09-27，v64.15）
+
+- 演算法（Python 參考版＋Worker 用 JS 版）與部署說明在 `C:\Users\mingi\txo-private\smc\`（**不在 git，勿放進公開 repo**；`README_SMC.md` 有部署到 `bluebird-indicators` Worker 的步驟與 TradingView 核對清單）。前端「🧠 SMC」按鈕已上線，**Worker 尚未加入 `indicator=smc` 前不會畫圖**（需使用者貼上並部署）。
+- 待使用者：①部署 Worker；②用 TradingView 核對 `README_SMC.md` 的事件清單。
+
 ## 2. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除／順手 commit）
 
 > ⚠️ v64.5 推上 main 後，共用資料夾內舊視窗的 `scripts/build_screener_cache.py` 未 commit 版本已被 main 上更完整的版本取代（含失敗重試、過期報價修正）；`trading room/room.js` 的 CVD 修改與 main 上同檔（弱火箭接線、版本字串）將在未來 `git pull`/merge 時出現衝突，須由使用者決定處理方式，AI 不要自行覆蓋。

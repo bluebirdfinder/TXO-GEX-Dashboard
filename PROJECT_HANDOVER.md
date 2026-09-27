@@ -1,15 +1,16 @@
-# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.14)
+# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.15)
 
 本手冊記錄專案現狀、核心功能清單、數據引擎 Self-Audit 熱備援架構、開發 SOP 與個人筆電續接步驟。
 
 ---
 
-## 📌 一、v64.14 完整功能清單與數據引擎架構
+## 📌 一、v64.15 完整功能清單與數據引擎架構
 
 ### 核心分析與視覺化模組
 
 | # | 功能 | 說明 |
 |---|---|---|
+| -12 | **🧠 戰情室 SMC 開關（畫圖端）(v64.15)** | `trading room/room.js`（SMC 畫圖：`renderSmcOverlay()`／`fetchSmcFromWorker()`）、`room.html`（🧠 SMC 按鈕）。演算法（LuxAlgo，CC BY-NC-SA）**不在本 repo**，在使用者私有資料夾與私有 Worker。詳見 HISTORY.md v64.15。 |
 | -11 | **🆕 選股雷達 JJ鬼爪 8 訊號（Pine 1:1 移植）(v64.14)** | `scripts/jj_ghost_claws.py`（新）、`scripts/build_screener_cache.py`、`trading room/room.js`（再啟勾選框改名）、`data/screener_cache.json`。⚠️ `scripts/tv_indicators_engine.py` 的 JJ 部分與 Pine 不一致且無人使用。詳見 HISTORY.md v64.14。 |
 | -10 | **🔴 即時報價台指期誤取現貨修正 (v64.13)** | `scripts/live_price_server.py`（MIS 備援只取 `TXF*-F/-M` 期貨合約，排除 `TXF-S` 現貨）。詳見 HISTORY.md v64.13。 |
 | -9 | **🔴🔴 即時伺服器資安修補 ✕ 總經即時行情 ✕ 不再送假價 ✕ 看門狗 (v64.12)** | `scripts/live_price_server.py`（僅 127.0.0.1、靜態檔白名單、CORS 白名單、Host 檢查、`macro` 輪詢、`watchdog_worker`、`age_sec`）、`scripts/fubon_api_provider.py`（`relogin()`、不再填假價）、`scripts/run_live_server_task.ps1`（開機常駐包裝）、`scripts/run_fubon_klines_task.ps1`（不再跳過）。詳見 HISTORY.md v64.12。 |
