@@ -180,11 +180,8 @@ class FubonAPIProvider:
                 change = float(txf_q.get("change", 0.0) or 0.0)
                 pct = float(txf_q.get("changePercent", 0.0) or 0.0)
 
-            # Fallback for gap period (05:00 - 08:45) when market is between sessions
-            if not txf_price or float(txf_price) <= 0:
-                txf_price = 47207.0
-                change = 252.0
-                pct = 0.54
+            # No price from Fubon (e.g. the 05:00-08:45 gap): report "no quote" — the caller/front end shows no live
+            # price. This used to substitute a made-up 47207.0 / +252 / +0.54 that looked like a real Fubon tick.
 
             # Query real-time spot index quotes (Day session)
             spot_price = None
