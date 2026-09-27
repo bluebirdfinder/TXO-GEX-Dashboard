@@ -1,15 +1,16 @@
-# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.11)
+# 🏛️ TXO GEX 儀表板 — 專案交接手冊 (v64.12)
 
 本手冊記錄專案現狀、核心功能清單、數據引擎 Self-Audit 熱備援架構、開發 SOP 與個人筆電續接步驟。
 
 ---
 
-## 📌 一、v64.11 完整功能清單與數據引擎架構
+## 📌 一、v64.12 完整功能清單與數據引擎架構
 
 ### 核心分析與視覺化模組
 
 | # | 功能 | 說明 |
 |---|---|---|
+| -9 | **🔴🔴 即時伺服器資安修補 ✕ 總經即時行情 ✕ 不再送假價 ✕ 看門狗 (v64.12)** | `scripts/live_price_server.py`（僅 127.0.0.1、靜態檔白名單、CORS 白名單、Host 檢查、`macro` 輪詢、`watchdog_worker`、`age_sec`）、`scripts/fubon_api_provider.py`（`relogin()`、不再填假價）、`scripts/run_live_server_task.ps1`（開機常駐包裝）、`scripts/run_fubon_klines_task.ps1`（不再跳過）。詳見 HISTORY.md v64.12。 |
 | -8 | **🛡️ 主引擎SSL憑證驗證全面啟用 ✕ 散戶快照以交易日為鍵 (v64.11)** | `scripts/fetch_and_calc_vision.py`、`backfill_snapshots.py`、`fetch_institutional_momentum.py`、`fetch_tw_universe.py`（保留憑證鏈與主機名驗證，僅關 `VERIFY_X509_STRICT`；雲端 Ubuntu/Py3.10 實測通過）；`fetch_official_taifex_retail_sentiment()` 改用交易日 `_q_date` 當鍵。詳見 HISTORY.md v64.11。 |
 | -7 | **🔴 期貨K線真實化：期交所日線＋富邦日內 (v64.10)** | `scripts/fetch_market_klines.py`（TXF/MXF/MTX/CDF 不再用 Yahoo；`FUTURES_ASSETS`、`fetch_taifex_futures_daily()`）、`scripts/fetch_fubon_futures_klines.py`（本機手動，收盤後執行一次，累積富邦日內K）、`scripts/fubon_klines_probe.py`（唯讀探測）、`data/klines_cache.json`。詳見 HISTORY.md v64.10。 |
 | -6 | **🔴 戰情室價格只用真實來源 ✕ 櫃買指數官方K線 ✕ K線缺量不填假值 (v64.9)** | `trading room/room.js`（`realPriceFor()`、`base_price=null`、無真實K線提示）、`scripts/fetch_market_klines.py`（OTC 改櫃買中心官方日線；缺量填 0；可 `python scripts/fetch_market_klines.py OTC` 單獨更新）、`data/klines_cache.json`。**待決定**：TXF/MTX/MXF K線來源為現貨 ^TWII 且成交量為公式推算。詳見 HISTORY.md v64.9。 |

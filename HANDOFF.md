@@ -66,6 +66,12 @@
 - 富邦只提供「最近一個場次」，錯過的場次**補不回來**；每次執行更新 `data/klines_gap_report.json`（缺漏／不完整場次）。**接手時第一件事：讀這份報告並告知使用者**。
 - 停用排程：`Unregister-ScheduledTask -TaskName TXO-Fubon-Futures-Klines -Confirm:$false`。
 
+## 1.7 即時伺服器開機常駐（2026-09-27）
+
+- 伺服器只監聽 `127.0.0.1:8000`（v64.12 起；舊版曾對區網開放並提供 `.env`，見 HISTORY v64.12）。工作排程 `TXO-Live-Price-Server`：登入 Windows 後背景啟動 `scripts/run_live_server_task.ps1 -EnvFile <.env>`（在 `C:\Users\mingi\txo-klines-runner`）。日誌 `logs\live_price_server.log`。停用：`Unregister-ScheduledTask -TaskName TXO-Live-Price-Server -Confirm:$false`。
+- 假日／場次切換不需重啟；看門狗每天 08:30、14:55 重新登入，交易時段 120 秒沒報價也會重新登入。
+- 分支 `claude/cvd-real-tick` 內含 CVD 真實化（尚未發版，待夜盤驗證）。
+
 ## 2. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除／順手 commit）
 
 > ⚠️ v64.5 推上 main 後，共用資料夾內舊視窗的 `scripts/build_screener_cache.py` 未 commit 版本已被 main 上更完整的版本取代（含失敗重試、過期報價修正）；`trading room/room.js` 的 CVD 修改與 main 上同檔（弱火箭接線、版本字串）將在未來 `git pull`/merge 時出現衝突，須由使用者決定處理方式，AI 不要自行覆蓋。
