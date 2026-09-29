@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T05:30:34+08:00",
+  "generated_at": "2026-09-29T08:52:23+08:00",
   "assets": {
     "TXF": {
       "missing_day": [],
@@ -7,7 +7,7 @@
       "partial_day": [],
       "partial_night": [],
       "first_captured_day": "2026-09-24",
-      "latest_day": "2026-09-24",
+      "latest_day": "2026-09-29",
       "latest_night": "2026-09-29"
     },
     "MXF": {
@@ -16,7 +16,7 @@
       "partial_day": [],
       "partial_night": [],
       "first_captured_day": "2026-09-24",
-      "latest_day": "2026-09-24",
+      "latest_day": "2026-09-29",
       "latest_night": "2026-09-29"
     },
     "MTX": {
@@ -25,7 +25,7 @@
       "partial_day": [],
       "partial_night": [],
       "first_captured_day": "2026-09-24",
-      "latest_day": "2026-09-24",
+      "latest_day": "2026-09-29",
       "latest_night": "2026-09-29"
     },
     "CDF": {
@@ -34,7 +34,7 @@
       "partial_day": [],
       "partial_night": [],
       "first_captured_day": "2026-09-24",
-      "latest_day": "2026-09-24",
+      "latest_day": "2026-09-29",
       "latest_night": "2026-09-29"
     }
   }
