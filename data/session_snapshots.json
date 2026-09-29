@@ -883,5 +883,24 @@
     "margin_maint_stock": 141.9,
     "margin_balance_billion": null,
     "written_at": "2026-09-29T09:43:41.523182+08:00"
+  },
+  "2026-09-30_NIGHT": {
+    "date": "2026-09-30",
+    "session": "NIGHT",
+    "spot_price": 47631.96,
+    "otc_price": 412.25,
+    "txf_price": 47956.0,
+    "zero_gamma_level": 47056.3,
+    "gex_plus_flip": 47056.2,
+    "call_wall_strike": 48000.0,
+    "put_wall_strike": 47500.0,
+    "max_pain_strike": 46750.0,
+    "pc_ratio": 75.3,
+    "taifex_vix": 24.58,
+    "us_vix": 16.1,
+    "margin_maint_market": 155.5,
+    "margin_maint_stock": 140.9,
+    "margin_balance_billion": null,
+    "written_at": "2026-09-29T16:03:25.730979+08:00"
   }
 }
