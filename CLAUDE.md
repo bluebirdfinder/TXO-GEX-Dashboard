@@ -16,6 +16,7 @@
 - **選擇權/GEX 知識庫**→ [OPTIONS_CHEATSHEET.md](OPTIONS_CHEATSHEET.md)、[docs/OPTIONS_QUANT_PLAYBOOK.md](docs/OPTIONS_QUANT_PLAYBOOK.md)
 - **資料公布時程**→ [MARKET_DATA_SCHEDULE.md](MARKET_DATA_SCHEDULE.md)
 - **尋鳥戰情交易室（副專案）**→ [trading room/TRADING_ROOM_ARCH_PLAN.md](trading%20room/TRADING_ROOM_ARCH_PLAN.md)、[trading room/TRADING_ROOM_PROJECT_STATE.md](trading%20room/TRADING_ROOM_PROJECT_STATE.md)
+- **哪些功能一定要留在使用者電腦、哪些能搬去雲端或別台機器**（新增本機排程或雲端排程前，先看這份、事後也回來補）→ [docs/LOCAL_EXECUTION_INVENTORY.md](docs/LOCAL_EXECUTION_INVENTORY.md)
 
 ## 發版
 
