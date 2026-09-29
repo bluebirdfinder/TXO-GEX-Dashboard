@@ -1145,5 +1145,18 @@
   "MARGIN_MAINT_EST_20260923": {
     "margin_maint_market": 161.7,
     "margin_maint_stock": 146.6
+  },
+  "2026-09-29_INST_NIGHT": {
+    "foreign_tx": -35,
+    "foreign_tx_amt": -3.3,
+    "foreign_mtx": -1201,
+    "foreign_micro": -3591,
+    "dealer_tx": 389,
+    "dealer_tx_amt": 37.3,
+    "written_at": "2026-09-29T00:56:09.765074"
+  },
+  "MARGIN_MAINT_EST_20260929": {
+    "margin_maint_market": 156.7,
+    "margin_maint_stock": 142.1
   }
 }
