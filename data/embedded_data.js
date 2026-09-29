@@ -19,7 +19,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 47055.4,
     "day_total_vex": 181.97
   },
-  "last_updated_time": "2026-09-30 02:31",
+  "last_updated_time": "2026-09-30 02:47",
   "spot_price": 47631.96,
   "spot_change": -392.64,
   "spot_change_pct": -0.82,
@@ -23756,9 +23756,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "09/29 (二)",
-        "price": 101.41,
-        "change": 0.21,
-        "pct": 0.21
+        "price": 101.39,
+        "change": 0.19,
+        "pct": 0.19
       },
       "usdjpy": {
         "date": "09/29 (二)",
@@ -23859,13 +23859,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "09/29 (二)",
-          "price": 101.41,
-          "change": 0.21,
-          "pct": 0.21
+          "price": 101.39,
+          "change": 0.19,
+          "pct": 0.19
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.88</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.10 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>101.41</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>157.44</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card bear\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚠️ <span style=\"color: var(--put-color); font-weight: 700;\">台幣呈現貶值 (資金流出避險)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣目前為 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.88</span>（單日貶值 <span style=\"color: var(--put-color); font-weight: 700;\">+0.10 元</span>）。外資拋售台幣換回美金提款，防範大盤拉回賣壓。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>101.39</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>157.44</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -35,
@@ -23935,7 +23935,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 2698.93,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-09-30 02:31",
+    "last_updated": "2026-09-30 02:47",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -24553,7 +24553,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "UMC (聯電ADR)",
-      "adr_change_pct": 4.05,
+      "adr_change_pct": 4.13,
       "adr_basis": "-",
       "spot_inst_net": -2150,
       "spot_foreign": -12783,
@@ -24641,7 +24641,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TSM (台積電ADR)",
-      "adr_change_pct": 1.25,
+      "adr_change_pct": 1.41,
       "adr_basis": "-",
       "spot_inst_net": -2992,
       "spot_foreign": -3737,
@@ -25565,7 +25565,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "EWT (MSCI台灣ETF)",
-      "adr_change_pct": -0.21,
+      "adr_change_pct": 0.04,
       "adr_basis": "-",
       "spot_inst_net": -66217,
       "spot_foreign": -68122,
@@ -25609,7 +25609,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TSM (台積電ADR)",
-      "adr_change_pct": 1.25,
+      "adr_change_pct": 1.41,
       "adr_basis": "-",
       "spot_inst_net": -2992,
       "spot_foreign": -3737,
@@ -26181,7 +26181,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "EWT (MSCI台灣ETF)",
-      "adr_change_pct": -0.21,
+      "adr_change_pct": 0.04,
       "adr_basis": "-",
       "spot_inst_net": -66217,
       "spot_foreign": -68122,
@@ -26621,7 +26621,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "IMOS (南茂ADR)",
-      "adr_change_pct": -5.43,
+      "adr_change_pct": -5.35,
       "adr_basis": "-",
       "spot_inst_net": -21303,
       "spot_foreign": -20627,
@@ -27017,7 +27017,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "ASX (日月光ADR)",
-      "adr_change_pct": 3.62,
+      "adr_change_pct": 3.79,
       "adr_basis": "-",
       "spot_inst_net": -1691,
       "spot_foreign": -724,
@@ -29129,7 +29129,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TLT (美債20Y ETF)",
-      "adr_change_pct": -0.68,
+      "adr_change_pct": -0.67,
       "adr_basis": "-",
       "spot_inst_net": 0,
       "spot_foreign": 0,
@@ -31549,7 +31549,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": true,
       "it_badge": "投信4日連買",
       "adr_symbol": "CHT (中華電ADR)",
-      "adr_change_pct": -0.96,
+      "adr_change_pct": -0.98,
       "adr_basis": "-",
       "spot_inst_net": -174,
       "spot_foreign": -153,
@@ -36722,9 +36722,9 @@ window.GEX_EMBEDDED_DATA = {
       "summary": "台指VIX 24.6、美股VIX 16.1；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 101.41,
-        "change_pct": 0.21,
-        "trend_label": "▲ 較昨日走升 (+0.21%)",
+        "price": 101.35,
+        "change_pct": 0.15,
+        "trend_label": "▲ 較昨日走升 (+0.15%)",
         "unit": ""
       },
       "us10y": {
@@ -36814,14 +36814,14 @@ window.GEX_EMBEDDED_DATA = {
     "us_vix": 16.13,
     "us_vix_change": 0.06,
     "us_vix_change_pct": 0.37,
-    "us_vvix": 90.75,
-    "us_vvix_change": -0.27,
-    "us_vvix_change_pct": -0.3,
+    "us_vvix": 90.64,
+    "us_vvix_change": -0.38,
+    "us_vvix_change_pct": -0.42,
     "vvix_regime_tag": "🟢 風穩常態",
     "vvix_regime_color": "#00e676",
     "vvix_safety_buffer": "🛡️ 氣墊: 250~350 點",
     "vvix_desc": "波動率加速度平穩，做市商避險情緒沉靜，賣腳貼牆防守安全。",
-    "tail_risk_status": "VIX (24.58) 與 VVIX (90.75) 同步對齊，🟢 風穩常態",
+    "tail_risk_status": "VIX (24.58) 與 VVIX (90.64) 同步對齊，🟢 風穩常態",
     "regime_tag": "🔴 極度恐慌 (Extreme Panic)",
     "regime_color": "#ff5252",
     "regime_desc": "恐慌爆發，追跌避險賣壓沉重。觀望等待 VIX 轉折；回落時為機構級建倉爆賺期。",
