@@ -1153,10 +1153,10 @@
     "foreign_micro": -3591,
     "dealer_tx": 389,
     "dealer_tx_amt": 37.3,
-    "written_at": "2026-09-29T00:56:09.765074"
+    "written_at": "2026-09-29T01:10:15.589423"
   },
   "MARGIN_MAINT_EST_20260929": {
-    "margin_maint_market": 156.7,
-    "margin_maint_stock": 142.1
+    "margin_maint_market": 156.6,
+    "margin_maint_stock": 142.0
   }
 }
