@@ -928,8 +928,8 @@
     "spot_price": 47940.13,
     "otc_price": 417.07,
     "txf_price": 48479.0,
-    "zero_gamma_level": 47058.3,
-    "gex_plus_flip": 47058.3,
+    "zero_gamma_level": 47037.8,
+    "gex_plus_flip": 47037.8,
     "call_wall_strike": 48500.0,
     "put_wall_strike": 47800.0,
     "max_pain_strike": 48750.0,
@@ -938,7 +938,7 @@
     "us_vix": 15.82,
     "margin_maint_market": 158.2,
     "margin_maint_stock": 143.4,
-    "margin_balance_billion": 6222.52,
-    "written_at": "2026-09-30T22:52:50.746206+08:00"
+    "margin_balance_billion": null,
+    "written_at": "2026-10-01T02:20:54.577426+08:00"
   }
 }
