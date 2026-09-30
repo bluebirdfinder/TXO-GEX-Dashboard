@@ -162,6 +162,8 @@ def fubon_books_worker():
                 if ok:
                     print(f"[Gateway] Fubon Books Worker subscribed to {symbols} (五檔).")
                     subscribed = True
+            elif subscribed:
+                fubon_provider.sync_session_subscriptions()  # 日盤/夜盤切換時改用對應的訂閱模式（夜盤需 afterHours）
             time.sleep(5.0)
     except Exception as e:
         print(f"[Gateway] Fubon Books Worker notice: {e}")
@@ -184,6 +186,8 @@ def fubon_trades_worker():
                 if ok:
                     print(f"[Gateway] Fubon Trades Worker subscribed to {symbols} (逐筆成交).")
                     subscribed = True
+            elif subscribed:
+                fubon_provider.sync_session_subscriptions()  # 日盤/夜盤切換時改用對應的訂閱模式（夜盤需 afterHours）
             time.sleep(5.0)
     except Exception as e:
         print(f"[Gateway] Fubon Trades Worker notice: {e}")
@@ -332,12 +336,15 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 from scripts.fubon_api_provider import fubon_provider
                 qs = urllib.parse.parse_qs(parsed.query)
                 symbol = (qs.get('symbol', [None])[0]) or fubon_provider.txf_symbol
-                bar = fubon_provider.get_momentum_bar_30m(symbol)
+                # Same UI-code vs Fubon-alias mismatch as /api/cvd (found 2026-09-30): the room sends TXF/MXF/MTX/TMF but books/trades
+                # are cached and subscribed under TXF1!/MXF1!/TMF1!, so this endpoint always returned bar=null and *_subscribed=false.
+                alias = fubon_provider.CVD_SYMBOL_ALIAS.get(symbol, symbol)
+                bar = fubon_provider.get_momentum_bar_30m(alias)
                 res_data = {
                     "symbol": symbol,
                     "bar": bar,
-                    "books_subscribed": symbol in fubon_provider._books_subscribed,
-                    "trades_subscribed": symbol in fubon_provider._trades_subscribed,
+                    "books_subscribed": alias in fubon_provider._books_subscribed,
+                    "trades_subscribed": alias in fubon_provider._trades_subscribed,
                     "ts": time.time()
                 }
                 body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')

@@ -72,6 +72,11 @@ class FubonAPIProvider:
         # and every data frame share the same channel 'id', so that id is the reliable way back to the
         # alias every cache, lookup and the room's CVD_SYMBOL_ALIAS are keyed by.
         self._channel_alias = {}
+        # Night-session (15:00-05:00) data is only pushed to subscriptions made with afterHours=True (verified against
+        # the live feed 2026-09-30: a plain subscribe gets one stale snapshot then nothing all night, an afterHours
+        # subscribe streams type FUTURE_AH ticks). Each (channel, symbol, afterHours) is subscribed at most once; both
+        # modes may coexist because only one session trades at a time. Kept so a reconnect can replay them.
+        self._sub_modes = set()
 
         # Trades (逐筆成交) WebSocket stream state.
         # trades_log[symbol] = a bounded deque of {'price','size','side','ts'} — 'side' is
@@ -303,10 +308,11 @@ class FubonAPIProvider:
             logging.warning("Fubon futopt WebSocket reconnect failed: could not re-establish connection.")
             return
         try:
-            for symbol in list(self._books_subscribed):
-                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
-            for symbol in list(self._trades_subscribed):
-                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
+            for channel, symbol, ah in list(self._sub_modes):
+                params = {'channel': channel, 'symbol': symbol}
+                if ah:
+                    params['afterHours'] = True
+                futopt_ws.subscribe(params)
             logging.info("Fubon futopt WebSocket reconnected and re-subscribed to all channels.")
         except Exception as e:
             logging.warning(f"Fubon futopt WebSocket re-subscribe after reconnect failed: {e}")
@@ -379,12 +385,11 @@ class FubonAPIProvider:
             return False
 
         for symbol in symbols:
-            if symbol in self._books_subscribed:
-                continue
             try:
-                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
+                self._subscribe_for_current_session(futopt_ws, 'books', symbol)
+                if symbol not in self._books_subscribed:
+                    logging.info(f"Fubon Books channel: subscribed to {symbol} (五檔委託簿).")
                 self._books_subscribed.add(symbol)
-                logging.info(f"Fubon Books channel: subscribed to {symbol} (五檔委託簿).")
             except Exception as e:
                 logging.warning(f"start_books_stream: subscribe({symbol}) failed: {e}")
 
@@ -456,18 +461,58 @@ class FubonAPIProvider:
             return False
 
         for symbol in symbols:
-            if symbol in self._trades_subscribed:
-                continue
             try:
-                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
+                self._subscribe_for_current_session(futopt_ws, 'trades', symbol)
+                if symbol not in self._trades_subscribed:
+                    logging.info(f"Fubon Trades channel: subscribed to {symbol} (逐筆成交).")
                 self._trades_subscribed.add(symbol)
-                logging.info(f"Fubon Trades channel: subscribed to {symbol} (逐筆成交).")
             except Exception as e:
                 logging.warning(f"start_trades_stream: subscribe({symbol}) failed: {e}")
 
         return True
 
     _TAIPEI_TZ = datetime.timezone(datetime.timedelta(hours=8))
+
+    def _session_after_hours(self, now_ts=None):
+        """True while the TAIFEX night session (15:00-05:00 Taipei) is the one trading. In the gaps with no session
+        (05:00-08:45, 13:45-15:00) keep the mode of the last subscription rather than flapping."""
+        now_ts = now_ts if now_ts is not None else time.time()
+        dt = datetime.datetime.fromtimestamp(now_ts, tz=self._TAIPEI_TZ)
+        hm = dt.hour * 60 + dt.minute
+        if hm >= 15 * 60 or hm < 5 * 60:
+            return True
+        if 8 * 60 + 45 <= hm < 13 * 60 + 45:
+            return False
+        return getattr(self, '_last_after_hours', False)
+
+    def _subscribe_for_current_session(self, futopt_ws, channel, symbol):
+        ah = self._session_after_hours()
+        self._last_after_hours = ah
+        key = (channel, symbol, ah)
+        if key in self._sub_modes:
+            return
+        params = {'channel': channel, 'symbol': symbol}
+        if ah:
+            params['afterHours'] = True
+        futopt_ws.subscribe(params)
+        self._sub_modes.add(key)
+
+    def sync_session_subscriptions(self):
+        """Called periodically by the gateway workers: when the day/night session flips, subscribe every channel/symbol
+        we already track in the new mode (no unsubscribe needed - the other session's stream simply goes quiet)."""
+        futopt_ws = self._futopt_ws
+        if not futopt_ws or not self._futopt_connected:
+            return
+        ah = self._session_after_hours()
+        pending = [(ch, sym) for ch, syms in (('books', self._books_subscribed), ('trades', self._trades_subscribed))
+                   for sym in syms if (ch, sym, ah) not in self._sub_modes]
+        for ch, sym in pending:
+            try:
+                self._subscribe_for_current_session(futopt_ws, ch, sym)
+            except Exception as e:
+                logging.warning(f"sync_session_subscriptions: {ch} {sym} failed: {e}")
+        if pending:
+            logging.info(f"Fubon session flip -> {'night (afterHours)' if ah else 'day'}: re-subscribed {len(pending)} channel(s).")
 
     @classmethod
     def _taifex_session_start_ts(cls, now_ts=None):
