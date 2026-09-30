@@ -36,13 +36,13 @@
 
 **2026-09-30 19:20 第三次發生（10/01 01:06 發現並關閉）**：共用資料夾的舊版 `live_price_server.py` 再度被啟動並綁在 `0.0.0.0:8000`（約暴露 6 小時，富邦金鑰可能被同網路的人讀到）。進程樹：`Python 3.14 (pythoncore-3.14-64)` ← Windows「Python Manager」啟動器（`WindowsApps\PythonSoftwareFoundation.PythonManager…\python.exe`），命令列是共用資料夾內的 `scripts\live_price_server.py`——**很像是在檔案總管對該 .py 檔雙擊或用「開啟檔案」執行**，而不是排程。三次都是同一份舊檔、同一個資料夾。已由 Claude 終止（PID 24644 與啟動器 39252），正式服務（PID 26200，127.0.0.1）未受影響。
 - **根因**：共用資料夾停在 v64.12 資安修補之前的舊版，裡面的 `live_price_server.py` 仍是 `0.0.0.0`；只要有人從那個資料夾啟動它就重演。
-- **根治方案（待使用者同意）**：把共用資料夾同步到 `origin/main`（`git fetch` + `git reset --hard origin/main`，8 個舊的未 commit 檔案已完整備份，見 3.0）。同步後該資料夾裡的 `live_price_server.py` 就是只綁 127.0.0.1 的安全版，雙擊也不會外洩。
+- **✅ 已根治（2026-10-01 01:30，使用者同意）**：共用資料夾已 `git fetch` + `git reset --hard origin/main`，現在內容＝`origin/main`，裡面的 `live_price_server.py` 預設只綁 `127.0.0.1`（`TXO_GATEWAY_HOST` 可覆寫），雙擊也不會對區網開放。動手前：8 個舊的未 commit 檔案與整份 patch 已備份到 `C:/Users/mingi/txo-private/shared-folder-backup-20260930/`；該分支唯一未推送的 commit `39d04e6`（9/26 選股雷達文件同步）經 `git cherry` 確認等價內容已在 `origin/main`，並另存保護分支 `backup/shared-folder-39d04e6-20260930`。舊 stash 兩筆（v47.8、v49.1 時期）未動。
 
 ## 3.0 共用資料夾差異清單（2026-09-30 已逐檔比對並備份，尚未 reset）
 
 - 共用資料夾落後 `origin/main` 124 個 commit；8 個未 commit 檔案**已完整備份**到 `C:/Users/mingi/txo-private/shared-folder-backup-20260930/`（含 `uncommitted_changes.patch`）。
 - 逐檔比對「新增行是否已存在於 `origin/main`」：`fubon_api_provider.py` 97%、`live_price_server.py` 83%、`room.js` 91%、`SELF_AUDIT_FINDINGS_TODO.md` 100%——缺的只有舊版字串（v64.4）或已被取代的舊版註解／函式；`room.html` 只差 v64.4 版號字串；`build_screener_cache.py` 是舊版 `compute_jj_rocket_and_bird` 說明，已被 `jj_ghost_claws.py`（現於私有資料夾）取代；2 個 JSON 為本機 pipeline 快取。**未發現獨特值得保留的內容。**
-- 建議：使用者確認後 `git fetch` + `git reset --hard origin/main` 即可安全同步（已有備份）。**尚待使用者同意。**
+- **已執行**：見上方「第三次發生」的根治紀錄（2026-10-01 已同步到 `origin/main`）。
 
 ## 3. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除）
 
