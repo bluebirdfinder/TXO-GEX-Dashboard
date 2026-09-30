@@ -67,6 +67,11 @@ class FubonAPIProvider:
         # books_cache[symbol] = {'bids': [{'price':..,'size':..}, ...], 'asks': [...], 'time':.., 'raw': <last raw message dict>}
         self.books_cache = {}
         self._books_subscribed = set()
+        # Fubon subscribes by alias ('TXF1!') but echoes the resolved contract code ('TXFJ6') as the
+        # 'symbol' of every data frame (verified against the live feed 2026-09-30). The subscribe ack
+        # and every data frame share the same channel 'id', so that id is the reliable way back to the
+        # alias every cache, lookup and the room's CVD_SYMBOL_ALIAS are keyed by.
+        self._channel_alias = {}
 
         # Trades (逐筆成交) WebSocket stream state.
         # trades_log[symbol] = a bounded deque of {'price','size','side','ts'} — 'side' is
@@ -74,6 +79,7 @@ class FubonAPIProvider:
         # start_trades_stream()'s docstring for exactly what is and isn't verified.
         self.trades_log = {}
         self._trades_subscribed = set()
+        self._trades_last_serial = {}  # symbol -> serial of the last trades frame, to drop exact replays
         self._trades_logged_raw = set()  # symbols we've logged one raw message for, for schema verification
         self._TRADES_LOG_MAXLEN = 20000  # ~a session's worth of prints per symbol; bounded so memory can't grow unbounded
 
@@ -324,6 +330,8 @@ class FubonAPIProvider:
         if event == 'subscribed':
             info = message.get('data') or {}
             channel = info.get('channel')
+            if info.get('id') and info.get('symbol'):
+                self._channel_alias[info['id']] = info['symbol']
             if channel == 'books':
                 logging.info(f"Fubon Books: subscription confirmed — {info}")
             elif channel == 'trades':
@@ -334,10 +342,11 @@ class FubonAPIProvider:
 
         channel = message.get('channel')
         data = message.get('data') or {}
+        alias = self._channel_alias.get(message.get('id'))
         if channel == 'books':
-            self._process_books_data(data)
+            self._process_books_data(data, alias)
         elif channel == 'trades':
-            self._process_trades_data(data)
+            self._process_trades_data(data, alias)
 
     def start_books_stream(self, symbols):
         """
@@ -381,9 +390,9 @@ class FubonAPIProvider:
 
         return True
 
-    def _process_books_data(self, data):
-        """ Handles one books 'data' payload (already unwrapped from the event envelope). """
-        symbol = data.get('symbol')
+    def _process_books_data(self, data, alias=None):
+        """ Handles one books 'data' payload (already unwrapped from the event envelope). Cached under the subscribed alias when known. """
+        symbol = alias or data.get('symbol')
         if not symbol:
             return
 
@@ -487,54 +496,81 @@ class FubonAPIProvider:
             session_open = prev_day.replace(hour=15, minute=0, second=0, microsecond=0)
         return session_open.timestamp()
 
-    def _process_trades_data(self, data):
-        """ Handles one trades 'data' payload (already unwrapped from the event envelope). See start_trades_stream() docstring for what is/isn't confirmed about its fields. """
-        symbol = data.get('symbol')
-        price = data.get('price')
-        size = data.get('size')
-        if not symbol or price is None or size is None:
+    def _process_trades_data(self, data, alias=None):
+        """
+        Handles one trades 'data' payload (already unwrapped from the event envelope).
+
+        Verified against the live feed (2026-09-30): a frame looks like
+          {'symbol': 'TXFJ6', 'trades': [{'price', 'size', 'bid', 'ask'}, ...],
+           'total': {...}, 'time': <us epoch>, 'serial': <int>}
+        i.e. prints are in a 'trades' list (not top-level price/size), each carrying the best bid/ask
+        at match time. Side is the tick rule against that bid/ask: at/above ask = buy, at/below bid = sell.
+        Cached under the subscribed alias (see _channel_alias) so lookups by 'TXF1!' etc. find it.
+        """
+        symbol = alias or data.get('symbol')
+        if not symbol:
             return
+        prints = data.get('trades')
+        if not isinstance(prints, list):
+            # Older/alternative shape: a single print at the top level.
+            prints = [data] if data.get('price') is not None and data.get('size') is not None else []
+        if not prints:
+            return
+
+        serial = data.get('serial')
+        if serial is not None:
+            if self._trades_last_serial.get(symbol) == serial:
+                return  # exact replay of the previous frame
+            self._trades_last_serial[symbol] = serial
 
         if symbol not in self._trades_logged_raw:
             logging.info(f"Fubon Trades RAW sample for {symbol} (verify against this): {data}")
             self._trades_logged_raw.add(symbol)
 
-        # Tick-rule side inference against the Books cache (confirmed schema) —
-        # deliberately does not depend on an unconfirmed 'bid'/'ask' field on
-        # the trades payload itself.
-        book = self.books_cache.get(symbol)
-        side = None
-        if book and book.get('bids') and book.get('asks'):
-            best_bid = book['bids'][0]['price']
-            best_ask = book['asks'][0]['price']
-            if price >= best_ask:
-                side = 'buy'
-            elif price <= best_bid:
-                side = 'sell'
-        if side is None:
-            log = self.trades_log.get(symbol)
-            side = log[-1]['side'] if log else 'buy'
+        for tr in prints:
+            price = tr.get('price')
+            size = tr.get('size')
+            if price is None or size is None:
+                continue
 
-        now = time.time()
-        if symbol not in self.trades_log:
-            self.trades_log[symbol] = deque(maxlen=self._TRADES_LOG_MAXLEN)
-        self.trades_log[symbol].append({
-            'price': float(price),
-            'size': int(size),
-            'side': side,
-            'ts': now
-        })
+            side = None
+            t_bid, t_ask = tr.get('bid'), tr.get('ask')
+            if t_bid and t_ask:
+                if price >= t_ask:
+                    side = 'buy'
+                elif price <= t_bid:
+                    side = 'sell'
+            if side is None:
+                book = self.books_cache.get(symbol)
+                if book and book.get('bids') and book.get('asks'):
+                    if price >= book['asks'][0]['price']:
+                        side = 'buy'
+                    elif price <= book['bids'][0]['price']:
+                        side = 'sell'
+            if side is None:
+                log = self.trades_log.get(symbol)
+                side = log[-1]['side'] if log else 'buy'
 
-        # Real CVD: same tick-rule 'side' as above, accumulated as its own persistent
-        # counter (see __init__ comment for why it isn't derived from trades_log).
-        session_start = self._taifex_session_start_ts(now)
-        if self.cvd_session_start.get(symbol) != session_start:
-            self.cvd_session_start[symbol] = session_start
-            self.cvd_cumulative[symbol] = 0
-            self.cvd_points[symbol] = deque(maxlen=self._TRADES_LOG_MAXLEN)
-        signed_size = int(size) if side == 'buy' else -int(size)
-        self.cvd_cumulative[symbol] = self.cvd_cumulative.get(symbol, 0) + signed_size
-        self.cvd_points[symbol].append({'ts': now, 'value': self.cvd_cumulative[symbol]})
+            now = time.time()
+            if symbol not in self.trades_log:
+                self.trades_log[symbol] = deque(maxlen=self._TRADES_LOG_MAXLEN)
+            self.trades_log[symbol].append({
+                'price': float(price),
+                'size': int(size),
+                'side': side,
+                'ts': now
+            })
+
+            # Real CVD: same side as above, accumulated as its own persistent counter
+            # (see __init__ comment for why it isn't derived from trades_log).
+            session_start = self._taifex_session_start_ts(now)
+            if self.cvd_session_start.get(symbol) != session_start:
+                self.cvd_session_start[symbol] = session_start
+                self.cvd_cumulative[symbol] = 0
+                self.cvd_points[symbol] = deque(maxlen=self._TRADES_LOG_MAXLEN)
+            signed_size = int(size) if side == 'buy' else -int(size)
+            self.cvd_cumulative[symbol] = self.cvd_cumulative.get(symbol, 0) + signed_size
+            self.cvd_points[symbol].append({'ts': now, 'value': self.cvd_cumulative[symbol]})
 
     def get_recent_trades(self, symbol, since_ts=None):
         """ Returns cached trade prints for symbol, optionally only those at/after since_ts (epoch seconds). """
