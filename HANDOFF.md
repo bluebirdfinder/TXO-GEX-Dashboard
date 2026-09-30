@@ -34,6 +34,10 @@
 
 **2026-09-30 09:08 第二次發生**：共用資料夾同一份舊版 `live_price_server.py` 又被啟動，再次綁在 `0.0.0.0:8000`。發現後該進程已消失（**不是我終止的，我的終止指令被權限檢查擋下**，事後不知是誰關的），同時正式服務（PID 2304）也一併不見，我依使用者同意執行 `Start-ScheduledTask -TaskName "TXO-Live-Price-Server"` 重啟，確認只綁 `127.0.0.1:8000` 且富邦訂閱正常。**尚不清楚是誰／哪個視窗在 09:08 啟動舊版**，建議使用者重新評估是否換富邦金鑰，並把共用資料夾同步到 origin/main（見第 3 節）。
 
+**2026-09-30 19:20 第三次發生（10/01 01:06 發現並關閉）**：共用資料夾的舊版 `live_price_server.py` 再度被啟動並綁在 `0.0.0.0:8000`（約暴露 6 小時，富邦金鑰可能被同網路的人讀到）。進程樹：`Python 3.14 (pythoncore-3.14-64)` ← Windows「Python Manager」啟動器（`WindowsApps\PythonSoftwareFoundation.PythonManager…\python.exe`），命令列是共用資料夾內的 `scripts\live_price_server.py`——**很像是在檔案總管對該 .py 檔雙擊或用「開啟檔案」執行**，而不是排程。三次都是同一份舊檔、同一個資料夾。已由 Claude 終止（PID 24644 與啟動器 39252），正式服務（PID 26200，127.0.0.1）未受影響。
+- **根因**：共用資料夾停在 v64.12 資安修補之前的舊版，裡面的 `live_price_server.py` 仍是 `0.0.0.0`；只要有人從那個資料夾啟動它就重演。
+- **根治方案（待使用者同意）**：把共用資料夾同步到 `origin/main`（`git fetch` + `git reset --hard origin/main`，8 個舊的未 commit 檔案已完整備份，見 3.0）。同步後該資料夾裡的 `live_price_server.py` 就是只綁 127.0.0.1 的安全版，雙擊也不會外洩。
+
 ## 3.0 共用資料夾差異清單（2026-09-30 已逐檔比對並備份，尚未 reset）
 
 - 共用資料夾落後 `origin/main` 124 個 commit；8 個未 commit 檔案**已完整備份**到 `C:/Users/mingi/txo-private/shared-folder-backup-20260930/`（含 `uncommitted_changes.patch`）。
