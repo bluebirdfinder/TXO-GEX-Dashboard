@@ -77,10 +77,11 @@
 - `TXO-Live-Price-Server`：登入 Windows 即背景啟動，只綁 `127.0.0.1:8000`，掛掉自動重啟，看門狗每天 08:30／14:55 重新登入、交易時段 120 秒沒報價也會重登。日誌 `logs\live_price_server.log`。
 - 兩者都在 `C:\Users\mingi\txo-klines-runner`（獨立於 OneDrive 共用資料夾的乾淨 clone），停用用 `Unregister-ScheduledTask -TaskName <name> -Confirm:$false`。
 
-## 7.5 🔴 雲端排程延遲（2026-09-30 量化）——手機報價不新鮮的根因
+## 7.5 🔴 雲端排程延遲（2026-09-30 量化）——已決定走 Worker Cron，程式已備好，等使用者部署
 
-- GitHub Actions 的 `schedule` cron 在這個 repo 結構性延遲：最近 9 天 60 次執行，53 次晚超過 1 小時，中位數 200 分鐘、最大 387 分鐘。原訂 05:33／15:33 的結算，實際常在 3～5 小時後才跑；手動 `workflow_dispatch` 則立即執行。
-- 建議方案 A：**Cloudflare Worker Cron Trigger** 準時呼叫 `workflow_dispatch`（需使用者建立僅限本 repo Actions 寫入的 fine-grained PAT，存 Worker secret）。方案 B：本機工作排程器準時跑資料引擎並 push。詳見 HISTORY「主頁 index.html 稽核、雲端排程延遲量化」。**等使用者決定，尚未動手。**
+- GitHub Actions 的 `schedule` cron 結構性延遲：最近 9 天 60 次執行，53 次晚超過 1 小時，中位數 200 分鐘、最大 387 分鐘；手動 `workflow_dispatch` 立即執行。手機報價不新鮮的根因即此。
+- **使用者決定方案 A（Cloudflare Worker Cron Trigger）**。新版 Worker（`2026-09-30-a`）已寫好並測試（含個股指標、`indicator=quote` 即時價轉發、來源檢查與限流），在使用者私有資料夾 `TradingView 指標/我寫的指標/ADX MTF 後端運算 (Cloudflare Worker)/worker.js`（不在 git）；部署步驟見同資料夾 `README.md`「2026-09-30 升級」。**待使用者：貼上新 worker.js → 建 fine-grained PAT（僅本 repo、Actions 讀寫）存成 Secret `GITHUB_TOKEN` → 加 Cron `3,33 * * * *`。**
+- 已知：期交所 MIS 9/30 晚回 HTTP 520，Worker 的台指期即時價段尚未實測；週五夜盤結算（週六 05:00）原排程就沒涵蓋。
 
 ## 8. 其他仍待處理，不急
 

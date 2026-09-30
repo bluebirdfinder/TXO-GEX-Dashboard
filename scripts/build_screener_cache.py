@@ -691,6 +691,13 @@ def main():
 
     print(f"=== Screener cache successfully built! Saved {len(results)} symbols to {OUTPUT_FILE} ===")
 
+    # 全市場個股日 K 分片（戰情室手機網頁與 Cloudflare Worker 只抓自己需要的那一片，見 build_stock_daily_shards.py）
+    try:
+        from build_stock_daily_shards import build as build_daily_shards
+        build_daily_shards()
+    except Exception as e:
+        print(f"[WARN] stock_daily shards not rebuilt: {e}")
+
     huaxin = next((x for x in results if x["symbol"] == "1605"), None)
     if huaxin:
         print("\n[VERIFICATION] 1605 (華新) Screener Cache:")

@@ -45,6 +45,16 @@
 
 ## 🎯 各版本詳細更新紀錄
 
+### ☁️ v64.17 後續微調（未升版號）：個股日K分片、Worker 升級版（個股指標／手機即時價／準時排程）(2026-09-30)
+
+- **背景**：使用者決定：排程延遲走「Cloudflare Worker 準時觸發」，Worker 要做「即時價轉發、個股副圖指標、來源限制與限流」，並提醒「指標程式碼應全部放 Cloudflare，網頁只留運算後的結果（智慧財產保護）」。
+- **✅ 個股日 K 改成 64 個小分片**：新增 `scripts/build_stock_daily_shards.py`，把全市場日 K 切成 `data/stock_daily/00.json`–`63.json`（djb2 雜湊 % 64；每片緊湊陣列 `[日期,開,高,低,收,量(張)]`，總共 6.1MB、最大一片 233KB）。原因：Worker 免費版每次請求 CPU 只有 10ms，解析 15MB 完整檔會超時；手機看一檔股票也不該下載 2.4MB。網頁改為只抓該股票所在的一片（一檔約 48KB gzip，**下載量約降為 1/50**）。`build_screener_cache.py` 每次重建後自動產生分片。前端、Python、Worker 三邊雜湊實測一致（2330→45、2603→16、00400A→58）。
+- **✅ Worker 升級版 `2026-09-30-a`（`worker.js` 在使用者私有資料夾，不在 git；已備份舊版）**：①個股：請求的代號不在 `klines_cache.json` 12 檔時，從分片補上 1D/1W/1Mth，六個指標演算法一行未改；②`indicator=quote` 即時價轉發（期交所 MIS 台指期＋證交所 MIS 加權／櫃買）；③`scheduled()` Cron Trigger 準時呼叫 GitHub `workflow_dispatch`（`3,33 * * * *`，程式內依台北時間篩結算時段）；④存取控制：只接受 `bluebirdfinder.github.io`／localhost 來源、每 IP 每分鐘 240 次、邊緣快取 30 秒；⑤`indicator=health`。
+- **驗證**：本機 Node 測試 28/28 通過（來源檢查、預檢、既有 12 檔不受影響、個股四個指標、MACD 序列長度＝日K根數、動能鳥 close＝官方最新收盤、分K 回 404 不造假、惡意代號回 404、排程時段 6 種情境、無 Token 不呼叫、限流 429）。**期交所 MIS 當晚遠端回 HTTP 520（連本機 Python 也是），台指期即時價一項標為略過，無法實測**；加權／櫃買（證交所 MIS）已實測。
+- **✅ 網頁端**：即時價來源順序改為「本機服務 → Worker 轉發 → 直連期交所」，Worker 未部署新版時安全退回「無即時數據，報價為 xx:xx 的資料」；模擬 Worker 有／無兩種情境已驗證。動能鳥 HUD 原本對不在 12 檔白名單的標的會改抓台指期數字，改為用實際代號問 Worker（算不出來顯示無資料）。
+- **⏳ 待使用者部署**（步驟在私有資料夾的 `README.md`「2026-09-30 升級」）：貼上新 `worker.js`；建立只限本 repo `Actions: Read and write` 的 fine-grained PAT 存成 Worker Secret `GITHUB_TOKEN`；加 Cron Trigger `3,33 * * * *`。部署後手機才有即時價與個股副圖指標，資料引擎才會準時。
+- **智慧財產保護現況**：已在 Worker——ADX、雙層 MACD、波段 CCI、AO、動能鳥、SMC；已在私有資料夾——選股雷達動能鳥／5K／九轉。**仍在瀏覽器可見的 `room.js`**：主圖動能鳥標記（簡化版）、神奇九轉 DeMark、SMMA、Supertrend、SAR、VWAP、VRVP、DMI。這批下一步應搬進 Worker。
+
 ### 🛡️ v64.17 後續微調（未升版號）：本機 AI 軍師不再使用假設／寫死數字（紅線 4、6）(2026-09-30)
 
 - **背景**：使用者決定「全部改成無資料」。細查本機軍師（`generateQuantAdvisorResponse()` 等）發現比寫死後備數字更嚴重的問題。

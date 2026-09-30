@@ -528,29 +528,40 @@ function computeMomentumBirdMarkers(candles, opens, closes, highs, lows, volumes
   }
   return markers;
 }
-// ---- 全市場個股日 K（證交所／櫃買官方資料，來自選股雷達的 screener_ohlcv_cache.json）----
-// klines_cache.json 只有 12 檔標的；其餘上千檔個股原本完全沒有 K 線。選到這類個股時才載入這個檔案，
+// ---- 全市場個股日 K（證交所／櫃買官方資料）----
+// klines_cache.json 只有 12 檔標的；其餘上千檔個股原本完全沒有 K 線。選到這類個股時，只下載「這檔股票所在的那一片」
+// data/stock_daily/NN.json（64 片，每片約 100KB；分片規則須與 scripts/build_stock_daily_shards.py 及 Worker 一致），
 // 轉成日 K，週 K／月 K 由日 K 合併而來（真實資料，不是推算）。分 K 沒有官方免費來源，維持「暫無真實K線」。
-let stockDailyCache = null;
-let stockDailyLoading = null;
-function loadStockDailyBars() {
-  if (stockDailyCache) return Promise.resolve(stockDailyCache);
-  if (!stockDailyLoading) {
-    stockDailyLoading = fetch('../data/screener_ohlcv_cache.json')
+const stockDailyBySym = {};    // 代號 -> [{date,open,high,low,close,volume}]；null 代表該片存在但沒有這檔
+const stockShardLoading = {};  // 片號 -> Promise
+function stockShardOf(code) {
+  let h = 5381;
+  for (const ch of String(code)) h = (Math.imul(h, 33) + ch.charCodeAt(0)) >>> 0;
+  return h % 64;
+}
+function loadStockDailyFor(sym) {
+  if (sym in stockDailyBySym) return Promise.resolve(stockDailyBySym[sym]);
+  const id = stockShardOf(sym);
+  if (!stockShardLoading[id]) {
+    const file = String(id).padStart(2, '0');
+    stockShardLoading[id] = fetch(`../data/stock_daily/${file}.json`)
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(j => {
-        const d = (j && j.data) || {};
-        const all = Object.assign({}, d._TWSE_BULK || {});
-        Object.keys(d).forEach(k => { if (!k.startsWith('_') && Array.isArray(d[k])) all[k] = d[k]; });
-        stockDailyCache = all;
-        return all;
+        Object.keys(j.bars || {}).forEach(code => {
+          stockDailyBySym[code] = j.bars[code].map(r => ({ date: String(r[0]), open: r[1], high: r[2], low: r[3], close: r[4], volume: r[5] }));
+        });
+        return true;
       })
-      .catch(e => { console.warn('⚠️ 載入個股日K失敗', e); stockDailyLoading = null; return null; });
+      .catch(e => { console.warn('⚠️ 載入個股日K分片失敗', e); stockShardLoading[id] = null; return false; });
   }
-  return stockDailyLoading;
+  return Promise.resolve(stockShardLoading[id]).then(ok => {
+    if (!ok) return null;
+    if (!(sym in stockDailyBySym)) stockDailyBySym[sym] = null;   // 這片有載入，但沒有這檔
+    return stockDailyBySym[sym];
+  });
 }
 function stockNeedsDailyLoad(sym, tf) {
-  return !stockDailyCache && !klinesCacheData?.assets?.[sym] && (tf === '1D' || tf === '1W' || tf === '1Mth');
+  return !(sym in stockDailyBySym) && !klinesCacheData?.assets?.[sym] && (tf === '1D' || tf === '1W' || tf === '1Mth');
 }
 // 日K -> 指定週期。時間戳沿用 klines_cache 的日K慣例（該日 09:00 台北 = 01:00 UTC）；量單位「張」換成「股」與 klines 一致。
 function dailyBarsToCandles(bars, tf) {
@@ -644,8 +655,8 @@ function generateIndicatorsData(tf) {
   const sym = currentActiveSymbol?.symbol || 'TXF';
   const isIndexOrYield = sym === 'TAIEX' || sym === 'OTC' || sym === 'US10Y' || sym === 'DXY' || !!currentActiveSymbol?.is_yield || !!currentActiveSymbol?.is_index;
   let cachedCandles = klinesCacheData?.assets?.[sym]?.timeframes?.[tf];
-  if (!cachedCandles && stockDailyCache && !klinesCacheData?.assets?.[sym] && (tf === '1D' || tf === '1W' || tf === '1Mth')) {
-    cachedCandles = dailyBarsToCandles(stockDailyCache[sym], tf);
+  if (!cachedCandles && !klinesCacheData?.assets?.[sym] && (tf === '1D' || tf === '1W' || tf === '1Mth')) {
+    cachedCandles = dailyBarsToCandles(stockDailyBySym[sym], tf);
   }
 
   if (cachedCandles && cachedCandles.length > 0) {
@@ -1210,7 +1221,7 @@ function generateIndicatorsData(tf) {
 function renderChartData() {
   const _symForLoad = currentActiveSymbol?.symbol || 'TXF';
   if (stockNeedsDailyLoad(_symForLoad, currentTf)) {
-    loadStockDailyBars().then(c => { if (c) renderChartData(); });   // 載入完成再重畫一次
+    loadStockDailyFor(_symForLoad).then(bars => { if (bars) renderChartData(); });   // 載入完成再重畫一次
   }
   const data = generateIndicatorsData(currentTf);
   // Explain an intentionally empty chart (no real bars for this symbol/timeframe) instead of leaving it blank.
@@ -1229,7 +1240,7 @@ function renderChartData() {
       _n.style.display = empty ? 'block' : 'none';
       if (empty) {
         const _isIntraday = !['1D', '1W', '1Mth'].includes(currentTf);
-        const _hasDaily = !!(stockDailyCache && stockDailyCache[currentActiveSymbol?.symbol]);
+        const _hasDaily = !!stockDailyBySym[currentActiveSymbol?.symbol];
         _n.textContent = (_isIntraday && (_hasDaily || stockNeedsDailyLoad(currentActiveSymbol?.symbol, '1D')))
           ? `⚪ ${currentActiveSymbol?.name || ''} 目前只提供日K以上（分K沒有官方免費來源），請切換 1D／1週／1月`
           : `⚪ ${currentActiveSymbol?.name || ''} ${currentTf} 暫無真實K線數據（官方來源未提供此時間級別）`;
@@ -1427,7 +1438,8 @@ async function updateMomentumBirdHud(symObj) {
   const strengthEl = document.getElementById('left-hud-strength');
   if (!modeEl || !assetEl || !biasEl || !mfiEl || !adxEl || !trendEl || !strengthEl) return;
 
-  const symbol = (symObj && MOMENTUM_BIRD_SUPPORTED_SYMBOLS.has(symObj.symbol)) ? symObj.symbol : 'TXF';
+  // 用實際選到的代號問 Worker（Worker 已支援全市場個股日K）；算不出來就顯示無資料，不再用台指期的數字頂替。
+  const symbol = (symObj && symObj.symbol) ? symObj.symbol : 'TXF';
   modeEl.innerText = 'Auto (動能鳥)';
   assetEl.innerText = `${symbol} (1D)`;
 
@@ -4203,6 +4215,7 @@ let lastTxfPrice = null;
 // 連不到就暫停一陣子再試：本機閘道 60 秒、期交所 MIS 5 分鐘（線上網站上 MIS 會被 CORS 擋，不必每 3 秒撞一次）。
 let _localGwRetryAt = 0;
 let _misRetryAt = 0;
+let _workerQuoteRetryAt = 0;
 async function fetchFubonOrPublicFallback() {
   if (Date.now() >= _localGwRetryAt) try {
     const controller = new AbortController();
@@ -4216,6 +4229,18 @@ async function fetchFubonOrPublicFallback() {
   } catch (e) {
     // Local gateway not running, blocked, or timed out — fall through to the public fallback.
     _localGwRetryAt = Date.now() + 60000;
+  }
+
+  // 第二來源：私有 Cloudflare Worker 代抓期交所／證交所（手機直連期交所會被 CORS 擋）。Worker 沒部署新版或連不到時退避 60 秒。
+  if (Date.now() >= _workerQuoteRetryAt) try {
+    const wr = await fetch(`${ADX_MTF_API}?indicator=quote`);
+    if (wr.ok) {
+      const q = await wr.json();
+      if (q && (q.txf || q.taiex || q.otc)) return { data: q, source: 'worker' };
+    }
+    _workerQuoteRetryAt = Date.now() + 60000;
+  } catch (e) {
+    _workerQuoteRetryAt = Date.now() + 60000;
   }
 
   if (Date.now() >= _misRetryAt) try {
@@ -4362,6 +4387,10 @@ function initFubonLivePriceStream() {
           statusTag.innerHTML = '🟢 富邦 Neo API (Live)';
           statusTag.style.borderColor = '#00e676';
           statusTag.style.color = '#00e676';
+        } else if (source === 'worker') {
+          statusTag.innerHTML = '🌐 期交所／證交所 (Worker 轉發，約 3 秒延遲)';
+          statusTag.style.borderColor = 'var(--primary-accent)';
+          statusTag.style.color = 'var(--primary-accent)';
         } else {
           statusTag.innerHTML = '🌐 期交所 MIS (備援行情)';
           statusTag.style.borderColor = 'var(--primary-accent)';
