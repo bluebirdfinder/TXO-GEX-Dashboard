@@ -466,68 +466,6 @@ function handleChartResize() {
  * Computes authentic MA, SMMA, VWAP, Dual MACD (4-color), CCI(20), AO, DMI/ADX, DeMark 9★/13★ & Momentum Birds
  */
 
-// 主圖K棒上的 🚀強火箭/🐦強藍鳥/🛸動能再啟/💰減碼 箭頭——跟Sub-Chart 2/3的雙層MACD/CCI是兩個獨立
-// 功能，共用同一套「4選1 + 14根K棒節流」判斷順序。抽成獨立函式是因為需要呼叫兩次：
-// generateIndicatorsData() 起手先用本地簡化版柱色畫一次（不用等API），Worker真實雙層配色
-// 回來後 updateMomentumSeries() 再呼叫一次拿真資料重算、整批替換掉，讓節流判斷是根據「單一套
-// 一致的資料」跑完整個歷史算出來的，不是本地版跟真實版兩批各自獨立節流再湊在一起。
-// difArr/deaArr是主軸MACD(12,26,9)快慢線——不管本地簡化版還是Worker真實版，主軸公式完全一樣
-// （雙層配色只影響「顏色」，不影響主軸dif/dea本身），所以🚀不需要特別分真假版本。
-// histColorAt(t, idx) 回傳當下這根K棒的柱體顏色字串（或null），只有🛸需要真的判斷是不是
-// '#ff3b30'（動能鳥雙層配色裡「強多加速」的純紅）——本地簡化版沒有真配色可查，呼叫端傳一個近似的
-// 判斷式進來，Worker真資料回來後傳真正的顏色進來，兩次呼叫共用同一份邏輯，差別只在這個參數。
-function computeMomentumBirdMarkers(candles, opens, closes, highs, lows, volumes, volMa5, ma7, difArr, deaArr, cciArr, histColorAt) {
-  const markers = [];
-  const count = candles.length;
-  let bullSetupCount = 0;
-  let bearSetupCount = 0;
-  let lastSignalIdx = -30;
-
-  for (let i = 4; i < count; i++) {
-    const t = candles[i].time;
-
-    if (closes[i] < closes[i - 4]) {
-      bullSetupCount++; bearSetupCount = 0;
-    } else if (closes[i] > closes[i - 4]) {
-      bearSetupCount++; bullSetupCount = 0;
-    } else {
-      bullSetupCount = 0; bearSetupCount = 0;
-    }
-
-    if (i >= 20 && (i - lastSignalIdx >= 14)) {
-      const curClose = closes[i];
-      const curOpen = opens[i];
-      const curVol = volumes[i].value;
-      const ma5v = volMa5.find(v => v.time === t)?.value || 1000;
-      const cciV = cciArr[i] || 0;
-      const macdDifV = difArr[i];
-      const macdDeaV = deaArr[i];
-      const color = histColorAt(t, i);
-
-      // 🚀 強火箭 (帶量突破主均線與前高)
-      if (curClose > curOpen && curClose > highs[i - 1] && curVol > ma5v * 1.6 && macdDifV > macdDeaV) {
-        markers.push({ time: t, position: 'belowBar', color: '#ffd600', shape: 'arrowUp', text: '🚀 強火箭' });
-        lastSignalIdx = i;
-      }
-      // 🐦 強藍鳥 (超跌起漲 + 抄底結構)
-      else if (cciV < -110 && (bullSetupCount >= 6 || curClose > curOpen) && curVol > ma5v * 1.1) {
-        markers.push({ time: t, position: 'belowBar', color: '#00b0ff', shape: 'arrowUp', text: '🐦 強藍鳥' });
-        lastSignalIdx = i;
-      }
-      // 🛸 動能再啟 (回測均線後強勢彈升 + 雙層配色轉為「強多加速」純紅)
-      else if (curClose > curOpen && lows[i] <= (ma7.find(m => m.time === t)?.value || curClose) && color === '#ff3b30') {
-        markers.push({ time: t, position: 'belowBar', color: '#ffd700', shape: 'circle', text: '🛸 動能再啟' });
-        lastSignalIdx = i;
-      }
-      // 💰 減碼 / ⚠️ 出清 (漲幅過大或跌破關鍵支撐)
-      else if (bearSetupCount >= 8 || (cciV > 165 && curClose < curOpen)) {
-        markers.push({ time: t, position: 'aboveBar', color: '#ff9800', shape: 'arrowDown', text: '💰 減碼' });
-        lastSignalIdx = i;
-      }
-    }
-  }
-  return markers;
-}
 // ---- 全市場個股日 K（證交所／櫃買官方資料）----
 // klines_cache.json 只有 12 檔標的；其餘上千檔個股原本完全沒有 K 線。選到這類個股時，只下載「這檔股票所在的那一片」
 // data/stock_daily/NN.json（64 片，每片約 100KB；分片規則須與 scripts/build_stock_daily_shards.py 及 Worker 一致），
@@ -714,23 +652,10 @@ function generateIndicatorsData(tf) {
     }
   }
 
-  // --- Real 尋鳥多空彩帶 (MA7, MA17, MA88, MA200) ---
-  const calcSMA = (len) => {
-    const res = [];
-    for (let i = 0; i < count; i++) {
-      if (i >= len - 1) {
-        let sum = 0;
-        for (let k = 0; k < len; k++) sum += closes[i - k];
-        res.push({ time: candles[i].time, value: Math.round((sum / len) * 10) / 10 });
-      }
-    }
-    return res;
-  };
-
-  const ma7 = calcSMA(7);
-  const ma17 = calcSMA(17);
-  const ma88 = calcSMA(Math.min(88, Math.floor(count * 0.7)));
-  const ma200 = calcSMA(Math.min(200, Math.floor(count * 0.85)));
+  // 均線彩帶 MA7/17/88/200、ADX Pro V3、神奇九轉、動能鳥箭頭、VWAP、SMMA、VRVP、SAR、Supertrend 的運算
+  // 已搬到私有 Cloudflare Worker（indicator=chart），網頁只畫它回傳的結果；見 fetchChartBundle()。
+  // 這裡刻意留空，不留公式當備援（留著就等於沒搬）。
+  const ma7 = [], ma17 = [], ma88 = [], ma200 = [];
 
   // 2026-09-24: 戰情雙層MACD/波段拐點CCI/AO 這三個原本在這裡算的真公式已經搬去
   // bluebird-indicators Cloudflare Worker（indicator=momentum）做IP保護，瀏覽器「檢視原始碼」
@@ -765,413 +690,11 @@ function generateIndicatorsData(tf) {
   const retailLine = [];     // 散戶成交筆數差 (綠柱，即時附加)
   const marketOrderLine = []; // 市場委買委賣口差 (黃線，即時附加)
 
-  // --- 🚀 Authentic ADX Pro V3 (Dual Color + 4-State Breakout + Divergence) ---
-  // 1:1 對齊 adx_dual_color_v3.pine 演算法
-  const adxPeriod = 14;
-  const thBase = 20;     // 20 盤整打底線
-  const thTrend = 30;    // 30 動能爆發線
-  const thStrong = 50;   // 50 強勢警戒線
-  const thExtreme = 75;  // 75 極端警戒線
-  const breakLookback = 20;
-  const breakCooldown = 8;
-
-  let trSmooth = 0, plusDmSmooth = 0, minusDmSmooth = 0;
-  const dxArr = [];
-  const adxValues = [];
-  const adxLine = [];
-  const adxHist = [];
-  const adxSignals = [];
-
-  let lastBoBar = -100;
-  let lastBdBar = -100;
-  let lastSwingHigh = null; // {price, adx} of the most recent confirmed swing high — real
-  let lastSwingLow = null;  // reference points for divergence, not a fixed price level
-
-  for (let i = 0; i < count; i++) {
-    const t = candles[i].time;
-    if (i === 0) {
-      adxValues.push(20);
-      adxLine.push({ time: t, value: 20 });
-      adxHist.push({ time: t, value: 20, color: '#26A69A' });
-      continue;
-    }
-
-    const upMove = highs[i] - highs[i - 1];
-    const downMove = lows[i - 1] - lows[i];
-    const plusDm = (upMove > downMove && upMove > 0) ? upMove : 0;
-    const minusDm = (downMove > upMove && downMove > 0) ? downMove : 0;
-    const tr = Math.max(highs[i] - lows[i], Math.abs(highs[i] - closes[i - 1]), Math.abs(lows[i] - closes[i - 1]));
-
-    if (i <= adxPeriod) {
-      trSmooth += tr;
-      plusDmSmooth += plusDm;
-      minusDmSmooth += minusDm;
-      if (i === adxPeriod) {
-        trSmooth /= adxPeriod;
-        plusDmSmooth /= adxPeriod;
-        minusDmSmooth /= adxPeriod;
-      }
-    } else {
-      trSmooth = (trSmooth * (adxPeriod - 1) + tr) / adxPeriod;
-      plusDmSmooth = (plusDmSmooth * (adxPeriod - 1) + plusDm) / adxPeriod;
-      minusDmSmooth = (minusDmSmooth * (adxPeriod - 1) + minusDm) / adxPeriod;
-    }
-
-    const pDi = trSmooth > 0 ? (plusDmSmooth / trSmooth) * 100 : 20;
-    const mDi = trSmooth > 0 ? (minusDmSmooth / trSmooth) * 100 : 20;
-    const diSum = pDi + mDi;
-    const dx = diSum > 0 ? (Math.abs(pDi - mDi) / diSum) * 100 : 20;
-    dxArr.push(dx);
-
-    let adx = 20;
-    if (dxArr.length >= adxPeriod) {
-      let sumDx = 0;
-      for (let k = 0; k < adxPeriod; k++) sumDx += dxArr[dxArr.length - 1 - k];
-      adx = sumDx / adxPeriod;
-    }
-    adx = Math.round(adx * 10) / 10;
-    adxValues.push(adx);
-
-    // ADX Pro V3 4-Color Gradient
-    let adxColor = '#26A69A'; // < 20 綠色 (盤整打底)
-    if (adx >= thExtreme) {
-      adxColor = '#FF5252';   // >= 75 極端警戒 (紅)
-    } else if (adx >= thStrong) {
-      adxColor = '#FF7043';   // >= 50 強勢警戒 (橘紅)
-    } else if (adx >= thTrend) {
-      adxColor = '#FFA726';   // >= 30 動能爆發 (金橘)
-    } else if (adx >= thBase) {
-      adxColor = '#BA68C8';   // >= 20 動能醞釀 (淡紫)
-    }
-
-    adxLine.push({ time: t, value: adx });
-    adxHist.push({ time: t, value: adx, color: adxColor });
-
-    // ADX Pro V3 頂背離與底背離判定：比較「本次波段極值」與「上一次波段極值」當下的真實 ADX
-    // 值（真實背離定義：價格創新高但趨勢強度未跟著創高＝頂背離；價格創新低但趨勢強度未跟著
-    // 創高＝底背離），完全依當時真實價格與 ADX 相對關係判斷，不綁定任何固定價位——價格永久
-    // 脫離舊區間後這個判斷依然成立，不會失效。
-    if (i >= 2) {
-      const priorIdx = i - 1;
-      const isConfirmedPeak = highs[priorIdx] > highs[priorIdx - 1] && highs[priorIdx] >= highs[i];
-      const isConfirmedTrough = lows[priorIdx] < lows[priorIdx - 1] && lows[priorIdx] <= lows[i];
-
-      if (isConfirmedPeak) {
-        const peakPrice = highs[priorIdx];
-        const peakAdx = adxValues[priorIdx];
-        if (lastSwingHigh && peakPrice > lastSwingHigh.price && peakAdx < lastSwingHigh.adx && (i - lastBoBar >= 25)) {
-          adxSignals.push({ time: candles[priorIdx].time, position: 'aboveBar', color: '#00E676', shape: 'arrowDown', text: '▼ 頂背離' });
-          lastBoBar = i;
-        }
-        lastSwingHigh = { price: peakPrice, adx: peakAdx };
-      }
-      if (isConfirmedTrough) {
-        const troughPrice = lows[priorIdx];
-        const troughAdx = adxValues[priorIdx];
-        if (lastSwingLow && troughPrice < lastSwingLow.price && troughAdx < lastSwingLow.adx && (i - lastBdBar >= 25)) {
-          adxSignals.push({ time: candles[priorIdx].time, position: 'belowBar', color: '#FF5252', shape: 'arrowUp', text: '▲ 底背離' });
-          lastBdBar = i;
-        }
-        lastSwingLow = { price: troughPrice, adx: troughAdx };
-      }
-    }
-  }
-
-  // --- Real TD Sequential DeMark 9★ / 13★ Setup & Multi-Factor Filtered Momentum Birds ---
-  // 這裡的🚀/🐦/🛸/💰主圖箭頭跟Sub-Chart 2/3的「戰情雙層MACD」是兩套不同的既有功能——
-  // 這組只需要標準單層MACD(12,26,9)判斷方向，不是動能鳥的雙層/四色配色那套需要保護的獨門邏輯，
-  // 標準MACD公式本身是1979年就公開的教科書公式，不算IP，所以在這裡留一份最簡單版本純粹是為了
-  // 讓這個既有箭頭功能不因為雙層版搬去Worker而跟著壞掉，跟Sub-Chart 2/3看到的真雙層MACD無關。
-  const bareEma = (src, period) => {
-    const k = 2 / (period + 1);
-    const out = [];
-    let prev = src[0];
-    for (let i = 0; i < src.length; i++) {
-      prev = i === 0 ? src[0] : src[i] * k + prev * (1 - k);
-      out.push(prev);
-    }
-    return out;
-  };
-  const bareEma12 = bareEma(closes, 12);
-  const bareEma26 = bareEma(closes, 26);
-  const mainDif = bareEma12.map((v, idx) => v - bareEma26[idx]);
-  const mainDea = bareEma(mainDif, 9);
-
-  // 同理：這裡也只需要標準CCI(20)判斷超賣區，不是波段CCI的±100/±200穿越+MACD濾網那套。
-  const bareCci = new Array(count).fill(0);
-  for (let i = 19; i < count; i++) {
-    let sumTp = 0;
-    const tpSlice = [];
-    for (let k = 0; k < 20; k++) {
-      const idx = i - k;
-      const tp = (highs[idx] + lows[idx] + closes[idx]) / 3.0;
-      tpSlice.push(tp);
-      sumTp += tp;
-    }
-    const meanTp = sumTp / 20;
-    let sumMd = 0;
-    for (let k = 0; k < 20; k++) sumMd += Math.abs(tpSlice[k] - meanTp);
-    const meanDev = sumMd / 20 || 0.001;
-    const currTp = (highs[i] + lows[i] + closes[i]) / 3.0;
-    bareCci[i] = (currTp - meanTp) / (0.015 * meanDev);
-  }
-
-  const demarkMarkers = [];
-  {
-    let bullSetupCount = 0;
-    let bearSetupCount = 0;
-    for (let i = 4; i < count; i++) {
-      const t = candles[i].time;
-      if (closes[i] < closes[i - 4]) {
-        bullSetupCount++; bearSetupCount = 0;
-      } else if (closes[i] > closes[i - 4]) {
-        bearSetupCount++; bullSetupCount = 0;
-      } else {
-        bullSetupCount = 0; bearSetupCount = 0;
-      }
-      if (bullSetupCount === 9) {
-        demarkMarkers.push({ time: t, position: 'belowBar', color: '#2ed573', shape: 'circle', text: '9★抄底' });
-      } else if (bearSetupCount === 9) {
-        demarkMarkers.push({ time: t, position: 'aboveBar', color: '#ff4757', shape: 'circle', text: '9★逃頂' });
-      }
-    }
-  }
-
-  // 🚀強火箭/🐦強藍鳥/🛸動能再啟/💰減碼——用本地簡化版MACD柱色（見上方bareEma/mainDif/mainDea）
-  // 起手畫一次讓畫面不用等API，Worker的雙層真配色回來後 updateMomentumSeries() 會用
-  // computeMomentumBirdMarkers() 拿真資料重算一次替換掉這批，見該函式與 fetchMomentumFromWorker()。
-  const bareHistColorAt = (t, idx) => {
-    const histNow = mainDif[idx] - mainDea[idx];
-    const histPrev = idx > 0 ? (mainDif[idx - 1] - mainDea[idx - 1]) : histNow;
-    return (histNow > 0 && histNow > histPrev) ? '#ff3b30' : null; // 只需要能不能判斷「純紅」這個狀態
-  };
-  const momentumBirdMarkers = computeMomentumBirdMarkers(
-    candles, opens, closes, highs, lows, volumes, volMa5, ma7, mainDif, mainDea, bareCci, bareHistColorAt
-  );
-  const markers = [...demarkMarkers, ...momentumBirdMarkers];
-
-  // --- Real VWAP & SMMA ---
-  const vwapData = [];
-  const vwapUpper = [];
-  const vwapLower = [];
-  const smmaData = [];
-  
-  let cumVol = 0;
-  let cumVolPrice = 0;
-  let smmaPrev = closes[0];
-
-  for (let i = 0; i < count; i++) {
-    const t = candles[i].time;
-    const tp = (highs[i] + lows[i] + closes[i]) / 3.0;
-    const v = volumes[i].value;
-    
-    cumVol += v;
-    cumVolPrice += tp * v;
-    const vwapVal = cumVol > 0 ? (cumVolPrice / cumVol) : tp;
-    
-    // ±1 Standard Deviation channel
-    const dev = atrBase * 1.25;
-    vwapData.push({ time: t, value: Math.round(vwapVal * 10) / 10 });
-    vwapUpper.push({ time: t, value: Math.round((vwapVal + dev) * 10) / 10 });
-    vwapLower.push({ time: t, value: Math.round((vwapVal - dev) * 10) / 10 });
-
-    // SMMA 200 on close
-    const smmaLen = indicatorConfig.smmaLen || 200;
-    if (i === 0) {
-      smmaPrev = closes[0];
-    } else {
-      smmaPrev = (smmaPrev * (smmaLen - 1) + closes[i]) / smmaLen;
-    }
-    smmaData.push({ time: t, value: Math.round(smmaPrev * 10) / 10 });
-  }
-
-  // --- Real VRVP (Visible Range Volume Profile: 50 Rows, 70% Value Area) ---
-  const numRows = indicatorConfig.vrvpRows || 50;
-  const vaTargetPct = (indicatorConfig.vrvpVa || 70) / 100;
-  let highMax = -Infinity, lowMin = Infinity;
-  for (let i = 0; i < count; i++) {
-    if (candles[i].high > highMax) highMax = candles[i].high;
-    if (candles[i].low < lowMin) lowMin = candles[i].low;
-  }
-  if (highMax === lowMin) highMax += 1.0;
-  const binWidth = (highMax - lowMin) / numRows;
-  const binsUp = new Array(numRows).fill(0);
-  const binsDown = new Array(numRows).fill(0);
-
-  for (let i = 0; i < count; i++) {
-    const c = candles[i].close, o = candles[i].open, v = volumes[i].value;
-    const h = candles[i].high, l = candles[i].low;
-    const isUp = c >= o;
-    const kLowIdx = Math.max(0, Math.min(numRows - 1, Math.floor((l - lowMin) / binWidth)));
-    const kHighIdx = Math.max(0, Math.min(numRows - 1, Math.floor((h - lowMin) / binWidth)));
-    const covered = Math.max(1, kHighIdx - kLowIdx + 1);
-    const volPerBin = v / covered;
-    for (let b = kLowIdx; b <= kHighIdx; b++) {
-      if (isUp) binsUp[b] += volPerBin;
-      else binsDown[b] += volPerBin;
-    }
-  }
-
-  const totalBins = binsUp.map((u, idx) => u + binsDown[idx]);
-  let pocIdx = 0, maxBinVol = -1;
-  let totalVolSum = 0;
-  for (let b = 0; b < numRows; b++) {
-    totalVolSum += totalBins[b];
-    if (totalBins[b] > maxBinVol) {
-      maxBinVol = totalBins[b];
-      pocIdx = b;
-    }
-  }
-
-  const inVa = new Array(numRows).fill(false);
-  inVa[pocIdx] = true;
-  let accumVaVol = totalBins[pocIdx];
-  const targetVaVol = totalVolSum * vaTargetPct;
-  let upPtr = pocIdx + 1, downPtr = pocIdx - 1;
-
-  while (accumVaVol < targetVaVol && (upPtr < numRows || downPtr >= 0)) {
-    const volUp = upPtr < numRows ? totalBins[upPtr] : -1;
-    const volDown = downPtr >= 0 ? totalBins[downPtr] : -1;
-    if (volUp >= volDown && volUp >= 0) {
-      inVa[upPtr] = true;
-      accumVaVol += volUp;
-      upPtr++;
-    } else if (volDown >= 0) {
-      inVa[downPtr] = true;
-      accumVaVol += volDown;
-      downPtr--;
-    } else {
-      break;
-    }
-  }
-
-  let valIdx = pocIdx, vahIdx = pocIdx;
-  for (let b = 0; b < numRows; b++) {
-    if (inVa[b]) { valIdx = b; break; }
-  }
-  for (let b = numRows - 1; b >= 0; b--) {
-    if (inVa[b]) { vahIdx = b; break; }
-  }
-
-  const pocPrice = Math.round((lowMin + (pocIdx + 0.5) * binWidth) * 10) / 10;
-  const vahPrice = Math.round((lowMin + (vahIdx + 1.0) * binWidth) * 10) / 10;
-  const valPrice = Math.round((lowMin + valIdx * binWidth) * 10) / 10;
-
-  const vrvpBins = [];
-  for (let b = 0; b < numRows; b++) {
-    vrvpBins.push({
-      priceLow: lowMin + b * binWidth,
-      priceHigh: lowMin + (b + 1) * binWidth,
-      volUp: binsUp[b],
-      volDown: binsDown[b],
-      totalVol: totalBins[b],
-      inVa: inVa[b],
-      isPoc: b === pocIdx
-    });
-  }
-
-  // --- Real Parabolic SAR (Wilder, 1978) ---
-  // 2026-09-16: the UI's "🎯 Parabolic SAR" checkbox + Step parameter existed and could be
-  // toggled (indicatorConfig.sar / .sarStep), but nothing ever read that state to actually
-  // compute or draw anything — checking the box silently did nothing. This is the first real
-  // implementation: standard textbook SAR, not an approximation.
-  const sarStep = indicatorConfig.sarStep || 0.02;
-  const sarMaxAf = 0.2;
-  const sarData = [];
-  if (count >= 2) {
-    let sarUp = closes[1] >= closes[0]; // initial trend guess from the first two closes
-    let sar = sarUp ? lows[0] : highs[0];
-    let ep = sarUp ? highs[0] : lows[0]; // extreme point
-    let af = sarStep;
-    sarData.push({ time: candles[0].time, value: sar });
-    for (let i = 1; i < count; i++) {
-      let nextSar = sar + af * (ep - sar);
-      if (sarUp) {
-        const clampLow = i >= 2 ? Math.min(lows[i - 1], lows[i - 2]) : lows[i - 1];
-        nextSar = Math.min(nextSar, clampLow);
-        if (lows[i] < nextSar) {
-          sarUp = false;
-          nextSar = ep;
-          ep = lows[i];
-          af = sarStep;
-        } else if (highs[i] > ep) {
-          ep = highs[i];
-          af = Math.min(af + sarStep, sarMaxAf);
-        }
-      } else {
-        const clampHigh = i >= 2 ? Math.max(highs[i - 1], highs[i - 2]) : highs[i - 1];
-        nextSar = Math.max(nextSar, clampHigh);
-        if (highs[i] > nextSar) {
-          sarUp = true;
-          nextSar = ep;
-          ep = highs[i];
-          af = sarStep;
-        } else if (lows[i] < ep) {
-          ep = lows[i];
-          af = Math.min(af + sarStep, sarMaxAf);
-        }
-      }
-      sar = nextSar;
-      sarData.push({ time: candles[i].time, value: sar });
-    }
-  }
-
-  // --- Real Supertrend (ATR-based, Wilder smoothing) ---
-  // 2026-09-16: the UI's "Supertrend" checkbox + ATR週期/倍數參數存在（indicatorConfig.supertrend
-  // / .stLen / .stMult），但從未被任何運算或渲染程式碼讀取。這是第一次真的實作:獨立的 Wilder ATR
-  // (跟 ADX Pro V3 那組 trSmooth 平滑狀態各自獨立，不共用)，再算標準 basic/final upper/lower band。
-  const stLen = indicatorConfig.stLen || 10;
-  const stMult = indicatorConfig.stMult || 3.0;
-  const supertrendUp = [];
-  const supertrendDown = [];
-  if (count >= 2) {
-    let stAtr = 0;
-    let stTrSum = 0;
-    let finalUpperPrev = 0;
-    let finalLowerPrev = 0;
-    let stTrendUp = true;
-
-    for (let i = 0; i < count; i++) {
-      const t = candles[i].time;
-      const tr = i === 0
-        ? (highs[i] - lows[i])
-        : Math.max(highs[i] - lows[i], Math.abs(highs[i] - closes[i - 1]), Math.abs(lows[i] - closes[i - 1]));
-
-      if (i < stLen) {
-        stTrSum += tr;
-        stAtr = stTrSum / (i + 1); // 暖機期間用簡單移動平均，滿週期時等同 Wilder 起始值
-      } else {
-        stAtr = (stAtr * (stLen - 1) + tr) / stLen;
-      }
-
-      const mid = (highs[i] + lows[i]) / 2;
-      const basicUpper = mid + stMult * stAtr;
-      const basicLower = mid - stMult * stAtr;
-
-      let finalUpper, finalLower;
-      if (i === 0) {
-        finalUpper = basicUpper;
-        finalLower = basicLower;
-        stTrendUp = closes[i] >= mid;
-      } else {
-        finalUpper = (basicUpper < finalUpperPrev || closes[i - 1] > finalUpperPrev) ? basicUpper : finalUpperPrev;
-        finalLower = (basicLower > finalLowerPrev || closes[i - 1] < finalLowerPrev) ? basicLower : finalLowerPrev;
-
-        if (closes[i] > finalUpperPrev) {
-          stTrendUp = true;
-        } else if (closes[i] < finalLowerPrev) {
-          stTrendUp = false;
-        } // 否則維持前一根的趨勢方向
-      }
-
-      const stValue = Math.round((stTrendUp ? finalLower : finalUpper) * 10) / 10;
-      supertrendUp.push({ time: t, value: stTrendUp ? stValue : undefined });
-      supertrendDown.push({ time: t, value: stTrendUp ? undefined : stValue });
-
-      finalUpperPrev = finalUpper;
-      finalLowerPrev = finalLower;
-    }
-  }
+  const adxLine = [], adxHist = [], adxSignals = [];
+  const markers = [], demarkMarkers = [];
+  const vwapData = [], vwapUpper = [], vwapLower = [], smmaData = [];
+  const sarData = [], supertrendUp = [], supertrendDown = [];
+  const vrvpData = null;
 
   return {
     candles,
@@ -1205,19 +728,60 @@ function generateIndicatorsData(tf) {
     sarData,
     supertrendUp,
     supertrendDown,
-    vrvpData: {
-      bins: vrvpBins,
-      poc: pocPrice,
-      vah: vahPrice,
-      val: valPrice,
-      maxBinVol
-    }
+    vrvpData
   };
 }
 
 /**
  * Render all 5 Charts with Datasets
  */
+// ---- 主圖與 ADX 副圖的指標運算：全部在私有 Cloudflare Worker（indicator=chart），網頁只畫結果 ----
+const CHART_BUNDLE_FIELDS = ['ma7', 'ma17', 'ma88', 'ma200', 'adxLine', 'adxHist', 'adxSignals', 'markers', 'demarkMarkers',
+  'vwapData', 'vwapUpper', 'vwapLower', 'smmaData', 'sarData', 'supertrendUp', 'supertrendDown', 'vrvpData'];
+const _chartBundleCache = {};
+async function fetchChartBundle(symbol, tf) {
+  const q = new URLSearchParams({
+    indicator: 'chart', symbol, tf,
+    smma: indicatorConfig.smmaLen || 200, rows: indicatorConfig.vrvpRows || 50, va: indicatorConfig.vrvpVa || 70,
+    sar: indicatorConfig.sarStep || 0.02, stlen: indicatorConfig.stLen || 10, stmult: indicatorConfig.stMult || 3
+  });
+  const key = q.toString();
+  if (_chartBundleCache[key]) return _chartBundleCache[key];
+  const pr = (async () => {
+    try {
+      const resp = await fetch(`${ADX_MTF_API}?${key}`);
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const b = await resp.json();
+      // 舊版 Worker 不認得 indicator=chart，會當成 ADX 回 200；用欄位確認拿到的真的是運算結果
+      if (!b || !Array.isArray(b.ma7) || !Array.isArray(b.adxLine)) throw new Error('Worker 尚未更新（沒有 chart 端點）');
+      return b;
+    } catch (e) {
+      console.warn('⚠️ 主圖指標 Worker fetch failed:', e);
+      delete _chartBundleCache[key];   // 失敗不快取，下次重試
+      return null;
+    }
+  })();
+  _chartBundleCache[key] = pr;
+  return pr;
+}
+function applyChartBundle(data, b) {
+  CHART_BUNDLE_FIELDS.forEach(k => { if (b[k] !== undefined) data[k] = b[k]; });
+}
+function setChartBundleNotice(text) {
+  const pane = document.getElementById('main-chart-pane');
+  if (!pane) return;
+  let n = document.getElementById('chart-bundle-notice');
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'chart-bundle-notice';
+    n.style.cssText = 'position:absolute;left:8px;bottom:36px;z-index:18;padding:3px 8px;border-radius:4px;background:rgba(13,17,23,0.85);border:1px dashed rgba(255,215,0,0.4);color:#ffd700;font-size:0.68rem;pointer-events:none;';
+    pane.appendChild(n);
+  }
+  n.style.display = text ? 'block' : 'none';
+  n.textContent = text || '';
+}
+let lastChartData = null;   // 最近一次畫圖用的資料（切換副圖分頁時沿用，不必重算）
+
 function renderChartData() {
   const _symForLoad = currentActiveSymbol?.symbol || 'TXF';
   if (stockNeedsDailyLoad(_symForLoad, currentTf)) {
@@ -1287,6 +851,29 @@ function renderChartData() {
 
   // 6. Main Chart Overlays (GEX + Ribbons + VWAP + SMMA)
   renderMainOverlays(data);
+
+  // 6b. 彩帶／ADX／九轉／動能鳥箭頭／VWAP／SMMA／VRVP／SAR／Supertrend 由 Worker 算好後補畫
+  data._sym = sym; data._tf = currentTf;
+  lastChartData = data;
+  if (data.candles && data.candles.length >= 2) {
+    const _bSym = sym, _bTf = currentTf;
+    fetchChartBundle(_bSym, _bTf).then(b => {
+      if ((currentActiveSymbol?.symbol || 'TXF') !== _bSym || currentTf !== _bTf) return;   // 使用者已切換商品／週期
+      if (!b) {
+        setChartBundleNotice('⚪ 指標線（均線彩帶／ADX／VWAP／VRVP…）需由 Worker 計算，目前取不到');
+        return;
+      }
+      setChartBundleNotice('');
+      applyChartBundle(data, b);
+      if (activeSub4 === 'adx' && sub4Series.adx) {
+        sub4Series.adx.setData(data.adxLine);
+        sub4Series.adx.setMarkers(data.adxSignals);
+      }
+      renderMainOverlays(data);
+    });
+  } else {
+    setChartBundleNotice('');
+  }
 
   // 7. Smart Money Concepts overlay (optional; computed by the private Worker)
   smcCandleTimes = (data.candles || []).map(c => c.time);
@@ -1513,30 +1100,7 @@ async function updateMomentumSeries(symbol, tf, data) {
     cciLineSeries.setData(result.cci.line);
     cciLineSeries.setMarkers(result.cci.signals.map(s => ({ time: s.time, position: 'inBar', color: s.color, shape: 'circle', text: s.text })));
 
-    // 主圖🚀/🐦/🛸/💰箭頭：用Worker回傳的真實雙層配色重算一次，取代generateIndicatorsData()起手
-    // 用本地簡化版畫的那批（尤其🛸「動能再啟」，本地版只是近似值，見computeMomentumBirdMarkers()
-    // 註解）。真實柱體顏色資料用時間對應（Worker跟本地candles是同一份klines_cache.json，時間戳
-    // 應該完全對得上），對不上的（例如本地是平盤假K棒的未覆蓋商品）該根就沒有顏色可判斷，🛸自然
-    // 不會誤觸發。GEX覆蓋線開啟時主圖箭頭本來就會被GEX突破箭頭取代，這裡不用重複畫。
-    const isGexEligible = GEX_SUPPORTED_SYMBOLS.includes((currentActiveSymbol?.symbol || activeContract || '').toUpperCase());
-    if (data && !(indicatorConfig.gex && gexData && isGexEligible)) {
-      const opens = data.candles.map(c => c.open);
-      const closes = data.candles.map(c => c.close);
-      const highs = data.candles.map(c => c.high);
-      const lows = data.candles.map(c => c.low);
-      const difByTime = new Map(result.macd.dif.map(d => [d.time, d.value]));
-      const deaByTime = new Map(result.macd.dea.map(d => [d.time, d.value]));
-      const cciByTime = new Map(result.cci.line.map(c => [c.time, c.value]));
-      const colorByTime = new Map(result.macd.hist.map(h => [h.time, h.color]));
-      const difArr = data.candles.map(c => difByTime.get(c.time));
-      const deaArr = data.candles.map(c => deaByTime.get(c.time));
-      const cciArr = data.candles.map(c => cciByTime.get(c.time) || 0);
-      const realMomentumBirdMarkers = computeMomentumBirdMarkers(
-        data.candles, opens, closes, highs, lows, data.volumes, data.volMa5, data.ma7,
-        difArr, deaArr, cciArr, (t) => colorByTime.get(t) ?? null
-      );
-      candleSeries.setMarkers([...data.demarkMarkers, ...realMomentumBirdMarkers]);
-    }
+    // 主圖🚀/🐦/🛸/💰箭頭與神奇九轉由 Worker 的 indicator=chart 一併回傳（見 fetchChartBundle()）。
   } else {
     macdHistSeries.setData([]);
     macdDifSeries.setData([]);
@@ -1877,7 +1441,7 @@ function renderMainOverlays(data) {
     overlaySeries.vwap.lower1.setData(data.vwapLower);
   }
 
-  // 3b. Parabolic SAR (real Wilder calc — see generateIndicatorsData() for the math)
+  // 3b. Parabolic SAR（計算在 Worker indicator=chart，這裡只畫）
   if (indicatorConfig.sar) {
     overlaySeries.sar = mainChart.addLineSeries({
       color: '#FFEB3B',
@@ -1891,7 +1455,7 @@ function renderMainOverlays(data) {
     overlaySeries.sar.setData(data.sarData);
   }
 
-  // 3c. Supertrend (real ATR-band calc — see generateIndicatorsData() for the math). Rendered
+  // 3c. Supertrend（計算在 Worker indicator=chart，這裡只畫）. Rendered
   // as two line series (up-trend segment green, down-trend segment red) since Lightweight
   // Charts v4 has no native per-point line color; each series has `undefined` for bars outside
   // its own trend, which renders as a gap, so together they look like one color-flipping line.
@@ -2520,7 +2084,8 @@ function setupEventListeners() {
       const tvChart4 = document.getElementById('tv-sub-chart-4');
       if (tvChart4) tvChart4.style.display = '';
       if (momentumPanel) momentumPanel.classList.add('hidden');
-      const data = generateIndicatorsData(currentTf);
+      const _symNow = currentActiveSymbol?.symbol || 'TXF';
+      const data = (lastChartData && lastChartData._sym === _symNow && lastChartData._tf === currentTf) ? lastChartData : generateIndicatorsData(currentTf);
       renderSub4Chart(data);
     });
   });

@@ -135,6 +135,20 @@ def run_profile(p, label, base, viewport, mobile):
         check(f"{label}: 選股雷達有結果列", sc["rows"] > 0, f"rows={sc['rows']}")
         page.evaluate("() => document.getElementById('btn-close-screener').click()")
 
+    with section(f"{label}: 原始碼不含指標公式"):
+        # 智慧財產防護網：這些是指標公式裡才會出現的變數名，出現在網頁原始碼代表公式又被放回瀏覽器看得到的地方
+        FORMULA_TOKENS = ["adxPeriod", "bareEma", "sarMaxAf", "finalUpperPrev", "pocIdx", "smmaPrev", "computeMomentumBirdMarkers",
+                          "bullSetupCount", "stAtr", "trSmooth", "plusDmSmooth", "cumVolPrice"]
+        srcs = {}
+        for name in ("trading%20room/room.js", "app.js"):
+            try:
+                srcs[name] = urllib.request.urlopen(base + name, timeout=30).read().decode("utf-8", "replace")
+            except Exception as e:
+                srcs[name] = ""
+        leaked = {n: [t for t in FORMULA_TOKENS if t in txt] for n, txt in srcs.items()}
+        leaked = {n: v for n, v in leaked.items() if v}
+        check(f"{label}: room.js／app.js 不含指標公式變數", not leaked, str(leaked))
+
     real_errors = [e for e in page_errors if not EXPECTED_NOISE.search(e)]
     check(f"{label}: 無未捕捉的 JavaScript 例外", not real_errors, "; ".join(real_errors[:3]))
     browser.close()

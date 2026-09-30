@@ -81,6 +81,13 @@
 - `TXO-Live-Price-Server`：登入 Windows 即背景啟動，只綁 `127.0.0.1:8000`，掛掉自動重啟，看門狗每天 08:30／14:55 重新登入、交易時段 120 秒沒報價也會重登。日誌 `logs\live_price_server.log`。
 - 兩者都在 `C:\Users\mingi\txo-klines-runner`（獨立於 OneDrive 共用資料夾的乾淨 clone），停用用 `Unregister-ScheduledTask -TaskName <name> -Confirm:$false`。
 
+## 7.4 ⏳ 指標公式搬遷（2026-10-01）：Worker 新版 + 新網頁 配對上線，順序不可顛倒
+
+- Worker `2026-10-01-a`（私有資料夾 `worker.js`）已含 `indicator=chart`；新網頁在分支 `claude/migrate-indicators`（本機，未推送）。兩者 170 項新舊比對＋44 項端到端已通過。
+- **順序**：①使用者貼新 `worker.js` 並 Deploy（向下相容舊網頁）→ ②使用者告知 → ③Claude 用 `curl -H "Origin: https://bluebirdfinder.github.io" "https://bluebird-indicators.bluebird-finder-tw.workers.dev/?indicator=health"`（應回 `version: 2026-10-01-a`）與 `?indicator=chart&symbol=TXF&tf=15M`（應回含 `ma7`、`adxLine`）驗證 → ④才推送新網頁。**若顛倒，線上均線／ADX／VRVP 會畫不出來。**
+- 使用者常見疑惑：「Cloudflare」與「Worker」是同一個地方（Worker 是 Cloudflare 上的程式），「搬進 Worker」＝「搬到 Cloudflare」；「B（推送富邦資料）」與指標搬遷無關，是報價資料的事，尚未做。
+- **看富邦即時報價**：在家用電腦瀏覽器開 `http://localhost:8000/trading%20room/room.html`（本機服務開機自動啟動；實測顯示 🟢 富邦 NEO API (LIVE)）。從 `https://bluebirdfinder.github.io/...` 開，瀏覽器的安全機制會擋掉對本機服務的連線（實測顯示無即時數據）。
+
 ## 7.5 🔴 雲端排程延遲（2026-09-30 量化）——已決定走 Worker Cron，程式已備好，等使用者部署
 
 - GitHub Actions 的 `schedule` cron 結構性延遲：最近 9 天 60 次執行，53 次晚超過 1 小時，中位數 200 分鐘、最大 387 分鐘；手動 `workflow_dispatch` 立即執行。手機報價不新鮮的根因即此。
