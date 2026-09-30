@@ -59,6 +59,16 @@ let advisorAttachedImage = null;
 
 // GEX Strict Asset Scope (僅在台指期、小台、微台顯示 GEX 5 大防線)
 const GEX_SUPPORTED_SYMBOLS = ['TXF', 'MXF', 'MTX', 'TMF'];
+// CVD／大戶散戶動能可看的期貨代號：四個指數期貨＋universe 內所有個股／ETF 期貨（選股票時對應到它自己的期貨合約）。
+const INDEX_FLOW_FUTURES = ['TXF', 'MXF', 'MTX', 'TMF'];
+function flowFuturesCodeFor(symObj) {
+  const sym = String(symObj?.symbol || activeContract || '').toUpperCase();
+  if (INDEX_FLOW_FUTURES.includes(sym)) return sym;
+  const stockFut = new Set((symbolsUniverse || []).filter(x => x.asset_type === 'stock_futures').map(x => String(x.symbol).toUpperCase()));
+  if (stockFut.has(sym)) return sym;
+  const fc = String(symObj?.futures_code || '').toUpperCase();
+  return stockFut.has(fc) ? fc : null;   // 大盤現貨、櫃買、沒有期貨的個股等回傳 null
+}
 
 // CVD 即時K棒重新分組支援的時間週期（秒數）。1D/1W/1Mth 不支援：CVD只能從連線當下累積，
 // 一個交易日以上的週期在單一session內沒有意義，故意不做、而不是硬湊一根假K棒。
@@ -1604,12 +1614,12 @@ function renderSub4Chart(data) {
     // 2026-09-25 真實化：不再用K棒開高低收公式湊近似值，改即時輪詢後端 /api/cvd
     // （真實逐筆tick-rule買賣方向累積），見 fetchAndRenderCvd()。此session開始前、或後端
     // 尚未連上富邦Trades時，故意留白不補假資料，比照大戶散戶動能的處理方式。
-    const cvdSymbolCode = (currentActiveSymbol?.symbol || activeContract || '').toUpperCase();
-    const isCvdEligible = GEX_SUPPORTED_SYMBOLS.includes(cvdSymbolCode);
+    const cvdSymbolCode = flowFuturesCodeFor(currentActiveSymbol);
+    const isCvdEligible = !!cvdSymbolCode;
     if (badge) {
       badge.innerText = isCvdEligible
-        ? '🎯 CVD 累積量差 K 線 (真實逐筆成交tick-rule累積，讀取中...)'
-        : '🎯 CVD 累積量差 K 線 (目前僅 TXF/MXF/MTX 有真實逐筆成交數據，此商品尚未支援)';
+        ? `🎯 CVD 累積量差 K 線 (${cvdSymbolCode} 真實逐筆成交tick-rule累積，讀取中...)`
+        : '🎯 CVD 累積量差 K 線 (只有台指期／小台／微台與有個股期貨的股票才有逐筆成交數據，此商品沒有)';
     }
     sub4Series.cvd = subChart4.addCandlestickSeries({
       upColor: '#26a69a',
@@ -1634,12 +1644,12 @@ function renderSub4Chart(data) {
     // 30分鐘 bar 由 fetchAndAppendMomentumBar() 即時輪詢附加，見該函式與後端
     // scripts/fubon_api_provider.py 的 get_momentum_bar_30m()。歷史時段（此 session 開始前）
     // 沒有真數據可畫，故意留白，不補假資料。
-    const symbolCode = (currentActiveSymbol?.symbol || activeContract || '').toUpperCase();
-    const isMomentumEligible = GEX_SUPPORTED_SYMBOLS.includes(symbolCode); // 目前後端只訂閱了 TXF
+    const symbolCode = flowFuturesCodeFor(currentActiveSymbol);   // 指數期貨、個股期貨；股票則對應其期貨合約
+    const isMomentumEligible = !!symbolCode;
     if (badge) {
       badge.innerText = isMomentumEligible
-        ? '🐂 大戶散戶動能 (真實 Books/Trades 即時串接，2026-09-13起，僅 TXF 有資料)'
-        : '🐂 大戶散戶動能 (目前僅 TXF/MXF/MTX 有真實委託簿數據，此商品尚未支援)';
+        ? `🐂 大戶散戶動能 (${symbolCode} 真實 Books/Trades 即時串接；資料自服務啟動後累積)`
+        : '🐂 大戶散戶動能 (只有台指期／小台／微台與有個股期貨的股票才有委託簿數據，此商品沒有)';
     }
 
     // 1. 大戶委託口差 (紅柱=偏多掛單較多，綠柱=偏空掛單較多；來源：Books 五檔委買委賣總口數差)

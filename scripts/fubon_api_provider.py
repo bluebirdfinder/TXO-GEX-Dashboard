@@ -53,6 +53,19 @@ class FubonAPIProvider:
         # "MTX" is TAIFEX 微台 (Fubon alias TMF1!) and "MXF" is TAIFEX 小台 (Fubon alias MXF1!) — same
         # naming as scripts/fetch_market_klines.py's FUTURES_ASSETS, confirmed against the live API 2026-09-27.
         self.CVD_SYMBOL_ALIAS = {"TXF": "TXF1!", "MXF": "MXF1!", "MTX": "TMF1!", "TMF": "TMF1!"}
+        # 個股／ETF 期貨（CDF 台積電期、CQF 台塑期…共 36 檔）同樣用 <代號>1! 連續月別名；代號清單取自 data/tw_symbols_universe.json。
+        # 2026-09-30 實測：36 檔 x (買賣簿＋成交) x (日盤＋夜盤) = 156 個訂閱全數成功、零錯誤。
+        try:
+            import json as _json
+            _uni_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "tw_symbols_universe.json")
+            with open(_uni_path, encoding="utf-8") as _f:
+                _uni = _json.load(_f)
+            for _it in (_uni if isinstance(_uni, list) else _uni.get("symbols", [])):
+                _code = str(_it.get("symbol", ""))
+                if _it.get("asset_type") == "stock_futures" and _code and _code not in self.CVD_SYMBOL_ALIAS:
+                    self.CVD_SYMBOL_ALIAS[_code] = _code + "1!"
+        except Exception as _e:
+            logging.warning(f"stock-futures alias list not loaded ({_e}); only TXF/MXF/MTX/TMF will have CVD/momentum")
         self.last_cache = {
             'spot_price': None,
             'otc_price': None,
