@@ -61,7 +61,8 @@ def run_profile(p, label, base, viewport, mobile):
     page.on("pageerror", lambda e: page_errors.append(str(e)))
     page.on("console", lambda m: page_errors.append("console: " + m.text)
             if m.type == "error" and not EXPECTED_NOISE.search(m.text) else None)
-    page.on("request", lambda r: local_requests.append(r.url) if "localhost:8000" in r.url else None)
+    # 只計「失敗」的本機閘道請求：閘道連得到時（例如在使用者自己的電腦上測本機網址）每 3 秒正常輪詢，不算沒退避
+    page.on("requestfailed", lambda r: local_requests.append(r.url) if "localhost:8000" in r.url else None)
 
     page.goto(base + ROOM + "?smoke=1", wait_until="load", timeout=60000)
     page.wait_for_timeout(6000)
@@ -75,7 +76,7 @@ def run_profile(p, label, base, viewport, mobile):
     # 退避：連不到本機閘道時，12 秒內請求數應該很少（不是每 3~5 秒一次）
     n0 = len(local_requests)
     page.wait_for_timeout(12000)
-    check(f"{label}: 本機閘道請求有退避", len(local_requests) - n0 <= 4, f"12秒內 {len(local_requests) - n0} 次")
+    check(f"{label}: 連不到本機閘道時請求有退避", len(local_requests) - n0 <= 4, f"12秒內失敗 {len(local_requests) - n0} 次")
 
     with section(f"{label}: 版面檢查"):
         if mobile:
