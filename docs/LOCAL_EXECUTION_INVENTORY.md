@@ -26,7 +26,7 @@ site-packages/fubon_neo/_fubon_neo.pyd
 | `scripts/live_price_server.py`（即時報價閘道：TXF/TAIEX/OTC 報價、五檔、逐筆成交、CVD、總經 DXY/US10Y/CL/VIX/VVIX） | 💻 本機常駐 | Windows 工作排程 `TXO-Live-Price-Server`，登入時啟動，掛掉自動重啟 | **是（核心功能）** | **不能**——即時報價/CVD 是這支的存在理由，全部要富邦 WebSocket |
 | `scripts/fetch_fubon_futures_klines.py`（富邦期貨日內 K 線累積：TXF/MXF/MTX/CDF） | 💻 本機、排程 | Windows 工作排程 `TXO-Fubon-Futures-Klines`，每天 05:30／14:00 | **是** | **不能**——富邦只給「最近一個場次」的日內 K，沒有歷史端點，只能常駐累積 |
 | `scripts/build_screener_cache.py`（選股雷達，1,400+ 檔全市場） | 💻 本機、**手動**執行 | **目前沒有排程**——一直是我在對話 session 裡手動跑完手動 commit（2026-09-30 查證確認，之前誤以為它在雲端排程裡，是我的錯誤假設） | 否（純 TWSE/TPEx 官方 HTTP 端點） | **可以**——沒有任何富邦依賴，理論上今天就能搬去雲端排程或 Mac mini，只是還沒設 |
-| `scripts/jj_ghost_claws.py`（動能鳥 8 訊號，被 `build_screener_cache.py` 呼叫） | 跟著上面一起跑 | 同上 | 否 | 同上，可以搬 |
+| `scripts/jj_ghost_claws.py`（動能鳥 8 訊號；2026-09-30 已搬私有資料夾，`build_screener_cache.py` 改由該處載入） | 跟著上面一起跑 | 同上 | 否 | 同上，可以搬 |
 | 私有 Cloudflare Worker（`bluebird-indicators`：ADX／雙層MACD／CCI／AO／動能鳥 HUD／SMC） | ☁️ Cloudflare（獨立於 GitHub Actions） | 常駐服務，使用者手動部署 | 否 | 已經在雲端，不受影響 |
 
 ## 三、資料量與 git 歷史（2026-09-30 實測）

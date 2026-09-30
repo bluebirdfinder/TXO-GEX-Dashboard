@@ -45,6 +45,15 @@
 
 ## 🎯 各版本詳細更新紀錄
 
+### 🔒 v64.17 後續微調（未升版號）：選股雷達動能鳥／5K／九轉運算搬離公開 repo (2026-09-30)
+
+- **背景**：使用者決定個人指標邏輯不放公開 repo，改放本機私有資料夾（比照 SMC 與 K 線模式），且**不改寫 git 歷史**。查證後 `build_screener_cache.py` 本來就不在雲端排程（手動執行），搬遷不影響任何自動化。
+- **✅ 搬遷內容**：`scripts/jj_ghost_claws.py` 整份，以及 `build_screener_cache.py` 的 `compute_jj_macd_and_cci`、`compute_5k_breakout`、`compute_demark_v3` 與其輔助函式（`_ema/_sma/_mean_dev/_mfi/_twse_tick_size/_atr/_rsi/_stoch_series`），移到 `C:/Users/mingi/txo-private/screener-indicators/`（`jj_ghost_claws.py`、`screener_indicators.py`）。`build_screener_cache.py` 由 1170 行縮為 690 行，改由環境變數 `TXO_PRIVATE_INDICATORS`（預設上述路徑）載入；路徑不存在時明確報錯並退出，不靜默失敗。
+- **✅ 驗證**：用現有 `screener_ohlcv_cache.json` 對 1387 檔各跑 4 個計算（動能鳥 8 訊號、5K、MACD/CCI、九轉），搬遷前後輸出完全相同（0 差異，九轉 0 例外）；並確認 `jj` 模組實際載入自私有路徑。**尚未實跑完整 `build_screener_cache.py`（需連線抓 TWSE），下次手動執行選股雷達時請留意。**
+- **🧹 移除死代碼 `scripts/tv_indicators_engine.py`**：v51.0（2026-09-09）加入，之後從未被任何程式呼叫，且與 Pine 不一致（見 v64.14）。備份 `tv_indicators_engine.py.bak` 在私有資料夾。`AGENTS.md`／`GEMINI.md` 紅線 6 原本把它列為「唯一計算真理」，已改為「使用者原創 Pine Script」。
+- **⚠️ 限制**：這些檔案仍留在 git **歷史**裡，公開 repo 的舊 commit 找得到（使用者已決定不改寫歷史）。`room.js` 內仍有部分簡化版指標，見 v64.17 的清單。
+- **待辦**：使用者部署新版 Worker 後，移除 `room.js` 對 `indicator=jj` 舊路由的暫時備援，只保留 `indicator=bird`。
+
 ### 🛠️ v64.17 後續微調（未升版號）：戰情室手機排版＋Y軸「自動」按鈕 (2026-09-30)
 
 - **背景**：使用者手機（三星 A54／Chrome）直向瀏覽戰情室時，最下面的 ADX Pro V3 副圖被截斷、看不到；換商品（台指期 4 萬多點 → 個股 50 幾元）後 Y 軸還停在舊價格範圍，要手動拖很久。

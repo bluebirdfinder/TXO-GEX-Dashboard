@@ -51,7 +51,7 @@
      - 即時盤中：強制走 **富邦 Neo API SDK (`fubon_neo`)** 實體串流或 **期交所 MIS 官方即時 API (`/futures/api/getQuoteList`)**。
      - 盤後歷史：強制下載 **期交所/證交所官方盤後真實分盤與結算資料庫**，絕不允許使用任何數學偽造曲線。
   2. **指標邏輯 100% 逐行對齊 Pine Script / XS 官方代碼**：
-     - 主圖與副圖指標（ADX Pro V3、動能鳥、神奇九轉 DeMark 9★/13★、雙層 MACD、波段 CCI、陳玠儒/老墨大戶散戶動能）必須以 `scripts/tv_indicators_engine.py` 及使用者原創 Pine Script 為唯一計算真理，嚴禁任何憑感覺近似或偷工減料。
+     - 主圖與副圖指標（ADX Pro V3、動能鳥、神奇九轉 DeMark 9★/13★、雙層 MACD、波段 CCI、陳玠儒/老墨大戶散戶動能）必須以使用者原創 Pine Script 為唯一計算真理（個人指標的 Python 計算放在使用者私有資料夾 `C:/Users/mingi/txo-private/`，不在公開 repo；舊的 `scripts/tv_indicators_engine.py` 已於 2026-09-30 移除，它與 Pine 不一致且從未被任何程式呼叫），嚴禁任何憑感覺近似或偷工減料。
   3. **若無真實數據時的處置規範**：
      - 若遭遇網絡斷線或非交易時段無數據，系統必須明確顯示 `⚪ 無即時數據` 或 `🟡 盤後休市 (定案結算價)`，嚴禁自行捏造數據填補。
 

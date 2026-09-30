@@ -47,16 +47,12 @@
 
 **建議**：找機會把共用資料夾同步到 origin/main（`git fetch` + 使用者確認後 `git reset --hard origin/main`，**這會丟掉上面這些過時的未 commit 檔案**，先跟使用者確認這些檔案裡沒有他想保留的東西）。目前還沒做這件事，因為沒把握這些檔案裡有沒有使用者還想要的內容。
 
-## 4. 待辦：動能鳥邏輯搬離公開 repo（已決定方案，還沒動手）
+## 4. ✅ 動能鳥邏輯搬離公開 repo（2026-09-30 已完成，待使用者驗收）
 
-使用者已決定：改放本機私有資料夾執行（比照 CVD／K 線模式），**不改寫 git 歷史**。技術路線已確認可行——查證後發現 `build_screener_cache.py` 本來就不在雲端排程裡（一直是手動執行），所以這個搬遷不影響任何現有自動化。
-
-**具體要做的**（完全還沒開始，只查過函式位置）：
-1. 把 `scripts/jj_ghost_claws.py` 整份、以及 `scripts/build_screener_cache.py` 裡的 `compute_jj_macd_and_cci`（377行起）、`compute_5k_breakout`（548行起）、`compute_demark_v3`（680行起）搬到使用者私有資料夾（建議 `C:\Users\mingi\txo-private\screener-indicators\`，比照 SMC 的模式）。
-2. `build_screener_cache.py` 改成從私有資料夾 import，路徑錯誤時要清楚報錯（不要靜默失敗）。
-3. `scripts/tv_indicators_engine.py`（未被任何地方引用，且與 Pine 邏輯不一致）——確認真的沒人用之後可以直接砍掉，私有資料夾留一份備份。
-4. 驗證：跑一次 `build_screener_cache.py`，跟現有 `data/screener_cache.json` 的訊號分布比對，確認搬遷沒改變任何計算結果。
-5. `room.js` 前端字串已在 v64.17 全改成「動能鳥」，**使用者部署新版 Worker 後**，記得移除 `room.js` 裡對 `indicator=jj`（舊路由）的暫時備援，改成只打 `indicator=bird`。
+- 已搬到 `C:/Users/mingi/txo-private/screener-indicators/`（不在 git）：`jj_ghost_claws.py`、`screener_indicators.py`（含 JJ MACD/CCI、真5K、九轉 DeMark v3 與輔助函式）、`tv_indicators_engine.py.bak`（備份）。`build_screener_cache.py` 改由 `TXO_PRIVATE_INDICATORS` 環境變數（預設該路徑）載入，路徑錯誤會明確報錯。
+- 驗證：1387 檔 × 4 個計算，搬遷前後輸出完全相同。**尚未實跑完整 `build_screener_cache.py`**，使用者下次手動執行時請確認正常。
+- `scripts/tv_indicators_engine.py` 已刪（死代碼），`AGENTS.md`／`GEMINI.md` 紅線 6 已改。
+- **仍待辦**：使用者部署新版 Worker 後，移除 `room.js` 對 `indicator=jj`（舊路由）的暫時備援，只打 `indicator=bird`。注意這些檔案仍在 git 歷史中（使用者已決定不改寫歷史）。
 
 ## 5. 待辦：`.git` 歷史肥大（新發現，未處理）
 
