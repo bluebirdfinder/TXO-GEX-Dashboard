@@ -257,7 +257,7 @@ function initMultiPaneCharts() {
     layout: {
       background: { color: '#080c14' },
       textColor: '#8b949e',
-      fontSize: 11,
+      fontSize: window.matchMedia('(max-width: 768px), (max-width: 1100px) and (orientation: portrait)').matches ? 9 : 11,
       fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, sans-serif"
     },
     grid: {
@@ -4034,6 +4034,22 @@ async function fetchFubonOrPublicFallback() {
   return { data: null, source: null };
 }
 
+// 手機等連不到即時來源的裝置：每 60 秒重抓一次 CI 更新的 gex_data.json，資料有更新時刷新畫面報價，不必手動重新整理。
+let _delayedQuoteCheckAt = 0;
+async function refreshDelayedQuote() {
+  if (Date.now() < _delayedQuoteCheckAt) return;
+  _delayedQuoteCheckAt = Date.now() + 60000;
+  try {
+    const res = await fetch('../data/gex_data.json?t=' + Date.now());
+    if (!res.ok) return;
+    const fresh = await res.json();
+    if (fresh && fresh.last_updated_time && (!gexData || fresh.last_updated_time !== gexData.last_updated_time)) {
+      gexData = fresh;
+      renderLeftPanel();
+    }
+  } catch (e) { /* 網路暫時不通，下一輪再試 */ }
+}
+
 // 台北時間現在是否在期交所交易時段（日盤 08:45–13:45、夜盤 15:00–隔日 05:00，週一至週五開盤；不含國定假日）。
 function isTaifexSessionOpenNow() {
   const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Taipei', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
@@ -4060,7 +4076,11 @@ function initFubonLivePriceStream() {
         if (statusTag) {
           // 交易時段內抓不到即時價，不能謊稱休市：如實顯示「無即時數據」（AGENTS.md 紅線 6）。
           const liveHours = isTaifexSessionOpenNow();
-          statusTag.innerHTML = liveHours ? '⚪ 無即時數據（連不到即時行情來源）' : '🟡 盤後休市 (定案結算價)';
+          const dataTime = gexData && gexData.last_updated_time ? gexData.last_updated_time : '';
+          statusTag.innerHTML = liveHours
+            ? '⚪ 無即時數據' + (dataTime ? '・畫面報價為 ' + dataTime + ' 的資料（非即時）' : '')
+            : '🟡 盤後休市 (定案結算價)';
+          if (liveHours) refreshDelayedQuote();
           statusTag.style.borderColor = liveHours ? '#8b95a5' : '#ffd700';
           statusTag.style.color = liveHours ? '#8b95a5' : '#ffd700';
         }

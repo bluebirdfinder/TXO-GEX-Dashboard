@@ -2012,7 +2012,7 @@ body.right-collapsed .dock-right { display: flex !important; }
 /* 「自動」Y 軸縮放按鈕（仿 TradingView 右下角） */
 .btn-auto-fit {
   position: absolute;
-  right: 64px;
+  left: 8px;
   bottom: 8px;
   z-index: 15;
   padding: 3px 9px;
@@ -2040,20 +2040,77 @@ body.right-collapsed .dock-right { display: flex !important; }
     overflow-y: auto;
     overflow-x: hidden;
   }
+  /* 五個窗格盡量一屏看完：吃滿工具列下方剩餘高度，主圖:副圖 = 40:15（同電腦版比例），
+     只有螢幕太矮（剩餘高度 < 560px）才整頁捲動。 */
   .multi-pane-container {
     height: auto;
-    min-height: 0;
-    overflow: visible;
-    flex: none;
+    flex: 1 1 0;
+    min-height: 560px;
+    overflow: hidden;
   }
+  /* 窗格標題列在窄螢幕上壓縮：附圖 4 的切換按鈕不折行、標題文字省略（按鈕本身已標示目前指標） */
+  /* 仿 TradingView 手機版：上方薄、圖表滿版、標籤小 */
+  :root { --header-height: 40px; }
+  .room-header { padding: 0 8px; }
+  .chart-toolbar { height: 32px; padding: 0 4px; overflow-x: auto; }
+  .tf-group { flex-wrap: nowrap; }
+  .btn-tf { padding: 2px 6px; font-size: 0.68rem; white-space: nowrap; }
+  .chart-floating-legend { top: 3px; left: 4px; padding: 1px 6px; font-size: 0.62rem; gap: 6px; }
+  .pane-header-strip { top: 1px; left: 4px; }
+  .pane-header-strip { right: 8px; }
+  .pane-label-badge { font-size: 0.6rem; max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #pane-4-badge { display: none; }
+  .sub4-tab-group { margin-left: auto; max-width: 100%; overflow-x: auto; }
+  .sub4-tab-btn { white-space: nowrap; font-size: 0.6rem; padding: 1px 5px; }
   .main-chart-pane {
-    flex: none;
-    height: 55vh;
-    min-height: 320px;
+    flex: 40 1 0;
+    min-height: 190px;
   }
   .sub-chart-pane {
+    flex: 15 1 0;
+    min-height: 90px;
+  }
+}
+
+
+/* 手機／矮螢幕：選股雷達視窗整個可捲動（原本 overflow:hidden＋篩選卡片比螢幕高，超出部分被切掉、結果表高度被壓成 0） */
+@media (max-width: 768px), (max-width: 1100px) and (orientation: portrait), (max-height: 760px) {
+  .screener-modal {
+    height: 100dvh;
+    align-items: flex-start;
+  }
+  .screener-modal-content {
+    width: 96vw;
+    max-height: 96dvh;
+    margin: 2dvh auto 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  .screener-modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #0d131f;
+  }
+  .screener-filter-deck {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    padding: 10px 12px;
+  }
+  .screener-table {
+    min-width: 640px;
+  }
+  .screener-results-wrap {
     flex: none;
-    height: 160px;
-    min-height: 160px;
+    min-height: 240px;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+  .settings-modal-overlay {
+    height: 100dvh;
+  }
+  .settings-modal {
+    max-height: 90dvh;
   }
 }
