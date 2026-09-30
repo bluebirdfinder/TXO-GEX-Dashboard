@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- CSS Stylesheet -->
-  <link rel="stylesheet" href="room.css?v=20260912_real">
+  <link rel="stylesheet" href="room.css?v=20260930_uifit">
   
   <!-- TradingView Lightweight Charts Standalone Engine -->
   <script src="../assets/lightweight-charts.standalone.production.js"></script>
@@ -382,6 +382,7 @@
         <!-- PANE 1: Main Candlestick Chart (K-line + GEX + Ribbons + Signals) -->
         <div class="main-chart-pane" id="main-chart-pane">
           <div id="tv-main-chart" style="width: 100%; height: 100%;"></div>
+          <button class="btn-auto-fit" id="btn-auto-fit" type="button" title="自動縮放：Y 軸自動適應目前資料範圍（同 TradingView 右下角「自動」）">自動</button>
           
           <!-- Floating Crosshair Legend -->
           <div class="chart-floating-legend">

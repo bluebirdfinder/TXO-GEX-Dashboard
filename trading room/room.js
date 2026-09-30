@@ -3324,6 +3324,8 @@ function switchActiveSymbol(symObj) {
 
   // Re-generate and render charts
   renderChartData();
+  // 換商品時價格範圍差很多（4 萬點 vs 50 元），把使用者手動拖過的 Y 軸重設回自動縮放
+  resetPriceAutoScale();
 }
 
 /**
@@ -4147,3 +4149,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+
+/**
+ * Y 軸自動縮放：重新開啟所有圖表右側價格軸的 autoScale（使用者手動拖曳 Y 軸會關掉它），
+ * 並讓 K 線適應螢幕。換商品與右下角「自動」按鈕共用。
+ */
+function resetPriceAutoScale() {
+  [mainChart, subChart1, subChart2, subChart3, subChart4].forEach(ch => {
+    if (!ch) return;
+    try { ch.priceScale('right').applyOptions({ autoScale: true }); } catch (e) { /* 軸不存在就略過 */ }
+  });
+  if (mainChart) {
+    try { mainChart.timeScale().fitContent(); } catch (e) { /* 尚無資料 */ }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('btn-auto-fit');
+  if (btn) btn.addEventListener('click', resetPriceAutoScale);
+});

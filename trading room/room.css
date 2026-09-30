@@ -2007,3 +2007,53 @@ body.right-collapsed .dock-right { display: flex !important; }
   }
 }
 
+
+
+/* 「自動」Y 軸縮放按鈕（仿 TradingView 右下角） */
+.btn-auto-fit {
+  position: absolute;
+  right: 64px;
+  bottom: 8px;
+  z-index: 15;
+  padding: 3px 9px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(13, 19, 31, 0.85);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-auto-fit:hover {
+  color: #070a10;
+  background: var(--primary-accent);
+}
+
+/* 手機直向：改用動態視窗高度（100vh 會被網址列吃掉底部），圖表區塊給最小高度並允許整頁捲動 */
+@media (max-width: 768px) {
+  html, body {
+    height: 100dvh;
+  }
+  .room-main-container {
+    height: calc(100dvh - var(--header-height));
+  }
+  .panel-center {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .multi-pane-container {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    flex: none;
+  }
+  .main-chart-pane {
+    flex: none;
+    height: 55vh;
+    min-height: 320px;
+  }
+  .sub-chart-pane {
+    flex: none;
+    height: 160px;
+    min-height: 160px;
+  }
+}
