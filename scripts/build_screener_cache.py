@@ -94,6 +94,15 @@ def _fetch_url(url, retries=2):
     raise last_err
 
 
+def _roc_to_yyyymmdd(text):
+    """'115/09/01' (民國年/月/日，TPEx 有時尾巴帶星號) -> '20260901'; None when unparseable."""
+    try:
+        y, m, d = str(text).replace('*', '').strip().split('/')
+        return f"{int(y) + 1911:04d}{int(m):02d}{int(d):02d}"
+    except (ValueError, AttributeError):
+        return None
+
+
 def fetch_twse_stock_month(symbol, year, month):
     """One month of real daily OHLCV for a TWSE-listed symbol, or [] if unavailable."""
     date_str = f"{year:04d}{month:02d}01"
@@ -106,6 +115,7 @@ def fetch_twse_stock_month(symbol, year, month):
         for row in data.get('data', []):
             try:
                 bars.append({
+                    "date": _roc_to_yyyymmdd(row[0]),
                     "open": float(row[3].replace(',', '')),
                     "high": float(row[4].replace(',', '')),
                     "low": float(row[5].replace(',', '')),
@@ -131,6 +141,7 @@ def fetch_tpex_stock_month(symbol, year, month):
         for row in tables[0].get('data', []):
             try:
                 bars.append({
+                    "date": _roc_to_yyyymmdd(row[0]),
                     "open": float(row[3].replace(',', '')),
                     "high": float(row[4].replace(',', '')),
                     "low": float(row[5].replace(',', '')),
@@ -253,7 +264,7 @@ def build_twse_bulk_history(num_trading_days=120, max_calendar_days_back=180):
             if collected == 0:
                 BULK_LATEST_DATE = date_str  # first success walking backward = newest trading day
             for code, bar in day_data.items():
-                history.setdefault(code, []).append(bar)
+                history.setdefault(code, []).append(dict(bar, date=date_str))  # 帶日期：有停牌／新上市的股票 K 棒數較少，不能用位置推日期
             collected += 1
             if collected % 5 == 0:
                 print(f"  ...TWSE bulk history: {collected}/{num_trading_days} trading days collected")

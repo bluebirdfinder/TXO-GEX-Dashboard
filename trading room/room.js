@@ -488,6 +488,63 @@ function computeMomentumBirdMarkers(candles, opens, closes, highs, lows, volumes
   }
   return markers;
 }
+// ---- 全市場個股日 K（證交所／櫃買官方資料，來自選股雷達的 screener_ohlcv_cache.json）----
+// klines_cache.json 只有 12 檔標的；其餘上千檔個股原本完全沒有 K 線。選到這類個股時才載入這個檔案，
+// 轉成日 K，週 K／月 K 由日 K 合併而來（真實資料，不是推算）。分 K 沒有官方免費來源，維持「暫無真實K線」。
+let stockDailyCache = null;
+let stockDailyLoading = null;
+function loadStockDailyBars() {
+  if (stockDailyCache) return Promise.resolve(stockDailyCache);
+  if (!stockDailyLoading) {
+    stockDailyLoading = fetch('../data/screener_ohlcv_cache.json')
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(j => {
+        const d = (j && j.data) || {};
+        const all = Object.assign({}, d._TWSE_BULK || {});
+        Object.keys(d).forEach(k => { if (!k.startsWith('_') && Array.isArray(d[k])) all[k] = d[k]; });
+        stockDailyCache = all;
+        return all;
+      })
+      .catch(e => { console.warn('⚠️ 載入個股日K失敗', e); stockDailyLoading = null; return null; });
+  }
+  return stockDailyLoading;
+}
+function stockNeedsDailyLoad(sym, tf) {
+  return !stockDailyCache && !klinesCacheData?.assets?.[sym] && (tf === '1D' || tf === '1W' || tf === '1Mth');
+}
+// 日K -> 指定週期。時間戳沿用 klines_cache 的日K慣例（該日 09:00 台北 = 01:00 UTC）；量單位「張」換成「股」與 klines 一致。
+function dailyBarsToCandles(bars, tf) {
+  if (!Array.isArray(bars)) return null;
+  const rows = [];
+  for (const b of bars) {
+    const s = b && b.date;
+    if (!s || s.length !== 8) continue;   // 沒日期的舊格式資料不用，寧可不畫也不猜日期
+    const y = +s.slice(0, 4), m = +s.slice(4, 6), d = +s.slice(6, 8);
+    rows.push({ y, m, d, time: Date.UTC(y, m - 1, d, 1, 0, 0) / 1000, open: b.open, high: b.high, low: b.low, close: b.close, volume: (b.volume || 0) * 1000 });
+  }
+  if (!rows.length) return null;
+  if (tf === '1D') return rows.map(r => ({ time: r.time, open: r.open, high: r.high, low: r.low, close: r.close, volume: r.volume }));
+  const keyOf = (r) => {
+    if (tf === '1Mth') return r.y * 100 + r.m;
+    const dt = new Date(Date.UTC(r.y, r.m - 1, r.d));            // 週K：以週一為一週起點
+    const dow = (dt.getUTCDay() + 6) % 7;
+    return Math.floor((dt.getTime() - dow * 86400000) / 86400000);
+  };
+  const out = [];
+  let curKey = null, cur = null;
+  for (const r of rows) {
+    const k = keyOf(r);
+    if (k !== curKey) {
+      cur = { time: r.time, open: r.open, high: r.high, low: r.low, close: r.close, volume: r.volume };
+      out.push(cur); curKey = k;
+    } else {
+      cur.high = Math.max(cur.high, r.high); cur.low = Math.min(cur.low, r.low);
+      cur.close = r.close; cur.volume += r.volume;
+    }
+  }
+  return out;
+}
+
 function generateIndicatorsData(tf) {
   let basePrice = null;
   let isYield = false;
@@ -546,7 +603,10 @@ function generateIndicatorsData(tf) {
 
   const sym = currentActiveSymbol?.symbol || 'TXF';
   const isIndexOrYield = sym === 'TAIEX' || sym === 'OTC' || sym === 'US10Y' || sym === 'DXY' || !!currentActiveSymbol?.is_yield || !!currentActiveSymbol?.is_index;
-  const cachedCandles = klinesCacheData?.assets?.[sym]?.timeframes?.[tf];
+  let cachedCandles = klinesCacheData?.assets?.[sym]?.timeframes?.[tf];
+  if (!cachedCandles && stockDailyCache && !klinesCacheData?.assets?.[sym] && (tf === '1D' || tf === '1W' || tf === '1Mth')) {
+    cachedCandles = dailyBarsToCandles(stockDailyCache[sym], tf);
+  }
 
   if (cachedCandles && cachedCandles.length > 0) {
     // 🚀 Authentic Multi-Timeframe Real Market K-Line Dataset
@@ -1127,6 +1187,10 @@ function generateIndicatorsData(tf) {
  * Render all 5 Charts with Datasets
  */
 function renderChartData() {
+  const _symForLoad = currentActiveSymbol?.symbol || 'TXF';
+  if (stockNeedsDailyLoad(_symForLoad, currentTf)) {
+    loadStockDailyBars().then(c => { if (c) renderChartData(); });   // 載入完成再重畫一次
+  }
   const data = generateIndicatorsData(currentTf);
   // Explain an intentionally empty chart (no real bars for this symbol/timeframe) instead of leaving it blank.
   {
@@ -1142,7 +1206,13 @@ function renderChartData() {
       }
       const empty = !data.candles || data.candles.length === 0;
       _n.style.display = empty ? 'block' : 'none';
-      if (empty) _n.textContent = `⚪ ${currentActiveSymbol?.name || ''} ${currentTf} 暫無真實K線數據（官方來源未提供此時間級別）`;
+      if (empty) {
+        const _isIntraday = !['1D', '1W', '1Mth'].includes(currentTf);
+        const _hasDaily = !!(stockDailyCache && stockDailyCache[currentActiveSymbol?.symbol]);
+        _n.textContent = (_isIntraday && (_hasDaily || stockNeedsDailyLoad(currentActiveSymbol?.symbol, '1D')))
+          ? `⚪ ${currentActiveSymbol?.name || ''} 目前只提供日K以上（分K沒有官方免費來源），請切換 1D／1週／1月`
+          : `⚪ ${currentActiveSymbol?.name || ''} ${currentTf} 暫無真實K線數據（官方來源未提供此時間級別）`;
+      }
     }
   }
 
@@ -3340,6 +3410,11 @@ function switchActiveSymbol(symObj) {
     }
   });
 
+  // 個股（不在 klines_cache 的 12 檔內）沒有分K：停在分K週期會是一片空白，自動切到日K
+  if (!klinesCacheData?.assets?.[symObj.symbol] && !['1D', '1W', '1Mth'].includes(currentTf)) {
+    const _btn = document.querySelector('.btn-tf[data-tf="1D"]');
+    if (_btn) { _btn.click(); resetPriceAutoScale(); return; }   // 按鈕會自己重畫圖表
+  }
   // Re-generate and render charts
   renderChartData();
   // 換商品時價格範圍差很多（4 萬點 vs 50 元），把使用者手動拖過的 Y 軸重設回自動縮放
