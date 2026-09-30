@@ -52,12 +52,42 @@ let cciMarkers = [];
 
 let activeSub4 = 'adx'; // Default to ADX Pro V3
 let momentumPollTimer = null; // 大戶散戶動能：輪詢 /api/momentum 的計時器
+let cvdPollTimer = null; // CVD：輪詢 /api/cvd 的計時器
 let leftPanelCollapsed = false;
 let rightPanelCollapsed = false;
 let advisorAttachedImage = null;
 
 // GEX Strict Asset Scope (僅在台指期、小台、微台顯示 GEX 5 大防線)
 const GEX_SUPPORTED_SYMBOLS = ['TXF', 'MXF', 'MTX', 'TMF'];
+
+// CVD 即時K棒重新分組支援的時間週期（秒數）。1D/1W/1Mth 不支援：CVD只能從連線當下累積，
+// 一個交易日以上的週期在單一session內沒有意義，故意不做、而不是硬湊一根假K棒。
+const CVD_TF_SECONDS = { '1M': 60, '3M': 180, '5M': 300, '15M': 900, '30M': 1800, '1H': 3600, '4H': 14400 };
+
+/**
+ * 把後端 /api/cvd 回傳的真實逐筆 {ts, value} 快照，依 barSeconds 即時重新分組成K棒。
+ * 邏輯跟一般tick→OHLC聚合一樣，只是「價格」換成累積量差；每根K棒的開盤值承接自上一根
+ * 的收盤值（session開始時基準為0），沒有成交的時段直接不產生K棒，不補假平線。
+ */
+function buildCvdCandlesFromPoints(points, barSeconds) {
+  if (!barSeconds || !points || points.length === 0) return [];
+  const candles = [];
+  let prevClose = 0; // session開始的累積量差基準值
+  let cur = null;
+  for (const p of points) {
+    const bucketStart = Math.floor(p.ts / barSeconds) * barSeconds;
+    if (!cur || cur.time !== bucketStart) {
+      if (cur) { candles.push(cur); prevClose = cur.close; }
+      cur = { time: bucketStart, open: prevClose, high: Math.max(prevClose, p.value), low: Math.min(prevClose, p.value), close: p.value };
+    } else {
+      cur.high = Math.max(cur.high, p.value);
+      cur.low = Math.min(cur.low, p.value);
+      cur.close = p.value;
+    }
+  }
+  if (cur) candles.push(cur);
+  return candles;
+}
 
 let sub4Series = {
   adx: null,
@@ -629,32 +659,13 @@ function generateIndicatorsData(tf) {
   const cciSignals = [];
   const aoData = [];
 
-  // --- CVD (Cumulative Volume Delta) — 目前仍是本地OHLC近似公式，尚未搬遷，見
-  // SELF_AUDIT_FINDINGS_TODO.md：跟真實逐筆買賣方向分類（scripts/fubon_api_provider.py 的
-  // Trades頻道tick rule）比起來，這是用單根K棒開高低收比例湊出來的近似值，不是真實累積量差，
-  // 之後要嘛換成真實tick資料重做，要嘛在UI上更明確標示是近似值 ---
+  // --- 2026-09-25: CVD (Cumulative Volume Delta) 真實化 — 原本這裡是用單根K棒開高低收
+  // 比例湊出來的近似公式，已移除（比照AO/雙層MACD/CCI的模式，不留公式當「萬一沒有真實數據時
+  // 的備援」，留著就等於還是假數據）。真實CVD K棒改由 fetchAndRenderCvd() 輪詢後端 /api/cvd
+  // （scripts/fubon_api_provider.py 的 get_cvd_series()，逐筆真實tick-rule買賣方向累積），
+  // 用 buildCvdCandlesFromPoints() 依目前選擇的時間週期即時重新分組。只能從連線當下開始累積，
+  // 此session開始前的歷史時段故意留白，不補假資料。
   const cvdCandles = [];
-  let cumDelta = 0;
-
-  for (let i = 0; i < count; i++) {
-    const t = candles[i].time;
-    const barSpread = (highs[i] - lows[i]) || 1;
-    const deltaRatio = (closes[i] - opens[i]) / barSpread;
-    const barDelta = Math.round(volumes[i].value * deltaRatio * 0.4);
-    const openVol = cumDelta;
-    const closeVol = cumDelta + barDelta;
-    const highVol = Math.max(openVol, closeVol) + Math.round(Math.abs(barDelta) * 0.2 + 20);
-    const lowVol = Math.min(openVol, closeVol) - Math.round(Math.abs(barDelta) * 0.2 + 20);
-    cumDelta = closeVol;
-
-    cvdCandles.push({
-      time: t,
-      open: openVol,
-      high: highVol,
-      low: lowVol,
-      close: closeVol
-    });
-  }
 
   // --- 🐂 大戶散戶動能指標 (陳玠儒/股市擺渡人方法論：委託口差 + 成交筆數差) ---
   // 2026-09-13 self-audit 更正：這裡原本用 K 棒開高低收公式湊出一條假的「大戶動能」與
@@ -1469,6 +1480,7 @@ function renderSub4Chart(data) {
   if (sub4Series.retailLine) { subChart4.removeSeries(sub4Series.retailLine); sub4Series.retailLine = null; }
   if (sub4Series.marketOrderLine) { subChart4.removeSeries(sub4Series.marketOrderLine); sub4Series.marketOrderLine = null; }
   stopMomentumLivePolling();
+  stopCvdLivePolling();
 
   const badge = document.getElementById('pane-4-badge');
 
@@ -1513,7 +1525,16 @@ function renderSub4Chart(data) {
       }
     });
   } else if (activeSub4 === 'cvd') {
-    if (badge) badge.innerText = '🎯 CVD (Cumulative Volume Delta 累積量差 K 線)';
+    // 2026-09-25 真實化：不再用K棒開高低收公式湊近似值，改即時輪詢後端 /api/cvd
+    // （真實逐筆tick-rule買賣方向累積），見 fetchAndRenderCvd()。此session開始前、或後端
+    // 尚未連上富邦Trades時，故意留白不補假資料，比照大戶散戶動能的處理方式。
+    const cvdSymbolCode = (currentActiveSymbol?.symbol || activeContract || '').toUpperCase();
+    const isCvdEligible = GEX_SUPPORTED_SYMBOLS.includes(cvdSymbolCode);
+    if (badge) {
+      badge.innerText = isCvdEligible
+        ? '🎯 CVD 累積量差 K 線 (真實逐筆成交tick-rule累積，讀取中...)'
+        : '🎯 CVD 累積量差 K 線 (目前僅 TXF/MXF/MTX 有真實逐筆成交數據，此商品尚未支援)';
+    }
     sub4Series.cvd = subChart4.addCandlestickSeries({
       upColor: '#26a69a',
       downColor: '#ef5350',
@@ -1522,7 +1543,7 @@ function renderSub4Chart(data) {
       wickUpColor: '#26a69a',
       wickDownColor: '#ef5350'
     });
-    sub4Series.cvd.setData(data.cvdCandles);
+    sub4Series.cvd.setData([]);
     sub4Series.cvd.createPriceLine({
       price: 0,
       color: 'rgba(255, 255, 255, 0.4)',
@@ -1530,6 +1551,7 @@ function renderSub4Chart(data) {
       lineWidth: 1,
       title: 'Zero'
     });
+    if (isCvdEligible) startCvdLivePolling(cvdSymbolCode);
   } else if (activeSub4 === 'momentum') {
     // 2026-09-13 更正：此副圖過去用 K 棒公式湊假數據，已移除。
     // 現在只畫「這個 session 開始追蹤之後」真正收到的富邦 Books(五檔)/Trades(逐筆成交) 資料，
@@ -1638,6 +1660,67 @@ function stopMomentumLivePolling() {
   if (momentumPollTimer) {
     clearInterval(momentumPollTimer);
     momentumPollTimer = null;
+  }
+}
+
+/**
+ * CVD：即時輪詢後端 /api/cvd，把真實逐筆tick-rule買賣方向累積出來的 {ts,value} 序列
+ * 依目前選擇的時間週期（見 CVD_TF_SECONDS）重新分組成K棒，整批 setData() 覆蓋畫面。
+ * 每次都整批覆蓋而不是只 update() 最新一筆，是因為session邊界重置、時間週期切換都會讓
+ * 「只更新最後一筆」的邏輯出錯，整批覆蓋雖然多耗一點頻寬，但正確性風險低很多。
+ * 只有在 Sub-Chart 4 切到 'cvd' 分頁時才會呼叫（見 renderSub4Chart）。
+ */
+async function fetchAndRenderCvd(symbol) {
+  try {
+    const res = await fetch(`http://localhost:8000/api/cvd?symbol=${encodeURIComponent(symbol)}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const payload = await res.json();
+    if (activeSub4 !== 'cvd' || !sub4Series.cvd) return;
+
+    const badge = document.getElementById('pane-4-badge');
+    const series = payload && payload.series;
+
+    if (!payload.trades_subscribed) {
+      sub4Series.cvd.setData([]);
+      if (badge) badge.innerText = '🎯 CVD 累積量差 K 線 (後端尚未連上富邦 Trades — 檢查 live_price_server.py 是否已啟動)';
+      return;
+    }
+    if (!series) {
+      sub4Series.cvd.setData([]);
+      if (badge) badge.innerText = '🎯 CVD 累積量差 K 線 (本次連線後尚未收到真實逐筆成交，等待成交中)';
+      return;
+    }
+
+    const barSeconds = CVD_TF_SECONDS[currentTf];
+    if (!barSeconds) {
+      sub4Series.cvd.setData([]);
+      if (badge) badge.innerText = '🎯 CVD 累積量差 K 線 (此時間週期尚未支援即時重建，請切換至1分~4小時)';
+      return;
+    }
+
+    sub4Series.cvd.setData(buildCvdCandlesFromPoints(series.points, barSeconds));
+    if (badge) {
+      const sessionStartStr = series.session_start_ts
+        ? new Date(series.session_start_ts * 1000).toLocaleTimeString('zh-TW', { hour12: false })
+        : '?';
+      badge.innerText = `🎯 CVD 累積量差 K 線 (真實逐筆成交，自本session ${sessionStartStr} 開始累積，共 ${series.trade_count_in_session} 筆；累積淨口數 ${series.cumulative_delta})`;
+    }
+  } catch (e) {
+    // Gateway server (live_price_server.py) not running locally — fail silently,
+    // this is expected whenever the user isn't running it (e.g. this cloud session).
+  }
+}
+
+function startCvdLivePolling(symbol) {
+  stopCvdLivePolling();
+  fetchAndRenderCvd(symbol);
+  cvdPollTimer = setInterval(() => fetchAndRenderCvd(symbol), 5000);
+}
+
+function stopCvdLivePolling() {
+  if (cvdPollTimer) {
+    clearInterval(cvdPollTimer);
+    cvdPollTimer = null;
   }
 }
 
