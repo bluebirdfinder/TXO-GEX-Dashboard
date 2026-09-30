@@ -191,6 +191,12 @@ async function loadDashboardData() {
   }
   
   if (!gexData) {
+    try {
+      const b = document.createElement('div');
+      b.textContent = '🔴 GEX 資料載入失敗：畫面上的 GEX 價位（Call Wall／Zero Gamma 等）是過期預設值，請勿當作實盤依據';
+      b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#b71c1c;color:#fff;font-size:12px;padding:4px 8px;text-align:center';
+      document.body.appendChild(b);
+    } catch (e) { /* DOM 尚未就緒也不要中斷載入 */ }
     gexData = {
       txf_price: ROOM_CHART_DEFAULTS.txf_price,
       zero_gamma_level: ROOM_CHART_DEFAULTS.zero_gamma_level,
@@ -1593,10 +1599,12 @@ function renderSub4Chart(data) {
  * 對新 time 會新增一筆，正好符合「bar 還在進行中就不斷更新最新值」的需求）。
  * 只有在 Sub-Chart 4 切到 'momentum' 分頁時才會呼叫（見 renderSub4Chart）。
  */
+let _momentumRetryAt = 0;  // 連不到本機閘道（如手機）時每 60 秒才試一次，不每 5 秒撞一次
 async function fetchAndAppendMomentumBar(symbol) {
+  if (Date.now() < _momentumRetryAt) return;
   try {
     const res = await fetch(`http://localhost:8000/api/momentum?symbol=${encodeURIComponent(symbol)}`, { cache: 'no-store' });
-    if (!res.ok) return;
+    if (!res.ok) { _momentumRetryAt = Date.now() + 60000; return; }
     const payload = await res.json();
     const bar = payload && payload.bar;
     if (!bar || activeSub4 !== 'momentum') return;
@@ -1623,6 +1631,7 @@ async function fetchAndAppendMomentumBar(symbol) {
       badge.innerText = '🐂 大戶散戶動能 (後端尚未連上富邦 Books/Trades — 檢查 live_price_server.py 是否已啟動)';
     }
   } catch (e) {
+    _momentumRetryAt = Date.now() + 60000;
     // Gateway server (live_price_server.py) not running locally — fail silently,
     // this is expected whenever the user isn't running it (e.g. this cloud session).
   }
@@ -1955,12 +1964,12 @@ function renderLeftPanel() {
   const topTaiex = document.getElementById('top-val-taiex');
   const topChgTaiex = document.getElementById('top-chg-taiex');
   if (topTaiex) {
-    const p = gexData?.spot_price || 46184.85;
-    topTaiex.innerText = Number(p).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const p = gexData?.spot_price;
+    topTaiex.innerText = p ? Number(p).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
   }
   if (topChgTaiex) {
-    const chg = gexData?.spot_change !== undefined ? gexData.spot_change : -755.64;
-    const pct = gexData?.spot_change_pct !== undefined ? gexData.spot_change_pct : -1.61;
+    const chg = gexData?.spot_change !== undefined ? gexData.spot_change : 0;
+    const pct = gexData?.spot_change_pct !== undefined ? gexData.spot_change_pct : 0;
     const sign = chg >= 0 ? '+' : '';
     topChgTaiex.innerText = `${sign}${chg.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
     topChgTaiex.style.color = chg >= 0 ? 'var(--call-color)' : 'var(--put-color)';
@@ -1969,12 +1978,12 @@ function renderLeftPanel() {
   const topOtc = document.getElementById('top-val-otc');
   const topChgOtc = document.getElementById('top-chg-otc');
   if (topOtc) {
-    const p = gexData?.two_price || 395.52;
-    topOtc.innerText = Number(p).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const p = gexData?.two_price;
+    topOtc.innerText = p ? Number(p).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
   }
   if (topChgOtc) {
-    const chg = gexData?.two_change !== undefined ? gexData.two_change : -9.72;
-    const pct = gexData?.two_change_pct !== undefined ? gexData.two_change_pct : -2.40;
+    const chg = gexData?.two_change !== undefined ? gexData.two_change : 0;
+    const pct = gexData?.two_change_pct !== undefined ? gexData.two_change_pct : 0;
     const sign = chg >= 0 ? '+' : '';
     topChgOtc.innerText = `${sign}${chg.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
     topChgOtc.style.color = chg >= 0 ? 'var(--call-color)' : 'var(--put-color)';
@@ -2710,14 +2719,14 @@ async function sendAdvisorQuery(query) {
   const cleanQ = (query || '').trim();
 
   // 1. Render User Message (with Image if attached)
-  let userMsgHtml = cleanQ;
+  let userMsgHtml = escapeHtml(cleanQ);
   const attachedImgSrc = advisorAttachedImage;
   if (attachedImgSrc) {
     userMsgHtml = `
       <div style="margin-bottom: 6px;">
         <img src="${attachedImgSrc}" alt="截圖" style="max-width: 100%; max-height: 180px; border-radius: 6px; border: 1px solid var(--primary-accent); display: block; margin-bottom: 4px;">
       </div>
-      <div>${cleanQ || '📷 [已傳送盤面/持倉截圖，請軍師診斷]'}</div>
+      <div>${escapeHtml(cleanQ) || '📷 [已傳送盤面/持倉截圖，請軍師診斷]'}</div>
     `;
   }
   appendAdvisorMessage('user', userMsgHtml);
@@ -2776,8 +2785,11 @@ async function callGeminiApi(apiKey, query, base64Image) {
   const mp = gexData?.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
   const vix = gexData?.vix_info?.taifex_vix ?? '無資料';
   const vvix = gexData?.vix_info?.us_vvix ?? '無資料';
-  const dxy = 98.845;
-  const us10y = 4.940;
+  // 只用真實 K 線快取的最新收盤；沒有就明說無資料，不再寫死數字（AGENTS.md 紅線 6）。
+  const dxyReal = realPriceFor('DXY');
+  const us10yReal = realPriceFor('US10Y');
+  const dxy = dxyReal === null ? '無資料' : dxyReal;
+  const us10y = us10yReal === null ? '無資料' : us10yReal;
 
   const systemInstruction = `你是「尋鳥戰情交易室 AI 量化軍師 (Bird Quant Advisor)」，結合老墨 XQ 指標體系與 TXO GEX 造市商對沖模型。
 最高風控鐵律與行為準則 (AGENTS.md)：
@@ -2787,7 +2799,7 @@ async function callGeminiApi(apiKey, query, base64Image) {
 當前即時盤面數據：
 - 當前監控商品：${currentActiveSymbol?.name || '台指期'} (${currentActiveSymbol?.symbol || 'TXF'})，即時報價：${currentPrice === null ? '無即時報價' : currentPrice}
 - GEX 造市商五大防線：Call Wall: ${cw}, Zero Gamma: ${zg}, Put Wall: ${pw}, Max Pain: ${mp}
-- 波動率與宏觀雷達：VIX: ${vix}, VVIX: ${vvix}, DXY: ${dxy}, 美債10Y: ${us10y}%
+- 波動率與宏觀雷達：VIX: ${vix}, VVIX: ${vvix}, DXY: ${dxy}, 美債10Y: ${us10y}${us10yReal === null ? '' : '%'}
 請以專業、精準、結構化的繁體中文 Markdown 回覆，重點條列空間拓撲與實戰建議。`;
 
   const parts = [];
@@ -2805,11 +2817,11 @@ async function callGeminiApi(apiKey, query, base64Image) {
     text: query || '請為我進行盤面走勢診斷與部位風控體檢。'
   });
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
     body: JSON.stringify({
       contents: [{ role: 'user', parts }],
       system_instruction: { parts: [{ text: systemInstruction }] },
@@ -2831,9 +2843,15 @@ async function callGeminiApi(apiKey, query, base64Image) {
   return text;
 }
 
+// 把外部文字（Gemini 回覆、使用者輸入）當純文字塞進 innerHTML 前先跳脫，避免回覆或截圖內的惡意 HTML 執行，
+// 進而讀走存在 localStorage 的 Gemini API Key。
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function formatGeminiMarkdown(md) {
   if (!md) return '';
-  let html = md
+  let html = escapeHtml(md)
     .replace(/^### (.*$)/gim, '<h4 style="color:var(--primary-accent); margin:6px 0 3px 0; font-size:0.88rem;">$1</h4>')
     .replace(/^## (.*$)/gim, '<h3 style="color:var(--gold-accent); margin:8px 0 4px 0; font-size:0.95rem;">$1</h3>')
     .replace(/^# (.*$)/gim, '<h2 style="color:#fff; margin:10px 0 6px 0; font-size:1.05rem;">$1</h2>')
@@ -4010,8 +4028,10 @@ async function fetchFubonOrPublicFallback() {
   }
 
   if (Date.now() >= _misRetryAt) try {
-    const nowH = new Date().getHours();
-    const isNightSession = (nowH >= 15 || nowH < 8);
+    // 05:00–08:45 沒有盤，期交所此時回的是舊夜盤資料，不可當即時價；夜盤判斷也改用台北時間而非瀏覽器本機時區。
+    if (!isTaifexSessionOpenNow()) return { data: null, source: null };
+    const nowH = taipeiHourNow();
+    const isNightSession = (nowH >= 15 || nowH < 5);
     const misRes = await fetch('https://mis.taifex.com.tw/futures/api/getQuoteList', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ MarketType: isNightSession ? '1' : '0', SymbolType: 'F' })
@@ -4048,6 +4068,10 @@ async function refreshDelayedQuote() {
       renderLeftPanel();
     }
   } catch (e) { /* 網路暫時不通，下一輪再試 */ }
+}
+
+function taipeiHourNow() {
+  return parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Taipei', hour: '2-digit', hour12: false }).format(new Date()), 10) % 24;
 }
 
 // 台北時間現在是否在期交所交易時段（日盤 08:45–13:45、夜盤 15:00–隔日 05:00，週一至週五開盤；不含國定假日）。
