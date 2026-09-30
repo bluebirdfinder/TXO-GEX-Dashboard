@@ -71,6 +71,11 @@
 - `TXO-Live-Price-Server`：登入 Windows 即背景啟動，只綁 `127.0.0.1:8000`，掛掉自動重啟，看門狗每天 08:30／14:55 重新登入、交易時段 120 秒沒報價也會重登。日誌 `logs\live_price_server.log`。
 - 兩者都在 `C:\Users\mingi\txo-klines-runner`（獨立於 OneDrive 共用資料夾的乾淨 clone），停用用 `Unregister-ScheduledTask -TaskName <name> -Confirm:$false`。
 
+## 7.5 🔴 雲端排程延遲（2026-09-30 量化）——手機報價不新鮮的根因
+
+- GitHub Actions 的 `schedule` cron 在這個 repo 結構性延遲：最近 9 天 60 次執行，53 次晚超過 1 小時，中位數 200 分鐘、最大 387 分鐘。原訂 05:33／15:33 的結算，實際常在 3～5 小時後才跑；手動 `workflow_dispatch` 則立即執行。
+- 建議方案 A：**Cloudflare Worker Cron Trigger** 準時呼叫 `workflow_dispatch`（需使用者建立僅限本 repo Actions 寫入的 fine-grained PAT，存 Worker secret）。方案 B：本機工作排程器準時跑資料引擎並 push。詳見 HISTORY「主頁 index.html 稽核、雲端排程延遲量化」。**等使用者決定，尚未動手。**
+
 ## 8. 其他仍待處理，不急
 
 - `live_price_server.py` 的 SSL 仍是 `CERT_NONE`（其他腳本已在 v64.11 改為驗證憑證）。

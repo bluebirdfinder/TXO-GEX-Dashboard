@@ -402,16 +402,24 @@ function showCacheNotice() {
   }
 }
 
+// 交易時段一律用「台北時間」判斷，不能用瀏覽器本機時區（人在國外或裝置時區不是 +8 時會全部判錯）。
+function taipeiClock() {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Taipei', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+  const get = t => parts.find(x => x.type === t).value;
+  const dowMap = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  return { h: parseInt(get('hour'), 10) % 24, m: parseInt(get('minute'), 10), dow: dowMap[get('weekday')] };
+}
+
 function updateMarketTradingStatus() {
   const feedText = document.getElementById('live-feed-text');
   const feedDot = document.getElementById('live-feed-dot');
   const feedPill = document.getElementById('live-feed-pill');
   const sessionBadge = document.getElementById('session-badge');
 
-  const now = new Date();
-  const h = now.getHours();
-  const m = now.getMinutes();
-  const dow = now.getDay(); // 0=Sun, 6=Sat
+  const tn = taipeiClock();
+  const h = tn.h;
+  const m = tn.m;
+  const dow = tn.dow; // 0=Sun, 6=Sat（台北時間）
   const timeMins = h * 60 + m;
 
   let isDayTrading = false;
@@ -1604,11 +1612,12 @@ function populateRetailSentiment() {
   const container = document.getElementById('retail-sentiment-container');
   if (!container || !gexData) return;
 
-  const det = gexData.retail_sentiment_details || {
-    mini_mtx: { title: "小台散戶籌碼 (MXF)", long_oi: 28147, short_oi: 21031, net_oi: 7116, daily_change: 136, total_oi: 35643, ratio: 19.97, prev_ratio: 20.01, sentiment_tag: "🔴 散戶偏多看壓" },
-    micro_tmf: { title: "微台散戶籌碼 (TMF)", long_oi: 59602, short_oi: 52121, net_oi: 7481, daily_change: -8539, total_oi: 78160, ratio: 9.63, prev_ratio: 20.17, sentiment_tag: "🟠 散戶微幅做多" },
-    broker_snapshot: { foreign_tx_net: -83474, foreign_tx_change: 1705, foreign_call_net: 1549, foreign_call_change: -275, foreign_put_net: 3721, foreign_put_change: 2448, vix_index: 29.07, vix_change: -1.15, market_turnover: 9794 }
-  };
+  const det = gexData.retail_sentiment_details;
+  // 後端沒給散戶籌碼時，如實顯示無資料；不再套用寫死的舊數字（AGENTS.md 紅線 6）。
+  if (!det || !det.mini_mtx || !det.micro_tmf || !det.broker_snapshot) {
+    container.innerHTML = '<div style="padding:14px;color:var(--text-muted);font-size:0.85rem;">⚪ 散戶籌碼資料尚未取得（不顯示舊數字）</div>';
+    return;
+  }
 
   const mtx = det.mini_mtx;
   const tmf = det.micro_tmf;
@@ -2798,8 +2807,8 @@ function initLiveTickPolling() {
     // 3. Fallback to TAIFEX MIS Live API (Night Session MarketType '1', Day Session MarketType '0')
     try {
       const nowDt = new Date();
-      const nowH = nowDt.getHours();
-      const nowM = nowDt.getMinutes();
+      const nowH = taipeiClock().h;
+      const nowM = taipeiClock().m;
       const isNightSession = (nowH >= 15 || nowH < 8 || (nowH === 8 && nowM < 45));
       const mType = isNightSession ? '1' : '0';
       
@@ -2836,8 +2845,8 @@ function initLiveTickPolling() {
         const price = yData?.chart?.result?.[0]?.meta?.regularMarketPrice;
         if (price && price > 0) {
           const nowDt = new Date();
-          const nowH = nowDt.getHours();
-          const nowM = nowDt.getMinutes();
+          const nowH = taipeiClock().h;
+          const nowM = taipeiClock().m;
           const isNightSession = (nowH >= 15 || nowH < 8 || (nowH === 8 && nowM < 45));
           handleLiveTick({
             ticker: 'IX0001',
@@ -2923,8 +2932,8 @@ function handleLiveTick(data) {
 
   // Futures Ticks (TXF1!) -> Update Futures Dual Session Cards & Zero Gamma Recalculation
   const nowDt = new Date();
-  const nowH = nowDt.getHours();
-  const nowM = nowDt.getMinutes();
+  const nowH = taipeiClock().h;
+  const nowM = taipeiClock().m;
   const isNightSession = (nowH >= 15 || nowH < 8 || (nowH === 8 && nowM < 45));
   const isMarketClosed = (
     (nowH >= 5 && (nowH < 8 || (nowH === 8 && nowM < 45))) || 
