@@ -2763,15 +2763,33 @@ function setupEventListeners() {
  * 6. AI Quant Advisor (尋鳥 AI 量化軍師) Engine
  * Powered by Gemini Pro reasoning + AGENTS.md Highest Wind Control Redlines + Real Position Audit Engine
  */
+// 軍師診斷所需的 GEX 欄位。缺任何一個就回報 ok=false，由呼叫端明說「無法診斷」；不再用寫死的舊數字
+// （TXF 47187、VVIX 102.66、ROOM_CHART_DEFAULTS…）給實盤建議（AGENTS.md 紅線 4／6）。
+function gexAdviceInputs() {
+  const g = gexData || {};
+  const num = v => (typeof v === 'number' && isFinite(v) && v > 0) ? v : null;
+  const vi = g.vix_info || {};
+  const o = {
+    txf: num(g.txf_price), zg: num(g.zero_gamma_level), cw: num(g.call_wall_strike),
+    pw: num(g.put_wall_strike), mp: num(g.max_pain_strike),
+    vvix: num(vi.us_vvix) ?? num(vi.vvix), vix: num(vi.taifex_vix)
+  };
+  o.ok = o.txf !== null && o.zg !== null && o.cw !== null && o.pw !== null && o.mp !== null && !gexIsFallbackNow();
+  return o;
+}
+// 載入失敗、畫面正在用過期預設值時（頂端有紅色橫幅），軍師也不能用它診斷
+function gexIsFallbackNow() {
+  return !!gexData && gexData.txf_price === ROOM_CHART_DEFAULTS.txf_price && gexData.zero_gamma_level === ROOM_CHART_DEFAULTS.zero_gamma_level;
+}
+const ADVISOR_NO_DATA_HTML = '<div style="border-left: 3px solid #8b95a5; padding-left: 8px;"><strong>⚪ 目前無法診斷</strong>'
+  + '<p style="margin-top:6px; font-size:0.8rem; line-height:1.5;">GEX 資料缺欄位或載入失敗，軍師不會拿舊數字給實盤建議。請稍後重新整理，或到主頁確認資料更新時間。</p></div>';
+
 function initAdvisorFeed() {
   const feed = document.getElementById('advisor-feed');
   if (!feed) return;
 
-  const txf = gexData ? gexData.txf_price : 47187;
-  const zg = gexData ? gexData.zero_gamma_level : ROOM_CHART_DEFAULTS.zero_gamma_level;
-  const cw = gexData ? gexData.call_wall_strike : ROOM_CHART_DEFAULTS.call_wall_strike;
-  const pw = gexData ? gexData.put_wall_strike : ROOM_CHART_DEFAULTS.put_wall_strike;
-  const mp = gexData ? gexData.max_pain_strike : ROOM_CHART_DEFAULTS.max_pain_strike;
+  const { txf, zg, cw, pw, mp, ok: gexOk } = gexAdviceInputs();
+  if (!gexOk) { feed.innerHTML = ''; appendAdvisorMessage('ai', ADVISOR_NO_DATA_HTML); return; }
 
   const isPosGamma = txf >= zg;
   const distCW = cw - txf;
@@ -2821,11 +2839,8 @@ function handleAdvisorAction(action) {
   const feed = document.getElementById('advisor-feed');
   if (!feed) return;
 
-  const txf = gexData ? gexData.txf_price : 47187;
-  const zg = gexData ? gexData.zero_gamma_level : ROOM_CHART_DEFAULTS.zero_gamma_level;
-  const cw = gexData ? gexData.call_wall_strike : ROOM_CHART_DEFAULTS.call_wall_strike;
-  const pw = gexData ? gexData.put_wall_strike : ROOM_CHART_DEFAULTS.put_wall_strike;
-  const mp = gexData ? gexData.max_pain_strike : ROOM_CHART_DEFAULTS.max_pain_strike;
+  const { txf, zg, cw, pw, mp, ok: gexOk } = gexAdviceInputs();
+  if (!gexOk) { appendAdvisorMessage('ai', ADVISOR_NO_DATA_HTML); return; }
 
   let title = '';
   let content = '';
@@ -2945,10 +2960,11 @@ async function sendAdvisorQuery(query) {
  */
 async function callGeminiApi(apiKey, query, base64Image) {
   const currentPrice = realPriceFor(currentActiveSymbol?.symbol || 'TXF') ?? gexData?.txf_price ?? null;
-  const cw = gexData?.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
-  const zg = gexData?.zero_gamma_level || ROOM_CHART_DEFAULTS.zero_gamma_level;
-  const pw = gexData?.put_wall_strike || ROOM_CHART_DEFAULTS.put_wall_strike;
-  const mp = gexData?.max_pain_strike || ROOM_CHART_DEFAULTS.max_pain_strike;
+  const _g = gexAdviceInputs();
+  const cw = _g.ok ? _g.cw : '無資料';
+  const zg = _g.ok ? _g.zg : '無資料';
+  const pw = _g.ok ? _g.pw : '無資料';
+  const mp = _g.ok ? _g.mp : '無資料';
   const vix = gexData?.vix_info?.taifex_vix ?? '無資料';
   const vvix = gexData?.vix_info?.us_vvix ?? '無資料';
   // 只用真實 K 線快取的最新收盤；沒有就明說無資料，不再寫死數字（AGENTS.md 紅線 6）。
@@ -3035,12 +3051,8 @@ function formatGeminiMarkdown(md) {
  * Powered by Gemini 2.5 Multi-modal Vision + AGENTS.md Highest Wind Control Redlines
  */
 function generateQuantAdvisorResponse(query, hasImage = false) {
-  const txf = gexData ? gexData.txf_price : 47187;
-  const zg = gexData ? gexData.zero_gamma_level : ROOM_CHART_DEFAULTS.zero_gamma_level;
-  const cw = gexData ? gexData.call_wall_strike : ROOM_CHART_DEFAULTS.call_wall_strike;
-  const pw = gexData ? gexData.put_wall_strike : ROOM_CHART_DEFAULTS.put_wall_strike;
-  const mp = gexData ? gexData.max_pain_strike : ROOM_CHART_DEFAULTS.max_pain_strike;
-  const vvix = gexData?.vix_info?.vvix || 102.66;
+  const { txf, zg, cw, pw, mp, vvix, vix, ok: gexOk } = gexAdviceInputs();
+  if (!gexOk) return ADVISOR_NO_DATA_HTML;
 
   const qLower = (query || '').toLowerCase();
   let imageBadge = '';
@@ -3083,14 +3095,22 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
 
     const distToSell = Math.abs(txf - sellStrike);
     const isItm = (posType.includes('Put') && txf < sellStrike) || (posType.includes('Call') && txf > sellStrike);
-    const safetyLevel = isItm ? '🔴 價內被貫穿 (極高風險)' : (distToSell > 180 ? '🟢 價外安全防守區 (安全)' : '🟡 臨界警戒區 (密切監控)');
+    // 不再假設「權利金＝價差寬度 × 0.32」這種死套公式（用它算出的最大獲利／最大虧損對真實部位是錯的，違反紅線 4）：
+    // 只有使用者自己提供實際成交權利金（例如「收 55 點」「權利金 55」「@55」）才計算風報比與 IOC 平倉成本。
+    const safetyLevel = isItm ? '🔴 價內被貫穿 (極高風險)' : `價外，距賣腳 ${distToSell} 點（距離不等於安全，請看剩餘天數與下方 IOC 條件）`;
 
-    const spreadWidth = buyStrike ? Math.abs(sellStrike - buyStrike) : 100;
-    const estNetCredit = Math.round(spreadWidth * 0.32); // Approximate 30-35% spread credit
-    const estMaxLoss = spreadWidth - estNetCredit;
-    const rewardRisk = (estNetCredit / estMaxLoss).toFixed(2);
-
+    const spreadWidth = buyStrike ? Math.abs(sellStrike - buyStrike) : null;
+    const creditMatch = query.match(/(?:權利金|收|進場|成交|credit|@)\s*[:：]?\s*(\d+(?:\.\d+)?)\s*(?:點|pt|pts)?/i);
+    const netCredit = creditMatch ? parseFloat(creditMatch[1]) : null;
+    const validCredit = netCredit !== null && spreadWidth !== null && netCredit > 0 && netCredit < spreadWidth;
+    const maxLoss = validCredit ? Math.round((spreadWidth - netCredit) * 100) / 100 : null;
+    const rrText = validCredit
+      ? `最大獲利 <strong>${netCredit} 點</strong> ($${netCredit * 50} TWD) / 最大風險 <strong>${maxLoss} 點</strong> ($${maxLoss * 50} TWD)（風報比 1 : ${(maxLoss / netCredit).toFixed(1)}）`
+      : '<strong>無法計算</strong>：請在問題中附上實際成交權利金（點數），例如「收 55 點」。軍師不會用假設的權利金替真實部位算風報比。';
     const triggerTxf = posType.includes('Put') ? (sellStrike + 20) : (sellStrike - 20);
+    const closeCostText = validCredit
+      ? `<strong><code>${Math.round(netCredit * 1.8 * 10) / 10} 點</code></strong>（＝收取權利金 ${netCredit} × 1.8，常見經驗值，請依自己的風險承受度調整）`
+      : '<strong>請先提供成交權利金</strong>';
 
     return `
       <div style="border-left: 3px solid #00d2ff; padding-left: 8px;">
@@ -3098,10 +3118,10 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
         <h4 style="color: var(--gold-accent); margin-bottom: 4px;">🛡️ 真實持倉部位風控體檢診斷書</h4>
         <p style="font-size: 0.8rem; line-height: 1.5; margin-bottom: 6px;">
           ・<strong>識別部位結構</strong>：<code>${posType}</code><br>
-          ・<strong>賣腳履約價 (Sell Leg)</strong>：<strong>${sellStrike}</strong> (當前安全距離：<strong>${distToSell} 點</strong>)<br>
-          ${buyStrike ? `・<strong>買腳履約價 (Buy Leg)</strong>：<strong>${buyStrike}</strong> (價差寬度: <strong>${spreadWidth} 點</strong>)<br>` : ''}
+          ・<strong>賣腳履約價 (Sell Leg)</strong>：<strong>${sellStrike}</strong> (距現價：<strong>${distToSell} 點</strong>)<br>
+          ${buyStrike ? `・<strong>買腳履約價 (Buy Leg)</strong>：<strong>${buyStrike}</strong> (價差寬度: <strong>${spreadWidth === null ? '—' : spreadWidth + ' 點'}</strong>)<br>` : ''}
           ・<strong>持倉狀態</strong>：<strong>${safetyLevel}</strong><br>
-          ・<strong>風報比試算 (Reward/Risk)</strong>：預估最大獲利約 <strong>${estNetCredit} 點</strong> ($${estNetCredit * 50} TWD) / 最大可能風險 <strong>${estMaxLoss} 點</strong> ($${estMaxLoss * 50} TWD) (風報比約 1 : ${(1 / rewardRisk).toFixed(1)})
+          ・<strong>風報比 (Reward/Risk)</strong>：${rrText}
         </p>
 
         <div style="background: rgba(255, 71, 87, 0.12); border: 1px solid rgba(255, 71, 87, 0.4); border-radius: 6px; padding: 6px 8px; margin: 6px 0; font-size: 0.78rem;">
@@ -3112,7 +3132,7 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
 
         <div style="background: rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 6px; padding: 6px 8px; font-size: 0.78rem;">
           🎯 <strong>券商連續洗價單實盤設定指南 (IOC)</strong>：<br>
-          ・<strong>觸發條件</strong>：當台指期 (TXF) ${posType.includes('Put') ? '跌破' : '漲破'} <strong><code>${triggerTxf} 點</code></strong> 或 價差平倉成本觸及 <strong><code>${Math.round(estNetCredit * 1.8)} 點</code></strong><br>
+          ・<strong>觸發條件</strong>：當台指期 (TXF) ${posType.includes('Put') ? '跌破' : '漲破'} <strong><code>${triggerTxf} 點</code></strong> 或 價差平倉成本觸及 ${closeCostText}<br>
           ・<strong>委託方式</strong>：<code>IOC (Immediate-or-Cancel) 市價/對手價</code><br>
           ・<strong>執行動作</strong>：雙腳整組同時代出平倉 (買回 ${sellStrike} ${posType.includes('Put') ? 'SP' : 'SC'} ＋ 賣出 ${buyStrike || (sellStrike - 100)} ${posType.includes('Put') ? 'BP' : 'BC'})<br>
           ・<strong>優點</strong>：保證金瞬間釋放，絕不產生單腳裸露風險！
@@ -3186,8 +3206,8 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
         針對您的提問：「<strong>${escapeHtml(query || '盤面截圖診斷')}</strong>」：<br><br>
         1. <strong>當前宏觀與波動率避險雷達</strong>：<br>
            - 台指期即時價位：<code>${txf}</code> ｜ Zero Gamma 多空分水嶺：<code>${zg}</code><br>
-           - 🌪️ <strong>VVIX 尾部避險指標</strong>：<code>${vvix}</code> ${vvix > 105 ? '⚠️ <span style="color:#ff9100;">機構避險情緒升溫，賣方組單應加大買腳保護</span>' : '🟢 <span style="color:#00e676;">低波平穩，適合雙賣或 Iron Condor 收租</span>'}。<br>
-           - 美元指數 DXY 處於 20MA 下方，資金動能偏多；VIX 處於平穩區間。<br><br>
+           - 🌪️ <strong>VVIX 尾部避險指標</strong>：${vvix === null ? '<code>無資料</code>' : `<code>${vvix}</code> ${vvix > 105 ? '⚠️ <span style="color:#ff9100;">機構避險情緒升溫，賣方組單應加大買腳保護</span>' : '<span style="color:#8b95a5;">未達 105 避險警戒線</span>'}`}。<br>
+           - 台指 VIX：<code>${vix === null ? '無資料' : vix}</code>｜DXY：<code>${realPriceFor('DXY') ?? '無資料'}</code>（K 線快取最新收盤，非即時）。<br><br>
         2. <strong>選擇權與期貨策略部署</strong>：<br>
            - <strong>區間操作首選</strong>：在 <strong>Put Wall (${pw})</strong> 與 <strong>Call Wall (${cw})</strong> 之間採取週選鐵兀鷹 (Iron Condor) 策略收取時間價值。<br>
            - <strong>進出場風控原則</strong>：嚴禁單邊裸賣！嚴禁拆單！若遇盤中暴衝超過 300 點，嚴禁盲目追價，待 15M/30M 出現 DeMark 9★ 或均線走平再行佈局。<br><br>

@@ -34,6 +34,12 @@
 
 **2026-09-30 09:08 第二次發生**：共用資料夾同一份舊版 `live_price_server.py` 又被啟動，再次綁在 `0.0.0.0:8000`。發現後該進程已消失（**不是我終止的，我的終止指令被權限檢查擋下**，事後不知是誰關的），同時正式服務（PID 2304）也一併不見，我依使用者同意執行 `Start-ScheduledTask -TaskName "TXO-Live-Price-Server"` 重啟，確認只綁 `127.0.0.1:8000` 且富邦訂閱正常。**尚不清楚是誰／哪個視窗在 09:08 啟動舊版**，建議使用者重新評估是否換富邦金鑰，並把共用資料夾同步到 origin/main（見第 3 節）。
 
+## 3.0 共用資料夾差異清單（2026-09-30 已逐檔比對並備份，尚未 reset）
+
+- 共用資料夾落後 `origin/main` 124 個 commit；8 個未 commit 檔案**已完整備份**到 `C:/Users/mingi/txo-private/shared-folder-backup-20260930/`（含 `uncommitted_changes.patch`）。
+- 逐檔比對「新增行是否已存在於 `origin/main`」：`fubon_api_provider.py` 97%、`live_price_server.py` 83%、`room.js` 91%、`SELF_AUDIT_FINDINGS_TODO.md` 100%——缺的只有舊版字串（v64.4）或已被取代的舊版註解／函式；`room.html` 只差 v64.4 版號字串；`build_screener_cache.py` 是舊版 `compute_jj_rocket_and_bird` 說明，已被 `jj_ghost_claws.py`（現於私有資料夾）取代；2 個 JSON 為本機 pipeline 快取。**未發現獨特值得保留的內容。**
+- 建議：使用者確認後 `git fetch` + `git reset --hard origin/main` 即可安全同步（已有備份）。**尚待使用者同意。**
+
 ## 3. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除）
 
 落後 97 個 commit，且有這些未 commit 的修改（來源不明，可能是造成第 2 節資安事件的舊視窗）：

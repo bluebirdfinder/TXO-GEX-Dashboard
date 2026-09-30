@@ -115,6 +115,14 @@ def run_profile(p, label, base, viewport, mobile):
         esc = page.evaluate("() => formatGeminiMarkdown('<img src=x onerror=alert(1)><script>1</script>')")
         check(f"{label}: Gemini 回覆 HTML 已跳脫", "<img" not in esc and "<script" not in esc, esc[:80])
 
+    with section(f"{label}: 軍師不使用假設數字"):
+        a1 = page.evaluate("() => generateQuantAdvisorResponse('W2 47000 SP / 46900 BP', false)")
+        a2 = page.evaluate("() => generateQuantAdvisorResponse('W2 47000 SP / 46900 BP 收 55 點', false)")
+        check(f"{label}: 未提供權利金時軍師不算風報比", "無法計算" in a1 and "預估最大獲利" not in a1, "")
+        check(f"{label}: 提供權利金時風報比用真實數字(55/45)", "55 點" in a2 and "45 點" in a2, "")
+        a3 = page.evaluate("() => { const s = gexData.txf_price; gexData.txf_price = undefined; const r = generateQuantAdvisorResponse('分析', false); gexData.txf_price = s; return r; }")
+        check(f"{label}: GEX 缺資料時軍師拒絕診斷", "無法診斷" in a3, "")
+
     with section(f"{label}: 選股雷達"):
         # 選股雷達
         page.evaluate("() => document.getElementById('btn-open-screener').click()")
