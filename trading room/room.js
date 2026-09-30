@@ -567,7 +567,7 @@ function generateIndicatorsData(tf) {
     // Baseline flat bars for un-cached symbol (never synthesize fake random waves)
     // A symbol that IS in klines_cache.json but has no bars for this timeframe (e.g. OTC intraday: TPEx
     // publishes daily index bars only) gets no bars — a flat line at today's price would look like data.
-    if (!hasRealPrice || klinesCacheData?.assets?.[sym]) count = 0;
+    count = 0; // 沒有真實 K 線就不畫（水平線看起來像有資料，2026-09-30 稽核移除）
     for (let i = 0; i < count; i++) {
       const t = startTime + (i * intervalSec);
       const p = roundDec(basePrice);
@@ -1513,7 +1513,7 @@ function renderSub4Chart(data) {
       }
     });
   } else if (activeSub4 === 'cvd') {
-    if (badge) badge.innerText = '🎯 CVD (Cumulative Volume Delta 累積量差 K 線)';
+    if (badge) badge.innerText = '⚠️ CVD 近似值（由 K 棒開高低收＋成交量推算，非真實逐筆累積量差，勿當作進出場依據）';
     sub4Series.cvd = subChart4.addCandlestickSeries({
       upColor: '#26a69a',
       downColor: '#ef5350',
@@ -3991,8 +3991,11 @@ let lastTxfPrice = null;
 // timeout would silently starve this tier forever. Falls back to TAIFEX's public MIS endpoint
 // (same one the main dashboard's app.js already uses) for TAIEX/TXF when the local Fubon
 // gateway is unreachable, instead of permanently showing "盤後休市" even during live trading.
+// 連不到就暫停一陣子再試：本機閘道 60 秒、期交所 MIS 5 分鐘（線上網站上 MIS 會被 CORS 擋，不必每 3 秒撞一次）。
+let _localGwRetryAt = 0;
+let _misRetryAt = 0;
 async function fetchFubonOrPublicFallback() {
-  try {
+  if (Date.now() >= _localGwRetryAt) try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 1000);
     const resp = await fetch('http://localhost:8000/api/live_tick', { signal: controller.signal });
@@ -4003,9 +4006,10 @@ async function fetchFubonOrPublicFallback() {
     }
   } catch (e) {
     // Local gateway not running, blocked, or timed out — fall through to the public fallback.
+    _localGwRetryAt = Date.now() + 60000;
   }
 
-  try {
+  if (Date.now() >= _misRetryAt) try {
     const nowH = new Date().getHours();
     const isNightSession = (nowH >= 15 || nowH < 8);
     const misRes = await fetch('https://mis.taifex.com.tw/futures/api/getQuoteList', {
@@ -4025,8 +4029,22 @@ async function fetchFubonOrPublicFallback() {
     }
   } catch (e) {
     // Public fallback also unreachable — genuinely nothing to show.
+    _misRetryAt = Date.now() + 300000;
   }
   return { data: null, source: null };
+}
+
+// 台北時間現在是否在期交所交易時段（日盤 08:45–13:45、夜盤 15:00–隔日 05:00，週一至週五開盤；不含國定假日）。
+function isTaifexSessionOpenNow() {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Taipei', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+  const get = t => parts.find(x => x.type === t).value;
+  const wd = get('weekday');
+  const mins = (parseInt(get('hour'), 10) % 24) * 60 + parseInt(get('minute'), 10);
+  const weekend = wd === 'Sat' || wd === 'Sun';
+  const day = !weekend && mins >= 8 * 60 + 45 && mins < 13 * 60 + 45;
+  const nightEve = !weekend && mins >= 15 * 60;
+  const nightMorn = wd !== 'Sun' && wd !== 'Mon' && mins < 5 * 60;
+  return day || nightEve || nightMorn;
 }
 
 function initFubonLivePriceStream() {
@@ -4040,9 +4058,11 @@ function initFubonLivePriceStream() {
       // 🔴 盤後休市或無即時伺服器串流時：嚴禁產生隨機假走步跳動！保持定案結算價！
       if (!data) {
         if (statusTag) {
-          statusTag.innerHTML = '🟡 盤後休市 (定案結算價)';
-          statusTag.style.borderColor = '#ffd700';
-          statusTag.style.color = '#ffd700';
+          // 交易時段內抓不到即時價，不能謊稱休市：如實顯示「無即時數據」（AGENTS.md 紅線 6）。
+          const liveHours = isTaifexSessionOpenNow();
+          statusTag.innerHTML = liveHours ? '⚪ 無即時數據（連不到即時行情來源）' : '🟡 盤後休市 (定案結算價)';
+          statusTag.style.borderColor = liveHours ? '#8b95a5' : '#ffd700';
+          statusTag.style.color = liveHours ? '#8b95a5' : '#ffd700';
         }
         return;
       }
