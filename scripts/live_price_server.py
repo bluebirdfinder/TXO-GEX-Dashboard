@@ -242,6 +242,31 @@ def mis_polling_worker():
 
         time.sleep(3.0)
 
+_LOOPBACK_HOSTS = ('localhost', '127.0.0.1', '[::1]', '')
+
+
+def host_request_allowed(host_header, ts_login=None, allowed_hosts=None, allowed_logins=None):
+    """Who may talk to this gateway (default: only requests addressed to the loopback name/IP — unchanged behaviour).
+
+    TXO_ALLOWED_HOSTS  comma list of extra hostnames, e.g. "mypc.tail1234.ts.net" or ".ts.net" (leading dot = suffix match).
+    TXO_ALLOWED_TS_LOGINS  comma list of Tailscale logins (emails). When set, a request to a NON-loopback host must carry a
+                       `Tailscale-User-Login` header (added by `tailscale serve`) that is in the list.
+    The gateway itself still only listens on 127.0.0.1; a reverse proxy running on this PC (tailscale serve / cloudflared)
+    is what makes it reachable, so nothing here opens a port to the network."""
+    host = (host_header or '').split(':')[0].lower()
+    if host in _LOOPBACK_HOSTS:
+        return True
+    if allowed_hosts is None:
+        allowed_hosts = [h.strip().lower() for h in os.environ.get('TXO_ALLOWED_HOSTS', '').split(',') if h.strip()]
+    if allowed_logins is None:
+        allowed_logins = [h.strip().lower() for h in os.environ.get('TXO_ALLOWED_TS_LOGINS', '').split(',') if h.strip()]
+    if not any((host == h) or (h.startswith('.') and host.endswith(h)) for h in allowed_hosts):
+        return False
+    if allowed_logins:
+        return (ts_login or '').strip().lower() in allowed_logins
+    return True
+
+
 class PriceGatewayHandler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         # Suppress standard HTTP request logging to clean stdout/stderr
@@ -269,9 +294,9 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
 
     def _host_ok(self):
-        # DNS-rebinding guard: only answer requests addressed to the loopback name/IP.
-        host = (self.headers.get('Host') or '').split(':')[0].lower()
-        return host in ('localhost', '127.0.0.1', '[::1]', '')
+        # DNS-rebinding guard: only answer requests addressed to the loopback name/IP — plus, only if the owner configured them,
+        # private hostnames (TXO_ALLOWED_HOSTS) and, optionally, a required Tailscale login (TXO_ALLOWED_TS_LOGINS).
+        return host_request_allowed(self.headers.get('Host'), self.headers.get('Tailscale-User-Login'))
 
     def do_OPTIONS(self):
         self.send_response(200)

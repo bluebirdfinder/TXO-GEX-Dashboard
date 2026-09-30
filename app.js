@@ -12,6 +12,9 @@ let showChartLegend = true;
 let currentSessionIndex = null; // Auto-select Live session on load
 let chartOrientation = 'horizontal'; // Default: T-Option Mode (T型報價視角 / Y軸履約價)
 
+// 報價服務位置：網頁若本身就是由報價服務提供（電腦上的 localhost，或 Tailscale／私人網址），就向「同一個位址」要報價；
+// 只有公開的 GitHub 網頁才用 http://localhost:8000（手機上的 localhost 是手機自己，不是你的電腦）。
+const GATEWAY_BASE = (location.hostname === 'bluebirdfinder.github.io') ? 'http://localhost:8000' : '';
 const VALID_PASSCODE = 'GEX2026';
 const CACHE_KEY = 'txo_gex_cache_v37';
 
@@ -2778,7 +2781,7 @@ function initLiveTickPolling() {
     try {
       const localController = new AbortController();
       const localTimeout = setTimeout(() => localController.abort(), 1000);
-      const res = await fetch('http://localhost:8000/api/live_tick', { signal: localController.signal });
+      const res = await fetch(`${GATEWAY_BASE}/api/live_tick`, { signal: localController.signal });
       clearTimeout(localTimeout);
       if (res.ok) {
         const data = await res.json();

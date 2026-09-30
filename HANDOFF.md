@@ -81,6 +81,12 @@
 - `TXO-Live-Price-Server`：登入 Windows 即背景啟動，只綁 `127.0.0.1:8000`，掛掉自動重啟，看門狗每天 08:30／14:55 重新登入、交易時段 120 秒沒報價也會重登。日誌 `logs\live_price_server.log`。
 - 兩者都在 `C:\Users\mingi\txo-klines-runner`（獨立於 OneDrive 共用資料夾的乾淨 clone），停用用 `Unregister-ScheduledTask -TaskName <name> -Confirm:$false`。
 
+## 7.3 🔐 私人存取規劃（2026-10-01）：手機在外面看富邦即時報價——待使用者選方案
+
+- 完整比較與操作手冊：`C:/Users/mingi/txo-private/PRIVATE_ACCESS_OPTIONS.md`（私有資料夾）。摘要：免費且安全性最高＝**Tailscale**（無公開入口，手機需開 Tailscale App）；付費最完整＝**Cloudflare Tunnel＋Access**（需網域，朋友免裝 App，可強制實體金鑰）；ngrok 免費版不可行；不建議「電腦推送到 Worker」（無真正登入）。
+- 程式端已備妥（本機分支 `claude/migrate-indicators`，未推送）：網頁 `GATEWAY_BASE`（非 GitHub 公開頁時向同位址要報價）、價格服務 `host_request_allowed()`（`TXO_ALLOWED_HOSTS`／`TXO_ALLOWED_TS_LOGINS`，預設行為不變）。
+- 使用者選了「自己＋幾位指定朋友」；**朋友看到富邦即時報價可能構成行情再散布**，建議先只開放自己並查清條款。網域尚未購買。倉庫改私有後 Actions 時數上限與 Worker 資料來源需一併處理（階段 2，尚未做）。
+
 ## 7.4 ⏳ 指標公式搬遷（2026-10-01）：Worker 新版 + 新網頁 配對上線，順序不可顛倒
 
 - Worker `2026-10-01-a`（私有資料夾 `worker.js`）已含 `indicator=chart`；新網頁在分支 `claude/migrate-indicators`（本機，未推送）。兩者 170 項新舊比對＋44 項端到端已通過。

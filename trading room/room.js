@@ -58,6 +58,9 @@ let rightPanelCollapsed = false;
 let advisorAttachedImage = null;
 
 // GEX Strict Asset Scope (僅在台指期、小台、微台顯示 GEX 5 大防線)
+// 報價服務位置：網頁若本身就是由報價服務提供（電腦上的 localhost，或 Tailscale／私人網址），就向「同一個位址」要報價；
+// 只有公開的 GitHub 網頁才用 http://localhost:8000（手機上的 localhost 是手機自己，不是你的電腦）。
+const GATEWAY_BASE = (location.hostname === 'bluebirdfinder.github.io') ? 'http://localhost:8000' : '';
 const GEX_SUPPORTED_SYMBOLS = ['TXF', 'MXF', 'MTX', 'TMF'];
 // CVD／大戶散戶動能可看的期貨代號：四個指數期貨＋universe 內所有個股／ETF 期貨（選股票時對應到它自己的期貨合約）。
 const INDEX_FLOW_FUTURES = ['TXF', 'MXF', 'MTX', 'TMF'];
@@ -1281,7 +1284,7 @@ let _momentumRetryAt = 0;  // 連不到本機閘道（如手機）時每 60 秒�
 async function fetchAndAppendMomentumBar(symbol) {
   if (Date.now() < _momentumRetryAt) return;
   try {
-    const res = await fetch(`http://localhost:8000/api/momentum?symbol=${encodeURIComponent(symbol)}`, { cache: 'no-store' });
+    const res = await fetch(`${GATEWAY_BASE}/api/momentum?symbol=${encodeURIComponent(symbol)}`, { cache: 'no-store' });
     if (!res.ok) { _momentumRetryAt = Date.now() + 60000; return; }
     const payload = await res.json();
     const bar = payload && payload.bar;
@@ -1339,7 +1342,7 @@ let _cvdRetryAt = 0;  // 連不到本機閘道（如手機）時 60 秒才試一
 async function fetchAndRenderCvd(symbol) {
   if (Date.now() < _cvdRetryAt) return;
   try {
-    const res = await fetch(`http://localhost:8000/api/cvd?symbol=${encodeURIComponent(symbol)}`, { cache: 'no-store' });
+    const res = await fetch(`${GATEWAY_BASE}/api/cvd?symbol=${encodeURIComponent(symbol)}`, { cache: 'no-store' });
     if (!res.ok) { _cvdRetryAt = Date.now() + 60000; return; }
     const payload = await res.json();
     if (activeSub4 !== 'cvd' || !sub4Series.cvd) return;
@@ -3785,7 +3788,7 @@ async function fetchFubonOrPublicFallback() {
   if (Date.now() >= _localGwRetryAt) try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 1000);
-    const resp = await fetch('http://localhost:8000/api/live_tick', { signal: controller.signal });
+    const resp = await fetch(`${GATEWAY_BASE}/api/live_tick`, { signal: controller.signal });
     clearTimeout(timeout);
     if (resp.ok) {
       const data = await resp.json();
