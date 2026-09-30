@@ -25,7 +25,7 @@ try:
 except Exception:
     pass
 
-PORT = 8000
+PORT = int(os.environ.get('TXO_GATEWAY_PORT', '8000'))
 SSL_CTX = ssl.create_default_context()
 # Certificate chain + hostname verification ON; only Python 3.13's strict X.509 flag is relaxed (TWSE/TPEx certs lack a Subject Key Identifier).
 SSL_CTX.verify_flags &= ~ssl.VERIFY_X509_STRICT
@@ -143,11 +143,13 @@ def fubon_worker():
 def fubon_books_worker():
     """
     Priority 1: Fubon Books (五檔委託簿) WebSocket Worker Thread.
-    Waits for the REST-based fubon_worker() above to bring the SDK active and
-    detect the TXF front-month symbol, then subscribes once. Actual message
-    handling happens on the SDK's own background thread (see
-    FubonAPIProvider._handle_books_message); this loop just keeps the process
-    alive and re-subscribes if the provider flips to active later than us.
+    Waits for the REST-based fubon_worker() above to bring the SDK active, then subscribes once to every
+    Fubon alias the room's CVD pane can show (TXF1!/MXF1!/TMF1! — see CVD_SYMBOL_ALIAS; MTX and TMF share
+    TMF1!). Was TXF-only until 2026-09-30, which silently starved MXF/MTX/TMF's tick-rule side detection
+    (get_cvd_series() falls back to "same side as the previous trade" without a books snapshot — degraded,
+    not wrong, but not what the room's four-symbol CVD claims). Actual message handling happens on the
+    SDK's own background thread (see FubonAPIProvider._handle_books_message); this loop just keeps the
+    process alive and re-subscribes if the provider flips to active later than us.
     """
     try:
         from scripts.fubon_api_provider import fubon_provider, load_local_env
@@ -155,11 +157,13 @@ def fubon_books_worker():
         subscribed = False
         while True:
             if fubon_provider.is_active and not subscribed:
-                symbol = fubon_provider.txf_symbol
-                ok = fubon_provider.start_books_stream([symbol])
+                symbols = sorted(set(fubon_provider.CVD_SYMBOL_ALIAS.values()))
+                ok = fubon_provider.start_books_stream(symbols)
                 if ok:
-                    print(f"[Gateway] Fubon Books Worker subscribed to {symbol} (五檔).")
+                    print(f"[Gateway] Fubon Books Worker subscribed to {symbols} (五檔).")
                     subscribed = True
+            elif subscribed:
+                fubon_provider.sync_session_subscriptions()  # 日盤/夜盤切換時改用對應的訂閱模式（夜盤需 afterHours）
             time.sleep(5.0)
     except Exception as e:
         print(f"[Gateway] Fubon Books Worker notice: {e}")
@@ -167,8 +171,9 @@ def fubon_books_worker():
 def fubon_trades_worker():
     """
     Priority 1: Fubon Trades (逐筆成交) WebSocket Worker Thread.
-    Same pattern as fubon_books_worker() — subscribes once the SDK is active,
-    then the SDK's own background thread handles incoming messages.
+    Same pattern as fubon_books_worker() — subscribes to every CVD-eligible alias once the SDK is
+    active (was TXF-only, see fubon_books_worker()'s docstring), then the SDK's own background
+    thread handles incoming messages.
     """
     try:
         from scripts.fubon_api_provider import fubon_provider, load_local_env
@@ -176,11 +181,13 @@ def fubon_trades_worker():
         subscribed = False
         while True:
             if fubon_provider.is_active and not subscribed:
-                symbol = fubon_provider.txf_symbol
-                ok = fubon_provider.start_trades_stream([symbol])
+                symbols = sorted(set(fubon_provider.CVD_SYMBOL_ALIAS.values()))
+                ok = fubon_provider.start_trades_stream(symbols)
                 if ok:
-                    print(f"[Gateway] Fubon Trades Worker subscribed to {symbol} (逐筆成交).")
+                    print(f"[Gateway] Fubon Trades Worker subscribed to {symbols} (逐筆成交).")
                     subscribed = True
+            elif subscribed:
+                fubon_provider.sync_session_subscriptions()  # 日盤/夜盤切換時改用對應的訂閱模式（夜盤需 afterHours）
             time.sleep(5.0)
     except Exception as e:
         print(f"[Gateway] Fubon Trades Worker notice: {e}")
@@ -329,12 +336,42 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 from scripts.fubon_api_provider import fubon_provider
                 qs = urllib.parse.parse_qs(parsed.query)
                 symbol = (qs.get('symbol', [None])[0]) or fubon_provider.txf_symbol
-                bar = fubon_provider.get_momentum_bar_30m(symbol)
+                # Same UI-code vs Fubon-alias mismatch as /api/cvd (found 2026-09-30): the room sends TXF/MXF/MTX/TMF but books/trades
+                # are cached and subscribed under TXF1!/MXF1!/TMF1!, so this endpoint always returned bar=null and *_subscribed=false.
+                alias = fubon_provider.CVD_SYMBOL_ALIAS.get(symbol, symbol)
+                bar = fubon_provider.get_momentum_bar_30m(alias)
                 res_data = {
                     "symbol": symbol,
                     "bar": bar,
-                    "books_subscribed": symbol in fubon_provider._books_subscribed,
-                    "trades_subscribed": symbol in fubon_provider._trades_subscribed,
+                    "books_subscribed": alias in fubon_provider._books_subscribed,
+                    "trades_subscribed": alias in fubon_provider._trades_subscribed,
+                    "ts": time.time()
+                }
+                body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(body)))
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(body)
+                self.wfile.flush()
+                return
+
+            # API Endpoint for real tick-rule CVD (Cumulative Volume Delta) — ?symbol=TXF (room UI code) or a raw Fubon alias
+            if parsed.path.startswith('/api/cvd'):
+                from scripts.fubon_api_provider import fubon_provider
+                qs = urllib.parse.parse_qs(parsed.query)
+                symbol = (qs.get('symbol', [None])[0]) or 'TXF'
+                # Found 2026-09-30 testing: the room sends its UI code (TXF/MXF/MTX/TMF) but trades are tracked
+                # under the Fubon alias (TXF1! etc) — comparing the UI code against _trades_subscribed (which
+                # only ever holds aliases) was always False, so the CVD pane permanently showed "not connected"
+                # even when it was. Map to the alias before touching either.
+                alias = fubon_provider.CVD_SYMBOL_ALIAS.get(symbol, symbol)
+                series = fubon_provider.get_cvd_series(alias)
+                res_data = {
+                    "symbol": symbol,
+                    "series": series,
+                    "trades_subscribed": alias in fubon_provider._trades_subscribed,
                     "ts": time.time()
                 }
                 body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')

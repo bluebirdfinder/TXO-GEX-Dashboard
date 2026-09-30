@@ -49,6 +49,10 @@ class FubonAPIProvider:
         # resolves to the current near-month contract and auto-rolls after settlement,
         # for both REST (/intraday/quote) and WebSocket subscribe — no manual detection needed.
         self.txf_symbol = "TXF1!"
+        # UI display code (room.js's GEX_SUPPORTED_SYMBOLS: TXF/MXF/MTX/TMF) -> Fubon Neo alias. The room's
+        # "MTX" is TAIFEX 微台 (Fubon alias TMF1!) and "MXF" is TAIFEX 小台 (Fubon alias MXF1!) — same
+        # naming as scripts/fetch_market_klines.py's FUTURES_ASSETS, confirmed against the live API 2026-09-27.
+        self.CVD_SYMBOL_ALIAS = {"TXF": "TXF1!", "MXF": "MXF1!", "MTX": "TMF1!", "TMF": "TMF1!"}
         self.last_cache = {
             'spot_price': None,
             'otc_price': None,
@@ -63,6 +67,16 @@ class FubonAPIProvider:
         # books_cache[symbol] = {'bids': [{'price':..,'size':..}, ...], 'asks': [...], 'time':.., 'raw': <last raw message dict>}
         self.books_cache = {}
         self._books_subscribed = set()
+        # Fubon subscribes by alias ('TXF1!') but echoes the resolved contract code ('TXFJ6') as the
+        # 'symbol' of every data frame (verified against the live feed 2026-09-30). The subscribe ack
+        # and every data frame share the same channel 'id', so that id is the reliable way back to the
+        # alias every cache, lookup and the room's CVD_SYMBOL_ALIAS are keyed by.
+        self._channel_alias = {}
+        # Night-session (15:00-05:00) data is only pushed to subscriptions made with afterHours=True (verified against
+        # the live feed 2026-09-30: a plain subscribe gets one stale snapshot then nothing all night, an afterHours
+        # subscribe streams type FUTURE_AH ticks). Each (channel, symbol, afterHours) is subscribed at most once; both
+        # modes may coexist because only one session trades at a time. Kept so a reconnect can replay them.
+        self._sub_modes = set()
 
         # Trades (逐筆成交) WebSocket stream state.
         # trades_log[symbol] = a bounded deque of {'price','size','side','ts'} — 'side' is
@@ -70,8 +84,20 @@ class FubonAPIProvider:
         # start_trades_stream()'s docstring for exactly what is and isn't verified.
         self.trades_log = {}
         self._trades_subscribed = set()
+        self._trades_last_serial = {}  # symbol -> serial of the last trades frame, to drop exact replays
         self._trades_logged_raw = set()  # symbols we've logged one raw message for, for schema verification
         self._TRADES_LOG_MAXLEN = 20000  # ~a session's worth of prints per symbol; bounded so memory can't grow unbounded
+
+        # Real Cumulative Volume Delta (CVD) — signed-volume running total built tick-by-tick
+        # from the same confirmed tick-rule 'side' used for trades_log, kept as its own
+        # incrementally-updated counter (not re-summed from trades_log, which is bounded and
+        # can evict old prints on a high-volume day — that would silently under-count CVD).
+        # Resets to 0 whenever a new TAIFEX session (day 08:45 / night 15:00) begins, matching
+        # how real CVD indicators behave. Cannot be backfilled before this process started
+        # tracking — see get_cvd_series()'s docstring.
+        self.cvd_cumulative = {}    # symbol -> running signed-volume total for the current session
+        self.cvd_session_start = {} # symbol -> epoch ts of the session the above total belongs to
+        self.cvd_points = {}        # symbol -> bounded deque of {'ts','value'} snapshots since session start
 
         # Shared futopt WebSocket connection state (Books + Trades share ONE connection —
         # see _ensure_futopt_connected() for why this must not be connected twice).
@@ -282,10 +308,11 @@ class FubonAPIProvider:
             logging.warning("Fubon futopt WebSocket reconnect failed: could not re-establish connection.")
             return
         try:
-            for symbol in list(self._books_subscribed):
-                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
-            for symbol in list(self._trades_subscribed):
-                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
+            for channel, symbol, ah in list(self._sub_modes):
+                params = {'channel': channel, 'symbol': symbol}
+                if ah:
+                    params['afterHours'] = True
+                futopt_ws.subscribe(params)
             logging.info("Fubon futopt WebSocket reconnected and re-subscribed to all channels.")
         except Exception as e:
             logging.warning(f"Fubon futopt WebSocket re-subscribe after reconnect failed: {e}")
@@ -309,6 +336,8 @@ class FubonAPIProvider:
         if event == 'subscribed':
             info = message.get('data') or {}
             channel = info.get('channel')
+            if info.get('id') and info.get('symbol'):
+                self._channel_alias[info['id']] = info['symbol']
             if channel == 'books':
                 logging.info(f"Fubon Books: subscription confirmed — {info}")
             elif channel == 'trades':
@@ -319,10 +348,11 @@ class FubonAPIProvider:
 
         channel = message.get('channel')
         data = message.get('data') or {}
+        alias = self._channel_alias.get(message.get('id'))
         if channel == 'books':
-            self._process_books_data(data)
+            self._process_books_data(data, alias)
         elif channel == 'trades':
-            self._process_trades_data(data)
+            self._process_trades_data(data, alias)
 
     def start_books_stream(self, symbols):
         """
@@ -355,20 +385,19 @@ class FubonAPIProvider:
             return False
 
         for symbol in symbols:
-            if symbol in self._books_subscribed:
-                continue
             try:
-                futopt_ws.subscribe({'channel': 'books', 'symbol': symbol})
+                self._subscribe_for_current_session(futopt_ws, 'books', symbol)
+                if symbol not in self._books_subscribed:
+                    logging.info(f"Fubon Books channel: subscribed to {symbol} (五檔委託簿).")
                 self._books_subscribed.add(symbol)
-                logging.info(f"Fubon Books channel: subscribed to {symbol} (五檔委託簿).")
             except Exception as e:
                 logging.warning(f"start_books_stream: subscribe({symbol}) failed: {e}")
 
         return True
 
-    def _process_books_data(self, data):
-        """ Handles one books 'data' payload (already unwrapped from the event envelope). """
-        symbol = data.get('symbol')
+    def _process_books_data(self, data, alias=None):
+        """ Handles one books 'data' payload (already unwrapped from the event envelope). Cached under the subscribed alias when known. """
+        symbol = alias or data.get('symbol')
         if not symbol:
             return
 
@@ -432,53 +461,161 @@ class FubonAPIProvider:
             return False
 
         for symbol in symbols:
-            if symbol in self._trades_subscribed:
-                continue
             try:
-                futopt_ws.subscribe({'channel': 'trades', 'symbol': symbol})
+                self._subscribe_for_current_session(futopt_ws, 'trades', symbol)
+                if symbol not in self._trades_subscribed:
+                    logging.info(f"Fubon Trades channel: subscribed to {symbol} (逐筆成交).")
                 self._trades_subscribed.add(symbol)
-                logging.info(f"Fubon Trades channel: subscribed to {symbol} (逐筆成交).")
             except Exception as e:
                 logging.warning(f"start_trades_stream: subscribe({symbol}) failed: {e}")
 
         return True
 
-    def _process_trades_data(self, data):
-        """ Handles one trades 'data' payload (already unwrapped from the event envelope). See start_trades_stream() docstring for what is/isn't confirmed about its fields. """
-        symbol = data.get('symbol')
-        price = data.get('price')
-        size = data.get('size')
-        if not symbol or price is None or size is None:
+    _TAIPEI_TZ = datetime.timezone(datetime.timedelta(hours=8))
+
+    def _session_after_hours(self, now_ts=None):
+        """True while the TAIFEX night session (15:00-05:00 Taipei) is the one trading. In the gaps with no session
+        (05:00-08:45, 13:45-15:00) keep the mode of the last subscription rather than flapping."""
+        now_ts = now_ts if now_ts is not None else time.time()
+        dt = datetime.datetime.fromtimestamp(now_ts, tz=self._TAIPEI_TZ)
+        hm = dt.hour * 60 + dt.minute
+        if hm >= 15 * 60 or hm < 5 * 60:
+            return True
+        if 8 * 60 + 45 <= hm < 13 * 60 + 45:
+            return False
+        return getattr(self, '_last_after_hours', False)
+
+    def _subscribe_for_current_session(self, futopt_ws, channel, symbol):
+        ah = self._session_after_hours()
+        self._last_after_hours = ah
+        key = (channel, symbol, ah)
+        if key in self._sub_modes:
             return
+        params = {'channel': channel, 'symbol': symbol}
+        if ah:
+            params['afterHours'] = True
+        futopt_ws.subscribe(params)
+        self._sub_modes.add(key)
+
+    def sync_session_subscriptions(self):
+        """Called periodically by the gateway workers: when the day/night session flips, subscribe every channel/symbol
+        we already track in the new mode (no unsubscribe needed - the other session's stream simply goes quiet)."""
+        futopt_ws = self._futopt_ws
+        if not futopt_ws or not self._futopt_connected:
+            return
+        ah = self._session_after_hours()
+        pending = [(ch, sym) for ch, syms in (('books', self._books_subscribed), ('trades', self._trades_subscribed))
+                   for sym in syms if (ch, sym, ah) not in self._sub_modes]
+        for ch, sym in pending:
+            try:
+                self._subscribe_for_current_session(futopt_ws, ch, sym)
+            except Exception as e:
+                logging.warning(f"sync_session_subscriptions: {ch} {sym} failed: {e}")
+        if pending:
+            logging.info(f"Fubon session flip -> {'night (afterHours)' if ah else 'day'}: re-subscribed {len(pending)} channel(s).")
+
+    @classmethod
+    def _taifex_session_start_ts(cls, now_ts=None):
+        """
+        Returns the epoch-seconds start of the TAIFEX session `now_ts` (default: now)
+        falls in, per the official boundary documented in
+        scripts/fetch_and_calc_vision.py (~line 3139): day session opens 08:45, night
+        session opens 15:00 and runs past midnight into the next calendar day.
+
+        The 13:45-15:00 gap between day close and night open has no live trades, so it
+        is treated as a continuation of the day session that just closed — this branch
+        only matters for bookkeeping and is never actually hit by a real incoming tick.
+        """
+        now_ts = now_ts if now_ts is not None else time.time()
+        now_dt = datetime.datetime.fromtimestamp(now_ts, tz=cls._TAIPEI_TZ)
+        hm = now_dt.hour * 60 + now_dt.minute
+        day_open_hm = 8 * 60 + 45
+        night_open_hm = 15 * 60
+        if day_open_hm <= hm < night_open_hm:
+            session_open = now_dt.replace(hour=8, minute=45, second=0, microsecond=0)
+        elif hm >= night_open_hm:
+            session_open = now_dt.replace(hour=15, minute=0, second=0, microsecond=0)
+        else:
+            # Before 08:45 — still inside the night session that opened the previous calendar day.
+            prev_day = now_dt - datetime.timedelta(days=1)
+            session_open = prev_day.replace(hour=15, minute=0, second=0, microsecond=0)
+        return session_open.timestamp()
+
+    def _process_trades_data(self, data, alias=None):
+        """
+        Handles one trades 'data' payload (already unwrapped from the event envelope).
+
+        Verified against the live feed (2026-09-30): a frame looks like
+          {'symbol': 'TXFJ6', 'trades': [{'price', 'size', 'bid', 'ask'}, ...],
+           'total': {...}, 'time': <us epoch>, 'serial': <int>}
+        i.e. prints are in a 'trades' list (not top-level price/size), each carrying the best bid/ask
+        at match time. Side is the tick rule against that bid/ask: at/above ask = buy, at/below bid = sell.
+        Cached under the subscribed alias (see _channel_alias) so lookups by 'TXF1!' etc. find it.
+        """
+        symbol = alias or data.get('symbol')
+        if not symbol:
+            return
+        prints = data.get('trades')
+        if not isinstance(prints, list):
+            # Older/alternative shape: a single print at the top level.
+            prints = [data] if data.get('price') is not None and data.get('size') is not None else []
+        if not prints:
+            return
+
+        serial = data.get('serial')
+        if serial is not None:
+            if self._trades_last_serial.get(symbol) == serial:
+                return  # exact replay of the previous frame
+            self._trades_last_serial[symbol] = serial
 
         if symbol not in self._trades_logged_raw:
             logging.info(f"Fubon Trades RAW sample for {symbol} (verify against this): {data}")
             self._trades_logged_raw.add(symbol)
 
-        # Tick-rule side inference against the Books cache (confirmed schema) —
-        # deliberately does not depend on an unconfirmed 'bid'/'ask' field on
-        # the trades payload itself.
-        book = self.books_cache.get(symbol)
-        side = None
-        if book and book.get('bids') and book.get('asks'):
-            best_bid = book['bids'][0]['price']
-            best_ask = book['asks'][0]['price']
-            if price >= best_ask:
-                side = 'buy'
-            elif price <= best_bid:
-                side = 'sell'
-        if side is None:
-            log = self.trades_log.get(symbol)
-            side = log[-1]['side'] if log else 'buy'
+        for tr in prints:
+            price = tr.get('price')
+            size = tr.get('size')
+            if price is None or size is None:
+                continue
 
-        if symbol not in self.trades_log:
-            self.trades_log[symbol] = deque(maxlen=self._TRADES_LOG_MAXLEN)
-        self.trades_log[symbol].append({
-            'price': float(price),
-            'size': int(size),
-            'side': side,
-            'ts': time.time()
-        })
+            side = None
+            t_bid, t_ask = tr.get('bid'), tr.get('ask')
+            if t_bid and t_ask:
+                if price >= t_ask:
+                    side = 'buy'
+                elif price <= t_bid:
+                    side = 'sell'
+            if side is None:
+                book = self.books_cache.get(symbol)
+                if book and book.get('bids') and book.get('asks'):
+                    if price >= book['asks'][0]['price']:
+                        side = 'buy'
+                    elif price <= book['bids'][0]['price']:
+                        side = 'sell'
+            if side is None:
+                log = self.trades_log.get(symbol)
+                side = log[-1]['side'] if log else 'buy'
+
+            now = time.time()
+            if symbol not in self.trades_log:
+                self.trades_log[symbol] = deque(maxlen=self._TRADES_LOG_MAXLEN)
+            self.trades_log[symbol].append({
+                'price': float(price),
+                'size': int(size),
+                'side': side,
+                'ts': now
+            })
+
+            # Real CVD: same side as above, accumulated as its own persistent counter
+            # (see __init__ comment for why it isn't derived from trades_log).
+            session_start = self._taifex_session_start_ts(now)
+            if self.cvd_session_start.get(symbol) != session_start:
+                self.cvd_session_start[symbol] = session_start
+                self.cvd_cumulative[symbol] = 0
+                self.cvd_points[symbol] = deque(maxlen=self._TRADES_LOG_MAXLEN)
+            signed_size = int(size) if side == 'buy' else -int(size)
+            self.cvd_cumulative[symbol] = self.cvd_cumulative.get(symbol, 0) + signed_size
+            self.cvd_points[symbol].append({'ts': now, 'value': self.cvd_cumulative[symbol]})
 
     def get_recent_trades(self, symbol, since_ts=None):
         """ Returns cached trade prints for symbol, optionally only those at/after since_ts (epoch seconds). """
@@ -536,6 +673,48 @@ class FubonAPIProvider:
             'trade_count_in_bar': len(recent),
             'is_trial': bool(book.get('is_trial', False)),
             'updated_ts': now
+        }
+
+    def get_cvd_series(self, symbol, max_points=3000):
+        """
+        Returns the real tick-rule Cumulative Volume Delta series for `symbol`'s current
+        TAIFEX session, as {'ts','value'} snapshots taken after every real trade print
+        received since this process started tracking (see _process_trades_data()).
+
+        `symbol` accepts either the room's UI code (TXF/MXF/MTX/TMF, via CVD_SYMBOL_ALIAS) or the raw
+        Fubon alias directly — trades are tracked and stored under the Fubon alias, since that is what
+        _process_trades_data() receives on the wire. A UI code the alias map doesn't know is used as-is.
+
+        Deliberately has NO backfill before this process's own tracking began — unlike
+        klines, there is no historical tick archive to reconstruct real CVD from, so a
+        session that started before this server connected will show a shorter series
+        than the true full-session CVD, not a wrong one. Downsamples evenly to
+        `max_points` for payload size when a session has produced more ticks than that,
+        always keeping the true latest point so the live edge is never stale.
+
+        Returns None if no trade has been received yet for this symbol this session.
+        """
+        symbol = self.CVD_SYMBOL_ALIAS.get(symbol, symbol)
+        points = self.cvd_points.get(symbol)
+        if not points:
+            return None
+
+        pts = list(points)
+        if len(pts) > max_points:
+            step = len(pts) / max_points
+            thinned = [pts[int(i * step)] for i in range(max_points)]
+            thinned[-1] = pts[-1]
+            pts = thinned
+
+        book = self.books_cache.get(symbol)
+        return {
+            'symbol': symbol,
+            'session_start_ts': self.cvd_session_start.get(symbol),
+            'cumulative_delta': self.cvd_cumulative.get(symbol, 0),
+            'trade_count_in_session': len(points),
+            'points': pts,
+            'is_trial': bool(book.get('is_trial', False)) if book else False,
+            'updated_ts': time.time()
         }
 
 
