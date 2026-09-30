@@ -12,6 +12,7 @@
 3. 用 `list_sessions` 確認有沒有其他視窗指向同一資料夾且正在執行。
 4. 改檔／commit／push 一律用暫時 worktree（`.claude/skills/multi-session-safety/SKILL.md`），不要直接在共用資料夾裡動 git 狀態。**push 前先問使用者。**
 5. 本檔「已驗證／已完成」是前一個視窗的自述，動工前抽樣重跑確認。
+6. 改過 `trading room/` 之後，跑 `python scripts/smoke_test_room.py`（21 項檢查，手機＋電腦；用法見 HISTORY「戰情室煙霧測試」）。
 
 ## 1. ✅ 真實 CVD／大戶散戶動能已上線（2026-09-30 15:35 起）；剩「買賣方向」待使用者用富邦 App 比對
 
