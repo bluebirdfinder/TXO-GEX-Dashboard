@@ -2029,7 +2029,7 @@ body.right-collapsed .dock-right { display: flex !important; }
 }
 
 /* 手機直向：改用動態視窗高度（100vh 會被網址列吃掉底部），圖表區塊給最小高度並允許整頁捲動 */
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-width: 1100px) and (orientation: portrait) {
   html, body {
     height: 100dvh;
   }
