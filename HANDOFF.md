@@ -1,111 +1,83 @@
 # HANDOFF.md — TXO-GEX-Dashboard 交接單（唯一真相來源）
 
-> 每次交接前更新並 commit。新視窗只需讀：`CLAUDE.md`（含「多視窗守則」）、本檔、`AGENTS.md`。
-> HISTORY.md 很長，**只讀最新兩個條目**（用 grep／指定行數），不要整份讀入。
-> 最後更新：2026-09-26，origin/main 約在 `bc33f43`（開工前務必 `git fetch origin` 確認）。
+> 每次交接前更新並 commit。新視窗只需讀：`CLAUDE.md`（含「多視窗守則」）、本檔、`AGENTS.md`、[docs/LOCAL_EXECUTION_INVENTORY.md](docs/LOCAL_EXECUTION_INVENTORY.md)（哪些功能鎖在 Windows 本機、哪些能搬雲端）。
+> HISTORY.md 很長，**只讀最新兩三個條目**（用 grep／指定行數），不要整份讀入。
+> 最後更新：2026-09-30 凌晨，因 context 視窗快滿（非額度用盡）交接。origin/main 在 `5ef4878`（v64.17）。
+> 這份文件之前有整整 4 天（9/26～9/30，v64.5～v64.17）沒有回頭更新，內容已完全過期，這次是**整份重寫**，不是增補。舊內容如果需要考古，去看 git log 這個檔案的歷史。
 
-## 0. 開工前檢查（每次）
-1. `git fetch origin`，看落後多少；main 會被 GitHub Actions 每天自動推資料 commit。
-2. `git status`：看有沒有別人的未 commit 檔案（見第 2 節）。
+## 0. 開工前檢查（每次，不要跳過）
+
+1. `git fetch origin`，確認本機落後多少；main 會被 GitHub Actions 每天自動推資料 commit。
+2. `git status`：**共用資料夾（`C:\Users\mingi\OneDrive\文件\TXO-GEX-Dashboard`）目前落後 origin/main 97 個 commit（還停在 9/26 的 `39d04e6`），且有 8 個檔案未 commit**（見第 2 節）。這些未 commit 的檔案是舊版本，**不要當作現況參考、不要 stash／覆蓋／刪除**。
 3. 用 `list_sessions` 確認有沒有其他視窗指向同一資料夾且正在執行。
-4. 改檔／commit／push 一律照 `.claude/skills/multi-session-safety/SKILL.md` 用暫時 worktree；**push 前先問使用者**。
-5. **本檔裡的「已驗證／已完成」是前一個視窗的自述，動工前請抽樣重跑確認，不要直接採信。**
+4. 改檔／commit／push 一律用暫時 worktree（`.claude/skills/multi-session-safety/SKILL.md`），不要直接在共用資料夾裡動 git 狀態。**push 前先問使用者。**
+5. 本檔「已驗證／已完成」是前一個視窗的自述，動工前抽樣重跑確認。
 
-## 1. 待辦
+## 1. 🔴 最優先：CVD 驗證仍在進行中，接手第一件事
 
-> **2026-09-26 進度（接手視窗）**：以下項目已合併並隨 **v64.5** 發布（分支 `claude/release-v64.5` 推上 main）；v64.6 補：融資速度指標回補、休市日誤寫防護、選股腳本 SSL、bump_version 戰情室版號。SSL 全域 `CERT_NONE` 僅剩主引擎與其他腳本；詳見 HISTORY.md v64.5。
-> | 項目 | 狀態 | 分支 |
-> |---|---|---|
-> | 1 修 `bump_version.py` ＋ 2 稽核 SOP | ✅ 完成（release skill 已補「寫出檔案 vs CI git add」步驟，腳本自動警告） | `claude/fix-bump-version` |
-> | 3 弱火箭／一般藍鳥 | ✅ 後端＋**前端接線**＋快取重生；獨立 `ta` 比對 1,345 檔 0 不一致。已隨 v64.5 發版 | `claude/screener-weak-rocket` |
-> | 4 「1,400+」→「1,380+」 | ✅ | 同上 |
-> | 5 fetch 失敗旗標＋重試 | ✅（失敗回 None、退避重試、仍失敗中止建置） | 同上 |
-> | 額外發現 | 選股腳本曾把過期 17 天的 `tw_quotes_latest.json` 當「最新 K 棒」附加 → 已修（僅在報價日期較新時附加）；舊快取所有訊號受污染 | 同上 |
-> | 法人 T-1~T-4 回補 | ✅ 新腳本 `scripts/backfill_institutional_snapshots.py`；補 9/18、9/21、9/22、9/23 日夜盤（欄位對映用 9/17 日盤與 9/16/9/17/9/24 夜盤重抓比對，逐欄一致）。9/25 中秋休市無資料 | `claude/backfill-institutional` |
-> | 額外發現 | `data/tw_holidays.json` 2026 年與證交所官方不符（漏 9/25 中秋、春節 2/12–2/20、4/6、10/26、12/25，誤列 1/26–1/30、10/01），已按官方修正；2025、2027 尚未對照官方 | 同上 |
-> | 仍待辦 | SSL 全域 `CERT_NONE`（項 6）、CL/US10Y/DXY 輪詢、`futDailyMarketReport` 編碼、worktree 殘留清理、融資餘額速度指標觀察 | — |
+分支 `claude/cvd-verify`（本機分支，**未 push**，base 是 origin/main + merge 了 `claude/cvd-real-tick`）：
 
-### 第一批：不需要使用者在場（可先做）
-| # | 項目 | 現況 | 備註 |
-|---|---|---|---|
-| 1 | 修 `scripts/bump_version.py` | ①不會插入新版本內容區塊（`release_note` 參數收了沒用）②全域字串置換會把舊條目「(v64.3)」標籤也改成新版 ③進度計數 [1/5]…[5/7] 不一致 | 舊視窗「9/26 交接續作」已開始處理，先確認它做到哪 |
-| 2 | 稽核 SOP 補一步 | 核對「腳本實際寫出的檔案」與「CI `.github/workflows/auto_update.yml` 的 `git add` 清單」是否一致 | v64.4 就是漏了這一步 |
-| 3 | 弱火箭✈️／一般藍鳥🐣（選股雷達） | `compute_jj_rocket_and_bird()` 回傳 4 值，程式完成、離線驗證（自述：1,336 檔回放 40,918 次、強弱互斥 0 違規）；**✅ 已重生快取並隨 v64.5 發版（見上方進度表）** | 共用資料夾內舊視窗的同名未 commit 檔已被取代 |
-| 4 | 選股畫面「1,400+ 檔」改實際數字 | 實際可掃描 1,383 檔股票/ETF（`trading room/room.html:793`、`room.js:216,3403`） | 只是文字，UI 未改 |
-| 5 | `fetch_twse_all_stocks_day()` 失敗旗標與重試 | 失敗只印 WARN 回 `{}`，與休市日無法區分，會讓全市場少一天 K 棒卻無聲（`build_screener_cache.py`） | 只是建議，未動 |
-| 6 | `build_screener_cache.py:56-58` SSL 驗證 | 全域 `CERT_NONE`；建議改預設驗證＋certifi，TWSE/TPEx 憑證鏈驗證失敗才對這兩網域降級並註明原因 | 已評估、未改 |
-| 7 | 融資餘額變化速度指標 | v64.4 上線，需連續 2 天以上真實資料才有數字，幾天後看 T0 欄位小字確認開始出數字 | 只需觀察 |
-| 8 | 低優先雜項 | 戰情室 CL/US10Y/DXY 即時輪詢（目前只是靜態提示）；`futDailyMarketReport` 中文標籤編碼全面搜尋；`data-pipeline-integrity` skill 正式測試；殘留 worktree 清理（`.git/worktrees/` 有殘留登記 `txo-docsync`、`main-merge-wt`、`txo-guard`；`.claude/worktrees/` 4 個舊資料夾） | |
+- 已修好兩個 bug（commit `61884e3`）：①前端傳 UI 代號（`TXF`/`MXF`/`MTX`/`TMF`），後端訂閱與比對卻用富邦別名（`TXF1!`/`MXF1!`/`TMF1!`），兩者從沒對上過，CVD 分頁永遠誤報「尚未連上」；②後端只訂閱了 TXF 一檔，MXF/MTX/TMF 完全沒訂閱。兩個都已修好並用真實富邦登入驗證過映射正確。
+- **邏輯已驗證**（模擬交易資料手算比對）：tick-rule 買賣方向判斷、累積值計算、時間戳遞增、換場次重置，全部正確。
+- **還沒驗證的**：真實成交進來後，累積值是否合理（凌晨夜盤成交稀疏，等了近 1 小時沒等到一筆）。**這是唯一卡住發版的事**，不需要重寫程式，純粹是等時機（交易時段內、有成交量時）。
+- 測試環境：暫存 worktree `C:\Users\mingi\AppData\Local\Temp\txo-wt-cvd2-4364`（可能已被系統清掉，不影響——bug 修復已經 commit 在 `claude/cvd-verify` 分支了，不依賴那個資料夾）。若要重新起測試伺服器：另開 worktree、把 `scripts/live_price_server.py` 的 `PORT = 8000` 那行改成讀 `TXO_GATEWAY_PORT` 環境變數（已經改過，見分支），用 `TXO_GATEWAY_PORT=8001` 跑，避免動到正式常駐的 8000 埠。
+- **接手步驟**：①確認現在是交易時段（日盤 08:45–13:45 或夜盤 15:00–05:00）；②起測試伺服器（見上）；③輪詢 `http://localhost:8001/api/cvd?symbol=TXF` 直到 `series` 不是 `null`；④打開戰情室、切到 CVD 分頁，跟真實市場走勢對一下是否合理；⑤通過後把 `claude/cvd-verify` 合併進 v64.18、發版、push（先問使用者）。
 
-### 第二批：需要使用者在場或決定（等使用者說要做再做）
-| # | 項目 | 現況 | 需要使用者 |
-|---|---|---|---|
-| 9 | **CVD 真實化** | 程式碼完成、離線驗證通過（自述）。K 棒版，支援 1M/3M/5M/15M/30M/1H/4H；1D/1W/1月不支援；只有 TXF/MXF/MTX/TMF 有真實 tick、無法回補歷史。**全部未 commit** | 使用者夜盤（15:00~05:00）在場：跑 `scripts/live_price_server.py`、戰情室切 CVD 分頁核對真實 tick；通過後才 commit，再用 `bump_version.py` 發版（`room.html`/`room.js` 版本字串仍是 v64.3） |
-| 10 | JJ鬼爪V4.1 對照 TradingView | 卡片標題仍標「⚠️未對照 TradingView 驗證」；Chrome 擴充功能讀不到 canvas 圖表，無法自動比對 | 使用者在場逐根 K 棒核對，通過後拿掉 `room.html` 內警告字樣 |
-| 11 | Smart Money Concept 移植 | 未開始；源碼在使用者私有資料夾 `TradingView 指標\合併好用公開指標\Merged_Indicators.md`；部署架構比照 JJ鬼爪，合併進同一份 Cloudflare `worker.js`（`indicator=` 路由） | 使用者在場 |
-| 12 | 三大法人 5 日矩陣 T-1~T-4 歷史缺口 | 期貨未平倉／選擇權大額／現貨買賣超／夜盤法人，存在 `institutional_snapshots.json`，回補腳本不補，CI 修好後只往後累積 | 使用者決定補不補（需逐日查官方資料，工程量中等） |
-| 13 | 選股雷達剩餘近似訊號 | ✅ 🛸⚡✈️🥚 已於 v64.14 改為 JJ鬼爪 Pine 忠實移植（見 HISTORY v64.14）；`k5_state`、`demark_state` 仍是簡化近似 | 需要對應 Pine 源碼 |
-| 14 | 使用者的 TradingView 分頁 | 卡在「離開此網站？」原生對話框，AI 關不掉 | 使用者手動關 |
+## 2. 🔴🔴 資安事件（已處理，但要知道發生過什麼）
 
-## 1.5 網頁對帳（2026-09-26 晚）— 未推送的修正與待使用者決定
+2026-09-30 凌晨發現：共用資料夾（落後 97 個 commit，還是 v64.12 資安修補之前的版本）裡的 `scripts/live_price_server.py`，從 **9/29 08:50 就被執行，監聽 `0.0.0.0:8000`**（對整個區網開放，會外洩 `.env` 富邦 API 金鑰與憑證密碼），跑了約 16 小時。已立即終止該進程（PID 13924、34700）。**正式排程的安全版本**（`C:\Users\mingi\txo-klines-runner`，只綁 `127.0.0.1`）**全程沒受影響、一直在正常運作**。
 
-已在分支 `claude/post-release-fixes` commit、**尚未 push、尚未發版（建議 v64.7）**：
-- 散戶多空比：`futDailyMarketReport` 未帶日期時讀到「最佳賣價」當未沖銷量（價格污染），已改帶 `queryDate`＋依表頭找欄位；9/24 小台 多25,440/空18,025 與當日存檔一致。
-- 頂部 P/C Ratio 改用期交所官方未平倉比率（9/24=85.33%，原自算 61.5% 與下方表格互相矛盾）。
-- 「期交所籌碼基準日期」改顯示籌碼所屬交易日（新欄位 `chip_base_date`），原本顯示週六執行日。
-- 現貨買賣超 T0 讀取失敗時，用同一交易日已存的真實快照補值（9/24 已與 TWSE BFI82U 核對一致）。
-- 美股 VIX 日盤列歷史對 Yahoo 官方收盤校正（9/17 以前整批落後一天、9/22 缺值）；9/17 加權指數 46,386.3→46,288.00（證交所）；移除休市日 9/25 的快照鍵。
+**推測根因**：共用資料夾裡有舊視窗留下的未 commit 修改（見第 3 節），使用者或某個視窗在這個過時資料夾裡手動執行了 `live_price_server.py`。
 
-**已與官方逐項核對一致**：加權指數 9/18~9/24（TWSE FMTQIK）、台指期日盤與台指VIX（TAIFEX）、外資/投信/自營期貨未平倉、P/C 9/18~9/23、大額交易人（含 9/22 前十大與特法差 1,000 為官方本來如此）、夜盤法人。
+**使用者已知情並決定**：富邦金鑰因為只在家用網路開過，先不換。**這個決定是基於「舊版有漏洞」的既有認知**——這次新發現的是「跑了 16 小時」這個更具體的時長，如果使用者想重新評估，可以再問一次要不要換金鑰，但除非使用者主動提起，不用每次交接都重提。
 
-**已決定並實作（v64.7）**：夜盤依期交所定義（標記日=收盤交易日）；融資維持率無官方值時以「融資餘額對前一交易日增減＋大盤漲跌」估算（仍標估算）。**v64.9 已處理**：戰情室 `base_price` 過期價、櫃買指數 K 線（改官方）。**v64.10 已處理**：期貨 K 線改期交所日線＋富邦日內。**需使用者動作**：收盤後執行 `python scripts/fetch_fubon_futures_klines.py`（先關 live_price_server）並 commit `data/klines_cache.json`，日內 K 才會有資料（富邦無歷史端點，只能每天累積）。**v64.8 已處理**：匯率備援假資料、戰情室總經 HUD 預設、2025 休市日曆。**v64.11 已處理**：主引擎 SSL（雲端實測後啟用驗證）、散戶快照交易日鍵。**仍待處理**：`live_price_server.py` SSL；2027 休市日曆（待官方公布）；CL/US10Y/DXY 即時輪詢（需 Cloudflare Worker 端點）；殘留 worktree 登記（OneDrive 權限）。
+## 3. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除）
 
-## 1.6 富邦期貨日內 K 排程（2026-09-27 已啟用）
+落後 97 個 commit，且有這些未 commit 的修改（來源不明，可能是造成第 2 節資安事件的舊視窗）：
 
-- Windows 工作排程 `TXO-Fubon-Futures-Klines`：每天 05:30 與 14:00 執行（錯過開機會在下次開機後補跑，`StartWhenAvailable`）。獨立執行副本 `C:\Users\mingi\txo-klines-runner`（OneDrive 之外），包裝腳本 `scripts/run_fubon_klines_task.ps1 -EnvFile <共用資料夾的 .env> -Push`：`git pull --rebase` → 執行 `scripts/fetch_fubon_futures_klines.py` → 只 commit `data/klines_cache.json`、`data/klines_gap_report.json` → 自動推送。日誌 `txo-klines-runner\logs\fubon_klines.log`。若 `live_price_server.py` 正在跑會跳過（避免重複登入）。
-- 富邦只提供「最近一個場次」，錯過的場次**補不回來**；每次執行更新 `data/klines_gap_report.json`（缺漏／不完整場次）。**接手時第一件事：讀這份報告並告知使用者**。
-- 停用排程：`Unregister-ScheduledTask -TaskName TXO-Fubon-Futures-Klines -Confirm:$false`。
-
-## 1.7 即時伺服器開機常駐（2026-09-27）
-
-- 伺服器只監聽 `127.0.0.1:8000`（v64.12 起；舊版曾對區網開放並提供 `.env`，見 HISTORY v64.12）。工作排程 `TXO-Live-Price-Server`：登入 Windows 後背景啟動 `scripts/run_live_server_task.ps1 -EnvFile <.env>`（在 `C:\Users\mingi\txo-klines-runner`）。日誌 `logs\live_price_server.log`。停用：`Unregister-ScheduledTask -TaskName TXO-Live-Price-Server -Confirm:$false`。
-- 假日／場次切換不需重啟；看門狗每天 08:30、14:55 重新登入，交易時段 120 秒沒報價也會重新登入。
-- 分支 `claude/cvd-real-tick` 內含 CVD 真實化（尚未發版，待夜盤驗證）。
-
-## 1.8 通行碼與 SMC 決定（2026-09-27）
-
-- **通行碼**：已依使用者決定只從 README／STATUS 文字移除（碼不換）。**碼仍寫在公開程式**：`app.js`（`VALID_PASSCODE`）、`scripts/encrypt.py`、`scripts/fetch_and_calc_vision.py`，且頁面預設自動通關，所以這不是實質保護，僅文件層面；git 歷史也仍有舊文字。
-- **SMC（LuxAlgo，CC BY-NC-SA 4.0）**：使用者確認純個人／非商業，決定**放私有 Worker、程式碼不進公開 repo**、UI 與說明標示 LuxAlgo 出處；顏色用台灣習慣（多方紅、空方綠）。私有程式碼放在使用者電腦 `C:\Users\mingi\txo-private\smc\`（不在 git，需自行備份）。
-- 富邦金鑰：使用者只在家裡網路開過即時伺服器，決定不換（舊版伺服器曾對區網提供 `.env`，已於 v64.12 修補）。
-- CVD：分支 `claude/cvd-real-tick` 待週二 9/29 15:00 後夜盤與使用者一起驗證再發版。
-
-## 1.9 SMC 已實作（2026-09-27，v64.15）
-
-- 演算法（Python 參考版＋Worker 用 JS 版）與部署說明在 `C:\Users\mingi\txo-private\smc\`（**不在 git，勿放進公開 repo**；`README_SMC.md` 有部署到 `bluebird-indicators` Worker 的步驟與 TradingView 核對清單）。前端「🧠 SMC」按鈕已上線，**Worker 尚未加入 `indicator=smc` 前不會畫圖**（需使用者貼上並部署）。
-- 待使用者：①把 `C:\Users\mingi\OneDrive\文件\TradingView 指標\我寫的指標\ADX MTF 後端運算 (Cloudflare Worker)\worker.js` 全文貼到 Cloudflare 並 Deploy（已含 `indicator=smc`，原檔備份 `worker.js.bak_before_smc_20260927`）；②用 TradingView 核對 `README_SMC.md` 的事件清單。
-
-## 1.10 指標 IP 保護：未完成事項（2026-09-27，需使用者決定）
-
-- 網頁稱呼已改「動能鳥」。Worker 私有檔已加 `indicator=bird`；**使用者重新部署 Worker 後，請移除 `room.js` 中對 `indicator=jj` 的暫時備援**。
-- 公開 repo 仍含個人指標邏輯：`scripts/jj_ghost_claws.py`、`scripts/build_screener_cache.py`（動能鳥 MACD/CCI、5K、DeMark 移植）、`scripts/tv_indicators_engine.py`（未使用）；`room.js` 仍有本地的主圖動能鳥標記、DeMark、DMI、CVD 近似。這些在 git 歷史中已公開。處理方案見使用者的決定。
-
-## 2. 共用資料夾內「別人未 commit 的檔案」（不要 stash／覆蓋／刪除／順手 commit）
-
-> ⚠️ v64.5 推上 main 後，共用資料夾內舊視窗的 `scripts/build_screener_cache.py` 未 commit 版本已被 main 上更完整的版本取代（含失敗重試、過期報價修正）；`trading room/room.js` 的 CVD 修改與 main 上同檔（弱火箭接線、版本字串）將在未來 `git pull`/merge 時出現衝突，須由使用者決定處理方式，AI 不要自行覆蓋。
-| 檔案 | 主人／性質 |
+| 檔案 | 備註 |
 |---|---|
-| `scripts/fubon_api_provider.py`、`scripts/live_price_server.py`、`trading room/room.js` | 舊視窗「TXO-GEX-Dashboard 交接續作」的 CVD 真實化。`room.js` 的 diff 比它當初記錄多 6 行，發版前先看實際 diff |
-| `scripts/build_screener_cache.py` | 同一舊視窗的弱火箭／一般藍鳥 |
-| `SELF_AUDIT_FINDINGS_TODO.md` | 同一舊視窗（CVD／弱火箭狀態標記） |
-| `trading room/room.html` | 版本字串（v64.3→v64.4）遺留變更，發版流程產物，不要手動 commit |
-| `data/stock_futures_large_trader_cache.json`、`data/twse_t86_cache.json` | pipeline 本機快取，不在 CI `git add` 清單，**不該 commit** |
+| `scripts/fubon_api_provider.py`、`scripts/live_price_server.py` | **極可能是沒有資安修補的舊版本**——main 上（v64.12 起）已經有正確、安全的版本，共用資料夾這份不要當參考，也不要 commit |
+| `trading room/room.js` | 舊版 CVD／弱火箭相關修改，main 上已有更完整版本 |
+| `scripts/build_screener_cache.py` | 舊版 |
+| `SELF_AUDIT_FINDINGS_TODO.md` | 舊版標記 |
+| `data/stock_futures_large_trader_cache.json`、`data/twse_t86_cache.json` | 本機 pipeline 快取，不在 CI `git add` 清單，本來就不該 commit |
 
-## 3. 風險與已知坑
-- 多個 Claude 視窗共用同一實體資料夾（非 worktree 隔離），曾出現不明作者 commit；已查清 `170105f`／`344d038` 是「期交所網頁整合至 GEX」視窗做的 v64.4，且已在 main。
-- 曾差點用 `git merge --ff-only` 蓋掉 main 上 46 次自動排程 commit；main 會被 GitHub Actions 每天推進，合併前必須 `git fetch`。
-- 停止／封存舊視窗不會刪掉它已寫在資料夾裡的檔案，但會失去它的對話脈絡；離線的 Remote Control／雲端視窗無法喚醒或關閉。
-- 上一批 `PROJECT_HANDOVER.md` 缺 v64.4 列已補；`bump_version.py` 修好前，每次發版都要人工檢查 PROJECT_HANDOVER／README／STATUS 的「最新內容」有沒有被誤標。
-- Windows／OneDrive 刪 worktree 常報 Permission denied，資料夾刪掉但 `.git/worktrees/` 留登記，不影響運作。
+**建議**：找機會把共用資料夾同步到 origin/main（`git fetch` + 使用者確認後 `git reset --hard origin/main`，**這會丟掉上面這些過時的未 commit 檔案**，先跟使用者確認這些檔案裡沒有他想保留的東西）。目前還沒做這件事，因為沒把握這些檔案裡有沒有使用者還想要的內容。
 
-## 4. 使用者偏好（摘要）
-進度用表格；分岔點用 AskUserQuestion；技術概念先白話解釋再帶術語；重大修復後主動走發版流程（`release` skill）；push 一律先問；不要斷言正確性沒驗證過（用真實資料、獨立函式庫或手動追蹤比對）；核心風控見 `AGENTS.md`。
+## 4. 待辦：動能鳥邏輯搬離公開 repo（已決定方案，還沒動手）
+
+使用者已決定：改放本機私有資料夾執行（比照 CVD／K 線模式），**不改寫 git 歷史**。技術路線已確認可行——查證後發現 `build_screener_cache.py` 本來就不在雲端排程裡（一直是手動執行），所以這個搬遷不影響任何現有自動化。
+
+**具體要做的**（完全還沒開始，只查過函式位置）：
+1. 把 `scripts/jj_ghost_claws.py` 整份、以及 `scripts/build_screener_cache.py` 裡的 `compute_jj_macd_and_cci`（377行起）、`compute_5k_breakout`（548行起）、`compute_demark_v3`（680行起）搬到使用者私有資料夾（建議 `C:\Users\mingi\txo-private\screener-indicators\`，比照 SMC 的模式）。
+2. `build_screener_cache.py` 改成從私有資料夾 import，路徑錯誤時要清楚報錯（不要靜默失敗）。
+3. `scripts/tv_indicators_engine.py`（未被任何地方引用，且與 Pine 邏輯不一致）——確認真的沒人用之後可以直接砍掉，私有資料夾留一份備份。
+4. 驗證：跑一次 `build_screener_cache.py`，跟現有 `data/screener_cache.json` 的訊號分布比對，確認搬遷沒改變任何計算結果。
+5. `room.js` 前端字串已在 v64.17 全改成「動能鳥」，**使用者部署新版 Worker 後**，記得移除 `room.js` 裡對 `indicator=jj`（舊路由）的暫時備援，改成只打 `indicator=bird`。
+
+## 5. 待辦：`.git` 歷史肥大（新發現，未處理）
+
+`.git` 資料夾已經 **645M**，持續肥大中（每天多次把資料檔案完整 commit 進去，沒有清除機制）。使用者已表態不想改寫公開 repo 歷史，所以「squash 舊 commit」這條路目前不能用。處理方式（git-lfs／資料檔案搬去外部儲存／其他）**尚未討論，需要使用者決定方向**。詳見 [docs/LOCAL_EXECUTION_INVENTORY.md](docs/LOCAL_EXECUTION_INVENTORY.md) 第三節。
+
+## 6. SMC（已上線 v64.15，等使用者部署 Worker）
+
+- 演算法（Python 參考版＋Worker 用 JS 版）在使用者電腦 `C:\Users\mingi\txo-private\smc\`（**不在 git**，`README_SMC.md` 有部署步驟與 TradingView 核對清單）。
+- 前端「🧠 SMC」按鈕已上線，**Worker 尚未加入 `indicator=smc` 前不會畫圖，也不會報錯**。
+- 待使用者：①把 `C:\Users\mingi\OneDrive\文件\TradingView 指標\我寫的指標\ADX MTF 後端運算 (Cloudflare Worker)\worker.js` 全文貼到 Cloudflare 並 Deploy（已含 `indicator=smc`／`indicator=bird`，原檔備份 `worker.js.bak_before_smc_20260927`）；②用 TradingView 核對 `README_SMC.md` 的事件清單。
+
+## 7. 本機常駐排程現況（一切正常運作中，不用動）
+
+- `TXO-Fubon-Futures-Klines`：每天 05:30／14:00 累積富邦期貨日內 K，`C:\Users\mingi\txo-klines-runner`，日誌同目錄 `logs\fubon_klines.log`。富邦只給「最近一個場次」，錯過補不回來，每次執行看 `data/klines_gap_report.json`。
+- `TXO-Live-Price-Server`：登入 Windows 即背景啟動，只綁 `127.0.0.1:8000`，掛掉自動重啟，看門狗每天 08:30／14:55 重新登入、交易時段 120 秒沒報價也會重登。日誌 `logs\live_price_server.log`。
+- 兩者都在 `C:\Users\mingi\txo-klines-runner`（獨立於 OneDrive 共用資料夾的乾淨 clone），停用用 `Unregister-ScheduledTask -TaskName <name> -Confirm:$false`。
+
+## 8. 其他仍待處理，不急
+
+- `live_price_server.py` 的 SSL 仍是 `CERT_NONE`（其他腳本已在 v64.11 改為驗證憑證）。
+- 2027 休市日曆待官方公布。
+- 通行碼字串仍寫在 `app.js`／`scripts/encrypt.py`／`scripts/fetch_and_calc_vision.py`（v64.16 只從 README/STATUS 文件移除，未改程式，頁面預設自動通關本來就不是實質保護）。
+
+## 9. 風控與溝通偏好（不變）
+
+核心風控見 `AGENTS.md`。進度用表格；分岔點用 AskUserQuestion；技術概念先白話解釋再帶術語；重大修復後主動走發版流程（`release` skill）；`git push` 一律先問；不要斷言正確性沒驗證過（用真實資料、獨立函式庫或手動追蹤比對，已多次證實這樣能抓到本可漏掉的 bug——這次 CVD 的兩個 symbol-mapping bug 就是靠真實登入實測才發現的，光看程式碼看不出來）。
