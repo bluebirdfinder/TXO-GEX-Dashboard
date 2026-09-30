@@ -935,10 +935,10 @@
     "max_pain_strike": 48750.0,
     "pc_ratio": 80.57,
     "taifex_vix": 23.04,
-    "us_vix": 15.87,
+    "us_vix": 15.89,
     "margin_maint_market": 158.2,
     "margin_maint_stock": 143.4,
-    "margin_balance_billion": null,
-    "written_at": "2026-09-30T16:01:37.874032+08:00"
+    "margin_balance_billion": 6222.52,
+    "written_at": "2026-09-30T21:29:22.044750+08:00"
   }
 }
