@@ -200,15 +200,20 @@ class FubonAPIProvider:
             # Session determination: 15:00 ~ 08:45 uses AFTERHOURS / Night session, 08:45 ~ 14:00 uses REGULAR
             session_mode = "AFTERHOURS" if (now_h >= 15 or now_h < 8 or (now_h == 8 and datetime.datetime.now().minute < 45)) else "REGULAR"
 
-            # Query real-time futures quote
+            # Query real-time futures quote.
+            # Verified against the live API 2026-10-01: the `session` parameter only accepts "afterhours" (night session).
+            # The day session is requested WITHOUT any session parameter; passing "REGULAR" raises an error. The old code
+            # swallowed that error and silently re-queried AFTERHOURS, so during the whole day session the "Fubon" quote was
+            # last night's closing price (48,296) while the market was trading at ~48,380. No silent fallback to the other
+            # session any more: if the call fails, we report "no quote" rather than a stale number.
             txf_q = None
             try:
-                txf_q = self.marketdata.rest_client.futopt.intraday.quote(symbol=self.txf_symbol, session=session_mode)
-            except Exception:
-                try:
+                if session_mode == "REGULAR":
+                    txf_q = self.marketdata.rest_client.futopt.intraday.quote(symbol=self.txf_symbol)
+                else:
                     txf_q = self.marketdata.rest_client.futopt.intraday.quote(symbol=self.txf_symbol, session="AFTERHOURS")
-                except Exception:
-                    pass
+            except Exception as e:
+                logging.warning(f"Fubon futopt quote ({session_mode}) failed: {e}")
 
             txf_price = None
             change = 0.0
@@ -251,6 +256,10 @@ class FubonAPIProvider:
         except Exception as e:
             logging.debug(f"Fubon live quote fetch error: {e}")
 
+        # Never hand out an old cached quote as if it were current: after 10 s without a successful fetch report "no quote".
+        if time.time() - self.last_fetch_ts > 10:
+            return {'spot_price': None, 'otc_price': None, 'txf_price': None, 'change': 0.0, 'pct': 0.0,
+                    'source': 'Fubon Neo API (no fresh quote)'}
         return self.last_cache
 
     def _ensure_futopt_connected(self):

@@ -41,6 +41,11 @@ class LivePriceState:
         self.last_update = time.time()
 
     def update_index(self, key, price, change=0.0, pct=0.0, provider="FUBON"):
+        # A fresh Fubon quote must not be overwritten every 3 s by the public-source fallback (the on-screen price used to flip
+        # between the two sources, and the source label with it). The fallback only fills in when Fubon has been silent for 10 s.
+        cur = self.indices.get(key)
+        if str(provider).upper() != "FUBON" and cur and str(cur.get("provider")).upper() == "FUBON" and (time.time() - cur.get("ts", 0)) < 10:
+            return
         if price > 0:
             self.indices[key] = {
                 "price": float(price),
