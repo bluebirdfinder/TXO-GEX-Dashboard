@@ -18,7 +18,7 @@
 |---|---|---|
 | 網頁（GEX 主頁＋尋鳥戰情室） | GitHub Pages `bluebirdfinder.github.io/TXO-GEX-Dashboard/`（公開倉庫 `bluebirdfinder/TXO-GEX-Dashboard`） | 線上，煙霧測試 37/37。版本字串仍是 v64.17（這兩天都是「未升版號的微調」，細節在 HISTORY） |
 | 本機價格服務（富邦即時價、五檔、CVD、大戶散戶動能） | `C:\Users\mingi\txo-klines-runner`（獨立 clone）；排程 `TXO-Live-Price-Server`（登入 Windows 自動啟動，掛了 15 秒重啟） | 運作中，只綁 `127.0.0.1:8000`；啟動時會 `git pull` main，所以**推送後要重啟服務才生效**（`Stop-ScheduledTask`→結束舊 python 進程→`Start-ScheduledTask`） |
-| 私有 Cloudflare Worker `bluebird-indicators` | 原始碼在使用者私有資料夾 `C:\Users\mingi\OneDrive\文件\TradingView 指標\我寫的指標\ADX MTF 後端運算 (Cloudflare Worker)\worker.js`（**不在 git，不可 commit 進公開 repo**） | 已部署版本 `2026-10-01-a`（`?indicator=health` 回 `github_token_set:false`＝準時排程**尚未設定**） |
+| 私有 Cloudflare Worker `bluebird-indicators` | 原始碼在使用者私有資料夾 `C:\Users\mingi\OneDrive\文件\TradingView 指標\我寫的指標\ADX MTF 後端運算 (Cloudflare Worker)\worker.js`（**不在 git，不可 commit 進公開 repo**） | 已部署版本 `2026-10-01-a`（`?indicator=health` 回 `github_token_set:true`、Cron 已設，準時排程待明早驗證） |
 | 本機排程 `TXO-Fubon-Futures-Klines` | 同 runner clone | 每天 05:30／14:00 累積富邦期貨日內 K；富邦只給最近一個場次，錯過補不回來，看 `data/klines_gap_report.json` |
 | 雲端資料引擎 | GitHub Actions `auto_update.yml` | **GitHub 的 cron 結構性延遲 3～5 小時**（9 天 60 次執行 53 次晚超過 1 小時），已決定改用 Worker Cron 準時觸發，等使用者設定（第 2 節 A） |
 | 私有資料夾 | `C:\Users\mingi\txo-private\`（不在 git） | `screener-indicators/`（選股雷達動能鳥／5K／九轉）、`smc/`、`shared-folder-backup-20260930/`、`PRIVATE_ACCESS_OPTIONS.md`、`handoff-20261001/`（本次交接的備份與測試工具） |
@@ -31,7 +31,7 @@
 
 | # | 事項 | 狀態／下一步 |
 |---|---|---|
-| A | **準時排程**：Worker Cron 呼叫 GitHub `workflow_dispatch` | 需使用者：①建立 GitHub fine-grained PAT（只授權本 repo、Actions: Read and write）②Cloudflare → Worker → Settings → Variables and Secrets 加 Secret `GITHUB_TOKEN`③Triggers → Cron `3,33 * * * *`。步驟在 Worker 資料夾 `README.md`「2026-09-30 升級」。完成後 `health` 的 `github_token_set` 會變 `true`，隔天 GitHub Actions 應出現準時的 `workflow_dispatch` 執行（05:03／05:33／06:03、15:03／15:33／16:03、21:03／21:33／22:03 台北） |
+| A | **準時排程：使用者已設定完成（2026-10-01 23:10），待驗證** | 金鑰 `GITHUB_TOKEN` 已存入 Cloudflare Secret（`health` 回 `github_token_set:true`），Cron `3,33 * * * *` 已加（測試用的已刪）。**下一個視窗要驗證**：2026-10-02 05:03 台北過後，`gh run list --workflow auto_update.yml --limit 6 --json createdAt,event` 應出現 `workflow_dispatch`，時間在 05:03～05:06 之間（UTC 21:03）；若沒出現，看 Cloudflare Worker Observability 的 Cron 記錄與 GitHub 金鑰是否有效。**金鑰有到期日，請向使用者確認並追蹤。** 同日已推 `auto_update.yml`：push 被擋時 `git pull --rebase` 重試最多 5 次、加 `concurrency`（同時只跑一輪，排隊不取消）。Lumi 專案會在 TXO 後約 15 分鐘觸發並檢查 `gex_data.json` 的 `last_updated_time`；TXO 一輪實測 6～9 分鐘，夠用 |
 | B | **手機在外面看富邦即時報價** | 富邦資料只在使用者家電腦。已比較方案（`txo-private\PRIVATE_ACCESS_OPTIONS.md`）：免費且安全性最高＝**Tailscale**（無公開入口，手機需開 App，設定約 20 分鐘）；付費最完整＝**Cloudflare Tunnel＋Access**（需網域約 US$2～10／年，朋友免裝 App，可強制實體金鑰）；ngrok 免費版不可行；「電腦推送到 Worker」無真正登入不建議。**使用者尚未選，網域未買。** 程式端已就緒：網頁 `GATEWAY_BASE`（不是從 github.io 開時向同位址要報價）、價格服務 `host_request_allowed()`（`TXO_ALLOWED_HOSTS`／`TXO_ALLOWED_TS_LOGINS`，預設行為不變）。Tailscale 做法：電腦與手機裝 Tailscale→後台開 MagicDNS＋HTTPS→電腦 `tailscale serve --bg 8000`→`.env` 加 `TXO_ALLOWED_HOSTS=.ts.net` 與 `TXO_ALLOWED_TS_LOGINS=信箱`→重啟服務→手機開 `https://電腦名.tailxxxx.ts.net/trading%20room/room.html` |
 | C | **CVD 買賣方向驗證** | 成交完整性已驗證（口數總和＝交易所 `tradeVolume`，345＝345），**方向準確度未證實**：介於買賣價之間的成交約占 8–13%，沿用前一筆方向（是猜的）。使用者說會用富邦 App 對照 5 分鐘內外盤表（`txo-private\handoff-20261001\cvd_5min_table_20260930.md`＋原始 CSV），結果回報給 Claude。在此之前 CVD 數字僅供參考 |
 | D | 個股期貨的大戶散戶動能 | 已擴到 36 檔個股／ETF 期貨（選股票會對應其期貨合約，如 2330→CDF）。10/01 日盤已見到訂閱與委託簿資料（CDF 大戶委託口差 -284），**成交筆數與 CVD 尚未仔細核對**——請用 `/api/momentum?symbol=CDF` 等確認 `trade_count_in_bar` 非 0 且合理 |
