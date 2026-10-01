@@ -19,7 +19,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 48160.5,
     "day_total_vex": 354.81
   },
-  "last_updated_time": "2026-10-02 02:51",
+  "last_updated_time": "2026-10-02 03:27",
   "spot_price": 48353.49,
   "spot_change": 413.36,
   "spot_change_pct": 0.86,
@@ -12963,7 +12963,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_is_estimated": true,
       "margin_balance_billion": 6298.67,
       "taifex_vix": 23.04,
-      "us_vix": 16.45,
+      "us_vix": 16.32,
       "has_snapshot": true,
       "margin_bal_1d_chg_pct": 2.4,
       "margin_bal_Nd_chg_pct": 3.88,
@@ -14256,7 +14256,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_is_estimated": true,
       "margin_balance_billion": 6298.67,
       "taifex_vix": 23.04,
-      "us_vix": 16.45,
+      "us_vix": 16.32,
       "has_snapshot": true,
       "margin_bal_1d_chg_pct": 2.4,
       "margin_bal_Nd_chg_pct": 3.88,
@@ -20707,7 +20707,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_is_estimated": true,
       "margin_balance_billion": 6298.67,
       "taifex_vix": 23.04,
-      "us_vix": 16.45,
+      "us_vix": 16.32,
       "has_snapshot": true,
       "margin_bal_1d_chg_pct": 2.4,
       "margin_bal_Nd_chg_pct": 3.88,
@@ -22000,7 +22000,7 @@ window.GEX_EMBEDDED_DATA = {
       "margin_maint_is_estimated": true,
       "margin_balance_billion": 6298.67,
       "taifex_vix": 23.04,
-      "us_vix": 16.45,
+      "us_vix": 16.32,
       "has_snapshot": true,
       "margin_bal_1d_chg_pct": 2.4,
       "margin_bal_Nd_chg_pct": 3.88,
@@ -23756,9 +23756,9 @@ window.GEX_EMBEDDED_DATA = {
       },
       "dxy": {
         "date": "10/01 (四)",
-        "price": 102.12,
-        "change": 0.67,
-        "pct": 0.66
+        "price": 102.07,
+        "change": 0.62,
+        "pct": 0.61
       },
       "usdjpy": {
         "date": "10/01 (四)",
@@ -23859,13 +23859,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "date": "10/01 (四)",
-          "price": 102.12,
-          "change": 0.67,
-          "pct": 0.66
+          "price": 102.07,
+          "change": 0.62,
+          "pct": 0.61
         }
       ]
     },
-    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.84</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>102.12</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.36</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
+    "hot_money_summary_html": "\n    <div class=\"hot-money-card neutral\" style=\"padding: 14px 18px;\">\n        <h4 style=\"margin: 0 0 6px 0; color: var(--gold-accent); font-size: 1.05rem; display: flex; align-items: center; gap: 8px;\">\n            <span>🌐 國際熱錢動向與匯率趨勢解讀 (Hot Money Digest)</span>\n        </h4>\n        <p style=\"margin-bottom: 6px; font-size: 0.95rem; line-height: 1.6;\"><strong>⚖️ <span style=\"color: var(--gold-accent); font-weight: 700;\">台幣盤整觀望 (資金量能平穩)</span></strong></p>\n        <p style=\"font-size: 0.88rem; line-height: 1.65; color: var(--text-main); margin-bottom: 12px;\">美元/台幣移於 <span style=\"color: var(--gold-accent); font-weight: 700;\">31.84</span> 附近（變動微幅）。外資匯入匯出量大致均衡，觀望氛圍較濃。</p>\n        <div style=\"display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;\">\n            <span>💵 <strong>美元指數 (DXY)</strong>: <code>102.07</code> (全球資金吸鐵石)</span>\n            <span>💴 <strong>美元/日圓 (USD/JPY)</strong>: <code>158.36</code> (套利平倉風險指標)</span>\n        </div>\n    </div>\n    "
   },
   "night_institutional_trading": {
     "tx_foreign_net_vol": -788,
@@ -23935,7 +23935,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 4091.66,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-10-02 02:51",
+    "last_updated": "2026-10-02 03:27",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -24421,7 +24421,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "AUOTY (友達ADR)",
-      "adr_change_pct": -1.91,
+      "adr_change_pct": -1.25,
       "adr_basis": "-",
       "spot_inst_net": -39267,
       "spot_foreign": -36217,
@@ -24553,7 +24553,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "UMC (聯電ADR)",
-      "adr_change_pct": 2.88,
+      "adr_change_pct": 3.12,
       "adr_basis": "-",
       "spot_inst_net": 29722,
       "spot_foreign": 25460,
@@ -24949,7 +24949,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TSM (台積電ADR)",
-      "adr_change_pct": 0.6,
+      "adr_change_pct": 0.41,
       "adr_basis": "-",
       "spot_inst_net": 4288,
       "spot_foreign": 3090,
@@ -25873,7 +25873,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "IMOS (南茂ADR)",
-      "adr_change_pct": 1.24,
+      "adr_change_pct": 1.2,
       "adr_basis": "-",
       "spot_inst_net": 1875,
       "spot_foreign": 2192,
@@ -25917,7 +25917,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "EWT (MSCI台灣ETF)",
-      "adr_change_pct": -0.04,
+      "adr_change_pct": -0.11,
       "adr_basis": "-",
       "spot_inst_net": -19448,
       "spot_foreign": -25200,
@@ -26005,7 +26005,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "TSM (台積電ADR)",
-      "adr_change_pct": 0.6,
+      "adr_change_pct": 0.41,
       "adr_basis": "-",
       "spot_inst_net": 4288,
       "spot_foreign": 3090,
@@ -26665,7 +26665,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "EWT (MSCI台灣ETF)",
-      "adr_change_pct": -0.04,
+      "adr_change_pct": -0.11,
       "adr_basis": "-",
       "spot_inst_net": -19448,
       "spot_foreign": -25200,
@@ -27369,7 +27369,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": false,
       "it_badge": "-",
       "adr_symbol": "ASX (日月光ADR)",
-      "adr_change_pct": 0.49,
+      "adr_change_pct": 0.48,
       "adr_basis": "-",
       "spot_inst_net": 740,
       "spot_foreign": 457,
@@ -31109,7 +31109,7 @@ window.GEX_EMBEDDED_DATA = {
       "is_it_adopted": true,
       "it_badge": "投信4日連買",
       "adr_symbol": "CHT (中華電ADR)",
-      "adr_change_pct": -0.15,
+      "adr_change_pct": -0.07,
       "adr_basis": "-",
       "spot_inst_net": 3566,
       "spot_foreign": 3507,
@@ -36719,24 +36719,24 @@ window.GEX_EMBEDDED_DATA = {
       }
     ],
     "macro_risk_dashboard": {
-      "summary": "台指VIX 23.0、美股VIX 16.4；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
+      "summary": "台指VIX 23.0、美股VIX 16.3；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 102.08,
-        "change_pct": 0.62,
-        "trend_label": "▲ 較昨日走升 (+0.62%)",
+        "price": 102.06,
+        "change_pct": 0.61,
+        "trend_label": "▲ 較昨日走升 (+0.61%)",
         "unit": ""
       },
       "us10y": {
         "name": "美殖利率 (10年期 US10Y)",
         "price": 5.24,
-        "change_pct": -1.02,
-        "trend_label": "▼ 較昨日走弱 (-1.02%)",
+        "change_pct": -1.06,
+        "trend_label": "▼ 較昨日走弱 (-1.06%)",
         "unit": "%"
       },
       "vix": {
         "name": "VIX恐慌指標 (CBOE)",
-        "price": 16.45,
+        "price": 16.32,
         "trend_label": "🟢 低波安定"
       }
     },
@@ -36811,17 +36811,17 @@ window.GEX_EMBEDDED_DATA = {
     "taifex_vix": 23.04,
     "taifex_vix_change": -1.54,
     "taifex_vix_change_pct": -6.27,
-    "us_vix": 16.45,
-    "us_vix_change": 0.11,
-    "us_vix_change_pct": 0.67,
-    "us_vvix": 92.63,
-    "us_vvix_change": 3.15,
-    "us_vvix_change_pct": 3.52,
+    "us_vix": 16.32,
+    "us_vix_change": -0.02,
+    "us_vix_change_pct": -0.12,
+    "us_vvix": 92.0,
+    "us_vvix_change": 2.52,
+    "us_vvix_change_pct": 2.82,
     "vvix_regime_tag": "🟢 風穩常態",
     "vvix_regime_color": "#00e676",
     "vvix_safety_buffer": "🛡️ 氣墊: 250~350 點",
     "vvix_desc": "波動率加速度平穩，做市商避險情緒沉靜，賣腳貼牆防守安全。",
-    "tail_risk_status": "VIX (23.04) 與 VVIX (92.63) 同步對齊，🟢 風穩常態",
+    "tail_risk_status": "VIX (23.04) 與 VVIX (92.00) 同步對齊，🟢 風穩常態",
     "regime_tag": "🔴 極度恐慌 (Extreme Panic)",
     "regime_color": "#ff5252",
     "regime_desc": "恐慌爆發，追跌避險賣壓沉重。觀望等待 VIX 轉折；回落時為機構級建倉爆賺期。",
