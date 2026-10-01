@@ -23,6 +23,12 @@ on:
 permissions:
   contents: write
 
+# Only one run at a time: the on-time Worker trigger and GitHub's own (late) cron can
+# overlap. Queue instead of cancelling so a run that is mid-fetch is never killed.
+concurrency:
+  group: taifex-data-engine
+  cancel-in-progress: false
+
 jobs:
   update-official-taifex-positioning:
     runs-on: ubuntu-latest
