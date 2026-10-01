@@ -230,18 +230,24 @@ def mis_polling_worker():
         except Exception as e:
             pass
 
-        # Poll Yahoo Finance for TAIEX & OTC
+        # TAIEX & OTC from the official TWSE MIS (z = last trade, y = previous close).
+        # The old source (Yahoo ^TWII `previousClose`) returned the close of TWO days ago (47,632 instead of the official
+        # 47,940.13), so the TAIEX change was overstated by ~300 points (+721 / +1.51% shown, +413 / +0.86% real). 2026-10-01.
         try:
-            url_y = "https://query1.finance.yahoo.com/v8/finance/chart/^TWII"
-            req_y = urllib.request.Request(url_y, headers={'User-Agent': 'Mozilla/5.0'})
-            with urllib.request.urlopen(req_y, timeout=5) as resp:
+            url_t = "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw%7Cotc_o00.tw&json=1&delay=0"
+            req_t = urllib.request.Request(url_t, headers={'User-Agent': 'Mozilla/5.0', 'Referer': 'https://mis.twse.com.tw/stock/index.jsp'})
+            with urllib.request.urlopen(req_t, context=SSL_CTX, timeout=5) as resp:
                 res = json.loads(resp.read().decode('utf-8'))
-                meta = res['chart']['result'][0]['meta']
-                last_p = float(meta['regularMarketPrice'])
-                ref_p = float(meta.get('previousClose', last_p) or last_p)
-                chg = round(last_p - ref_p, 2)
-                pct = round((chg / ref_p * 100), 2) if ref_p > 0 else 0.0
-                state.update_index('taiex', last_p, chg, pct, provider="TWSE")
+            for it in res.get('msgArray', []):
+                key = {'t00': 'taiex', 'o00': 'otc'}.get(it.get('c'))
+                try:
+                    last_p = float(it.get('z'))
+                    ref_p = float(it.get('y'))
+                except (TypeError, ValueError):
+                    continue   # z is '-' before the first trade of the day: no quote, nothing invented
+                if key and last_p > 0 and ref_p > 0:
+                    chg = round(last_p - ref_p, 2)
+                    state.update_index(key, last_p, chg, round(chg / ref_p * 100, 2), provider="TWSE_MIS")
         except Exception:
             pass
 

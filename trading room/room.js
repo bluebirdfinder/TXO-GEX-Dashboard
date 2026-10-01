@@ -150,10 +150,17 @@ const CORE_PRESET_ASSETS = {
  * Latest REAL price for a symbol, or null. Sources, in order: live gexData (index futures / TAIEX / OTC),
  * real daily quotes, the last real candle in klines_cache.json. Never a hard-coded or synthesized number.
  */
+// 最近一次即時報價（來自本機富邦服務／Worker）；超過 15 秒沒更新就視為過期，不再當「目前價格」使用。
+let liveTxf = null;   // { price, at }
+function liveTxfPrice() {
+  return (liveTxf && (Date.now() - liveTxf.at) < 15000) ? liveTxf.price : null;
+}
+
 function realPriceFor(sym) {
   if (!sym) return null;
   const num = (v) => (typeof v === 'number' && isFinite(v) && v > 0) ? v : null;
-  if (sym === 'TXF' || sym === 'MTX' || sym === 'MXF' || sym === 'TMF') return num(gexData?.night_txf_price) ?? num(gexData?.txf_price);
+  // 台指期系列：優先用新鮮的即時報價，否則才用雲端資料檔（可能是數小時前的結算價，畫面會另外標示「非即時」）
+  if (sym === 'TXF' || sym === 'MTX' || sym === 'MXF' || sym === 'TMF') return liveTxfPrice() ?? num(gexData?.night_txf_price) ?? num(gexData?.txf_price);
   if (sym === 'TAIEX') return num(gexData?.spot_price);
   if (sym === 'OTC') return num(gexData?.two_price);
   const q = num(realQuotesData?.[sym]?.close);
@@ -323,12 +330,16 @@ function initMultiPaneCharts() {
       scaleMargins: { top: 0.1, bottom: 0.1 },
       autoScale: true
     },
+    // 圖表套件只用 UTC 格式化時間（原始碼只有 getUTCHours），不設定的話台指期日盤第一根 08:45 會被標成 00:45，
+    // 與台北時間差 8 小時。K 線時間戳本身是對的（真實 UTC），這裡只改「顯示」。2026-10-01 稽核發現。
+    localization: { timeFormatter: chartTimeFormatter },
     timeScale: {
       borderColor: '#1a2538',
       timeVisible: true,
       secondsVisible: false,
       rightOffset: 12,
-      barSpacing: 8
+      barSpacing: 8,
+      tickMarkFormatter: chartTickFormatter
     }
   };
 
@@ -449,6 +460,31 @@ function initMultiPaneCharts() {
 /**
  * Handle Resize for all 5 Charts
  */
+// ---- 圖表時間顯示：UTC 時間戳 -> 台北時間（+8，台灣沒有日光節約）----
+function _tpeParts(t) {
+  const d = new Date((t + 8 * 3600) * 1000);
+  return { y: d.getUTCFullYear(), mo: d.getUTCMonth() + 1, da: d.getUTCDate(), h: d.getUTCHours(), mi: d.getUTCMinutes() };
+}
+function chartTimeFormatter(t) {
+  if (typeof t !== 'number') return '';
+  const p = _tpeParts(t);
+  const pad = (n) => String(n).padStart(2, '0');
+  if (typeof currentTf !== 'undefined' && (currentTf === '1D' || currentTf === '1W' || currentTf === '1Mth')) {
+    return `${p.y}-${pad(p.mo)}-${pad(p.da)}`;
+  }
+  return `${pad(p.mo)}/${pad(p.da)} ${pad(p.h)}:${pad(p.mi)}`;
+}
+function chartTickFormatter(t, type) {
+  if (typeof t !== 'number') return null;
+  const p = _tpeParts(t);
+  const pad = (n) => String(n).padStart(2, '0');
+  // type: 0 年、1 月、2 日、3 時:分、4 時:分:秒
+  if (type === 0) return String(p.y);
+  if (type === 1) return `${p.mo}月`;
+  if (type === 2) return String(p.da);
+  return `${pad(p.h)}:${pad(p.mi)}`;
+}
+
 function handleChartResize() {
   const cMain = document.getElementById('tv-main-chart');
   const cSub1 = document.getElementById('tv-sub-chart-1');
@@ -1395,6 +1431,14 @@ function stopCvdLivePolling() {
   }
 }
 
+// 「神奇九轉」勾選框：以前讀了值卻沒用，取消勾選後九轉箭頭仍會畫（2026-10-01 稽核發現）。
+function visibleMarkers(data) {
+  const all = data.markers || [];
+  if (indicatorConfig.demark) return all;
+  const demarkKeys = new Set((data.demarkMarkers || []).map(m => `${m.time}|${m.text}`));
+  return all.filter(m => !demarkKeys.has(`${m.time}|${m.text}`));
+}
+
 function renderMainOverlays(data) {
   // Clear old series
   if (overlaySeries.ribbons.ma7) { mainChart.removeSeries(overlaySeries.ribbons.ma7); overlaySeries.ribbons.ma7 = null; }
@@ -1499,7 +1543,7 @@ function renderMainOverlays(data) {
   } else {
     clearGexPriceLines();
     // 恢復純粹的 DeMark 與動能鳥標記
-    candleSeries.setMarkers(data.markers);
+    candleSeries.setMarkers(visibleMarkers(data));
   }
 }
 
@@ -1692,6 +1736,25 @@ function updateLegendOverlay(param) {
 /**
  * 4. Render Left Panel Quotes, GEX Levels & Macro Risk HUD
  */
+// GEX 防線距離（天花板／零 Gamma／地板／最大痛點 vs 目前價格）。
+// The GEX levels are TXO strikes in TAIEX/TXF index points, so a distance is only meaningful for the
+// index-point family and only when a real price exists; anything else shows "—" (not DXY 98.8 - 48,000).
+function refreshGexDistances(baseP, cw, zg, pw, mp) {
+  const gexApplicable = baseP !== null && ['TXF', 'MTX', 'MXF', 'TMF', 'TWN', 'TAIEX'].includes(currentActiveSymbol?.symbol || 'TXF');
+  const setDist = (id, level, digits) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!gexApplicable) { el.innerText = '—'; el.style.color = 'var(--text-muted)'; return; }
+    const d = baseP - level;
+    el.innerText = `${d >= 0 ? '+' : ''}${digits ? d.toFixed(digits) : Math.round(d)} 點`;
+    el.style.color = d >= 0 ? 'var(--call-color)' : 'var(--put-color)';
+  };
+  setDist('left-dist-cw', cw, 0);
+  setDist('left-dist-zg', zg, 1);
+  setDist('left-dist-pw', pw, 0);
+  setDist('left-dist-mp', mp, 0);
+}
+
 function renderLeftPanel() {
   if (!gexData) return;
 
@@ -1807,22 +1870,8 @@ function renderLeftPanel() {
     pEl.innerText = baseP === null ? '—' : (currentActiveSymbol.is_yield ? `${baseP.toFixed(3)}%` : (baseP < 500 ? baseP.toFixed(2) : baseP.toLocaleString()));
   }
 
-  // Distances
-  // The GEX levels are TXO strikes in TAIEX/TXF index points, so a distance is only meaningful for the
-  // index-point family and only when a real price exists; anything else shows "—" (not DXY 98.8 - 48,000).
-  const gexApplicable = baseP !== null && ['TXF', 'MTX', 'MXF', 'TMF', 'TWN', 'TAIEX'].includes(currentActiveSymbol?.symbol || 'TXF');
-  const setDist = (id, level, digits) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (!gexApplicable) { el.innerText = '—'; el.style.color = 'var(--text-muted)'; return; }
-    const d = baseP - level;
-    el.innerText = `${d >= 0 ? '+' : ''}${digits ? d.toFixed(digits) : Math.round(d)} 點`;
-    el.style.color = d >= 0 ? 'var(--call-color)' : 'var(--put-color)';
-  };
-  setDist('left-dist-cw', cw, 0);
-  setDist('left-dist-zg', zg, 1);
-  setDist('left-dist-pw', pw, 0);
-  setDist('left-dist-mp', mp, 0);
+  // Distances（抽成 refreshGexDistances()：即時報價進來時也要用最新價格重算，否則距離停在載入時的舊價）
+  refreshGexDistances(baseP, cw, zg, pw, mp);
 
   // Strike levels themselves (🛡️ GEX 造市商五大防線 card). Found 2026-09-15: this whole card
   // was permanently frozen at whatever numbers were typed into room.html's initial markup —
@@ -2140,6 +2189,9 @@ function setupEventListeners() {
       indicatorConfig.sar = document.getElementById('chk-sar').checked;
       indicatorConfig.sarStep = parseFloat(document.getElementById('param-sar-step').value) || 0.02;
       indicatorConfig.fvg = document.getElementById('chk-fvg').checked;
+      // Supertrend 週期／倍數：欄位一直存在但從沒被讀取（2026-10-01 稽核發現），改了沒有效果
+      indicatorConfig.stLen = parseInt(document.getElementById('param-st-len').value) || 10;
+      indicatorConfig.stMult = parseFloat(document.getElementById('param-st-mult').value) || 3.0;
 
       modal.classList.remove('show');
       renderChartData();
@@ -2350,7 +2402,7 @@ function gexAdviceInputs() {
   const num = v => (typeof v === 'number' && isFinite(v) && v > 0) ? v : null;
   const vi = g.vix_info || {};
   const o = {
-    txf: num(g.txf_price), zg: num(g.zero_gamma_level), cw: num(g.call_wall_strike),
+    txf: liveTxfPrice() ?? num(g.txf_price), zg: num(g.zero_gamma_level), cw: num(g.call_wall_strike),
     pw: num(g.put_wall_strike), mp: num(g.max_pain_strike),
     vvix: num(vi.us_vvix) ?? num(vi.vvix), vix: num(vi.taifex_vix)
   };
@@ -3935,6 +3987,22 @@ function initFubonLivePriceStream() {
             setTimeout(() => { leftMainP.style.transform = 'scale(1.0)'; }, 250);
           }
           lastTxfPrice = data.txf.price;
+          liveTxf = { price: data.txf.price, at: Date.now() };
+          // 價格即時更新時，下方的漲跌點數／漲跌幅也要同步用即時報價的數字；以前只更新價格，漲跌停在頁面載入時用雲端資料檔算的
+          // 舊值（例如價格 48,685 旁邊卻顯示 -32／-0.07%，實際是 +355／+0.73%）。2026-10-01 稽核發現。
+          const dEl = document.getElementById('left-price-diff');
+          const pcEl = document.getElementById('left-price-pct');
+          if (dEl && pcEl && typeof data.txf.change === 'number') {
+            const up = data.txf.change >= 0;
+            const sg = up ? '+' : '';
+            dEl.innerText = `${sg}${data.txf.change}`;
+            pcEl.innerText = `(${sg}${data.txf.pct}%)`;
+            const col = up ? 'var(--call-color)' : 'var(--put-color)';
+            dEl.style.color = col; pcEl.style.color = col; leftMainP.style.color = col;
+          }
+          if (gexData && gexAdviceInputs().ok) {
+            refreshGexDistances(data.txf.price, gexData.call_wall_strike, gexData.zero_gamma_level, gexData.put_wall_strike, gexData.max_pain_strike);
+          }
         }
 
         if (chgEl) {

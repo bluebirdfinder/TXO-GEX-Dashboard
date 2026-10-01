@@ -149,6 +149,34 @@ def run_profile(p, label, base, viewport, mobile):
         leaked = {n: v for n, v in leaked.items() if v}
         check(f"{label}: room.js／app.js 不含指標公式變數", not leaked, str(leaked))
 
+    with section(f"{label}: 設定視窗欄位有效"):
+        # 2026-10-01 稽核：Supertrend 週期／倍數欄位與「神奇九轉」勾選框曾經沒有任何效果（畫面有、程式沒讀／沒用）
+        page.evaluate("""() => { indicatorConfig.gex = false; currentActiveSymbol = { symbol: 'CL', name: 'CL', category: 'x', market: 'X', has_futures: false, futures_code: 'CL', base_price: null }; activeContract = 'CL'; currentTf = '1H'; renderChartData(); }""")
+        page.wait_for_timeout(6000)
+        cnt = lambda: page.evaluate("() => { const m = candleSeries.markers(); return {demark: m.filter(x => (x.text||'').includes('9★')).length, birds: m.filter(x => !(x.text||'').includes('9★')).length}; }")
+        before = cnt()
+        page.evaluate("""() => { document.getElementById('open-indicator-settings-btn').click(); document.getElementById('chk-demark').checked = false;
+            document.getElementById('param-st-len').value = 7; document.getElementById('param-st-mult').value = 2.5;
+            document.getElementById('apply-indicator-settings-btn').click(); }""")
+        page.wait_for_timeout(5000)
+        after = cnt()
+        cfg = page.evaluate("() => ({stLen: indicatorConfig.stLen, stMult: indicatorConfig.stMult})")
+        check(f"{label}: 取消「神奇九轉」後九轉箭頭消失、動能鳥箭頭不受影響", before["demark"] > 0 and after["demark"] == 0 and after["birds"] == before["birds"], f"before={before} after={after}")
+        check(f"{label}: Supertrend 週期／倍數欄位會被讀取", cfg["stLen"] == 7 and cfg["stMult"] == 2.5, str(cfg))
+
+    with section(f"{label}: 即時報價與漲跌一致"):
+        # 2026-10-01 稽核：價格即時更新，但下方漲跌／GEX 距離停在載入時的舊值（價格 48,685 旁邊卻顯示 -32）
+        page2 = ctx.new_page()
+        tick = {"active_provider": "FUBON", "provider_name": "x", "indices": {}, "txf": {"price": 48685.0, "change": 355.0, "pct": 0.73, "provider": "FUBON"}}
+        page2.route("**/api/live_tick**", lambda r: r.fulfill(status=200, headers={"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}, body=json.dumps(tick)))
+        page2.goto(base + ROOM + "?smoke=2", wait_until="load", timeout=60000)
+        page2.wait_for_timeout(7000)
+        got = page2.evaluate("() => ({price: document.getElementById('left-main-price').innerText, diff: document.getElementById('left-price-diff').innerText, pct: document.getElementById('left-price-pct').innerText, cwDist: document.getElementById('left-dist-cw').innerText, cw: gexData.call_wall_strike})")
+        exp_dist = round(48685 - got["cw"])
+        check(f"{label}: 價格 48,685 時漲跌顯示 +355 (+0.73%)", got["price"] == "48,685" and got["diff"] == "+355" and "0.73" in got["pct"], str(got))
+        check(f"{label}: GEX 天花板距離用即時價計算", got["cwDist"].replace(" 點", "").replace("+", "") == str(exp_dist), f"顯示 {got['cwDist']} 預期 {exp_dist}")
+        page2.close()
+
     real_errors = [e for e in page_errors if not EXPECTED_NOISE.search(e)]
     check(f"{label}: 無未捕捉的 JavaScript 例外", not real_errors, "; ".join(real_errors[:3]))
     browser.close()
