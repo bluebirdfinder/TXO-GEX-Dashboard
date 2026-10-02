@@ -1463,5 +1463,18 @@
     "dealer_opt_put_net": 0.97,
     "pc_ratio": 82.54,
     "written_at": "2026-10-01T22:07:38.248840"
+  },
+  "2026-10-02_INST_NIGHT": {
+    "foreign_tx": -1377,
+    "foreign_tx_amt": -133.01,
+    "foreign_mtx": -2707,
+    "foreign_micro": -5252,
+    "dealer_tx": 654,
+    "dealer_tx_amt": 63.22,
+    "written_at": "2026-10-02T01:02:02.850799"
+  },
+  "MARGIN_MAINT_EST_20261002": {
+    "margin_maint_market": 154.9,
+    "margin_maint_stock": 140.5
   }
 }
