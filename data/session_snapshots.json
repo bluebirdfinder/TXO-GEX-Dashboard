@@ -982,9 +982,9 @@
   "2026-10-02_DAY": {
     "date": "2026-10-02",
     "session": "DAY",
-    "spot_price": 48413.18,
-    "otc_price": 421.25,
-    "txf_price": 48601.0,
+    "spot_price": 48368.4,
+    "otc_price": 422.73,
+    "txf_price": 48578.0,
     "zero_gamma_level": 48160.6,
     "gex_plus_flip": 48160.5,
     "call_wall_strike": 49000.0,
@@ -993,9 +993,9 @@
     "pc_ratio": 65.7,
     "taifex_vix": 23.04,
     "us_vix": 16.39,
-    "margin_maint_market": 154.9,
-    "margin_maint_stock": 140.5,
+    "margin_maint_market": 154.8,
+    "margin_maint_stock": 140.3,
     "margin_balance_billion": null,
-    "written_at": "2026-10-02T09:01:31.374335+08:00"
+    "written_at": "2026-10-02T09:30:47.103868+08:00"
   }
 }
