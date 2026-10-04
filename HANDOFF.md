@@ -1,7 +1,7 @@
 # HANDOFF.md — TXO-GEX-Dashboard 交接單（唯一真相來源）
 
 > 新視窗只需讀：`CLAUDE.md`、本檔、`AGENTS.md`（風控紅線）。HISTORY.md 很長，**只讀最新幾個條目**（`grep -n "^### " HISTORY.md | head -20` 再讀對應段落），不要整份讀入。
-> 最後更新：2026-10-01 傍晚（上一個視窗因 context 視窗快滿而交接，非額度用盡）。**本檔是整份重寫**：9/30～10/01 兩天做了非常多事，舊的分段紀錄已併入 HISTORY.md，這裡只留現況與待辦。
+> 最後更新：2026-10-04（第 2 節 A 列已更新；其餘仍是 10/01 傍晚版）（上一個視窗因 context 視窗快滿而交接，非額度用盡）。**本檔是整份重寫**：9/30～10/01 兩天做了非常多事，舊的分段紀錄已併入 HISTORY.md，這裡只留現況與待辦。
 
 ## 0. 開工前檢查（每次，不要跳過）
 
@@ -31,7 +31,7 @@
 
 | # | 事項 | 狀態／下一步 |
 |---|---|---|
-| A | ✅ **準時排程已驗證成功（2026-10-02）** | Worker Cron `3,33 * * * *`＋Secret `GITHUB_TOKEN` 已設定；10/02 台北 05:03／05:33／06:03 三輪都出現 `workflow_dispatch`，開跑時間為整點後約 12 秒（UTC 21:03:12／21:33:13／22:03:12），全部成功。**仍待辦**：①GitHub 金鑰（fine-grained PAT）**到期日 2026-12-30**（使用者已告知）；過期後準時排程會靜默失效、退回 GitHub 自己晚 3～5 小時的排程。**建議 2026-12-16 左右**建新金鑰並更新 Cloudflare Secret `GITHUB_TOKEN`②下午 15:03 等日盤時段再抽驗一次③週六 05:00（週五夜盤結算）沒涵蓋，要補在 `DISPATCH_SLOTS` 的 05/06 時段加 `Sat`。同日已推 `auto_update.yml`：push 被擋時 `git pull --rebase` 重試最多 5 次、加 `concurrency`。Lumi 專案在 TXO 後約 15 分鐘觸發，TXO 一輪實測 6～9 分鐘，夠用；使用者已把這些資訊轉告 Lumi |
+| A | ✅ **準時排程已驗證成功（2026-10-02～03）** | Worker Cron `3,33 * * * *`＋Secret `GITHUB_TOKEN`。已驗證：10/02 05:03～06:03、日盤 15:03～16:03、夜盤 21:03～21:33 全部準時（整點後約 12～50 秒）成功；**週六 05:03／05:33／06:03 已補（Worker 版本 `2026-10-02-a`，10/03 實測三輪成功）**，Lumi 週六晨報的新鮮度閘門不會再被擋。**GitHub 金鑰（fine-grained PAT）到期日 2026-12-30**，過期後準時排程會靜默失效、退回 GitHub 晚 3～5 小時的排程；Google 日曆已建 2026-12-16 提醒（建新金鑰並更新 Cloudflare Secret `GITHUB_TOKEN`）。**auto_update.yml**：push 被擋時 `git pull --rebase` 重試最多 5 次、加 `concurrency`；10/02 22:03 那輪因工作目錄有未 commit 的快取檔導致 rebase 直接失敗，已於 10/04 加 `git stash --include-untracked`（40189df），**尚未被真實碰撞驗證**，下次推送被擋時看日誌確認。Lumi 在 TXO 後約 15 分鐘觸發，TXO 一輪實測 6～9 分鐘，夠用 |
 | B | **手機在外面看富邦即時報價** | 富邦資料只在使用者家電腦。已比較方案（`txo-private\PRIVATE_ACCESS_OPTIONS.md`）：免費且安全性最高＝**Tailscale**（無公開入口，手機需開 App，設定約 20 分鐘）；付費最完整＝**Cloudflare Tunnel＋Access**（需網域約 US$2～10／年，朋友免裝 App，可強制實體金鑰）；ngrok 免費版不可行；「電腦推送到 Worker」無真正登入不建議。**使用者尚未選，網域未買。** 程式端已就緒：網頁 `GATEWAY_BASE`（不是從 github.io 開時向同位址要報價）、價格服務 `host_request_allowed()`（`TXO_ALLOWED_HOSTS`／`TXO_ALLOWED_TS_LOGINS`，預設行為不變）。Tailscale 做法：電腦與手機裝 Tailscale→後台開 MagicDNS＋HTTPS→電腦 `tailscale serve --bg 8000`→`.env` 加 `TXO_ALLOWED_HOSTS=.ts.net` 與 `TXO_ALLOWED_TS_LOGINS=信箱`→重啟服務→手機開 `https://電腦名.tailxxxx.ts.net/trading%20room/room.html` |
 | C | **CVD 買賣方向驗證** | 成交完整性已驗證（口數總和＝交易所 `tradeVolume`，345＝345），**方向準確度未證實**：介於買賣價之間的成交約占 8–13%，沿用前一筆方向（是猜的）。使用者說會用富邦 App 對照 5 分鐘內外盤表（`txo-private\handoff-20261001\cvd_5min_table_20260930.md`＋原始 CSV），結果回報給 Claude。在此之前 CVD 數字僅供參考 |
 | D | 個股期貨的大戶散戶動能 | 已擴到 36 檔個股／ETF 期貨（選股票會對應其期貨合約，如 2330→CDF）。10/01 日盤已見到訂閱與委託簿資料（CDF 大戶委託口差 -284），**成交筆數與 CVD 尚未仔細核對**——請用 `/api/momentum?symbol=CDF` 等確認 `trade_count_in_bar` 非 0 且合理 |
@@ -66,7 +66,7 @@
 
 ## 6. 已知問題與備忘（不急）
 
-- 週五夜盤結算（週六 05:00）原 GitHub cron 就沒涵蓋（`0-4` 換算是台北週一至週五早上）；Worker 的 `DISPATCH_SLOTS` 刻意照抄，要補在 05/06 時段加 `'Sat'`。
+- 週五夜盤結算（週六 05:00）原 GitHub cron 就沒涵蓋；Worker 的 `DISPATCH_SLOTS` 已於 2026-10-02 補上 `'Sat'`（05/06 時段），GitHub 自己的 cron 仍沒有週六。
 - 價格服務頂部「報價來源」文字（`active_provider`）是「最後一個更新任何指數的來源」，加權由證交所更新時會顯示「官方備援」，**只是標籤**；台指期價格實際來源看 `txf.provider`。
 - `app.js` 的 `CHART_DEFAULTS`（2026-09-15 的 GEX 預設值）仍在，僅資料檔完全載入失敗時使用；戰情室對應情況已加紅色橫幅，主頁尚未。
 - 通行碼 `GEX2026` 寫在公開的 `app.js`／`scripts/encrypt.py`／`scripts/fetch_and_calc_vision.py`，頁面預設自動通關，不是實質保護。
