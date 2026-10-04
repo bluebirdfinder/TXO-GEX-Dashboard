@@ -78,6 +78,9 @@ jobs:
           git commit -m "🏛️ [Official] TAIFEX Day/Night Session Positioning & GEX Baseline"
           # main moves while this job runs (CI data commits, manual pushes). Retry with
           # rebase; a real conflict makes the rebase fail and the job fail loudly.
+          # Uncommitted leftovers (caches the job does not commit) make `git pull --rebase` refuse to run
+          # (seen 2026-10-02 22:03); the runner is ephemeral, so set them aside first.
+          git stash --include-untracked || true
           for i in 1 2 3 4 5; do
             git push && exit 0
             echo "Push rejected (attempt $i/5); rebasing onto origin/main"
