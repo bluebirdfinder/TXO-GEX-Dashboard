@@ -39,7 +39,7 @@
 | F | 倉庫改私有（法規方向）的連帶事項 | ①GitHub 私有倉庫 Actions 免費時數 2,000 分鐘／月（公開不限），目前粗估 2,000～2,400 分鐘／月可能略超過②Worker 讀資料來源（公開 Pages）要改③Worker `ALLOWED_ORIGINS` 要換成私人網址④電腦要定時 `git pull`⑤Worker 的官方報價轉發是公開可呼叫，私人化後建議改成需密語。**尚未做** |
 | G | 法規確認（使用者要自己查，Claude 非律師） | 富邦 API 行情條款（通常限本人使用）、期交所／證交所即時行情再散布需資訊廠商授權、投顧法（公開買賣建議、社群圖卡、AI 軍師輸出）、SMC 指標 CC BY-NC-SA 僅非商業。使用者選「自己＋幾位指定朋友」，**Claude 建議先只開放自己**（朋友看到即時報價可能構成再散布）。主頁「社群圖卡」功能先保留，法規確認後再決定 |
 | H | `.git` 歷史肥大（本機約 645M，持續增加） | 使用者不想改寫公開歷史，所以不能 squash。方向（git-lfs／資料檔搬外部儲存）**尚未討論**。2026-10-01 又新增約 6MB 分片資料檔與一次 15MB 日 K 快取更新 |
-| I | 清理本機殘留 | 本機有三十多個已合併的 `claude/*` 分支與 9 個暫時 worktree（`C:\Users\mingi\AppData\Local\Temp\txo-wt-*`）；保護分支 `backup/shared-folder-39d04e6-20260930` 請保留。清理前先問使用者 |
+| I | 清理本機殘留（2026-10-05 部分完成） | 已刪 38 個已合併的 `claude/*` 分支（刪前確認皆已合併進 origin/main）。**剩餘**：①9 個暫時 worktree 資料夾（`txo-wt-fix3-11213`、`handoff-20333`、`inv-12531`、`livefix-4096`、`ui`、`workflow`、`txo-wt-colors`、`txo-wt-handoff-key`、`txo-wt-wf-fix`）與對應分支；其中 `fix3`、`livefix` 因 `git worktree remove --force` 卡在 `.git` 而被刪成半殘（檔案在 main 歷史裡，無遺失）②`.git\worktrees` 底下 24 個殘留記錄刪不掉。**原因**：`.git`、`.gitefs`、`.git\logs`、`.claude` 有繼承的 `Everyone DENY 刪除子項目` 權限（疑似本機 Codex 沙箱 `codex-windows-sandbox-service` 設的保護，非 OneDrive 問題；未確認、未修改）。**不要再用 `--force` 批次刪**，會留下半殘狀態；使用者決定先留著。保護分支 `backup/shared-folder-39d04e6-20260930`、`claude/elegant-heisenberg-b65af4`（有他人未 commit 的 `room.js` 修改）要保留 |
 
 ## 3. 這兩天（9/30～10/01）完成的重點（細節在 HISTORY.md 最新幾個條目）
 
