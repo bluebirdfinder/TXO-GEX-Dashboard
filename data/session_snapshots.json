@@ -1012,9 +1012,9 @@
     "pc_ratio": 80.84,
     "taifex_vix": 21.9,
     "us_vix": 15.31,
-    "margin_maint_market": 155.7,
-    "margin_maint_stock": 141.2,
+    "margin_maint_market": 155.3,
+    "margin_maint_stock": 140.8,
     "margin_balance_billion": null,
-    "written_at": "2026-10-05T06:04:04.605207+08:00"
+    "written_at": "2026-10-05T07:55:02.035715+08:00"
   }
 }
