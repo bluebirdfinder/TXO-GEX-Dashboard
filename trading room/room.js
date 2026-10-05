@@ -185,6 +185,11 @@ let indicatorConfig = {
   stMult: 3.0,
   vwap: false,
   vwapColor: '#FF8A80',
+  // 彩帶四條均線顏色：預設照 TradingView 原指標配色（快線白、持股線黃、多空線 E91E63、年線 9C27B0）
+  ma7Color: '#ffffff',
+  ma17Color: '#ffeb3b',
+  ma88Color: '#e91e63',
+  ma200Color: '#9c27b0',
   vrvp: true,
   vrvpRows: 50,
   vrvpVa: 70,
@@ -193,8 +198,32 @@ let indicatorConfig = {
   fvg: false
 };
 
+// 顏色偏好只存在使用者自己的瀏覽器（localStorage），不需登入；換裝置要重選。沒存過就用 TradingView 預設色。
+const IND_COLOR_KEYS = ['ma7Color', 'ma17Color', 'ma88Color', 'ma200Color', 'smmaColor', 'vwapColor'];
+const IND_COLOR_DEFAULTS = {};
+IND_COLOR_KEYS.forEach(k => { IND_COLOR_DEFAULTS[k] = indicatorConfig[k]; });
+function loadIndicatorColors() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('txo_ind_colors') || '{}');
+    IND_COLOR_KEYS.forEach(k => { if (typeof saved[k] === 'string' && /^#[0-9a-fA-F]{6}$/.test(saved[k])) indicatorConfig[k] = saved[k]; });
+  } catch (e) { /* storage blocked or corrupted: keep defaults */ }
+}
+function saveIndicatorColors() {
+  try {
+    const out = {};
+    IND_COLOR_KEYS.forEach(k => { out[k] = indicatorConfig[k]; });
+    localStorage.setItem('txo_ind_colors', JSON.stringify(out));
+  } catch (e) { /* ignore */ }
+}
+const IND_COLOR_INPUTS = { ma7Color: 'col-ma7', ma17Color: 'col-ma17', ma88Color: 'col-ma88', ma200Color: 'col-ma200', smmaColor: 'col-smma', vwapColor: 'col-vwap' };
+function syncColorPickers() {
+  Object.keys(IND_COLOR_INPUTS).forEach(k => { const el = document.getElementById(IND_COLOR_INPUTS[k]); if (el) el.value = indicatorConfig[k]; });
+}
+loadIndicatorColors();
+
 // DOM Initialization
 document.addEventListener('DOMContentLoaded', async () => {
+  syncColorPickers();
   initGlobalSmartTooltips();
   await initTradingRoom();
   initFubonLivePriceStream();
@@ -1455,10 +1484,10 @@ function renderMainOverlays(data) {
 
   // 1. 尋鳥多空彩帶 (MA7, MA17, MA88, MA200)
   if (indicatorConfig.ribbons) {
-    overlaySeries.ribbons.ma7 = mainChart.addLineSeries({ color: '#ffffff', lineWidth: 1.5, title: '快線 MA7' });
-    overlaySeries.ribbons.ma17 = mainChart.addLineSeries({ color: '#ffd700', lineWidth: 1.5, title: '波段 MA17' });
-    overlaySeries.ribbons.ma88 = mainChart.addLineSeries({ color: '#e84393', lineWidth: 2, title: '多空 MA88' });
-    overlaySeries.ribbons.ma200 = mainChart.addLineSeries({ color: '#0984e3', lineWidth: 2, title: '年線 MA200' });
+    overlaySeries.ribbons.ma7 = mainChart.addLineSeries({ color: indicatorConfig.ma7Color, lineWidth: 1.5, title: '快線 MA7' });
+    overlaySeries.ribbons.ma17 = mainChart.addLineSeries({ color: indicatorConfig.ma17Color, lineWidth: 1.5, title: '波段 MA17' });
+    overlaySeries.ribbons.ma88 = mainChart.addLineSeries({ color: indicatorConfig.ma88Color, lineWidth: 2, title: '多空 MA88' });
+    overlaySeries.ribbons.ma200 = mainChart.addLineSeries({ color: indicatorConfig.ma200Color, lineWidth: 2, title: '年線 MA200' });
 
     overlaySeries.ribbons.ma7.setData(data.ma7);
     overlaySeries.ribbons.ma17.setData(data.ma17);
@@ -2172,6 +2201,14 @@ function setupEventListeners() {
     });
   }
 
+  const resetColorsBtn = document.getElementById('btn-reset-ind-colors');
+  if (resetColorsBtn) {
+    resetColorsBtn.addEventListener('click', () => {
+      IND_COLOR_KEYS.forEach(k => { indicatorConfig[k] = IND_COLOR_DEFAULTS[k]; });
+      syncColorPickers();
+    });
+  }
+
   if (applySettingsBtn && modal) {
     applySettingsBtn.addEventListener('click', () => {
       indicatorConfig.gex = document.getElementById('chk-gex').checked;
@@ -2183,6 +2220,11 @@ function setupEventListeners() {
       indicatorConfig.supertrend = document.getElementById('chk-supertrend').checked;
       indicatorConfig.vwap = document.getElementById('chk-vwap').checked;
       indicatorConfig.vwapColor = document.getElementById('col-vwap').value || '#FF8A80';
+      indicatorConfig.ma7Color = document.getElementById('col-ma7').value || IND_COLOR_DEFAULTS.ma7Color;
+      indicatorConfig.ma17Color = document.getElementById('col-ma17').value || IND_COLOR_DEFAULTS.ma17Color;
+      indicatorConfig.ma88Color = document.getElementById('col-ma88').value || IND_COLOR_DEFAULTS.ma88Color;
+      indicatorConfig.ma200Color = document.getElementById('col-ma200').value || IND_COLOR_DEFAULTS.ma200Color;
+      saveIndicatorColors();
       indicatorConfig.vrvp = document.getElementById('chk-vrvp').checked;
       indicatorConfig.vrvpRows = parseInt(document.getElementById('param-vrvp-rows').value) || 50;
       indicatorConfig.vrvpVa = parseInt(document.getElementById('param-vrvp-va').value) || 70;
