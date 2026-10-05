@@ -19,7 +19,7 @@ window.GEX_EMBEDDED_DATA = {
     "day_gex_plus_flip": 49054.4,
     "day_total_vex": 162.87
   },
-  "last_updated_time": "2026-10-06 05:35",
+  "last_updated_time": "2026-10-06 06:04",
   "spot_price": 49712.04,
   "spot_change": 1236.3,
   "spot_change_pct": 2.55,
@@ -19651,7 +19651,7 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex_plus": 7415.01,
   "sector_capital_rotation": {
     "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
-    "last_updated": "2026-10-06 05:35",
+    "last_updated": "2026-10-06 06:04",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
@@ -32438,7 +32438,7 @@ window.GEX_EMBEDDED_DATA = {
       "summary": "台指VIX 23.5、美股VIX 15.5；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 102.13,
+        "price": 102.12,
         "change_pct": 0.19,
         "trend_label": "▲ 較昨日走升 (+0.19%)",
         "unit": ""
