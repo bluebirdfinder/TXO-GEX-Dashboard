@@ -120,7 +120,7 @@ def run_profile(p, label, base, viewport, mobile):
         a2 = page.evaluate("() => generateQuantAdvisorResponse('W2 47000 SP / 46900 BP 收 55 點', false)")
         check(f"{label}: 未提供權利金時軍師不算風報比", "無法計算" in a1 and "預估最大獲利" not in a1, "")
         check(f"{label}: 提供權利金時風報比用真實數字(55/45)", "55 點" in a2 and "45 點" in a2, "")
-        a3 = page.evaluate("() => { const s = gexData.txf_price; gexData.txf_price = undefined; const r = generateQuantAdvisorResponse('分析', false); gexData.txf_price = s; return r; }")
+        a3 = page.evaluate("() => { const s = gexData.txf_price, lv = liveTxf; gexData.txf_price = undefined; liveTxf = null; const r = generateQuantAdvisorResponse('分析', false); gexData.txf_price = s; liveTxf = lv; return r; }")
         check(f"{label}: GEX 缺資料時軍師拒絕診斷", "無法診斷" in a3, "")
 
     with section(f"{label}: 選股雷達"):
