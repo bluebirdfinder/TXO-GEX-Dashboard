@@ -1030,10 +1030,10 @@
     "max_pain_strike": 50400.0,
     "pc_ratio": 91.95,
     "taifex_vix": 23.46,
-    "us_vix": 16.28,
-    "margin_maint_market": 157.9,
-    "margin_maint_stock": 143.2,
-    "margin_balance_billion": null,
-    "written_at": "2026-10-05T16:04:42.300667+08:00"
+    "us_vix": 16.18,
+    "margin_maint_market": 159.7,
+    "margin_maint_stock": 144.8,
+    "margin_balance_billion": 6333.52,
+    "written_at": "2026-10-05T21:04:39.306335+08:00"
   }
 }
