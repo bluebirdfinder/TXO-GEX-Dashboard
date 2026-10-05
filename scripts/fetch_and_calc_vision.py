@@ -48,6 +48,39 @@ HEADERS = {
 # 🌐 1. REAL TAIFEX & TWSE DATA FETCHERS
 # ==============================================================================
 
+def _fetch_live_night_tx_from_mis():
+    """
+    Real-time night-session TX from TAIFEX MIS (MarketType "1", symbols TXF?6-M).
+    The after-hours Excel (marketCode=1) only reflects the *previous* night's close until the
+    night session ends, so during 15:00-08:45 it must not be used as the night price
+    (AGENTS.md redline 5: intraday quotes go through MIS, never a post-session Excel).
+    Returns a float or None (no fake fallback).
+    """
+    try:
+        payload = {"MarketType": "1", "SymbolType": "F"}
+        req = urllib.request.Request(
+            'https://mis.taifex.com.tw/futures/api/getQuoteList',
+            data=json.dumps(payload, ensure_ascii=False).encode('utf-8'),
+            headers={**HEADERS, 'Content-Type': 'application/json;charset=UTF-8'}
+        )
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=5) as resp:
+            d = json.loads(resp.read().decode('utf-8'))
+        for q in d.get('RtData', {}).get('QuoteList', []):
+            sym = q.get('SymbolID', '')
+            # nearest monthly TX only (TXFJ6-M); skip spreads / other contracts
+            if sym.startswith('TXF') and sym.endswith('-M') and len(sym) == 7 and q.get('CLastPrice'):
+                try:
+                    p = float(q.get('CLastPrice'))
+                except ValueError:
+                    continue
+                if p > 10000:
+                    print(f"[OK] Live Real-Time TAIFEX Night TX ({sym}): {p}")
+                    return p
+    except Exception as e:
+        print(f"[Warning] Live Night TX fetch error: {e}")
+    return None
+
+
 def fetch_official_taifex_tx_prices():
     """
     Fetches real Day TX and Night TX prices with multi-tier precision:
@@ -155,7 +188,11 @@ def fetch_official_taifex_tx_prices():
         today_day_tx = live_day_tx or excel_day_close or _snap.get('day_txf_price')
         prev_day_tx = excel_day_close or _snap.get('day_txf_price')
 
-    night_tx = night_tx_close or _snap.get('night_txf_price')
+    # Night session window 15:00 -> next day 08:45 (same window the front end uses). The Excel is the previous
+    # night's close until after 05:00, so prefer the live MIS night quote here; Excel only if MIS is unavailable.
+    _in_night_window = now_hour >= 15 or now_hour < 8 or (now_hour == 8 and tw_now.minute < 45)
+    live_night_tx = _fetch_live_night_tx_from_mis() if _in_night_window else None
+    night_tx = live_night_tx or night_tx_close or _snap.get('night_txf_price')
 
     return today_day_tx, night_tx, prev_day_tx
 
