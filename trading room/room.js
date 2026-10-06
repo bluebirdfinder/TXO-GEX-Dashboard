@@ -1970,11 +1970,11 @@ function renderStrongWeakLevels(data) {
   const { strong, weak } = computeStrongWeakLevels(data.candles, true);
   if (!strong.length) return;
   overlaySeries.swLevels.strong = mainChart.addLineSeries({
-    color: '#e53935', lineWidth: 1.5, lineType: LightweightCharts.LineType.WithSteps,
+    color: '#e53935', lineWidth: 1, lineType: LightweightCharts.LineType.WithSteps,
     priceLineVisible: false, lastValueVisible: true, title: ':強關'
   });
   overlaySeries.swLevels.weak = mainChart.addLineSeries({
-    color: '#2e7d32', lineWidth: 1.5, lineType: LightweightCharts.LineType.WithSteps,
+    color: '#2e7d32', lineWidth: 1, lineType: LightweightCharts.LineType.WithSteps,
     priceLineVisible: false, lastValueVisible: true, title: ':弱關'
   });
   overlaySeries.swLevels.strong.setData(strong);
