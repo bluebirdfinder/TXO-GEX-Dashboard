@@ -1047,7 +1047,11 @@ def fetch_taifex_official_stock_futures():
     # 官方日盤行情表（STF＝全部個股期貨）：每列 = 契約代號、到期月份、開、高、低、收、漲跌價、漲跌%、盤後量、
     # 一般時段量、合計量、結算價、未沖銷契約數、…；到期月份含「/」的是跨月價差單，不算。
     # 無 queryDate 時是「最新一個已公布的交易日」，表頭日期必須以表內日期為準（盤中看到的是昨天，見 AGENTS.md 紅線 5）。
-    vol_map, data_date = _parse_stf_excel(*_fetch_stf_excel_rows(None))
+    try:
+        vol_map, data_date = _parse_stf_excel(*_fetch_stf_excel_rows(None))
+    except Exception as e:   # 期交所連不上：維持原本行為（沒有行情就空表），不要讓整個資料引擎中斷
+        print(f"[Warning] TAIFEX Stock Futures STF market fetch error: {e}")
+        vol_map, data_date = {}, None
     prev_map, prev_date = {}, None
     if data_date:
         try:
