@@ -184,7 +184,8 @@ let overlaySeries = {
   smma: null,
   supertrend: { up: null, down: null },
   vwap: { vwap: null, upper1: null, lower1: null },
-  sar: null
+  sar: null,
+  swLevels: { strong: null, weak: null }
 };
 
 let priceLines = {};
@@ -371,7 +372,8 @@ let indicatorConfig = {
   vrvpVa: 70,
   sar: false,
   sarStep: 0.02,
-  fvg: false
+  fvg: false,
+  swLevels: true   // 強弱關價（黃金切割 0.618／0.382）；僅台指期系列、分K週期
 };
 
 // 顏色偏好只存在使用者自己的瀏覽器（localStorage），不需登入；換裝置要重選。沒存過就用 TradingView 預設色。
@@ -1939,6 +1941,46 @@ function visibleMarkers(data) {
   return all.filter(m => !demarkKeys.has(`${m.time}|${m.text}`));
 }
 
+/**
+ * 強關價／弱關價（黃金切割率＝斐波那契 0.618／0.382）：
+ *   強關 = 當盤最低 + (當盤最高 − 當盤最低) × 0.618；弱關 = 當盤最低 + (當盤最高 − 當盤最低) × 0.382。
+ * 「當盤」＝期貨日盤（08:45–13:45）或夜盤（15:00–05:00），各自從場次第一根 K 棒起累計最高／最低，
+ * 場次切換時重算；創新高或新低時兩條線同步移動（階梯狀）。公式來源：OP666 簡報與教學影片的公開說明。
+ * 只在台指期系列（GEX_SUPPORTED_SYMBOLS）與分K週期畫；日K以上沒有「當盤」概念，不畫。
+ */
+function computeStrongWeakLevels(candles, isFut) {
+  const strong = [], weak = [];
+  let sessStart = null, hi = null, lo = null;
+  for (const c of candles) {
+    const sess = tpeSessionAt(c.time, isFut);
+    if (!sess) continue;                       // 場次空檔不畫（不補假線）
+    if (sess.start !== sessStart) { sessStart = sess.start; hi = c.high; lo = c.low; }
+    else { if (c.high > hi) hi = c.high; if (c.low < lo) lo = c.low; }
+    const range = hi - lo;
+    strong.push({ time: c.time, value: lo + range * 0.618 });
+    weak.push({ time: c.time, value: lo + range * 0.382 });
+  }
+  return { strong, weak };
+}
+function renderStrongWeakLevels(data) {
+  const code = (currentActiveSymbol?.symbol || activeContract || '').toUpperCase();
+  const intraday = !['1D', '1W', '1Mth'].includes(currentTf);
+  if (!indicatorConfig.swLevels || !intraday || !GEX_SUPPORTED_SYMBOLS.includes(code)) return;
+  if (!data.candles || data.candles.length === 0) return;
+  const { strong, weak } = computeStrongWeakLevels(data.candles, true);
+  if (!strong.length) return;
+  overlaySeries.swLevels.strong = mainChart.addLineSeries({
+    color: '#e53935', lineWidth: 1.5, lineType: LightweightCharts.LineType.WithSteps,
+    priceLineVisible: false, lastValueVisible: true, title: ':強關'
+  });
+  overlaySeries.swLevels.weak = mainChart.addLineSeries({
+    color: '#2e7d32', lineWidth: 1.5, lineType: LightweightCharts.LineType.WithSteps,
+    priceLineVisible: false, lastValueVisible: true, title: ':弱關'
+  });
+  overlaySeries.swLevels.strong.setData(strong);
+  overlaySeries.swLevels.weak.setData(weak);
+}
+
 function renderMainOverlays(data) {
   // Clear old series
   if (overlaySeries.ribbons.ma7) { mainChart.removeSeries(overlaySeries.ribbons.ma7); overlaySeries.ribbons.ma7 = null; }
@@ -1952,6 +1994,10 @@ function renderMainOverlays(data) {
   if (overlaySeries.sar) { mainChart.removeSeries(overlaySeries.sar); overlaySeries.sar = null; }
   if (overlaySeries.supertrend.up) { mainChart.removeSeries(overlaySeries.supertrend.up); overlaySeries.supertrend.up = null; }
   if (overlaySeries.supertrend.down) { mainChart.removeSeries(overlaySeries.supertrend.down); overlaySeries.supertrend.down = null; }
+
+  if (overlaySeries.swLevels.strong) { mainChart.removeSeries(overlaySeries.swLevels.strong); overlaySeries.swLevels.strong = null; }
+  if (overlaySeries.swLevels.weak) { mainChart.removeSeries(overlaySeries.swLevels.weak); overlaySeries.swLevels.weak = null; }
+  renderStrongWeakLevels(data);
 
   // 1. 尋鳥多空彩帶 (MA7, MA17, MA88, MA200)
   if (indicatorConfig.ribbons) {
@@ -2796,6 +2842,7 @@ function setupEventListeners() {
       indicatorConfig.sar = document.getElementById('chk-sar').checked;
       indicatorConfig.sarStep = parseFloat(document.getElementById('param-sar-step').value) || 0.02;
       indicatorConfig.fvg = document.getElementById('chk-fvg').checked;
+      indicatorConfig.swLevels = document.getElementById('chk-sw').checked;
       // Supertrend 週期／倍數：欄位一直存在但從沒被讀取（2026-10-01 稽核發現），改了沒有效果
       indicatorConfig.stLen = parseInt(document.getElementById('param-st-len').value) || 10;
       indicatorConfig.stMult = parseFloat(document.getElementById('param-st-mult').value) || 3.0;
