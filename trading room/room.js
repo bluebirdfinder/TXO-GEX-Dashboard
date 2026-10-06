@@ -1634,10 +1634,56 @@ function clearVrvpRays() {
   if (priceLines.val && candleSeries) { candleSeries.removePriceLine(priceLines.val); priceLines.val = null; }
 }
 
+// ---- GEX 價位數字標籤疊加層 ----
+// 這個版本的圖表函式庫把價位線的「名稱文字」綁在 Y 軸標籤上，關掉軸標籤名稱也會消失；
+// 所以自己畫一層：只顯示數字、顏色同線色、靠右貼著 Y 軸內側；太近的標籤自動往上下錯開（不改數字）。
+let gexOverlayLevels = [];
+let gexOverlayTimer = null;
+function renderGexOverlay() {
+  const host = document.getElementById('main-chart-pane');
+  const chartEl = document.getElementById('tv-main-chart');
+  if (!host || !chartEl || !candleSeries) return;
+  let layer = document.getElementById('gex-overlay-layer');
+  if (!layer) {
+    layer = document.createElement('div');
+    layer.id = 'gex-overlay-layer';
+    layer.style.cssText = 'position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;z-index:15;overflow:hidden;';
+    if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+    host.appendChild(layer);
+  }
+  if (!gexOverlayLevels.length || !indicatorConfig.gex) { layer.innerHTML = ''; return; }
+  const hostBox = host.getBoundingClientRect(), chartBox = chartEl.getBoundingClientRect();
+  const offX = chartBox.left - hostBox.left, offY = chartBox.top - hostBox.top;
+  let axisW = 56;
+  try { const w = mainChart.priceScale('right').width(); if (w > 0) axisW = w; } catch (e) { /* keep default */ }
+  const H = chartBox.height - 28;   // 扣掉底部時間軸
+  const items = [];
+  gexOverlayLevels.forEach(l => {
+    const y = candleSeries.priceToCoordinate(l.price);
+    if (y === null || y === undefined || y < 0 || y > H) return;   // 價位不在目前可視範圍就不畫
+    items.push({ ...l, y, yDraw: y });
+  });
+  items.sort((a, b) => a.y - b.y);
+  const GAP = 13;
+  for (let k = 1; k < items.length; k++) if (items[k].yDraw - items[k - 1].yDraw < GAP) items[k].yDraw = items[k - 1].yDraw + GAP;
+  const over = items.length ? items[items.length - 1].yDraw - (H - 4) : 0;   // 底部放不下就整組往上提
+  if (over > 0) items.forEach(it => { it.yDraw -= over; });
+  // 文字放在線的上方（Pine: label_style_label_lower_left），極小、純文字、顏色同線色；加一圈暗色描邊確保壓在 K 棒上仍看得清
+  layer.innerHTML = items.map(it =>
+    `<div style="position:absolute;right:${axisW + 8}px;top:${Math.round(offY + it.yDraw - 14)}px;line-height:13px;font:700 10px/13px 'Microsoft JhengHei',ui-monospace,Consolas,monospace;color:${it.color};white-space:nowrap;text-shadow:0 0 3px #04070f,0 0 3px #04070f,0 0 2px #04070f;">${it.text}</div>`
+  ).join('');
+}
+function startGexOverlayTimer() {
+  if (gexOverlayTimer) return;
+  gexOverlayTimer = setInterval(() => { if (gexOverlayLevels.length) renderGexOverlay(); }, 300);   // 跟著縮放／拖曳／換價位刻度更新
+}
+
 /**
  * Clear GEX Price Lines & Markers
  */
 function clearGexPriceLines() {
+  gexOverlayLevels = [];
+  renderGexOverlay();
   if (priceLines.cw && candleSeries) { candleSeries.removePriceLine(priceLines.cw); priceLines.cw = null; }
   if (priceLines.vex && candleSeries) { candleSeries.removePriceLine(priceLines.vex); priceLines.vex = null; }
   if (priceLines.zg && candleSeries) { candleSeries.removePriceLine(priceLines.zg); priceLines.zg = null; }
@@ -1669,8 +1715,7 @@ function drawGexHorizontalRays(candles) {
     color: '#FF76AC',
     lineWidth: 2,
     lineStyle: LightweightCharts.LineStyle.Solid,
-    axisLabelVisible: true,
-    title: `Call Wall (${cw})`
+    axisLabelVisible: false
   });
 
   // 2. VEX Early Flip (VEX 早鳥轉折線) - 亮橘虛線 1.5px
@@ -1679,8 +1724,7 @@ function drawGexHorizontalRays(candles) {
     color: '#FFA726',
     lineWidth: 1.5,
     lineStyle: LightweightCharts.LineStyle.Dashed,
-    axisLabelVisible: true,
-    title: `VEX Early (${vex})`
+    axisLabelVisible: false
   });
 
   // 3. Zero Gamma (基準多空變盤點) - 亮黃實線 2px
@@ -1689,8 +1733,7 @@ function drawGexHorizontalRays(candles) {
     color: '#FFEB3B',
     lineWidth: 2,
     lineStyle: LightweightCharts.LineStyle.Solid,
-    axisLabelVisible: true,
-    title: `Zero Gamma (${zg})`
+    axisLabelVisible: false
   });
 
   // 4. Put Wall (買權防守地板牆) - 青綠實線 2px
@@ -1699,8 +1742,7 @@ function drawGexHorizontalRays(candles) {
     color: '#26A69A',
     lineWidth: 2,
     lineStyle: LightweightCharts.LineStyle.Solid,
-    axisLabelVisible: true,
-    title: `Put Wall (${pw})`
+    axisLabelVisible: false
   });
 
   // 5. Max Pain (最大痛點引力) - 亮藍點線 1px
@@ -1709,9 +1751,26 @@ function drawGexHorizontalRays(candles) {
     color: '#42A5F5',
     lineWidth: 1,
     lineStyle: LightweightCharts.LineStyle.Dotted,
-    axisLabelVisible: true,
-    title: `Max Pain (${mp})`
+    axisLabelVisible: false
   });
+
+  // 五個 GEX 價位的浮動標籤（照使用者的 Pine 指標 bluebird_finder_GEX.pine：極小純文字、無背景框、顏色同線色、
+  // 文字在線的上方、靠右空白處）；畫在圖上而不是右側 Y 軸，避免和均線／最新價標籤搶位置。
+  // VEX 與 Zero Gamma 相差不到 15 點時合併成「⚡ ZG / 🟠 VEX」一個標籤（同 Pine）。
+  const fmtLv = (v) => Number.isInteger(v) ? String(v) : v.toFixed(1);
+  gexOverlayLevels = [
+    { price: cw, color: '#FF76AC', text: `🔴 Call Wall: ${fmtLv(cw)}` },
+    { price: mp, color: '#42A5F5', text: `🔵 Max Pain: ${fmtLv(mp)}` },
+    { price: pw, color: '#26A69A', text: `🟢 Put Wall: ${fmtLv(pw)}` }
+  ];
+  if (Math.abs(vex - zg) < 15) {
+    gexOverlayLevels.push({ price: zg, color: '#FFEB3B', text: `⚡ ZG / 🟠 VEX: ${fmtLv(zg)}` });
+  } else {
+    gexOverlayLevels.push({ price: vex, color: '#FFA726', text: `🟠 VEX Early: ${fmtLv(vex)}` });
+    gexOverlayLevels.push({ price: zg, color: '#FFEB3B', text: `⚡ Zero Gamma: ${fmtLv(zg)}` });
+  }
+  renderGexOverlay();
+  startGexOverlayTimer();
 
   // 6. TV 級即時穿透偵測與標籤 (On-Chart Touch Visual Signals)
   if (candles && candles.length > 0) {
@@ -3253,7 +3312,8 @@ function switchActiveSymbol(symObj) {
   activeContract = symObj.symbol;
 
   // Toggle GEX lines only for Index Futures
-  const isIndexFutures = ['TXF', 'MXF', 'TMF', 'TWN'].includes(symObj.symbol);
+  // 與 GEX_SUPPORTED_SYMBOLS 同一份清單（2026-10-06：原清單漏了 MTX＝微台分頁，切過去 GEX 會被關掉）
+  const isIndexFutures = GEX_SUPPORTED_SYMBOLS.includes(symObj.symbol);
   indicatorConfig.gex = isIndexFutures;
 
   // Update Left HUD & Header
