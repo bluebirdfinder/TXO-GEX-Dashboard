@@ -1239,7 +1239,14 @@ function renderSub4Chart(data) {
       lineColor: '#FF5252',
       lineWidth: 2,
       priceScaleId: 'right',
-      title: ''
+      title: '',
+      // 依可見資料自動縮放：下限固定 0、上限至少涵蓋 26.65 頂部門檻，避免整段被壓成平線
+      autoscaleInfoProvider: (original) => {
+        const res = original();
+        const dataMax = res && res.priceRange ? res.priceRange.maxValue : 0;
+        const top = Math.max(30, Math.min(dataMax * 1.1, 100));
+        return { priceRange: { minValue: 0, maxValue: top }, margins: res ? res.margins : undefined };
+      }
     });
 
     // 2. 4 大標準門檻參考線 (26.65 頂部, 22.37 突破, 11.63 打底, 0.00)

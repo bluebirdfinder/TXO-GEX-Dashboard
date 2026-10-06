@@ -5,6 +5,16 @@
 
 ---
 
+### 2026-10-06 ～ 10-07 官方對帳後續（引擎＋戰情室，未升版號）
+
+- GEX／VEX 波動率改用當日官方臺指 VIX（原固定 18%），資料檔新增 `gex_model`。
+- Zero Gamma 卡片改名「賣買權 OI 分界」，並排顯示標準 Gamma Flip（`gamma_flip_standard`）；引擎每輪寫 `data/gex_line_observations.json` 供日後檢驗；新增 `scripts/compare_zero_gamma.py`。**根因**：舊 Zero Gamma 實為賣買權 OI 分界，與教科書 Gamma Flip 不同；VEX 早鳥線與其幾乎重合。
+- 事件日曆 CPI／非農改讀 BLS 官方日程檔 `data/us_macro_calendar.json`（手動維護），移除規則猜日期。
+- 戰情室：右側 Y 軸改彩色數字標籤（TV 風格）、新增黃金 GC（Yahoo）、依商品顯示真實來源（富邦無海外期貨）、左欄當日開高低、微台 GEX 被關掉的 bug。
+- 戰情室 ADX Pro V3 附圖 Y 軸改依可見資料自動縮放（下限 0），修正整段被壓成平線。
+
+---
+
 ## 📅 版本演進總覽時間軸
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
