@@ -4454,9 +4454,44 @@ def generate_gex_payload():
             }
         ]
 
-        # 美國 NFP／CPI／ADP 發布日沒有可靠規則（BLS 官網擋機器人、規則推算在 2026 年 1、5 月就會錯，
-        # 例如 CPI 並非「每月 12 號」，10/12 還是美國聯邦假日），沒有官方來源就不顯示（2026-10-06）。
-        candidates = [c for c in candidates if c["id"] not in ("us_nfp_unemp", "us_cpi", "us_adp")]
+        # 美國 NFP／CPI 發布日：只用 data/us_macro_calendar.json（BLS 官網公布的官方日程，手動抄錄）。
+        # 舊版用「CPI＝每月 12 號」「NFP＝第一個週五」推算，2026 年多數月份都不對（例如 9 月 CPI 實為 10/14，10/12 是聯邦假日）。
+        # 檔案缺漏或日期已過 → 該事件不顯示。ADP 官網沒有未來日程，不收錄。
+        def _official_us_release(kind):
+            try:
+                with open(os.path.join(_DATA_DIR, "us_macro_calendar.json"), "r", encoding="utf-8") as f:
+                    cal = json.load(f)
+                try:
+                    from zoneinfo import ZoneInfo
+                    ny = ZoneInfo("America/New_York")
+                except Exception:
+                    ny = None
+                for it in sorted(cal.get(kind, []), key=lambda x: x["release_date"]):
+                    d0 = datetime.date.fromisoformat(it["release_date"])
+                    if ny is not None:
+                        dt = datetime.datetime(d0.year, d0.month, d0.day, 8, 30, tzinfo=ny).astimezone(tw_tz)
+                    else:   # 無時區資料庫時的近似：美東夏令（4~10 月）→ 台北 20:30，冬令 → 21:30
+                        dt = datetime.datetime(d0.year, d0.month, d0.day, get_us_twd_hour(d0.month, 20), 30, tzinfo=tw_tz)
+                    if dt > curr_twd:
+                        return dt
+            except Exception as e:
+                print(f"[Calendar] us_macro_calendar.json unavailable: {e}")
+            return None
+
+        _official_dt = {"us_nfp_unemp": _official_us_release("empsit"), "us_cpi": _official_us_release("cpi")}
+        _kept = []
+        for c in candidates:
+            if c["id"] == "us_adp":
+                continue
+            if c["id"] in _official_dt:
+                odt = _official_dt[c["id"]]
+                if odt is None:
+                    continue
+                c["target_epoch"] = int(odt.timestamp() * 1000)
+                c["date_display"] = odt.strftime("%m/%d %H:%M (台灣時間)")
+                c["gex_advice"] = f"發布前 30 分鐘 ({odt.strftime('%H:%M')} 起) 流動性急遽抽離，提防數據發布瞬間 50~150 點雙向劇烈刷洗！（發布日期：美國勞工統計局官方日程）"
+            _kept.append(c)
+        candidates = _kept
 
         if witching_d:
             candidates.append({
@@ -4595,6 +4630,12 @@ def generate_gex_payload():
         except Exception as e:
             print(f"[WeeklyFocus] FOMC calendar unavailable: {e}")
 
+        try:
+            with open(os.path.join(_DATA_DIR, "us_macro_calendar.json"), "r", encoding="utf-8") as _f:
+                _us_cal = json.load(_f)
+        except Exception:
+            _us_cal = {}
+
         def day_events(d):
             dd = d.date() if hasattr(d, 'date') else d
             ev = []
@@ -4612,6 +4653,10 @@ def generate_gex_payload():
         for label, d in (("週一", mon), ("週二", tue), ("週三", wed), ("週四", thu), ("週五", fri)):
             evs = day_events(d)
             dd = d.date() if hasattr(d, 'date') else d
+            for _kind, _label in (("cpi", "美國 CPI"), ("empsit", "美國非農就業 (NFP) 與失業率")):
+                for _it in _us_cal.get(_kind, []):
+                    if _it["release_date"] == dd.isoformat():
+                        evs.append(f"{_label}（美東 08:30，BLS 官方日程）")
             for fd, hh in fomc_by_date.items():
                 if fd == dd:
                     evs.append(f"聯準會 FOMC 利率決議（台灣時間 {dd.strftime('%m/%d')} {hh:02d}:00，美東前一日 14:00）")
@@ -4619,7 +4664,7 @@ def generate_gex_payload():
 
         return {
             "title": "本週市場日曆（期交所結算日／休市日／FOMC）",
-            "source": "期交所契約規格、證交所休市日、聯準會官方日曆；不含美國經濟數據發布日與個別公司財報（尚未接入有官方來源的日曆）",
+            "source": "期交所契約規格、證交所休市日、聯準會官方日曆、美國勞工統計局官方日程（CPI／非農，data/us_macro_calendar.json）；不含 ADP 與個別公司財報（沒有官方來源）",
             "date_range": date_range_str,
             "theme": "",
             "schedule": schedule

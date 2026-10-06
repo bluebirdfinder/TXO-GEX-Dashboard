@@ -433,10 +433,10 @@ def check_no_fabricated_events(d):
     bad = []
     focus = d.get("fubon_weekly_focus") or {}
     txt = json.dumps({"radar": d.get("macro_events_radar"), "schedule": focus.get("schedule")}, ensure_ascii=False)
-    for kw in ("CPI", "非農", "NFP", "ADP", "ISM", "Broadcom", "博通", "HPE", "財報"):
+    for kw in ("ADP", "ISM", "Broadcom", "博通", "HPE", "財報"):
         if kw in txt:
             bad.append(kw)
-    rec("事件行事曆", "不得含無官方來源的美國數據／財報事件", bad or "無", "無", not bad, "僅允許：期交所結算日、證交所休市日、FOMC（聯準會官方日曆）、四巫日／MSCI／富台指（規則日曆）")
+    rec("事件行事曆", "不得含無官方來源的美國數據／財報事件", bad or "無", "無", not bad, "僅允許：期交所結算日、證交所休市日、FOMC（聯準會官方日曆）、BLS 官方日程的 CPI／非農（data/us_macro_calendar.json）、四巫日／MSCI／富台指（規則日曆）")
 
 
 def main():

@@ -1,0 +1,39 @@
+{
+  "_說明": "美國經濟數據官方發布日程。來源：美國勞工統計局（BLS）官網 Schedule of Releases，2026-10-06 由使用者要求查核後手動抄錄；引擎只讀這份檔，不再用「每月 12 號」「第一個週五」之類的規則猜日期。BLS 官網擋機器人（HTTP 403），所以不能由引擎自動抓。每年初到 BLS 官網核對一次並更新；過期（最後一筆已過）時引擎不會顯示這些事件。",
+  "source_urls": {
+    "cpi": "https://www.bls.gov/schedule/news_release/cpi.htm",
+    "empsit": "https://www.bls.gov/schedule/news_release/empsit.htm"
+  },
+  "release_time_et": "08:30",
+  "note_adp": "ADP 小非農官網沒有列出未來日程，不收錄。",
+  "cpi": [
+    {"reference_month": "2025-11", "release_date": "2025-12-18"},
+    {"reference_month": "2025-12", "release_date": "2026-01-13"},
+    {"reference_month": "2026-01", "release_date": "2026-02-13"},
+    {"reference_month": "2026-02", "release_date": "2026-03-11"},
+    {"reference_month": "2026-03", "release_date": "2026-04-10"},
+    {"reference_month": "2026-04", "release_date": "2026-05-12"},
+    {"reference_month": "2026-05", "release_date": "2026-06-10"},
+    {"reference_month": "2026-06", "release_date": "2026-07-14"},
+    {"reference_month": "2026-07", "release_date": "2026-08-12"},
+    {"reference_month": "2026-08", "release_date": "2026-09-11"},
+    {"reference_month": "2026-09", "release_date": "2026-10-14"},
+    {"reference_month": "2026-10", "release_date": "2026-11-10"},
+    {"reference_month": "2026-11", "release_date": "2026-12-10"}
+  ],
+  "empsit": [
+    {"reference_month": "2025-11", "release_date": "2025-12-16"},
+    {"reference_month": "2025-12", "release_date": "2026-01-09"},
+    {"reference_month": "2026-01", "release_date": "2026-02-11"},
+    {"reference_month": "2026-02", "release_date": "2026-03-06"},
+    {"reference_month": "2026-03", "release_date": "2026-04-03"},
+    {"reference_month": "2026-04", "release_date": "2026-05-08"},
+    {"reference_month": "2026-05", "release_date": "2026-06-05"},
+    {"reference_month": "2026-06", "release_date": "2026-07-02"},
+    {"reference_month": "2026-07", "release_date": "2026-08-07"},
+    {"reference_month": "2026-08", "release_date": "2026-09-04"},
+    {"reference_month": "2026-09", "release_date": "2026-10-02"},
+    {"reference_month": "2026-10", "release_date": "2026-11-06"},
+    {"reference_month": "2026-11", "release_date": "2026-12-04"}
+  ]
+}
