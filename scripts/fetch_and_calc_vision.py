@@ -3290,9 +3290,13 @@ def generate_gex_payload():
         result = fetch_fn(target_date=target_date)
         if result is not None:
             return result
-        _snaps = load_institutional_snapshots()
-        fallback = _snaps.get(snapshot_key) or dict(empty_shape)
+        # 2026-10-07：當日資料期交所還沒公布時，不再借用舊快照（LAST_REAL，雲端引擎不會把它更新，
+        # 曾每天早上固定顯示 9/16 的大額交易人數字冒充當日）。改回「全部 None＋not_published」，
+        # 前端與下游文字會顯示「—／資料尚未公布」。snapshot_key 參數保留以免動到呼叫端。
+        import copy as _copy
+        fallback = _copy.deepcopy(empty_shape)
         fallback['is_live'] = False
+        fallback['not_published'] = True
         return fallback
 
     opt_inst = _fresh_or_last_real(_today_date_slash, fetch_official_taifex_options_matrix, OPT_MATRIX_SNAPSHOT_KEY, {
