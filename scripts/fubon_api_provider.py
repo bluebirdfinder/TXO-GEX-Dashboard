@@ -766,6 +766,26 @@ class FubonAPIProvider:
                     rec['n'] = len(trades)
                     hist[t] = rec
                 self._mom_hist_dirty.add(alias)
+                if alias in self._RAW_LOG_ALIASES:
+                    self._append_raw_snapshot(alias, now, book)
+
+    # 還原 JJ（rStock）指標定義用：只對少數商品把每 15 秒的原始五檔＋該 15 秒成交寫成 jsonl（每天一個檔，不進 git）
+    _RAW_LOG_ALIASES = ("TXF1!", "CAF1!")
+
+    def _append_raw_snapshot(self, alias, now, book):
+        import json as _json
+        try:
+            os.makedirs(self._mom_hist_dir, exist_ok=True)
+            day = datetime.datetime.fromtimestamp(now, tz=self._TAIPEI_TZ).strftime("%Y%m%d")
+            trades = self.get_recent_trades(alias, since_ts=now - 15)
+            row = {'ts': round(now, 1), 'alias': alias,
+                   'bids': [[l['price'], l['size']] for l in book.get('bids', [])],
+                   'asks': [[l['price'], l['size']] for l in book.get('asks', [])],
+                   'trades_15s': [[x['ts'], x['price'], x['size'], x['side']] for x in trades]}
+            with open(os.path.join(self._mom_hist_dir, f"raw_{day}.jsonl"), "a", encoding="utf-8") as f:
+                f.write(_json.dumps(row, separators=(',', ':')) + "\n")
+        except Exception as e:
+            logging.warning(f"raw snapshot log failed: {e}")
 
     def save_momentum_history(self):
         import json as _json
