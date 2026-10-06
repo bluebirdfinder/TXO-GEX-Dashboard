@@ -977,6 +977,50 @@ def fetch_twse_institutional_t86_latest():
         time.sleep(0.3)
     return {}
 
+def _fetch_stf_excel_rows(query_date=None):
+    """期交所「每日行情表」Excel（個股期貨 STF，日盤）。回傳 (html 內第一個日期 YYYY/MM/DD 或 None, rows)。"""
+    url = "https://www.taifex.com.tw/cht/3/futDailyMarketExcel?marketCode=0&commodity_id=STF"
+    if query_date:
+        url += "&queryDate=" + query_date
+    req = urllib.request.Request(url, headers=HEADERS)
+    with urllib.request.urlopen(req, context=SSL_CTX, timeout=25) as resp:
+        html = resp.read().decode('big5', errors='ignore')
+    m = re.search(r"20\d\d/\d\d/\d\d", html)
+    soup = BeautifulSoup(html, 'html.parser')
+    rows = [[td.get_text().strip() for td in r.find_all(['td', 'th'])] for r in soup.find_all('tr')]
+    return (m.group(0) if m else None), rows
+
+
+def _parse_stf_excel(date_str, rows):
+    """逐列解析 STF Excel → {契約代號: {total_vol, near_price, oi, near:{...}}}。
+    欄位：[0]契約 [1]到期月 [2]開 [3]高 [4]低 [5]收 [6]漲跌價 [7]漲跌% [9]一般時段量 [12]未沖銷契約數。
+    量與未平倉都是「所有到期月加總」；開高低收／漲跌／振幅只看近月（第一個非價差的到期月）。"""
+    def num(x):
+        try:
+            return float(str(x).replace(',', '').replace('%', ''))
+        except ValueError:
+            return None
+    out = {}
+    for cols in rows:
+        if len(cols) < 13 or cols[0] in ('契約', '商品', '') or '/' in cols[1]:
+            continue
+        sym, vol, oi, close_p = cols[0], num(cols[9]), num(cols[12]), num(cols[5])
+        if vol is None:
+            continue
+        e = out.setdefault(sym, {'total_vol': 0, 'near_price': 0.0, 'oi': 0, 'near': None})
+        e['total_vol'] += int(vol)
+        if oi is not None:
+            e['oi'] += int(oi)
+        if close_p and close_p > 0 and e['near_price'] == 0:
+            e['near_price'] = close_p
+        if e['near'] is None:
+            hi, lo, chg, pct = num(cols[3]), num(cols[4]), num(cols[6]), num(cols[7])
+            prev_settle = (close_p - chg) if (close_p is not None and chg is not None) else None
+            amp = round((hi - lo) / prev_settle * 100, 2) if (hi is not None and lo is not None and prev_settle and prev_settle > 0) else None
+            e['near'] = {'chg_pct': pct, 'amplitude_pct': amp}
+    return out, date_str
+
+
 def fetch_taifex_official_stock_futures():
     """
     Fetches 100% Ground-Truth TAIFEX Individual Stock & ETF Futures Trading Volume and Prices.
@@ -1000,45 +1044,47 @@ def fetch_taifex_official_stock_futures():
     except Exception as e:
         print(f"[Warning] TAIFEX Stock Futures symbol map error: {e}")
 
-    vol_map = {}
-    try:
-        stf_url = "https://www.taifex.com.tw/cht/3/futDailyMarketExcel?marketCode=0&commodity_id=STF"
-        req2 = urllib.request.Request(stf_url, headers=HEADERS)
-        with urllib.request.urlopen(req2, context=SSL_CTX, timeout=15) as resp:
-            html = resp.read().decode('big5', errors='ignore')
-            soup = BeautifulSoup(html, 'html.parser')
-            for r in soup.find_all('tr'):
-                cols = [td.get_text().strip() for td in r.find_all(['td', 'th'])]
-                if cols and len(cols) >= 10:
-                    symbol = cols[0]
-                    expiry = cols[1]
-                    close_p = cols[5]
-                    vol = cols[9]
-                    if symbol not in ('契約', '商品', '') and '/' not in expiry:
-                        try:
-                            v = int(vol.replace(',', ''))
-                            p = float(close_p.replace(',', '')) if close_p != '-' else 0.0
-                            if symbol not in vol_map:
-                                vol_map[symbol] = {'total_vol': 0, 'near_price': p}
-                            vol_map[symbol]['total_vol'] += v
-                            if p > 0 and vol_map[symbol]['near_price'] == 0:
-                                vol_map[symbol]['near_price'] = p
-                        except ValueError:
-                            pass
-    except Exception as e:
-        print(f"[Warning] TAIFEX Stock Futures STF market fetch error: {e}")
+    # 官方日盤行情表（STF＝全部個股期貨）：每列 = 契約代號、到期月份、開、高、低、收、漲跌價、漲跌%、盤後量、
+    # 一般時段量、合計量、結算價、未沖銷契約數、…；到期月份含「/」的是跨月價差單，不算。
+    # 無 queryDate 時是「最新一個已公布的交易日」，表頭日期必須以表內日期為準（盤中看到的是昨天，見 AGENTS.md 紅線 5）。
+    vol_map, data_date = _parse_stf_excel(*_fetch_stf_excel_rows(None))
+    prev_map, prev_date = {}, None
+    if data_date:
+        try:
+            d0 = datetime.datetime.strptime(data_date, "%Y/%m/%d").date()
+            for back in range(1, 8):
+                dq = d0 - datetime.timedelta(days=back)
+                if dq.weekday() >= 5:
+                    continue
+                m1, d1 = _parse_stf_excel(*_fetch_stf_excel_rows(dq.strftime("%Y/%m/%d")))
+                if d1 == dq.strftime("%Y/%m/%d") and any(v['total_vol'] > 0 for v in m1.values()):
+                    prev_map, prev_date = m1, d1   # 休市日表內日期不會等於查詢日或沒有成交，自動往前找
+                    break
+        except Exception as e:
+            print(f"[Warning] TAIFEX STF previous-day fetch error: {e}")
 
     stk_fut_data = {}
     for fut_sym, info in symbol_map.items():
         code = info['code']
         vol_info = vol_map.get(fut_sym, {'total_vol': 0, 'near_price': 0.0})
         if code not in stk_fut_data or vol_info['total_vol'] > stk_fut_data[code]['total_vol']:
+            in_stf = fut_sym in vol_map   # ETF 期貨等不在 STF 行情表的契約：不給未平倉／增減，免得拿 0 去算假增減
+            pv = prev_map.get(fut_sym) if in_stf else None
+            near = vol_info.get('near') or {}
             stk_fut_data[code] = {
                 'code': code,
                 'name': info['name'],
                 'fut_symbol': fut_sym,
                 'total_vol': vol_info['total_vol'],
-                'fut_price': vol_info['near_price']
+                'in_stf': in_stf,
+                'fut_price': vol_info['near_price'],
+                'oi': vol_info.get('oi') if in_stf else None,
+                'oi_chg': (vol_info['oi'] - pv['oi']) if (pv and in_stf) else None,
+                'vol_chg': (vol_info['total_vol'] - pv['total_vol']) if pv else None,
+                'fut_chg_pct': near.get('chg_pct') if in_stf else None,
+                'amplitude_pct': near.get('amplitude_pct') if in_stf else None,
+                'data_date': data_date,
+                'prev_date': prev_date,
             }
 
     print(f"[OK] Parsed {len(stk_fut_data)} ground-truth TAIFEX stock futures market records.")
@@ -3630,7 +3676,11 @@ def generate_gex_payload():
                 point_contrib = round((spot_p * (chg_pct / 100.0)) * 0.1, 1)
 
             spot_vol = twse_info.get('volume') or int(vol * 5)
-            fut_vol = tf_data.get('total_vol') or (nq.get('volume') if nq else 0) or int(vol)
+            if tf_data.get('in_stf') and not nq:
+                # 官方股期行情表有這檔：成交量就是官方數字（沒成交＝0），不可再拿現貨成交量頂替（2026-10-06 修正）
+                fut_vol = tf_data.get('total_vol', 0)
+            else:
+                fut_vol = tf_data.get('total_vol') or (nq.get('volume') if nq else 0) or int(vol)
 
             raw_stock_futures.append({
                 "code": code,
@@ -3649,7 +3699,14 @@ def generate_gex_payload():
                 "volume": fut_vol,
                 "ex_date": ex_date,
                 "ex_dividend": ex_dividend,
-                "ex_type": ex_type
+                "ex_type": ex_type,
+                # 期交所官方日盤行情表（STF）：未平倉量（各到期月加總）、與前一交易日的增減、近月漲跌幅與振幅
+                "fut_oi": tf_data.get('oi'),
+                "fut_oi_chg": tf_data.get('oi_chg'),
+                "fut_vol_chg": tf_data.get('vol_chg'),
+                "fut_chg_pct": tf_data.get('fut_chg_pct'),
+                "amplitude_pct": tf_data.get('amplitude_pct'),
+                "fut_data_date": tf_data.get('data_date'),
             })
 
     # Sort stock futures by real TAIFEX daily futures volume
