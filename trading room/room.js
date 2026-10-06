@@ -419,12 +419,12 @@ function initMultiPaneCharts() {
   volMa5Series = subChart1.addLineSeries({
     color: '#FFEB3B',
     lineWidth: 1.5,
-    title: 'Volume MA (5)'
+    title: ''
   });
   volMa10Series = subChart1.addLineSeries({
     color: '#FFFFFF',
     lineWidth: 1.5,
-    title: 'Volume MA (10)'
+    title: ''
   });
 
   // --- Sub-Chart 2: 戰情雙層 MACD (4 色柱體 + 快慢線) ---
@@ -438,12 +438,12 @@ function initMultiPaneCharts() {
   macdDifSeries = subChart2.addLineSeries({
     color: '#ffffff',
     lineWidth: 1.5,
-    title: '快線'
+    title: ''
   });
   macdDeaSeries = subChart2.addLineSeries({
     color: '#ffd700',
     lineWidth: 1.5,
-    title: '慢線'
+    title: ''
   });
 
   // --- Sub-Chart 3: 波段拐點 CCI (20 通道 & 買賣轉折點) ---
@@ -454,14 +454,14 @@ function initMultiPaneCharts() {
   cciLineSeries = subChart3.addLineSeries({
     color: '#ffd700',
     lineWidth: 2,
-    title: 'CCI'
+    title: ''
   });
   // Add reference lines (+200, +100, 0, -100, -200)
-  cciLineSeries.createPriceLine({ price: 200, color: 'rgba(0, 206, 201, 0.7)', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '+200 超買' });
-  cciLineSeries.createPriceLine({ price: 100, color: 'rgba(46, 213, 115, 0.6)', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '+100 賣點' });
-  cciLineSeries.createPriceLine({ price: 0, color: 'rgba(255, 255, 255, 0.25)', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '0' });
-  cciLineSeries.createPriceLine({ price: -100, color: 'rgba(255, 128, 128, 0.6)', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '-100 買點' });
-  cciLineSeries.createPriceLine({ price: -200, color: 'rgba(255, 0, 0, 0.7)', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '-200 超賣' });
+  cciLineSeries.createPriceLine({ price: 200, color: 'rgba(0, 206, 201, 0.7)', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '' });
+  cciLineSeries.createPriceLine({ price: 100, color: 'rgba(46, 213, 115, 0.6)', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '' });
+  cciLineSeries.createPriceLine({ price: 0, color: 'rgba(255, 255, 255, 0.25)', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '' });
+  cciLineSeries.createPriceLine({ price: -100, color: 'rgba(255, 128, 128, 0.6)', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '' });
+  cciLineSeries.createPriceLine({ price: -200, color: 'rgba(255, 0, 0, 0.7)', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '' });
 
   // --- Sub-Chart 4: 動能副圖 (AO / CVD / DMI) ---
   subChart4 = LightweightCharts.createChart(cSub4, {
@@ -1239,14 +1239,14 @@ function renderSub4Chart(data) {
       lineColor: '#FF5252',
       lineWidth: 2,
       priceScaleId: 'right',
-      title: 'ADX'
+      title: ''
     });
 
     // 2. 4 大標準門檻參考線 (26.65 頂部, 22.37 突破, 11.63 打底, 0.00)
-    sub4Series.adx.createPriceLine({ price: 26.65, color: '#EF5350', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1.5, title: '26.65 頂部' });
-    sub4Series.adx.createPriceLine({ price: 22.37, color: '#FFA726', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '22.37 突破' });
-    sub4Series.adx.createPriceLine({ price: 11.63, color: '#26A69A', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '11.63 打底' });
-    sub4Series.adx.createPriceLine({ price: 0, color: 'rgba(255, 255, 255, 0.25)', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '0.00' });
+    sub4Series.adx.createPriceLine({ price: 26.65, color: '#EF5350', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1.5, title: '' });
+    sub4Series.adx.createPriceLine({ price: 22.37, color: '#FFA726', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '' });
+    sub4Series.adx.createPriceLine({ price: 11.63, color: '#26A69A', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '' });
+    sub4Series.adx.createPriceLine({ price: 0, color: 'rgba(255, 255, 255, 0.25)', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '' });
 
     sub4Series.adx.setData(data.adxLine);
     sub4Series.adx.setMarkers(data.adxSignals);
@@ -1293,7 +1293,7 @@ function renderSub4Chart(data) {
       color: 'rgba(255, 255, 255, 0.4)',
       lineStyle: LightweightCharts.LineStyle.Dotted,
       lineWidth: 1,
-      title: 'Zero'
+      title: ''
     });
     if (isCvdEligible) startCvdLivePolling(cvdSymbolCode);
   } else if (activeSub4 === 'momentum') {
@@ -1313,7 +1313,7 @@ function renderSub4Chart(data) {
     // 1. 大戶委託口差 (紅柱=偏多掛單較多，綠柱=偏空掛單較多；來源：Books 五檔委買委賣總口數差)
     sub4Series.momentumHist = subChart4.addHistogramSeries({
       priceScaleId: 'right',
-      title: '大戶委託口差'
+      title: ''
     });
 
     // 2. 散戶成交筆數差 (青綠色；來源：Trades 逐筆成交，買筆數-賣筆數，非口數)
@@ -1321,7 +1321,7 @@ function renderSub4Chart(data) {
       color: '#00CEC9',
       lineWidth: 1.5,
       priceScaleId: 'right',
-      title: '散戶成交筆數差'
+      title: ''
     });
 
     // 3. 市場委買委賣口差 (黃線；目前與大戶委託口差同源，見後端註解說明限制)
@@ -1330,7 +1330,7 @@ function renderSub4Chart(data) {
       lineWidth: 1,
       lineStyle: LightweightCharts.LineStyle.Dashed,
       priceScaleId: 'right',
-      title: '市場委買委賣口差'
+      title: ''
     });
 
     // 4. 0 基準水平線
@@ -1339,7 +1339,7 @@ function renderSub4Chart(data) {
       color: 'rgba(255, 255, 255, 0.4)',
       lineStyle: LightweightCharts.LineStyle.Dashed,
       lineWidth: 1,
-      title: '0 軸'
+      title: ''
     });
 
     sub4Series.momentumHist.setData(data.momentumHist);
@@ -1498,10 +1498,10 @@ function renderMainOverlays(data) {
 
   // 1. 尋鳥多空彩帶 (MA7, MA17, MA88, MA200)
   if (indicatorConfig.ribbons) {
-    overlaySeries.ribbons.ma7 = mainChart.addLineSeries({ color: indicatorConfig.ma7Color, lineWidth: 1.5, title: '快線 MA7' });
-    overlaySeries.ribbons.ma17 = mainChart.addLineSeries({ color: indicatorConfig.ma17Color, lineWidth: 1.5, title: '波段 MA17' });
-    overlaySeries.ribbons.ma88 = mainChart.addLineSeries({ color: indicatorConfig.ma88Color, lineWidth: 2, title: '多空 MA88' });
-    overlaySeries.ribbons.ma200 = mainChart.addLineSeries({ color: indicatorConfig.ma200Color, lineWidth: 2, title: '年線 MA200' });
+    overlaySeries.ribbons.ma7 = mainChart.addLineSeries({ color: indicatorConfig.ma7Color, lineWidth: 1.5, title: '' });
+    overlaySeries.ribbons.ma17 = mainChart.addLineSeries({ color: indicatorConfig.ma17Color, lineWidth: 1.5, title: '' });
+    overlaySeries.ribbons.ma88 = mainChart.addLineSeries({ color: indicatorConfig.ma88Color, lineWidth: 2, title: '' });
+    overlaySeries.ribbons.ma200 = mainChart.addLineSeries({ color: indicatorConfig.ma200Color, lineWidth: 2, title: '' });
 
     overlaySeries.ribbons.ma7.setData(data.ma7);
     overlaySeries.ribbons.ma17.setData(data.ma17);
@@ -1514,7 +1514,7 @@ function renderMainOverlays(data) {
     overlaySeries.smma = mainChart.addLineSeries({
       color: indicatorConfig.smmaColor || '#e84393',
       lineWidth: 2,
-      title: `SMMA ${indicatorConfig.smmaLen || 200}`
+      title: ''
     });
     overlaySeries.smma.setData(data.smmaData);
   }
@@ -1522,9 +1522,9 @@ function renderMainOverlays(data) {
   // 3. VWAP
   if (indicatorConfig.vwap) {
     const vwapColor = indicatorConfig.vwapColor || '#FF8A80';
-    overlaySeries.vwap.vwap = mainChart.addLineSeries({ color: vwapColor, lineWidth: 2, title: 'VWAP' });
-    overlaySeries.vwap.upper1 = mainChart.addLineSeries({ color: 'rgba(76, 175, 80, 0.5)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, title: 'VWAP +1σ' });
-    overlaySeries.vwap.lower1 = mainChart.addLineSeries({ color: 'rgba(76, 175, 80, 0.5)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, title: 'VWAP -1σ' });
+    overlaySeries.vwap.vwap = mainChart.addLineSeries({ color: vwapColor, lineWidth: 2, title: '' });
+    overlaySeries.vwap.upper1 = mainChart.addLineSeries({ color: 'rgba(76, 175, 80, 0.5)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, title: '' });
+    overlaySeries.vwap.lower1 = mainChart.addLineSeries({ color: 'rgba(76, 175, 80, 0.5)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, title: '' });
 
     overlaySeries.vwap.vwap.setData(data.vwapData);
     overlaySeries.vwap.upper1.setData(data.vwapUpper);
@@ -1540,7 +1540,7 @@ function renderMainOverlays(data) {
       pointMarkersRadius: 2,
       priceLineVisible: false,
       lastValueVisible: false,
-      title: 'SAR'
+      title: ''
     });
     overlaySeries.sar.setData(data.sarData);
   }
@@ -1555,14 +1555,14 @@ function renderMainOverlays(data) {
       lineWidth: 2,
       priceLineVisible: false,
       lastValueVisible: false,
-      title: 'Supertrend'
+      title: ''
     });
     overlaySeries.supertrend.down = mainChart.addLineSeries({
       color: '#EF5350',
       lineWidth: 2,
       priceLineVisible: false,
       lastValueVisible: false,
-      title: 'Supertrend'
+      title: ''
     });
     overlaySeries.supertrend.up.setData(data.supertrendUp);
     overlaySeries.supertrend.down.setData(data.supertrendDown);
@@ -1604,7 +1604,7 @@ function drawVrvpHorizontalRays(vrvp) {
     lineWidth: 2,
     lineStyle: LightweightCharts.LineStyle.Solid,
     axisLabelVisible: true,
-    title: `VRVP POC (${vrvp.poc})`
+    title: ''
   });
 
   // 2. VAH (Value Area High) - 亮橘點線 1.5px
@@ -1614,7 +1614,7 @@ function drawVrvpHorizontalRays(vrvp) {
     lineWidth: 1.5,
     lineStyle: LightweightCharts.LineStyle.Dotted,
     axisLabelVisible: true,
-    title: `VRVP VAH (${vrvp.vah})`
+    title: ''
   });
 
   // 3. VAL (Value Area Low) - 亮橘點線 1.5px
@@ -1624,7 +1624,7 @@ function drawVrvpHorizontalRays(vrvp) {
     lineWidth: 1.5,
     lineStyle: LightweightCharts.LineStyle.Dotted,
     axisLabelVisible: true,
-    title: `VRVP VAL (${vrvp.val})`
+    title: ''
   });
 }
 
@@ -1634,56 +1634,10 @@ function clearVrvpRays() {
   if (priceLines.val && candleSeries) { candleSeries.removePriceLine(priceLines.val); priceLines.val = null; }
 }
 
-// ---- GEX 價位數字標籤疊加層 ----
-// 這個版本的圖表函式庫把價位線的「名稱文字」綁在 Y 軸標籤上，關掉軸標籤名稱也會消失；
-// 所以自己畫一層：只顯示數字、顏色同線色、靠右貼著 Y 軸內側；太近的標籤自動往上下錯開（不改數字）。
-let gexOverlayLevels = [];
-let gexOverlayTimer = null;
-function renderGexOverlay() {
-  const host = document.getElementById('main-chart-pane');
-  const chartEl = document.getElementById('tv-main-chart');
-  if (!host || !chartEl || !candleSeries) return;
-  let layer = document.getElementById('gex-overlay-layer');
-  if (!layer) {
-    layer = document.createElement('div');
-    layer.id = 'gex-overlay-layer';
-    layer.style.cssText = 'position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;z-index:15;overflow:hidden;';
-    if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
-    host.appendChild(layer);
-  }
-  if (!gexOverlayLevels.length || !indicatorConfig.gex) { layer.innerHTML = ''; return; }
-  const hostBox = host.getBoundingClientRect(), chartBox = chartEl.getBoundingClientRect();
-  const offX = chartBox.left - hostBox.left, offY = chartBox.top - hostBox.top;
-  let axisW = 56;
-  try { const w = mainChart.priceScale('right').width(); if (w > 0) axisW = w; } catch (e) { /* keep default */ }
-  const H = chartBox.height - 28;   // 扣掉底部時間軸
-  const items = [];
-  gexOverlayLevels.forEach(l => {
-    const y = candleSeries.priceToCoordinate(l.price);
-    if (y === null || y === undefined || y < 0 || y > H) return;   // 價位不在目前可視範圍就不畫
-    items.push({ ...l, y, yDraw: y });
-  });
-  items.sort((a, b) => a.y - b.y);
-  const GAP = 13;
-  for (let k = 1; k < items.length; k++) if (items[k].yDraw - items[k - 1].yDraw < GAP) items[k].yDraw = items[k - 1].yDraw + GAP;
-  const over = items.length ? items[items.length - 1].yDraw - (H - 4) : 0;   // 底部放不下就整組往上提
-  if (over > 0) items.forEach(it => { it.yDraw -= over; });
-  // 文字放在線的上方（Pine: label_style_label_lower_left），極小、純文字、顏色同線色；加一圈暗色描邊確保壓在 K 棒上仍看得清
-  layer.innerHTML = items.map(it =>
-    `<div style="position:absolute;right:${axisW + 8}px;top:${Math.round(offY + it.yDraw - 14)}px;line-height:13px;font:700 10px/13px 'Microsoft JhengHei',ui-monospace,Consolas,monospace;color:${it.color};white-space:nowrap;text-shadow:0 0 3px #04070f,0 0 3px #04070f,0 0 2px #04070f;">${it.text}</div>`
-  ).join('');
-}
-function startGexOverlayTimer() {
-  if (gexOverlayTimer) return;
-  gexOverlayTimer = setInterval(() => { if (gexOverlayLevels.length) renderGexOverlay(); }, 300);   // 跟著縮放／拖曳／換價位刻度更新
-}
-
 /**
  * Clear GEX Price Lines & Markers
  */
 function clearGexPriceLines() {
-  gexOverlayLevels = [];
-  renderGexOverlay();
   if (priceLines.cw && candleSeries) { candleSeries.removePriceLine(priceLines.cw); priceLines.cw = null; }
   if (priceLines.vex && candleSeries) { candleSeries.removePriceLine(priceLines.vex); priceLines.vex = null; }
   if (priceLines.zg && candleSeries) { candleSeries.removePriceLine(priceLines.zg); priceLines.zg = null; }
@@ -1715,7 +1669,7 @@ function drawGexHorizontalRays(candles) {
     color: '#FF76AC',
     lineWidth: 2,
     lineStyle: LightweightCharts.LineStyle.Solid,
-    axisLabelVisible: false
+    axisLabelVisible: true
   });
 
   // 2. VEX Early Flip (VEX 早鳥轉折線) - 亮橘虛線 1.5px
@@ -1724,7 +1678,7 @@ function drawGexHorizontalRays(candles) {
     color: '#FFA726',
     lineWidth: 1.5,
     lineStyle: LightweightCharts.LineStyle.Dashed,
-    axisLabelVisible: false
+    axisLabelVisible: Math.abs(vex - zg) >= 15
   });
 
   // 3. Zero Gamma (基準多空變盤點) - 亮黃實線 2px
@@ -1733,7 +1687,7 @@ function drawGexHorizontalRays(candles) {
     color: '#FFEB3B',
     lineWidth: 2,
     lineStyle: LightweightCharts.LineStyle.Solid,
-    axisLabelVisible: false
+    axisLabelVisible: true
   });
 
   // 4. Put Wall (買權防守地板牆) - 青綠實線 2px
@@ -1742,7 +1696,7 @@ function drawGexHorizontalRays(candles) {
     color: '#26A69A',
     lineWidth: 2,
     lineStyle: LightweightCharts.LineStyle.Solid,
-    axisLabelVisible: false
+    axisLabelVisible: true
   });
 
   // 5. Max Pain (最大痛點引力) - 亮藍點線 1px
@@ -1751,26 +1705,10 @@ function drawGexHorizontalRays(candles) {
     color: '#42A5F5',
     lineWidth: 1,
     lineStyle: LightweightCharts.LineStyle.Dotted,
-    axisLabelVisible: false
+    axisLabelVisible: true
   });
 
-  // 五個 GEX 價位的浮動標籤（照使用者的 Pine 指標 bluebird_finder_GEX.pine：極小純文字、無背景框、顏色同線色、
-  // 文字在線的上方、靠右空白處）；畫在圖上而不是右側 Y 軸，避免和均線／最新價標籤搶位置。
-  // VEX 與 Zero Gamma 相差不到 15 點時合併成「⚡ ZG / 🟠 VEX」一個標籤（同 Pine）。
-  const fmtLv = (v) => Number.isInteger(v) ? String(v) : v.toFixed(1);
-  gexOverlayLevels = [
-    { price: cw, color: '#FF76AC', text: `🔴 Call Wall: ${fmtLv(cw)}` },
-    { price: mp, color: '#42A5F5', text: `🔵 Max Pain: ${fmtLv(mp)}` },
-    { price: pw, color: '#26A69A', text: `🟢 Put Wall: ${fmtLv(pw)}` }
-  ];
-  if (Math.abs(vex - zg) < 15) {
-    gexOverlayLevels.push({ price: zg, color: '#FFEB3B', text: `⚡ ZG / 🟠 VEX: ${fmtLv(zg)}` });
-  } else {
-    gexOverlayLevels.push({ price: vex, color: '#FFA726', text: `🟠 VEX Early: ${fmtLv(vex)}` });
-    gexOverlayLevels.push({ price: zg, color: '#FFEB3B', text: `⚡ Zero Gamma: ${fmtLv(zg)}` });
-  }
-  renderGexOverlay();
-  startGexOverlayTimer();
+
 
   // 6. TV 級即時穿透偵測與標籤 (On-Chart Touch Visual Signals)
   if (candles && candles.length > 0) {
