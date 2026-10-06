@@ -143,7 +143,8 @@ const CORE_PRESET_ASSETS = {
   'MXF': { symbol: 'MXF', name: '小台期貨', category: '指數期貨', market: 'TAIFEX', has_futures: true, futures_code: 'MXF', base_price: null, is_yield: false },
   'US10Y': { symbol: 'US10Y', name: '美國10年公債殖利率', category: '總經公債', market: 'GLOBAL', has_futures: false, futures_code: 'ZN', base_price: null, is_yield: true },
   'DXY': { symbol: 'DXY', name: '美元指數 (DXY)', category: '總經外匯', market: 'ICE', has_futures: false, futures_code: 'DX', base_price: null, is_yield: false },
-  'CL': { symbol: 'CL', name: '紐約輕原油期貨', category: '大宗商品', market: 'NYMEX', has_futures: true, futures_code: 'CL', base_price: null, is_yield: false }
+  'CL': { symbol: 'CL', name: '紐約輕原油期貨', category: '大宗商品', market: 'NYMEX', has_futures: true, futures_code: 'CL', base_price: null, is_yield: false },
+  'GC': { symbol: 'GC', name: 'COMEX 黃金期貨', category: '大宗商品', market: 'COMEX', has_futures: true, futures_code: 'GC', base_price: null, is_yield: false }
 };
 
 /**
@@ -152,6 +153,15 @@ const CORE_PRESET_ASSETS = {
  */
 // 最近一次即時報價（來自本機富邦服務／Worker）；超過 15 秒沒更新就視為過期，不再當「目前價格」使用。
 let liveTxf = null;   // { price, at }
+// 海外商品（Yahoo，經本機價格服務每 30 秒更新）：富邦 API 沒有這些，標籤與價格來源都要照實顯示
+let liveMacro = null; // { dxy, us10y, cl, gc, ..., at }
+const YAHOO_SOURCE_SYMBOLS = new Set(['CL', 'GC', 'DXY', 'US10Y']);
+const MACRO_KEY_BY_SYMBOL = { CL: 'cl', GC: 'gc', DXY: 'dxy', US10Y: 'us10y' };
+function liveMacroPrice(sym) {
+  const k = MACRO_KEY_BY_SYMBOL[sym];
+  const v = (liveMacro && k && (Date.now() - liveMacro.at) < 120000) ? liveMacro[k] : null;
+  return (typeof v === 'number' && isFinite(v) && v > 0) ? v : null;
+}
 function liveTxfPrice() {
   return (liveTxf && (Date.now() - liveTxf.at) < 15000) ? liveTxf.price : null;
 }
@@ -163,6 +173,8 @@ function realPriceFor(sym) {
   if (sym === 'TXF' || sym === 'MTX' || sym === 'MXF' || sym === 'TMF') return liveTxfPrice() ?? num(gexData?.night_txf_price) ?? num(gexData?.txf_price);
   if (sym === 'TAIEX') return num(gexData?.spot_price);
   if (sym === 'OTC') return num(gexData?.two_price);
+  const lm = liveMacroPrice(sym);
+  if (lm !== null) return lm;
   const q = num(realQuotesData?.[sym]?.close);
   if (q !== null) return q;
   const tfs = klinesCacheData?.assets?.[sym]?.timeframes;
@@ -1083,7 +1095,7 @@ const ADX_MTF_API = 'https://bluebird-indicators.bluebird-finder-tw.workers.dev/
 // ⚠️ 尚未對照真實 TradingView 圖表逐根K棒驗證過（見 worker.js 註解），is_holding/
 // reduce_count 這類需要很多根K棒才會顯現的狀態，暖機起點可能跟 TradingView 實際載入的K棒
 // 數不同而有落差。卡片標題會標註「(未驗證)」，正式核對過後再拿掉這個標籤。
-const MOMENTUM_BIRD_SUPPORTED_SYMBOLS = new Set(['TXF', 'TAIEX', 'OTC', 'CDF', 'MTX', 'MXF', 'US10Y', 'DXY', 'CL', '2330', '2454', '2317']);
+const MOMENTUM_BIRD_SUPPORTED_SYMBOLS = new Set(['TXF', 'TAIEX', 'OTC', 'CDF', 'MTX', 'MXF', 'US10Y', 'DXY', 'CL', 'GC', '2330', '2454', '2317']);
 
 async function updateMomentumBirdHud(symObj) {
   const modeEl = document.getElementById('left-hud-mode');
@@ -1733,6 +1745,56 @@ function drawGexHorizontalRays(candles) {
 /**
  * Update Floating Legend on Crosshair Move
  */
+// 當日開盤／最高／最低：只用 K 線快取裡的真實分 K，依官方場次切（日盤 08:45～13:45、夜盤 15:00～隔日 05:00；
+// 加權／櫃買現貨 09:00～13:30）。K 線快取還沒跟上目前進行中的場次（例如日盤剛開、快取只有昨晚夜盤）、
+// 或不在台灣場次的商品（海外）就回傳 null（畫面顯示 —），絕不拿舊場次冒充「當日」。
+function tpeSessionAt(t, isFut) {
+  const tp = _tpeParts(t);
+  const mins = tp.h * 60 + tp.mi;
+  const dayStart = isFut ? 8 * 60 + 45 : 9 * 60, dayEnd = isFut ? 13 * 60 + 45 : 13 * 60 + 30;
+  // 台北＝UTC+8：「台北當日 00:00」的 UTC 秒數
+  const midnightTpe = (y, mo, da) => Date.UTC(y, mo - 1, da) / 1000 - 8 * 3600;
+  if (mins >= dayStart && mins <= dayEnd) {
+    const start = midnightTpe(tp.y, tp.mo, tp.da) + dayStart * 60;
+    return { start, end: start + (dayEnd - dayStart) * 60 + 59, label: '日盤' };
+  }
+  if (isFut && mins >= 15 * 60) {
+    const start = midnightTpe(tp.y, tp.mo, tp.da) + 15 * 3600;
+    return { start, end: start + 14 * 3600, label: '夜盤' };
+  }
+  if (isFut && mins <= 5 * 60) {
+    const prev = _tpeParts(t - 86400);
+    const start = midnightTpe(prev.y, prev.mo, prev.da) + 15 * 3600;
+    return { start, end: start + 14 * 3600, label: '夜盤' };
+  }
+  return null;   // 場次空檔（例如 05:00～08:45）
+}
+function sessionOhlcFor(sym) {
+  const isFut = ['TXF', 'MTX', 'MXF', 'TMF', 'CDF'].includes(sym), isSpot = sym === 'TAIEX' || sym === 'OTC';
+  if (!isFut && !isSpot) return null;
+  const tfs = klinesCacheData?.assets?.[sym]?.timeframes;
+  if (!tfs) return null;
+  const bars = tfs['1M'] || tfs['3M'] || tfs['5M'] || tfs['15M'] || null;
+  if (!bars || !bars.length) return null;
+  const last = bars[bars.length - 1];
+  const sess = tpeSessionAt(last.time, isFut);
+  if (!sess) return null;
+  // 現在若正在另一個場次進行中（快取還沒有它的 K 棒），不顯示舊場次
+  const nowSess = tpeSessionAt(Math.floor(Date.now() / 1000), isFut);
+  if (nowSess && nowSess.start !== sess.start) return null;
+  const inSess = bars.filter(b => b.time >= sess.start && b.time <= sess.end);
+  if (!inSess.length) return null;
+  const pad = (n) => String(n).padStart(2, '0');
+  const tp = _tpeParts(last.time), sp = _tpeParts(sess.start);
+  return {
+    open: inSess[0].open,
+    high: Math.max(...inSess.map(b => b.high)),
+    low: Math.min(...inSess.map(b => b.low)),
+    label: `${sess.label} ${pad(sp.mo)}/${pad(sp.da)} 起`,
+    lastBar: `${pad(tp.mo)}/${pad(tp.da)} ${pad(tp.h)}:${pad(tp.mi)}`
+  };
+}
+
 // 最新一根真 K 棒（滑鼠不在圖上時，圖例顯示它，行為同 TradingView；沒有 K 棒就維持 --）
 let legendLastCandle = null;
 function updateLegendOverlay(param) {
@@ -1888,9 +1950,12 @@ function renderLeftPanel() {
         prevClose = gexData.two_price - gexData.two_change;
       }
     }
-    lOpen.innerText = '—';
-    lHigh.innerText = '—';
-    lLow.innerText = '—';
+    const sOhlc = sessionOhlcFor(currentActiveSymbol?.symbol);
+    const fmtP = (v) => v.toLocaleString(undefined, { minimumFractionDigits: v < 500 ? 2 : 0, maximumFractionDigits: v < 500 ? 2 : 0 });
+    lOpen.innerText = sOhlc ? fmtP(sOhlc.open) : '—';
+    lHigh.innerText = sOhlc ? fmtP(sOhlc.high) : '—';
+    lLow.innerText = sOhlc ? fmtP(sOhlc.low) : '—';
+    [lOpen, lHigh, lLow].forEach(el => { el.title = sOhlc ? `${sOhlc.label}（取自 K 線快取，最後一根 ${sOhlc.lastBar}）` : '沒有真實的場次 K 棒資料，不顯示數字'; });
     lPrev.innerText = (prevClose !== null && !isNaN(prevClose)) ? prevClose.toLocaleString(undefined, { minimumFractionDigits: prevClose < 500 ? 2 : 1, maximumFractionDigits: prevClose < 500 ? 2 : 1 }) : '—';
   }
 
@@ -4062,11 +4127,17 @@ function initFubonLivePriceStream() {
 
       // 4. Live Left Macro Risk HUD Pulsing (same macro_events_radar nesting fix as above)
       if (data.macro) {
+        liveMacro = { ...data.macro, at: Date.now() };
         updateMacroRiskHUD(gexData?.macro_events_radar?.macro_risk_dashboard || null, data.macro);
       }
 
       if (statusTag) {
-        if (source === 'fubon') {
+        if (YAHOO_SOURCE_SYMBOLS.has(currentActiveSymbol?.symbol)) {
+          // 原油／黃金／美元指數／美債不是富邦資料（富邦 API 沒有海外期貨），照實標示來源
+          statusTag.innerHTML = '🌐 Yahoo Finance（非富邦，可能延遲）';
+          statusTag.style.borderColor = 'var(--primary-accent)';
+          statusTag.style.color = 'var(--primary-accent)';
+        } else if (source === 'fubon') {
           statusTag.innerHTML = '🟢 富邦 Neo API (Live)';
           statusTag.style.borderColor = '#00e676';
           statusTag.style.color = '#00e676';
@@ -4099,7 +4170,7 @@ function initFubonLivePriceStream() {
 function initOverseasLiveTickStream() {
   const clTab = document.querySelector('.contract-tab[data-contract="CL"]');
   if (clTab) {
-    clTab.title = '紐約輕原油期貨（本頁尚無即時報價）';  // was a hard-coded "結算" price that never updated
+    clTab.title = '紐約輕原油期貨（Yahoo 來源，非富邦；可能延遲）';  // was a hard-coded "結算" price that never updated
   }
 }
 

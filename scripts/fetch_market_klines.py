@@ -30,6 +30,7 @@ SYMBOLS_MAP = {
     'US10Y': {'query': '%5ETNX', 'name': '美國10年公債殖利率', 'is_index': True, 'is_yield': True, 'decimals': 3, 'fut_vol_mult': 0, 'base_contract_vol': 0},
     'DXY': {'query': 'DX-Y.NYB', 'name': '美元指數 (DXY)', 'is_index': True, 'is_yield': False, 'decimals': 3, 'fut_vol_mult': 0, 'base_contract_vol': 0},
     'CL': {'query': 'CL=F', 'name': '紐約輕原油期貨', 'is_index': False, 'is_yield': False, 'decimals': 2, 'fut_vol_mult': 0, 'base_contract_vol': 0},
+    'GC': {'query': 'GC=F', 'name': 'COMEX 黃金期貨', 'is_index': False, 'is_yield': False, 'decimals': 1, 'fut_vol_mult': 0, 'base_contract_vol': 0},
     '2330': {'query': '2330.TW', 'name': '台積電', 'is_index': False, 'is_yield': False, 'decimals': 0, 'fut_vol_mult': 0, 'base_contract_vol': 0},
     '2454': {'query': '2454.TW', 'name': '聯發科', 'is_index': False, 'is_yield': False, 'decimals': 0, 'fut_vol_mult': 0, 'base_contract_vol': 0},
     '2317': {'query': '2317.TW', 'name': '鴻海', 'is_index': False, 'is_yield': False, 'decimals': 1, 'fut_vol_mult': 0, 'base_contract_vol': 0}

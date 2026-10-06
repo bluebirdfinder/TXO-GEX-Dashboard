@@ -59,11 +59,11 @@ class LivePriceState:
 
 state = LivePriceState()
 
-MACRO_TICKERS = {"dxy": "DX-Y.NYB", "us10y": "%5ETNX", "cl": "CL=F", "vix": "%5EVIX", "vvix": "%5EVVIX"}
+MACRO_TICKERS = {"dxy": "DX-Y.NYB", "us10y": "%5ETNX", "cl": "CL=F", "gc": "GC=F", "vix": "%5EVIX", "vvix": "%5EVVIX"}
 
 
 def macro_polling_worker(interval=30):
-    """Real DXY / US10Y / CL / VIX / VVIX from Yahoo every `interval` seconds (Fubon Neo has TAIFEX products only). If a
+    """Real DXY / US10Y / CL / GC / VIX / VVIX from Yahoo every `interval` seconds (Fubon Neo has TAIFEX products only). If a
     fetch fails the key is simply absent and the room keeps showing the cloud-built snapshot (fallback)."""
     while True:
         got = {}

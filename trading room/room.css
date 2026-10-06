@@ -2120,8 +2120,9 @@ body.right-collapsed .dock-right { display: flex !important; }
 @media (min-width: 1025px) {
   .room-header { overflow-x: hidden; }
   .header-left { flex: 1 1 auto; min-width: 0; }
-  .header-left .contract-tabs { flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
-  .header-left .contract-tabs::-webkit-scrollbar { display: none; }
+  .header-left .contract-tabs { flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: thin; scrollbar-color: rgba(0, 210, 255, 0.35) transparent; }
+  .header-left .contract-tabs::-webkit-scrollbar { height: 4px; }
+  .header-left .contract-tabs::-webkit-scrollbar-thumb { background: rgba(0, 210, 255, 0.35); border-radius: 2px; }
   .header-left .contract-tab { flex-shrink: 0; white-space: nowrap; }
   .header-center { flex: 0 0 0; }
   .header-right { flex-shrink: 0; margin-left: 8px; }
