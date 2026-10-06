@@ -1550,6 +1550,12 @@
             <option value="top10_buy">🔥 期貨真多主力 Top 10（強勢真看多 × 大戶浮部位最多）</option>
             <option value="top10_sell">❄️ 期貨真空主力 Top 10（強勢真看空 × 大戶浮部位最空）</option>
             <option value="upcoming_ex">📅 即將/近期除權息標的 (Ex-Div Scheduled)</option>
+            <option value="rank_vol">📊 排行：期貨成交量前 20</option>
+            <option value="rank_oi">📊 排行：未平倉量前 20</option>
+            <option value="rank_oi_up">📈 排行：未平倉增加前 20（較前一交易日）</option>
+            <option value="rank_up">🔺 排行：期貨漲幅前 20</option>
+            <option value="rank_down">🔻 排行：期貨跌幅前 20</option>
+            <option value="rank_amp">↕️ 排行：當日振幅前 20</option>
             <option value="個股期貨">🏢 個股期貨 (標準 2000股)</option>
             <option value="小型個股期貨">🔹 小型個股期貨 (100股)</option>
             <option value="ETF期貨">📈 ETF 期貨 (10000份)</option>
@@ -1616,7 +1622,10 @@
               <th data-sort="spot_volume" style="cursor: pointer;">現貨成交量 (張) ⇕</th>
               <th data-sort="spot_inst_net" style="cursor: pointer;">現貨三大法人 (張) ⇕</th>
               <th data-sort="fut_price" style="cursor: pointer;">期貨價 (TWD) ⇕</th>
-              <th data-sort="fut_volume" style="cursor: pointer;">期貨成交量 (口) ⇕</th>
+              <th data-sort="fut_chg_pct" style="cursor: pointer;" title="期貨近月契約當日漲跌幅（期交所官方日盤行情表）">期貨漲跌幅 ⇕</th>
+              <th data-sort="amplitude_pct" style="cursor: pointer;" title="當日振幅＝（最高−最低）÷前一日結算價，期貨近月契約（期交所官方日盤行情表）">振幅 ⇕</th>
+              <th data-sort="fut_volume" style="cursor: pointer;" title="各到期月日盤成交量加總；小字為較前一交易日增減">期貨成交量 (口) ⇕</th>
+              <th data-sort="fut_oi" style="cursor: pointer;" title="未沖銷契約數（各到期月加總）；小字為較前一交易日增減">未平倉量 (口) ⇕</th>
               <th data-sort="basis" style="cursor: pointer; color: var(--gold-accent);">期現價差 (Basis) ⇕</th>
               <th data-sort="top10_net_oi" style="cursor: pointer;">期貨大戶淨部位 (口) ⇕</th>
               <th>夜盤標籤</th>
@@ -2033,7 +2042,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=v64.17&b=20260930a"></script>
+  <script src="app.js?v=v64.17&b=20261006b"></script>
 </body>
 </html>
 

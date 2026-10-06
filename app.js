@@ -6,6 +6,7 @@
 let gexData = null;
 let currentTab = 'total-gex';
 let currentSortKey = 'volume';
+let userPickedSort = false;   // 使用者是否點過表頭排序（排行榜預設維持名次順序，點表頭後才改成依該欄排序）
 let currentSortOrder = 'desc';
 let isOverlayMode = false;
 let showChartLegend = true;
@@ -208,7 +209,7 @@ function initEventListeners() {
   // Stock Futures Filters & Category Dropdown
   const filterCategory = document.getElementById('category-filter-select');
   if (filterCategory) {
-    filterCategory.addEventListener('change', () => populateStockFutures());
+    filterCategory.addEventListener('change', () => { userPickedSort = false; populateStockFutures(); });   // 換排行／類別時回到預設順序
   }
 
   const filterNight = document.getElementById('filter-night-only');
@@ -224,6 +225,7 @@ function initEventListeners() {
   document.querySelectorAll('.sortable-table th[data-sort]').forEach(th => {
     th.addEventListener('click', () => {
       const sortKey = th.getAttribute('data-sort');
+      userPickedSort = true;
       if (currentSortKey === sortKey) {
         currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
       } else {
@@ -2295,6 +2297,15 @@ function populateStockFutures() {
     if (!currentSortKey) list.sort((a, b) => (a.top10_net_oi || 0) - (b.top10_net_oi || 0));
   } else if (selectedCat === 'upcoming_ex') {
     list = list.filter(item => item.ex_date && item.ex_date !== '-');
+  } else if (selectedCat.startsWith('rank_')) {
+    // 排行榜：以期交所官方日盤行情表（STF）的欄位排序，取前 20；欄位缺值（沒有成交、沒有前一日資料）的不列入
+    const RANK_KEY = { rank_vol: ['fut_volume', -1], rank_oi: ['fut_oi', -1], rank_oi_up: ['fut_oi_chg', -1],
+                       rank_up: ['fut_chg_pct', -1], rank_down: ['fut_chg_pct', 1], rank_amp: ['amplitude_pct', -1] };
+    const [rk, dir] = RANK_KEY[selectedCat] || ['fut_volume', -1];
+    // 只收期交所股期行情表（STF）有資料的契約（有 fut_oi）；ETF 期貨等不在該表者，成交量欄位不是真實期貨量，不參與排名
+    list = list.filter(item => typeof item[rk] === 'number' && isFinite(item[rk]) && typeof item.fut_oi === 'number');
+    list.sort((a, b) => dir > 0 ? a[rk] - b[rk] : b[rk] - a[rk]);   // dir=-1：由大到小；dir=1：由小到大（跌幅）
+    list = list.slice(0, 20);
   } else if (selectedCat !== 'all') {
     list = list.filter(item => item.category === selectedCat);
   }
@@ -2312,7 +2323,8 @@ function populateStockFutures() {
   const INTENT_SORT_RANK = { '🔥 強勢真看多': 1, '🛡️ 對沖避險': 2, '⚡ 基差套利': 3, '⚖️ 觀望分歧': 4, '❄️ 強勢真看空': 5 };
   const sortKey = currentSortKey || 'volume';
   
-  list.sort((a, b) => {
+  const rankMode = selectedCat.startsWith('rank_') && !userPickedSort;   // 排行榜：維持名次順序，除非使用者點表頭改排序
+  if (!rankMode) list.sort((a, b) => {
     if (!currentSortKey && (selectedCat === 'night6' || nightOnly)) {
       const idxA = NIGHT_POPULARITY_ORDER.indexOf(a.code);
       const idxB = NIGHT_POPULARITY_ORDER.indexOf(b.code);
@@ -2335,14 +2347,26 @@ function populateStockFutures() {
       valB = (b.fut_price || b.spot_price) - b.spot_price;
     }
 
-    if (valA === undefined) valA = '';
-    if (valB === undefined) valB = '';
+    // 沒有數值（null／undefined）的列一律排最後，不管升冪降冪
+    const missA = valA === undefined || valA === null, missB = valB === undefined || valB === null;
+    if (missA || missB) {
+      if (missA && missB) return 0;
+      return missA ? 1 : -1;
+    }
 
     if (typeof valA === 'string') {
       return currentSortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
     }
     return currentSortOrder === 'asc' ? valA - valB : valB - valA;
   });
+
+  // 台股慣例：紅漲綠跌
+  const fmtPctCell = (v) => (v === undefined || v === null)
+    ? '<span style="color:#666;">—</span>'
+    : `<span style="color: ${v > 0 ? 'var(--call-color)' : (v < 0 ? 'var(--put-color)' : '#aaa')}; font-weight: 600;">${v > 0 ? '+' : ''}${v.toFixed(2)}%</span>`;
+  const fmtDeltaSub = (d) => (d === undefined || d === null)
+    ? ''
+    : `<div style="font-size: 0.7rem; color: ${d > 0 ? 'var(--call-color)' : (d < 0 ? 'var(--put-color)' : '#888')};" title="較前一交易日增減">${d > 0 ? '+' : ''}${d.toLocaleString()}</div>`;
 
   let html = '';
   list.forEach(item => {
@@ -2446,7 +2470,10 @@ function populateStockFutures() {
         ${spotSubChips}
       </td>
       <td style="font-weight: 600;">${futPrice.toFixed(2)}</td>
-      <td>${futVol.toLocaleString()}</td>
+      <td>${fmtPctCell(item.fut_chg_pct)}</td>
+      <td>${item.amplitude_pct === undefined || item.amplitude_pct === null ? '<span style="color:#666;">—</span>' : item.amplitude_pct.toFixed(2) + '%'}</td>
+      <td>${futVol.toLocaleString()}${fmtDeltaSub(item.fut_vol_chg)}</td>
+      <td>${item.fut_oi === undefined || item.fut_oi === null ? '<span style="color:#666;">—</span>' : item.fut_oi.toLocaleString() + fmtDeltaSub(item.fut_oi_chg)}</td>
       <td>${basisBadge}</td>
       <td>
         <div style="color: ${top10NetOi >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 700;">${futNetSign}${top10NetOi.toLocaleString()}</div>
