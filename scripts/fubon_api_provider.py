@@ -770,7 +770,7 @@ class FubonAPIProvider:
                     self._append_raw_snapshot(alias, now, book)
 
     # 還原 JJ（rStock）指標定義用：只對少數商品把每 15 秒的原始五檔＋該 15 秒成交寫成 jsonl（每天一個檔，不進 git）
-    _RAW_LOG_ALIASES = ("TXF1!", "CAF1!")
+    _RAW_LOG_ALIASES = ("TXF1!", "CCF1!")
 
     def _append_raw_snapshot(self, alias, now, book):
         import json as _json
