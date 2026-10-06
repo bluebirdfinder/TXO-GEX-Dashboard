@@ -1226,7 +1226,37 @@ def compute_days_to_expiries(ref_dt, tw_tz):
     return raw_days_wed, raw_days_fri, raw_days_mth, third_wed
 
 
-def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None):
+def _standard_gamma_flip(spot, chain, T, sigma, r, span=2000, step=10):
+    """國際標準 Gamma Flip：沿「指數價位軸」掃描——假設指數在 spot±span 內各價位，每個價位重算所有履約價的 Gamma，
+    加總做市商總 GEX（Call 為正、Put 為負，與本引擎同號同單位），找總和由正轉負／由負轉正的價位，取離現價最近的一個。
+    與引擎原本的 Zero Gamma（沿履約價軸找 Call／Put 淨 GEX 翻轉處，本質是賣買權 OI 分界線）是兩件不同的事。
+    找不到轉折點 → None（不編造數字）。"""
+    items = []
+    for K, k in chain.items():
+        legs = [(k.get(f'call_oi_{b}', 0) - k.get(f'put_oi_{b}', 0), Tb) for b, Tb in T.items()]
+        legs = [(n, Tb) for n, Tb in legs if n]
+        if legs:
+            items.append((K, legs))
+    if not items:
+        return None
+
+    def total(S):
+        t = 0.0
+        for K, legs in items:
+            for net, Tb in legs:
+                t += net * black_scholes_gamma(S, K, Tb, r, sigma)
+        return t * (S ** 2) * 50 / 1e8
+
+    xs, prev, S = [], None, spot - span
+    while S <= spot + span:
+        v = total(S)
+        if prev is not None and prev[1] * v <= 0 and prev[1] != v:
+            xs.append(prev[0] + (0 - prev[1]) * (S - prev[0]) / (v - prev[1]))
+        prev, S = (S, v), S + step
+    return round(min(xs, key=lambda x: abs(x - spot)), 1) if xs else None
+
+
+def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None, with_standard=False):
     """
     option_chain: {strike: {"call_oi_w1":n, "put_oi_w1":n, "call_oi_w2":n, "put_oi_w2":n,
     "call_oi_fri":n, "put_oi_fri":n, "call_oi_mth":n, "put_oi_mth":n}}, built by
@@ -1381,6 +1411,9 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
             break
 
     total_gex_plus_sum = total_gex_sum + (1.0 * total_vex_sum)
+    gamma_flip_standard = None
+    if with_standard and option_chain:
+        gamma_flip_standard = _standard_gamma_flip(spot_price, option_chain, {"w1": T_w1, "w2": T_w2, "fri": T_fri, "mth": T_mth}, sigma, r)
     pc_ratio = round((put_oi_sum / call_oi_sum) * 100, 2) if call_oi_sum > 0 else 108.5
 
     return {
@@ -1390,6 +1423,7 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         "monthly_gex": monthly_gex,
         "zero_gamma_level": zero_gamma_level,
         "gex_plus_flip": gex_plus_flip,
+        "gamma_flip_standard": gamma_flip_standard,
         "total_vex": round(total_vex_sum, 2),
         "total_gex_val": round(total_gex_sum, 2),
         "total_gex_plus": round(total_gex_plus_sum, 2),
@@ -3090,7 +3124,7 @@ def generate_gex_payload():
         print("[Warning] No real TAIFEX TXO open interest available — GEX profile will be flat/zero, not a guessed curve.")
 
     # Compute GEX Profile
-    gex_profile = calculate_true_gex_profile(spot_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth)
+    gex_profile = calculate_true_gex_profile(spot_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, with_standard=True)
     gex_profile["dte_dates"] = dte_dates
 
     # Day vs Night Session Shift Metrics
@@ -4670,6 +4704,28 @@ def generate_gex_payload():
             "schedule": schedule
         }
 
+    # 觀察記錄（2026-10-06 使用者要求並排觀察「現行 Zero Gamma」「VEX 早鳥線」「標準 Gamma Flip」）：
+    # 每輪引擎以「籌碼日」為鍵，覆寫該日最新一筆，累積成長期可回頭檢驗的紀錄（data/gex_line_observations.json）。
+    try:
+        _obs_path = os.path.join(_DATA_DIR, "gex_line_observations.json")
+        try:
+            with open(_obs_path, "r", encoding="utf-8") as _f:
+                _obs = json.load(_f)
+        except Exception:
+            _obs = {}
+        _obs[t0_date.strftime("%Y-%m-%d")] = {
+            "updated": now_dt.strftime("%Y-%m-%d %H:%M"), "session": session_type, "engine": ENGINE_VERSION,
+            "spot": spot_price, "txf_day": day_txf_price, "txf_night": night_txf_price,
+            "zero_gamma_oi_boundary": gex_profile['zero_gamma_level'], "gex_plus_flip": gex_profile['gex_plus_flip'],
+            "gamma_flip_standard": gex_profile.get('gamma_flip_standard'),
+            "call_wall": gex_profile['call_wall_strike'], "put_wall": gex_profile['put_wall_strike'], "max_pain": gex_profile['max_pain_strike'],
+            "taifex_vix": (fetch_official_taifex_vix() or {}).get("taifex_vix"), "sigma": _gex_sigma_info().get("sigma"),
+        }
+        with open(_obs_path, "w", encoding="utf-8") as _f:
+            json.dump(dict(sorted(_obs.items())[-400:]), _f, ensure_ascii=False, indent=1)
+    except Exception as _e:
+        print(f"[Warning] gex_line_observations not written: {_e}")
+
     return {
         "date": today_str,
         "chip_base_date": t0_date.strftime("%Y-%m-%d"),  # the trading day the chip/OI data actually belongs to (today_str is the run date, e.g. a Saturday)
@@ -4689,6 +4745,7 @@ def generate_gex_payload():
         "txf_price": txf_price,
         "zero_gamma_level": gex_profile['zero_gamma_level'],
         "gex_plus_flip": gex_profile['gex_plus_flip'],
+        "gamma_flip_standard": gex_profile.get('gamma_flip_standard'),
         "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'],
         "max_pain_strike": gex_profile['max_pain_strike'],

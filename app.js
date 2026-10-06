@@ -651,6 +651,12 @@ function renderDashboard() {
     elZgShift.innerText = `(${zgSign}${zgShift.toFixed(1)} 點)`;
   }
 
+  // 標準 Gamma Flip（價格軸）並排顯示；VEX 早鳥線與 Zero Gamma 幾乎重疊時註明
+  const elGfs = document.getElementById('stat-gamma-flip-std');
+  if (elGfs) elGfs.innerText = (typeof gexData.gamma_flip_standard === 'number') ? gexData.gamma_flip_standard.toLocaleString() : '—（無轉折點）';
+  const elOverlap = document.getElementById('stat-flip-overlap-note');
+  if (elOverlap) elOverlap.innerText = (typeof gexData.gex_plus_flip === 'number' && typeof gexData.zero_gamma_level === 'number' && Math.abs(gexData.gex_plus_flip - gexData.zero_gamma_level) < 0.5) ? '（與 Zero Gamma 重疊）' : '';
+
   // 3. Call Wall (日盤 vs 夜盤)
   const cwDay = shift.day_call_wall || CHART_DEFAULTS.call_wall_strike;
   const cwNight = gexData.call_wall_strike || cwDay;
