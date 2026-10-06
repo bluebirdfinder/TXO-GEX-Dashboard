@@ -367,7 +367,7 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 self.wfile.flush()
                 return
 
-            # 大戶散戶動能歷史（重開機不歸零；只含服務真正收到的資料）— ?symbol=TXF&days=5
+            # 大戶散戶動能歷史（重開機不歸零；只含服務真正收到的資料）— ?symbol=TXF&days=5&tf=30（tf＝合成幾分鐘 K，1～240）
             if parsed.path.startswith('/api/momentum_history'):
                 from scripts.fubon_api_provider import fubon_provider
                 qs = urllib.parse.parse_qs(parsed.query)
@@ -376,7 +376,11 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                     days = max(1, min(14, int((qs.get('days', ['5'])[0]))))
                 except ValueError:
                     days = 5
-                res_data = {"symbol": symbol, "bars": fubon_provider.get_momentum_history(symbol, days), "ts": time.time()}
+                try:
+                    tf = max(1, min(240, int(qs.get('tf', ['30'])[0])))
+                except ValueError:
+                    tf = 30
+                res_data = {"symbol": symbol, "tf_minutes": tf, "bars": fubon_provider.get_momentum_history(symbol, days, tf), "ts": time.time()}
                 body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json; charset=utf-8')

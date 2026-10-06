@@ -100,13 +100,14 @@ class FubonAPIProvider:
         self._trades_last_serial = {}  # symbol -> serial of the last trades frame, to drop exact replays
         self._trades_logged_raw = set()  # symbols we've logged one raw message for, for schema verification
         self._TRADES_LOG_MAXLEN = 20000  # ~a session's worth of prints per symbol; bounded so memory can't grow unbounded
-        # 大戶散戶動能 30 分 bar 歷史：每 15 秒把「進行中的 bar」存進記憶體並每 60 秒寫檔，重開機後可讀回。
+        # 大戶散戶動能 1 分鐘歷史（可合成 5／15／30 分）：每 15 秒更新「進行中的分鐘」並每 60 秒寫檔，重開機後可讀回。
         # 檔案放在 repo 外（預設 ~/.txo_momentum_history，可用 MOMENTUM_HISTORY_DIR 覆蓋），避免被 git add 進公開倉庫。
         # 只存真實收到的資料；沒開機／沒連線的時段不會補值。
-        self._mom_hist = {}   # alias -> {bar_start_ts(int): {'t','big','retail','mkt','n'}}
+        self._mom_hist = {}   # alias -> {minute_start_ts(int): 1 分鐘紀錄（欄位見 record_momentum_bars）}
+        self._mom_hist_dirty = set()
         self._mom_hist_lock = threading.Lock()
-        self._mom_hist_dir = os.getenv("MOMENTUM_HISTORY_DIR") or os.path.join(os.path.expanduser("~"), ".txo_momentum_history")
-        self._mom_hist_keep_days = 14
+        self._mom_hist_dir = os.getenv("MOMENTUM_HISTORY_DIR") or os.path.join(os.path.expanduser("~"), ".txo_momentum_1m")
+        self._mom_hist_keep_days = 5   # 1 分鐘資料量大，只留 5 天
         self._mom_hist_started = False
 
         # Real Cumulative Volume Delta (CVD) — signed-volume running total built tick-by-tick
@@ -726,36 +727,91 @@ class FubonAPIProvider:
         self._mom_hist[alias] = bars
 
     def record_momentum_bars(self):
-        """Snapshot the in-progress 30-minute bar of every subscribed symbol into the history store."""
+        """
+        每 15 秒呼叫：更新目前與上一個「分鐘」的紀錄（買賣筆數／口數由 trades_log 重算，重複呼叫結果相同）。
+        欄位：t 分鐘起點、bid／ask 該分鐘最後一次五檔買／賣量合計、bid_avg／ask_avg 該分鐘內快照平均、
+        big=bid-ask（與 get_momentum_bar_30m 同定義）、buy_n／sell_n 買／賣筆數、buy_v／sell_v 買／賣口數、n 成交筆數。
+        只存真實收到的資料；沒連線的分鐘不會補值。
+        """
+        now = time.time()
+        cur = int(now - now % 60)
         with self._mom_hist_lock:
             for alias in list(self._books_subscribed):
-                bar = self.get_momentum_bar_30m(alias)
-                if not bar:
+                book = self.books_cache.get(alias)
+                if not book:
                     continue
                 self._mom_hist_load(alias)
-                t = int(bar['bar_start_ts'])
-                self._mom_hist[alias][t] = {'t': t, 'big': bar['big_order_diff'], 'retail': bar['retail_trade_count_diff'],
-                                            'mkt': bar['market_order_diff'], 'n': bar['trade_count_in_bar']}
+                hist = self._mom_hist[alias]
+                bid = sum(l['size'] for l in book.get('bids', []))
+                ask = sum(l['size'] for l in book.get('asks', []))
+                for t in (cur - 60, cur):
+                    trades = [x for x in self.get_recent_trades(alias, since_ts=t) if x['ts'] < t + 60]
+                    rec = hist.get(t)
+                    if t == cur:
+                        if rec is None:
+                            rec = {'t': t, 'bid': bid, 'ask': ask, 'bid_avg': bid, 'ask_avg': ask, 'snaps': 1}
+                        else:
+                            k = rec.get('snaps', 1)
+                            rec['bid_avg'] = (rec['bid_avg'] * k + bid) / (k + 1)
+                            rec['ask_avg'] = (rec['ask_avg'] * k + ask) / (k + 1)
+                            rec['snaps'] = k + 1
+                            rec['bid'], rec['ask'] = bid, ask
+                    elif rec is None:
+                        continue   # 上一分鐘沒有任何快照（服務當時沒在跑）就不補
+                    rec['big'] = rec['bid'] - rec['ask']
+                    rec['buy_n'] = sum(1 for x in trades if x['side'] == 'buy')
+                    rec['sell_n'] = sum(1 for x in trades if x['side'] == 'sell')
+                    rec['buy_v'] = sum(x['size'] for x in trades if x['side'] == 'buy')
+                    rec['sell_v'] = sum(x['size'] for x in trades if x['side'] == 'sell')
+                    rec['n'] = len(trades)
+                    hist[t] = rec
+                self._mom_hist_dirty.add(alias)
 
     def save_momentum_history(self):
         import json as _json
         cutoff = time.time() - self._mom_hist_keep_days * 86400
         with self._mom_hist_lock:
             os.makedirs(self._mom_hist_dir, exist_ok=True)
-            for alias, bars in self._mom_hist.items():
-                rows = sorted((b for b in bars.values() if b['t'] >= cutoff), key=lambda b: b['t'])
+            for alias in list(self._mom_hist_dirty):
+                rows = sorted((b for b in self._mom_hist[alias].values() if b['t'] >= cutoff), key=lambda b: b['t'])
+                self._mom_hist[alias] = {b['t']: b for b in rows}
                 tmp = self._mom_hist_path(alias) + ".tmp"
                 with open(tmp, "w", encoding="utf-8") as f:
-                    _json.dump(rows, f)
+                    _json.dump(rows, f, separators=(',', ':'))
                 os.replace(tmp, self._mom_hist_path(alias))
+            self._mom_hist_dirty.clear()
 
-    def get_momentum_history(self, symbol, days=5):
-        """Saved + in-memory 30-min bars for `symbol` (UI code or alias) of the last `days` days, oldest first."""
+    def get_momentum_history(self, symbol, days=5, tf_minutes=30):
+        """
+        1 分鐘紀錄合成 tf_minutes 分鐘的 bar（oldest first）。合成規則：big／bid／ask＝該 bar 最後一分鐘的快照
+        （與即時 30 分 bar 同定義）、bid_avg／ask_avg＝各分鐘平均再平均、買賣筆數與口數＝加總；
+        retail＝buy_n−sell_n、mkt＝big（與即時端點一致，來源相同）。
+        """
         alias = self.CVD_SYMBOL_ALIAS.get(symbol, symbol)
+        tf_sec = max(1, int(tf_minutes)) * 60
         with self._mom_hist_lock:
             self._mom_hist_load(alias)
             cutoff = time.time() - days * 86400
-            return sorted((b for b in self._mom_hist[alias].values() if b['t'] >= cutoff), key=lambda b: b['t'])
+            rows = sorted((b for b in self._mom_hist[alias].values() if b['t'] >= cutoff and 'buy_n' in b), key=lambda b: b['t'])
+        out = {}
+        for r in rows:
+            k = int(r['t'] // tf_sec * tf_sec)
+            g = out.get(k)
+            if g is None:
+                g = out[k] = {'t': k, 'buy_n': 0, 'sell_n': 0, 'buy_v': 0, 'sell_v': 0, 'n': 0, '_ba': 0.0, '_aa': 0.0, '_m': 0}
+            g['buy_n'] += r['buy_n']; g['sell_n'] += r['sell_n']
+            g['buy_v'] += r['buy_v']; g['sell_v'] += r['sell_v']; g['n'] += r['n']
+            g['_ba'] += r['bid_avg']; g['_aa'] += r['ask_avg']; g['_m'] += 1
+            g['bid'], g['ask'], g['big'] = r['bid'], r['ask'], r['big']
+        res = []
+        for k in sorted(out):
+            g = out[k]
+            m = g.pop('_m'); ba = g.pop('_ba'); aa = g.pop('_aa')
+            g['bid_avg'] = round(ba / m, 2); g['ask_avg'] = round(aa / m, 2)
+            g['retail'] = g['buy_n'] - g['sell_n']
+            g['mkt'] = g['big']
+            res.append(g)
+        return res
 
     def start_momentum_recorder(self):
         """Idempotent: background thread that records every 15 s and saves to disk every 60 s."""
