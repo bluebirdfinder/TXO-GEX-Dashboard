@@ -1053,8 +1053,16 @@ function populateKeyMetrics5Day() {
         mmMain = `<span style="font-size: 0.78rem; padding: 2px 6px; border-radius: 4px; background: rgba(255, 215, 0, 0.08); color: #ffd700; font-weight: 600; border: 1px dashed rgba(255, 215, 0, 0.4); display: inline-block; white-space: nowrap;">未公布 <span style="font-size: 0.72rem; opacity: 0.85;">(約20:30~21:00實時連線)</span></span>`;
         mmSub = `<div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 2px;">TWSE 盤後清算中</div>`;
       } else if (s.margin_maint_market === null || s.margin_maint_market === undefined) {
-        mmMain = `<span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">—</span>`;
-        mmSub = `<div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 2px;">融資餘額數據暫時無法取得</div>`;
+        // 證交所不公布全市場整戶維持率，本站不推算（2026-10-06 起）；改顯示證交所真實的融資餘額與增減
+        const balB = s.margin_balance_billion;
+        mmMain = (typeof balB === 'number')
+          ? `<span style="font-size: 0.82rem; color: #cbd5e1; font-weight: 700;" title="證交所信用交易統計：融資餘額">融資餘額 ${balB.toLocaleString(undefined, { maximumFractionDigits: 1 })} 億</span>`
+          : `<span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">—</span>`;
+        mmSub = `<div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 2px;" title="證交所不公布全市場整戶維持率，本站不推算">證交所未公布維持率，不估算</div>`;
+        if (typeof s.margin_bal_1d_chg_pct === 'number') {
+          const d1 = s.margin_bal_1d_chg_pct;
+          mmSub += `<div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;" title="真實TWSE融資餘額日增減率">${d1 > 0.5 ? '📈' : (d1 < -0.5 ? '📉' : '➡️')} 餘額${d1 >= 0 ? '+' : ''}${d1.toFixed(1)}%</div>`;
+        }
       } else {
         const mmMarket = s.margin_maint_market;
         const mmStock = s.margin_maint_stock;
@@ -2379,7 +2387,7 @@ function populateStockFutures() {
         ? `<span class="badge" style="background: rgba(0, 230, 118, 0.2); color: #00e676;">🟢 ${basis.toFixed(2)} (逆價差)</span>`
         : `<span class="badge" style="background: rgba(255, 255, 255, 0.1); color: #aaa;">0.00 (平價差)</span>`);
 
-    const spotVol = item.spot_volume || item.volume || 1000;
+    const spotVol = (item.spot_volume === undefined || item.spot_volume === null) ? null : item.spot_volume;   // 沒有官方現貨成交量就顯示 —，不用期貨量或假數字頂替
     const spotInstNet = item.spot_inst_net !== undefined ? item.spot_inst_net : (item.foreign_net || 0);
     const futVol = item.fut_volume || item.volume || 0;
     const top10NetOi = item.top10_net_oi !== undefined ? item.top10_net_oi : ((item.foreign_net || 0) + (item.dealer_net || 0));
@@ -2395,6 +2403,8 @@ function populateStockFutures() {
       intentBadgeHtml = `<span class="badge" style="background: rgba(255, 215, 0, 0.25); color: var(--gold-accent); border: 1px solid rgba(255, 215, 0, 0.45); font-weight: 700; padding: 4px 8px;">🛡️ 對沖避險</span>`;
     } else if (intentTag.includes('基差套利') || intentTag.includes('套利')) {
       intentBadgeHtml = `<span class="badge" style="background: rgba(0, 210, 255, 0.25); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.45); font-weight: 700; padding: 4px 8px;">⚡ 基差套利</span>`;
+    } else if (intentTag.includes('資料不足')) {
+      intentBadgeHtml = `<span class="badge" style="background: rgba(255, 255, 255, 0.04); color: #777; padding: 4px 8px;" title="缺少官方大戶或三大法人資料，不判斷">⚪ 資料不足</span>`;
     } else {
       intentBadgeHtml = `<span class="badge" style="background: rgba(255, 255, 255, 0.08); color: #aaa; padding: 4px 8px;">⚖️ 觀望分歧</span>`;
     }
@@ -2464,7 +2474,7 @@ function populateStockFutures() {
       <td>${intentBadgeHtml}</td>
       <td>${itBadgeHtml}</td>
       <td style="font-weight: 600;">${spotPrice.toFixed(2)}</td>
-      <td>${spotVol.toLocaleString()}</td>
+      <td>${spotVol === null ? '<span style="color:#666;">—</span>' : spotVol.toLocaleString()}</td>
       <td>
         <div style="color: ${spotInstNet >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 700;">${spotNetSign}${spotInstNet.toLocaleString()}</div>
         ${spotSubChips}
@@ -2472,7 +2482,7 @@ function populateStockFutures() {
       <td style="font-weight: 600;">${futPrice.toFixed(2)}</td>
       <td>${fmtPctCell(item.fut_chg_pct)}</td>
       <td>${item.amplitude_pct === undefined || item.amplitude_pct === null ? '<span style="color:#666;">—</span>' : item.amplitude_pct.toFixed(2) + '%'}</td>
-      <td>${futVol.toLocaleString()}${fmtDeltaSub(item.fut_vol_chg)}</td>
+      <td>${(item.fut_oi === undefined || item.fut_oi === null) && !item.has_night ? '<span style="color:#666;" title="此契約不在期交所股期行情表，沒有可核對的官方成交量">—</span>' : futVol.toLocaleString() + fmtDeltaSub(item.fut_vol_chg)}</td>
       <td>${item.fut_oi === undefined || item.fut_oi === null ? '<span style="color:#666;">—</span>' : item.fut_oi.toLocaleString() + fmtDeltaSub(item.fut_oi_chg)}</td>
       <td>${basisBadge}</td>
       <td>

@@ -435,8 +435,11 @@ def fetch_twse_margin_maintenance(target_date_str=None, spot_change_pct=None):
 
                         # Collateral value scales with the real index move; a growing margin
                         # balance (more new debt against the same collateral) thins the ratio.
-                        maint_market = round(anchor_market * (1 + idx_pct / 100.0) / (1 + bal_chg_pct / 100.0), 1)
-                        maint_stock = round(anchor_stock * (1 + idx_pct / 100.0) / (1 + bal_chg_pct / 100.0), 1)
+                        # 2026-10-06：不再輸出「維持率」數字。證交所從不公布全市場整戶維持率，舊做法是從寫死的起點
+                        # （160%／145%）依指數與融資餘額變動往後滾動推算——整串數字的源頭是編造的，畫面上卻配「安定／警戒／斷頭洗盤」
+                        # 徽章，看起來像官方數據（違反 AGENTS.md 紅線 6）。只保留證交所真實的融資餘額與增減。
+                        maint_market = None
+                        maint_stock = None
 
                         snap_key = f"{MARGIN_MAINT_SNAPSHOT_KEY_PREFIX}_{target_date_str}"
                         snaps[snap_key] = {"margin_maint_market": maint_market, "margin_maint_stock": maint_stock}
@@ -758,7 +761,7 @@ def fetch_twse_stock_spot_prices():
                 for code, q in quotes.items():
                     close_p = float(q.get("close", 0.0) or 0.0)
                     chg_pct = float(q.get("pct_change", 0.0) or 0.0)
-                    vol = int(q.get("volume", 1000) or 1000)
+                    vol = int(q.get("volume") or 0)   # 沒有成交量就是 0，不放 1000 之類的假數字
                     if close_p > 0 and code not in ("TXF", "MXF", "TMF", "TWN"):
                         stock_spot_dict[code] = {"price": close_p, "change_pct": chg_pct, "volume": vol}
             if len(stock_spot_dict) > 100:
@@ -806,7 +809,7 @@ def fetch_twse_stock_spot_prices():
                     close_p = float(val.replace(',', ''))
                     y_p = float(y_val.replace(',', '')) if (y_val and y_val != '-') else close_p
                     chg_pct = round(((close_p - y_p) / y_p * 100), 2) if y_p > 0 else 0.0
-                    stock_spot_dict[code] = {"price": close_p, "change_pct": chg_pct, "volume": 10000}
+                    stock_spot_dict[code] = {"price": close_p, "change_pct": chg_pct, "volume": None}   # MIS 備援沒有可靠的當日成交量，不填假數字
             if len(stock_spot_dict) > 0:
                 print(f"[OK] Loaded {len(stock_spot_dict)} key stock spot prices (Tier 2 TWSE MIS)")
                 return stock_spot_dict
@@ -1039,8 +1042,9 @@ def fetch_taifex_official_stock_futures():
                 if len(cols) >= 4 and cols[0].isdigit():
                     fut_sym = cols[1]       # e.g. DFF, CDF
                     stk_code = cols[2]      # e.g. 1101, 2330
+                    is_mini = '小型' in cols[3]   # 官方簡稱「小型台積電期貨」＝小型契約（QFF）；本專案目錄用「代號＋F」（2330F）
                     stk_name = cols[3].replace('期貨', '').replace('期', '') # e.g. 台泥, 台積電
-                    symbol_map[fut_sym] = {'code': stk_code, 'name': stk_name}
+                    symbol_map[fut_sym] = {'code': stk_code + ('F' if is_mini else ''), 'name': stk_name}
     except Exception as e:
         print(f"[Warning] TAIFEX Stock Futures symbol map error: {e}")
 
@@ -1342,12 +1346,15 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         friday_gex.append({"strike": K, "call_gex": round(c_gex_f, 2), "put_gex": round(p_gex_f, 2), "net_gex": round(c_gex_f + p_gex_f, 2)})
         monthly_gex.append({"strike": K, "call_gex": round(c_gex_m, 2), "put_gex": round(p_gex_m, 2), "net_gex": round(c_gex_m + p_gex_m, 2)})
 
-        total_loss = 0.0
-        for S_target in strikes:
-            c_loss = max(0, S_target - K) * (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
-            p_loss = max(0, K - S_target) * (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
-            total_loss += (c_loss + p_loss)
-        strike_losses[K] = total_loss
+    # Max Pain（最大痛點）：只取決於「真實未平倉」，必須用全部履約價計算，不可只看現價上下 ±900 點的窗口——
+    # 窗口邊界會把答案拉向邊緣、還會隨現價改變（2026-10-06 實測：同一份 OI，現價 49,822 算出 50,550，
+    # 現價 50,136 算出 50,950，而官方 OI 全履約價重算是 49,000）。這裡與 GEX 同樣只計 w1/w2/fri/mth 四個週別。
+    if option_chain:
+        _pain_ks = sorted(option_chain.keys())
+        _C = {k: sum(option_chain[k].get(f'call_oi_{x}', 0) for x in ('w1', 'w2', 'fri', 'mth')) for k in _pain_ks}
+        _P = {k: sum(option_chain[k].get(f'put_oi_{x}', 0) for x in ('w1', 'w2', 'fri', 'mth')) for k in _pain_ks}
+        for S_target in _pain_ks:
+            strike_losses[S_target] = sum(max(0, S_target - k) * _C[k] + max(0, k - S_target) * _P[k] for k in _pain_ks)
 
     max_pain_k = min(strike_losses, key=strike_losses.get) if strike_losses else base_strike
 
@@ -2591,9 +2598,20 @@ def fetch_official_taifex_retail_sentiment():
     if mtx_ratio is None or tmf_ratio is None:
         mtx_line = "小台/微台散戶多空比數據暫時無法取得。"
     else:
-        mtx_line = f"小台散戶多空比為 <span style=\"color: {mtx_col}; font-weight:700;\">{mtx_ratio:+.2f}%</span>（全月合計未沖銷契約數為基準，淨部位 {mtx_r_net:+,} 口／近月單一契約月基準 {mtx_near_ratio:+.2f}%），微台多空比為 <span style=\"color: {tmf_col}; font-weight:700;\">{tmf_ratio:+.2f}%</span>（淨部位 {tmf_r_net:+,} 口／近月單一契約月基準 {tmf_near_ratio:+.2f}%）。散戶部位維持強烈偏多姿態。"
-    vix_line = (f"台指 VIX 波動率指數最新為 <span style=\"color: #00e676; font-weight:700;\">{vix_idx:.2f}</span> ({vix_chg:+.2f})，市場恐慌情緒整體平穩，做市商對沖與避險牆維繫常態震盪防守。"
-                if vix_idx is not None else "VIX 波動率指數暫時無法取得。")
+        mtx_line = f"小台散戶多空比為 <span style=\"color: {mtx_col}; font-weight:700;\">{mtx_ratio:+.2f}%</span>（全月合計未沖銷契約數為基準，淨部位 {mtx_r_net:+,} 口／近月單一契約月基準 {mtx_near_ratio:+.2f}%），微台多空比為 <span style=\"color: {tmf_col}; font-weight:700;\">{tmf_ratio:+.2f}%</span>（淨部位 {tmf_r_net:+,} 口／近月單一契約月基準 {tmf_near_ratio:+.2f}%）。小台：{mtx_sentiment_tag}；微台：{tmf_sentiment_tag}。"
+    # 敘述必須依 VIX 實際水位（與頁面上的四級對照一致：<14 極度平靜、14~18 常態溫和、18~22 恐慌升溫、>22 極度恐慌）
+    if vix_idx is None:
+        vix_line = "VIX 波動率指數暫時無法取得。"
+    else:
+        if vix_idx < 14.0:
+            _vx_txt, _vx_col = "市場極度平靜，權利金壓縮", "#00e676"
+        elif vix_idx < 18.0:
+            _vx_txt, _vx_col = "市場情緒常態溫和", "#00b0ff"
+        elif vix_idx < 22.0:
+            _vx_txt, _vx_col = "市場恐慌升溫，避險需求增加", "#ffd700"
+        else:
+            _vx_txt, _vx_col = "市場處於極度恐慌區（VIX 高於 22）", "#ff5252"
+        vix_line = f"台指 VIX 波動率指數最新為 <span style=\"color: {_vx_col}; font-weight:700;\">{vix_idx:.2f}</span> ({vix_chg:+.2f})，{_vx_txt}。"
     sentiment_summary_html = f"""
     <p style="margin-bottom: 6px;">&#128161; <strong>散戶籌碼動向</strong>：{mtx_line}</p>
     <p style="margin-bottom: 0;">&#9878; <strong>外資與 VIX 波動度觀測</strong>：{vix_line}</p>
@@ -2703,70 +2721,55 @@ def fetch_official_taifex_specific_traders(lt_inst, fut_inst):
 
 # ==============================================================================
 def calculate_dynamic_sector_rotation(stock_futures, now_dt):
-    semicon_codes = {"2330", "2330F", "2454", "2303", "3711", "3037", "2379", "3443", "6669"}
-    ai_server_codes = {"2317", "2382", "3231", "2356", "6669", "2301", "3017", "2376"}
-    leo_sat_codes = {"3491", "6285", "2312", "2313", "3596", "5388"}
-    green_solar_codes = {"1519", "1503", "1513", "1514", "9958", "6443", "3576", "2406"}
-    shipping_codes = {"2603", "2609", "2615", "2637", "2605", "2618", "2610", "2606"}
-    construction_codes = {"2542", "2522", "2548", "2501", "2545", "2524", "2511", "2535"}
-    military_bio_codes = {"8033", "2634", "6753", "6446", "1795", "6472", "4743"}
-    financial_trad_codes = {"2881", "2882", "2891", "2886", "2884", "2885", "2892", "2002", "1301", "1303"}
+    """8 大主題族群的個股期貨「漲跌幅平均」與「成交值占比」。
 
-    semi_chgs, semi_names, semi_intents = [], [], []
-    ai_chgs, ai_names, ai_intents = [], [], []
-    leo_chgs, leo_names, leo_intents = [], [], []
-    green_chgs, green_names, green_intents = [], [], []
-    ship_chgs, ship_names, ship_intents = [], [], []
-    const_chgs, const_names, const_intents = [], [], []
-    mili_bio_chgs, mili_bio_names, mili_bio_intents = [], [], []
-    fin_chgs, fin_names, fin_intents = [], [], []
+    2026-10-06 重寫：舊版的 share_pct 是寫死的比例（38/16/6.5/…，加總剛好 100），族群查無成員時還用寫死的假漲跌幅
+    （半導體 +1.20、生技軍工 +3.20…）頂替，兩者都不是資料。現在：
+      - change_pct：族群內「標準契約」個股期貨漲跌幅的簡單平均（小型契約是同一檔標的，不重複計入）；查無成員 → "—"。
+      - share_pct：族群個股期貨成交值（口數 × 近月收盤價 × 契約單位）占全部個股期貨成交值的比例，
+        契約單位依期交所規格：個股期貨 2000 股、小型 100 股、ETF 期貨 10000 份、小型 ETF 1000 份；查無成員 → 0。
+    族群分類（哪些股票歸哪一組）是本專案自訂的主題分類，不是證交所產業別。
+    """
+    GROUPS = [
+        ("semicon_tech", "💻 半導體與晶圓代工", {"2330", "2330F", "2454", "2303", "3711", "3037", "2379", "3443", "6669"}, ("台積電", "聯發科", "聯電")),
+        ("ai_servers", "🤖 AI 伺服器與組裝代工", {"2317", "2382", "3231", "2356", "6669", "2301", "3017", "2376"}, ("鴻海", "廣達", "緯創")),
+        ("leo_satellites", "📡 低軌衛星與網通航太", {"3491", "6285", "2312", "2313", "3596", "5388"}, ("昇達科", "啟碁", "華通")),
+        ("green_power", "⚡ 重電綠能與儲能太陽能", {"1519", "1503", "1513", "1514", "9958", "6443", "3576", "2406"}, ("華城", "士電", "中興電", "元晶")),
+        ("maritime_shipping", "🚢 航運物流與水路運輸", {"2603", "2609", "2615", "2637", "2605", "2618", "2610", "2606"}, ("長榮", "萬海", "陽明", "慧洋")),
+        ("construction_realty", "🏢 營建資產與房產建商", {"2542", "2522", "2548", "2501", "2545", "2524", "2511", "2535"}, ("興富發", "遠雄", "國建", "華固", "長虹")),
+        ("biotech_defense", "🧬 生技醫療與軍工防衛", {"8033", "2634", "6753", "6446", "1795", "6472", "4743"}, ("雷虎", "漢翔", "藥華藥", "美時")),
+        ("financials_trad", "🏦 金融金控與傳產原物料", {"2881", "2882", "2891", "2886", "2884", "2885", "2892", "2002", "1301", "1303"}, ("富邦金", "國泰金", "中信金")),
+    ]
+    UNIT = {"個股期貨": 2000, "小型個股期貨": 100, "ETF期貨": 10000, "小型ETF期貨": 1000}
+    acc = {g[0]: {"chgs": [], "intents": [], "stocks": [], "value": 0.0} for g in GROUPS}
+    total_value = 0.0
 
     for stk in (stock_futures or []):
         code = stk.get('code', '')
-        name = stk.get('name', '')
-        chg = stk.get('change_pct', 0.0)
-        intent = stk.get('intent_tag', '')
-        clean_name = name.replace("期貨", "").replace("個股期", "")
+        base_code = code[:-1] if (code.endswith('F') and stk.get('category', '').startswith('小型')) else code
+        is_mini = base_code != code
+        clean_name = stk.get('name', '').replace("期貨", "").replace("個股期", "")
+        vol, px = stk.get('fut_volume'), stk.get('fut_price')
+        value = (vol * px * UNIT.get(stk.get('category'), 2000)) if isinstance(vol, (int, float)) and isinstance(px, (int, float)) else 0.0
+        total_value += value
+        for gid, _gname, codes, kws in GROUPS:
+            if base_code in codes or any(k in clean_name for k in kws):
+                a = acc[gid]
+                a["value"] += value
+                if not is_mini:
+                    a["chgs"].append(stk.get('change_pct', 0.0))
+                    if stk.get('intent_tag'):
+                        a["intents"].append(stk['intent_tag'])
+                    a["stocks"].append((vol or 0, clean_name))
+                break
 
-        if code in semicon_codes or '台積電' in clean_name or '聯發科' in clean_name or '聯電' in clean_name:
-            semi_chgs.append(chg)
-            if intent: semi_intents.append(intent)
-            if len(semi_names) < 3: semi_names.append(clean_name)
-        elif code in ai_server_codes or '鴻海' in clean_name or '廣達' in clean_name or '緯創' in clean_name:
-            ai_chgs.append(chg)
-            if intent: ai_intents.append(intent)
-            if len(ai_names) < 3: ai_names.append(clean_name)
-        elif code in leo_sat_codes or '昇達科' in clean_name or '啟碁' in clean_name or '華通' in clean_name:
-            leo_chgs.append(chg)
-            if intent: leo_intents.append(intent)
-            if len(leo_names) < 3: leo_names.append(clean_name)
-        elif code in green_solar_codes or '華城' in clean_name or '士電' in clean_name or '中興電' in clean_name or '元晶' in clean_name:
-            green_chgs.append(chg)
-            if intent: green_intents.append(intent)
-            if len(green_names) < 3: green_names.append(clean_name)
-        elif code in shipping_codes or '長榮' in clean_name or '萬海' in clean_name or '陽明' in clean_name or '慧洋' in clean_name:
-            ship_chgs.append(chg)
-            if intent: ship_intents.append(intent)
-            if len(ship_names) < 3: ship_names.append(clean_name)
-        elif code in construction_codes or '興富發' in clean_name or '遠雄' in clean_name or '國建' in clean_name or '華固' in clean_name or '長虹' in clean_name:
-            const_chgs.append(chg)
-            if intent: const_intents.append(intent)
-            if len(const_names) < 3: const_names.append(clean_name)
-        elif code in military_bio_codes or '雷虎' in clean_name or '漢翔' in clean_name or '藥華藥' in clean_name or '美時' in clean_name:
-            mili_bio_chgs.append(chg)
-            if intent: mili_bio_intents.append(intent)
-            if len(mili_bio_names) < 3: mili_bio_names.append(clean_name)
-        elif code in financial_trad_codes or '富邦金' in clean_name or '國泰金' in clean_name or '中信金' in clean_name:
-            fin_chgs.append(chg)
-            if intent: fin_intents.append(intent)
-            if len(fin_names) < 3: fin_names.append(clean_name)
-
-    def calc_stat(arr, intents, default_chg):
-        avg = round(sum(arr)/len(arr), 2) if arr else default_chg
+    def calc_stat(arr, intents):
+        if not arr:
+            return "—", "⚪ 無資料", "var(--gold-accent)"
+        avg = round(sum(arr) / len(arr), 2)
         bull_count = sum(1 for it in intents if '真看多' in it)
         bear_count = sum(1 for it in intents if '真看空' in it)
         hedge_count = sum(1 for it in intents if '避險' in it)
-
         if avg > 1.0 or bull_count >= 2:
             status, color = "🔥 買盤點火狂拉", "var(--call-color)"
         elif avg > 0.2:
@@ -2781,92 +2784,25 @@ def calculate_dynamic_sector_rotation(stock_futures, now_dt):
             status, color = "⚖️ 資金平穩觀望", "var(--gold-accent)"
         return f"{'+' if avg >= 0 else ''}{avg:.1f}%", status, color
 
-    semi_chg_str, semi_status, semi_color = calc_stat(semi_chgs, semi_intents, 1.20)
-    ai_chg_str, ai_status, ai_color = calc_stat(ai_chgs, ai_intents, 0.85)
-    leo_chg_str, leo_status, leo_color = calc_stat(leo_chgs, leo_intents, 1.45)
-    green_chg_str, green_status, green_color = calc_stat(green_chgs, green_intents, -0.40)
-    ship_chg_str, ship_status, ship_color = calc_stat(ship_chgs, ship_intents, 1.60)
-    const_chg_str, const_status, const_color = calc_stat(const_chgs, const_intents, 0.75)
-    mili_bio_chg_str, mili_bio_status, mili_bio_color = calc_stat(mili_bio_chgs, mili_bio_intents, 3.20)
-    fin_chg_str, fin_status, fin_color = calc_stat(fin_chgs, fin_intents, -0.40)
-
+    sectors = []
+    for gid, gname, _codes, _kws in GROUPS:
+        a = acc[gid]
+        chg_str, status, color = calc_stat(a["chgs"], a["intents"])
+        top = [n for _v, n in sorted(a["stocks"], key=lambda t: -t[0])[:3]]
+        sectors.append({
+            "name": gname,
+            "code": gid,
+            "share_pct": round(a["value"] / total_value * 100, 1) if total_value > 0 else 0.0,
+            "change_pct": chg_str,
+            "status": status,
+            "color": color,
+            "top_stocks": top,
+        })
     return {
-        "title": "📊 證交所 33 大產業歸納 8 大精準主題資金輪動矩陣",
+        "title": "📊 8 大主題族群個股期貨資金輪動矩陣",
+        "note": "占比＝族群個股期貨成交值（口數×近月收盤價×契約單位）占全部個股期貨成交值的比例，由期交所官方成交量估算；漲跌幅為族群內標準契約的簡單平均；主題分類為本專案自訂，不是證交所產業別。",
         "last_updated": now_dt.strftime("%Y-%m-%d %H:%M"),
-        "sectors": [
-            {
-                "name": "💻 半導體與晶圓代工",
-                "code": "semicon_tech",
-                "share_pct": 38.0,
-                "change_pct": semi_chg_str,
-                "status": semi_status,
-                "color": semi_color,
-                "top_stocks": semi_names if semi_names else ["台積電", "聯發科", "聯電"]
-            },
-            {
-                "name": "🤖 AI 伺服器與組裝代工",
-                "code": "ai_servers",
-                "share_pct": 16.0,
-                "change_pct": ai_chg_str,
-                "status": ai_status,
-                "color": ai_color,
-                "top_stocks": ai_names if ai_names else ["鴻海", "廣達", "緯創"]
-            },
-            {
-                "name": "📡 低軌衛星與網通航太",
-                "code": "leo_satellites",
-                "share_pct": 6.5,
-                "change_pct": leo_chg_str,
-                "status": leo_status,
-                "color": leo_color,
-                "top_stocks": leo_names if leo_names else ["昇達科", "啟碁", "華通"]
-            },
-            {
-                "name": "⚡ 重電綠能與儲能太陽能",
-                "code": "green_power",
-                "share_pct": 7.5,
-                "change_pct": green_chg_str,
-                "status": green_status,
-                "color": green_color,
-                "top_stocks": green_names if green_names else ["華城", "士電", "中興電", "元晶"]
-            },
-            {
-                "name": "🚢 航運物流與水路運輸",
-                "code": "maritime_shipping",
-                "share_pct": 9.5,
-                "change_pct": ship_chg_str,
-                "status": ship_status,
-                "color": ship_color,
-                "top_stocks": ship_names if ship_names else ["長榮", "萬海", "陽明", "慧洋-KY"]
-            },
-            {
-                "name": "🏢 營建資產與房產建商",
-                "code": "construction_realty",
-                "share_pct": 6.5,
-                "change_pct": const_chg_str,
-                "status": const_status,
-                "color": const_color,
-                "top_stocks": const_names if const_names else ["興富發", "遠雄", "國建", "華固"]
-            },
-            {
-                "name": "🧬 生技醫療與軍工防衛",
-                "code": "biotech_defense",
-                "share_pct": 5.5,
-                "change_pct": mili_bio_chg_str,
-                "status": mili_bio_status,
-                "color": mili_bio_color,
-                "top_stocks": mili_bio_names if mili_bio_names else ["藥華藥", "美時", "雷虎", "漢翔"]
-            },
-            {
-                "name": "🏦 金融金控與傳產原物料",
-                "code": "financials_trad",
-                "share_pct": 10.5,
-                "change_pct": fin_chg_str,
-                "status": fin_status,
-                "color": fin_color,
-                "top_stocks": fin_names if fin_names else ["富邦金", "國泰金", "中信金", "中鋼"]
-            }
-        ]
+        "sectors": sectors
     }
 
 # ==============================================================================
@@ -3632,10 +3568,30 @@ def generate_gex_payload():
 
     # Build All Stock Futures from TAIFEX Official Market Data + Catalog + TWSE Spot Prices + Ex-Dividend Schedule
     stock_spot_dict = fetch_twse_stock_spot_prices()
-    catalog_270 = load_taifex_270_catalog()
     ex_div_dict = fetch_twse_ex_dividend_schedule()
     taifex_stk_dict = fetch_taifex_official_stock_futures()
     taifex_night_dict = fetch_taifex_official_night_stock_futures()
+
+    # 契約清單：以期交所官方「股票期貨／ETF 期貨保證金」清單為準（含標準與小型契約），
+    # taifex_catalog.json 只當作補充資料（分類、夜盤、流動性標籤）。2026-10-06 對帳發現舊的靜態目錄
+    # 有 8 檔官方根本沒有的「小型」契約（小型鴻海、廣達、長榮、富邦金、國泰金、欣興、緯創、00878），
+    # 並漏掉官方實際存在的 43 檔（多為小型契約），中光電也已更名為中光電投控。
+    _catalog_meta = {x['code']: x for x in (load_taifex_270_catalog() or [])}
+    catalog_270 = []
+    for _code, _info in taifex_stk_dict.items():
+        _meta = _catalog_meta.get(_code, {})
+        _is_mini = _code.endswith('F')
+        _is_etf = (_code[:-1] if _is_mini else _code).startswith('00')
+        _cat = _meta.get('category') or (('小型ETF期貨' if _is_etf else '小型個股期貨') if _is_mini else ('ETF期貨' if _is_etf else '個股期貨'))
+        catalog_270.append({
+            'code': _code,
+            'name': _meta.get('name') or (_info['name'] + '期'),
+            'category': _cat,
+            'has_night': _meta.get('has_night', False),
+            'liquidity': _meta.get('liquidity', '中'),
+        })
+    if not catalog_270:
+        print("[Warning] TAIFEX official stock-futures list unavailable — stock futures table will be empty (no static catalog fallback: it contained contracts that do not exist).")
 
     raw_stock_futures = []
     NIGHT_SESSION_CODES = {"2330", "2330F", "2303", "0050", "0050F", "00679B"}
@@ -3661,7 +3617,7 @@ def generate_gex_payload():
                 fut_price = tf_price if (tf_price and tf_price > 0) else spot_p
 
             tf_data = taifex_stk_dict.get(code, {})
-            vol = (nq.get('volume') if nq else 0) or tf_data.get('total_vol') or twse_info.get('volume') or stk.get('volume', 1000)
+            vol = (nq.get('volume') if nq else 0) or tf_data.get('total_vol') or twse_info.get('volume') or stk.get('volume') or 0
             basis = round(fut_price - spot_p, 2)
 
             ex_info = ex_div_dict.get(code, {}) or ex_div_dict.get(lookup_code, {})
@@ -3679,12 +3635,12 @@ def generate_gex_payload():
             else:
                 point_contrib = round((spot_p * (chg_pct / 100.0)) * 0.1, 1)
 
-            spot_vol = twse_info.get('volume') or int(vol * 5)
+            spot_vol = twse_info.get('volume')   # 沒有官方現貨成交量就留空（畫面顯示 —），不再用「期貨量 × 5」估算
             if tf_data.get('in_stf') and not nq:
                 # 官方股期行情表有這檔：成交量就是官方數字（沒成交＝0），不可再拿現貨成交量頂替（2026-10-06 修正）
                 fut_vol = tf_data.get('total_vol', 0)
             else:
-                fut_vol = tf_data.get('total_vol') or (nq.get('volume') if nq else 0) or int(vol)
+                fut_vol = tf_data.get('total_vol') or (nq.get('volume') if nq else 0) or 0   # 沒有官方期貨成交量＝0（未知），不再拿現貨量頂替
 
             raw_stock_futures.append({
                 "code": code,
@@ -3802,7 +3758,12 @@ def generate_gex_payload():
             item["spot_data_unavailable"] = True
 
         # AI Quant Strategic Intent Diagnosis
-        if spot_inst_net >= 80 and top10_net_oi >= 50:
+        # 缺少官方期貨大戶或現貨法人資料時（上面都被填成 0），不能因為「數字是 0」就判成「觀望分歧」——
+        # 那會把「沒有資料」誤報成「有資料且分歧」（2026-10-06 對帳：76 檔屬此情況）。
+        if item.get("lt_data_unavailable") or item.get("spot_data_unavailable"):
+            intent_tag = "⚪ 資料不足"
+            intent_desc = "缺少官方大戶或三大法人資料，不判斷"
+        elif spot_inst_net >= 80 and top10_net_oi >= 50:
             intent_tag = "🔥 強勢真看多"
             intent_desc = "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)"
         elif spot_inst_net <= -80 and top10_net_oi <= -50:
@@ -4220,7 +4181,7 @@ def generate_gex_payload():
         ai_bullet_4 = "📅 <strong>近期除權息扣點校正與價差防守</strong>：目前追蹤個股期貨標的近期無即將除權息事件，暫無扣點價差需特別留意。"
 
     ai_ex_dividend_digest = {
-        "title": "🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描",
+        "title": "籌碼、價差與除權息事件量化焦點摘要（程式規則自動產生）",
         "compliance_note": "⚖️ 合規量化學理分析 (非個別證券建議)",
         "bullet_1": ai_bullet_1,
         "bullet_2": ai_bullet_2,
@@ -4470,6 +4431,10 @@ def generate_gex_payload():
             }
         ]
 
+        # 美國 NFP／CPI／ADP 發布日沒有可靠規則（BLS 官網擋機器人、規則推算在 2026 年 1、5 月就會錯，
+        # 例如 CPI 並非「每月 12 號」，10/12 還是美國聯邦假日），沒有官方來源就不顯示（2026-10-06）。
+        candidates = [c for c in candidates if c["id"] not in ("us_nfp_unemp", "us_cpi", "us_adp")]
+
         if witching_d:
             candidates.append({
                 "id": "us_quad_witching",
@@ -4592,124 +4557,49 @@ def generate_gex_payload():
 
         date_range_str = f"{mon.strftime('%Y.%m.%d')} – {fri.strftime('%m.%d')}"
 
-        # 3. Macro Event Detection for the 5-day window
-        has_nfp = any(d.weekday() == 4 and d.day <= 7 for d in [mon, tue, wed, thu, fri])
-        has_cpi = any(10 <= d.day <= 15 for d in [mon, tue, wed, thu, fri])
-        has_third_wed = any(d.weekday() == 2 and 15 <= d.day <= 21 for d in [mon, tue, wed, thu, fri])
-        has_msci = any((d.month in [2, 5, 8, 11] and d.day >= 25) for d in [mon, tue, wed, thu, fri])
-        has_semicon = (mon.month == 8 and mon.day == 31) or (mon.month == 9 and mon.day <= 7)
+        # 3. 只放「有官方規則或官方公告可核對」的事項（2026-10-06 重寫）：
+        #    - 台指週選／週五選／月選擇權結算日：期交所契約規格（每週三、每週五、每月第三個週三 13:30）
+        #    - 臺灣證交所休市日：data/tw_holidays.json
+        #    - FOMC 利率決議：聯準會官方日曆（fetch_fomc_meeting_dates）
+        #    不再放美國經濟數據發布日與個別公司財報：以前這裡用「日期 ≤ 7 號就是 ISM」之類的推測字串，
+        #    實際沒有接任何行事曆來源，卻標示「全自動對接國際財經日曆」，屬於憑空編造。
+        fomc_by_date = {}
+        try:
+            for meeting in fetch_fomc_meeting_dates():
+                d0 = meeting["rate_decision_date"]
+                twd_hour = 2 if (3 < d0.month < 11) else 3     # 美東 14:00 → 台北隔日 02:00（夏令）／03:00（冬令）
+                fomc_by_date[d0 + datetime.timedelta(days=1)] = twd_hour
+        except Exception as e:
+            print(f"[WeeklyFocus] FOMC calendar unavailable: {e}")
 
-        theme_items = []
-        if has_semicon:
-            theme_items.append("半導體展 (SEMICON)")
-        if has_nfp:
-            theme_items.append("美國大非農就業數據 (NFP)")
-        if has_cpi:
-            theme_items.append("美國 CPI 通膨數據")
-        if has_third_wed:
-            theme_items.append("台指期月合約大結算")
-        if has_msci:
-            theme_items.append("MSCI 季度調整甩尾")
+        def day_events(d):
+            dd = d.date() if hasattr(d, 'date') else d
+            ev = []
+            if not is_tw_trading_day(dd):
+                ev.append("休市（臺灣證交所休市日／週末）" if dd.weekday() < 5 else "週末休市")
+                return ev
+            if dd.weekday() == 2:
+                third = 15 <= dd.day <= 21
+                ev.append("台指期貨／選擇權每月結算日（13:30）" if third else "台指週三選擇權結算（13:30）")
+            if dd.weekday() == 4:
+                ev.append("台指週五選擇權結算（13:30）")
+            return ev
 
-        if not theme_items:
-            theme_items = ["重點科技財報週", "台指期貨與選擇權波動監測"]
-
-        theme_str = " ✕ ".join(theme_items)
-
-        # Mon
-        if has_msci:
-            mon_event = "MSCI 季度調整 ✕ 被動資金尾盤調節"
-            mon_cats = [
-                {"label": "載板", "type": "股票期貨", "symbols": "欣興 (3037)、景碩 (3189)、南電 (8046)"},
-                {"label": "記憶體", "type": "股票期貨", "symbols": "華邦電 (2344)、旺宏 (2337)、南亞科 (2408)"}
-            ]
-        else:
-            mon_event = "亞洲早盤開局 ✕ 國際熱錢與美元指數"
-            mon_cats = [
-                {"label": "權值股", "type": "股票期貨", "symbols": "台積電 (2330)、聯發科 (2454)、鴻海 (2317)"},
-                {"label": "微型期貨", "type": "國際期貨", "symbols": "微型那指 (MNQ)、微型標普 (MES)"}
-            ]
-
-        # Tue
-        if mon.day <= 7:
-            tue_event = "美國 ISM 製造業採購經理人指數"
-            tue_cats = [
-                {"label": "MNQ", "type": "微型那指期貨", "symbols": "NASDAQ 100 Micro (MNQ)"},
-                {"label": "MES", "type": "微型標普期貨", "symbols": "S&P 500 Micro (MES)"}
-            ]
-        elif has_cpi:
-            tue_event = "美國 CPI 發布前夕預期 ✕ 科技股情緒"
-            tue_cats = [
-                {"label": "AI伺服器", "type": "股票期貨", "symbols": "廣達 (2382)、緯創 (3231)、技嘉 (2376)"},
-                {"label": "MNQ", "type": "微型期貨", "symbols": "微型那指 (MNQ)"}
-            ]
-        else:
-            tue_event = "國際美債殖利率聯動 ✕ 科技晶片股期"
-            tue_cats = [
-                {"label": "MNQ", "type": "微型那指期貨", "symbols": "NASDAQ 100 Micro"},
-                {"label": "ASIC", "type": "股票期貨", "symbols": "世芯-KY (3661)、智原 (3035)、創意 (3443)"}
-            ]
-
-        # Wed
-        if has_semicon:
-            wed_event = "半導體展 (9/2-9/4) ✕ 戴爾 (Dell) 財報"
-            wed_cats = [
-                {"label": "設備股", "type": "股票期貨", "symbols": "弘塑 (3131)、辛耘 (3583)、萬潤 (6187)"},
-                {"label": "AI伺服器", "type": "股票期貨", "symbols": "鴻海 (2317)、廣達 (2382)、緯創 (3231)"}
-            ]
-        elif has_third_wed:
-            wed_event = "🏛️ 台指期貨 ✕ 選擇權 (TXF/TXO) 每月大結算日"
-            wed_cats = [
-                {"label": "TXF", "type": "台指期貨", "symbols": "台指期萬口未平倉轉倉換月"},
-                {"label": "TXO", "type": "選擇權", "symbols": "做市商結算磁吸與歸零效應"}
-            ]
-        else:
-            wed_event = "台指週選擇權結算 ✕ 美國 ADP 小非農"
-            wed_cats = [
-                {"label": "週選擇權", "type": "期權結算", "symbols": "TXO 週合約尾盤 13:00~13:30 結算"},
-                {"label": "半導體", "type": "股票期貨", "symbols": "台積電 (2330)、日月光投控 (3711)"}
-            ]
-
-        # Thu
-        if mon.day <= 7:
-            thu_event = "美國 ISM 非製造業指數 ✕ 博通(Broadcom)/HPE 財報"
-            thu_cats = [
-                {"label": "MNQ", "type": "微型那指期貨", "symbols": "NASDAQ 100 Micro (MNQ)"},
-                {"label": "ASIC", "type": "股票期貨", "symbols": "世芯-KY (3661)、智原 (3035)、創意 (3443)"}
-            ]
-        else:
-            thu_event = "美國每週初領失業金人數 ✕ 科技財報"
-            thu_cats = [
-                {"label": "MNQ", "type": "微型期貨", "symbols": "微型那斯達克 (MNQ)"},
-                {"label": "IC設計", "type": "股票期貨", "symbols": "聯發科 (2454)、瑞昱 (2379)、聯詠 (3034)"}
-            ]
-
-        # Fri
-        if has_nfp:
-            fri_event = "美國 8 月非農就業人口 (NFP) ✕ 失業率"
-            fri_cats = [
-                {"label": "MNQ", "type": "微型那指期貨", "symbols": "NASDAQ 100 Micro (MNQ)"},
-                {"label": "MES", "type": "微型標普期貨", "symbols": "S&P 500 Micro (MES)"}
-            ]
-        else:
-            fri_event = "美股週末持股避險 ✕ 夜盤流動性調節"
-            fri_cats = [
-                {"label": "MES", "type": "微型標普期貨", "symbols": "S&P 500 Micro (MES)"},
-                {"label": "大型權值", "type": "股票期貨", "symbols": "台積電 (2330)、鴻海 (2317)"}
-            ]
+        schedule = []
+        for label, d in (("週一", mon), ("週二", tue), ("週三", wed), ("週四", thu), ("週五", fri)):
+            evs = day_events(d)
+            dd = d.date() if hasattr(d, 'date') else d
+            for fd, hh in fomc_by_date.items():
+                if fd == dd:
+                    evs.append(f"聯準會 FOMC 利率決議（台灣時間 {dd.strftime('%m/%d')} {hh:02d}:00，美東前一日 14:00）")
+            schedule.append({"date": f"{d.strftime('%m/%d')} ({label})", "event": " ✕ ".join(evs) if evs else "無官方結算日或重大排程", "categories": []})
 
         return {
-            "title": "本週重大市場焦點週報 (全自動排程即時更新)",
-            "source": "國際總經焦點 ✕ 期交所官方日曆 (Python 自動化引擎)",
+            "title": "本週市場日曆（期交所結算日／休市日／FOMC）",
+            "source": "期交所契約規格、證交所休市日、聯準會官方日曆；不含美國經濟數據發布日與個別公司財報（尚未接入有官方來源的日曆）",
             "date_range": date_range_str,
-            "theme": theme_str,
-            "schedule": [
-                {"date": f"{mon.strftime('%m/%d')} (週一)", "event": mon_event, "categories": mon_cats},
-                {"date": f"{tue.strftime('%m/%d')} (週二)", "event": tue_event, "categories": tue_cats},
-                {"date": f"{wed.strftime('%m/%d')} (週三)", "event": wed_event, "categories": wed_cats},
-                {"date": f"{thu.strftime('%m/%d')} (週四)", "event": thu_event, "categories": thu_cats},
-                {"date": f"{fri.strftime('%m/%d')} (週五)", "event": fri_event, "categories": fri_cats},
-            ]
+            "theme": "",
+            "schedule": schedule
         }
 
     return {

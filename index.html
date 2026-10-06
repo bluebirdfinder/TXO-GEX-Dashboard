@@ -1217,7 +1217,7 @@
     <div id="key-metrics-5day-panel" class="panel watermark-panel" style="margin-bottom: 20px; border: 1px solid var(--primary-accent); background: rgba(0, 210, 255, 0.02);">
       <h3 style="color: var(--gold-accent); margin-bottom: 12px; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center;">
         <span>📈 近 5 日關鍵市場指數與 GEX 結構歷程矩陣</span>
-        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">(包含加權、櫃買、台指期日夜盤、Zero Gamma、GEX+ 早鳥轉折、Call/Put Wall、Max Pain、融資維持率四級燈號: 🟢安定/🟡常態/🟠警戒/🔴斷頭)</span>
+        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">(包含加權、櫃買、台指期日夜盤、Zero Gamma、GEX+ 早鳥轉折、Call/Put Wall、Max Pain、融資餘額（證交所，維持率不公布）)</span>
       </h3>
       <div class="table-scroll-container" style="max-height: none;">
         <table class="matrix-table" style="text-align: center; width: 100%;">
@@ -1234,7 +1234,7 @@
               <th>Put Wall (地板)</th>
               <th>Max Pain (最大痛點)</th>
               <th>P/C Ratio</th>
-              <th style="color: #00e676;">📊 融資維持率 (大盤/個股)</th>
+              <th style="color: #00e676;" title="證交所不公布全市場整戶維持率，本站不推算，只顯示證交所真實的融資餘額與增減">📊 融資餘額 (證交所)</th>
             </tr>
           </thead>
           <tbody id="key-metrics-5day-body">
@@ -1275,7 +1275,7 @@
       <button class="tab-btn" data-tab="friday-gex">🇺🇸 週五結算選 (W1F/W2F/W4F/W5F)</button>
       <button class="tab-btn" data-tab="monthly-gex">🏛️ 當月月選 GEX</button>
       <button class="tab-btn nav-jump-btn" data-tab="nav-sentiment" onclick="document.getElementById('sentiment-panel').scrollIntoView({behavior: 'smooth'})">📉 散戶多空籌碼 ↓</button>
-      <button class="tab-btn nav-jump-btn" data-tab="nav-stocks" onclick="document.getElementById('stock-futures-panel').scrollIntoView({behavior: 'smooth'})">💎 熱門個股期貨 (270檔) ↓</button>
+      <button class="tab-btn nav-jump-btn" data-tab="nav-stocks" onclick="document.getElementById('stock-futures-panel').scrollIntoView({behavior: 'smooth'})">💎 個股期貨明細 ↓</button>
     </div>
 
     <!-- Main Chart Panel -->
@@ -1502,11 +1502,11 @@
       
     </div>
 
-    <!-- 🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描 Panel -->
+    <!-- 籌碼、價差與除權息事件量化焦點摘要 Panel（規則產生） -->
     <div id="ai-quant-digest-panel" class="panel watermark-panel" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(18, 24, 36, 0.95), rgba(10, 14, 23, 0.95)); border: 1px solid var(--primary-accent); border-radius: 14px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 210, 255, 0.12);">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; margin-bottom: 14px;">
         <h3 style="color: var(--primary-accent); margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
-          <span>🤖 Gemini AI 籌碼、價差與除權息事件量化焦點掃描</span>
+          <span>🧮 籌碼、價差與除權息事件量化焦點摘要（程式規則自動產生，非 AI）</span>
         </h3>
         <span style="font-size: 0.72rem; color: var(--text-muted); padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.05);">⚖️ 合規量化學理分析 (非個別證券建議)</span>
       </div>
@@ -1528,7 +1528,7 @@
       <div class="panel-header" style="flex-direction: column; align-items: flex-start; gap: 12px;">
         <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div class="panel-title" style="display: flex; align-items: center; gap: 10px;">
-            <span>💎 期交所全量 287 檔個股與 ETF 期貨篩選明細</span>
+            <span>💎 期交所全量個股與 ETF 期貨篩選明細（標準＋小型契約）</span>
             <button id="open-intent-modal-btn" class="btn" style="font-size: 0.78rem; padding: 4px 12px; border-radius: 16px; border-color: var(--gold-accent); color: var(--gold-accent);" title="查看 AI 主力意圖診斷對照表與實戰教學">
               ℹ️ AI 主力意圖診斷教學
             </button>
@@ -1539,7 +1539,7 @@
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; width: 100%;">
           <span style="font-size: 0.85rem; color: var(--text-muted);">契約類別切換：</span>
           <select id="category-filter-select" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--primary-accent); background: #121721; color: var(--primary-accent); font-weight: 600; font-size: 0.85rem;">
-            <option value="all">🌐 全部 287 檔契約 (All Categories)</option>
+            <option value="all">🌐 全部契約 (All Categories)</option>
             <option value="it_adopted">🚀 投信波段認養標的 (>0.5% 且連買≥3天)</option>
             <option value="intent_bull">🔥 意圖：強勢真看多 (Strong Bullish)</option>
             <option value="intent_bear">❄️ 意圖：強勢真看空 (Strong Bearish)</option>
