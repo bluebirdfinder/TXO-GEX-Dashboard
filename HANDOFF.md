@@ -12,6 +12,19 @@
 5. 本檔「已驗證」是上一個視窗的自述，動工前抽樣重跑確認：`python scripts/smoke_test_room.py`（線上版，37 項，約 3～4 分鐘，手機＋電腦）。
 6. 使用者慣用繁體中文、白話解釋、進度用表格、分岔點用 AskUserQuestion（見第 9 節）。
 
+## 0.1 ⭐ 2026-10-07 排程調整：日盤後第一梯次改到台灣時間 16:00 之後（待使用者在 Cloudflare 改 Worker）
+
+| 項目 | 舊（台灣時間 UTC+8） | 新 | 狀態 |
+|---|---|---|---|
+| TXO 日盤後 | 15:03／15:33／16:03 | **16:03／16:33／17:03** | `auto_update.yml` 備援 cron 已改（分支 `claude/schedule-1600`，**未 push，需使用者同意**） |
+| Lumi 日盤後 | 15:18／15:48／16:18／16:48 | **16:18／16:48／17:18／17:48**（仍晚 TXO 15 分鐘） | Lumi repo 同名分支已改 |
+| 夜盤、融資維持率 | 05:03…、21:03… | 不變 | — |
+
+- **Worker 部分我改不到**：`bluebird-indicators` 的 cron `3,33 * * * *` 每小時都會響，不用動；要改的是 Worker 程式碼裡 `DISPATCH_SLOTS` 的日盤時段（15:03／15:33／16:03 → 16:03／16:33／17:03；Worker 原始碼在 Cloudflare Dashboard／私有資料夾，不在這個 repo）。Lumi 的 `lumi-scheduler` cron 要把 `18,48 7,8 * * MON-FRI` 改成 `18,48 8,9 * * MON-FRI`（UTC；星期一律用 MON-FRI；cron 數量不變，仍在帳號 5 個額度內）。
+- **為什麼改**：使用者要求第一梯次在 16:00 之後、TXO 與 Lumi 互相錯開。實測（10/05、10/06 Actions 日誌）顯示 15:04／15:18 那輪就已拿到完整當日資料，**不是資料太早才出錯**，改後純屬保守。
+- **`MARKET_DATA_SCHEDULE.md` 寫的「大額交易人 17:00～18:30 公布」與實測不符**：10/06 TXO 15:04 那輪（約 15:16 完成）已抓到當日選擇權大額交易人 OI 與 256/286 檔個股期大額；期交所 OpenAPI 的 `OpenInterestOfLargeTradersFutures` 長期落後一天，Lumi 靠官網備援 `fetch_taifex_chip_fallback.py` 補到。
+- 閘門仍在：Lumi `IsDataComplete=false` 或 GEX 產生時間早於當日 15:00 就整輪跳過、不記已發送。
+
 ## 1. 系統現況一覽（2026-10-01 傍晚）
 
 | 零件 | 位置 | 狀態 |

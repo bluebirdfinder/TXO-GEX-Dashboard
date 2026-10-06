@@ -7,10 +7,10 @@ on:
     - cron: '33 21 * * 0-4'  # 05:33 TWD (Night Session Settlement & Card Generation)
     - cron: '3 22 * * 0-4'   # 06:03 TWD (Night Session Failover Retry)
 
-    # --- ☀️ Day Session Settlement & Institutional Chips Window (15:03, 15:33, 16:03 TWD) ---
-    - cron: '3 7 * * 1-5'    # 15:03 TWD (Day Session Close Attempt 1)
-    - cron: '33 7 * * 1-5'   # 15:33 TWD (Primary Day Settlement, Chips & Card Generation)
-    - cron: '3 8 * * 1-5'    # 16:03 TWD (Day Session Failover Retry)
+    # --- ☀️ Day Session Settlement & Institutional Chips Window (16:03, 16:33, 17:03 TWD; moved to after 16:00 on 2026-10-07) ---
+    - cron: '3 8 * * 1-5'    # 16:03 TWD (Day Session Close Attempt 1)
+    - cron: '33 8 * * 1-5'   # 16:33 TWD (Primary Day Settlement, Chips & Card Generation)
+    - cron: '3 9 * * 1-5'    # 17:03 TWD (Day Session Failover Retry)
 
     # --- 📈 TWSE Evening Margin Maintenance Ratio Window (21:03, 21:33, 22:03 TWD) ---
     - cron: '3 13 * * 1-5'   # 21:03 TWD (TWSE Margin Maintenance Ratio Release)
