@@ -1,0 +1,18 @@
+{
+ "2026-10-06": {
+  "updated": "2026-10-07 02:51",
+  "session": "NIGHT",
+  "engine": "v64.17",
+  "spot": 49822.55,
+  "txf_day": 50060.0,
+  "txf_night": 50085.0,
+  "zero_gamma_oi_boundary": 49658.0,
+  "gex_plus_flip": 49657.9,
+  "gamma_flip_standard": 49132.4,
+  "call_wall": 50000.0,
+  "put_wall": 49000.0,
+  "max_pain": 49000.0,
+  "taifex_vix": 23.53,
+  "sigma": 0.2353
+ }
+}
