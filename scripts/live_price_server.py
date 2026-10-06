@@ -367,6 +367,26 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 self.wfile.flush()
                 return
 
+            # 大戶散戶動能歷史（重開機不歸零；只含服務真正收到的資料）— ?symbol=TXF&days=5
+            if parsed.path.startswith('/api/momentum_history'):
+                from scripts.fubon_api_provider import fubon_provider
+                qs = urllib.parse.parse_qs(parsed.query)
+                symbol = (qs.get('symbol', [None])[0]) or fubon_provider.txf_symbol
+                try:
+                    days = max(1, min(14, int((qs.get('days', ['5'])[0]))))
+                except ValueError:
+                    days = 5
+                res_data = {"symbol": symbol, "bars": fubon_provider.get_momentum_history(symbol, days), "ts": time.time()}
+                body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(body)))
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(body)
+                self.wfile.flush()
+                return
+
             # API Endpoint for 大戶散戶動能 30-min momentum bar — ?symbol=TXFA4
             if parsed.path.startswith('/api/momentum'):
                 from scripts.fubon_api_provider import fubon_provider
@@ -484,6 +504,8 @@ def run_server():
     t_mis = threading.Thread(target=mis_polling_worker, daemon=True)
     t_mis.start()
 
+    from scripts.fubon_api_provider import fubon_provider as _fp_hist
+    _fp_hist.start_momentum_recorder()
     t_books = threading.Thread(target=fubon_books_worker, daemon=True)
     t_books.start()
 

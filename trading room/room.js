@@ -1404,8 +1404,27 @@ async function fetchAndAppendMomentumBar(symbol) {
   }
 }
 
-function startMomentumLivePolling(symbol) {
+// 先讀本機服務存檔的歷史 30 分 bar（重開機不歸零），再接上即時輪詢；只畫服務真正收到過的 bar，缺的時段留白
+async function loadMomentumHistory(symbol) {
+  try {
+    const res = await fetch(`${GATEWAY_BASE}/api/momentum_history?symbol=${encodeURIComponent(symbol)}&days=5`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const bars = ((await res.json()) || {}).bars || [];
+    if (!bars.length || activeSub4 !== 'momentum' || !sub4Series.momentumHist) return;
+    sub4Series.momentumHist.setData(bars.map(b => ({
+      time: b.t, value: b.big,
+      color: b.big >= 0 ? 'rgba(255, 71, 87, 0.85)' : 'rgba(46, 213, 115, 0.85)'
+    })));
+    if (sub4Series.retailLine) sub4Series.retailLine.setData(bars.map(b => ({ time: b.t, value: b.retail })));
+    if (sub4Series.marketOrderLine) sub4Series.marketOrderLine.setData(bars.map(b => ({ time: b.t, value: b.mkt })));
+  } catch (e) { /* 本機服務沒開（如手機）：維持原行為，靜默略過 */ }
+}
+
+async function startMomentumLivePolling(symbol) {
   stopMomentumLivePolling();
+  await loadMomentumHistory(symbol);
+  if (activeSub4 !== 'momentum') return;
+  stopMomentumLivePolling();   // await 期間可能又被呼叫一次，避免重複計時器
   fetchAndAppendMomentumBar(symbol);
   momentumPollTimer = setInterval(() => fetchAndAppendMomentumBar(symbol), 5000);
 }
@@ -1650,6 +1669,8 @@ function clearGexPriceLines() {
   if (priceLines.zg && candleSeries) { candleSeries.removePriceLine(priceLines.zg); priceLines.zg = null; }
   if (priceLines.pw && candleSeries) { candleSeries.removePriceLine(priceLines.pw); priceLines.pw = null; }
   if (priceLines.mp && candleSeries) { candleSeries.removePriceLine(priceLines.mp); priceLines.mp = null; }
+  gexLabelDefs = [];
+  renderGexLabels();
 }
 
 /**
@@ -1716,6 +1737,19 @@ function drawGexHorizontalRays(candles) {
   });
 
 
+
+  // 名稱＋數值文字標籤（TV 截圖風格）：畫在 VRVP 籌碼分布圖左側，不壓在籌碼分布上；價位數字仍由右側 Y 軸色塊顯示
+  const zgVexClose = Math.abs(vex - zg) < 15;
+  gexLabelDefs = [
+    { price: mp, color: '#42A5F5', text: `Max Pain: ${mp}` },
+    { price: cw, color: '#FF76AC', text: `Call Wall: ${cw}` },
+    zgVexClose
+      ? { price: zg, color: '#FFEB3B', text: `⚡ ZG / 🟠 VEX: ${zg}` }
+      : { price: zg, color: '#FFEB3B', text: `⚡ ZG: ${zg}` },
+    { price: pw, color: '#26A69A', text: `Put Wall: ${pw}` }
+  ];
+  if (!zgVexClose) gexLabelDefs.push({ price: vex, color: '#FFA726', text: `🟠 VEX: ${vex}` });
+  renderGexLabels();
 
   // 6. TV 級即時穿透偵測與標籤 (On-Chart Touch Visual Signals)
   if (candles && candles.length > 0) {
@@ -2988,6 +3022,61 @@ function appendAdvisorMessage(type, contentHtml) {
 function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+
+/**
+ * GEX 關鍵價名稱標籤：獨立 canvas，文字靠右對齊在 VRVP 最大延伸寬度的左邊，避免與籌碼分布重疊。
+ * 價格軸被縮放／拖曳時 y 會變，所以另有輕量輪詢（只在 y 簽名改變時重畫）。
+ */
+let gexLabelDefs = [];
+function renderGexLabels() {
+  const container = document.getElementById('main-chart-pane');
+  if (!container) return;
+  let canvas = document.getElementById('gex-label-canvas');
+  if (!canvas) {
+    if (!gexLabelDefs.length) return;
+    canvas = document.createElement('canvas');
+    canvas.id = 'gex-label-canvas';
+    canvas.style.cssText = 'position:absolute;top:0;right:0;pointer-events:none;z-index:6;';
+    container.style.position = 'relative';
+    container.appendChild(canvas);
+  }
+  const rect = container.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+  canvas.style.width = `${rect.width}px`; canvas.style.height = `${rect.height}px`;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!gexLabelDefs.length || !candleSeries) return;
+  ctx.scale(dpr, dpr);
+  ctx.font = '600 12px "Microsoft JhengHei", "Segoe UI", sans-serif';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  // 標籤右緣 = VRVP 最大寬度的左邊再留 12px（VRVP 畫在 rect.width - 55 往左 28% 寬）
+  const rightEdge = rect.width - 55 - rect.width * 0.28 - 12;
+  const usedY = [];
+  const sorted = gexLabelDefs.map(d => ({ d, y: candleSeries.priceToCoordinate(d.price) })).filter(o => o.y !== null).sort((a, b) => a.y - b.y);
+  for (const o of sorted) {
+    let y = o.y - 3;                       // 字底貼在線的上方
+    for (const u of usedY) if (Math.abs(y - u) < 14) y = u + 14;   // 兩條線太近時往下錯開，避免文字疊在一起
+    usedY.push(y);
+    if (y < 10 || y > rect.height - 4) continue;   // 超出可視範圍就不畫
+    ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 3;
+    ctx.fillStyle = o.d.color;
+    ctx.fillText(o.d.text, rightEdge, y);
+  }
+}
+setInterval(() => {
+  if (!gexLabelDefs.length || !candleSeries) return;
+  const container = document.getElementById('main-chart-pane');
+  if (!container) return;
+  const r = container.getBoundingClientRect();
+  const sig = gexLabelDefs.map(d => { const y = candleSeries.priceToCoordinate(d.price); return y === null ? 'n' : Math.round(y); }).sort((a, b) => a - b).join(',') + ',';
+  // 與 renderGexLabels 的簽名格式不同（排序／空值），單純用「是否變動」判斷即可
+  if (sig + r.width + 'x' + r.height !== window.__gexLabelPoll) {
+    window.__gexLabelPoll = sig + r.width + 'x' + r.height;
+    renderGexLabels();
+  }
+}, 400);
 
 /**
  * 7. VRVP Canvas Overlay (Visible Range Volume Profile: Right 30% Width)

@@ -100,6 +100,14 @@ class FubonAPIProvider:
         self._trades_last_serial = {}  # symbol -> serial of the last trades frame, to drop exact replays
         self._trades_logged_raw = set()  # symbols we've logged one raw message for, for schema verification
         self._TRADES_LOG_MAXLEN = 20000  # ~a session's worth of prints per symbol; bounded so memory can't grow unbounded
+        # 大戶散戶動能 30 分 bar 歷史：每 15 秒把「進行中的 bar」存進記憶體並每 60 秒寫檔，重開機後可讀回。
+        # 檔案放在 repo 外（預設 ~/.txo_momentum_history，可用 MOMENTUM_HISTORY_DIR 覆蓋），避免被 git add 進公開倉庫。
+        # 只存真實收到的資料；沒開機／沒連線的時段不會補值。
+        self._mom_hist = {}   # alias -> {bar_start_ts(int): {'t','big','retail','mkt','n'}}
+        self._mom_hist_lock = threading.Lock()
+        self._mom_hist_dir = os.getenv("MOMENTUM_HISTORY_DIR") or os.path.join(os.path.expanduser("~"), ".txo_momentum_history")
+        self._mom_hist_keep_days = 14
+        self._mom_hist_started = False
 
         # Real Cumulative Volume Delta (CVD) — signed-volume running total built tick-by-tick
         # from the same confirmed tick-rule 'side' used for trades_log, kept as its own
@@ -696,6 +704,76 @@ class FubonAPIProvider:
             'is_trial': bool(book.get('is_trial', False)),
             'updated_ts': now
         }
+
+    def _mom_hist_path(self, alias):
+        safe = alias.replace('!', '_')
+        return os.path.join(self._mom_hist_dir, safe + ".json")
+
+    def _mom_hist_load(self, alias):
+        """Lazy-load one symbol's saved bars from disk the first time it is touched."""
+        if alias in self._mom_hist:
+            return
+        bars = {}
+        try:
+            import json as _json
+            with open(self._mom_hist_path(alias), encoding="utf-8") as f:
+                for b in _json.load(f):
+                    bars[int(b['t'])] = b
+        except FileNotFoundError:
+            pass
+        except Exception as e:
+            logging.warning(f"momentum history load failed for {alias}: {e}")
+        self._mom_hist[alias] = bars
+
+    def record_momentum_bars(self):
+        """Snapshot the in-progress 30-minute bar of every subscribed symbol into the history store."""
+        with self._mom_hist_lock:
+            for alias in list(self._books_subscribed):
+                bar = self.get_momentum_bar_30m(alias)
+                if not bar:
+                    continue
+                self._mom_hist_load(alias)
+                t = int(bar['bar_start_ts'])
+                self._mom_hist[alias][t] = {'t': t, 'big': bar['big_order_diff'], 'retail': bar['retail_trade_count_diff'],
+                                            'mkt': bar['market_order_diff'], 'n': bar['trade_count_in_bar']}
+
+    def save_momentum_history(self):
+        import json as _json
+        cutoff = time.time() - self._mom_hist_keep_days * 86400
+        with self._mom_hist_lock:
+            os.makedirs(self._mom_hist_dir, exist_ok=True)
+            for alias, bars in self._mom_hist.items():
+                rows = sorted((b for b in bars.values() if b['t'] >= cutoff), key=lambda b: b['t'])
+                tmp = self._mom_hist_path(alias) + ".tmp"
+                with open(tmp, "w", encoding="utf-8") as f:
+                    _json.dump(rows, f)
+                os.replace(tmp, self._mom_hist_path(alias))
+
+    def get_momentum_history(self, symbol, days=5):
+        """Saved + in-memory 30-min bars for `symbol` (UI code or alias) of the last `days` days, oldest first."""
+        alias = self.CVD_SYMBOL_ALIAS.get(symbol, symbol)
+        with self._mom_hist_lock:
+            self._mom_hist_load(alias)
+            cutoff = time.time() - days * 86400
+            return sorted((b for b in self._mom_hist[alias].values() if b['t'] >= cutoff), key=lambda b: b['t'])
+
+    def start_momentum_recorder(self):
+        """Idempotent: background thread that records every 15 s and saves to disk every 60 s."""
+        if self._mom_hist_started:
+            return
+        self._mom_hist_started = True
+        def _loop():
+            last_save = 0
+            while True:
+                try:
+                    self.record_momentum_bars()
+                    if time.time() - last_save >= 60:
+                        self.save_momentum_history()
+                        last_save = time.time()
+                except Exception as e:
+                    logging.warning(f"momentum recorder error: {e}")
+                time.sleep(15)
+        threading.Thread(target=_loop, daemon=True, name="momentum-recorder").start()
 
     def get_cvd_series(self, symbol, max_points=3000):
         """
