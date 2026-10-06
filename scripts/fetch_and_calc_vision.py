@@ -1240,7 +1240,7 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
     base_strike = fixed_base_strike if fixed_base_strike is not None else round(spot_price / 100) * 100
 
     r = 0.015
-    sigma = 0.18
+    sigma = _gex_sigma_info()["sigma"]   # 官方臺指 VIX；取不到才用 0.18
 
     MIN_T_DAYS = 0.5
     T_w1 = max(float(days_wed), MIN_T_DAYS) / 365.0
@@ -1432,7 +1432,30 @@ def fetch_yahoo_finance_quote(ticker):
         print(f"[Warning] Failed to fetch Yahoo Finance quote for {ticker}: {e}")
     return None
 
+_VIX_CACHE = None
+
+
 def fetch_official_taifex_vix():
+    """同一輪引擎只向期交所／Yahoo 抓一次 VIX（GEX 計算與頁面顯示共用同一份）。"""
+    global _VIX_CACHE
+    if _VIX_CACHE is None:
+        _VIX_CACHE = _fetch_official_taifex_vix_uncached()
+    return dict(_VIX_CACHE)
+
+
+def _gex_sigma_info():
+    """GEX／VEX 的 Black-Scholes 波動率：優先用期交所當日官方臺指 VIX（臺指選擇權隱含波動率指數）；
+    取不到才退回固定 18% 並註明。2026-10-06 起（原本一律固定 18%，與市況無關）。"""
+    try:
+        v = fetch_official_taifex_vix().get('taifex_vix')
+    except Exception:
+        v = None
+    if isinstance(v, (int, float)) and 5.0 <= v <= 100.0:
+        return {"sigma": round(v / 100.0, 4), "sigma_source": f"期交所臺指 VIX {v:.2f}（當日官方）", "risk_free_rate": 0.015}
+    return {"sigma": 0.18, "sigma_source": "固定假設 18%（官方 VIX 暫時取不到）", "risk_free_rate": 0.015}
+
+
+def _fetch_official_taifex_vix_uncached():
     """
     Fetches real-time / daily official TAIFEX VIX index & daily change from TAIFEX vixMinNew endpoint,
     as well as US CBOE VIX (^VIX) via Yahoo Finance API with fallback.
@@ -4652,6 +4675,7 @@ def generate_gex_payload():
         "ai_ex_dividend_digest": ai_ex_dividend_digest,
         "macro_events_radar": macro_events_data,
         "vix_info": fetch_official_taifex_vix(),
+        "gex_model": _gex_sigma_info(),
         "fubon_weekly_focus": generate_dynamic_weekly_focus(now_dt)
     }
 

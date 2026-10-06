@@ -485,6 +485,12 @@ function updateMarketTradingStatus() {
 }
 
 function updateFreshnessIndicator(data) {
+  // GEX／VEX 模型假設揭露：波動率來源與利率（資料檔 gex_model）
+  const gexNote = document.getElementById('gex-model-note');
+  if (gexNote) {
+    const gm = data && data.gex_model;
+    gexNote.textContent = gm ? `GEX／VEX 以 Black-Scholes 計算：波動率 σ＝${(gm.sigma * 100).toFixed(2)}%（${gm.sigma_source}），無風險利率 ${(gm.risk_free_rate * 100).toFixed(1)}%；未平倉量為期交所官方資料` : '';
+  }
   if (data && data.engine_version) {
     const headerBadge = document.getElementById('app-header-version-badge');
     if (headerBadge) headerBadge.textContent = `TXO GEX 量化系統 ${data.engine_version}`;
