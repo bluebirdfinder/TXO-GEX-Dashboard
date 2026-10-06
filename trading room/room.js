@@ -373,11 +373,15 @@ let indicatorConfig = {
   sar: false,
   sarStep: 0.02,
   fvg: false,
-  swLevels: true   // 強弱關價（黃金切割 0.618／0.382）；僅台指期系列、分K週期
+  swLevels: true,   // 強弱關價（黃金切割 0.618／0.382）；僅台指期系列、分K週期
+  swStrongColor: '#e53935',   // 強關線顏色（個人偏好，存瀏覽器）
+  swWeakColor: '#2e7d32',     // 弱關線顏色
+  swStyle: 'dashed',          // 線條樣式：solid／dashed／dotted／large-dashed
+  swWidth: 1                  // 線寬 1–3
 };
 
 // 顏色偏好只存在使用者自己的瀏覽器（localStorage），不需登入；換裝置要重選。沒存過就用 TradingView 預設色。
-const IND_COLOR_KEYS = ['ma7Color', 'ma17Color', 'ma88Color', 'ma200Color', 'smmaColor', 'vwapColor'];
+const IND_COLOR_KEYS = ['ma7Color', 'ma17Color', 'ma88Color', 'ma200Color', 'smmaColor', 'vwapColor', 'swStrongColor', 'swWeakColor'];
 const IND_COLOR_DEFAULTS = {};
 IND_COLOR_KEYS.forEach(k => { IND_COLOR_DEFAULTS[k] = indicatorConfig[k]; });
 function loadIndicatorColors() {
@@ -393,15 +397,34 @@ function saveIndicatorColors() {
     localStorage.setItem('txo_ind_colors', JSON.stringify(out));
   } catch (e) { /* ignore */ }
 }
-const IND_COLOR_INPUTS = { ma7Color: 'col-ma7', ma17Color: 'col-ma17', ma88Color: 'col-ma88', ma200Color: 'col-ma200', smmaColor: 'col-smma', vwapColor: 'col-vwap' };
+const IND_COLOR_INPUTS = { ma7Color: 'col-ma7', ma17Color: 'col-ma17', ma88Color: 'col-ma88', ma200Color: 'col-ma200', smmaColor: 'col-smma', vwapColor: 'col-vwap', swStrongColor: 'col-sw-strong', swWeakColor: 'col-sw-weak' };
 function syncColorPickers() {
   Object.keys(IND_COLOR_INPUTS).forEach(k => { const el = document.getElementById(IND_COLOR_INPUTS[k]); if (el) el.value = indicatorConfig[k]; });
 }
+// 強弱關價的線條樣式／粗細：同樣只存在使用者自己的瀏覽器（localStorage）。
+const SW_STYLES = { solid: 0, dotted: 1, dashed: 2, 'large-dashed': 3 };
+function loadSwStyle() {
+  try {
+    const sv = JSON.parse(localStorage.getItem('txo_sw_style') || '{}');
+    if (sv.style in SW_STYLES) indicatorConfig.swStyle = sv.style;
+    if ([1, 2, 3].includes(sv.width)) indicatorConfig.swWidth = sv.width;
+  } catch (e) { /* storage blocked or corrupted: keep defaults */ }
+}
+function saveSwStyle() {
+  try { localStorage.setItem('txo_sw_style', JSON.stringify({ style: indicatorConfig.swStyle, width: indicatorConfig.swWidth })); } catch (e) { /* ignore */ }
+}
+function syncSwStyleControls() {
+  const a = document.getElementById('sel-sw-style'), b = document.getElementById('sel-sw-width');
+  if (a) a.value = indicatorConfig.swStyle;
+  if (b) b.value = String(indicatorConfig.swWidth);
+}
 loadIndicatorColors();
+loadSwStyle();
 
 // DOM Initialization
 document.addEventListener('DOMContentLoaded', async () => {
   syncColorPickers();
+  syncSwStyleControls();
   initGlobalSmartTooltips();
   await initTradingRoom();
   initFubonLivePriceStream();
@@ -1969,12 +1992,14 @@ function renderStrongWeakLevels(data) {
   if (!data.candles || data.candles.length === 0) return;
   const { strong, weak } = computeStrongWeakLevels(data.candles, true);
   if (!strong.length) return;
+  const lineStyle = SW_STYLES[indicatorConfig.swStyle] ?? SW_STYLES.dashed;
+  const lineWidth = [1, 2, 3].includes(indicatorConfig.swWidth) ? indicatorConfig.swWidth : 1;
   overlaySeries.swLevels.strong = mainChart.addLineSeries({
-    color: '#e53935', lineWidth: 1, lineType: LightweightCharts.LineType.WithSteps,
+    color: indicatorConfig.swStrongColor, lineWidth, lineStyle, lineType: LightweightCharts.LineType.WithSteps,
     priceLineVisible: false, lastValueVisible: true, title: ':強關'
   });
   overlaySeries.swLevels.weak = mainChart.addLineSeries({
-    color: '#2e7d32', lineWidth: 1, lineType: LightweightCharts.LineType.WithSteps,
+    color: indicatorConfig.swWeakColor, lineWidth, lineStyle, lineType: LightweightCharts.LineType.WithSteps,
     priceLineVisible: false, lastValueVisible: true, title: ':弱關'
   });
   overlaySeries.swLevels.strong.setData(strong);
@@ -2816,7 +2841,9 @@ function setupEventListeners() {
   if (resetColorsBtn) {
     resetColorsBtn.addEventListener('click', () => {
       IND_COLOR_KEYS.forEach(k => { indicatorConfig[k] = IND_COLOR_DEFAULTS[k]; });
+      indicatorConfig.swStyle = 'dashed'; indicatorConfig.swWidth = 1; saveSwStyle();
       syncColorPickers();
+      syncSwStyleControls();
     });
   }
 
@@ -2843,6 +2870,12 @@ function setupEventListeners() {
       indicatorConfig.sarStep = parseFloat(document.getElementById('param-sar-step').value) || 0.02;
       indicatorConfig.fvg = document.getElementById('chk-fvg').checked;
       indicatorConfig.swLevels = document.getElementById('chk-sw').checked;
+      indicatorConfig.swStrongColor = document.getElementById('col-sw-strong').value || IND_COLOR_DEFAULTS.swStrongColor;
+      indicatorConfig.swWeakColor = document.getElementById('col-sw-weak').value || IND_COLOR_DEFAULTS.swWeakColor;
+      indicatorConfig.swStyle = document.getElementById('sel-sw-style').value;
+      indicatorConfig.swWidth = parseInt(document.getElementById('sel-sw-width').value) || 1;
+      saveIndicatorColors();
+      saveSwStyle();
       // Supertrend 週期／倍數：欄位一直存在但從沒被讀取（2026-10-01 稽核發現），改了沒有效果
       indicatorConfig.stLen = parseInt(document.getElementById('param-st-len').value) || 10;
       indicatorConfig.stMult = parseFloat(document.getElementById('param-st-mult').value) || 3.0;

@@ -760,7 +760,21 @@
             <span class="indicator-name">🎯 強弱關價（黃金切割 0.618／0.382，台指期分K）</span>
           </div>
           <div class="indicator-controls-col">
-            <span style="font-size: 0.72rem; color: var(--primary-accent);">當盤最高最低</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">強</span>
+            <input type="color" id="col-sw-strong" class="color-picker-input" value="#e53935" title="強關線顏色">
+            <span style="font-size: 0.72rem; color: var(--text-muted);">弱</span>
+            <input type="color" id="col-sw-weak" class="color-picker-input" value="#2e7d32" title="弱關線顏色">
+            <select id="sel-sw-style" class="param-input" title="線條樣式">
+              <option value="dashed">虛線</option>
+              <option value="solid">實線</option>
+              <option value="dotted">點線</option>
+              <option value="large-dashed">長虛線</option>
+            </select>
+            <select id="sel-sw-width" class="param-input" title="線條粗細">
+              <option value="1">細 1</option>
+              <option value="2">中 2</option>
+              <option value="3">粗 3</option>
+            </select>
           </div>
         </div>
 
