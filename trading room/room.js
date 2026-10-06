@@ -882,6 +882,8 @@ function renderChartData() {
 
   // 1. Candlesticks on Main Chart
   candleSeries.setData(data.candles);
+  legendLastCandle = (data.candles && data.candles.length) ? data.candles[data.candles.length - 1] : null;
+  updateLegendOverlay(null);
 
   // 2. Sub-Chart 1: 成交量 + Volume MA 5 & Volume MA 10 (價格指數與殖利率無合約成交量)
   const sym = currentActiveSymbol?.symbol || 'TXF';
@@ -1731,9 +1733,12 @@ function drawGexHorizontalRays(candles) {
 /**
  * Update Floating Legend on Crosshair Move
  */
+// 最新一根真 K 棒（滑鼠不在圖上時，圖例顯示它，行為同 TradingView；沒有 K 棒就維持 --）
+let legendLastCandle = null;
 function updateLegendOverlay(param) {
-  if (!param.time || !param.seriesData) return;
-  const candle = param.seriesData.get(candleSeries);
+  let candle = null;
+  if (param && param.time && param.seriesData) candle = param.seriesData.get(candleSeries);
+  else candle = legendLastCandle;
   if (!candle) return;
 
   const isYield = currentActiveSymbol && currentActiveSymbol.is_yield;

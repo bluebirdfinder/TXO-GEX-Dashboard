@@ -2114,3 +2114,21 @@ body.right-collapsed .dock-right { display: flex !important; }
     max-height: 90dvh;
   }
 }
+
+/* 2026-10-06 電腦版頂部列：寬度不足（如 1366px）時，右側「面板開關／導覽切換」被擠出畫面。
+   改成中間的資產分頁可橫向捲動，右側按鈕固定保留在畫面內。 */
+@media (min-width: 1025px) {
+  .room-header { overflow-x: hidden; }
+  .header-left { flex: 1 1 auto; min-width: 0; }
+  .header-left .contract-tabs { flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .header-left .contract-tabs::-webkit-scrollbar { display: none; }
+  .header-left .contract-tab { flex-shrink: 0; white-space: nowrap; }
+  .header-center { flex: 0 0 0; }
+  .header-right { flex-shrink: 0; margin-left: 8px; }
+}
+
+/* 2026-10-06 AI 面板快捷按鈕：4 顆塞在窄欄需橫向捲動，使用者看不到後兩顆；改成自動換行。 */
+@media (min-width: 1025px) {
+  .quick-audit-bar { flex-wrap: wrap; overflow-x: visible; }
+  .quick-audit-bar .audit-chip { flex: 1 1 auto; text-align: center; white-space: nowrap; }
+}
