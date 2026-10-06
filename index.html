@@ -1025,7 +1025,7 @@
 
       <!-- Card 4: ZERO GAMMA (轉折點) Dual Session Card -->
       <div class="stat-card zero-gamma">
-        <div class="stat-label">ZERO GAMMA (轉折點)</div>
+        <div class="stat-label" title="本站原本的 Zero Gamma：沿履約價軸找 Call 與 Put 淨 GEX 翻轉處，本質是「賣權多／買權多」的未平倉分界線，不是國際標準的 Gamma Flip">ZERO GAMMA (賣買權 OI 分界)</div>
         
         <!-- Day Session Part -->
         <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
@@ -1044,6 +1044,11 @@
           <div id="stat-zg-shift" class="stat-sub" style="text-align: right; color: var(--text-muted); margin-top: 2px;">
             (0.0 點)
           </div>
+        </div>
+        <!-- 國際標準 Gamma Flip（價格軸；並排觀察用） -->
+        <div style="margin-top: 6px; padding-top: 5px; border-top: 1px dashed rgba(255,255,255,0.15); font-size: 0.72rem; display: flex; justify-content: space-between; align-items: center;" title="國際標準 Gamma Flip：假設指數漲跌到各價位並重算所有履約價 Gamma，做市商總 Gamma 由正轉負的價位。與左邊的 OI 分界是兩件事，並排觀察中">
+          <span style="color: #7dd3fc;">📐 標準 Gamma Flip</span>
+          <strong id="stat-gamma-flip-std" style="font-size: 0.95rem; color: #7dd3fc;">—</strong>
         </div>
       </div>
 
@@ -1132,7 +1137,7 @@
 
       <!-- Card 8: VEX 恐慌曝險 & GEX+ Flip (早鳥警報線) Dual Session Card -->
       <div class="stat-card" style="border-left: 4px solid #ff5252;">
-        <div class="stat-label">VEX 恐慌曝險 & GEX+ FLIP</div>
+        <div class="stat-label">VEX 恐慌曝險 & GEX+ FLIP <span id="stat-flip-overlap-note" style="font-size: 0.65rem; color: var(--text-muted); font-weight: normal;"></span></div>
         
         <!-- Day Session Part -->
         <div style="margin-top: 4px; padding-bottom: 6px; border-bottom: 1px dashed rgba(255,255,255,0.15);">
@@ -2042,7 +2047,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=v64.17&b=20261006b"></script>
+  <script src="app.js?v=v64.17&b=20261006c"></script>
 </body>
 </html>
 
