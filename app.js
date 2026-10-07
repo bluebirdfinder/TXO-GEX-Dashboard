@@ -668,9 +668,9 @@ function renderDashboard() {
 
   // 標準 Gamma Flip（價格軸）並排顯示；VEX 早鳥線與 Zero Gamma 幾乎重疊時註明
   const elGfs = document.getElementById('stat-gamma-flip-std');
-  if (elGfs) elGfs.innerText = (typeof gexData.gamma_flip_standard === 'number') ? gexData.gamma_flip_standard.toLocaleString() : '—（無轉折點）';
+  if (elGfs) elGfs.innerText = (typeof gexData.gamma_flip_standard === 'number') ? gexData.gamma_flip_standard.toLocaleString() : '—（現價±2,000 點內無轉折點）';
   const elGfsClose = document.getElementById('stat-gamma-flip-std-close');
-  if (elGfsClose) elGfsClose.innerText = (typeof gexData.gamma_flip_standard_close === 'number') ? gexData.gamma_flip_standard_close.toLocaleString() : '—';
+  if (elGfsClose) elGfsClose.innerText = (typeof gexData.gamma_flip_standard_close === 'number') ? gexData.gamma_flip_standard_close.toLocaleString() : '—（±2,000 點內無轉折）';
   const elGfsCloseDate = document.getElementById('stat-gamma-flip-std-close-date');
   if (elGfsCloseDate) elGfsCloseDate.innerText = (typeof gexData.gamma_flip_standard_close === 'number' && gexData.gamma_flip_standard_close_date) ? '(' + String(gexData.gamma_flip_standard_close_date).slice(5).replace('-', '/') + ')' : '';
   const elOverlap = document.getElementById('stat-flip-overlap-note');
