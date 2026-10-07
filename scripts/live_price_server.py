@@ -40,7 +40,7 @@ class LivePriceState:
         self.active_provider = "NONE"  # set by update_index() from the source that actually delivered a quote
         self.last_update = time.time()
 
-    def update_index(self, key, price, change=0.0, pct=0.0, provider="FUBON"):
+    def update_index(self, key, price, change=0.0, pct=0.0, provider="FUBON", extra=None):
         # A fresh Fubon quote must not be overwritten every 3 s by the public-source fallback (the on-screen price used to flip
         # between the two sources, and the source label with it). The fallback only fills in when Fubon has been silent for 10 s.
         cur = self.indices.get(key)
@@ -54,6 +54,8 @@ class LivePriceState:
                 "provider": provider,
                 "ts": time.time()
             }
+            if extra:   # 本盤別開高低等（有才放，沒有就不出現這些欄位）
+                self.indices[key].update({k: v for k, v in extra.items() if v is not None})
             self.active_provider = "FUBON" if str(provider).upper() == "FUBON" else "OFFICIAL"
             self.last_update = time.time()
 
@@ -140,7 +142,8 @@ def fubon_worker():
                 # Publish only what Fubon really returned. (This used to fall back to 47207.0 / +252 / +0.54 — a stale
                 # made-up quote presented as a live Fubon tick whenever the quote call came back empty.)
                 if quotes and quotes.get('txf_price'):
-                    state.update_index('txf', quotes['txf_price'], quotes.get('change') or 0.0, quotes.get('pct') or 0.0, provider="FUBON")
+                    state.update_index('txf', quotes['txf_price'], quotes.get('change') or 0.0, quotes.get('pct') or 0.0, provider="FUBON",
+                                       extra={'open': quotes.get('open'), 'high': quotes.get('high'), 'low': quotes.get('low')})
                 time.sleep(1.0)
     except Exception as e:
         print(f"[Gateway] Fubon Worker notice: {e}")
@@ -337,6 +340,21 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                     res_data["macro"] = {**state.macro, "ts": state.macro_ts}
                 body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
                 self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(body)))
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(body)
+                self.wfile.flush()
+                return
+
+            # 個股／ETF 即時報價（富邦）— ?symbol=2330；富邦沒回就 404，前端改顯示資料日期
+            if parsed.path.startswith('/api/stock_quote'):
+                from scripts.fubon_api_provider import fubon_provider
+                qs = urllib.parse.parse_qs(parsed.query)
+                sq = fubon_provider.get_stock_quote((qs.get('symbol', [''])[0]))
+                body = json.dumps(sq if sq else {"error": "no quote"}, ensure_ascii=False).encode('utf-8')
+                self.send_response(200 if sq else 404)
                 self.send_header('Content-Type', 'application/json; charset=utf-8')
                 self.send_header('Content-Length', str(len(body)))
                 self._send_cors()

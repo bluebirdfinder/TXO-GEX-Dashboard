@@ -65,11 +65,18 @@ jobs:
         run: |
           python scripts/fetch_market_klines.py
 
+      - name: Fetch Real Daily Stock Quotes (TWSE/TPEx OpenAPI)
+        # 2026-10-07 實測發現：data/tw_quotes_latest.json（戰情室個股報價、選股雷達價格）完全沒有排程，
+        # 只在有人手動跑時才更新，曾經 13 天沒動。搭同一個 cron 視窗順便更新；失敗不影響主流程。
+        continue-on-error: true
+        run: |
+          python scripts/fetch_real_quotes.py
+
       - name: Commit and Push Official Payload
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/gex_data.json data/encrypted_gex.json data/embedded_data.js data/social_card_*.png data/klines_cache.json data/session_snapshots.json data/institutional_snapshots.json data/gex_line_observations.json
+          git add data/gex_data.json data/encrypted_gex.json data/embedded_data.js data/social_card_*.png data/klines_cache.json data/tw_quotes_latest.json data/session_snapshots.json data/institutional_snapshots.json data/gex_line_observations.json
           git status
           if git diff-index --quiet HEAD; then
             echo "No data changes to commit."
