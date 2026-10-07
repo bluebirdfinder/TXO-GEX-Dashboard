@@ -4197,8 +4197,9 @@ function renderPointContributionHUD() {
   let html = '';
   topWeights.forEach(item => {
     const q = (realQuotesData && realQuotesData[item.symbol]) ? realQuotesData[item.symbol] : null;
-    const change = q ? (q.change || 0) : (item.symbol === '1605' ? -0.5 : 5.0);
-    const price = q ? (q.close || 0) : (item.symbol === '1605' ? 37.90 : 1045);
+    if (!q) return;   // 沒有真實報價就不顯示這列（2026-10-07：原本用寫死的 5.0／1045／37.90 湊數，違反紅線 6）
+    const change = q.change || 0;
+    const price = q.close || 0;
     const pts = (change * item.weightPts).toFixed(1);
     const isUp = change >= 0;
     const color = isUp ? 'var(--call-color)' : 'var(--put-color)';
