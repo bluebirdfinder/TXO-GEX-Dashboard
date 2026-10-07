@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-07T05:30:38+08:00",
+  "generated_at": "2026-10-08T05:30:37+08:00",
   "assets": {
     "TXF": {
       "missing_day": [],
@@ -7,8 +7,8 @@
       "partial_day": [],
       "partial_night": [],
       "first_captured_day": "2026-09-24",
-      "latest_day": "2026-10-06",
-      "latest_night": "2026-10-07"
+      "latest_day": "2026-10-07",
+      "latest_night": "2026-10-08"
     },
     "MXF": {
       "missing_day": [],
@@ -16,8 +16,8 @@
       "partial_day": [],
       "partial_night": [],
       "first_captured_day": "2026-09-24",
-      "latest_day": "2026-10-06",
-      "latest_night": "2026-10-07"
+      "latest_day": "2026-10-07",
+      "latest_night": "2026-10-08"
     },
     "MTX": {
       "missing_day": [],
@@ -25,8 +25,8 @@
       "partial_day": [],
       "partial_night": [],
       "first_captured_day": "2026-09-24",
-      "latest_day": "2026-10-06",
-      "latest_night": "2026-10-07"
+      "latest_day": "2026-10-07",
+      "latest_night": "2026-10-08"
     },
     "CDF": {
       "missing_day": [],
@@ -38,11 +38,12 @@
         "2026-10-01",
         "2026-10-02",
         "2026-10-05",
-        "2026-10-06"
+        "2026-10-06",
+        "2026-10-07"
       ],
       "first_captured_day": "2026-09-24",
-      "latest_day": "2026-10-06",
-      "latest_night": "2026-10-07"
+      "latest_day": "2026-10-07",
+      "latest_night": "2026-10-08"
     }
   }
 }
