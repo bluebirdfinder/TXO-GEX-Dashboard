@@ -180,7 +180,10 @@ function _normDate(d) {          // '1150924'(民國) / '20260924' / '2026-09-24
 function stockQuoteInfo(sym) {
   const cands = [];
   const lv = liveStockQuotes[sym];
-  if (lv && Date.now() - lv.at < 90000) cands.push({ price: lv.price, change: lv.change, pct: lv.pct, open: lv.open, high: lv.high, low: lv.low, prev: lv.prev_close, asof: 'live', rank: 99999999, src: '富邦即時' });
+  if (lv && Date.now() - lv.at < 90000) cands.push({ price: lv.price,
+    // 富邦個股 quote 有時不帶 change／changePercent：用「現價 − 昨收（referencePrice）」自己算，兩者都沒有才顯示「—」
+    change: typeof lv.change === 'number' ? lv.change : (lv.prev_close ? +(lv.price - lv.prev_close).toFixed(2) : null),
+    pct: typeof lv.pct === 'number' ? lv.pct : (lv.prev_close ? +((lv.price / lv.prev_close - 1) * 100).toFixed(2) : null), open: lv.open, high: lv.high, low: lv.low, prev: lv.prev_close, asof: 'live', rank: 99999999, src: '富邦即時' });
   const q = realQuotesData?.[sym];
   if (q && q.close > 0) {
     const d = _normDate(q.date);
