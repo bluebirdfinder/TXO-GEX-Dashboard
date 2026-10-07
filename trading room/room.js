@@ -401,7 +401,7 @@ async function loadDashboardData() {
 
   // Phase 3: Load Multi-Asset Multi-Timeframe K-Lines Cache
   try {
-    const klineRes = await fetch('../data/klines_cache.json?t=' + Date.now());
+    const klineRes = await fetch('../data/klines_cache.json?t=' + Math.floor(Date.now() / 300000));
     if (klineRes.ok) {
       klinesCacheData = await klineRes.json();
       console.log('✅ [Phase 3] Loaded real multi-timeframe K-line cache for 8 core assets.');
