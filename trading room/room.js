@@ -3461,6 +3461,23 @@ function initSymbolSearchAndAutocomplete() {
       return symMatch || nameMatch || futMatch;
     }).slice(0, 15);
 
+    // 2026-10-07：股票有對應期貨、而且戰情室有那檔期貨的真實 K 線時（目前只有台積電期貨 CDF），緊接在現貨後面再列一行期貨讓使用者選；
+    // Enter 預設仍是第一行（現貨）。沒有 K 線資料的期貨不列，免得點進去是一張空圖。
+    {
+      const expanded = [];
+      currentMatches.forEach(item => {
+        expanded.push(item);
+        const fc = item.futures_code;
+        if (!fc || fc === item.symbol) return;
+        const fut = CORE_PRESET_ASSETS[fc] || null;
+        const hasBars = !!(fut && klinesCacheData?.assets?.[fut.symbol]);
+        if (fut && hasBars && !currentMatches.some(m => m.symbol === fut.symbol) && !expanded.some(m => m.symbol === fut.symbol)) {
+          expanded.push({ ...fut, name: fut.name, market: 'TAIFEX', has_futures: false, _futureOf: item.symbol });
+        }
+      });
+      currentMatches = expanded;
+    }
+
     focusedIndex = -1;
 
     if (currentMatches.length === 0) {
@@ -3473,7 +3490,7 @@ function initSymbolSearchAndAutocomplete() {
       <div class="search-result-item" data-idx="${idx}">
         <div class="search-item-left">
           <span class="search-item-sym">${item.symbol}</span>
-          <span class="search-item-name">${item.name}</span>
+          <span class="search-item-name">${item.name}${item._futureOf ? `（${item._futureOf} 的期貨）` : ''}</span>
         </div>
         <div class="search-item-right">
           <span class="search-tag-market">${item.market || 'TWSE'}</span>
