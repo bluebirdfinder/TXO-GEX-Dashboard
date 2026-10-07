@@ -3187,6 +3187,13 @@ function initSymbolSearchAndAutocomplete() {
     }
   });
 
+  // 2026-10-07 全域 Esc：關閉最上層開著的視窗（指標庫、API Key、選股雷達）；搜尋框自己的 Esc 另行處理。
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || e.target === searchInput) return;
+    const open = [...document.querySelectorAll('.settings-modal-overlay.show, .screener-modal.show')];
+    if (open.length) open[open.length - 1].classList.remove('show');
+  });
+
   function updateHighlight() {
     const items = dropdown.querySelectorAll('.search-result-item');
     items.forEach((item, idx) => {
@@ -3357,7 +3364,8 @@ function switchActiveSymbol(symObj) {
   const contractBtns = document.querySelectorAll('.contract-tab');
   contractBtns.forEach(btn => {
     const code = btn.getAttribute('data-contract');
-    if (code === symObj.symbol || code === symObj.futures_code) {
+    // 只比對代號本身：個股 2330 不該讓「台積期 CDF」分頁亮起（2026-10-07 實測）
+    if (code === symObj.symbol) {
       btn.classList.add('active');
     } else {
       btn.classList.remove('active');
@@ -4129,6 +4137,52 @@ function isTaifexSessionOpenNow() {
   return day || nightEve || nightMorn;
 }
 
+// 2026-10-07 實測：開盤後主圖停在夜盤最後一根、不跟即時報價走（圖只吃 klines_cache.json，富邦分K排程收盤後才補）。
+// 現在用真實的 /api/live_tick 台指期成交價推進「最後一根」，換到新週期時自動開新K棒。只用真實報價，不補、不造：
+// 開盤價＝本頁面第一次看到該根的成交價（頁面在該根中途才開時，開／高／低只涵蓋「看到之後」，圖上用黃色小字誠實標明）。
+const LIVE_BAR_SECONDS = { '1M': 60, '3M': 180, '5M': 300, '15M': 900, '30M': 1800, '1H': 3600 };
+let liveBar = null;   // { tf, time, open, high, low, close, partial }
+function applyLiveTickToChart(price) {
+  if (!candleSeries || !(price > 0)) return;
+  if ((currentActiveSymbol?.symbol || 'TXF') !== 'TXF') return;
+  const step = LIVE_BAR_SECONDS[currentTf];
+  if (!step) { setLiveBarNotice(''); return; }      // 4H／日／週／月K 的分段規則有盤別邊界，不在前端硬湊
+  const cached = candleSeries.data();
+  const last = cached && cached.length ? cached[cached.length - 1] : null;
+  if (!last) return;
+  const bucket = Math.floor(Date.now() / 1000 / step) * step;
+  if (last.time > bucket) return;                    // 圖上已有比現在更新的資料，不動
+  if (last.time === bucket) {
+    // 該根已在快取內（或上一輪即時推進建立的）：只往真實價格方向擴張高低、更新收盤
+    const bar = { time: bucket, open: last.open, high: Math.max(last.high, price), low: Math.min(last.low, price), close: price };
+    candleSeries.update(bar);
+    liveBar = { ...bar, tf: currentTf, partial: liveBar && liveBar.time === bucket ? liveBar.partial : false };
+  } else {
+    // 新的一根：開盤＝第一筆看到的成交價
+    const bar = { time: bucket, open: price, high: price, low: price, close: price };
+    candleSeries.update(bar);
+    liveBar = { ...bar, tf: currentTf, partial: true };
+  }
+  legendLastCandle = { time: liveBar.time, open: liveBar.open, high: liveBar.high, low: liveBar.low, close: liveBar.close };
+  setLiveBarNotice(liveBar.partial
+    ? `⏱ 即時K棒：自 ${new Date(Date.now()).toLocaleTimeString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false, hour: '2-digit', minute: '2-digit' })} 起累積（開／高／低可能不含此前走勢）；副圖指標待收盤K線更新`
+    : '');
+}
+function setLiveBarNotice(text) {
+  let n = document.getElementById('live-bar-notice');
+  const pane = document.getElementById('main-chart-pane');
+  if (!pane) return;
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'live-bar-notice';
+    n.style.cssText = 'position:absolute;bottom:26px;left:8px;z-index:20;padding:2px 8px;border-radius:6px;background:rgba(13,17,23,0.8);color:#ffd700;font-size:0.68rem;pointer-events:none;';
+    if (getComputedStyle(pane).position === 'static') pane.style.position = 'relative';
+    pane.appendChild(n);
+  }
+  n.style.display = text ? 'block' : 'none';
+  n.textContent = text || '';
+}
+
 function initFubonLivePriceStream() {
   // Check if trading hours & real server active
   setInterval(async () => {
@@ -4186,6 +4240,9 @@ function initFubonLivePriceStream() {
         const leftMainP = document.getElementById('left-main-price');
 
         if (valEl) valEl.innerText = data.txf.price.toLocaleString();
+        // 只在交易時段、且這筆報價夠新（有時間戳就檢查；MIS 備援沒有時間戳）時推進K棒，避免休市後拿舊價開新棒
+        const _tickFresh = typeof data.txf.ts === 'number' ? (Date.now() / 1000 - data.txf.ts) < 20 : true;
+        if (isTaifexSessionOpenNow() && _tickFresh) applyLiveTickToChart(data.txf.price);
         if (leftMainP && (!currentActiveSymbol || currentActiveSymbol.symbol === 'TXF')) {
           leftMainP.innerText = data.txf.price.toLocaleString();
           if (lastTxfPrice !== null && lastTxfPrice !== data.txf.price) {
