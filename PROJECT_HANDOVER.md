@@ -10,6 +10,7 @@
 
 | # | 功能 | 說明 |
 |---|---|---|
+| -15 | **📋 2026-10-06～10-08 官方對帳／到期天數／資料完整度／代碼修正（未升版）** | `scripts/fetch_and_calc_vision.py`（到期天數改小數天、未公布時 `not_published`＋`data_completeness`、`gamma_flip_standard_close`、官方臺指 VIX 當波動率）、`scripts/fetch_tw_universe.py`＋`data/tw_symbols_universe.json`（個股期貨代碼以期交所官方表為準）、`scripts/audit_vs_official.py`、`scripts/probe_publish_times.py`、`scripts/fubon_api_provider.py`（大戶散戶動能每分鐘存檔）、`trading room/room.js`（GEX 名稱標籤、Y 軸標籤、ADX 縮放、GC 黃金）。詳見 README／STATUS 的「2026-10-06～10-08 現況更新」、HANDOFF.md K～P 列、docs/VEX_SIGN_AND_FLIP_VALIDATION_20261007.md、docs/JJ_RSTOCK_MOMENTUM_EXPLORATION.md。 |
 | -14 | **🛡️ 網頁一律稱「動能鳥」＋指標 IP 保護現況盤點 (v64.17)** | `trading room/room.html`、`room.js`（移除 JJ 稱呼、元素 id 改名）；Worker 私有檔新增 `indicator=bird` 別名。詳見 HISTORY.md v64.17。 |
 | -13 | **🛠️ 指標庫 FVG/Order Blocks 勾選框接上 SMC (v64.16)** | `trading room/room.js`（`fetchSmcFromWorker()` 依勾選加 `fvg=1&swingob=1`）。詳見 HISTORY.md v64.16。 |
 | -12 | **🧠 戰情室 SMC 開關（畫圖端）(v64.15)** | `trading room/room.js`（SMC 畫圖：`renderSmcOverlay()`／`fetchSmcFromWorker()`）、`room.html`（🧠 SMC 按鈕）。演算法（LuxAlgo，CC BY-NC-SA）**不在本 repo**，在使用者私有資料夾與私有 Worker。詳見 HISTORY.md v64.15。 |

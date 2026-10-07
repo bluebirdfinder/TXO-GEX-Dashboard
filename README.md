@@ -7,6 +7,19 @@
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
 [![引擎版本](https://img.shields.io/badge/Engine-v64.17-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
+## 📋 2026-10-06 ～ 10-08 現況更新（文件同步，未升版）
+
+- **對官方資料逐項對帳**：`scripts/audit_vs_official.py`（獨立向期交所／證交所重抓逐項比對，收盤後執行）；清除虛構資料（Max Pain 改全履約價、寫死的本週焦點週報、CPI／非農規則猜日期改讀 BLS 官方日程檔 `data/us_macro_calendar.json`、板塊輪動寫死占比、融資維持率、假成交量預設值等）。
+- **GEX／VEX 波動率改用當日官方臺指 VIX**（原固定 18%），資料檔新增 `gex_model`；Zero Gamma 卡片改名「賣買權 OI 分界」，並排顯示新算的「標準 Gamma Flip」（`gamma_flip_standard`，價位掃描、現價±2,000 點內無轉折時顯示「—」並註明）與「日盤收盤值」（`gamma_flip_standard_close`）。
+- 🔴 **到期天數誤差修正**：結算日當天（週三／週五）13:30 前，當天要結算的週選原本被當成 7 天後到期（只看星期幾的整數天），低估 gamma；改為到 13:30 結算時刻的小數天、結算後才切下一檔。影響每週三、週五 13:30 前的 GEX／VEX／Zero Gamma／標準 Gamma Flip（例：10/07 凌晨標準 flip 49,132→49,588、總 GEX 2,582→7,806）。
+- 🔴 **當日資料未公布時不再借用舊快照**：大額交易人（期貨／選擇權）與三大法人選擇權在期交所尚未公布時回傳 None（`not_published`），資料檔新增 `data_completeness`，網頁狀態列顯示「⚠️ 期交所資料尚未公布」。先前每個交易日早上固定顯示凍結在 9/16 的大額交易人數字。
+- 🔴 **個股期貨代碼對照表修正**：手寫的 `STOCK_FUTURES_MAP` 有 28 檔代碼對到別檔股票（例：聯電期實為 `CCF`，非 `CAF`），改以期交所官方對照表為準。
+- **尋鳥戰情室**：右側 Y 軸只顯示彩色數字標籤（TV 風格）、GEX 名稱標籤畫在 VRVP 左側、ADX 附圖依可見資料自動縮放、新增黃金 GC（Yahoo；富邦 NEO 沒有海外期貨）、依商品顯示真實資料來源。
+- **大戶散戶動能**：本機服務每分鐘存檔（`~/.txo_momentum_1m`，可合成任意分 K，`/api/momentum_history?tf=`）；還原 JJ（rStock）指標定義進行中，**未定案、演算法未改**，見 [docs/JJ_RSTOCK_MOMENTUM_EXPLORATION.md](docs/JJ_RSTOCK_MOMENTUM_EXPLORATION.md)。
+- **排程調查**：期交所各項盤後資料實際公布時間尚未量準（`scripts/probe_publish_times.py`，本機排程 `TXO-Probe-Publish-Day`／`Night`）；MARKET_DATA_SCHEDULE.md 的「大額交易人 17:00～18:30」已標註為未驗證。排程時間尚未更動。
+- **VEX 符號／Gamma Flip 驗證**（唯讀研究，未改引擎）：見 [docs/VEX_SIGN_AND_FLIP_VALIDATION_20261007.md](docs/VEX_SIGN_AND_FLIP_VALIDATION_20261007.md)；GEX+ 符號維持現狀、繼續觀察。
+- 詳見 [HISTORY.md](HISTORY.md) 2026-10-06～10-08 條目與 [HANDOFF.md](HANDOFF.md) K～P 列。
+
 ## 📋 2026-09-26 選股雷達現況盤點（文件同步，未升版）
 
 - 實測涵蓋：universe 1,423 筆＝**1,383 檔**上市股票/ETF（100% 有真實120日歷史）＋40 筆 TAIFEX 指數/股期代碼（設計上不適用日K）。畫面「1,400+ 檔」略為誇大；舊文件「97%」是把這40筆算進分母。

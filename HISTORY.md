@@ -5,6 +5,14 @@
 
 ---
 
+### 2026-10-08 資料完整度提示 ✕ 標準 Gamma Flip 收盤值 ✕ 探針排程修復（未升版號）
+
+- 引擎新增 `data_completeness`（大額交易人期貨／選擇權、三大法人選擇權是否已公布），網頁狀態列在未公布時顯示提示；Lumi 等下游可據此不發有誤的盤後文字。
+- 新增 `gamma_flip_standard_close`／`_close_date`：日盤收盤後以該交易日 13:30 的到期天數與收盤現價重算，盤中沿用，供與羊叔等收盤值比較；網頁並排顯示，空值註明「現價±2,000 點內無轉折點」。
+- 探針排程（`TXO-Probe-Publish-Day`／`Night`）10/07 沒有執行（預設電池供電不啟動），已改為允許電池；仍未設定喚醒電腦。
+- 戰情室 `klines_cache.json` 載入快取改為 5 分鐘版本號（原每次 `Date.now()` 強制重抓；gzip 後實際傳輸約 1MB，影響有限）。
+- 研究紀錄：`docs/VEX_SIGN_AND_FLIP_VALIDATION_20261007.md`（VEX 符號、價位掃描 GEX+ Flip、7/9 第二日驗證——方向一致、大小未重現）、`docs/JJ_RSTOCK_MOMENTUM_EXPLORATION.md`。
+
 ### 2026-10-07 到期天數誤差修正（未升版號）
 
 - 🔴 `compute_days_to_expiries()` 結算日當天（週三／週五）回傳 7 天，與 bucket 分類器不一致，導致每週三、週五 13:30 前 GEX／VEX／Zero Gamma／標準 Gamma Flip 都偏差；改為到 13:30 結算時刻的小數天。**根因**：只看星期幾的整數天設計沒考慮結算日當天未結算的系列。
