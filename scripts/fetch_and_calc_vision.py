@@ -3133,6 +3133,38 @@ def generate_gex_payload():
 
     # Compute GEX Profile
     gex_profile = calculate_true_gex_profile(spot_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, with_standard=True)
+
+    # 日盤收盤時的標準 Gamma Flip（2026-10-07）：盤中的 gamma_flip_standard 會隨現價與剩餘時間即時重算；
+    # 要和羊叔等「收盤值」比，另存收盤版：用 OI 所屬交易日 13:30 的到期天數＋當日收盤現價。
+    # 只在日盤收盤後（≥13:45）到隔日開盤前（<08:45）重算；盤中沿用上一份 gex_data.json 的收盤值，不編造。
+    gamma_flip_standard_close, gamma_flip_standard_close_date = None, None
+    try:
+        _gp = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'gex_data.json')
+        if os.path.exists(_gp):
+            with open(_gp, 'r', encoding='utf-8') as _f:
+                _old = json.load(_f)
+            gamma_flip_standard_close = _old.get('gamma_flip_standard_close')
+            gamma_flip_standard_close_date = _old.get('gamma_flip_standard_close_date')
+    except Exception:
+        pass
+    _mins = now_dt.hour * 60 + now_dt.minute
+    _after_close = (_mins >= 13 * 60 + 45) or (_mins < 8 * 60 + 45)
+    if _after_close and _txo_latest_date and real_option_chain:
+        try:
+            _oi_d = datetime.date.fromisoformat(str(_txo_latest_date).replace('/', '-'))
+            # 13:45 之後要求 OI 就是今天的；隔日開盤前的 OI 日期則是最近一個交易日（週末／假日也成立）
+            if (_mins < 8 * 60 + 45) or _oi_d == now_dt.date():
+                _ref = datetime.datetime(_oi_d.year, _oi_d.month, _oi_d.day, 13, 30, tzinfo=tw_tz)
+                _dw, _df, _dm, _ = compute_days_to_expiries(_ref, tw_tz)
+                _t1 = max(float(_dw), 0.5) / 365.0
+                _sig = _gex_sigma_info()["sigma"]
+                _v = _standard_gamma_flip(spot_price, real_option_chain,
+                                          {"w1": _t1, "w2": _t1 + 7.0 / 365.0, "fri": max(float(_df), 0.5) / 365.0, "mth": max(float(_dm), 0.5) / 365.0},
+                                          _sig, 0.015)
+                gamma_flip_standard_close = _v
+                gamma_flip_standard_close_date = _oi_d.isoformat() if _v is not None else None
+        except Exception as _e:
+            print(f"[Warning] gamma_flip_standard_close failed: {_e}")
     gex_profile["dte_dates"] = dte_dates
 
     # Day vs Night Session Shift Metrics
@@ -4758,6 +4790,8 @@ def generate_gex_payload():
         "zero_gamma_level": gex_profile['zero_gamma_level'],
         "gex_plus_flip": gex_profile['gex_plus_flip'],
         "gamma_flip_standard": gex_profile.get('gamma_flip_standard'),
+        "gamma_flip_standard_close": gamma_flip_standard_close,
+        "gamma_flip_standard_close_date": gamma_flip_standard_close_date,
         "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'],
         "max_pain_strike": gex_profile['max_pain_strike'],

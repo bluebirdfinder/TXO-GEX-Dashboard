@@ -654,6 +654,10 @@ function renderDashboard() {
   // 標準 Gamma Flip（價格軸）並排顯示；VEX 早鳥線與 Zero Gamma 幾乎重疊時註明
   const elGfs = document.getElementById('stat-gamma-flip-std');
   if (elGfs) elGfs.innerText = (typeof gexData.gamma_flip_standard === 'number') ? gexData.gamma_flip_standard.toLocaleString() : '—（無轉折點）';
+  const elGfsClose = document.getElementById('stat-gamma-flip-std-close');
+  if (elGfsClose) elGfsClose.innerText = (typeof gexData.gamma_flip_standard_close === 'number') ? gexData.gamma_flip_standard_close.toLocaleString() : '—';
+  const elGfsCloseDate = document.getElementById('stat-gamma-flip-std-close-date');
+  if (elGfsCloseDate) elGfsCloseDate.innerText = (typeof gexData.gamma_flip_standard_close === 'number' && gexData.gamma_flip_standard_close_date) ? '(' + String(gexData.gamma_flip_standard_close_date).slice(5).replace('-', '/') + ')' : '';
   const elOverlap = document.getElementById('stat-flip-overlap-note');
   if (elOverlap) elOverlap.innerText = (typeof gexData.gex_plus_flip === 'number' && typeof gexData.zero_gamma_level === 'number' && Math.abs(gexData.gex_plus_flip - gexData.zero_gamma_level) < 0.5) ? '（與 Zero Gamma 重疊）' : '';
 
