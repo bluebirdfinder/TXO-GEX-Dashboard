@@ -491,6 +491,21 @@ function updateFreshnessIndicator(data) {
     const gm = data && data.gex_model;
     gexNote.textContent = gm ? `GEX／VEX 以 Black-Scholes 計算：波動率 σ＝${(gm.sigma * 100).toFixed(2)}%（${gm.sigma_source}），無風險利率 ${(gm.risk_free_rate * 100).toFixed(1)}%；未平倉量為期交所官方資料` : '';
   }
+  // 期交所當日資料尚未公布時的提示（engine data_completeness；欄位顯示 — 是正常的，不是故障）
+  const dcNote = document.getElementById('data-completeness-note');
+  if (dcNote) {
+    const dc = data && data.data_completeness;
+    const miss = [];
+    if (dc && dc.large_trader_futures === false) miss.push('大額交易人（期貨）');
+    if (dc && dc.large_trader_options === false) miss.push('大額交易人（選擇權）');
+    if (dc && dc.options_matrix === false) miss.push('三大法人選擇權');
+    if (miss.length) {
+      dcNote.style.display = 'inline-flex';
+      dcNote.textContent = '⚠️ 期交所資料尚未公布：' + miss.join('、') + '（欄位顯示 — 為正常，公布後下一輪自動更新）';
+    } else {
+      dcNote.style.display = 'none';
+    }
+  }
   if (data && data.engine_version) {
     const headerBadge = document.getElementById('app-header-version-badge');
     if (headerBadge) headerBadge.textContent = `TXO GEX 量化系統 ${data.engine_version}`;

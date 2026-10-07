@@ -4795,6 +4795,12 @@ def generate_gex_payload():
         "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'],
         "max_pain_strike": gex_profile['max_pain_strike'],
+        # 資料完整度（2026-10-07）：當日期交所資料還沒公布時為 False；網頁據此顯示「資料尚未公布」，Lumi 等下游可據此不發有誤的盤後文字
+        "data_completeness": {
+            "large_trader_futures": not lt_inst.get('not_published', False),
+            "large_trader_options": not opt_lt_inst.get('not_published', False),
+            "options_matrix": not opt_inst.get('not_published', False),
+        },
         "opt_large_trader": opt_lt_inst,
         "pc_ratio": gex_profile['pc_ratio'],
         "total_gex": gex_profile['total_gex'],
