@@ -28,6 +28,14 @@
 - `scripts/build_screener_cache.py:56-58` 全域關閉 SSL 驗證（`CERT_NONE`），已評估、僅回報未修改。
 - 詳見 [HISTORY.md](HISTORY.md) 2026-09-26 條目與 [DASHBOARD_DATA_SOURCE_MAP.md](DASHBOARD_DATA_SOURCE_MAP.md) 第7列。
 
+## 🌟 2026-10-07 戰情室實測修正與 K 線歷史回補（未升版號）
+
+- **圖表跟即時報價走**：台指期 1～60 分線用富邦即時成交價推進最後一根；個股取「富邦即時／報價檔／日K」中最新者並標資料日期；開／高／低、手機底部列、報價服務斷線紅帶、搜尋下拉現貨＋期貨並列、副圖可拖曳。
+- **持倉部位體檢不再冒充真實體檢**（先問部位）、洗價點改三級警戒；GEX 五大防線只顯示在台指期／小台／微台。
+- **K 線歷史回補**：`scripts/backfill_taifex_klines.py` 用期交所官方逐筆成交檔補回日內 K（與富邦 OHLC 100% 一致），15 分線不用再等每天累積。
+
+完整內容請見 [HISTORY.md](HISTORY.md) 與 [docs/ROOM_UX_WALKTHROUGH_2026-10-07.md](docs/ROOM_UX_WALKTHROUGH_2026-10-07.md)。
+
 ## 🌟 v64.17 網頁一律稱「動能鳥」
 
 - 網頁上的「JJ」稱呼全部改為「動能鳥」（標題、說明、程式內字串與名稱）；Worker 新增 `indicator=bird` 別名。

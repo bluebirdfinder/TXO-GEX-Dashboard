@@ -230,3 +230,12 @@ function updateGexChartOverlay(symbol) {
 - 戰情室：右側 Y 軸只顯示彩色數字標籤（TV 風格）、GEX 名稱標籤（Max Pain／Call Wall／ZG／VEX／Put Wall）畫在 VRVP 左側、ADX 附圖依可見資料自動縮放（下限 0）、新增黃金 GC（Yahoo；富邦沒有海外期貨）、klines 載入快取改 5 分鐘版本號。
 - 🔴 個股期貨代碼對照表修正：手寫表有 28 檔代碼對到別檔股票（聯電期實為 `CCF`），改以期交所官方對照表為準；修正前選個股時 CVD／大戶散戶動能顯示的可能是別檔股票。
 - 大戶散戶動能：本機服務每分鐘存檔（`~/.txo_momentum_1m`），`/api/momentum_history?symbol=&days=&tf=` 可合成任意分 K，戰情室切到該分頁先讀歷史；台指期、聯電期另存每 15 秒原始五檔＋成交供還原 JJ（rStock）定義。目前與 JJ 的比對：黃線（市場委託口差）正負號與我們五檔買賣口差 3/3 相符，紅線、綠線量級對不上，**未定案、演算法未改**；細節與 JJ 頁面操作注意事項見 `docs/JJ_RSTOCK_MOMENTUM_EXPLORATION.md`。
+
+## 🔧 開發紀錄（2026-10-07 ～ 08）：「扮演用戶」實測 15 項修正
+
+- 做法：開盤前後像一般用戶操作（切週期、搜尋、指標庫、AI 軍師、選股雷達、手機版），記錄問題，逐題問過使用者後修正。完整紀錄與狀態：`docs/ROOM_UX_WALKTHROUGH_2026-10-07.md`。
+- 規格補充（與上方「標的顯示過濾規則」一致）：GEX 五大防線只在 TXF／MXF／MTX／TMF 顯示；VRVP 與其他指標每個商品都要有。
+- 即時 K 棒：`applyLiveTickToChart()`（room.js）用 `/api/live_tick` 的 TXF 成交價推進最後一根（`LIVE_BAR_SECONDS` 涵蓋 1～60 分）；新棒的開高低只涵蓋頁面打開之後，圖上標示；副圖補 whitespace 點維持五圖「第幾根」對齊。
+- 圖表可視範圍：`applyDefaultVisibleRange()`＋`DEFAULT_VISIBLE_BARS`；套用時暫停五圖同步（`_rangeSyncPaused`），並在換圖後 1.2／3／6／10 秒補套（Worker 指標資料非同步抵達會重設位置），使用者拖曳或滾輪後停止。
+- 個股報價：`stockQuoteInfo()` 取最新者、`paintStockQuote()` 標日期；gateway `/api/stock_quote`（`fubon_api_provider.get_stock_quote`）。
+- 資料：`scripts/backfill_taifex_klines.py` 補日內 K 歷史（期交所官方逐筆檔，成交量 ÷2）。
