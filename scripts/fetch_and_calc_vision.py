@@ -1196,33 +1196,41 @@ def black_scholes_vanna(S, K, T, r, sigma):
 
 def compute_days_to_expiries(ref_dt, tw_tz):
     """
-    Days from ref_dt to the next Wednesday, next Friday, and the front monthly settlement
-    (3rd Wednesday of the month, rolling to next month if already past) — as of ref_dt, not
-    necessarily "now". Used both for the live GEX profile and for historical backfill, where
-    ref_dt is a past trading day so the option Greeks use that day's real time-to-expiry
-    instead of today's.
+    Days (fractional) from ref_dt to the next Wednesday weekly, next Friday weekly, and the front
+    monthly settlement (3rd Wednesday of the month) — as of ref_dt, not necessarily "now". Used both
+    for the live GEX profile and for historical backfill, where ref_dt is a past trading day so the
+    option Greeks use that day's real time-to-expiry instead of today's.
+
+    2026-10-07 fix: all three are now measured to the REAL settlement moment (13:30 on the settlement
+    day), as fractional days. It used to count whole days by weekday only, and on a settlement day
+    itself (Wed / Fri, any time incl. before 13:30) returned 7 — treating the not-yet-settled series
+    as expiring next week — while classify_txo_contract_buckets() correctly still counted that series
+    as w1/fri. Net effect: every Wed/Fri morning the expiring series' gamma was badly understated
+    (10/07 02:51: standard Gamma Flip 49,132 vs ~49,590 with the real 0.44 day). At/after 13:30 on the
+    settlement day the series is dead (the classifier drops it) so the next one, 7 days out, is used.
     """
+    settle_h, settle_m = 13, 30
+
     def days_to_next_weekday(base_dt, target_weekday):
         d = (target_weekday - base_dt.weekday()) % 7
-        return max(d, 0) if d > 0 else 7
+        target = (base_dt + datetime.timedelta(days=d)).replace(hour=settle_h, minute=settle_m, second=0, microsecond=0)
+        if target <= base_dt:
+            target += datetime.timedelta(days=7)
+        return (target - base_dt).total_seconds() / 86400.0
 
     raw_days_wed = days_to_next_weekday(ref_dt, 2)
     raw_days_fri = days_to_next_weekday(ref_dt, 4)
 
+    def _third_wed(y, m):
+        first_day = datetime.datetime(y, m, 1, tzinfo=tw_tz)
+        offset = (2 - first_day.weekday()) % 7 + 14
+        return datetime.datetime(y, m, 1 + offset, tzinfo=tw_tz)
+
     year, month = ref_dt.year, ref_dt.month
-    first_day = datetime.datetime(year, month, 1, tzinfo=tw_tz)
-    third_wed_offset = (2 - first_day.weekday()) % 7 + 14
-    third_wed = datetime.datetime(year, month, 1 + third_wed_offset, tzinfo=tw_tz)
-    if third_wed <= ref_dt:
-        if month == 12:
-            first_next = datetime.datetime(year + 1, 1, 1, tzinfo=tw_tz)
-            offset = (2 - first_next.weekday()) % 7 + 14
-            third_wed = datetime.datetime(year + 1, 1, 1 + offset, tzinfo=tw_tz)
-        else:
-            first_next = datetime.datetime(year, month + 1, 1, tzinfo=tw_tz)
-            offset = (2 - first_next.weekday()) % 7 + 14
-            third_wed = datetime.datetime(year, month + 1, 1 + offset, tzinfo=tw_tz)
-    raw_days_mth = max((third_wed - ref_dt).days, 0)
+    third_wed = _third_wed(year, month)
+    if third_wed.replace(hour=settle_h, minute=settle_m) <= ref_dt:
+        third_wed = _third_wed(year + 1, 1) if month == 12 else _third_wed(year, month + 1)
+    raw_days_mth = max((third_wed.replace(hour=settle_h, minute=settle_m) - ref_dt).total_seconds() / 86400.0, 0.0)
     return raw_days_wed, raw_days_fri, raw_days_mth, third_wed
 
 
