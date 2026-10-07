@@ -338,6 +338,7 @@ async function initTradingRoom() {
   // 2. Initialize Multi-Pane Charts Stack (5 Synchronized Charts)
   initMultiPaneCharts();
   
+  initPaneResizers();
   // 3. Render Left Panel Quotes, GEX Levels & Momentum HUD
   renderLeftPanel();
   
@@ -504,12 +505,14 @@ function initMultiPaneCharts() {
   volMa5Series = subChart1.addLineSeries({
     color: '#FFEB3B',
     lineWidth: 1.5,
-    title: ''
+    title: '',
+    priceFormat: { type: 'volume' }   // 量的均線也用 K/M 格式（原本顯示 1583600.00）
   });
   volMa10Series = subChart1.addLineSeries({
     color: '#FFFFFF',
     lineWidth: 1.5,
-    title: ''
+    title: '',
+    priceFormat: { type: 'volume' }   // 量的均線也用 K/M 格式（原本顯示 1583600.00）
   });
 
   // --- Sub-Chart 2: 戰情雙層 MACD (4 色柱體 + 快慢線) ---
@@ -560,7 +563,7 @@ function initMultiPaneCharts() {
 
   allCharts.forEach((sourceChart, srcIdx) => {
     sourceChart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
-      if (isSyncing || !range) return;
+      if (isSyncing || _rangeSyncPaused || !range) return;
       isSyncing = true;
       allCharts.forEach((targetChart, tgtIdx) => {
         if (srcIdx !== tgtIdx && targetChart) {
@@ -569,6 +572,12 @@ function initMultiPaneCharts() {
       });
       isSyncing = false;
     });
+  });
+
+  // 使用者自己拖曳／滾輪縮放後，不再自動重設可視範圍
+  ['tv-main-chart', 'tv-sub-chart-1', 'tv-sub-chart-2', 'tv-sub-chart-3', 'tv-sub-chart-4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) ['wheel', 'pointerdown', 'touchstart'].forEach(ev => el.addEventListener(ev, () => { _rangeUserTouched = true; }, { passive: true }));
   });
 
   // Crosshair OHLC Legend Tracker
@@ -609,6 +618,54 @@ function chartTickFormatter(t, type) {
   if (type === 1) return `${p.mo}月`;
   if (type === 2) return String(p.da);
   return `${pad(p.h)}:${pad(p.mi)}`;
+}
+
+// 圖與圖之間的分隔線：拖曳調整各窗格高度（2026-10-07）。高度比例存 localStorage，換裝置要重調。
+function initPaneResizers() {
+  const box = document.querySelector('.multi-pane-container');
+  if (!box || box.querySelector('.pane-resizer')) return;
+  const panes = ['main-chart-pane', 'sub-chart-pane-1', 'sub-chart-pane-2', 'sub-chart-pane-3', 'sub-chart-pane-4'].map(id => document.getElementById(id));
+  if (panes.some(p => !p)) return;
+  const KEY = 'txo_pane_flex_v1';
+  const isMobile = () => window.matchMedia('(max-width: 1024px)').matches;
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (Array.isArray(saved) && saved.length === 5 && saved.every(v => v > 0) && !isMobile()) panes.forEach((p, i) => { p.style.flex = `${saved[i]} 1 0`; });
+  } catch (e) { /* storage blocked */ }
+  for (let i = 1; i < panes.length; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'pane-resizer';
+    bar.title = '拖曳調整高度（雙擊還原）';
+    box.insertBefore(bar, panes[i]);
+    const above = panes[i - 1], below = panes[i];
+    bar.addEventListener('dblclick', () => { panes.forEach(p => { p.style.flex = ''; }); try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ } handleChartResize(); });
+    bar.addEventListener('pointerdown', (ev) => {
+      ev.preventDefault();
+      bar.setPointerCapture(ev.pointerId);
+      bar.classList.add('dragging');
+      const startY = ev.clientY, hA = above.getBoundingClientRect().height, hB = below.getBoundingClientRect().height;
+      // 先把所有窗格換成「像素高度 1 0」的 flex，之後只動相鄰兩個，總高度不變
+      const hs = panes.map(p => p.getBoundingClientRect().height);
+      panes.forEach((p, k) => { p.style.flex = `${hs[k]} 1 0`; });
+      const move = (e) => {
+        const dy = Math.max(-(hA - 36), Math.min(hB - 36, e.clientY - startY));   // 每個窗格至少留 36px
+        above.style.flex = `${hA + dy} 1 0`;
+        below.style.flex = `${hB - dy} 1 0`;
+        handleChartResize();
+      };
+      const up = () => {
+        bar.classList.remove('dragging');
+        bar.removeEventListener('pointermove', move);
+        bar.removeEventListener('pointerup', up);
+        bar.removeEventListener('pointercancel', up);
+        try { localStorage.setItem(KEY, JSON.stringify(panes.map(p => parseFloat(p.style.flex) || 1))); } catch (e) { /* ignore */ }
+        handleChartResize();
+      };
+      bar.addEventListener('pointermove', move);
+      bar.addEventListener('pointerup', up);
+      bar.addEventListener('pointercancel', up);
+    });
+  }
 }
 
 function handleChartResize() {
@@ -947,6 +1004,42 @@ function setChartBundleNotice(text) {
 }
 let lastChartData = null;   // 最近一次畫圖用的資料（切換副圖分頁時沿用，不必重算）
 
+// 2026-10-07：切商品／週期時可視範圍不穩（有時只剩最後 2 根，有時 fitContent 把 7,850 根 1 分K全塞進一屏）。
+// 比照券商 App：每個週期給一個「預設可見根數」（約一個月以上的走勢），可往左滑看更早的歷史。
+const DEFAULT_VISIBLE_BARS = { '1M': 240, '3M': 240, '5M': 240, '15M': 160, '30M': 160, '1H': 160, '4H': 120, '1D': 150, '1W': 104, '1Mth': 60 };
+let _rangeKey = '', _rangeN = 0;
+let _rangeSyncPaused = false;
+let _rangeUserTouched = false;   // 套用預設範圍時暫停五張圖的互相同步（否則範圍變更事件會讓它們互相拉扯回舊值）
+function applyDefaultVisibleRange(force) {
+  if (!mainChart || !candleSeries) return;
+  const n = (candleSeries.data() || []).length;
+  if (!n) return;
+  const sym = currentActiveSymbol?.symbol || 'TXF';
+  const key = `${sym}|${currentTf}`;
+  // 同一張圖重畫（例如個股日K分片晚到）不打斷使用者的捲動；只有換圖、或資料從幾乎沒有變多時才重設
+  if (!force && key === _rangeKey && !(_rangeN < 10 && n > _rangeN)) { _rangeN = n; return; }
+  if (key !== _rangeKey) {
+    // 換了一張圖：副圖的指標資料（Worker／CVD／動能）是非同步陸續到的，每次 setData 都會把該圖捲回預設位置，
+    // 所以在接下來幾秒再補套用幾次；使用者一旦自己拖曳／滾輪縮放就不再動它。
+    _rangeUserTouched = false;
+    [1200, 3000, 6000, 10000].forEach(ms => setTimeout(() => {
+      if (!_rangeUserTouched && `${currentActiveSymbol?.symbol || 'TXF'}|${currentTf}` === key) applyDefaultVisibleRange(true);
+    }, ms));
+  }
+  _rangeKey = key; _rangeN = n;
+  let want = DEFAULT_VISIBLE_BARS[currentTf] || 150;
+  if (currentTf === '1D' && isStockSymbol(sym)) want = 200;       // 現貨看更長：約 10 個月
+  // 五張圖靠「第幾根」同步捲動。直接對主圖設範圍會觸發同步事件、各圖互相拉扯回舊值而錯位（2026-10-07 實測），
+  // 所以先暫停同步，對五張圖各自設「同一個」範圍，再恢復。（timeScale.applyOptions({barSpacing}) 在此版本無效，不能用。）
+  const range = { from: Math.max(0, n - want) - 0.5, to: n - 1 + 12 };
+  _rangeSyncPaused = true;
+  [mainChart, subChart1, subChart2, subChart3, subChart4].forEach(ch => {
+    if (!ch) return;
+    try { ch.timeScale().setVisibleLogicalRange(range); } catch (e) { /* 該圖尚無資料 */ }
+  });
+  setTimeout(() => { _rangeSyncPaused = false; }, 250);
+}
+
 function renderChartData() {
   const _symForLoad = currentActiveSymbol?.symbol || 'TXF';
   if (stockNeedsDailyLoad(_symForLoad, currentTf)) {
@@ -973,12 +1066,20 @@ function renderChartData() {
         _n.textContent = (_isIntraday && (_hasDaily || stockNeedsDailyLoad(currentActiveSymbol?.symbol, '1D')))
           ? `⚪ ${currentActiveSymbol?.name || ''} 目前只提供日K以上（分K沒有官方免費來源），請切換 1D／1週／1月`
           : `⚪ ${currentActiveSymbol?.name || ''} ${currentTf} 暫無真實K線數據（官方來源未提供此時間級別）`;
+        if (currentTf !== '1D') {   // 一鍵改看日K（2026-10-07）
+          const b = document.createElement('button');
+          b.textContent = '改看日K';
+          b.style.cssText = 'display:block;margin:8px auto 0;padding:3px 12px;border-radius:6px;border:1px solid rgba(255,215,0,0.6);background:rgba(255,215,0,0.12);color:#ffd700;cursor:pointer;pointer-events:auto;font-size:0.78rem;';
+          b.addEventListener('click', () => document.querySelector('.btn-tf[data-tf="1D"]')?.click());
+          _n.appendChild(b);
+        }
       }
     }
   }
 
   // 1. Candlesticks on Main Chart
   candleSeries.setData(data.candles);
+  applyDefaultVisibleRange(false);
   legendLastCandle = (data.candles && data.candles.length) ? data.candles[data.candles.length - 1] : null;
   updateLegendOverlay(null);
 
@@ -1924,7 +2025,11 @@ function updateLegendOverlay(param) {
   let candle = null;
   if (param && param.time && param.seriesData) candle = param.seriesData.get(candleSeries);
   else candle = legendLastCandle;
-  if (!candle) return;
+  if (!candle) {
+    // 沒有K棒（例如櫃買指數 1H 沒資料）：OHLC 列清成「—」，不要留著上一個商品的數字（2026-10-07 實測）
+    if (!param) ['leg-open', 'leg-high', 'leg-low', 'leg-close', 'leg-diff'].forEach(id => { const el = document.getElementById(id); if (el) el.innerText = '—'; });
+    return;
+  }
 
   const isYield = currentActiveSymbol && currentActiveSymbol.is_yield;
   const _lp = currentActiveSymbol ? realPriceFor(currentActiveSymbol.symbol) : null;
@@ -2347,6 +2452,20 @@ function setupEventListeners() {
       }
     });
   }
+
+  // 手機底部列：按鈕轉呼叫上面的抽屜開關；價格每秒從左側報價區抄一份（不另外抓資料）
+  const mbL = document.getElementById('mb-left'), mbR = document.getElementById('mb-right');
+  if (mbL && btnToggleLeftDrawer) mbL.addEventListener('click', () => btnToggleLeftDrawer.click());
+  if (mbR && btnToggleRightDrawer) mbR.addEventListener('click', () => btnToggleRightDrawer.click());
+  setInterval(() => {
+    const g = id => document.getElementById(id);
+    if (!g('mb-val') || !g('left-main-price')) return;
+    g('mb-sym').textContent = currentActiveSymbol?.symbol || '';
+    g('mb-val').textContent = g('left-main-price').textContent;
+    g('mb-val').style.color = g('left-main-price').style.color;
+    g('mb-chg').textContent = `${g('left-price-diff')?.textContent || ''} ${g('left-price-pct')?.textContent || ''}`;
+    g('mb-chg').style.color = g('left-price-diff')?.style.color || '';
+  }, 1000);
 
   if (btnCloseLeft) btnCloseLeft.addEventListener('click', closeAllDrawers);
   if (btnCloseRight) btnCloseRight.addEventListener('click', closeAllDrawers);
@@ -4175,6 +4294,20 @@ let lastTxfPrice = null;
 // gateway is unreachable, instead of permanently showing "盤後休市" even during live trading.
 // 連不到就暫停一陣子再試：本機閘道 60 秒、期交所 MIS 5 分鐘（線上網站上 MIS 會被 CORS 擋，不必每 3 秒撞一次）。
 let _localGwRetryAt = 0;
+let _gatewayDown = false;   // 本機報價服務（/api/live_tick）最近一次是否連不上；用來顯示頂端紅帶
+function setGatewayBanner(down, source) {
+  let bar = document.getElementById('gateway-offline-bar');
+  if (!down) { if (bar) bar.style.display = 'none'; return; }
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'gateway-offline-bar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:5000;padding:3px 10px;background:#b71c1c;color:#fff;font-size:0.76rem;font-weight:700;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.5);';
+    document.body.appendChild(bar);
+  }
+  const via = source === 'worker' ? '目前改用期交所／證交所轉發（約 3 秒延遲）' : (source === 'mis' ? '目前改用期交所 MIS 備援' : '目前沒有任何即時來源');
+  bar.textContent = `🔴 報價服務未連線（富邦即時、五檔、CVD 都不可用）— ${via}。請確認本機報價服務有開（start_live.bat），或用 localhost:8000 開啟本頁。`;
+  bar.style.display = 'block';
+}
 let _misRetryAt = 0;
 let _workerQuoteRetryAt = 0;
 async function fetchFubonOrPublicFallback() {
@@ -4185,11 +4318,13 @@ async function fetchFubonOrPublicFallback() {
     clearTimeout(timeout);
     if (resp.ok) {
       const data = await resp.json();
-      if (data) return { data, source: 'fubon' };
+      if (data) { _gatewayDown = false; return { data, source: 'fubon' }; }
     }
+    _gatewayDown = true;
   } catch (e) {
     // Local gateway not running, blocked, or timed out — fall through to the public fallback.
     _localGwRetryAt = Date.now() + 60000;
+    _gatewayDown = true;
   }
 
   // 第二來源：私有 Cloudflare Worker 代抓期交所／證交所（手機直連期交所會被 CORS 擋）。Worker 沒部署新版或連不到時退避 60 秒。
@@ -4296,6 +4431,10 @@ function applyLiveTickToChart(price) {
     const bar = { time: bucket, open: price, high: price, low: price, close: price };
     candleSeries.update(bar);
     liveBar = { ...bar, tf: currentTf, partial: true };
+    // 各圖表是用「第幾根」對齊捲動位置的；主圖多一根、副圖沒有的話，整排副圖會錯位。
+    // 副圖補一個「只有時間、沒有數值」的空白點（whitespace），根數就對得上，指標線本身不動。
+    [volumeSeries, volMa5Series, volMa10Series, macdHistSeries, macdDifSeries, macdDeaSeries, cciLineSeries, ...Object.values(sub4Series || {})]
+      .forEach(sr => { try { if (sr) sr.update({ time: bucket }); } catch (e) { /* 該圖尚無資料或時間順序不符就略過 */ } });
   }
   legendLastCandle = { time: liveBar.time, open: liveBar.open, high: liveBar.high, low: liveBar.low, close: liveBar.close };
   setLiveBarNotice(liveBar.partial
@@ -4322,6 +4461,7 @@ function initFubonLivePriceStream() {
   setInterval(async () => {
     try {
       const { data, source } = await fetchFubonOrPublicFallback();
+      setGatewayBanner(_gatewayDown, source);
 
       const statusTag = document.getElementById('fubon-status-tag');
 
@@ -4341,16 +4481,25 @@ function initFubonLivePriceStream() {
         return;
       }
 
+      // 現貨指數（加權／櫃買）的報價時間戳超過 2 分鐘沒更新，就不能掛「LIVE」：9:00 前是昨收，盤中則是資料延遲。
+      // 2026-10-07 實測：08:46 數字其實是昨收（77 分鐘前的資料）卻跟著綠色 LIVE 標籤一起顯示。
+      const _spotStale = (q) => typeof q?.ts === 'number' && (Date.now() / 1000 - q.ts) > 120;
+      const _spotTag = () => {
+        const mins = (taipeiHourNow() * 60) + new Date().getMinutes();   // 台北整點＋分（分鐘在所有時區相同）
+        return (mins < 9 * 60 || mins >= 13 * 60 + 30) ? '昨收／收盤' : '資料延遲';
+      };
+
       // 1. TAIEX 加權指數
       if (data.taiex) {
         const valEl = document.getElementById('top-val-taiex');
         const chgEl = document.getElementById('top-chg-taiex');
-        if (valEl) valEl.innerText = data.taiex.price.toLocaleString();
+        const st = _spotStale(data.taiex);
+        if (valEl) { valEl.innerText = data.taiex.price.toLocaleString(); valEl.style.opacity = st ? '0.55' : ''; }
         if (chgEl) {
           const isUp = data.taiex.change >= 0;
           const sign = isUp ? '+' : '';
-          chgEl.innerText = `${sign}${data.taiex.change} (${sign}${data.taiex.pct}%)`;
-          chgEl.style.color = isUp ? 'var(--call-color)' : 'var(--put-color)';
+          chgEl.innerText = `${sign}${data.taiex.change} (${sign}${data.taiex.pct}%)` + (st ? `・${_spotTag()}` : '');
+          chgEl.style.color = st ? 'var(--text-muted)' : (isUp ? 'var(--call-color)' : 'var(--put-color)');
         }
       }
 
@@ -4358,12 +4507,13 @@ function initFubonLivePriceStream() {
       if (data.otc) {
         const valEl = document.getElementById('top-val-otc');
         const chgEl = document.getElementById('top-chg-otc');
-        if (valEl) valEl.innerText = data.otc.price.toLocaleString();
+        const st = _spotStale(data.otc);
+        if (valEl) { valEl.innerText = data.otc.price.toLocaleString(); valEl.style.opacity = st ? '0.55' : ''; }
         if (chgEl) {
           const isUp = data.otc.change >= 0;
           const sign = isUp ? '+' : '';
-          chgEl.innerText = `${sign}${data.otc.change} (${sign}${data.otc.pct}%)`;
-          chgEl.style.color = isUp ? 'var(--call-color)' : 'var(--put-color)';
+          chgEl.innerText = `${sign}${data.otc.change} (${sign}${data.otc.pct}%)` + (st ? `・${_spotTag()}` : '');
+          chgEl.style.color = st ? 'var(--text-muted)' : (isUp ? 'var(--call-color)' : 'var(--put-color)');
         }
       }
 
@@ -4493,7 +4643,7 @@ function resetPriceAutoScale() {
     try { ch.priceScale('right').applyOptions({ autoScale: true }); } catch (e) { /* 軸不存在就略過 */ }
   });
   if (mainChart) {
-    try { mainChart.timeScale().fitContent(); } catch (e) { /* 尚無資料 */ }
+    applyDefaultVisibleRange(true);   // 右下角「自動」與換商品：回到預設可見範圍（不再 fitContent 全塞）
   }
 }
 
