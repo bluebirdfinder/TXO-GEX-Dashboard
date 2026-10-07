@@ -186,6 +186,13 @@ class FubonAPIProvider:
             self.is_active = False
 
     def get_live_quotes(self):
+        def _num(q, k):
+            try:
+                v = q.get(k) if isinstance(q, dict) else None
+                return float(v) if v else None
+            except Exception:
+                return None
+
         """
         Retrieves real-time index & futures quotes from Fubon Provider.
         Returns dict: {'spot_price': float, 'otc_price': float, 'txf_price': float, 'change': float, 'pct': float, 'source': str}
@@ -257,6 +264,11 @@ class FubonAPIProvider:
                     'txf_price': float(txf_price),
                     'change': change,
                     'pct': pct,
+                    # 2026-10-07: 本盤別開高低（富邦 futopt quote 的 openPrice/highPrice/lowPrice），戰情室左側報價區用；
+                    # 欄位沒回就是 None，前端顯示「—」，不自己湊。
+                    'open': _num(txf_q, 'openPrice'),
+                    'high': _num(txf_q, 'highPrice'),
+                    'low': _num(txf_q, 'lowPrice'),
                     'source': f'Fubon Neo API ({session_mode})'
                 }
                 self.last_fetch_ts = now
@@ -270,6 +282,41 @@ class FubonAPIProvider:
             return {'spot_price': None, 'otc_price': None, 'txf_price': None, 'change': 0.0, 'pct': 0.0,
                     'source': 'Fubon Neo API (no fresh quote)'}
         return self.last_cache
+
+    def get_stock_quote(self, symbol):
+        """個股／ETF 即時報價（富邦 stock.intraday.quote）。2026-10-07 新增：戰情室個股報價原本只吃一份沒排程的舊檔。
+        只回富邦真的給的欄位；失敗回 None（前端改顯示資料日期，不造數字）。每檔快取 2 秒避免瀏覽器輪詢打爆 API。"""
+        symbol = str(symbol or '').strip().upper()
+        if not symbol.isalnum() or len(symbol) > 8 or not self.is_active or not self.marketdata:
+            return None
+        cache = getattr(self, '_stock_quote_cache', None)
+        if cache is None:
+            cache = self._stock_quote_cache = {}
+        hit = cache.get(symbol)
+        if hit and time.time() - hit[0] < 2.0:
+            return hit[1]
+        try:
+            q = self.marketdata.rest_client.stock.intraday.quote(symbol=symbol)
+        except Exception as e:  # noqa: BLE001
+            logging.debug(f"Fubon stock quote {symbol} failed: {e}")
+            return None
+        if not isinstance(q, dict):
+            return None
+
+        def _f(k):
+            try:
+                v = q.get(k)
+                return float(v) if v not in (None, '', 0, 0.0) else None
+            except Exception:
+                return None
+        price = _f('lastPrice') or _f('closePrice')
+        if not price:
+            return None
+        out = {'symbol': symbol, 'price': price, 'change': _f('change'), 'pct': _f('changePercent'),
+               'open': _f('openPrice'), 'high': _f('highPrice'), 'low': _f('lowPrice'),
+               'prev_close': _f('previousClose') or _f('referencePrice'), 'ts': time.time()}
+        cache[symbol] = (time.time(), out)
+        return out
 
     def _ensure_futopt_connected(self):
         """

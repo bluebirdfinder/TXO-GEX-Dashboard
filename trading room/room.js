@@ -166,6 +166,93 @@ function liveTxfPrice() {
   return (liveTxf && (Date.now() - liveTxf.at) < 15000) ? liveTxf.price : null;
 }
 
+// ===== 個股／ETF 報價（2026-10-07）==================================================================================
+// 以前只吃 data/tw_quotes_latest.json（沒有排程，13 天沒更新）還不標日期。現在三個來源取「日期最新」的那個：
+//   ① 富邦即時（gateway /api/stock_quote，交易時段 ~4 秒一次） ② 報價檔 ③ 日K分片最後一根。畫面一律標出資料日期。
+const liveStockQuotes = {};      // 代號 -> { price, change, pct, open, high, low, prev_close, at }
+const _stockQuoteBackoff = {};   // 代號 -> 下次可再試的時間（gateway 沒這個端點／富邦沒回就退避）
+function isStockSymbol(sym) { return !!sym && !CORE_PRESET_ASSETS[sym] && /^[0-9]{4,6}[A-Z]?$/.test(sym); }
+function _normDate(d) {          // '1150924'(民國) / '20260924' / '2026-09-24' -> '20260924'
+  const t = String(d || '').replace(/[^0-9]/g, '');
+  if (t.length === 7) return String(parseInt(t.slice(0, 3), 10) + 1911) + t.slice(3);
+  return t.length === 8 ? t : '';
+}
+function stockQuoteInfo(sym) {
+  const cands = [];
+  const lv = liveStockQuotes[sym];
+  if (lv && Date.now() - lv.at < 90000) cands.push({ price: lv.price,
+    // 富邦個股 quote 有時不帶 change／changePercent：用「現價 − 昨收（referencePrice）」自己算，兩者都沒有才顯示「—」
+    change: typeof lv.change === 'number' ? lv.change : (lv.prev_close ? +(lv.price - lv.prev_close).toFixed(2) : null),
+    pct: typeof lv.pct === 'number' ? lv.pct : (lv.prev_close ? +((lv.price / lv.prev_close - 1) * 100).toFixed(2) : null), open: lv.open, high: lv.high, low: lv.low, prev: lv.prev_close, asof: 'live', rank: 99999999, src: '富邦即時' });
+  const q = realQuotesData?.[sym];
+  if (q && q.close > 0) {
+    const d = _normDate(q.date);
+    cands.push({ price: q.close, change: q.change, pct: q.pct_change, open: q.open, high: q.high, low: q.low, prev: (q.close - (q.change || 0)) || null, asof: d, rank: Number(d) || 0, src: '報價檔' });
+  }
+  const bars = stockDailyBySym[sym];
+  if (bars && bars.length) {
+    const b = bars[bars.length - 1], pb = bars.length > 1 ? bars[bars.length - 2] : null;
+    const d = _normDate(b.date);
+    cands.push({ price: b.close, change: pb ? +(b.close - pb.close).toFixed(2) : null, pct: pb ? +((b.close / pb.close - 1) * 100).toFixed(2) : null, open: b.open, high: b.high, low: b.low, prev: pb ? pb.close : null, asof: d, rank: Number(d) || 0, src: '日K收盤' });
+  }
+  if (!cands.length) return null;
+  cands.sort((a, b2) => b2.rank - a.rank);
+  return cands[0];
+}
+// 最近一個「應該已經有收盤資料」的交易日（只排除週末；國定假日不在這裡判斷，所以只是「可能過期」的提示）
+function expectedLastTradingDate() {
+  const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+  const g = t => p.find(x => x.type === t).value;
+  let d = new Date(Date.UTC(+g('year'), +g('month') - 1, +g('day')));
+  const mins = (+g('hour') % 24) * 60 + +g('minute');
+  if (mins < 14 * 60) d = new Date(d.getTime() - 86400000);          // 今天還沒收完，期待的是昨天
+  while ([0, 6].includes(d.getUTCDay())) d = new Date(d.getTime() - 86400000);
+  return d.toISOString().slice(0, 10).replace(/-/g, '');
+}
+function paintStockQuote() {
+  const sym = currentActiveSymbol?.symbol;
+  const asofEl = document.getElementById('left-quote-asof');
+  if (!isStockSymbol(sym)) { if (asofEl) asofEl.style.display = 'none'; return; }
+  const si = stockQuoteInfo(sym);
+  if (!si) { if (asofEl) { asofEl.style.display = 'block'; asofEl.style.color = '#ffd700'; asofEl.textContent = '⚠️ 沒有這檔的報價資料'; } return; }
+  const fmtP = v => v.toLocaleString(undefined, { minimumFractionDigits: v < 500 ? 2 : 0, maximumFractionDigits: v < 500 ? 2 : 0 });
+  const setT = (id, v) => { const el = document.getElementById(id); if (el) el.innerText = (v === null || v === undefined || isNaN(v)) ? '—' : fmtP(v); };
+  const pEl = document.getElementById('left-main-price');
+  if (pEl) pEl.innerText = fmtP(si.price);
+  const dEl = document.getElementById('left-price-diff'), pcEl = document.getElementById('left-price-pct');
+  if (dEl && pcEl) {
+    if (typeof si.change === 'number' && typeof si.pct === 'number') {
+      const up = si.change >= 0, sg = up ? '+' : '', col = up ? 'var(--call-color)' : 'var(--put-color)';
+      dEl.innerText = `${sg}${si.change.toFixed(2)}`; pcEl.innerText = `(${sg}${si.pct.toFixed(2)}%)`;
+      dEl.style.color = pcEl.style.color = col; if (pEl) pEl.style.color = col;
+    } else { dEl.innerText = '—'; pcEl.innerText = '(—)'; }
+  }
+  setT('left-open', si.open); setT('left-high', si.high); setT('left-low', si.low); setT('left-prev', si.prev);
+  if (asofEl) {
+    asofEl.style.display = 'block';
+    if (si.asof === 'live') { asofEl.style.color = '#00e676'; asofEl.textContent = '🟢 富邦即時'; }
+    else {
+      const stale = si.asof < expectedLastTradingDate();
+      const md = `${+si.asof.slice(4, 6)}/${+si.asof.slice(6, 8)}`;
+      asofEl.style.color = stale ? '#ffd700' : 'var(--text-muted)';
+      asofEl.textContent = `${stale ? '⚠️ 資料過期：' : '資料日期：'}${md}（${si.src}）${stale ? '，非最新' : ''}`;
+    }
+  }
+}
+async function pollActiveStockQuote() {
+  const sym = currentActiveSymbol?.symbol;
+  if (!isStockSymbol(sym) || Date.now() < (_stockQuoteBackoff[sym] || 0)) return;
+  try {
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 2500);
+    const r = await fetch(`${GATEWAY_BASE}/api/stock_quote?symbol=${encodeURIComponent(sym)}`, { signal: ctl.signal, cache: 'no-store' });
+    clearTimeout(to);
+    if (!r.ok) { _stockQuoteBackoff[sym] = Date.now() + 60000; return; }
+    const j = await r.json();
+    if (j && j.price > 0) { liveStockQuotes[sym] = { ...j, at: Date.now() }; if (currentActiveSymbol?.symbol === sym) paintStockQuote(); }
+  } catch (e) { _stockQuoteBackoff[sym] = Date.now() + 60000; }
+}
+setInterval(pollActiveStockQuote, 4000);
+
 function realPriceFor(sym) {
   if (!sym) return null;
   const num = (v) => (typeof v === 'number' && isFinite(v) && v > 0) ? v : null;
@@ -175,6 +262,7 @@ function realPriceFor(sym) {
   if (sym === 'OTC') return num(gexData?.two_price);
   const lm = liveMacroPrice(sym);
   if (lm !== null) return lm;
+  if (isStockSymbol(sym)) { const si = stockQuoteInfo(sym); if (si) return si.price; }
   const q = num(realQuotesData?.[sym]?.close);
   if (q !== null) return q;
   const tfs = klinesCacheData?.assets?.[sym]?.timeframes;
@@ -253,6 +341,7 @@ async function initTradingRoom() {
   // 2. Initialize Multi-Pane Charts Stack (5 Synchronized Charts)
   initMultiPaneCharts();
   
+  initPaneResizers();
   // 3. Render Left Panel Quotes, GEX Levels & Momentum HUD
   renderLeftPanel();
   
@@ -419,12 +508,14 @@ function initMultiPaneCharts() {
   volMa5Series = subChart1.addLineSeries({
     color: '#FFEB3B',
     lineWidth: 1.5,
-    title: ''
+    title: '',
+    priceFormat: { type: 'volume' }   // 量的均線也用 K/M 格式（原本顯示 1583600.00）
   });
   volMa10Series = subChart1.addLineSeries({
     color: '#FFFFFF',
     lineWidth: 1.5,
-    title: ''
+    title: '',
+    priceFormat: { type: 'volume' }   // 量的均線也用 K/M 格式（原本顯示 1583600.00）
   });
 
   // --- Sub-Chart 2: 戰情雙層 MACD (4 色柱體 + 快慢線) ---
@@ -475,7 +566,7 @@ function initMultiPaneCharts() {
 
   allCharts.forEach((sourceChart, srcIdx) => {
     sourceChart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
-      if (isSyncing || !range) return;
+      if (isSyncing || _rangeSyncPaused || !range) return;
       isSyncing = true;
       allCharts.forEach((targetChart, tgtIdx) => {
         if (srcIdx !== tgtIdx && targetChart) {
@@ -484,6 +575,12 @@ function initMultiPaneCharts() {
       });
       isSyncing = false;
     });
+  });
+
+  // 使用者自己拖曳／滾輪縮放後，不再自動重設可視範圍
+  ['tv-main-chart', 'tv-sub-chart-1', 'tv-sub-chart-2', 'tv-sub-chart-3', 'tv-sub-chart-4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) ['wheel', 'pointerdown', 'touchstart'].forEach(ev => el.addEventListener(ev, () => { _rangeUserTouched = true; }, { passive: true }));
   });
 
   // Crosshair OHLC Legend Tracker
@@ -524,6 +621,54 @@ function chartTickFormatter(t, type) {
   if (type === 1) return `${p.mo}月`;
   if (type === 2) return String(p.da);
   return `${pad(p.h)}:${pad(p.mi)}`;
+}
+
+// 圖與圖之間的分隔線：拖曳調整各窗格高度（2026-10-07）。高度比例存 localStorage，換裝置要重調。
+function initPaneResizers() {
+  const box = document.querySelector('.multi-pane-container');
+  if (!box || box.querySelector('.pane-resizer')) return;
+  const panes = ['main-chart-pane', 'sub-chart-pane-1', 'sub-chart-pane-2', 'sub-chart-pane-3', 'sub-chart-pane-4'].map(id => document.getElementById(id));
+  if (panes.some(p => !p)) return;
+  const KEY = 'txo_pane_flex_v1';
+  const isMobile = () => window.matchMedia('(max-width: 1024px)').matches;
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (Array.isArray(saved) && saved.length === 5 && saved.every(v => v > 0) && !isMobile()) panes.forEach((p, i) => { p.style.flex = `${saved[i]} 1 0`; });
+  } catch (e) { /* storage blocked */ }
+  for (let i = 1; i < panes.length; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'pane-resizer';
+    bar.title = '拖曳調整高度（雙擊還原）';
+    box.insertBefore(bar, panes[i]);
+    const above = panes[i - 1], below = panes[i];
+    bar.addEventListener('dblclick', () => { panes.forEach(p => { p.style.flex = ''; }); try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ } handleChartResize(); });
+    bar.addEventListener('pointerdown', (ev) => {
+      ev.preventDefault();
+      bar.setPointerCapture(ev.pointerId);
+      bar.classList.add('dragging');
+      const startY = ev.clientY, hA = above.getBoundingClientRect().height, hB = below.getBoundingClientRect().height;
+      // 先把所有窗格換成「像素高度 1 0」的 flex，之後只動相鄰兩個，總高度不變
+      const hs = panes.map(p => p.getBoundingClientRect().height);
+      panes.forEach((p, k) => { p.style.flex = `${hs[k]} 1 0`; });
+      const move = (e) => {
+        const dy = Math.max(-(hA - 36), Math.min(hB - 36, e.clientY - startY));   // 每個窗格至少留 36px
+        above.style.flex = `${hA + dy} 1 0`;
+        below.style.flex = `${hB - dy} 1 0`;
+        handleChartResize();
+      };
+      const up = () => {
+        bar.classList.remove('dragging');
+        bar.removeEventListener('pointermove', move);
+        bar.removeEventListener('pointerup', up);
+        bar.removeEventListener('pointercancel', up);
+        try { localStorage.setItem(KEY, JSON.stringify(panes.map(p => parseFloat(p.style.flex) || 1))); } catch (e) { /* ignore */ }
+        handleChartResize();
+      };
+      bar.addEventListener('pointermove', move);
+      bar.addEventListener('pointerup', up);
+      bar.addEventListener('pointercancel', up);
+    });
+  }
 }
 
 function handleChartResize() {
@@ -862,10 +1007,46 @@ function setChartBundleNotice(text) {
 }
 let lastChartData = null;   // 最近一次畫圖用的資料（切換副圖分頁時沿用，不必重算）
 
+// 2026-10-07：切商品／週期時可視範圍不穩（有時只剩最後 2 根，有時 fitContent 把 7,850 根 1 分K全塞進一屏）。
+// 比照券商 App：每個週期給一個「預設可見根數」（約一個月以上的走勢），可往左滑看更早的歷史。
+const DEFAULT_VISIBLE_BARS = { '1M': 240, '3M': 240, '5M': 240, '15M': 160, '30M': 160, '1H': 160, '4H': 120, '1D': 150, '1W': 104, '1Mth': 60 };
+let _rangeKey = '', _rangeN = 0;
+let _rangeSyncPaused = false;
+let _rangeUserTouched = false;   // 套用預設範圍時暫停五張圖的互相同步（否則範圍變更事件會讓它們互相拉扯回舊值）
+function applyDefaultVisibleRange(force) {
+  if (!mainChart || !candleSeries) return;
+  const n = (candleSeries.data() || []).length;
+  if (!n) return;
+  const sym = currentActiveSymbol?.symbol || 'TXF';
+  const key = `${sym}|${currentTf}`;
+  // 同一張圖重畫（例如個股日K分片晚到）不打斷使用者的捲動；只有換圖、或資料從幾乎沒有變多時才重設
+  if (!force && key === _rangeKey && !(_rangeN < 10 && n > _rangeN)) { _rangeN = n; return; }
+  if (key !== _rangeKey) {
+    // 換了一張圖：副圖的指標資料（Worker／CVD／動能）是非同步陸續到的，每次 setData 都會把該圖捲回預設位置，
+    // 所以在接下來幾秒再補套用幾次；使用者一旦自己拖曳／滾輪縮放就不再動它。
+    _rangeUserTouched = false;
+    [1200, 3000, 6000, 10000].forEach(ms => setTimeout(() => {
+      if (!_rangeUserTouched && `${currentActiveSymbol?.symbol || 'TXF'}|${currentTf}` === key) applyDefaultVisibleRange(true);
+    }, ms));
+  }
+  _rangeKey = key; _rangeN = n;
+  let want = DEFAULT_VISIBLE_BARS[currentTf] || 150;
+  if (currentTf === '1D' && isStockSymbol(sym)) want = 200;       // 現貨看更長：約 10 個月
+  // 五張圖靠「第幾根」同步捲動。直接對主圖設範圍會觸發同步事件、各圖互相拉扯回舊值而錯位（2026-10-07 實測），
+  // 所以先暫停同步，對五張圖各自設「同一個」範圍，再恢復。（timeScale.applyOptions({barSpacing}) 在此版本無效，不能用。）
+  const range = { from: Math.max(0, n - want) - 0.5, to: n - 1 + 12 };
+  _rangeSyncPaused = true;
+  [mainChart, subChart1, subChart2, subChart3, subChart4].forEach(ch => {
+    if (!ch) return;
+    try { ch.timeScale().setVisibleLogicalRange(range); } catch (e) { /* 該圖尚無資料 */ }
+  });
+  setTimeout(() => { _rangeSyncPaused = false; }, 250);
+}
+
 function renderChartData() {
   const _symForLoad = currentActiveSymbol?.symbol || 'TXF';
   if (stockNeedsDailyLoad(_symForLoad, currentTf)) {
-    loadStockDailyFor(_symForLoad).then(bars => { if (bars) renderChartData(); });   // 載入完成再重畫一次
+    loadStockDailyFor(_symForLoad).then(bars => { if (bars) { renderChartData(); paintStockQuote(); } });   // 載入完成再重畫一次
   }
   const data = generateIndicatorsData(currentTf);
   // Explain an intentionally empty chart (no real bars for this symbol/timeframe) instead of leaving it blank.
@@ -888,12 +1069,20 @@ function renderChartData() {
         _n.textContent = (_isIntraday && (_hasDaily || stockNeedsDailyLoad(currentActiveSymbol?.symbol, '1D')))
           ? `⚪ ${currentActiveSymbol?.name || ''} 目前只提供日K以上（分K沒有官方免費來源），請切換 1D／1週／1月`
           : `⚪ ${currentActiveSymbol?.name || ''} ${currentTf} 暫無真實K線數據（官方來源未提供此時間級別）`;
+        if (currentTf !== '1D') {   // 一鍵改看日K（2026-10-07）
+          const b = document.createElement('button');
+          b.textContent = '改看日K';
+          b.style.cssText = 'display:block;margin:8px auto 0;padding:3px 12px;border-radius:6px;border:1px solid rgba(255,215,0,0.6);background:rgba(255,215,0,0.12);color:#ffd700;cursor:pointer;pointer-events:auto;font-size:0.78rem;';
+          b.addEventListener('click', () => document.querySelector('.btn-tf[data-tf="1D"]')?.click());
+          _n.appendChild(b);
+        }
       }
     }
   }
 
   // 1. Candlesticks on Main Chart
   candleSeries.setData(data.candles);
+  applyDefaultVisibleRange(false);
   legendLastCandle = (data.candles && data.candles.length) ? data.candles[data.candles.length - 1] : null;
   updateLegendOverlay(null);
 
@@ -1839,7 +2028,11 @@ function updateLegendOverlay(param) {
   let candle = null;
   if (param && param.time && param.seriesData) candle = param.seriesData.get(candleSeries);
   else candle = legendLastCandle;
-  if (!candle) return;
+  if (!candle) {
+    // 沒有K棒（例如櫃買指數 1H 沒資料）：OHLC 列清成「—」，不要留著上一個商品的數字（2026-10-07 實測）
+    if (!param) ['leg-open', 'leg-high', 'leg-low', 'leg-close', 'leg-diff'].forEach(id => { const el = document.getElementById(id); if (el) el.innerText = '—'; });
+    return;
+  }
 
   const isYield = currentActiveSymbol && currentActiveSymbol.is_yield;
   const _lp = currentActiveSymbol ? realPriceFor(currentActiveSymbol.symbol) : null;
@@ -1874,7 +2067,8 @@ function updateLegendOverlay(param) {
 // The GEX levels are TXO strikes in TAIEX/TXF index points, so a distance is only meaningful for the
 // index-point family and only when a real price exists; anything else shows "—" (not DXY 98.8 - 48,000).
 function refreshGexDistances(baseP, cw, zg, pw, mp) {
-  const gexApplicable = baseP !== null && ['TXF', 'MTX', 'MXF', 'TMF', 'TWN', 'TAIEX'].includes(currentActiveSymbol?.symbol || 'TXF');
+  // GEX 點位只屬於台指期／小台／微台（2026-10-07 使用者決定；加權指數現貨也不顯示）
+  const gexApplicable = baseP !== null && GEX_SUPPORTED_SYMBOLS.includes(currentActiveSymbol?.symbol || 'TXF');
   const setDist = (id, level, digits) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -1895,6 +2089,9 @@ function renderLeftPanel() {
   updateMomentumBirdHud(currentActiveSymbol); // async — fills in real bias/mfi/adx/trend/grade once the API responds
 
   const isIndexFutures = currentActiveSymbol && ['TXF', 'MXF', 'TMF', 'TWN'].includes(currentActiveSymbol.symbol);
+  // 非台指期／小台／微台：整塊 GEX 五大防線收起（其他指標每個商品都照常顯示）
+  const _gexBox = document.getElementById('left-gex-container');
+  if (_gexBox) _gexBox.style.display = GEX_SUPPORTED_SYMBOLS.includes(currentActiveSymbol?.symbol || 'TXF') ? '' : 'none';
   const baseP = realPriceFor(currentActiveSymbol?.symbol || 'TXF');  // null => shown as '—', never a stale constant
   
   const cw = gexData?.call_wall_strike || ROOM_CHART_DEFAULTS.call_wall_strike;
@@ -1988,7 +2185,7 @@ function renderLeftPanel() {
         prevClose = gexData.two_price - gexData.two_change;
       }
     }
-    const sOhlc = sessionOhlcFor(currentActiveSymbol?.symbol);
+    const sOhlc = liveOhlcFor(currentActiveSymbol?.symbol) || sessionOhlcFor(currentActiveSymbol?.symbol);
     const fmtP = (v) => v.toLocaleString(undefined, { minimumFractionDigits: v < 500 ? 2 : 0, maximumFractionDigits: v < 500 ? 2 : 0 });
     lOpen.innerText = sOhlc ? fmtP(sOhlc.open) : '—';
     lHigh.innerText = sOhlc ? fmtP(sOhlc.high) : '—';
@@ -2009,6 +2206,7 @@ function renderLeftPanel() {
 
   // Distances（抽成 refreshGexDistances()：即時報價進來時也要用最新價格重算，否則距離停在載入時的舊價）
   refreshGexDistances(baseP, cw, zg, pw, mp);
+  paintStockQuote();   // 個股：用最新來源（富邦即時／報價檔／日K）覆蓋價格、漲跌、開高低收，並標資料日期
 
   // Strike levels themselves (🛡️ GEX 造市商五大防線 card). Found 2026-09-15: this whole card
   // was permanently frozen at whatever numbers were typed into room.html's initial markup —
@@ -2257,6 +2455,20 @@ function setupEventListeners() {
       }
     });
   }
+
+  // 手機底部列：按鈕轉呼叫上面的抽屜開關；價格每秒從左側報價區抄一份（不另外抓資料）
+  const mbL = document.getElementById('mb-left'), mbR = document.getElementById('mb-right');
+  if (mbL && btnToggleLeftDrawer) mbL.addEventListener('click', () => btnToggleLeftDrawer.click());
+  if (mbR && btnToggleRightDrawer) mbR.addEventListener('click', () => btnToggleRightDrawer.click());
+  setInterval(() => {
+    const g = id => document.getElementById(id);
+    if (!g('mb-val') || !g('left-main-price')) return;
+    g('mb-sym').textContent = currentActiveSymbol?.symbol || '';
+    g('mb-val').textContent = g('left-main-price').textContent;
+    g('mb-val').style.color = g('left-main-price').style.color;
+    g('mb-chg').textContent = `${g('left-price-diff')?.textContent || ''} ${g('left-price-pct')?.textContent || ''}`;
+    g('mb-chg').style.color = g('left-price-diff')?.style.color || '';
+  }, 1000);
 
   if (btnCloseLeft) btnCloseLeft.addEventListener('click', closeAllDrawers);
   if (btnCloseRight) btnCloseRight.addEventListener('click', closeAllDrawers);
@@ -2574,8 +2786,11 @@ function initAdvisorFeed() {
   if (!gexOk) { feed.innerHTML = ''; appendAdvisorMessage('ai', ADVISOR_NO_DATA_HTML); return; }
 
   const isPosGamma = txf >= zg;
-  const distCW = cw - txf;
+  // 距離一律「價格 − 價位」（高於價位為正），與左側 GEX 面板同一個方向（2026-10-07 統一）
+  const sgn = v => `${v >= 0 ? '+' : '-'}${Math.abs(Math.round(v))}`;
+  const distCW = txf - cw;
   const distPW = txf - pw;
+  const brokeCW = txf > cw, brokePW = txf < pw;
 
   // Mirrors app.js's live #stat-mp-topology-badge classifier so both surfaces agree.
   // 型態C已移除（死碼+62天真實回測最多只抓到1~2天，見app.js同一段註解）。
@@ -2599,8 +2814,8 @@ function initAdvisorFeed() {
         <p style="font-size: 0.8rem; line-height: 1.55; margin-bottom: 6px;">
           🔹 <strong>當前空間拓撲</strong>：${topologyLabel}<br>
           ⚡ <strong>GEX 狀態</strong>：台指期 (<strong>${txf}</strong>) 位於 Zero Gamma (<strong>${zg}</strong>) ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。<br>
-          ・<strong>上檔天花板 (Call Wall)</strong>：<code>${cw}</code> (距目前 <strong>+${distCW} 點</strong>)<br>
-          ・<strong>下檔防守線 (Put Wall)</strong>：<code>${pw}</code> (距目前 <strong>-${distPW} 點</strong>)<br>
+          ・<strong>${brokeCW ? 'Call Wall（價格已站上，轉為回測支撐位）' : '上檔天花板 (Call Wall)'}</strong>：<code>${cw}</code> (價格−價位 <strong>${sgn(distCW)} 點</strong>)<br>
+          ・<strong>${brokePW ? 'Put Wall（價格已跌破，轉為反壓位）' : '下檔防守線 (Put Wall)'}</strong>：<code>${pw}</code> (價格−價位 <strong>${sgn(distPW)} 點</strong>)<br>
           ・<strong>結算最大痛點 (Max Pain)</strong>：<code>${mp}</code>
         </p>
         <div class="topology-banner" style="margin-top: 6px;">
@@ -2630,21 +2845,28 @@ function handleAdvisorAction(action) {
   if (action === 'topology') {
     title = '⚡ 空間拓撲與做市商 Gamma 深度體檢報告';
     content = `
-      1. <strong>空間結構</strong>：指數 (${txf}) 位於 Zero Gamma (${zg}) 之上，做市商處於正 Gamma 避險狀態（低買高賣），大盤具有強烈向均值回歸的粘滯性。<br>
+      1. <strong>空間結構</strong>：${txf >= zg
+        ? `指數 (${txf}) 位於 Zero Gamma (${zg}) 之上，做市商處於正 Gamma 避險狀態（低買高賣），大盤具有向均值回歸的粘滯性。`
+        : `指數 (${txf}) 位於 Zero Gamma (${zg}) 之下，做市商處於負 Gamma（順勢追買追賣），波動容易放大，不宜用均值回歸思維。`}<br>
       2. <strong>雙向防禦邊界</strong>：
-         - 上檔天花板以 <strong>Call Wall ${cw}</strong> 為極限壓力區（做市商大量賣出 Call 避險買盤在此竭盡）。<br>
-         - 下檔地板以 <strong>Put Wall ${pw}</strong> 為強烈支撐牆（做市商賣出 Put 避險回補買盤集結）。<br>
-      3. <strong>最佳策略</strong>：適合採取 <strong>週選鐵兀鷹 (Iron Condor)</strong> 或 <strong>雙向賣出垂直價差單</strong>，收斂週選時間價值 (Theta Decay)。
+         - ${txf > cw ? `價格 (${txf}) 已站上 <strong>Call Wall ${cw}</strong>（+${Math.round(txf - cw)} 點）：原壓力區被突破，先看能否站穩、回測不破則轉為支撐。` : `上檔以 <strong>Call Wall ${cw}</strong> 為壓力區（距離 ${Math.round(cw - txf)} 點）。`}<br>
+         - ${txf < pw ? `價格 (${txf}) 已跌破 <strong>Put Wall ${pw}</strong>（${Math.round(txf - pw)} 點）：原支撐被貫穿，反彈不過先視為壓力。` : `下檔以 <strong>Put Wall ${pw}</strong> 為支撐牆（距離 ${Math.round(txf - pw)} 點）。`}<br>
+      3. <strong>策略方向</strong>：${txf >= zg && txf <= cw && txf >= pw ? '價格在 Put Wall～Call Wall 之間且為正 Gamma，常見做法是週選鐵兀鷹或雙向賣出垂直價差單收斂時間價值（Theta）。' : '價格已在 Put Wall～Call Wall 區間之外或為負 Gamma，區間型的收租策略勝率下降，建議先縮小部位、等價格回到區間或出現竭盡訊號。'}
     `;
   } else if (action === 'audit') {
-    title = '🛡️ 真實持倉部位風控體檢規範 (AGENTS.md 嚴格執行)';
+    // 2026-10-07：以前這裡拿 Put Wall 當「賣腳」就宣稱價外安全，等於沒看使用者真實部位（違反 AGENTS 紅線 4）。
+    // 現在先要部位，不下任何「安全」結論；真正的體檢由使用者貼上部位後走下方的部位解析流程。
+    title = '🛡️ 持倉部位體檢：請先告訴我你的部位';
     content = `
-      1. <strong>賣腳 (Sell Leg) 安全邊際</strong>：距市價目前約 <strong>${Math.abs(txf - pw)} 點</strong>，處於價外 (OTM) 安全防守走廊。<br>
-      2. <strong>風控紅線 1 - 嚴禁拆單 (No Legging Out)</strong>：
-         - 週選垂直價差單 (Vertical Spread) <strong>絕不可單獨平倉獲利的賣腳而留下買腳裸露</strong>，此舉會將已鎖定的有限風險瞬間解鎖為無限/極大風險！<br>
-      3. <strong>風控紅線 2 - 暴衝暫停追價</strong>：
-         - 盤中急拉或急殺超過 300 點時，嚴禁手動追價追空，應先暫停逆勢洗價，等待 15M K 線走平或 DeMark 9★ 出現。
+      我不知道你實際持有什麼，所以<strong>不會</strong>給「安全／不安全」的結論。請在下方輸入框貼上部位，例如：<br>
+      ・<code>W2 47000 SP / 46900 BP 收 55 點</code>（賣 47000 Put、買 46900 Put，收權利金 55 點）<br>
+      ・<code>W2 50500 SC / 50600 BC 收 40 點</code><br>
+      我會逐項檢查：賣腳是否已價內／被貫穿、目前未實現損益與對手價平倉成本、最大獲利／最大虧損（風報比）、並給出分級的 IOC 洗價條件。<br><br>
+      🛡️ <strong>先記住兩條紅線</strong>：<br>
+      1. 週選垂直價差<strong>嚴禁拆單</strong>（不可只平賣腳留下買腳裸露），平倉、轉倉或到期結算都要整組處理。<br>
+      2. 盤中急拉／急殺 300 點以上<strong>嚴禁追價</strong>，等 15M／30M 的 DeMark 9★／13★ 竭盡或均線走平再動作。
     `;
+    setTimeout(() => { const ci = document.getElementById('advisor-input') || document.querySelector('#panel-right input[type="text"], #panel-right textarea'); if (ci) { ci.focus(); if (!ci.value) ci.placeholder = '貼上部位，例如：W2 47000 SP / 46900 BP 收 55 點'; } }, 50);
   } else if (action === 'condor') {
     const ucSell = cw;
     const ucBuy = cw + 100;
@@ -2889,7 +3111,19 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
     const rrText = validCredit
       ? `最大獲利 <strong>${netCredit} 點</strong> ($${netCredit * 50} TWD) / 最大風險 <strong>${maxLoss} 點</strong> ($${maxLoss * 50} TWD)（風報比 1 : ${(maxLoss / netCredit).toFixed(1)}）`
       : '<strong>無法計算</strong>：請在問題中附上實際成交權利金（點數），例如「收 55 點」。軍師不會用假設的權利金替真實部位算風報比。';
-    const triggerTxf = posType.includes('Put') ? (sellStrike + 20) : (sellStrike - 20);
+    // 2026-10-07：不再用「賣腳 ±20」死公式（賣腳離現價 3,000 點時永遠不會觸發，違反紅線 4 不可死套公式）。
+    // 依「現價到賣腳還剩多少距離」分三級；賣腳已價內就直接標示立即處理。剩餘天數未知，所以只給比例定位，請自行對照 DTE。
+    const isPutPos = posType.includes('Put');
+    const _dir = isPutPos ? -1 : 1;                           // Put 價差怕下跌、Call 價差怕上漲
+    const _r10 = v => Math.round(v / 10) * 10;
+    const tierAlert = _r10(txf + _dir * distToSell * 0.5);    // 警戒：走完一半距離，開始盯盤、不動作
+    const tierReduce = _r10(txf + _dir * distToSell * 0.8);   // 減碼：走完八成，評估整組轉倉／減口數
+    const tierWash = sellStrike - _dir * Math.max(50, _r10(distToSell * 0.05));   // 洗價：賣腳前留緩衝，整組 IOC 出場
+    const tierHtml = isItm
+      ? `<strong>賣腳已價內</strong>：現價 ${txf} 已越過賣腳 ${sellStrike}，不是設條件單的階段，請立即評估整組平倉／轉倉（仍嚴禁拆單）。`
+      : (distToSell > 1500
+        ? `目前距賣腳 <strong>${distToSell} 點</strong>，<strong>暫時不需設洗價單</strong>；可先設價格警示在 <code>${tierAlert}</code>。`
+        : `🟡 警戒 <code>${tierAlert}</code>（只盯盤）→ 🟠 減碼 <code>${tierReduce}</code>（評估整組轉倉／減口）→ 🔴 洗價 <code>${tierWash}</code>（整組 IOC 出場）`);
     const closeCostText = validCredit
       ? `<strong><code>${Math.round(netCredit * 1.8 * 10) / 10} 點</code></strong>（＝收取權利金 ${netCredit} × 1.8，常見經驗值，請依自己的風險承受度調整）`
       : '<strong>請先提供成交權利金</strong>';
@@ -2914,7 +3148,9 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
 
         <div style="background: rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 6px; padding: 6px 8px; font-size: 0.78rem;">
           🎯 <strong>券商連續洗價單實盤設定指南 (IOC)</strong>：<br>
-          ・<strong>觸發條件</strong>：當台指期 (TXF) ${posType.includes('Put') ? '跌破' : '漲破'} <strong><code>${triggerTxf} 點</code></strong> 或 價差平倉成本觸及 ${closeCostText}<br>
+          ・<strong>分級條件</strong>（台指期 TXF ${isPutPos ? '往下' : '往上'}）：${tierHtml}<br>
+          ・<strong>平倉成本條件</strong>：價差平倉成本觸及 ${closeCostText}<br>
+          ・<strong>注意</strong>：以上是依「現價→賣腳距離」比例算的定位，不是預測；剩餘天數越少、IV 越高，越要提早。<br>
           ・<strong>委託方式</strong>：<code>IOC (Immediate-or-Cancel) 市價/對手價</code><br>
           ・<strong>執行動作</strong>：雙腳整組同時代出平倉 (買回 ${sellStrike} ${posType.includes('Put') ? 'SP' : 'SC'} ＋ 賣出 ${buyStrike || (sellStrike - 100)} ${posType.includes('Put') ? 'BP' : 'BC'})<br>
           ・<strong>優點</strong>：保證金瞬間釋放，絕不產生單腳裸露風險！
@@ -3187,6 +3423,13 @@ function initSymbolSearchAndAutocomplete() {
     }
   });
 
+  // 2026-10-07 全域 Esc：關閉最上層開著的視窗（指標庫、API Key、選股雷達）；搜尋框自己的 Esc 另行處理。
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || e.target === searchInput) return;
+    const open = [...document.querySelectorAll('.settings-modal-overlay.show, .screener-modal.show')];
+    if (open.length) open[open.length - 1].classList.remove('show');
+  });
+
   function updateHighlight() {
     const items = dropdown.querySelectorAll('.search-result-item');
     items.forEach((item, idx) => {
@@ -3352,12 +3595,14 @@ function switchActiveSymbol(symObj) {
 
   // Update Left HUD & Header
   renderLeftPanel();
+  pollActiveStockQuote();
 
   // Highlight contract tab if matches
   const contractBtns = document.querySelectorAll('.contract-tab');
   contractBtns.forEach(btn => {
     const code = btn.getAttribute('data-contract');
-    if (code === symObj.symbol || code === symObj.futures_code) {
+    // 只比對代號本身：個股 2330 不該讓「台積期 CDF」分頁亮起（2026-10-07 實測）
+    if (code === symObj.symbol) {
       btn.classList.add('active');
     } else {
       btn.classList.remove('active');
@@ -3596,6 +3841,18 @@ function runBirdQuantScreener() {
     results.sort((a, b) => b.score - a.score || b.changePct - a.changePct);
 
     if (countEl) countEl.innerText = results.length;
+    // 掃描資料的日期（2026-10-07：以前完全沒標，報價其實是舊的也看不出來）
+    {
+      const subEl = document.querySelector('.screener-subtitle');
+      if (subEl) {
+        let asEl = document.getElementById('screener-asof');
+        if (!asEl) { asEl = document.createElement('span'); asEl.id = 'screener-asof'; asEl.style.marginLeft = '8px'; subEl.appendChild(asEl); }
+        const qd = Object.values(realQuotesData || {}).map(q => _normDate(q.date)).filter(Boolean).sort().pop();
+        const stale = qd && qd < expectedLastTradingDate();
+        asEl.style.color = stale ? '#ffd700' : 'var(--text-muted)';
+        asEl.textContent = qd ? `｜報價日期 ${+qd.slice(4, 6)}/${+qd.slice(6, 8)}${stale ? '（⚠️ 非最新）' : ''}｜指標計算 ${String(screenerCacheData?.last_update || '—').slice(0, 16)}` : '';
+      }
+    }
 
     if (results.length === 0) {
       tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 24px; color: var(--text-muted);">無完全符合所有堆疊條件的標的，建議適度放寬條件篩選。</td></tr>`;
@@ -3630,7 +3887,7 @@ function runBirdQuantScreener() {
           <td><strong style="color: var(--primary-accent);">${r.item.symbol}</strong></td>
           <td style="font-weight: 600;">${r.item.name}</td>
           <td><span class="search-tag-market">${r.item.market}・${r.item.category}</span></td>
-          <td style="font-weight: 700;">$${r.price.toLocaleString()}</td>
+          <td style="font-weight: 700;">${r.price.toLocaleString()}</td>
           <td style="color: ${col}; font-weight: 700;">${sign}${r.changePct.toFixed(2)}%</td>
           <td><span class="signal-badge-chip">${r.signals}</span></td>
           <td><span class="${gradeClass}">${r.grade}</span></td>
@@ -3943,8 +4200,9 @@ function renderPointContributionHUD() {
   let html = '';
   topWeights.forEach(item => {
     const q = (realQuotesData && realQuotesData[item.symbol]) ? realQuotesData[item.symbol] : null;
-    const change = q ? (q.change || 0) : (item.symbol === '1605' ? -0.5 : 5.0);
-    const price = q ? (q.close || 0) : (item.symbol === '1605' ? 37.90 : 1045);
+    if (!q) return;   // 沒有真實報價就不顯示這列（2026-10-07：原本用寫死的 5.0／1045／37.90 湊數，違反紅線 6）
+    const change = q.change || 0;
+    const price = q.close || 0;
     const pts = (change * item.weightPts).toFixed(1);
     const isUp = change >= 0;
     const color = isUp ? 'var(--call-color)' : 'var(--put-color)';
@@ -4040,6 +4298,20 @@ let lastTxfPrice = null;
 // gateway is unreachable, instead of permanently showing "盤後休市" even during live trading.
 // 連不到就暫停一陣子再試：本機閘道 60 秒、期交所 MIS 5 分鐘（線上網站上 MIS 會被 CORS 擋，不必每 3 秒撞一次）。
 let _localGwRetryAt = 0;
+let _gatewayDown = false;   // 本機報價服務（/api/live_tick）最近一次是否連不上；用來顯示頂端紅帶
+function setGatewayBanner(down, source) {
+  let bar = document.getElementById('gateway-offline-bar');
+  if (!down) { if (bar) bar.style.display = 'none'; return; }
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'gateway-offline-bar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:5000;padding:3px 10px;background:#b71c1c;color:#fff;font-size:0.76rem;font-weight:700;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.5);';
+    document.body.appendChild(bar);
+  }
+  const via = source === 'worker' ? '目前改用期交所／證交所轉發（約 3 秒延遲）' : (source === 'mis' ? '目前改用期交所 MIS 備援' : '目前沒有任何即時來源');
+  bar.textContent = `🔴 報價服務未連線（富邦即時、五檔、CVD 都不可用）— ${via}。請確認本機報價服務有開（start_live.bat），或用 localhost:8000 開啟本頁。`;
+  bar.style.display = 'block';
+}
 let _misRetryAt = 0;
 let _workerQuoteRetryAt = 0;
 async function fetchFubonOrPublicFallback() {
@@ -4050,11 +4322,13 @@ async function fetchFubonOrPublicFallback() {
     clearTimeout(timeout);
     if (resp.ok) {
       const data = await resp.json();
-      if (data) return { data, source: 'fubon' };
+      if (data) { _gatewayDown = false; return { data, source: 'fubon' }; }
     }
+    _gatewayDown = true;
   } catch (e) {
     // Local gateway not running, blocked, or timed out — fall through to the public fallback.
     _localGwRetryAt = Date.now() + 60000;
+    _gatewayDown = true;
   }
 
   // 第二來源：私有 Cloudflare Worker 代抓期交所／證交所（手機直連期交所會被 CORS 擋）。Worker 沒部署新版或連不到時退避 60 秒。
@@ -4129,11 +4403,69 @@ function isTaifexSessionOpenNow() {
   return day || nightEve || nightMorn;
 }
 
+// 2026-10-07：台指期「本盤別」開高低——取自富邦即時 quote（gateway 的 txf.open/high/low），不用 K 線快取（開盤後快取還沒有新盤別）。
+// 沒有欄位（舊版 gateway／MIS 備援）就回 null，畫面維持「—」。
+let liveTxfOhlc = null;   // { open, high, low, at }
+function liveOhlcFor(sym) {
+  if (sym !== 'TXF' || !liveTxfOhlc || Date.now() - liveTxfOhlc.at > 20000) return null;
+  return { open: liveTxfOhlc.open, high: liveTxfOhlc.high, low: liveTxfOhlc.low, label: '富邦即時（本盤別）', lastBar: '即時' };
+}
+// 2026-10-07 實測：開盤後主圖停在夜盤最後一根、不跟即時報價走（圖只吃 klines_cache.json，富邦分K排程收盤後才補）。
+// 現在用真實的 /api/live_tick 台指期成交價推進「最後一根」，換到新週期時自動開新K棒。只用真實報價，不補、不造：
+// 開盤價＝本頁面第一次看到該根的成交價（頁面在該根中途才開時，開／高／低只涵蓋「看到之後」，圖上用黃色小字誠實標明）。
+const LIVE_BAR_SECONDS = { '1M': 60, '3M': 180, '5M': 300, '15M': 900, '30M': 1800, '1H': 3600 };
+let liveBar = null;   // { tf, time, open, high, low, close, partial }
+function applyLiveTickToChart(price) {
+  if (!candleSeries || !(price > 0)) return;
+  if ((currentActiveSymbol?.symbol || 'TXF') !== 'TXF') return;
+  const step = LIVE_BAR_SECONDS[currentTf];
+  if (!step) { setLiveBarNotice(''); return; }      // 4H／日／週／月K 的分段規則有盤別邊界，不在前端硬湊
+  const cached = candleSeries.data();
+  const last = cached && cached.length ? cached[cached.length - 1] : null;
+  if (!last) return;
+  const bucket = Math.floor(Date.now() / 1000 / step) * step;
+  if (last.time > bucket) return;                    // 圖上已有比現在更新的資料，不動
+  if (last.time === bucket) {
+    // 該根已在快取內（或上一輪即時推進建立的）：只往真實價格方向擴張高低、更新收盤
+    const bar = { time: bucket, open: last.open, high: Math.max(last.high, price), low: Math.min(last.low, price), close: price };
+    candleSeries.update(bar);
+    liveBar = { ...bar, tf: currentTf, partial: liveBar && liveBar.time === bucket ? liveBar.partial : false };
+  } else {
+    // 新的一根：開盤＝第一筆看到的成交價
+    const bar = { time: bucket, open: price, high: price, low: price, close: price };
+    candleSeries.update(bar);
+    liveBar = { ...bar, tf: currentTf, partial: true };
+    // 各圖表是用「第幾根」對齊捲動位置的；主圖多一根、副圖沒有的話，整排副圖會錯位。
+    // 副圖補一個「只有時間、沒有數值」的空白點（whitespace），根數就對得上，指標線本身不動。
+    [volumeSeries, volMa5Series, volMa10Series, macdHistSeries, macdDifSeries, macdDeaSeries, cciLineSeries, ...Object.values(sub4Series || {})]
+      .forEach(sr => { try { if (sr) sr.update({ time: bucket }); } catch (e) { /* 該圖尚無資料或時間順序不符就略過 */ } });
+  }
+  legendLastCandle = { time: liveBar.time, open: liveBar.open, high: liveBar.high, low: liveBar.low, close: liveBar.close };
+  setLiveBarNotice(liveBar.partial
+    ? `⏱ 即時K棒：自 ${new Date(Date.now()).toLocaleTimeString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false, hour: '2-digit', minute: '2-digit' })} 起累積（開／高／低可能不含此前走勢）；副圖指標待收盤K線更新`
+    : '');
+}
+function setLiveBarNotice(text) {
+  let n = document.getElementById('live-bar-notice');
+  const pane = document.getElementById('main-chart-pane');
+  if (!pane) return;
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'live-bar-notice';
+    n.style.cssText = 'position:absolute;bottom:26px;left:8px;z-index:20;padding:2px 8px;border-radius:6px;background:rgba(13,17,23,0.8);color:#ffd700;font-size:0.68rem;pointer-events:none;';
+    if (getComputedStyle(pane).position === 'static') pane.style.position = 'relative';
+    pane.appendChild(n);
+  }
+  n.style.display = text ? 'block' : 'none';
+  n.textContent = text || '';
+}
+
 function initFubonLivePriceStream() {
   // Check if trading hours & real server active
   setInterval(async () => {
     try {
       const { data, source } = await fetchFubonOrPublicFallback();
+      setGatewayBanner(_gatewayDown, source);
 
       const statusTag = document.getElementById('fubon-status-tag');
 
@@ -4153,16 +4485,25 @@ function initFubonLivePriceStream() {
         return;
       }
 
+      // 現貨指數（加權／櫃買）的報價時間戳超過 2 分鐘沒更新，就不能掛「LIVE」：9:00 前是昨收，盤中則是資料延遲。
+      // 2026-10-07 實測：08:46 數字其實是昨收（77 分鐘前的資料）卻跟著綠色 LIVE 標籤一起顯示。
+      const _spotStale = (q) => typeof q?.ts === 'number' && (Date.now() / 1000 - q.ts) > 120;
+      const _spotTag = () => {
+        const mins = (taipeiHourNow() * 60) + new Date().getMinutes();   // 台北整點＋分（分鐘在所有時區相同）
+        return (mins < 9 * 60 || mins >= 13 * 60 + 30) ? '昨收／收盤' : '資料延遲';
+      };
+
       // 1. TAIEX 加權指數
       if (data.taiex) {
         const valEl = document.getElementById('top-val-taiex');
         const chgEl = document.getElementById('top-chg-taiex');
-        if (valEl) valEl.innerText = data.taiex.price.toLocaleString();
+        const st = _spotStale(data.taiex);
+        if (valEl) { valEl.innerText = data.taiex.price.toLocaleString(); valEl.style.opacity = st ? '0.55' : ''; }
         if (chgEl) {
           const isUp = data.taiex.change >= 0;
           const sign = isUp ? '+' : '';
-          chgEl.innerText = `${sign}${data.taiex.change} (${sign}${data.taiex.pct}%)`;
-          chgEl.style.color = isUp ? 'var(--call-color)' : 'var(--put-color)';
+          chgEl.innerText = `${sign}${data.taiex.change} (${sign}${data.taiex.pct}%)` + (st ? `・${_spotTag()}` : '');
+          chgEl.style.color = st ? 'var(--text-muted)' : (isUp ? 'var(--call-color)' : 'var(--put-color)');
         }
       }
 
@@ -4170,12 +4511,13 @@ function initFubonLivePriceStream() {
       if (data.otc) {
         const valEl = document.getElementById('top-val-otc');
         const chgEl = document.getElementById('top-chg-otc');
-        if (valEl) valEl.innerText = data.otc.price.toLocaleString();
+        const st = _spotStale(data.otc);
+        if (valEl) { valEl.innerText = data.otc.price.toLocaleString(); valEl.style.opacity = st ? '0.55' : ''; }
         if (chgEl) {
           const isUp = data.otc.change >= 0;
           const sign = isUp ? '+' : '';
-          chgEl.innerText = `${sign}${data.otc.change} (${sign}${data.otc.pct}%)`;
-          chgEl.style.color = isUp ? 'var(--call-color)' : 'var(--put-color)';
+          chgEl.innerText = `${sign}${data.otc.change} (${sign}${data.otc.pct}%)` + (st ? `・${_spotTag()}` : '');
+          chgEl.style.color = st ? 'var(--text-muted)' : (isUp ? 'var(--call-color)' : 'var(--put-color)');
         }
       }
 
@@ -4186,6 +4528,18 @@ function initFubonLivePriceStream() {
         const leftMainP = document.getElementById('left-main-price');
 
         if (valEl) valEl.innerText = data.txf.price.toLocaleString();
+        // 只在交易時段、且這筆報價夠新（有時間戳就檢查；MIS 備援沒有時間戳）時推進K棒，避免休市後拿舊價開新棒
+        const _tickFresh = typeof data.txf.ts === 'number' ? (Date.now() / 1000 - data.txf.ts) < 20 : true;
+        if (isTaifexSessionOpenNow() && _tickFresh) applyLiveTickToChart(data.txf.price);
+        if (data.txf.open > 0 && data.txf.high > 0 && data.txf.low > 0) {
+          liveTxfOhlc = { open: data.txf.open, high: data.txf.high, low: data.txf.low, at: Date.now() };
+          if ((currentActiveSymbol?.symbol || 'TXF') === 'TXF') {   // 只更新三個數字，不整塊重畫（renderLeftPanel 會重打動能 API）
+            [['left-open', 'open'], ['left-high', 'high'], ['left-low', 'low']].forEach(([id, k]) => {
+              const el = document.getElementById(id);
+              if (el) { el.innerText = liveTxfOhlc[k].toLocaleString(undefined, { maximumFractionDigits: 0 }); el.title = '富邦即時（本盤別）'; }
+            });
+          }
+        }
         if (leftMainP && (!currentActiveSymbol || currentActiveSymbol.symbol === 'TXF')) {
           leftMainP.innerText = data.txf.price.toLocaleString();
           if (lastTxfPrice !== null && lastTxfPrice !== data.txf.price) {
@@ -4293,7 +4647,7 @@ function resetPriceAutoScale() {
     try { ch.priceScale('right').applyOptions({ autoScale: true }); } catch (e) { /* 軸不存在就略過 */ }
   });
   if (mainChart) {
-    try { mainChart.timeScale().fitContent(); } catch (e) { /* 尚無資料 */ }
+    applyDefaultVisibleRange(true);   // 右下角「自動」與換商品：回到預設可見範圍（不再 fitContent 全塞）
   }
 }
 

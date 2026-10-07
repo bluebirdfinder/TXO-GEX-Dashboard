@@ -195,6 +195,7 @@
               <span id="left-price-diff" style="color: var(--call-color); font-weight: 700;">+401</span>
               <span id="left-price-pct" style="color: var(--call-color); font-weight: 700;">(+0.87%)</span>
             </div>
+            <div id="left-quote-asof" style="display: none; font-size: 0.68rem; margin-top: 2px; text-align: center;"></div>
           </div>
         </div>
 
@@ -585,6 +586,13 @@
 
     <!-- Mobile Drawer Dark Blur Overlay -->
     <div id="mobile-drawer-overlay" class="mobile-drawer-overlay"></div>
+
+    <!-- 手機版底部固定列（2026-10-07）：原本開關在標題列最右邊、畫面外，找不到；現在固定在底部，並顯示目前商品即時價 -->
+    <div id="mobile-bottom-bar">
+      <button id="mb-left" type="button">📊 行情／風控</button>
+      <div id="mb-price"><span id="mb-sym"></span> <b id="mb-val">—</b> <span id="mb-chg"></span></div>
+      <button id="mb-right" type="button">🤖 軍師</button>
+    </div>
 
   </main>
 

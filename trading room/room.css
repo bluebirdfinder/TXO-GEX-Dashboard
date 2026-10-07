@@ -2118,7 +2118,9 @@ body.right-collapsed .dock-right { display: flex !important; }
 /* 2026-10-06 電腦版頂部列：寬度不足（如 1366px）時，右側「面板開關／導覽切換」被擠出畫面。
    改成中間的資產分頁可橫向捲動，右側按鈕固定保留在畫面內。 */
 @media (min-width: 1025px) {
-  .room-header { overflow-x: hidden; }
+  /* 2026-10-07 實測：header 的 overflow 會把 #symbol-search-dropdown 整個裁掉（搜尋看不到下拉）。
+     資產分頁自己會橫向捲動（.contract-tabs），header 本身不需要裁切，改 visible。 */
+  .room-header { overflow: visible; }
   .header-left { flex: 1 1 auto; min-width: 0; }
   .header-left .contract-tabs { flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: thin; scrollbar-color: rgba(0, 210, 255, 0.35) transparent; }
   .header-left .contract-tabs::-webkit-scrollbar { height: 4px; }
@@ -2132,4 +2134,40 @@ body.right-collapsed .dock-right { display: flex !important; }
 @media (min-width: 1025px) {
   .quick-audit-bar { flex-wrap: wrap; overflow-x: visible; }
   .quick-audit-bar .audit-chip { flex: 1 1 auto; text-align: center; white-space: nowrap; }
+}
+
+/* 2026-10-07 副圖高度：第 4 副圖（ADX／AO／CVD／大戶散戶）預設太矮、看不到內容；各圖之間加可拖曳分隔線（高度存在瀏覽器）。 */
+@media (min-width: 1025px) {
+  #sub-chart-pane-4 { flex: 24; }
+}
+.pane-resizer {
+  flex: 0 0 6px;
+  height: 6px;
+  margin: -3px 0;
+  position: relative;
+  z-index: 30;
+  cursor: row-resize;
+  background: transparent;
+}
+.pane-resizer:hover, .pane-resizer.dragging { background: rgba(0, 210, 255, 0.35); }
+
+/* 手機版底部固定列：行情／風控抽屜、AI 軍師抽屜開關＋目前商品價格 */
+#mobile-bottom-bar { display: none; }
+@media (max-width: 1024px) {
+  #mobile-bottom-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 6px;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 150; height: 44px; padding: 0 8px;
+    background: rgba(13, 19, 31, 0.98); border-top: 1px solid var(--panel-border);
+  }
+  #mobile-bottom-bar button {
+    flex: 0 0 auto; padding: 6px 10px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; cursor: pointer;
+    background: rgba(0, 210, 255, 0.12); border: 1px solid var(--primary-accent); color: var(--primary-accent);
+  }
+  #mb-price { flex: 1 1 auto; min-width: 0; text-align: center; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #mb-price b { font-size: 1rem; }
+  body { padding-bottom: 44px; }
+}
+
+@media (max-width: 768px) {
+  #live-bar-notice { font-size: 0.58rem; max-width: 72%; bottom: 34px; line-height: 1.3; }
 }
