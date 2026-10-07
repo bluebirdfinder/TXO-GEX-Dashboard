@@ -243,13 +243,13 @@ async function pollActiveStockQuote() {
   const sym = currentActiveSymbol?.symbol;
   if (!isStockSymbol(sym) || Date.now() < (_stockQuoteBackoff[sym] || 0)) return;
   try {
-    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 2500);
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 6000);
     const r = await fetch(`${GATEWAY_BASE}/api/stock_quote?symbol=${encodeURIComponent(sym)}`, { signal: ctl.signal, cache: 'no-store' });
     clearTimeout(to);
     if (!r.ok) { _stockQuoteBackoff[sym] = Date.now() + 60000; return; }
     const j = await r.json();
     if (j && j.price > 0) { liveStockQuotes[sym] = { ...j, at: Date.now() }; if (currentActiveSymbol?.symbol === sym) paintStockQuote(); }
-  } catch (e) { _stockQuoteBackoff[sym] = Date.now() + 60000; }
+  } catch (e) { _stockQuoteBackoff[sym] = Date.now() + 8000; }   // 逾時／斷線只短暫退避（網路慢時不要 60 秒都看不到即時價）；404（沒這個端點或富邦沒這檔）才退避 60 秒
 }
 setInterval(pollActiveStockQuote, 4000);
 
@@ -3117,8 +3117,8 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
     const _dir = isPutPos ? -1 : 1;                           // Put 價差怕下跌、Call 價差怕上漲
     const _r10 = v => Math.round(v / 10) * 10;
     const tierAlert = _r10(txf + _dir * distToSell * 0.5);    // 警戒：走完一半距離，開始盯盤、不動作
-    const tierReduce = _r10(txf + _dir * distToSell * 0.8);   // 減碼：走完八成，評估整組轉倉／減口數
-    const tierWash = sellStrike - _dir * Math.max(50, _r10(distToSell * 0.05));   // 洗價：賣腳前留緩衝，整組 IOC 出場
+    const tierReduce = _r10(txf + _dir * distToSell * 0.75);  // 減碼：走完七成五，評估整組轉倉／減口數
+    const tierWash = _r10(txf + _dir * distToSell * 0.9);     // 洗價：走完九成（賣腳前留一小段緩衝），整組 IOC 出場；三級由近到遠單調
     const tierHtml = isItm
       ? `<strong>賣腳已價內</strong>：現價 ${txf} 已越過賣腳 ${sellStrike}，不是設條件單的階段，請立即評估整組平倉／轉倉（仍嚴禁拆單）。`
       : (distToSell > 1500
