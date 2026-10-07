@@ -19,7 +19,7 @@ TW_HOLIDAYS_FILE = os.path.join(_DATA_DIR, "tw_holidays.json")
 sys.path.insert(0, _SCRIPT_DIR)
 from fetch_and_calc_vision import (
     fetch_taifex_txo_open_interest, classify_txo_contract_buckets,
-    build_real_option_chain, calculate_true_gex_profile, compute_days_to_expiries,
+    build_real_option_chain, calculate_true_gex_profile, compute_days_to_expiries, bucket_expiry_dates, days_from_expiries,
     fetch_official_taifex_pc_ratio
 )
 
@@ -281,12 +281,17 @@ def backfill(n_days=10, overwrite=False):
             buckets = classify_txo_contract_buckets(day_oi, now=ref_dt)
             real_chain = build_real_option_chain(day_oi, buckets)
             days_wed, days_fri, days_mth, _ = compute_days_to_expiries(ref_dt, tw_tz)
+            _rd = days_from_expiries(ref_dt, bucket_expiry_dates(day_oi, buckets), tw_tz)   # 真實結算日（休市順延）優先
+            days_wed = _rd['w1'] if _rd.get('w1') is not None else days_wed
+            days_fri = _rd['fri'] if _rd.get('fri') is not None else days_fri
+            days_mth = _rd['mth'] if _rd.get('mth') is not None else days_mth
+            days_w2 = _rd.get('w2')
 
             def real_gex_fields(price):
                 if price is None or price <= 0:
                     return None
                 if price not in gex_profile_by_price:
-                    gex_profile_by_price[price] = calculate_true_gex_profile(price, real_chain, days_wed, days_fri, days_mth)
+                    gex_profile_by_price[price] = calculate_true_gex_profile(price, real_chain, days_wed, days_fri, days_mth, days_w2=days_w2)
                 p = gex_profile_by_price[price]
                 return {
                     "zero_gamma_level": p["zero_gamma_level"], "gex_plus_flip": p["gex_plus_flip"],

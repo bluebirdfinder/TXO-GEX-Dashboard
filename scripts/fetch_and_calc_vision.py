@@ -1264,7 +1264,7 @@ def _standard_gamma_flip(spot, chain, T, sigma, r, span=2000, step=10):
     return round(min(xs, key=lambda x: abs(x - spot)), 1) if xs else None
 
 
-def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None, with_standard=False):
+def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None, with_standard=False, days_w2=None):
     """
     option_chain: {strike: {"call_oi_w1":n, "put_oi_w1":n, "call_oi_w2":n, "put_oi_w2":n,
     "call_oi_fri":n, "put_oi_fri":n, "call_oi_mth":n, "put_oi_mth":n}}, built by
@@ -1282,7 +1282,7 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
 
     MIN_T_DAYS = 0.5
     T_w1 = max(float(days_wed), MIN_T_DAYS) / 365.0
-    T_w2 = T_w1 + 7.0 / 365.0  # TAIFEX weeklies are 7 days apart; the next Wednesday weekly
+    T_w2 = (max(float(days_w2), MIN_T_DAYS) / 365.0) if days_w2 is not None else (T_w1 + 7.0 / 365.0)  # 有真實結算日用真實的，否則假設與 w1 相隔 7 天
     T_fri = max(float(days_fri), MIN_T_DAYS) / 365.0
     T_mth = max(float(days_mth), MIN_T_DAYS) / 365.0
 
@@ -1792,11 +1792,20 @@ def classify_txo_contract_buckets(day_data, now=None):
             continue
         if _is_dead(exp):
             continue
-        if len(code.strip()) == 6:  # "YYYYMM" — no weekly-letter suffix
+        c = code.strip()
+        if len(c) == 6:  # "YYYYMM" — no weekly-letter suffix
             mth_list.append((exp, code))
-        elif exp.weekday() == 2:  # Wednesday
+            continue
+        # 2026-10-08：週選種類以合約代碼的 W（週三選）／F（週五選）字母為準。原本看「結算日是不是週三／週五」，
+        # 但週五選遇國定假日休市會順延（例：202610F2 結算日 10/12 週一），結算日星期規則會把它整檔丟掉。
+        kind = c[6].upper() if len(c) > 6 else ''
+        if kind == 'W':
             wed_list.append((exp, code))
-        elif exp.weekday() == 4:  # Friday
+        elif kind == 'F':
+            fri_list.append((exp, code))
+        elif exp.weekday() == 2:  # 沒有字母可判斷時才退回結算日星期
+            wed_list.append((exp, code))
+        elif exp.weekday() == 4:
             fri_list.append((exp, code))
     wed_list.sort()
     fri_list.sort()
@@ -1807,6 +1816,33 @@ def classify_txo_contract_buckets(day_data, now=None):
         "fri": fri_list[0][1] if fri_list else None,
         "mth": mth_list[0][1] if mth_list else None,
     }
+
+
+def bucket_expiry_dates(day_data, buckets):
+    """{'w1'|'w2'|'fri'|'mth': date} — 各 bucket 合約在期交所資料裡的「真實結算日」（國定假日順延後的日期）。"""
+    out = {}
+    for key in ('w1', 'w2', 'fri', 'mth'):
+        code = buckets.get(key)
+        info = day_data.get(code) if code else None
+        if info:
+            try:
+                out[key] = datetime.datetime.strptime(info['expiry'], '%Y%m%d').date()
+            except Exception:
+                pass
+    return out
+
+
+def days_from_expiries(ref_dt, expiries, tw_tz):
+    """從 ref_dt 到各結算日 13:30 的小數天；該 bucket 沒有合約就回 None（呼叫端退回星期規則）。"""
+    out = {}
+    for k in ('w1', 'w2', 'fri', 'mth'):
+        d = expiries.get(k)
+        if d is None:
+            out[k] = None
+            continue
+        t = datetime.datetime(d.year, d.month, d.day, 13, 30, tzinfo=tw_tz)
+        out[k] = max((t - ref_dt).total_seconds() / 86400.0, 0.0)
+    return out
 
 
 def build_real_option_chain(day_data, buckets):
@@ -3096,6 +3132,7 @@ def generate_gex_payload():
     txf_price = night_txf_price if is_night_session else day_txf_price
 
     raw_days_wed, raw_days_fri, raw_days_mth, third_wed = compute_days_to_expiries(now_dt, tw_tz)
+    raw_days_w2 = None   # 之後有真實結算日才設定（見下方 OI 取得後）
 
     # Compute exact expiration dates
     w1_dt = now_dt + datetime.timedelta(days=raw_days_wed)
@@ -3131,8 +3168,39 @@ def generate_gex_payload():
         real_option_chain = {}
         print("[Warning] No real TAIFEX TXO open interest available — GEX profile will be flat/zero, not a guessed curve.")
 
+    # 2026-10-08：到期天數改用「合約資料裡的真實結算日」（週五選遇休市順延到週一等情形，星期規則會算錯）；
+    # 該 bucket 沒有合約（或沒有 OI）時才沿用上面的星期規則。
+    _exp_dates = {}
+    if _txo_latest_date:
+        _exp_dates = bucket_expiry_dates(_txo_oi_by_date[_txo_latest_date], _txo_buckets)
+        _real_days = days_from_expiries(now_dt, _exp_dates, tw_tz)
+        if _real_days.get('w1') is not None:
+            raw_days_wed = _real_days['w1']
+        if _real_days.get('fri') is not None:
+            raw_days_fri = _real_days['fri']
+        if _real_days.get('mth') is not None:
+            raw_days_mth = _real_days['mth']
+        raw_days_w2 = _real_days.get('w2')
+        # 結算日標籤隨之更新
+        w1_dt = now_dt + datetime.timedelta(days=raw_days_wed)
+        w2_dt = (now_dt + datetime.timedelta(days=raw_days_w2)) if raw_days_w2 is not None else (w1_dt + datetime.timedelta(days=7))
+        fri_dt = now_dt + datetime.timedelta(days=raw_days_fri)
+        if _exp_dates.get('mth'):
+            _m = _exp_dates['mth']
+            mth_dt = datetime.datetime(_m.year, _m.month, _m.day, tzinfo=tw_tz)
+        w1_date_str = f"{w1_dt.strftime('%m/%d')}({weekdays_zh[w1_dt.weekday()]})"
+        w2_date_str = f"{w2_dt.strftime('%m/%d')}({weekdays_zh[w2_dt.weekday()]})"
+        fri_date_str = f"{fri_dt.strftime('%m/%d')}({weekdays_zh[fri_dt.weekday()]})"
+        mth_date_str = f"{mth_dt.strftime('%m/%d')}({weekdays_zh[mth_dt.weekday()]})"
+        dte_dates = {
+            "w1": f"{w1_date_str}結算",
+            "w2": f"{w2_date_str}結算",
+            "fri": f"{fri_date_str}結算",
+            "m1": f"{mth_date_str}結算"
+        }
+
     # Compute GEX Profile
-    gex_profile = calculate_true_gex_profile(spot_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, with_standard=True)
+    gex_profile = calculate_true_gex_profile(spot_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, with_standard=True, days_w2=raw_days_w2)
 
     # 日盤收盤時的標準 Gamma Flip（2026-10-07）：盤中的 gamma_flip_standard 會隨現價與剩餘時間即時重算；
     # 要和羊叔等「收盤值」比，另存收盤版：用 OI 所屬交易日 13:30 的到期天數＋當日收盤現價。
@@ -3156,6 +3224,10 @@ def generate_gex_payload():
             if (_mins < 8 * 60 + 45) or _oi_d == now_dt.date():
                 _ref = datetime.datetime(_oi_d.year, _oi_d.month, _oi_d.day, 13, 30, tzinfo=tw_tz)
                 _dw, _df, _dm, _ = compute_days_to_expiries(_ref, tw_tz)
+                _rd = days_from_expiries(_ref, _exp_dates, tw_tz) if _exp_dates else {}
+                _dw = _rd.get('w1') if _rd.get('w1') is not None else _dw
+                _df = _rd.get('fri') if _rd.get('fri') is not None else _df
+                _dm = _rd.get('mth') if _rd.get('mth') is not None else _dm
                 _t1 = max(float(_dw), 0.5) / 365.0
                 _sig = _gex_sigma_info()["sigma"]
                 _v = _standard_gamma_flip(spot_price, real_option_chain,
@@ -3168,7 +3240,7 @@ def generate_gex_payload():
     gex_profile["dte_dates"] = dte_dates
 
     # Day vs Night Session Shift Metrics
-    day_profile = calculate_true_gex_profile(day_txf_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth)
+    day_profile = calculate_true_gex_profile(day_txf_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, days_w2=raw_days_w2)
     day_zero_gamma = day_profile['zero_gamma_level']
     day_call_wall = day_profile['call_wall_strike']
     day_put_wall = day_profile['put_wall_strike']
@@ -4205,7 +4277,7 @@ def generate_gex_payload():
         # fabricated curve) but not that specific past day's own OI, since per-strike history
         # backfill is out of scope here (only the scalar zero_gamma/call_wall/etc fields get a
         # true historical backfill, via backfill_snapshots.py).
-        sess_prof = calculate_true_gex_profile(s_spot, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, fixed_base_strike=global_base_strike)
+        sess_prof = calculate_true_gex_profile(s_spot, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, fixed_base_strike=global_base_strike, days_w2=raw_days_w2)
         sess_item['total_gex'] = sess_prof['total_gex']
         sess_item['weekly_gex'] = sess_prof['weekly_gex']
         sess_item['friday_gex'] = sess_prof['friday_gex']
