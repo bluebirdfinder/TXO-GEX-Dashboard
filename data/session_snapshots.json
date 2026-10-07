@@ -1073,5 +1073,43 @@
     "margin_maint_stock": null,
     "margin_balance_billion": null,
     "written_at": "2026-10-07T08:33:57.678320+08:00"
+  },
+  "2026-10-07_DAY": {
+    "date": "2026-10-07",
+    "session": "DAY",
+    "spot_price": 49956.31,
+    "otc_price": 435.5,
+    "txf_price": 50068.0,
+    "zero_gamma_level": 49657.6,
+    "gex_plus_flip": 49657.6,
+    "call_wall_strike": 50000.0,
+    "put_wall_strike": 49500.0,
+    "max_pain_strike": 49000.0,
+    "pc_ratio": 52.75,
+    "taifex_vix": 23.53,
+    "us_vix": 15.01,
+    "margin_maint_market": null,
+    "margin_maint_stock": null,
+    "margin_balance_billion": null,
+    "written_at": "2026-10-07T09:22:09.910952+08:00"
+  },
+  "2026-10-08_NIGHT": {
+    "date": "2026-10-08",
+    "session": "NIGHT",
+    "spot_price": 49806.37,
+    "otc_price": 430.46,
+    "txf_price": 49495.0,
+    "zero_gamma_level": 48928.8,
+    "gex_plus_flip": 48928.8,
+    "call_wall_strike": 50000.0,
+    "put_wall_strike": 49000.0,
+    "max_pain_strike": 48000.0,
+    "pc_ratio": 82.25,
+    "taifex_vix": 23.29,
+    "us_vix": 15.75,
+    "margin_maint_market": null,
+    "margin_maint_stock": null,
+    "margin_balance_billion": 6400.01,
+    "written_at": "2026-10-07T21:04:26.244466+08:00"
   }
 }
