@@ -1967,8 +1967,8 @@ function visibleMarkers(data) {
 /**
  * 強關價／弱關價（黃金切割率＝斐波那契 0.618／0.382）：
  *   強關 = 當盤最低 + (當盤最高 − 當盤最低) × 0.618；弱關 = 當盤最低 + (當盤最高 − 當盤最低) × 0.382。
- * 「當盤」＝期貨日盤（08:45–13:45）或夜盤（15:00–05:00），各自從場次第一根 K 棒起累計最高／最低，
- * 場次切換時重算；創新高或新低時兩條線同步移動（階梯狀）。公式來源：OP666 簡報與教學影片的公開說明。
+ * 「當盤」＝整個交易日：前一晚夜盤 15:00 起，累計最高／最低到日盤收盤（日盤 08:45 不歸零），隔天夜盤 15:00 重新起算；
+ * 創新高或新低時兩條線同步移動（階梯狀）。公式來源：OP666 簡報與教學影片的公開說明，並以營業員提供的截圖逐點驗證。
  * 只在台指期系列（GEX_SUPPORTED_SYMBOLS）與分K週期畫；日K以上沒有「當盤」概念，不畫。
  */
 function computeStrongWeakLevels(candles, isFut) {
@@ -1977,7 +1977,12 @@ function computeStrongWeakLevels(candles, isFut) {
   for (const c of candles) {
     const sess = tpeSessionAt(c.time, isFut);
     if (!sess) continue;                       // 場次空檔不畫（不補假線）
-    if (sess.start !== sessStart) { sessStart = sess.start; hi = c.high; lo = c.low; }
+    // 「當盤」＝整個交易日：從前一晚夜盤 15:00 起累計到日盤收盤，日盤 08:45 **不歸零**
+    // （2026-10-08 以 OP666 截圖驗證：10/8 09:11 強關 49681／弱關 49518 ＝ 10/7 15:00 起的最高 49946、最低 49253；
+    //  10/2 10:3x 強關 48546／弱關 48417 ＝ 10/1 15:00 起的最高 48753、最低 48210；只算日盤會對不上）。
+    //  日盤的場次起點是當天 08:45，往前 17 小時 45 分就是前一日曆日 15:00＝這個交易日的夜盤起點。
+    const dayKey = (sess.label === '日盤') ? sess.start - 17 * 3600 - 45 * 60 : sess.start;
+    if (dayKey !== sessStart) { sessStart = dayKey; hi = c.high; lo = c.low; }
     else { if (c.high > hi) hi = c.high; if (c.low < lo) lo = c.low; }
     const range = hi - lo;
     strong.push({ time: c.time, value: lo + range * 0.618 });
