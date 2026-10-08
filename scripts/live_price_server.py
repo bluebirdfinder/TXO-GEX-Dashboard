@@ -421,6 +421,7 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 res_data = {
                     "symbol": symbol,
                     "bar": bar,
+                    "feed_age_sec": (None if fubon_provider.feed_age_sec() is None else round(fubon_provider.feed_age_sec(), 1)),
                     "books_subscribed": alias in fubon_provider._books_subscribed,
                     "trades_subscribed": alias in fubon_provider._trades_subscribed,
                     "ts": time.time()

@@ -1583,6 +1583,10 @@ async function fetchAndAppendMomentumBar(symbol) {
     }
 
     const badge = document.getElementById('pane-4-badge');
+    // 交易時段內富邦委託簿／成交超過 3 分鐘沒更新＝資料凍結，如實標示（2026-10-08：10/07 22:52 起凍結 10 小時沒人發現）
+    if (badge && typeof payload.feed_age_sec === 'number' && payload.feed_age_sec > 180 && isTaifexSessionOpenNow()) {
+      badge.innerText = `⚠️ 富邦委託簿／成交資料已 ${Math.round(payload.feed_age_sec / 60)} 分鐘沒更新（凍結中，下方數字不是即時）`;
+    }
     if (badge && !payload.books_subscribed && !payload.trades_subscribed) {
       badge.innerText = '🐂 大戶散戶動能 (後端尚未連上富邦 Books/Trades — 檢查 live_price_server.py 是否已啟動)';
     }

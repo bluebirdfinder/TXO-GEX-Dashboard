@@ -109,6 +109,11 @@ class FubonAPIProvider:
         self._mom_hist_dir = os.getenv("MOMENTUM_HISTORY_DIR") or os.path.join(os.path.expanduser("~"), ".txo_momentum_1m")
         self._mom_hist_keep_days = 5   # 1 分鐘資料量大，只留 5 天
         self._mom_hist_started = False
+        # 看門狗（2026-10-08）：futopt WebSocket 可能在沒有觸發 disconnect 事件下死掉（10/07 22:53 'NoneType'.sock 之後
+        # Books／Trades 凍結到隔天 09:12），所以記錄「最近一次收到任何 futopt 訊息」的時間，太久沒有就重連＋重新訂閱。
+        self._last_futopt_msg_ts = None
+        self._proc_start_ts = time.time()
+        self._futopt_watchdog_last_try = 0.0
 
         # Real Cumulative Volume Delta (CVD) — signed-volume running total built tick-by-tick
         # from the same confirmed tick-rule 'side' used for trades_log, kept as its own
@@ -402,6 +407,7 @@ class FubonAPIProvider:
         _process_books_data()/_process_trades_data() by the message's own
         'channel' field — never guesses which stream a message belongs to.
         """
+        self._last_futopt_msg_ts = time.time()
         try:
             import json as _json
             message = _json.loads(raw_message) if isinstance(raw_message, (str, bytes)) else raw_message
@@ -880,6 +886,51 @@ class FubonAPIProvider:
             res.append(g)
         return res
 
+    def feed_age_sec(self):
+        """距離上次收到任何 futopt（Books／Trades）訊息的秒數；從沒收到回 None。"""
+        return None if self._last_futopt_msg_ts is None else max(0.0, time.time() - self._last_futopt_msg_ts)
+
+    @staticmethod
+    def _in_taifex_trading_window(now_ts=None):
+        """粗略的交易時段（台北時間）：日盤 08:45～13:45、夜盤 15:00～隔日 05:00；週一～五開盤（夜盤跨到週六凌晨）。
+        不含國定假日——假日沒訊息時看門狗最多每 5 分鐘重連一次，成本很低。"""
+        now_ts = now_ts if now_ts is not None else time.time()
+        dt_ = datetime.datetime.fromtimestamp(now_ts, tz=FubonAPIProvider._TAIPEI_TZ)
+        mins = dt_.hour * 60 + dt_.minute
+        wd = dt_.weekday()   # Mon=0
+        day = wd < 5 and 8 * 60 + 45 <= mins < 13 * 60 + 45
+        night_eve = wd < 5 and mins >= 15 * 60
+        night_morn = 1 <= wd <= 5 and mins < 5 * 60
+        return day or night_eve or night_morn
+
+    def futopt_watchdog(self, stale_after=180, cooldown=300):
+        """交易時段內超過 stale_after 秒沒收到任何 futopt 訊息 → 關掉舊連線、重連並重新訂閱所有頻道。
+        每 cooldown 秒最多試一次。回傳是否有嘗試重連。"""
+        try:
+            if not self.is_active or not self._sub_modes or not self._in_taifex_trading_window():
+                return False
+            age = self.feed_age_sec()
+            if age is not None and age < stale_after:
+                return False
+            if self._last_futopt_msg_ts is None and time.time() - getattr(self, '_proc_start_ts', time.time()) < stale_after:
+                return False   # 剛啟動、還沒等到第一則訊息
+            now = time.time()
+            if now - self._futopt_watchdog_last_try < cooldown:
+                return False
+            self._futopt_watchdog_last_try = now
+            logging.warning(f"Fubon futopt watchdog: no futopt message for {None if age is None else int(age)}s inside trading hours "
+                            f"— forcing reconnect + re-subscribe")
+            try:
+                if self._futopt_ws is not None:
+                    self._futopt_ws.disconnect()
+            except Exception as e:
+                logging.warning(f"futopt watchdog: disconnect() failed (ignored): {e}")
+            self._on_futopt_disconnect("watchdog", "no futopt data")
+            return True
+        except Exception as e:
+            logging.warning(f"futopt watchdog error: {e}")
+            return False
+
     def start_momentum_recorder(self):
         """Idempotent: background thread that records every 15 s and saves to disk every 60 s."""
         if self._mom_hist_started:
@@ -890,6 +941,7 @@ class FubonAPIProvider:
             while True:
                 try:
                     self.record_momentum_bars()
+                    self.futopt_watchdog()
                     if time.time() - last_save >= 60:
                         self.save_momentum_history()
                         last_save = time.time()
