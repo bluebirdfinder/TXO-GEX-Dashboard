@@ -53,6 +53,20 @@
       el.innerHTML = '<div style="font-size:.74rem;color:var(--text-muted)">🧑‍🤝‍🧑 散戶淨部位：⚪ 資料尚未取得（不顯示舊數字）</div>';
       return;
     }
+    // 多空能量（台新日報公式，10 個交易日逐日吻合）= 3 × 外資小台淨未平倉；佔比 = 2 × 外資小台淨 ÷ 小台總未平倉。為何乘 3 不明，僅照公式呈現。
+    const bs = det.broker_snapshot || {};
+    const fm = bs.foreign_mtx_net;
+    const energy = (typeof fm === 'number') ? 3 * fm : null;
+    const energyChg = (typeof bs.foreign_mtx_change === 'number') ? 3 * bs.foreign_mtx_change : null;
+    const totOi = det.mini_mtx.total_oi;
+    const energyPct = (energy !== null && typeof totOi === 'number' && totOi > 0) ? (2 * fm / totOi * 100) : null;
+    const energyHtml = (energy === null)
+      ? '<div style="margin-top:6px;font-size:.66rem;color:var(--text-muted)">多空能量：⚪ 外資小台淨未平倉尚未取得</div>'
+      : `<div style="margin-top:6px;padding-top:5px;border-top:1px dashed var(--panel-border)">
+          <div style="font-size:.68rem;color:var(--text-muted)" title="自製公式：3 × 外資小台淨未平倉（與台新日報逐日吻合）；非台新官方數字">多空能量（外資小台，自製公式）</div>
+          <div style="font-weight:700;font-size:1rem;color:${clr(energy)}">${fmt(energy)}</div>
+          <div style="font-size:.66rem;color:var(--gold-accent,#ffd700)">單日 ${fmt(energyChg)}　佔比 ${energyPct !== null ? (energyPct > 0 ? '+' : '') + energyPct.toFixed(2) + '%' : '—'}</div>
+        </div>`;
     const hist = await loadHistory();
     const rows = hist.map(h => `<tr><td>${h.date}</td><td style="text-align:right;color:${clr(h.mtx)}">${fmt(h.mtx)}</td><td style="text-align:right;color:${clr(h.tmf)}">${fmt(h.tmf)}</td></tr>`).join('');
     el.innerHTML = `
@@ -61,6 +75,7 @@
         <span style="font-size:.6rem;color:var(--text-muted)" title="散戶淨未平倉 = −(外資+自營商+投信)，期交所盤後公布；一天一個數字，非盤中走勢">?</span>
       </div>
       <div style="display:flex;gap:8px">${box('小台', det.mini_mtx)}${box('微台', det.micro_tmf)}</div>
+      ${energyHtml}
       ${rows ? `<table style="width:100%;margin-top:6px;font-size:.64rem;color:var(--text-muted);border-collapse:collapse">
         <tr><th style="text-align:left;font-weight:400">日期</th><th style="text-align:right;font-weight:400">小台</th><th style="text-align:right;font-weight:400">微台</th></tr>${rows}</table>` : ''}`;
   }

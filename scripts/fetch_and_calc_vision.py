@@ -2611,6 +2611,8 @@ def fetch_official_taifex_retail_sentiment():
                         if len(f_nums) >= 6 and len(t_nums) >= 6 and len(d_nums) >= 6:
                             inst[comm]['long'] = f_nums[-6] + t_nums[-6] + d_nums[-6]
                             inst[comm]['short'] = f_nums[-4] + t_nums[-4] + d_nums[-4]
+                            # 第三列＝外資（期交所列序：自營商、投信、外資；10/8 小台 2,504 多／3,106 空＝淨 -602，與台新日報多空能量 3×外資小台淨 吻合）
+                            inst[comm]['foreign_net'] = d_nums[-6] - d_nums[-4]
                             inst_ok[comm] = True
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Institutional Futures OI: {e}")
@@ -2745,6 +2747,8 @@ def fetch_official_taifex_retail_sentiment():
     fut_inst_snap = fetch_official_taifex_futures_institutional_oi()
     opt_inst_snap = fetch_official_taifex_options_matrix()
     foreign_tx_net = fut_inst_snap.get('foreign')
+    # 外資小台淨未平倉（期交所當日公布；未公布時沿用前一筆真實值，不編造）→ 多空能量 = 3 × 此值
+    foreign_mtx_net = inst['MTX'].get('foreign_net') if inst_ok['MTX'] else _prev.get('foreign_mtx_net')
     foreign_call_net = opt_inst_snap.get('foreign', {}).get('call_net_amt')
     foreign_put_net = opt_inst_snap.get('foreign', {}).get('put_net_amt')
 
@@ -2752,6 +2756,7 @@ def fetch_official_taifex_retail_sentiment():
     mtx_prev_ratio = _prev.get('mtx_ratio')
     tmf_daily_change = (tmf_r_net - _prev['tmf_net_oi']) if (tmf_r_net is not None and _prev.get('tmf_net_oi') is not None) else None
     tmf_prev_ratio = _prev.get('tmf_ratio')
+    foreign_mtx_change = (foreign_mtx_net - _prev['foreign_mtx_net']) if (foreign_mtx_net is not None and _prev.get('foreign_mtx_net') is not None) else None
     foreign_tx_change = (foreign_tx_net - _prev['foreign_tx_net']) if ('foreign_tx_net' in _prev and foreign_tx_net is not None) else None
     foreign_call_change = (foreign_call_net - _prev['foreign_call_net']) if ('foreign_call_net' in _prev and foreign_call_net is not None) else None
     foreign_put_change = (foreign_put_net - _prev['foreign_put_net']) if ('foreign_put_net' in _prev and foreign_put_net is not None) else None
@@ -2761,7 +2766,8 @@ def fetch_official_taifex_retail_sentiment():
         'mtx_long_oi': mtx_r_long, 'mtx_short_oi': mtx_r_short,
         'tmf_net_oi': tmf_r_net, 'tmf_ratio': tmf_ratio, 'tmf_total_ratio': tmf_total_ratio,
         'tmf_long_oi': tmf_r_long, 'tmf_short_oi': tmf_r_short,
-        'foreign_tx_net': foreign_tx_net, 'foreign_call_net': foreign_call_net, 'foreign_put_net': foreign_put_net
+        'foreign_tx_net': foreign_tx_net, 'foreign_call_net': foreign_call_net, 'foreign_put_net': foreign_put_net,
+        'foreign_mtx_net': foreign_mtx_net
     })
 
     def _sentiment_tag(ratio):
@@ -2831,6 +2837,8 @@ def fetch_official_taifex_retail_sentiment():
                 "sentiment_tag": tmf_sentiment_tag
             },
             "broker_snapshot": {
+                "foreign_mtx_net": foreign_mtx_net,
+                "foreign_mtx_change": foreign_mtx_change,
                 "foreign_tx_net": foreign_tx_net,
                 "foreign_tx_change": foreign_tx_change,
                 "foreign_call_net": foreign_call_net,
