@@ -10,16 +10,16 @@ window.GEX_EMBEDDED_DATA = {
     "put_wall_shift": 0.0,
     "zero_gamma_shift": 0.0,
     "gex_plus_flip_shift": 0.0,
-    "vex_shift": -0.13,
+    "vex_shift": -0.14,
     "day_txf_price": 49349.0,
     "day_call_wall": 50000.0,
     "day_put_wall": 49000.0,
     "day_zero_gamma": 49449.0,
     "day_max_pain": 48700.0,
     "day_gex_plus_flip": 49449.0,
-    "day_total_vex": 329.12
+    "day_total_vex": 329.75
   },
-  "last_updated_time": "2026-10-09 05:04",
+  "last_updated_time": "2026-10-09 05:34",
   "spot_price": 49313.44,
   "spot_change": -492.93,
   "spot_change_pct": -0.99,
@@ -31,7 +31,7 @@ window.GEX_EMBEDDED_DATA = {
   "txf_price": 48705.0,
   "zero_gamma_level": 49449.0,
   "gex_plus_flip": 49449.0,
-  "gamma_flip_standard": 48821.2,
+  "gamma_flip_standard": 48824.3,
   "gamma_flip_standard_close": 48728.7,
   "gamma_flip_standard_close_date": "2026-10-08",
   "call_wall_strike": 50000.0,
@@ -85,27 +85,27 @@ window.GEX_EMBEDDED_DATA = {
   "total_gex": [
     {
       "strike": 48400.0,
-      "call_gex": 46.6,
-      "put_gex": -211.67,
-      "net_gex": -165.07,
-      "vex": 12.51,
-      "gex_plus": -152.57,
+      "call_gex": 46.64,
+      "put_gex": -211.91,
+      "net_gex": -165.27,
+      "vex": 12.52,
+      "gex_plus": -152.75,
       "w1_call": 1.61,
-      "w1_put": -16.6,
+      "w1_put": -16.62,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 40.79,
-      "mth_put": -18.92,
+      "mth_call": 40.81,
+      "mth_put": -18.93,
       "fri_call": 4.21,
-      "fri_put": -176.16
+      "fri_put": -176.36
     },
     {
       "strike": 48450.0,
       "call_gex": 0.86,
-      "put_gex": -150.53,
-      "net_gex": -149.67,
-      "vex": 10.68,
-      "gex_plus": -138.99,
+      "put_gex": -150.73,
+      "net_gex": -149.87,
+      "vex": 10.69,
+      "gex_plus": -139.18,
       "w1_call": 0.55,
       "w1_put": -5.75,
       "w2_call": 0.0,
@@ -113,1023 +113,1023 @@ window.GEX_EMBEDDED_DATA = {
       "mth_call": 0.0,
       "mth_put": -1.0,
       "fri_call": 0.31,
-      "fri_put": -143.79
+      "fri_put": -143.98
     },
     {
       "strike": 48500.0,
-      "call_gex": 237.48,
-      "put_gex": -639.12,
-      "net_gex": -401.65,
-      "vex": 26.82,
-      "gex_plus": -374.83,
-      "w1_call": 3.91,
-      "w1_put": -113.15,
+      "call_gex": 237.79,
+      "put_gex": -639.97,
+      "net_gex": -402.18,
+      "vex": 26.85,
+      "gex_plus": -375.32,
+      "w1_call": 3.92,
+      "w1_put": -113.3,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 62.48,
-      "mth_put": -144.24,
-      "fri_call": 171.09,
-      "fri_put": -381.73
+      "mth_call": 62.52,
+      "mth_put": -144.35,
+      "fri_call": 171.35,
+      "fri_put": -382.32
     },
     {
       "strike": 48550.0,
-      "call_gex": 2.89,
-      "put_gex": -84.81,
-      "net_gex": -81.92,
+      "call_gex": 2.9,
+      "put_gex": -84.96,
+      "net_gex": -82.06,
       "vex": 5.16,
-      "gex_plus": -76.77,
+      "gex_plus": -76.9,
       "w1_call": 0.57,
-      "w1_put": -5.13,
+      "w1_put": -5.14,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 0.0,
       "mth_put": -1.42,
-      "fri_call": 2.32,
-      "fri_put": -78.27
+      "fri_call": 2.33,
+      "fri_put": -78.4
     },
     {
       "strike": 48600.0,
-      "call_gex": 62.07,
-      "put_gex": -232.51,
-      "net_gex": -170.44,
-      "vex": 10.07,
-      "gex_plus": -160.37,
+      "call_gex": 62.12,
+      "put_gex": -232.92,
+      "net_gex": -170.8,
+      "vex": 10.09,
+      "gex_plus": -160.71,
       "w1_call": 0.0,
-      "w1_put": -23.8,
+      "w1_put": -23.83,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 59.69,
-      "mth_put": -23.71,
+      "mth_call": 59.73,
+      "mth_put": -23.73,
       "fri_call": 2.39,
-      "fri_put": -185.01
+      "fri_put": -185.36
     },
     {
       "strike": 48650.0,
       "call_gex": 1.7,
-      "put_gex": -164.02,
-      "net_gex": -162.32,
-      "vex": 8.85,
-      "gex_plus": -153.47,
+      "put_gex": -164.35,
+      "net_gex": -162.65,
+      "vex": 8.87,
+      "gex_plus": -153.78,
       "w1_call": 0.3,
-      "w1_put": -12.4,
+      "w1_put": -12.42,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 0.0,
       "mth_put": -3.3,
-      "fri_call": 1.4,
-      "fri_put": -148.32
+      "fri_call": 1.41,
+      "fri_put": -148.63
     },
     {
       "strike": 48700.0,
-      "call_gex": 56.19,
-      "put_gex": -269.68,
-      "net_gex": -213.49,
-      "vex": 10.8,
-      "gex_plus": -202.69,
+      "call_gex": 56.25,
+      "put_gex": -270.24,
+      "net_gex": -213.99,
+      "vex": 10.82,
+      "gex_plus": -203.17,
       "w1_call": 0.3,
-      "w1_put": -12.6,
+      "w1_put": -12.62,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 46.9,
-      "mth_put": -23.04,
-      "fri_call": 8.99,
-      "fri_put": -234.04
+      "mth_call": 46.94,
+      "mth_put": -23.05,
+      "fri_call": 9.01,
+      "fri_put": -234.56
     },
     {
       "strike": 48750.0,
-      "call_gex": 3.42,
-      "put_gex": -110.31,
-      "net_gex": -106.89,
-      "vex": 4.93,
-      "gex_plus": -101.95,
+      "call_gex": 3.43,
+      "put_gex": -110.56,
+      "net_gex": -107.13,
+      "vex": 4.95,
+      "gex_plus": -102.19,
       "w1_call": 1.22,
-      "w1_put": -5.17,
+      "w1_put": -5.18,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 0.0,
       "mth_put": -3.97,
       "fri_call": 2.21,
-      "fri_put": -101.17
+      "fri_put": -101.41
     },
     {
       "strike": 48800.0,
-      "call_gex": 84.26,
-      "put_gex": -325.56,
-      "net_gex": -241.31,
-      "vex": 10.14,
-      "gex_plus": -231.17,
-      "w1_call": 4.32,
-      "w1_put": -14.19,
+      "call_gex": 84.42,
+      "put_gex": -326.31,
+      "net_gex": -241.9,
+      "vex": 10.17,
+      "gex_plus": -231.73,
+      "w1_call": 4.33,
+      "w1_put": -14.22,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 27.33,
-      "mth_put": -30.7,
-      "fri_call": 52.6,
-      "fri_put": -280.67
+      "mth_call": 27.36,
+      "mth_put": -30.72,
+      "fri_call": 52.73,
+      "fri_put": -281.37
     },
     {
       "strike": 48850.0,
-      "call_gex": 10.72,
-      "put_gex": -82.58,
-      "net_gex": -71.86,
+      "call_gex": 10.75,
+      "put_gex": -82.79,
+      "net_gex": -72.04,
       "vex": 2.72,
-      "gex_plus": -69.14,
+      "gex_plus": -69.31,
       "w1_call": 0.0,
-      "w1_put": -9.06,
+      "w1_put": -9.07,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 0.0,
       "mth_put": -1.9,
-      "fri_call": 10.72,
-      "fri_put": -71.62
+      "fri_call": 10.75,
+      "fri_put": -71.81
     },
     {
       "strike": 48900.0,
-      "call_gex": 74.55,
-      "put_gex": -292.17,
-      "net_gex": -217.63,
-      "vex": 7.36,
-      "gex_plus": -210.27,
+      "call_gex": 74.7,
+      "put_gex": -292.94,
+      "net_gex": -218.23,
+      "vex": 7.38,
+      "gex_plus": -210.86,
       "w1_call": 3.16,
-      "w1_put": -13.58,
+      "w1_put": -13.6,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 21.9,
-      "mth_put": -8.93,
-      "fri_call": 49.49,
-      "fri_put": -269.66
+      "mth_call": 21.92,
+      "mth_put": -8.94,
+      "fri_call": 49.62,
+      "fri_put": -270.4
     },
     {
       "strike": 48950.0,
-      "call_gex": 7.76,
-      "put_gex": -80.85,
-      "net_gex": -73.09,
+      "call_gex": 7.78,
+      "put_gex": -81.07,
+      "net_gex": -73.29,
       "vex": 2.16,
-      "gex_plus": -70.94,
+      "gex_plus": -71.13,
       "w1_call": 0.64,
-      "w1_put": -7.34,
+      "w1_put": -7.35,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 0.0,
       "mth_put": -1.5,
-      "fri_call": 7.12,
-      "fri_put": -72.02
+      "fri_call": 7.14,
+      "fri_put": -72.22
     },
     {
       "strike": 49000.0,
-      "call_gex": 306.52,
-      "put_gex": -733.29,
-      "net_gex": -426.78,
-      "vex": 10.93,
-      "gex_plus": -415.85,
-      "w1_call": 27.99,
-      "w1_put": -47.3,
+      "call_gex": 307.11,
+      "put_gex": -735.22,
+      "net_gex": -428.12,
+      "vex": 10.97,
+      "gex_plus": -417.15,
+      "w1_call": 28.05,
+      "w1_put": -47.39,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 128.92,
-      "mth_put": -66.71,
-      "fri_call": 149.61,
-      "fri_put": -619.28
+      "mth_call": 129.02,
+      "mth_put": -66.77,
+      "fri_call": 150.04,
+      "fri_put": -621.07
     },
     {
       "strike": 49050.0,
-      "call_gex": 12.9,
-      "put_gex": -114.22,
-      "net_gex": -101.32,
-      "vex": 2.15,
-      "gex_plus": -99.17,
+      "call_gex": 12.93,
+      "put_gex": -114.55,
+      "net_gex": -101.61,
+      "vex": 2.16,
+      "gex_plus": -99.46,
       "w1_call": 1.3,
-      "w1_put": -6.81,
+      "w1_put": -6.82,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 0.65,
       "mth_put": -1.51,
-      "fri_call": 10.96,
-      "fri_put": -105.9
+      "fri_call": 10.99,
+      "fri_put": -106.22
     },
     {
       "strike": 49100.0,
-      "call_gex": 253.46,
-      "put_gex": -274.6,
-      "net_gex": -21.14,
+      "call_gex": 253.93,
+      "put_gex": -275.35,
+      "net_gex": -21.43,
       "vex": 0.52,
-      "gex_plus": -20.63,
-      "w1_call": 5.22,
-      "w1_put": -10.77,
+      "gex_plus": -20.9,
+      "w1_call": 5.23,
+      "w1_put": -10.79,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 130.24,
-      "mth_put": -27.43,
-      "fri_call": 118.0,
-      "fri_put": -236.4
+      "mth_call": 130.35,
+      "mth_put": -27.45,
+      "fri_call": 118.35,
+      "fri_put": -237.11
     },
     {
       "strike": 49150.0,
-      "call_gex": 44.9,
-      "put_gex": -96.06,
-      "net_gex": -51.16,
-      "vex": 0.67,
-      "gex_plus": -50.49,
+      "call_gex": 45.02,
+      "put_gex": -96.35,
+      "net_gex": -51.33,
+      "vex": 0.68,
+      "gex_plus": -50.66,
       "w1_call": 1.97,
-      "w1_put": -4.59,
+      "w1_put": -4.6,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 8.66,
+      "mth_call": 8.67,
       "mth_put": -0.22,
-      "fri_call": 34.27,
-      "fri_put": -91.26
+      "fri_call": 34.38,
+      "fri_put": -91.53
     },
     {
       "strike": 49200.0,
-      "call_gex": 217.31,
-      "put_gex": -333.56,
-      "net_gex": -116.25,
-      "vex": 1.08,
-      "gex_plus": -115.17,
-      "w1_call": 11.2,
-      "w1_put": -15.48,
+      "call_gex": 217.86,
+      "put_gex": -334.55,
+      "net_gex": -116.69,
+      "vex": 1.09,
+      "gex_plus": -115.6,
+      "w1_call": 11.22,
+      "w1_put": -15.51,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 50.35,
-      "mth_put": -12.37,
-      "fri_call": 155.77,
-      "fri_put": -305.72
+      "mth_call": 50.39,
+      "mth_put": -12.38,
+      "fri_call": 156.25,
+      "fri_put": -306.66
     },
     {
       "strike": 49250.0,
-      "call_gex": 48.4,
-      "put_gex": -142.48,
-      "net_gex": -94.08,
+      "call_gex": 48.54,
+      "put_gex": -142.91,
+      "net_gex": -94.37,
       "vex": 0.44,
-      "gex_plus": -93.65,
-      "w1_call": 3.3,
-      "w1_put": -11.89,
+      "gex_plus": -93.93,
+      "w1_call": 3.31,
+      "w1_put": -11.91,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 1.3,
-      "mth_put": -1.3,
-      "fri_call": 43.79,
-      "fri_put": -129.29
+      "mth_call": 1.31,
+      "mth_put": -1.31,
+      "fri_call": 43.93,
+      "fri_put": -129.69
     },
     {
       "strike": 49300.0,
-      "call_gex": 209.73,
-      "put_gex": -533.35,
-      "net_gex": -323.63,
+      "call_gex": 210.31,
+      "put_gex": -534.9,
+      "net_gex": -324.59,
       "vex": 0.15,
-      "gex_plus": -323.48,
-      "w1_call": 16.21,
-      "w1_put": -29.11,
+      "gex_plus": -324.44,
+      "w1_call": 16.24,
+      "w1_put": -29.16,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 20.89,
-      "mth_put": -35.69,
-      "fri_call": 172.62,
-      "fri_put": -468.55
+      "mth_call": 20.91,
+      "mth_put": -35.72,
+      "fri_call": 173.16,
+      "fri_put": -470.01
     },
     {
       "strike": 49350.0,
-      "call_gex": 97.55,
-      "put_gex": -106.44,
-      "net_gex": -8.89,
+      "call_gex": 97.85,
+      "put_gex": -106.77,
+      "net_gex": -8.92,
       "vex": -0.03,
-      "gex_plus": -8.93,
-      "w1_call": 3.64,
-      "w1_put": -5.63,
+      "gex_plus": -8.95,
+      "w1_call": 3.65,
+      "w1_put": -5.64,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 1.09,
       "mth_put": -1.31,
-      "fri_call": 92.82,
-      "fri_put": -99.51
+      "fri_call": 93.11,
+      "fri_put": -99.82
     },
     {
       "strike": 49400.0,
-      "call_gex": 311.65,
-      "put_gex": -661.01,
-      "net_gex": -349.36,
-      "vex": -2.67,
-      "gex_plus": -352.03,
-      "w1_call": 29.43,
-      "w1_put": -11.57,
+      "call_gex": 312.52,
+      "put_gex": -663.01,
+      "net_gex": -350.48,
+      "vex": -2.68,
+      "gex_plus": -353.16,
+      "w1_call": 29.49,
+      "w1_put": -11.6,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 25.05,
-      "mth_put": -16.12,
-      "fri_call": 257.17,
-      "fri_put": -633.32
+      "mth_call": 25.07,
+      "mth_put": -16.13,
+      "fri_call": 257.96,
+      "fri_put": -635.28
     },
     {
       "strike": 49450.0,
-      "call_gex": 79.8,
-      "put_gex": -72.7,
-      "net_gex": 7.1,
+      "call_gex": 80.03,
+      "put_gex": -72.92,
+      "net_gex": 7.11,
       "vex": 0.09,
-      "gex_plus": 7.18,
-      "w1_call": 10.89,
-      "w1_put": -2.31,
+      "gex_plus": 7.2,
+      "w1_call": 10.91,
+      "w1_put": -2.32,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 1.09,
       "mth_put": -1.74,
-      "fri_call": 67.82,
-      "fri_put": -68.65
+      "fri_call": 68.03,
+      "fri_put": -68.86
     },
     {
       "strike": 49500.0,
-      "call_gex": 564.01,
-      "put_gex": -665.15,
-      "net_gex": -101.14,
+      "call_gex": 565.34,
+      "put_gex": -666.98,
+      "net_gex": -101.64,
       "vex": -1.49,
-      "gex_plus": -102.62,
-      "w1_call": 62.86,
-      "w1_put": -37.19,
+      "gex_plus": -103.14,
+      "w1_call": 62.98,
+      "w1_put": -37.26,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 142.71,
-      "mth_put": -65.05,
-      "fri_call": 358.44,
-      "fri_put": -562.92
+      "mth_call": 142.83,
+      "mth_put": -65.1,
+      "fri_call": 359.53,
+      "fri_put": -564.62
     },
     {
       "strike": 49550.0,
-      "call_gex": 95.29,
-      "put_gex": -34.67,
-      "net_gex": 60.62,
+      "call_gex": 95.56,
+      "put_gex": -34.76,
+      "net_gex": 60.79,
       "vex": 1.22,
-      "gex_plus": 61.84,
-      "w1_call": 7.87,
-      "w1_put": -2.95,
+      "gex_plus": 62.01,
+      "w1_call": 7.88,
+      "w1_put": -2.96,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 1.52,
       "mth_put": -1.3,
-      "fri_call": 85.9,
-      "fri_put": -30.41
+      "fri_call": 86.16,
+      "fri_put": -30.5
     },
     {
       "strike": 49600.0,
-      "call_gex": 352.05,
-      "put_gex": -195.74,
-      "net_gex": 156.31,
-      "vex": 3.81,
-      "gex_plus": 160.13,
-      "w1_call": 20.54,
-      "w1_put": -6.19,
+      "call_gex": 353.0,
+      "put_gex": -196.29,
+      "net_gex": 156.71,
+      "vex": 3.82,
+      "gex_plus": 160.53,
+      "w1_call": 20.58,
+      "w1_put": -6.21,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 28.84,
-      "mth_put": -8.67,
-      "fri_call": 302.67,
-      "fri_put": -180.87
+      "mth_call": 28.86,
+      "mth_put": -8.68,
+      "fri_call": 303.56,
+      "fri_put": -181.4
     },
     {
       "strike": 49650.0,
-      "call_gex": 94.99,
-      "put_gex": -33.47,
-      "net_gex": 61.52,
-      "vex": 1.74,
-      "gex_plus": 63.27,
-      "w1_call": 5.18,
-      "w1_put": -3.24,
+      "call_gex": 95.25,
+      "put_gex": -33.56,
+      "net_gex": 61.69,
+      "vex": 1.75,
+      "gex_plus": 63.44,
+      "w1_call": 5.19,
+      "w1_put": -3.25,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 1.95,
       "mth_put": -0.0,
-      "fri_call": 87.86,
-      "fri_put": -30.23
+      "fri_call": 88.11,
+      "fri_put": -30.31
     },
     {
       "strike": 49700.0,
-      "call_gex": 386.08,
-      "put_gex": -93.46,
-      "net_gex": 292.62,
-      "vex": 9.5,
-      "gex_plus": 302.12,
-      "w1_call": 41.79,
-      "w1_put": -13.82,
+      "call_gex": 387.06,
+      "put_gex": -93.69,
+      "net_gex": 293.37,
+      "vex": 9.53,
+      "gex_plus": 302.9,
+      "w1_call": 41.87,
+      "w1_put": -13.85,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 25.89,
+      "mth_call": 25.91,
       "mth_put": -10.79,
-      "fri_call": 318.4,
-      "fri_put": -68.85
+      "fri_call": 319.28,
+      "fri_put": -69.05
     },
     {
       "strike": 49750.0,
-      "call_gex": 178.51,
-      "put_gex": -30.98,
-      "net_gex": 147.54,
-      "vex": 5.38,
-      "gex_plus": 152.92,
-      "w1_call": 10.84,
+      "call_gex": 178.98,
+      "put_gex": -31.06,
+      "net_gex": 147.92,
+      "vex": 5.4,
+      "gex_plus": 153.32,
+      "w1_call": 10.86,
       "w1_put": -2.87,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 1.72,
-      "mth_put": -0.64,
-      "fri_call": 165.96,
-      "fri_put": -27.46
+      "mth_put": -0.65,
+      "fri_call": 166.4,
+      "fri_put": -27.54
     },
     {
       "strike": 49800.0,
-      "call_gex": 471.12,
-      "put_gex": -121.01,
-      "net_gex": 350.11,
-      "vex": 14.22,
-      "gex_plus": 364.34,
-      "w1_call": 63.12,
-      "w1_put": -12.31,
+      "call_gex": 472.23,
+      "put_gex": -121.26,
+      "net_gex": 350.96,
+      "vex": 14.26,
+      "gex_plus": 365.22,
+      "w1_call": 63.23,
+      "w1_put": -12.33,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 30.84,
-      "mth_put": -25.7,
-      "fri_call": 377.16,
-      "fri_put": -83.0
+      "mth_call": 30.87,
+      "mth_put": -25.72,
+      "fri_call": 378.13,
+      "fri_put": -83.21
     },
     {
       "strike": 49850.0,
-      "call_gex": 153.24,
-      "put_gex": -21.41,
-      "net_gex": 131.83,
-      "vex": 5.89,
-      "gex_plus": 137.72,
-      "w1_call": 15.29,
-      "w1_put": -6.24,
+      "call_gex": 153.6,
+      "put_gex": -21.46,
+      "net_gex": 132.15,
+      "vex": 5.9,
+      "gex_plus": 138.05,
+      "w1_call": 15.32,
+      "w1_put": -6.25,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 1.07,
       "mth_put": -0.0,
-      "fri_call": 136.88,
-      "fri_put": -15.17
+      "fri_call": 137.22,
+      "fri_put": -15.2
     },
     {
       "strike": 49900.0,
-      "call_gex": 310.69,
-      "put_gex": -50.97,
-      "net_gex": 259.71,
-      "vex": 12.67,
-      "gex_plus": 272.38,
-      "w1_call": 15.11,
-      "w1_put": -12.64,
+      "call_gex": 311.36,
+      "put_gex": -51.06,
+      "net_gex": 260.3,
+      "vex": 12.69,
+      "gex_plus": 273.0,
+      "w1_call": 15.14,
+      "w1_put": -12.66,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 21.22,
-      "mth_put": -13.79,
-      "fri_call": 274.35,
-      "fri_put": -24.54
+      "mth_call": 21.24,
+      "mth_put": -13.81,
+      "fri_call": 274.99,
+      "fri_put": -24.59
     },
     {
       "strike": 49950.0,
-      "call_gex": 145.9,
-      "put_gex": -13.14,
-      "net_gex": 132.76,
-      "vex": 7.01,
-      "gex_plus": 139.77,
+      "call_gex": 146.21,
+      "put_gex": -13.16,
+      "net_gex": 133.05,
+      "vex": 7.03,
+      "gex_plus": 140.08,
       "w1_call": 2.74,
-      "w1_put": -3.04,
+      "w1_put": -3.05,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 1.27,
       "mth_put": -0.63,
-      "fri_call": 141.89,
-      "fri_put": -9.46
+      "fri_call": 142.2,
+      "fri_put": -9.48
     },
     {
       "strike": 50000.0,
-      "call_gex": 1198.57,
-      "put_gex": -72.2,
-      "net_gex": 1126.37,
-      "vex": 64.51,
-      "gex_plus": 1190.88,
-      "w1_call": 153.9,
-      "w1_put": -3.6,
+      "call_gex": 1200.54,
+      "put_gex": -72.3,
+      "net_gex": 1128.25,
+      "vex": 64.62,
+      "gex_plus": 1192.86,
+      "w1_call": 154.14,
+      "w1_put": -3.61,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 305.38,
-      "mth_put": -39.46,
-      "fri_call": 739.29,
-      "fri_put": -29.15
+      "mth_call": 305.61,
+      "mth_put": -39.49,
+      "fri_call": 740.79,
+      "fri_put": -29.2
     },
     {
       "strike": 50050.0,
-      "call_gex": 247.2,
-      "put_gex": -4.66,
-      "net_gex": 242.54,
-      "vex": 14.79,
-      "gex_plus": 257.33,
-      "w1_call": 5.61,
+      "call_gex": 247.66,
+      "put_gex": -4.67,
+      "net_gex": 242.99,
+      "vex": 14.81,
+      "gex_plus": 257.8,
+      "w1_call": 5.62,
       "w1_put": -0.3,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 2.09,
       "mth_put": -0.21,
-      "fri_call": 239.51,
-      "fri_put": -4.16
+      "fri_call": 239.95,
+      "fri_put": -4.17
     },
     {
       "strike": 50100.0,
-      "call_gex": 305.01,
-      "put_gex": -25.51,
-      "net_gex": 279.5,
-      "vex": 18.2,
-      "gex_plus": 297.7,
-      "w1_call": 13.07,
+      "call_gex": 305.5,
+      "put_gex": -25.55,
+      "net_gex": 279.95,
+      "vex": 18.23,
+      "gex_plus": 298.19,
+      "w1_call": 13.09,
       "w1_put": -0.29,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 24.03,
-      "mth_put": -4.97,
-      "fri_call": 267.9,
-      "fri_put": -20.24
+      "mth_call": 24.05,
+      "mth_put": -4.98,
+      "fri_call": 268.36,
+      "fri_put": -20.28
     },
     {
       "strike": 50150.0,
-      "call_gex": 151.88,
-      "put_gex": -4.59,
-      "net_gex": 147.29,
-      "vex": 10.18,
-      "gex_plus": 157.47,
-      "w1_call": 9.71,
+      "call_gex": 152.11,
+      "put_gex": -4.6,
+      "net_gex": 147.51,
+      "vex": 10.19,
+      "gex_plus": 157.7,
+      "w1_call": 9.72,
       "w1_put": -0.0,
       "w2_call": 0.0,
       "w2_put": -0.0,
       "mth_call": 0.21,
       "mth_put": -0.0,
-      "fri_call": 141.97,
-      "fri_put": -4.59
+      "fri_call": 142.18,
+      "fri_put": -4.6
     },
     {
       "strike": 50200.0,
-      "call_gex": 502.43,
-      "put_gex": -13.09,
-      "net_gex": 489.34,
-      "vex": 35.85,
-      "gex_plus": 525.19,
-      "w1_call": 24.65,
+      "call_gex": 503.07,
+      "put_gex": -13.1,
+      "net_gex": 489.97,
+      "vex": 35.89,
+      "gex_plus": 525.86,
+      "w1_call": 24.68,
       "w1_put": -1.4,
       "w2_call": 0.0,
       "w2_put": -0.0,
-      "mth_call": 41.43,
-      "mth_put": -7.55,
-      "fri_call": 436.35,
-      "fri_put": -4.13
+      "mth_call": 41.46,
+      "mth_put": -7.56,
+      "fri_call": 436.92,
+      "fri_put": -4.14
     }
   ],
   "weekly_gex": [
     {
       "strike": 48400.0,
       "call_gex": 1.61,
-      "put_gex": -16.6,
-      "net_gex": -14.99
+      "put_gex": -16.62,
+      "net_gex": -15.01
     },
     {
       "strike": 48450.0,
       "call_gex": 0.55,
       "put_gex": -5.75,
-      "net_gex": -5.2
+      "net_gex": -5.21
     },
     {
       "strike": 48500.0,
-      "call_gex": 3.91,
-      "put_gex": -113.15,
-      "net_gex": -109.24
+      "call_gex": 3.92,
+      "put_gex": -113.3,
+      "net_gex": -109.39
     },
     {
       "strike": 48550.0,
       "call_gex": 0.57,
-      "put_gex": -5.13,
+      "put_gex": -5.14,
       "net_gex": -4.56
     },
     {
       "strike": 48600.0,
       "call_gex": 0.0,
-      "put_gex": -23.8,
-      "net_gex": -23.8
+      "put_gex": -23.83,
+      "net_gex": -23.83
     },
     {
       "strike": 48650.0,
       "call_gex": 0.3,
-      "put_gex": -12.4,
-      "net_gex": -12.1
+      "put_gex": -12.42,
+      "net_gex": -12.12
     },
     {
       "strike": 48700.0,
       "call_gex": 0.3,
-      "put_gex": -12.6,
-      "net_gex": -12.3
+      "put_gex": -12.62,
+      "net_gex": -12.32
     },
     {
       "strike": 48750.0,
       "call_gex": 1.22,
-      "put_gex": -5.17,
+      "put_gex": -5.18,
       "net_gex": -3.96
     },
     {
       "strike": 48800.0,
-      "call_gex": 4.32,
-      "put_gex": -14.19,
-      "net_gex": -9.87
+      "call_gex": 4.33,
+      "put_gex": -14.22,
+      "net_gex": -9.89
     },
     {
       "strike": 48850.0,
       "call_gex": 0.0,
-      "put_gex": -9.06,
-      "net_gex": -9.06
+      "put_gex": -9.07,
+      "net_gex": -9.07
     },
     {
       "strike": 48900.0,
       "call_gex": 3.16,
-      "put_gex": -13.58,
-      "net_gex": -10.42
+      "put_gex": -13.6,
+      "net_gex": -10.44
     },
     {
       "strike": 48950.0,
       "call_gex": 0.64,
-      "put_gex": -7.34,
-      "net_gex": -6.7
+      "put_gex": -7.35,
+      "net_gex": -6.71
     },
     {
       "strike": 49000.0,
-      "call_gex": 27.99,
-      "put_gex": -47.3,
-      "net_gex": -19.31
+      "call_gex": 28.05,
+      "put_gex": -47.39,
+      "net_gex": -19.34
     },
     {
       "strike": 49050.0,
       "call_gex": 1.3,
-      "put_gex": -6.81,
-      "net_gex": -5.51
+      "put_gex": -6.82,
+      "net_gex": -5.52
     },
     {
       "strike": 49100.0,
-      "call_gex": 5.22,
-      "put_gex": -10.77,
-      "net_gex": -5.55
+      "call_gex": 5.23,
+      "put_gex": -10.79,
+      "net_gex": -5.56
     },
     {
       "strike": 49150.0,
       "call_gex": 1.97,
-      "put_gex": -4.59,
-      "net_gex": -2.62
+      "put_gex": -4.6,
+      "net_gex": -2.63
     },
     {
       "strike": 49200.0,
-      "call_gex": 11.2,
-      "put_gex": -15.48,
-      "net_gex": -4.28
+      "call_gex": 11.22,
+      "put_gex": -15.51,
+      "net_gex": -4.29
     },
     {
       "strike": 49250.0,
-      "call_gex": 3.3,
-      "put_gex": -11.89,
-      "net_gex": -8.59
+      "call_gex": 3.31,
+      "put_gex": -11.91,
+      "net_gex": -8.6
     },
     {
       "strike": 49300.0,
-      "call_gex": 16.21,
-      "put_gex": -29.11,
-      "net_gex": -12.9
+      "call_gex": 16.24,
+      "put_gex": -29.16,
+      "net_gex": -12.92
     },
     {
       "strike": 49350.0,
-      "call_gex": 3.64,
-      "put_gex": -5.63,
+      "call_gex": 3.65,
+      "put_gex": -5.64,
       "net_gex": -1.99
     },
     {
       "strike": 49400.0,
-      "call_gex": 29.43,
-      "put_gex": -11.57,
-      "net_gex": 17.86
+      "call_gex": 29.49,
+      "put_gex": -11.6,
+      "net_gex": 17.89
     },
     {
       "strike": 49450.0,
-      "call_gex": 10.89,
-      "put_gex": -2.31,
-      "net_gex": 8.58
+      "call_gex": 10.91,
+      "put_gex": -2.32,
+      "net_gex": 8.6
     },
     {
       "strike": 49500.0,
-      "call_gex": 62.86,
-      "put_gex": -37.19,
-      "net_gex": 25.67
+      "call_gex": 62.98,
+      "put_gex": -37.26,
+      "net_gex": 25.72
     },
     {
       "strike": 49550.0,
-      "call_gex": 7.87,
-      "put_gex": -2.95,
-      "net_gex": 4.92
+      "call_gex": 7.88,
+      "put_gex": -2.96,
+      "net_gex": 4.93
     },
     {
       "strike": 49600.0,
-      "call_gex": 20.54,
-      "put_gex": -6.19,
-      "net_gex": 14.34
+      "call_gex": 20.58,
+      "put_gex": -6.21,
+      "net_gex": 14.37
     },
     {
       "strike": 49650.0,
-      "call_gex": 5.18,
-      "put_gex": -3.24,
-      "net_gex": 1.94
+      "call_gex": 5.19,
+      "put_gex": -3.25,
+      "net_gex": 1.95
     },
     {
       "strike": 49700.0,
-      "call_gex": 41.79,
-      "put_gex": -13.82,
-      "net_gex": 27.97
+      "call_gex": 41.87,
+      "put_gex": -13.85,
+      "net_gex": 28.02
     },
     {
       "strike": 49750.0,
-      "call_gex": 10.84,
+      "call_gex": 10.86,
       "put_gex": -2.87,
-      "net_gex": 7.97
+      "net_gex": 7.98
     },
     {
       "strike": 49800.0,
-      "call_gex": 63.12,
-      "put_gex": -12.31,
-      "net_gex": 50.81
+      "call_gex": 63.23,
+      "put_gex": -12.33,
+      "net_gex": 50.9
     },
     {
       "strike": 49850.0,
-      "call_gex": 15.29,
-      "put_gex": -6.24,
-      "net_gex": 9.05
+      "call_gex": 15.32,
+      "put_gex": -6.25,
+      "net_gex": 9.07
     },
     {
       "strike": 49900.0,
-      "call_gex": 15.11,
-      "put_gex": -12.64,
+      "call_gex": 15.14,
+      "put_gex": -12.66,
       "net_gex": 2.47
     },
     {
       "strike": 49950.0,
       "call_gex": 2.74,
-      "put_gex": -3.04,
+      "put_gex": -3.05,
       "net_gex": -0.3
     },
     {
       "strike": 50000.0,
-      "call_gex": 153.9,
-      "put_gex": -3.6,
-      "net_gex": 150.3
+      "call_gex": 154.14,
+      "put_gex": -3.61,
+      "net_gex": 150.53
     },
     {
       "strike": 50050.0,
-      "call_gex": 5.61,
+      "call_gex": 5.62,
       "put_gex": -0.3,
       "net_gex": 5.32
     },
     {
       "strike": 50100.0,
-      "call_gex": 13.07,
+      "call_gex": 13.09,
       "put_gex": -0.29,
-      "net_gex": 12.78
+      "net_gex": 12.8
     },
     {
       "strike": 50150.0,
-      "call_gex": 9.71,
+      "call_gex": 9.72,
       "put_gex": -0.0,
-      "net_gex": 9.71
+      "net_gex": 9.72
     },
     {
       "strike": 50200.0,
-      "call_gex": 24.65,
+      "call_gex": 24.68,
       "put_gex": -1.4,
-      "net_gex": 23.25
+      "net_gex": 23.28
     }
   ],
   "friday_gex": [
     {
       "strike": 48400.0,
       "call_gex": 4.21,
-      "put_gex": -176.16,
-      "net_gex": -171.95
+      "put_gex": -176.36,
+      "net_gex": -172.15
     },
     {
       "strike": 48450.0,
       "call_gex": 0.31,
-      "put_gex": -143.79,
-      "net_gex": -143.48
+      "put_gex": -143.98,
+      "net_gex": -143.67
     },
     {
       "strike": 48500.0,
-      "call_gex": 171.09,
-      "put_gex": -381.73,
-      "net_gex": -210.64
+      "call_gex": 171.35,
+      "put_gex": -382.32,
+      "net_gex": -210.97
     },
     {
       "strike": 48550.0,
-      "call_gex": 2.32,
-      "put_gex": -78.27,
-      "net_gex": -75.95
+      "call_gex": 2.33,
+      "put_gex": -78.4,
+      "net_gex": -76.08
     },
     {
       "strike": 48600.0,
       "call_gex": 2.39,
-      "put_gex": -185.01,
-      "net_gex": -182.62
+      "put_gex": -185.36,
+      "net_gex": -182.97
     },
     {
       "strike": 48650.0,
-      "call_gex": 1.4,
-      "put_gex": -148.32,
-      "net_gex": -146.92
+      "call_gex": 1.41,
+      "put_gex": -148.63,
+      "net_gex": -147.23
     },
     {
       "strike": 48700.0,
-      "call_gex": 8.99,
-      "put_gex": -234.04,
-      "net_gex": -225.05
+      "call_gex": 9.01,
+      "put_gex": -234.56,
+      "net_gex": -225.56
     },
     {
       "strike": 48750.0,
       "call_gex": 2.21,
-      "put_gex": -101.17,
-      "net_gex": -98.96
+      "put_gex": -101.41,
+      "net_gex": -99.2
     },
     {
       "strike": 48800.0,
-      "call_gex": 52.6,
-      "put_gex": -280.67,
-      "net_gex": -228.07
+      "call_gex": 52.73,
+      "put_gex": -281.37,
+      "net_gex": -228.64
     },
     {
       "strike": 48850.0,
-      "call_gex": 10.72,
-      "put_gex": -71.62,
-      "net_gex": -60.9
+      "call_gex": 10.75,
+      "put_gex": -71.81,
+      "net_gex": -61.06
     },
     {
       "strike": 48900.0,
-      "call_gex": 49.49,
-      "put_gex": -269.66,
-      "net_gex": -220.17
+      "call_gex": 49.62,
+      "put_gex": -270.4,
+      "net_gex": -220.77
     },
     {
       "strike": 48950.0,
-      "call_gex": 7.12,
-      "put_gex": -72.02,
-      "net_gex": -64.9
+      "call_gex": 7.14,
+      "put_gex": -72.22,
+      "net_gex": -65.08
     },
     {
       "strike": 49000.0,
-      "call_gex": 149.61,
-      "put_gex": -619.28,
-      "net_gex": -469.68
+      "call_gex": 150.04,
+      "put_gex": -621.07,
+      "net_gex": -471.03
     },
     {
       "strike": 49050.0,
-      "call_gex": 10.96,
-      "put_gex": -105.9,
-      "net_gex": -94.95
+      "call_gex": 10.99,
+      "put_gex": -106.22,
+      "net_gex": -95.23
     },
     {
       "strike": 49100.0,
-      "call_gex": 118.0,
-      "put_gex": -236.4,
-      "net_gex": -118.41
+      "call_gex": 118.35,
+      "put_gex": -237.11,
+      "net_gex": -118.76
     },
     {
       "strike": 49150.0,
-      "call_gex": 34.27,
-      "put_gex": -91.26,
-      "net_gex": -56.98
+      "call_gex": 34.38,
+      "put_gex": -91.53,
+      "net_gex": -57.16
     },
     {
       "strike": 49200.0,
-      "call_gex": 155.77,
-      "put_gex": -305.72,
-      "net_gex": -149.95
+      "call_gex": 156.25,
+      "put_gex": -306.66,
+      "net_gex": -150.41
     },
     {
       "strike": 49250.0,
-      "call_gex": 43.79,
-      "put_gex": -129.29,
-      "net_gex": -85.5
+      "call_gex": 43.93,
+      "put_gex": -129.69,
+      "net_gex": -85.76
     },
     {
       "strike": 49300.0,
-      "call_gex": 172.62,
-      "put_gex": -468.55,
-      "net_gex": -295.93
+      "call_gex": 173.16,
+      "put_gex": -470.01,
+      "net_gex": -296.85
     },
     {
       "strike": 49350.0,
-      "call_gex": 92.82,
-      "put_gex": -99.51,
-      "net_gex": -6.69
+      "call_gex": 93.11,
+      "put_gex": -99.82,
+      "net_gex": -6.71
     },
     {
       "strike": 49400.0,
-      "call_gex": 257.17,
-      "put_gex": -633.32,
-      "net_gex": -376.15
+      "call_gex": 257.96,
+      "put_gex": -635.28,
+      "net_gex": -377.31
     },
     {
       "strike": 49450.0,
-      "call_gex": 67.82,
-      "put_gex": -68.65,
+      "call_gex": 68.03,
+      "put_gex": -68.86,
       "net_gex": -0.83
     },
     {
       "strike": 49500.0,
-      "call_gex": 358.44,
-      "put_gex": -562.92,
-      "net_gex": -204.47
+      "call_gex": 359.53,
+      "put_gex": -564.62,
+      "net_gex": -205.09
     },
     {
       "strike": 49550.0,
-      "call_gex": 85.9,
-      "put_gex": -30.41,
-      "net_gex": 55.48
+      "call_gex": 86.16,
+      "put_gex": -30.5,
+      "net_gex": 55.65
     },
     {
       "strike": 49600.0,
-      "call_gex": 302.67,
-      "put_gex": -180.87,
-      "net_gex": 121.8
+      "call_gex": 303.56,
+      "put_gex": -181.4,
+      "net_gex": 122.16
     },
     {
       "strike": 49650.0,
-      "call_gex": 87.86,
-      "put_gex": -30.23,
-      "net_gex": 57.63
+      "call_gex": 88.11,
+      "put_gex": -30.31,
+      "net_gex": 57.8
     },
     {
       "strike": 49700.0,
-      "call_gex": 318.4,
-      "put_gex": -68.85,
-      "net_gex": 249.55
+      "call_gex": 319.28,
+      "put_gex": -69.05,
+      "net_gex": 250.24
     },
     {
       "strike": 49750.0,
-      "call_gex": 165.96,
-      "put_gex": -27.46,
-      "net_gex": 138.49
+      "call_gex": 166.4,
+      "put_gex": -27.54,
+      "net_gex": 138.86
     },
     {
       "strike": 49800.0,
-      "call_gex": 377.16,
-      "put_gex": -83.0,
-      "net_gex": 294.17
+      "call_gex": 378.13,
+      "put_gex": -83.21,
+      "net_gex": 294.92
     },
     {
       "strike": 49850.0,
-      "call_gex": 136.88,
-      "put_gex": -15.17,
-      "net_gex": 121.71
+      "call_gex": 137.22,
+      "put_gex": -15.2,
+      "net_gex": 122.01
     },
     {
       "strike": 49900.0,
-      "call_gex": 274.35,
-      "put_gex": -24.54,
-      "net_gex": 249.82
+      "call_gex": 274.99,
+      "put_gex": -24.59,
+      "net_gex": 250.4
     },
     {
       "strike": 49950.0,
-      "call_gex": 141.89,
-      "put_gex": -9.46,
-      "net_gex": 132.43
+      "call_gex": 142.2,
+      "put_gex": -9.48,
+      "net_gex": 132.72
     },
     {
       "strike": 50000.0,
-      "call_gex": 739.29,
-      "put_gex": -29.15,
-      "net_gex": 710.15
+      "call_gex": 740.79,
+      "put_gex": -29.2,
+      "net_gex": 711.59
     },
     {
       "strike": 50050.0,
-      "call_gex": 239.51,
-      "put_gex": -4.16,
-      "net_gex": 235.35
+      "call_gex": 239.95,
+      "put_gex": -4.17,
+      "net_gex": 235.79
     },
     {
       "strike": 50100.0,
-      "call_gex": 267.9,
-      "put_gex": -20.24,
-      "net_gex": 247.66
+      "call_gex": 268.36,
+      "put_gex": -20.28,
+      "net_gex": 248.08
     },
     {
       "strike": 50150.0,
-      "call_gex": 141.97,
-      "put_gex": -4.59,
-      "net_gex": 137.38
+      "call_gex": 142.18,
+      "put_gex": -4.6,
+      "net_gex": 137.59
     },
     {
       "strike": 50200.0,
-      "call_gex": 436.35,
-      "put_gex": -4.13,
-      "net_gex": 432.21
+      "call_gex": 436.92,
+      "put_gex": -4.14,
+      "net_gex": 432.78
     }
   ],
   "monthly_gex": [
     {
       "strike": 48400.0,
-      "call_gex": 40.79,
-      "put_gex": -18.92,
-      "net_gex": 21.87
+      "call_gex": 40.81,
+      "put_gex": -18.93,
+      "net_gex": 21.89
     },
     {
       "strike": 48450.0,
@@ -1139,9 +1139,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 48500.0,
-      "call_gex": 62.48,
-      "put_gex": -144.24,
-      "net_gex": -81.76
+      "call_gex": 62.52,
+      "put_gex": -144.35,
+      "net_gex": -81.82
     },
     {
       "strike": 48550.0,
@@ -1151,9 +1151,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 48600.0,
-      "call_gex": 59.69,
-      "put_gex": -23.71,
-      "net_gex": 35.97
+      "call_gex": 59.73,
+      "put_gex": -23.73,
+      "net_gex": 36.0
     },
     {
       "strike": 48650.0,
@@ -1163,9 +1163,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 48700.0,
-      "call_gex": 46.9,
-      "put_gex": -23.04,
-      "net_gex": 23.87
+      "call_gex": 46.94,
+      "put_gex": -23.05,
+      "net_gex": 23.88
     },
     {
       "strike": 48750.0,
@@ -1175,9 +1175,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 48800.0,
-      "call_gex": 27.33,
-      "put_gex": -30.7,
-      "net_gex": -3.36
+      "call_gex": 27.36,
+      "put_gex": -30.72,
+      "net_gex": -3.37
     },
     {
       "strike": 48850.0,
@@ -1187,9 +1187,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 48900.0,
-      "call_gex": 21.9,
-      "put_gex": -8.93,
-      "net_gex": 12.97
+      "call_gex": 21.92,
+      "put_gex": -8.94,
+      "net_gex": 12.98
     },
     {
       "strike": 48950.0,
@@ -1199,9 +1199,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 49000.0,
-      "call_gex": 128.92,
-      "put_gex": -66.71,
-      "net_gex": 62.21
+      "call_gex": 129.02,
+      "put_gex": -66.77,
+      "net_gex": 62.26
     },
     {
       "strike": 49050.0,
@@ -1211,33 +1211,33 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 49100.0,
-      "call_gex": 130.24,
-      "put_gex": -27.43,
-      "net_gex": 102.81
+      "call_gex": 130.35,
+      "put_gex": -27.45,
+      "net_gex": 102.89
     },
     {
       "strike": 49150.0,
-      "call_gex": 8.66,
+      "call_gex": 8.67,
       "put_gex": -0.22,
       "net_gex": 8.45
     },
     {
       "strike": 49200.0,
-      "call_gex": 50.35,
-      "put_gex": -12.37,
-      "net_gex": 37.98
+      "call_gex": 50.39,
+      "put_gex": -12.38,
+      "net_gex": 38.01
     },
     {
       "strike": 49250.0,
-      "call_gex": 1.3,
-      "put_gex": -1.3,
+      "call_gex": 1.31,
+      "put_gex": -1.31,
       "net_gex": 0.0
     },
     {
       "strike": 49300.0,
-      "call_gex": 20.89,
-      "put_gex": -35.69,
-      "net_gex": -14.8
+      "call_gex": 20.91,
+      "put_gex": -35.72,
+      "net_gex": -14.81
     },
     {
       "strike": 49350.0,
@@ -1247,9 +1247,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 49400.0,
-      "call_gex": 25.05,
-      "put_gex": -16.12,
-      "net_gex": 8.93
+      "call_gex": 25.07,
+      "put_gex": -16.13,
+      "net_gex": 8.94
     },
     {
       "strike": 49450.0,
@@ -1259,9 +1259,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 49500.0,
-      "call_gex": 142.71,
-      "put_gex": -65.05,
-      "net_gex": 77.66
+      "call_gex": 142.83,
+      "put_gex": -65.1,
+      "net_gex": 77.73
     },
     {
       "strike": 49550.0,
@@ -1271,9 +1271,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 49600.0,
-      "call_gex": 28.84,
-      "put_gex": -8.67,
-      "net_gex": 20.17
+      "call_gex": 28.86,
+      "put_gex": -8.68,
+      "net_gex": 20.18
     },
     {
       "strike": 49650.0,
@@ -1283,20 +1283,20 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 49700.0,
-      "call_gex": 25.89,
+      "call_gex": 25.91,
       "put_gex": -10.79,
-      "net_gex": 15.1
+      "net_gex": 15.11
     },
     {
       "strike": 49750.0,
       "call_gex": 1.72,
-      "put_gex": -0.64,
-      "net_gex": 1.07
+      "put_gex": -0.65,
+      "net_gex": 1.08
     },
     {
       "strike": 49800.0,
-      "call_gex": 30.84,
-      "put_gex": -25.7,
+      "call_gex": 30.87,
+      "put_gex": -25.72,
       "net_gex": 5.14
     },
     {
@@ -1307,8 +1307,8 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 49900.0,
-      "call_gex": 21.22,
-      "put_gex": -13.79,
+      "call_gex": 21.24,
+      "put_gex": -13.81,
       "net_gex": 7.43
     },
     {
@@ -1319,9 +1319,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 50000.0,
-      "call_gex": 305.38,
-      "put_gex": -39.46,
-      "net_gex": 265.92
+      "call_gex": 305.61,
+      "put_gex": -39.49,
+      "net_gex": 266.13
     },
     {
       "strike": 50050.0,
@@ -1331,9 +1331,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 50100.0,
-      "call_gex": 24.03,
-      "put_gex": -4.97,
-      "net_gex": 19.06
+      "call_gex": 24.05,
+      "put_gex": -4.98,
+      "net_gex": 19.07
     },
     {
       "strike": 50150.0,
@@ -1343,9 +1343,9 @@ window.GEX_EMBEDDED_DATA = {
     },
     {
       "strike": 50200.0,
-      "call_gex": 41.43,
-      "put_gex": -7.55,
-      "net_gex": 33.88
+      "call_gex": 41.46,
+      "put_gex": -7.56,
+      "net_gex": 33.9
     }
   ],
   "history_10_sessions": [
@@ -1374,747 +1374,747 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 51.89,
-          "put_gex": -280.82,
-          "net_gex": -228.93,
+          "call_gex": 51.95,
+          "put_gex": -281.63,
+          "net_gex": -229.67,
           "vex": -1.0,
-          "gex_plus": -229.93,
+          "gex_plus": -230.67,
           "w1_call": 1.95,
-          "w1_put": -20.12,
+          "w1_put": -20.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.21,
-          "mth_put": -20.5,
-          "fri_call": 5.74,
-          "fri_put": -240.2
+          "mth_call": 44.24,
+          "mth_put": -20.52,
+          "fri_call": 5.76,
+          "fri_put": -240.95
         },
         {
           "strike": 48450.0,
           "call_gex": 1.06,
-          "put_gex": -196.88,
-          "net_gex": -195.82,
-          "vex": -1.7,
-          "gex_plus": -197.52,
+          "put_gex": -197.47,
+          "net_gex": -196.41,
+          "vex": -1.71,
+          "gex_plus": -198.12,
           "w1_call": 0.65,
-          "w1_put": -6.81,
+          "w1_put": -6.82,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.07,
           "fri_call": 0.41,
-          "fri_put": -189.0
+          "fri_put": -189.59
         },
         {
           "strike": 48500.0,
-          "call_gex": 287.7,
-          "put_gex": -767.96,
-          "net_gex": -480.26,
-          "vex": -6.36,
-          "gex_plus": -486.62,
-          "w1_call": 4.53,
-          "w1_put": -131.0,
+          "call_gex": 288.43,
+          "put_gex": -769.82,
+          "net_gex": -481.39,
+          "vex": -6.38,
+          "gex_plus": -487.77,
+          "w1_call": 4.54,
+          "w1_put": -131.25,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 66.38,
-          "mth_put": -153.26,
-          "fri_call": 216.79,
-          "fri_put": -483.7
+          "mth_call": 66.44,
+          "mth_put": -153.39,
+          "fri_call": 217.45,
+          "fri_put": -485.18
         },
         {
           "strike": 48550.0,
-          "call_gex": 3.48,
-          "put_gex": -102.91,
-          "net_gex": -99.43,
-          "vex": -1.7,
-          "gex_plus": -101.13,
-          "w1_call": 0.64,
-          "w1_put": -5.8,
+          "call_gex": 3.49,
+          "put_gex": -103.21,
+          "net_gex": -99.72,
+          "vex": -1.71,
+          "gex_plus": -101.42,
+          "w1_call": 0.65,
+          "w1_put": -5.81,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.49,
           "fri_call": 2.84,
-          "fri_put": -95.61
+          "fri_put": -95.9
         },
         {
           "strike": 48600.0,
-          "call_gex": 64.98,
-          "put_gex": -268.9,
-          "net_gex": -203.92,
-          "vex": -4.29,
-          "gex_plus": -208.21,
+          "call_gex": 65.04,
+          "put_gex": -269.62,
+          "net_gex": -204.58,
+          "vex": -4.3,
+          "gex_plus": -208.88,
           "w1_call": 0.0,
-          "w1_put": -26.31,
+          "w1_put": -26.36,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 62.17,
-          "mth_put": -24.7,
-          "fri_call": 2.81,
-          "fri_put": -217.89
+          "mth_call": 62.22,
+          "mth_put": -24.72,
+          "fri_call": 2.82,
+          "fri_put": -218.54
         },
         {
           "strike": 48650.0,
-          "call_gex": 1.91,
-          "put_gex": -185.22,
-          "net_gex": -183.31,
-          "vex": -4.68,
-          "gex_plus": -187.99,
+          "call_gex": 1.92,
+          "put_gex": -185.74,
+          "net_gex": -183.82,
+          "vex": -4.69,
+          "gex_plus": -188.51,
           "w1_call": 0.32,
-          "w1_put": -13.4,
+          "w1_put": -13.43,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.4,
-          "fri_call": 1.59,
-          "fri_put": -168.42
+          "fri_call": 1.6,
+          "fri_put": -168.91
         },
         {
           "strike": 48700.0,
-          "call_gex": 58.05,
-          "put_gex": -293.06,
-          "net_gex": -235.01,
-          "vex": -6.94,
-          "gex_plus": -241.94,
+          "call_gex": 58.12,
+          "put_gex": -293.83,
+          "net_gex": -235.71,
+          "vex": -6.96,
+          "gex_plus": -242.66,
           "w1_call": 0.32,
-          "w1_put": -13.31,
+          "w1_put": -13.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 47.9,
-          "mth_put": -23.52,
-          "fri_call": 9.84,
-          "fri_put": -256.23
+          "mth_call": 47.94,
+          "mth_put": -23.54,
+          "fri_call": 9.87,
+          "fri_put": -256.95
         },
         {
           "strike": 48750.0,
-          "call_gex": 3.59,
-          "put_gex": -116.15,
-          "net_gex": -112.56,
+          "call_gex": 3.6,
+          "put_gex": -116.46,
+          "net_gex": -112.86,
           "vex": -3.82,
-          "gex_plus": -116.38,
+          "gex_plus": -116.69,
           "w1_call": 1.26,
-          "w1_put": -5.34,
+          "w1_put": -5.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
-          "mth_put": -4.01,
-          "fri_call": 2.33,
-          "fri_put": -106.79
+          "mth_put": -4.02,
+          "fri_call": 2.34,
+          "fri_put": -107.09
         },
         {
           "strike": 48800.0,
-          "call_gex": 85.27,
-          "put_gex": -330.75,
-          "net_gex": -245.48,
-          "vex": -9.34,
-          "gex_plus": -254.81,
-          "w1_call": 4.36,
-          "w1_put": -14.32,
+          "call_gex": 85.44,
+          "put_gex": -331.55,
+          "net_gex": -246.11,
+          "vex": -9.36,
+          "gex_plus": -255.47,
+          "w1_call": 4.37,
+          "w1_put": -14.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 27.37,
-          "mth_put": -30.74,
-          "fri_call": 53.54,
-          "fri_put": -285.69
+          "mth_call": 27.39,
+          "mth_put": -30.76,
+          "fri_call": 53.68,
+          "fri_put": -286.44
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.53,
-          "put_gex": -81.12,
-          "net_gex": -70.6,
-          "vex": -2.98,
-          "gex_plus": -73.58,
+          "call_gex": 10.55,
+          "put_gex": -81.32,
+          "net_gex": -70.76,
+          "vex": -2.99,
+          "gex_plus": -73.75,
           "w1_call": 0.0,
-          "w1_put": -8.94,
+          "w1_put": -8.95,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.89,
-          "fri_call": 10.53,
-          "fri_put": -70.3
+          "fri_call": 10.55,
+          "fri_put": -70.48
         },
         {
           "strike": 48900.0,
-          "call_gex": 71.38,
-          "put_gex": -277.09,
-          "net_gex": -205.71,
-          "vex": -9.52,
-          "gex_plus": -215.22,
+          "call_gex": 71.52,
+          "put_gex": -277.73,
+          "net_gex": -206.21,
+          "vex": -9.54,
+          "gex_plus": -215.75,
           "w1_call": 3.05,
-          "w1_put": -13.1,
+          "w1_put": -13.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.5,
+          "mth_call": 21.51,
           "mth_put": -8.77,
-          "fri_call": 46.84,
-          "fri_put": -255.23
+          "fri_call": 46.95,
+          "fri_put": -255.84
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.1,
-          "put_gex": -74.1,
-          "net_gex": -67.0,
-          "vex": -3.39,
-          "gex_plus": -70.39,
+          "call_gex": 7.12,
+          "put_gex": -74.27,
+          "net_gex": -67.15,
+          "vex": -3.4,
+          "gex_plus": -70.54,
           "w1_call": 0.6,
-          "w1_put": -6.92,
+          "w1_put": -6.93,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.45,
-          "fri_call": 6.5,
-          "fri_put": -65.74
+          "fri_call": 6.52,
+          "fri_put": -65.88
         },
         {
           "strike": 49000.0,
-          "call_gex": 281.56,
-          "put_gex": -652.9,
-          "net_gex": -371.33,
-          "vex": -20.21,
-          "gex_plus": -391.54,
-          "w1_call": 25.8,
-          "w1_put": -43.59,
+          "call_gex": 281.98,
+          "put_gex": -654.17,
+          "net_gex": -372.19,
+          "vex": -20.26,
+          "gex_plus": -392.45,
+          "w1_call": 25.84,
+          "w1_put": -43.65,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 124.08,
-          "mth_put": -64.21,
-          "fri_call": 131.69,
-          "fri_put": -545.1
+          "mth_call": 124.18,
+          "mth_put": -64.26,
+          "fri_call": 131.96,
+          "fri_put": -546.25
         },
         {
           "strike": 49050.0,
-          "call_gex": 11.08,
-          "put_gex": -97.47,
-          "net_gex": -86.39,
-          "vex": -5.08,
-          "gex_plus": -91.47,
+          "call_gex": 11.1,
+          "put_gex": -97.66,
+          "net_gex": -86.55,
+          "vex": -5.09,
+          "gex_plus": -91.64,
           "w1_call": 1.17,
-          "w1_put": -6.13,
+          "w1_put": -6.14,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.62,
           "mth_put": -1.44,
-          "fri_call": 9.3,
-          "fri_put": -89.9
+          "fri_call": 9.32,
+          "fri_put": -90.08
         },
         {
           "strike": 49100.0,
-          "call_gex": 224.12,
-          "put_gex": -228.92,
-          "net_gex": -4.8,
-          "vex": -0.16,
-          "gex_plus": -4.96,
+          "call_gex": 224.39,
+          "put_gex": -229.29,
+          "net_gex": -4.91,
+          "vex": -0.17,
+          "gex_plus": -5.07,
           "w1_call": 4.6,
-          "w1_put": -9.48,
+          "w1_put": -9.5,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 122.92,
-          "mth_put": -25.89,
-          "fri_call": 96.61,
-          "fri_put": -193.55
+          "mth_call": 123.01,
+          "mth_put": -25.91,
+          "fri_call": 96.78,
+          "fri_put": -193.89
         },
         {
           "strike": 49150.0,
-          "call_gex": 36.85,
-          "put_gex": -76.21,
-          "net_gex": -39.36,
+          "call_gex": 36.9,
+          "put_gex": -76.34,
+          "net_gex": -39.43,
           "vex": -2.63,
-          "gex_plus": -41.99,
-          "w1_call": 1.69,
-          "w1_put": -3.95,
+          "gex_plus": -42.07,
+          "w1_call": 1.7,
+          "w1_put": -3.96,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 8.1,
           "mth_put": -0.2,
-          "fri_call": 27.06,
-          "fri_put": -72.06
+          "fri_call": 27.11,
+          "fri_put": -72.17
         },
         {
           "strike": 49200.0,
-          "call_gex": 174.66,
-          "put_gex": -257.32,
-          "net_gex": -82.66,
-          "vex": -5.84,
-          "gex_plus": -88.5,
-          "w1_call": 9.42,
-          "w1_put": -13.03,
+          "call_gex": 174.87,
+          "put_gex": -257.67,
+          "net_gex": -82.8,
+          "vex": -5.85,
+          "gex_plus": -88.65,
+          "w1_call": 9.43,
+          "w1_put": -13.04,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 46.6,
-          "mth_put": -11.45,
-          "fri_call": 118.64,
-          "fri_put": -232.84
+          "mth_call": 46.63,
+          "mth_put": -11.46,
+          "fri_call": 118.8,
+          "fri_put": -233.17
         },
         {
           "strike": 49250.0,
-          "call_gex": 36.08,
-          "put_gex": -105.96,
-          "net_gex": -69.87,
-          "vex": -5.27,
-          "gex_plus": -75.14,
+          "call_gex": 36.13,
+          "put_gex": -106.08,
+          "net_gex": -69.96,
+          "vex": -5.28,
+          "gex_plus": -75.23,
           "w1_call": 2.72,
-          "w1_put": -9.78,
+          "w1_put": -9.79,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.2,
           "mth_put": -1.2,
-          "fri_call": 32.17,
-          "fri_put": -94.98
+          "fri_call": 32.21,
+          "fri_put": -95.1
         },
         {
           "strike": 49300.0,
-          "call_gex": 154.33,
-          "put_gex": -387.84,
-          "net_gex": -233.51,
-          "vex": -18.59,
-          "gex_plus": -252.1,
-          "w1_call": 13.04,
-          "w1_put": -23.42,
+          "call_gex": 154.47,
+          "put_gex": -388.21,
+          "net_gex": -233.74,
+          "vex": -18.61,
+          "gex_plus": -252.35,
+          "w1_call": 13.05,
+          "w1_put": -23.44,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 18.96,
-          "mth_put": -32.39,
-          "fri_call": 122.33,
-          "fri_put": -332.03
+          "mth_call": 18.97,
+          "mth_put": -32.41,
+          "fri_call": 122.45,
+          "fri_put": -332.36
         },
         {
           "strike": 49350.0,
-          "call_gex": 67.29,
-          "put_gex": -73.62,
-          "net_gex": -6.33,
+          "call_gex": 67.34,
+          "put_gex": -73.68,
+          "net_gex": -6.34,
           "vex": -0.53,
-          "gex_plus": -6.86,
-          "w1_call": 2.86,
-          "w1_put": -4.42,
+          "gex_plus": -6.87,
+          "w1_call": 2.87,
+          "w1_put": -4.43,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.98,
-          "mth_put": -1.17,
-          "fri_call": 63.45,
-          "fri_put": -68.02
+          "mth_put": -1.18,
+          "fri_call": 63.5,
+          "fri_put": -68.07
         },
         {
           "strike": 49400.0,
-          "call_gex": 214.5,
-          "put_gex": -440.86,
-          "net_gex": -226.35,
-          "vex": -19.85,
-          "gex_plus": -246.21,
-          "w1_call": 22.63,
-          "w1_put": -8.9,
+          "call_gex": 214.63,
+          "put_gex": -441.09,
+          "net_gex": -226.47,
+          "vex": -19.86,
+          "gex_plus": -246.33,
+          "w1_call": 22.65,
+          "w1_put": -8.91,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.29,
-          "mth_put": -14.34,
-          "fri_call": 169.58,
-          "fri_put": -417.61
+          "mth_call": 22.31,
+          "mth_put": -14.35,
+          "fri_call": 169.67,
+          "fri_put": -417.83
         },
         {
           "strike": 49450.0,
-          "call_gex": 52.29,
-          "put_gex": -46.94,
+          "call_gex": 52.31,
+          "put_gex": -46.96,
           "net_gex": 5.35,
           "vex": 0.49,
-          "gex_plus": 5.84,
-          "w1_call": 8.19,
+          "gex_plus": 5.85,
+          "w1_call": 8.2,
           "w1_put": -1.74,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.96,
           "mth_put": -1.54,
-          "fri_call": 43.14,
-          "fri_put": -43.67
+          "fri_call": 43.15,
+          "fri_put": -43.68
         },
         {
           "strike": 49500.0,
-          "call_gex": 390.74,
-          "put_gex": -429.57,
-          "net_gex": -38.83,
+          "call_gex": 390.86,
+          "put_gex": -429.63,
+          "net_gex": -38.77,
           "vex": -3.62,
-          "gex_plus": -42.45,
-          "w1_call": 46.21,
-          "w1_put": -27.34,
+          "gex_plus": -42.39,
+          "w1_call": 46.25,
+          "w1_put": -27.36,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 124.55,
-          "mth_put": -56.77,
+          "mth_call": 124.63,
+          "mth_put": -56.81,
           "fri_call": 219.98,
           "fri_put": -345.46
         },
         {
           "strike": 49550.0,
-          "call_gex": 57.83,
+          "call_gex": 57.82,
           "put_gex": -21.25,
           "net_gex": 36.57,
           "vex": 3.66,
-          "gex_plus": 40.24,
-          "w1_call": 5.65,
+          "gex_plus": 40.23,
+          "w1_call": 5.66,
           "w1_put": -2.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.31,
+          "mth_call": 1.32,
           "mth_put": -1.13,
-          "fri_call": 50.86,
-          "fri_put": -18.01
+          "fri_call": 50.85,
+          "fri_put": -18.0
         },
         {
           "strike": 49600.0,
-          "call_gex": 212.02,
-          "put_gex": -115.1,
-          "net_gex": 96.92,
+          "call_gex": 211.95,
+          "put_gex": -115.05,
+          "net_gex": 96.9,
           "vex": 10.13,
-          "gex_plus": 107.05,
+          "gex_plus": 107.03,
           "w1_call": 14.44,
-          "w1_put": -4.35,
+          "w1_put": -4.36,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.69,
-          "mth_put": -7.42,
-          "fri_call": 172.9,
-          "fri_put": -103.32
+          "mth_call": 24.7,
+          "mth_put": -7.43,
+          "fri_call": 172.8,
+          "fri_put": -103.26
         },
         {
           "strike": 49650.0,
-          "call_gex": 53.64,
-          "put_gex": -18.89,
-          "net_gex": 34.75,
-          "vex": 3.77,
-          "gex_plus": 38.52,
+          "call_gex": 53.6,
+          "put_gex": -18.87,
+          "net_gex": 34.73,
+          "vex": 3.76,
+          "gex_plus": 38.49,
           "w1_call": 3.56,
           "w1_put": -2.23,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.65,
           "mth_put": -0.0,
-          "fri_call": 48.42,
-          "fri_put": -16.66
+          "fri_call": 48.38,
+          "fri_put": -16.65
         },
         {
           "strike": 49700.0,
-          "call_gex": 219.15,
-          "put_gex": -54.96,
-          "net_gex": 164.18,
-          "vex": 18.48,
-          "gex_plus": 182.67,
-          "w1_call": 28.09,
+          "call_gex": 218.97,
+          "put_gex": -54.93,
+          "net_gex": 164.04,
+          "vex": 18.47,
+          "gex_plus": 182.51,
+          "w1_call": 28.1,
           "w1_put": -9.29,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.73,
-          "mth_put": -9.05,
-          "fri_call": 169.32,
-          "fri_put": -36.62
+          "mth_call": 21.74,
+          "mth_put": -9.06,
+          "fri_call": 169.13,
+          "fri_put": -36.57
         },
         {
           "strike": 49750.0,
-          "call_gex": 93.71,
-          "put_gex": -16.51,
-          "net_gex": 77.2,
-          "vex": 9.0,
-          "gex_plus": 86.19,
+          "call_gex": 93.59,
+          "put_gex": -16.49,
+          "net_gex": 77.09,
+          "vex": 8.99,
+          "gex_plus": 86.08,
           "w1_call": 7.12,
           "w1_put": -1.89,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.43,
           "mth_put": -0.54,
-          "fri_call": 85.16,
-          "fri_put": -14.09
+          "fri_call": 85.03,
+          "fri_put": -14.07
         },
         {
           "strike": 49800.0,
-          "call_gex": 252.71,
-          "put_gex": -70.17,
-          "net_gex": 182.54,
-          "vex": 22.03,
-          "gex_plus": 204.58,
+          "call_gex": 252.39,
+          "put_gex": -70.11,
+          "net_gex": 182.28,
+          "vex": 22.0,
+          "gex_plus": 204.29,
           "w1_call": 40.57,
           "w1_put": -7.91,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.39,
-          "mth_put": -21.16,
-          "fri_call": 186.75,
-          "fri_put": -41.1
+          "mth_call": 25.41,
+          "mth_put": -21.17,
+          "fri_call": 186.42,
+          "fri_put": -41.02
         },
         {
           "strike": 49850.0,
-          "call_gex": 75.88,
-          "put_gex": -11.17,
-          "net_gex": 64.71,
-          "vex": 8.07,
-          "gex_plus": 72.79,
+          "call_gex": 75.75,
+          "put_gex": -11.15,
+          "net_gex": 64.59,
+          "vex": 8.06,
+          "gex_plus": 72.65,
           "w1_call": 9.61,
           "w1_put": -3.92,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.87,
           "mth_put": -0.0,
-          "fri_call": 65.4,
-          "fri_put": -7.25
+          "fri_call": 65.26,
+          "fri_put": -7.23
         },
         {
           "strike": 49900.0,
-          "call_gex": 152.93,
-          "put_gex": -30.23,
-          "net_gex": 122.7,
-          "vex": 15.81,
-          "gex_plus": 138.51,
+          "call_gex": 152.62,
+          "put_gex": -30.2,
+          "net_gex": 122.42,
+          "vex": 15.77,
+          "gex_plus": 138.19,
           "w1_call": 9.29,
           "w1_put": -7.77,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 17.14,
-          "mth_put": -11.14,
-          "fri_call": 126.5,
-          "fri_put": -11.31
+          "mth_call": 17.15,
+          "mth_put": -11.15,
+          "fri_call": 126.19,
+          "fri_put": -11.29
         },
         {
           "strike": 49950.0,
-          "call_gex": 65.8,
-          "put_gex": -6.55,
-          "net_gex": 59.25,
-          "vex": 7.87,
-          "gex_plus": 67.12,
+          "call_gex": 65.62,
+          "put_gex": -6.53,
+          "net_gex": 59.08,
+          "vex": 7.85,
+          "gex_plus": 66.94,
           "w1_call": 1.65,
           "w1_put": -1.83,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.01,
           "mth_put": -0.51,
-          "fri_call": 63.14,
-          "fri_put": -4.21
+          "fri_call": 62.96,
+          "fri_put": -4.2
         },
         {
           "strike": 50000.0,
-          "call_gex": 649.87,
-          "put_gex": -45.89,
-          "net_gex": 603.98,
-          "vex": 83.05,
-          "gex_plus": 687.03,
-          "w1_call": 90.48,
+          "call_gex": 648.9,
+          "put_gex": -45.86,
+          "net_gex": 603.04,
+          "vex": 82.92,
+          "gex_plus": 685.96,
+          "w1_call": 90.43,
           "w1_put": -2.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 241.92,
-          "mth_put": -31.26,
-          "fri_call": 317.47,
-          "fri_put": -12.52
+          "mth_call": 242.01,
+          "mth_put": -31.27,
+          "fri_call": 316.46,
+          "fri_put": -12.48
         },
         {
           "strike": 50050.0,
-          "call_gex": 104.13,
-          "put_gex": -2.06,
-          "net_gex": 102.07,
-          "vex": 14.4,
-          "gex_plus": 116.47,
-          "w1_call": 3.23,
+          "call_gex": 103.77,
+          "put_gex": -2.05,
+          "net_gex": 101.72,
+          "vex": 14.35,
+          "gex_plus": 116.06,
+          "w1_call": 3.22,
           "w1_put": -0.17,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.64,
           "mth_put": -0.16,
-          "fri_call": 99.26,
+          "fri_call": 98.91,
           "fri_put": -1.72
         },
         {
           "strike": 50100.0,
-          "call_gex": 133.19,
-          "put_gex": -12.12,
-          "net_gex": 121.06,
-          "vex": 17.59,
-          "gex_plus": 138.65,
+          "call_gex": 132.76,
+          "put_gex": -12.09,
+          "net_gex": 120.67,
+          "vex": 17.53,
+          "gex_plus": 138.2,
           "w1_call": 7.35,
           "w1_put": -0.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 18.67,
+          "mth_call": 18.68,
           "mth_put": -3.86,
-          "fri_call": 107.16,
-          "fri_put": -8.1
+          "fri_call": 106.74,
+          "fri_put": -8.07
         },
         {
           "strike": 50150.0,
-          "call_gex": 60.31,
-          "put_gex": -1.77,
-          "net_gex": 58.53,
-          "vex": 8.73,
-          "gex_plus": 67.27,
-          "w1_call": 5.34,
+          "call_gex": 60.06,
+          "put_gex": -1.76,
+          "net_gex": 58.3,
+          "vex": 8.7,
+          "gex_plus": 66.99,
+          "w1_call": 5.33,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.16,
           "mth_put": -0.0,
-          "fri_call": 54.81,
-          "fri_put": -1.77
+          "fri_call": 54.57,
+          "fri_put": -1.76
         },
         {
           "strike": 50200.0,
-          "call_gex": 207.45,
-          "put_gex": -8.05,
-          "net_gex": 199.4,
-          "vex": 30.59,
-          "gex_plus": 229.99,
-          "w1_call": 13.26,
+          "call_gex": 206.66,
+          "put_gex": -8.04,
+          "net_gex": 198.62,
+          "vex": 30.47,
+          "gex_plus": 229.09,
+          "w1_call": 13.25,
           "w1_put": -0.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.58,
+          "mth_call": 31.59,
           "mth_put": -5.76,
-          "fri_call": 162.61,
-          "fri_put": -1.54
+          "fri_call": 161.83,
+          "fri_put": -1.53
         }
       ],
       "weekly_gex": [
         {
           "strike": 48400.0,
           "call_gex": 1.95,
-          "put_gex": -20.12,
-          "net_gex": -18.17
+          "put_gex": -20.16,
+          "net_gex": -18.2
         },
         {
           "strike": 48450.0,
           "call_gex": 0.65,
-          "put_gex": -6.81,
-          "net_gex": -6.16
+          "put_gex": -6.82,
+          "net_gex": -6.17
         },
         {
           "strike": 48500.0,
-          "call_gex": 4.53,
-          "put_gex": -131.0,
-          "net_gex": -126.47
+          "call_gex": 4.54,
+          "put_gex": -131.25,
+          "net_gex": -126.71
         },
         {
           "strike": 48550.0,
-          "call_gex": 0.64,
-          "put_gex": -5.8,
-          "net_gex": -5.16
+          "call_gex": 0.65,
+          "put_gex": -5.81,
+          "net_gex": -5.17
         },
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -26.31,
-          "net_gex": -26.31
+          "put_gex": -26.36,
+          "net_gex": -26.36
         },
         {
           "strike": 48650.0,
           "call_gex": 0.32,
-          "put_gex": -13.4,
-          "net_gex": -13.08
+          "put_gex": -13.43,
+          "net_gex": -13.11
         },
         {
           "strike": 48700.0,
           "call_gex": 0.32,
-          "put_gex": -13.31,
-          "net_gex": -12.99
+          "put_gex": -13.33,
+          "net_gex": -13.01
         },
         {
           "strike": 48750.0,
           "call_gex": 1.26,
-          "put_gex": -5.34,
+          "put_gex": -5.35,
           "net_gex": -4.09
         },
         {
           "strike": 48800.0,
-          "call_gex": 4.36,
-          "put_gex": -14.32,
-          "net_gex": -9.96
+          "call_gex": 4.37,
+          "put_gex": -14.35,
+          "net_gex": -9.98
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -8.94,
-          "net_gex": -8.94
+          "put_gex": -8.95,
+          "net_gex": -8.95
         },
         {
           "strike": 48900.0,
           "call_gex": 3.05,
-          "put_gex": -13.1,
-          "net_gex": -10.05
+          "put_gex": -13.12,
+          "net_gex": -10.07
         },
         {
           "strike": 48950.0,
           "call_gex": 0.6,
-          "put_gex": -6.92,
-          "net_gex": -6.31
+          "put_gex": -6.93,
+          "net_gex": -6.32
         },
         {
           "strike": 49000.0,
-          "call_gex": 25.8,
-          "put_gex": -43.59,
-          "net_gex": -17.79
+          "call_gex": 25.84,
+          "put_gex": -43.65,
+          "net_gex": -17.82
         },
         {
           "strike": 49050.0,
           "call_gex": 1.17,
-          "put_gex": -6.13,
-          "net_gex": -4.96
+          "put_gex": -6.14,
+          "net_gex": -4.97
         },
         {
           "strike": 49100.0,
           "call_gex": 4.6,
-          "put_gex": -9.48,
-          "net_gex": -4.88
+          "put_gex": -9.5,
+          "net_gex": -4.89
         },
         {
           "strike": 49150.0,
-          "call_gex": 1.69,
-          "put_gex": -3.95,
+          "call_gex": 1.7,
+          "put_gex": -3.96,
           "net_gex": -2.26
         },
         {
           "strike": 49200.0,
-          "call_gex": 9.42,
-          "put_gex": -13.03,
-          "net_gex": -3.6
+          "call_gex": 9.43,
+          "put_gex": -13.04,
+          "net_gex": -3.61
         },
         {
           "strike": 49250.0,
           "call_gex": 2.72,
-          "put_gex": -9.78,
-          "net_gex": -7.06
+          "put_gex": -9.79,
+          "net_gex": -7.07
         },
         {
           "strike": 49300.0,
-          "call_gex": 13.04,
-          "put_gex": -23.42,
-          "net_gex": -10.38
+          "call_gex": 13.05,
+          "put_gex": -23.44,
+          "net_gex": -10.39
         },
         {
           "strike": 49350.0,
-          "call_gex": 2.86,
-          "put_gex": -4.42,
+          "call_gex": 2.87,
+          "put_gex": -4.43,
           "net_gex": -1.56
         },
         {
           "strike": 49400.0,
-          "call_gex": 22.63,
-          "put_gex": -8.9,
-          "net_gex": 13.73
+          "call_gex": 22.65,
+          "put_gex": -8.91,
+          "net_gex": 13.75
         },
         {
           "strike": 49450.0,
-          "call_gex": 8.19,
+          "call_gex": 8.2,
           "put_gex": -1.74,
-          "net_gex": 6.45
+          "net_gex": 6.46
         },
         {
           "strike": 49500.0,
-          "call_gex": 46.21,
-          "put_gex": -27.34,
-          "net_gex": 18.87
+          "call_gex": 46.25,
+          "put_gex": -27.36,
+          "net_gex": 18.89
         },
         {
           "strike": 49550.0,
-          "call_gex": 5.65,
+          "call_gex": 5.66,
           "put_gex": -2.12,
-          "net_gex": 3.53
+          "net_gex": 3.54
         },
         {
           "strike": 49600.0,
           "call_gex": 14.44,
-          "put_gex": -4.35,
-          "net_gex": 10.08
+          "put_gex": -4.36,
+          "net_gex": 10.09
         },
         {
           "strike": 49650.0,
@@ -2124,7 +2124,7 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 28.09,
+          "call_gex": 28.1,
           "put_gex": -9.29,
           "net_gex": 18.8
         },
@@ -2160,13 +2160,13 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 90.48,
+          "call_gex": 90.43,
           "put_gex": -2.12,
-          "net_gex": 88.36
+          "net_gex": 88.31
         },
         {
           "strike": 50050.0,
-          "call_gex": 3.23,
+          "call_gex": 3.22,
           "put_gex": -0.17,
           "net_gex": 3.06
         },
@@ -2174,152 +2174,152 @@ window.GEX_EMBEDDED_DATA = {
           "strike": 50100.0,
           "call_gex": 7.35,
           "put_gex": -0.16,
-          "net_gex": 7.19
+          "net_gex": 7.18
         },
         {
           "strike": 50150.0,
-          "call_gex": 5.34,
+          "call_gex": 5.33,
           "put_gex": -0.0,
-          "net_gex": 5.34
+          "net_gex": 5.33
         },
         {
           "strike": 50200.0,
-          "call_gex": 13.26,
+          "call_gex": 13.25,
           "put_gex": -0.75,
-          "net_gex": 12.51
+          "net_gex": 12.49
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 5.74,
-          "put_gex": -240.2,
-          "net_gex": -234.47
+          "call_gex": 5.76,
+          "put_gex": -240.95,
+          "net_gex": -235.19
         },
         {
           "strike": 48450.0,
           "call_gex": 0.41,
-          "put_gex": -189.0,
-          "net_gex": -188.59
+          "put_gex": -189.59,
+          "net_gex": -189.18
         },
         {
           "strike": 48500.0,
-          "call_gex": 216.79,
-          "put_gex": -483.7,
-          "net_gex": -266.91
+          "call_gex": 217.45,
+          "put_gex": -485.18,
+          "net_gex": -267.73
         },
         {
           "strike": 48550.0,
           "call_gex": 2.84,
-          "put_gex": -95.61,
-          "net_gex": -92.78
+          "put_gex": -95.9,
+          "net_gex": -93.06
         },
         {
           "strike": 48600.0,
-          "call_gex": 2.81,
-          "put_gex": -217.89,
-          "net_gex": -215.08
+          "call_gex": 2.82,
+          "put_gex": -218.54,
+          "net_gex": -215.72
         },
         {
           "strike": 48650.0,
-          "call_gex": 1.59,
-          "put_gex": -168.42,
-          "net_gex": -166.83
+          "call_gex": 1.6,
+          "put_gex": -168.91,
+          "net_gex": -167.31
         },
         {
           "strike": 48700.0,
-          "call_gex": 9.84,
-          "put_gex": -256.23,
-          "net_gex": -246.39
+          "call_gex": 9.87,
+          "put_gex": -256.95,
+          "net_gex": -247.09
         },
         {
           "strike": 48750.0,
-          "call_gex": 2.33,
-          "put_gex": -106.79,
-          "net_gex": -104.46
+          "call_gex": 2.34,
+          "put_gex": -107.09,
+          "net_gex": -104.75
         },
         {
           "strike": 48800.0,
-          "call_gex": 53.54,
-          "put_gex": -285.69,
-          "net_gex": -232.14
+          "call_gex": 53.68,
+          "put_gex": -286.44,
+          "net_gex": -232.76
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.53,
-          "put_gex": -70.3,
-          "net_gex": -59.77
+          "call_gex": 10.55,
+          "put_gex": -70.48,
+          "net_gex": -59.92
         },
         {
           "strike": 48900.0,
-          "call_gex": 46.84,
-          "put_gex": -255.23,
-          "net_gex": -208.39
+          "call_gex": 46.95,
+          "put_gex": -255.84,
+          "net_gex": -208.89
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.5,
-          "put_gex": -65.74,
-          "net_gex": -59.23
+          "call_gex": 6.52,
+          "put_gex": -65.88,
+          "net_gex": -59.37
         },
         {
           "strike": 49000.0,
-          "call_gex": 131.69,
-          "put_gex": -545.1,
-          "net_gex": -413.41
+          "call_gex": 131.96,
+          "put_gex": -546.25,
+          "net_gex": -414.29
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.3,
-          "put_gex": -89.9,
-          "net_gex": -80.6
+          "call_gex": 9.32,
+          "put_gex": -90.08,
+          "net_gex": -80.76
         },
         {
           "strike": 49100.0,
-          "call_gex": 96.61,
-          "put_gex": -193.55,
-          "net_gex": -96.94
+          "call_gex": 96.78,
+          "put_gex": -193.89,
+          "net_gex": -97.11
         },
         {
           "strike": 49150.0,
-          "call_gex": 27.06,
-          "put_gex": -72.06,
-          "net_gex": -45.0
+          "call_gex": 27.11,
+          "put_gex": -72.17,
+          "net_gex": -45.07
         },
         {
           "strike": 49200.0,
-          "call_gex": 118.64,
-          "put_gex": -232.84,
-          "net_gex": -114.21
+          "call_gex": 118.8,
+          "put_gex": -233.17,
+          "net_gex": -114.37
         },
         {
           "strike": 49250.0,
-          "call_gex": 32.17,
-          "put_gex": -94.98,
-          "net_gex": -62.81
+          "call_gex": 32.21,
+          "put_gex": -95.1,
+          "net_gex": -62.89
         },
         {
           "strike": 49300.0,
-          "call_gex": 122.33,
-          "put_gex": -332.03,
-          "net_gex": -209.7
+          "call_gex": 122.45,
+          "put_gex": -332.36,
+          "net_gex": -209.91
         },
         {
           "strike": 49350.0,
-          "call_gex": 63.45,
-          "put_gex": -68.02,
-          "net_gex": -4.57
+          "call_gex": 63.5,
+          "put_gex": -68.07,
+          "net_gex": -4.58
         },
         {
           "strike": 49400.0,
-          "call_gex": 169.58,
-          "put_gex": -417.61,
-          "net_gex": -248.03
+          "call_gex": 169.67,
+          "put_gex": -417.83,
+          "net_gex": -248.17
         },
         {
           "strike": 49450.0,
-          "call_gex": 43.14,
-          "put_gex": -43.67,
+          "call_gex": 43.15,
+          "put_gex": -43.68,
           "net_gex": -0.53
         },
         {
@@ -2330,95 +2330,95 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49550.0,
-          "call_gex": 50.86,
-          "put_gex": -18.01,
-          "net_gex": 32.85
+          "call_gex": 50.85,
+          "put_gex": -18.0,
+          "net_gex": 32.84
         },
         {
           "strike": 49600.0,
-          "call_gex": 172.9,
-          "put_gex": -103.32,
-          "net_gex": 69.58
+          "call_gex": 172.8,
+          "put_gex": -103.26,
+          "net_gex": 69.54
         },
         {
           "strike": 49650.0,
-          "call_gex": 48.42,
-          "put_gex": -16.66,
-          "net_gex": 31.76
+          "call_gex": 48.38,
+          "put_gex": -16.65,
+          "net_gex": 31.74
         },
         {
           "strike": 49700.0,
-          "call_gex": 169.32,
-          "put_gex": -36.62,
-          "net_gex": 132.71
+          "call_gex": 169.13,
+          "put_gex": -36.57,
+          "net_gex": 132.56
         },
         {
           "strike": 49750.0,
-          "call_gex": 85.16,
-          "put_gex": -14.09,
-          "net_gex": 71.07
+          "call_gex": 85.03,
+          "put_gex": -14.07,
+          "net_gex": 70.96
         },
         {
           "strike": 49800.0,
-          "call_gex": 186.75,
-          "put_gex": -41.1,
-          "net_gex": 145.65
+          "call_gex": 186.42,
+          "put_gex": -41.02,
+          "net_gex": 145.39
         },
         {
           "strike": 49850.0,
-          "call_gex": 65.4,
-          "put_gex": -7.25,
-          "net_gex": 58.16
+          "call_gex": 65.26,
+          "put_gex": -7.23,
+          "net_gex": 58.03
         },
         {
           "strike": 49900.0,
-          "call_gex": 126.5,
-          "put_gex": -11.31,
-          "net_gex": 115.19
+          "call_gex": 126.19,
+          "put_gex": -11.29,
+          "net_gex": 114.9
         },
         {
           "strike": 49950.0,
-          "call_gex": 63.14,
-          "put_gex": -4.21,
-          "net_gex": 58.93
+          "call_gex": 62.96,
+          "put_gex": -4.2,
+          "net_gex": 58.76
         },
         {
           "strike": 50000.0,
-          "call_gex": 317.47,
-          "put_gex": -12.52,
-          "net_gex": 304.96
+          "call_gex": 316.46,
+          "put_gex": -12.48,
+          "net_gex": 303.98
         },
         {
           "strike": 50050.0,
-          "call_gex": 99.26,
+          "call_gex": 98.91,
           "put_gex": -1.72,
-          "net_gex": 97.54
+          "net_gex": 97.19
         },
         {
           "strike": 50100.0,
-          "call_gex": 107.16,
-          "put_gex": -8.1,
-          "net_gex": 99.06
+          "call_gex": 106.74,
+          "put_gex": -8.07,
+          "net_gex": 98.67
         },
         {
           "strike": 50150.0,
-          "call_gex": 54.81,
-          "put_gex": -1.77,
-          "net_gex": 53.04
+          "call_gex": 54.57,
+          "put_gex": -1.76,
+          "net_gex": 52.81
         },
         {
           "strike": 50200.0,
-          "call_gex": 162.61,
-          "put_gex": -1.54,
-          "net_gex": 161.07
+          "call_gex": 161.83,
+          "put_gex": -1.53,
+          "net_gex": 160.29
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 44.21,
-          "put_gex": -20.5,
-          "net_gex": 23.7
+          "call_gex": 44.24,
+          "put_gex": -20.52,
+          "net_gex": 23.72
         },
         {
           "strike": 48450.0,
@@ -2428,9 +2428,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 66.38,
-          "put_gex": -153.26,
-          "net_gex": -86.88
+          "call_gex": 66.44,
+          "put_gex": -153.39,
+          "net_gex": -86.95
         },
         {
           "strike": 48550.0,
@@ -2440,9 +2440,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 62.17,
-          "put_gex": -24.7,
-          "net_gex": 37.47
+          "call_gex": 62.22,
+          "put_gex": -24.72,
+          "net_gex": 37.5
         },
         {
           "strike": 48650.0,
@@ -2452,20 +2452,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 47.9,
-          "put_gex": -23.52,
-          "net_gex": 24.37
+          "call_gex": 47.94,
+          "put_gex": -23.54,
+          "net_gex": 24.39
         },
         {
           "strike": 48750.0,
           "call_gex": 0.0,
-          "put_gex": -4.01,
-          "net_gex": -4.01
+          "put_gex": -4.02,
+          "net_gex": -4.02
         },
         {
           "strike": 48800.0,
-          "call_gex": 27.37,
-          "put_gex": -30.74,
+          "call_gex": 27.39,
+          "put_gex": -30.76,
           "net_gex": -3.37
         },
         {
@@ -2476,9 +2476,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 21.5,
+          "call_gex": 21.51,
           "put_gex": -8.77,
-          "net_gex": 12.73
+          "net_gex": 12.74
         },
         {
           "strike": 48950.0,
@@ -2488,9 +2488,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 124.08,
-          "put_gex": -64.21,
-          "net_gex": 59.87
+          "call_gex": 124.18,
+          "put_gex": -64.26,
+          "net_gex": 59.92
         },
         {
           "strike": 49050.0,
@@ -2500,21 +2500,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 122.92,
-          "put_gex": -25.89,
-          "net_gex": 97.03
+          "call_gex": 123.01,
+          "put_gex": -25.91,
+          "net_gex": 97.1
         },
         {
           "strike": 49150.0,
           "call_gex": 8.1,
           "put_gex": -0.2,
-          "net_gex": 7.89
+          "net_gex": 7.9
         },
         {
           "strike": 49200.0,
-          "call_gex": 46.6,
-          "put_gex": -11.45,
-          "net_gex": 35.15
+          "call_gex": 46.63,
+          "put_gex": -11.46,
+          "net_gex": 35.17
         },
         {
           "strike": 49250.0,
@@ -2524,20 +2524,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 18.96,
-          "put_gex": -32.39,
-          "net_gex": -13.43
+          "call_gex": 18.97,
+          "put_gex": -32.41,
+          "net_gex": -13.44
         },
         {
           "strike": 49350.0,
           "call_gex": 0.98,
-          "put_gex": -1.17,
+          "put_gex": -1.18,
           "net_gex": -0.2
         },
         {
           "strike": 49400.0,
-          "call_gex": 22.29,
-          "put_gex": -14.34,
+          "call_gex": 22.31,
+          "put_gex": -14.35,
           "net_gex": 7.95
         },
         {
@@ -2548,21 +2548,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 124.55,
-          "put_gex": -56.77,
-          "net_gex": 67.78
+          "call_gex": 124.63,
+          "put_gex": -56.81,
+          "net_gex": 67.82
         },
         {
           "strike": 49550.0,
-          "call_gex": 1.31,
+          "call_gex": 1.32,
           "put_gex": -1.13,
           "net_gex": 0.19
         },
         {
           "strike": 49600.0,
-          "call_gex": 24.69,
-          "put_gex": -7.42,
-          "net_gex": 17.26
+          "call_gex": 24.7,
+          "put_gex": -7.43,
+          "net_gex": 17.27
         },
         {
           "strike": 49650.0,
@@ -2572,8 +2572,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 21.73,
-          "put_gex": -9.05,
+          "call_gex": 21.74,
+          "put_gex": -9.06,
           "net_gex": 12.68
         },
         {
@@ -2584,8 +2584,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49800.0,
-          "call_gex": 25.39,
-          "put_gex": -21.16,
+          "call_gex": 25.41,
+          "put_gex": -21.17,
           "net_gex": 4.23
         },
         {
@@ -2596,8 +2596,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 17.14,
-          "put_gex": -11.14,
+          "call_gex": 17.15,
+          "put_gex": -11.15,
           "net_gex": 6.0
         },
         {
@@ -2608,9 +2608,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 241.92,
-          "put_gex": -31.26,
-          "net_gex": 210.66
+          "call_gex": 242.01,
+          "put_gex": -31.27,
+          "net_gex": 210.74
         },
         {
           "strike": 50050.0,
@@ -2620,9 +2620,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 18.67,
+          "call_gex": 18.68,
           "put_gex": -3.86,
-          "net_gex": 14.81
+          "net_gex": 14.82
         },
         {
           "strike": 50150.0,
@@ -2632,7 +2632,7 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 31.58,
+          "call_gex": 31.59,
           "put_gex": -5.76,
           "net_gex": 25.83
         }
@@ -2663,594 +2663,594 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 51.9,
-          "put_gex": -280.96,
-          "net_gex": -229.06,
+          "call_gex": 51.96,
+          "put_gex": -281.76,
+          "net_gex": -229.8,
           "vex": -0.71,
-          "gex_plus": -229.77,
+          "gex_plus": -230.51,
           "w1_call": 1.95,
-          "w1_put": -20.12,
+          "w1_put": -20.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.22,
-          "mth_put": -20.51,
-          "fri_call": 5.74,
-          "fri_put": -240.33
+          "mth_call": 44.25,
+          "mth_put": -20.52,
+          "fri_call": 5.76,
+          "fri_put": -241.08
         },
         {
           "strike": 48450.0,
           "call_gex": 1.06,
-          "put_gex": -197.09,
-          "net_gex": -196.03,
+          "put_gex": -197.69,
+          "net_gex": -196.63,
           "vex": -1.46,
-          "gex_plus": -197.49,
+          "gex_plus": -198.09,
           "w1_call": 0.65,
-          "w1_put": -6.81,
+          "w1_put": -6.83,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.07,
           "fri_call": 0.41,
-          "fri_put": -189.21
+          "fri_put": -189.8
         },
         {
           "strike": 48500.0,
-          "call_gex": 288.11,
-          "put_gex": -768.99,
-          "net_gex": -480.89,
-          "vex": -5.77,
-          "gex_plus": -486.65,
-          "w1_call": 4.53,
-          "w1_put": -131.14,
+          "call_gex": 288.84,
+          "put_gex": -770.86,
+          "net_gex": -482.02,
+          "vex": -5.78,
+          "gex_plus": -487.8,
+          "w1_call": 4.54,
+          "w1_put": -131.39,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 66.42,
-          "mth_put": -153.34,
-          "fri_call": 217.15,
-          "fri_put": -484.51
+          "mth_call": 66.47,
+          "mth_put": -153.47,
+          "fri_call": 217.82,
+          "fri_put": -486.0
         },
         {
           "strike": 48550.0,
-          "call_gex": 3.49,
-          "put_gex": -103.13,
-          "net_gex": -99.64,
-          "vex": -1.58,
-          "gex_plus": -101.22,
+          "call_gex": 3.5,
+          "put_gex": -103.43,
+          "net_gex": -99.94,
+          "vex": -1.59,
+          "gex_plus": -101.52,
           "w1_call": 0.65,
-          "w1_put": -5.81,
+          "w1_put": -5.82,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.49,
-          "fri_call": 2.84,
-          "fri_put": -95.83
+          "fri_call": 2.85,
+          "fri_put": -96.12
         },
         {
           "strike": 48600.0,
-          "call_gex": 65.04,
-          "put_gex": -269.59,
-          "net_gex": -204.54,
-          "vex": -4.05,
-          "gex_plus": -208.59,
+          "call_gex": 65.1,
+          "put_gex": -270.31,
+          "net_gex": -205.21,
+          "vex": -4.06,
+          "gex_plus": -209.27,
           "w1_call": 0.0,
-          "w1_put": -26.36,
+          "w1_put": -26.41,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 62.22,
-          "mth_put": -24.72,
-          "fri_call": 2.82,
-          "fri_put": -218.51
+          "mth_call": 62.27,
+          "mth_put": -24.74,
+          "fri_call": 2.83,
+          "fri_put": -219.16
         },
         {
           "strike": 48650.0,
           "call_gex": 1.92,
-          "put_gex": -185.83,
-          "net_gex": -183.91,
-          "vex": -4.46,
-          "gex_plus": -188.37,
+          "put_gex": -186.35,
+          "net_gex": -184.43,
+          "vex": -4.47,
+          "gex_plus": -188.9,
           "w1_call": 0.32,
-          "w1_put": -13.43,
+          "w1_put": -13.45,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
-          "mth_put": -3.4,
+          "mth_put": -3.41,
           "fri_call": 1.6,
-          "fri_put": -168.99
+          "fri_put": -169.49
         },
         {
           "strike": 48700.0,
-          "call_gex": 58.15,
-          "put_gex": -294.14,
-          "net_gex": -235.99,
-          "vex": -6.67,
-          "gex_plus": -242.66,
+          "call_gex": 58.22,
+          "put_gex": -294.92,
+          "net_gex": -236.7,
+          "vex": -6.69,
+          "gex_plus": -243.39,
           "w1_call": 0.32,
-          "w1_put": -13.34,
+          "w1_put": -13.37,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 47.95,
-          "mth_put": -23.55,
-          "fri_call": 9.88,
-          "fri_put": -257.25
+          "mth_call": 47.99,
+          "mth_put": -23.57,
+          "fri_call": 9.91,
+          "fri_put": -257.98
         },
         {
           "strike": 48750.0,
-          "call_gex": 3.6,
-          "put_gex": -116.66,
-          "net_gex": -113.06,
-          "vex": -3.69,
-          "gex_plus": -116.75,
+          "call_gex": 3.61,
+          "put_gex": -116.97,
+          "net_gex": -113.36,
+          "vex": -3.7,
+          "gex_plus": -117.06,
           "w1_call": 1.26,
-          "w1_put": -5.36,
+          "w1_put": -5.37,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -4.02,
-          "fri_call": 2.34,
-          "fri_put": -107.28
+          "fri_call": 2.35,
+          "fri_put": -107.58
         },
         {
           "strike": 48800.0,
-          "call_gex": 85.6,
-          "put_gex": -332.3,
-          "net_gex": -246.7,
-          "vex": -9.07,
-          "gex_plus": -255.78,
-          "w1_call": 4.37,
-          "w1_put": -14.37,
+          "call_gex": 85.77,
+          "put_gex": -333.12,
+          "net_gex": -247.35,
+          "vex": -9.1,
+          "gex_plus": -256.44,
+          "w1_call": 4.38,
+          "w1_put": -14.4,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 27.41,
-          "mth_put": -30.78,
-          "fri_call": 53.82,
-          "fri_put": -287.15
+          "mth_call": 27.43,
+          "mth_put": -30.81,
+          "fri_call": 53.96,
+          "fri_put": -287.92
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.59,
-          "put_gex": -81.56,
-          "net_gex": -70.97,
-          "vex": -2.91,
-          "gex_plus": -73.88,
+          "call_gex": 10.61,
+          "put_gex": -81.75,
+          "net_gex": -71.14,
+          "vex": -2.92,
+          "gex_plus": -74.06,
           "w1_call": 0.0,
-          "w1_put": -8.97,
+          "w1_put": -8.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.89,
-          "fri_call": 10.59,
-          "fri_put": -70.7
+          "fri_call": 10.61,
+          "fri_put": -70.88
         },
         {
           "strike": 48900.0,
-          "call_gex": 71.73,
-          "put_gex": -278.76,
-          "net_gex": -207.03,
-          "vex": -9.32,
-          "gex_plus": -216.35,
+          "call_gex": 71.86,
+          "put_gex": -279.41,
+          "net_gex": -207.55,
+          "vex": -9.34,
+          "gex_plus": -216.89,
           "w1_call": 3.06,
-          "w1_put": -13.15,
+          "w1_put": -13.17,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.53,
-          "mth_put": -8.78,
-          "fri_call": 47.13,
-          "fri_put": -256.83
+          "mth_call": 21.55,
+          "mth_put": -8.79,
+          "fri_call": 47.25,
+          "fri_put": -257.46
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.15,
-          "put_gex": -74.59,
-          "net_gex": -67.44,
+          "call_gex": 7.17,
+          "put_gex": -74.75,
+          "net_gex": -67.59,
           "vex": -3.33,
-          "gex_plus": -70.76,
+          "gex_plus": -70.92,
           "w1_call": 0.6,
-          "w1_put": -6.95,
+          "w1_put": -6.96,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.46,
-          "fri_call": 6.55,
-          "fri_put": -66.19
+          "fri_call": 6.56,
+          "fri_put": -66.34
         },
         {
           "strike": 49000.0,
-          "call_gex": 282.92,
-          "put_gex": -657.28,
-          "net_gex": -374.36,
-          "vex": -19.91,
-          "gex_plus": -394.27,
-          "w1_call": 25.92,
-          "w1_put": -43.79,
+          "call_gex": 283.34,
+          "put_gex": -658.58,
+          "net_gex": -375.24,
+          "vex": -19.95,
+          "gex_plus": -395.19,
+          "w1_call": 25.96,
+          "w1_put": -43.86,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 124.34,
-          "mth_put": -64.34,
-          "fri_call": 132.66,
-          "fri_put": -549.14
+          "mth_call": 124.43,
+          "mth_put": -64.39,
+          "fri_call": 132.95,
+          "fri_put": -550.33
         },
         {
           "strike": 49050.0,
-          "call_gex": 11.17,
-          "put_gex": -98.22,
-          "net_gex": -87.06,
-          "vex": -5.01,
-          "gex_plus": -92.07,
-          "w1_call": 1.17,
-          "w1_put": -6.16,
+          "call_gex": 11.19,
+          "put_gex": -98.41,
+          "net_gex": -87.23,
+          "vex": -5.02,
+          "gex_plus": -92.25,
+          "w1_call": 1.18,
+          "w1_put": -6.17,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.62,
           "mth_put": -1.44,
-          "fri_call": 9.37,
-          "fri_put": -90.62
+          "fri_call": 9.39,
+          "fri_put": -90.8
         },
         {
           "strike": 49100.0,
-          "call_gex": 225.26,
-          "put_gex": -230.69,
-          "net_gex": -5.42,
-          "vex": -0.19,
-          "gex_plus": -5.61,
-          "w1_call": 4.62,
-          "w1_put": -9.53,
+          "call_gex": 225.54,
+          "put_gex": -231.08,
+          "net_gex": -5.54,
+          "vex": -0.2,
+          "gex_plus": -5.74,
+          "w1_call": 4.63,
+          "w1_put": -9.55,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 123.21,
-          "mth_put": -25.95,
-          "fri_call": 97.43,
-          "fri_put": -195.2
+          "mth_call": 123.3,
+          "mth_put": -25.97,
+          "fri_call": 97.61,
+          "fri_put": -195.56
         },
         {
           "strike": 49150.0,
-          "call_gex": 37.13,
-          "put_gex": -76.9,
-          "net_gex": -39.77,
+          "call_gex": 37.18,
+          "put_gex": -77.02,
+          "net_gex": -39.84,
           "vex": -2.61,
-          "gex_plus": -42.37,
-          "w1_call": 1.7,
+          "gex_plus": -42.45,
+          "w1_call": 1.71,
           "w1_put": -3.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 8.12,
           "mth_put": -0.2,
-          "fri_call": 27.31,
-          "fri_put": -72.72
+          "fri_call": 27.36,
+          "fri_put": -72.84
         },
         {
           "strike": 49200.0,
-          "call_gex": 175.99,
-          "put_gex": -259.69,
-          "net_gex": -83.7,
-          "vex": -5.81,
-          "gex_plus": -89.5,
-          "w1_call": 9.48,
-          "w1_put": -13.1,
+          "call_gex": 176.21,
+          "put_gex": -260.06,
+          "net_gex": -83.85,
+          "vex": -5.82,
+          "gex_plus": -89.66,
+          "w1_call": 9.49,
+          "w1_put": -13.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 46.72,
-          "mth_put": -11.48,
-          "fri_call": 119.79,
-          "fri_put": -235.1
+          "mth_call": 46.76,
+          "mth_put": -11.49,
+          "fri_call": 119.96,
+          "fri_put": -235.45
         },
         {
           "strike": 49250.0,
-          "call_gex": 36.43,
-          "put_gex": -107.0,
-          "net_gex": -70.57,
-          "vex": -5.23,
-          "gex_plus": -75.8,
-          "w1_call": 2.73,
-          "w1_put": -9.84,
+          "call_gex": 36.48,
+          "put_gex": -107.14,
+          "net_gex": -70.65,
+          "vex": -5.24,
+          "gex_plus": -75.89,
+          "w1_call": 2.74,
+          "w1_put": -9.86,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.2,
           "mth_put": -1.2,
-          "fri_call": 32.5,
-          "fri_put": -95.96
+          "fri_call": 32.54,
+          "fri_put": -96.08
         },
         {
           "strike": 49300.0,
-          "call_gex": 155.8,
-          "put_gex": -391.69,
-          "net_gex": -235.9,
-          "vex": -18.49,
-          "gex_plus": -254.38,
-          "w1_call": 13.13,
-          "w1_put": -23.57,
+          "call_gex": 155.96,
+          "put_gex": -392.1,
+          "net_gex": -236.14,
+          "vex": -18.5,
+          "gex_plus": -254.65,
+          "w1_call": 13.14,
+          "w1_put": -23.6,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 19.02,
-          "mth_put": -32.49,
-          "fri_call": 123.65,
-          "fri_put": -335.63
+          "mth_call": 19.03,
+          "mth_put": -32.51,
+          "fri_call": 123.78,
+          "fri_put": -335.99
         },
         {
           "strike": 49350.0,
-          "call_gex": 68.04,
-          "put_gex": -74.43,
-          "net_gex": -6.39,
+          "call_gex": 68.1,
+          "put_gex": -74.5,
+          "net_gex": -6.4,
           "vex": -0.53,
-          "gex_plus": -6.92,
-          "w1_call": 2.88,
+          "gex_plus": -6.93,
+          "w1_call": 2.89,
           "w1_put": -4.46,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.98,
           "mth_put": -1.18,
-          "fri_call": 64.17,
-          "fri_put": -68.8
+          "fri_call": 64.23,
+          "fri_put": -68.86
         },
         {
           "strike": 49400.0,
-          "call_gex": 216.78,
-          "put_gex": -445.98,
-          "net_gex": -229.2,
-          "vex": -19.81,
-          "gex_plus": -249.01,
-          "w1_call": 22.8,
-          "w1_put": -8.97,
+          "call_gex": 216.92,
+          "put_gex": -446.25,
+          "net_gex": -229.33,
+          "vex": -19.82,
+          "gex_plus": -249.15,
+          "w1_call": 22.83,
+          "w1_put": -8.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.37,
-          "mth_put": -14.39,
-          "fri_call": 171.61,
-          "fri_put": -422.62
+          "mth_call": 22.38,
+          "mth_put": -14.4,
+          "fri_call": 171.71,
+          "fri_put": -422.87
         },
         {
           "strike": 49450.0,
-          "call_gex": 52.9,
-          "put_gex": -47.51,
-          "net_gex": 5.39,
+          "call_gex": 52.93,
+          "put_gex": -47.53,
+          "net_gex": 5.4,
           "vex": 0.49,
-          "gex_plus": 5.88,
-          "w1_call": 8.25,
+          "gex_plus": 5.89,
+          "w1_call": 8.26,
           "w1_put": -1.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.96,
           "mth_put": -1.54,
-          "fri_call": 43.68,
-          "fri_put": -44.22
+          "fri_call": 43.7,
+          "fri_put": -44.24
         },
         {
           "strike": 49500.0,
-          "call_gex": 394.46,
-          "put_gex": -434.54,
-          "net_gex": -40.08,
+          "call_gex": 394.6,
+          "put_gex": -434.63,
+          "net_gex": -40.03,
           "vex": -3.69,
-          "gex_plus": -43.77,
-          "w1_call": 46.59,
-          "w1_put": -27.57,
+          "gex_plus": -43.72,
+          "w1_call": 46.63,
+          "w1_put": -27.59,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 125.0,
-          "mth_put": -56.97,
-          "fri_call": 222.86,
-          "fri_put": -350.0
+          "mth_call": 125.08,
+          "mth_put": -57.01,
+          "fri_call": 222.89,
+          "fri_put": -350.03
         },
         {
           "strike": 49550.0,
-          "call_gex": 58.58,
+          "call_gex": 58.57,
           "put_gex": -21.52,
           "net_gex": 37.05,
           "vex": 3.66,
           "gex_plus": 40.72,
-          "w1_call": 5.7,
+          "w1_call": 5.71,
           "w1_put": -2.14,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.32,
           "mth_put": -1.13,
-          "fri_call": 51.56,
+          "fri_call": 51.55,
           "fri_put": -18.25
         },
         {
           "strike": 49600.0,
-          "call_gex": 214.71,
-          "put_gex": -116.64,
-          "net_gex": 98.07,
+          "call_gex": 214.66,
+          "put_gex": -116.6,
+          "net_gex": 98.06,
           "vex": 10.13,
-          "gex_plus": 108.2,
+          "gex_plus": 108.18,
           "w1_call": 14.57,
-          "w1_put": -4.39,
+          "w1_put": -4.4,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.78,
-          "mth_put": -7.45,
-          "fri_call": 175.36,
-          "fri_put": -104.79
+          "mth_call": 24.8,
+          "mth_put": -7.46,
+          "fri_call": 175.29,
+          "fri_put": -104.75
         },
         {
           "strike": 49650.0,
-          "call_gex": 54.39,
-          "put_gex": -19.15,
-          "net_gex": 35.24,
-          "vex": 3.78,
-          "gex_plus": 39.02,
+          "call_gex": 54.36,
+          "put_gex": -19.14,
+          "net_gex": 35.22,
+          "vex": 3.77,
+          "gex_plus": 38.99,
           "w1_call": 3.6,
           "w1_put": -2.25,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.66,
           "mth_put": -0.0,
-          "fri_call": 49.14,
-          "fri_put": -16.91
+          "fri_call": 49.11,
+          "fri_put": -16.89
         },
         {
           "strike": 49700.0,
-          "call_gex": 222.12,
-          "put_gex": -55.65,
-          "net_gex": 166.46,
-          "vex": 18.53,
-          "gex_plus": 184.99,
-          "w1_call": 28.36,
+          "call_gex": 221.96,
+          "put_gex": -55.62,
+          "net_gex": 166.34,
+          "vex": 18.52,
+          "gex_plus": 184.85,
+          "w1_call": 28.37,
           "w1_put": -9.38,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.82,
-          "mth_put": -9.09,
-          "fri_call": 171.93,
-          "fri_put": -37.18
+          "mth_call": 21.83,
+          "mth_put": -9.1,
+          "fri_call": 171.75,
+          "fri_put": -37.14
         },
         {
           "strike": 49750.0,
-          "call_gex": 95.15,
-          "put_gex": -16.76,
-          "net_gex": 78.39,
-          "vex": 9.04,
-          "gex_plus": 87.43,
+          "call_gex": 95.03,
+          "put_gex": -16.74,
+          "net_gex": 78.29,
+          "vex": 9.03,
+          "gex_plus": 87.32,
           "w1_call": 7.19,
           "w1_put": -1.9,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.44,
           "mth_put": -0.54,
-          "fri_call": 86.52,
-          "fri_put": -14.32
+          "fri_call": 86.4,
+          "fri_put": -14.3
         },
         {
           "strike": 49800.0,
-          "call_gex": 256.34,
-          "put_gex": -71.03,
-          "net_gex": 185.31,
-          "vex": 22.14,
-          "gex_plus": 207.45,
+          "call_gex": 256.03,
+          "put_gex": -70.97,
+          "net_gex": 185.07,
+          "vex": 22.11,
+          "gex_plus": 207.17,
           "w1_call": 40.99,
           "w1_put": -7.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.51,
-          "mth_put": -21.26,
-          "fri_call": 189.84,
-          "fri_put": -41.78
+          "mth_call": 25.52,
+          "mth_put": -21.27,
+          "fri_call": 189.52,
+          "fri_put": -41.71
         },
         {
           "strike": 49850.0,
-          "call_gex": 77.11,
-          "put_gex": -11.34,
-          "net_gex": 65.77,
-          "vex": 8.12,
-          "gex_plus": 73.9,
+          "call_gex": 76.98,
+          "put_gex": -11.32,
+          "net_gex": 65.66,
+          "vex": 8.11,
+          "gex_plus": 73.76,
           "w1_call": 9.72,
           "w1_put": -3.97,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.87,
           "mth_put": -0.0,
-          "fri_call": 66.52,
-          "fri_put": -7.37
+          "fri_call": 66.39,
+          "fri_put": -7.36
         },
         {
           "strike": 49900.0,
-          "call_gex": 155.35,
-          "put_gex": -30.57,
-          "net_gex": 124.79,
-          "vex": 15.92,
-          "gex_plus": 140.71,
+          "call_gex": 155.05,
+          "put_gex": -30.54,
+          "net_gex": 124.51,
+          "vex": 15.89,
+          "gex_plus": 140.4,
           "w1_call": 9.39,
           "w1_put": -7.86,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 17.22,
-          "mth_put": -11.19,
-          "fri_call": 128.74,
-          "fri_put": -11.51
+          "mth_call": 17.23,
+          "mth_put": -11.2,
+          "fri_call": 128.43,
+          "fri_put": -11.49
         },
         {
           "strike": 49950.0,
-          "call_gex": 66.97,
-          "put_gex": -6.65,
-          "net_gex": 60.33,
-          "vex": 7.94,
-          "gex_plus": 68.27,
-          "w1_call": 1.67,
+          "call_gex": 66.8,
+          "put_gex": -6.63,
+          "net_gex": 60.16,
+          "vex": 7.92,
+          "gex_plus": 68.08,
+          "w1_call": 1.66,
           "w1_put": -1.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.02,
           "mth_put": -0.51,
-          "fri_call": 64.29,
-          "fri_put": -4.29
+          "fri_call": 64.11,
+          "fri_put": -4.27
         },
         {
           "strike": 50000.0,
-          "call_gex": 658.16,
-          "put_gex": -46.31,
-          "net_gex": 611.84,
-          "vex": 83.36,
-          "gex_plus": 695.2,
-          "w1_call": 91.54,
+          "call_gex": 657.21,
+          "put_gex": -46.28,
+          "net_gex": 610.92,
+          "vex": 83.23,
+          "gex_plus": 694.15,
+          "w1_call": 91.5,
           "w1_put": -2.14,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 243.16,
-          "mth_put": -31.42,
-          "fri_call": 323.45,
-          "fri_put": -12.75
+          "mth_call": 243.26,
+          "mth_put": -31.43,
+          "fri_call": 322.45,
+          "fri_put": -12.71
         },
         {
           "strike": 50050.0,
-          "call_gex": 106.1,
+          "call_gex": 105.75,
           "put_gex": -2.09,
-          "net_gex": 104.01,
-          "vex": 14.54,
-          "gex_plus": 118.54,
-          "w1_call": 3.27,
+          "net_gex": 103.66,
+          "vex": 14.49,
+          "gex_plus": 118.15,
+          "w1_call": 3.26,
           "w1_put": -0.17,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.65,
           "mth_put": -0.16,
-          "fri_call": 101.19,
-          "fri_put": -1.76
+          "fri_call": 100.84,
+          "fri_put": -1.75
         },
         {
           "strike": 50100.0,
-          "call_gex": 135.52,
-          "put_gex": -12.31,
-          "net_gex": 123.21,
-          "vex": 17.74,
-          "gex_plus": 140.96,
+          "call_gex": 135.1,
+          "put_gex": -12.28,
+          "net_gex": 122.82,
+          "vex": 17.69,
+          "gex_plus": 140.51,
           "w1_call": 7.44,
           "w1_put": -0.17,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 18.78,
-          "mth_put": -3.88,
-          "fri_call": 109.3,
-          "fri_put": -8.26
+          "mth_put": -3.89,
+          "fri_call": 108.88,
+          "fri_put": -8.23
         },
         {
           "strike": 50150.0,
-          "call_gex": 61.5,
-          "put_gex": -1.81,
-          "net_gex": 59.69,
-          "vex": 8.83,
-          "gex_plus": 68.52,
-          "w1_call": 5.41,
+          "call_gex": 61.26,
+          "put_gex": -1.8,
+          "net_gex": 59.46,
+          "vex": 8.79,
+          "gex_plus": 68.25,
+          "w1_call": 5.4,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.16,
           "mth_put": -0.0,
-          "fri_call": 55.94,
-          "fri_put": -1.81
+          "fri_call": 55.7,
+          "fri_put": -1.8
         },
         {
           "strike": 50200.0,
-          "call_gex": 211.24,
-          "put_gex": -8.13,
-          "net_gex": 203.11,
-          "vex": 30.9,
-          "gex_plus": 234.01,
-          "w1_call": 13.44,
+          "call_gex": 210.45,
+          "put_gex": -8.12,
+          "net_gex": 202.34,
+          "vex": 30.78,
+          "gex_plus": 233.12,
+          "w1_call": 13.42,
           "w1_put": -0.76,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.76,
+          "mth_call": 31.77,
           "mth_put": -5.79,
-          "fri_call": 166.04,
+          "fri_call": 165.26,
           "fri_put": -1.57
         }
       ],
@@ -3258,152 +3258,152 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48400.0,
           "call_gex": 1.95,
-          "put_gex": -20.12,
-          "net_gex": -18.18
+          "put_gex": -20.16,
+          "net_gex": -18.21
         },
         {
           "strike": 48450.0,
           "call_gex": 0.65,
-          "put_gex": -6.81,
-          "net_gex": -6.16
+          "put_gex": -6.83,
+          "net_gex": -6.18
         },
         {
           "strike": 48500.0,
-          "call_gex": 4.53,
-          "put_gex": -131.14,
-          "net_gex": -126.6
+          "call_gex": 4.54,
+          "put_gex": -131.39,
+          "net_gex": -126.85
         },
         {
           "strike": 48550.0,
           "call_gex": 0.65,
-          "put_gex": -5.81,
-          "net_gex": -5.17
+          "put_gex": -5.82,
+          "net_gex": -5.18
         },
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -26.36,
-          "net_gex": -26.36
+          "put_gex": -26.41,
+          "net_gex": -26.41
         },
         {
           "strike": 48650.0,
           "call_gex": 0.32,
-          "put_gex": -13.43,
-          "net_gex": -13.11
+          "put_gex": -13.45,
+          "net_gex": -13.13
         },
         {
           "strike": 48700.0,
           "call_gex": 0.32,
-          "put_gex": -13.34,
-          "net_gex": -13.02
+          "put_gex": -13.37,
+          "net_gex": -13.05
         },
         {
           "strike": 48750.0,
           "call_gex": 1.26,
-          "put_gex": -5.36,
+          "put_gex": -5.37,
           "net_gex": -4.1
         },
         {
           "strike": 48800.0,
-          "call_gex": 4.37,
-          "put_gex": -14.37,
-          "net_gex": -10.0
+          "call_gex": 4.38,
+          "put_gex": -14.4,
+          "net_gex": -10.01
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -8.97,
-          "net_gex": -8.97
+          "put_gex": -8.98,
+          "net_gex": -8.98
         },
         {
           "strike": 48900.0,
           "call_gex": 3.06,
-          "put_gex": -13.15,
-          "net_gex": -10.09
+          "put_gex": -13.17,
+          "net_gex": -10.11
         },
         {
           "strike": 48950.0,
           "call_gex": 0.6,
-          "put_gex": -6.95,
-          "net_gex": -6.34
+          "put_gex": -6.96,
+          "net_gex": -6.35
         },
         {
           "strike": 49000.0,
-          "call_gex": 25.92,
-          "put_gex": -43.79,
-          "net_gex": -17.87
+          "call_gex": 25.96,
+          "put_gex": -43.86,
+          "net_gex": -17.9
         },
         {
           "strike": 49050.0,
-          "call_gex": 1.17,
-          "put_gex": -6.16,
-          "net_gex": -4.99
+          "call_gex": 1.18,
+          "put_gex": -6.17,
+          "net_gex": -5.0
         },
         {
           "strike": 49100.0,
-          "call_gex": 4.62,
-          "put_gex": -9.53,
-          "net_gex": -4.91
+          "call_gex": 4.63,
+          "put_gex": -9.55,
+          "net_gex": -4.92
         },
         {
           "strike": 49150.0,
-          "call_gex": 1.7,
+          "call_gex": 1.71,
           "put_gex": -3.98,
           "net_gex": -2.27
         },
         {
           "strike": 49200.0,
-          "call_gex": 9.48,
-          "put_gex": -13.1,
-          "net_gex": -3.62
+          "call_gex": 9.49,
+          "put_gex": -13.12,
+          "net_gex": -3.63
         },
         {
           "strike": 49250.0,
-          "call_gex": 2.73,
-          "put_gex": -9.84,
-          "net_gex": -7.11
+          "call_gex": 2.74,
+          "put_gex": -9.86,
+          "net_gex": -7.12
         },
         {
           "strike": 49300.0,
-          "call_gex": 13.13,
-          "put_gex": -23.57,
-          "net_gex": -10.45
+          "call_gex": 13.14,
+          "put_gex": -23.6,
+          "net_gex": -10.46
         },
         {
           "strike": 49350.0,
-          "call_gex": 2.88,
+          "call_gex": 2.89,
           "put_gex": -4.46,
           "net_gex": -1.57
         },
         {
           "strike": 49400.0,
-          "call_gex": 22.8,
-          "put_gex": -8.97,
-          "net_gex": 13.84
+          "call_gex": 22.83,
+          "put_gex": -8.98,
+          "net_gex": 13.85
         },
         {
           "strike": 49450.0,
-          "call_gex": 8.25,
+          "call_gex": 8.26,
           "put_gex": -1.75,
-          "net_gex": 6.5
+          "net_gex": 6.51
         },
         {
           "strike": 49500.0,
-          "call_gex": 46.59,
-          "put_gex": -27.57,
-          "net_gex": 19.03
+          "call_gex": 46.63,
+          "put_gex": -27.59,
+          "net_gex": 19.04
         },
         {
           "strike": 49550.0,
-          "call_gex": 5.7,
+          "call_gex": 5.71,
           "put_gex": -2.14,
-          "net_gex": 3.56
+          "net_gex": 3.57
         },
         {
           "strike": 49600.0,
           "call_gex": 14.57,
-          "put_gex": -4.39,
-          "net_gex": 10.17
+          "put_gex": -4.4,
+          "net_gex": 10.18
         },
         {
           "strike": 49650.0,
@@ -3413,9 +3413,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 28.36,
+          "call_gex": 28.37,
           "put_gex": -9.38,
-          "net_gex": 18.98
+          "net_gex": 18.99
         },
         {
           "strike": 49750.0,
@@ -3427,7 +3427,7 @@ window.GEX_EMBEDDED_DATA = {
           "strike": 49800.0,
           "call_gex": 40.99,
           "put_gex": -7.99,
-          "net_gex": 32.99
+          "net_gex": 33.0
         },
         {
           "strike": 49850.0,
@@ -3443,19 +3443,19 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49950.0,
-          "call_gex": 1.67,
+          "call_gex": 1.66,
           "put_gex": -1.85,
-          "net_gex": -0.19
+          "net_gex": -0.18
         },
         {
           "strike": 50000.0,
-          "call_gex": 91.54,
+          "call_gex": 91.5,
           "put_gex": -2.14,
-          "net_gex": 89.4
+          "net_gex": 89.36
         },
         {
           "strike": 50050.0,
-          "call_gex": 3.27,
+          "call_gex": 3.26,
           "put_gex": -0.17,
           "net_gex": 3.09
         },
@@ -3463,251 +3463,251 @@ window.GEX_EMBEDDED_DATA = {
           "strike": 50100.0,
           "call_gex": 7.44,
           "put_gex": -0.17,
-          "net_gex": 7.28
+          "net_gex": 7.27
         },
         {
           "strike": 50150.0,
-          "call_gex": 5.41,
+          "call_gex": 5.4,
           "put_gex": -0.0,
-          "net_gex": 5.41
+          "net_gex": 5.4
         },
         {
           "strike": 50200.0,
-          "call_gex": 13.44,
+          "call_gex": 13.42,
           "put_gex": -0.76,
-          "net_gex": 12.67
+          "net_gex": 12.66
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 5.74,
-          "put_gex": -240.33,
-          "net_gex": -234.59
+          "call_gex": 5.76,
+          "put_gex": -241.08,
+          "net_gex": -235.32
         },
         {
           "strike": 48450.0,
           "call_gex": 0.41,
-          "put_gex": -189.21,
-          "net_gex": -188.8
+          "put_gex": -189.8,
+          "net_gex": -189.38
         },
         {
           "strike": 48500.0,
-          "call_gex": 217.15,
-          "put_gex": -484.51,
-          "net_gex": -267.36
+          "call_gex": 217.82,
+          "put_gex": -486.0,
+          "net_gex": -268.18
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.84,
-          "put_gex": -95.83,
-          "net_gex": -92.98
+          "call_gex": 2.85,
+          "put_gex": -96.12,
+          "net_gex": -93.27
         },
         {
           "strike": 48600.0,
-          "call_gex": 2.82,
-          "put_gex": -218.51,
-          "net_gex": -215.69
+          "call_gex": 2.83,
+          "put_gex": -219.16,
+          "net_gex": -216.33
         },
         {
           "strike": 48650.0,
           "call_gex": 1.6,
-          "put_gex": -168.99,
-          "net_gex": -167.4
+          "put_gex": -169.49,
+          "net_gex": -167.89
         },
         {
           "strike": 48700.0,
-          "call_gex": 9.88,
-          "put_gex": -257.25,
-          "net_gex": -247.37
+          "call_gex": 9.91,
+          "put_gex": -257.98,
+          "net_gex": -248.07
         },
         {
           "strike": 48750.0,
-          "call_gex": 2.34,
-          "put_gex": -107.28,
-          "net_gex": -104.94
+          "call_gex": 2.35,
+          "put_gex": -107.58,
+          "net_gex": -105.23
         },
         {
           "strike": 48800.0,
-          "call_gex": 53.82,
-          "put_gex": -287.15,
-          "net_gex": -233.33
+          "call_gex": 53.96,
+          "put_gex": -287.92,
+          "net_gex": -233.96
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.59,
-          "put_gex": -70.7,
-          "net_gex": -60.11
+          "call_gex": 10.61,
+          "put_gex": -70.88,
+          "net_gex": -60.27
         },
         {
           "strike": 48900.0,
-          "call_gex": 47.13,
-          "put_gex": -256.83,
-          "net_gex": -209.69
+          "call_gex": 47.25,
+          "put_gex": -257.46,
+          "net_gex": -210.21
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.55,
-          "put_gex": -66.19,
-          "net_gex": -59.64
+          "call_gex": 6.56,
+          "put_gex": -66.34,
+          "net_gex": -59.78
         },
         {
           "strike": 49000.0,
-          "call_gex": 132.66,
-          "put_gex": -549.14,
-          "net_gex": -416.48
+          "call_gex": 132.95,
+          "put_gex": -550.33,
+          "net_gex": -417.38
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.37,
-          "put_gex": -90.62,
-          "net_gex": -81.24
+          "call_gex": 9.39,
+          "put_gex": -90.8,
+          "net_gex": -81.41
         },
         {
           "strike": 49100.0,
-          "call_gex": 97.43,
-          "put_gex": -195.2,
-          "net_gex": -97.77
+          "call_gex": 97.61,
+          "put_gex": -195.56,
+          "net_gex": -97.95
         },
         {
           "strike": 49150.0,
-          "call_gex": 27.31,
-          "put_gex": -72.72,
-          "net_gex": -45.41
+          "call_gex": 27.36,
+          "put_gex": -72.84,
+          "net_gex": -45.48
         },
         {
           "strike": 49200.0,
-          "call_gex": 119.79,
-          "put_gex": -235.1,
-          "net_gex": -115.31
+          "call_gex": 119.96,
+          "put_gex": -235.45,
+          "net_gex": -115.48
         },
         {
           "strike": 49250.0,
-          "call_gex": 32.5,
-          "put_gex": -95.96,
-          "net_gex": -63.46
+          "call_gex": 32.54,
+          "put_gex": -96.08,
+          "net_gex": -63.54
         },
         {
           "strike": 49300.0,
-          "call_gex": 123.65,
-          "put_gex": -335.63,
-          "net_gex": -211.98
+          "call_gex": 123.78,
+          "put_gex": -335.99,
+          "net_gex": -212.2
         },
         {
           "strike": 49350.0,
-          "call_gex": 64.17,
-          "put_gex": -68.8,
+          "call_gex": 64.23,
+          "put_gex": -68.86,
           "net_gex": -4.63
         },
         {
           "strike": 49400.0,
-          "call_gex": 171.61,
-          "put_gex": -422.62,
-          "net_gex": -251.01
+          "call_gex": 171.71,
+          "put_gex": -422.87,
+          "net_gex": -251.16
         },
         {
           "strike": 49450.0,
-          "call_gex": 43.68,
-          "put_gex": -44.22,
+          "call_gex": 43.7,
+          "put_gex": -44.24,
           "net_gex": -0.54
         },
         {
           "strike": 49500.0,
-          "call_gex": 222.86,
-          "put_gex": -350.0,
-          "net_gex": -127.13
+          "call_gex": 222.89,
+          "put_gex": -350.03,
+          "net_gex": -127.14
         },
         {
           "strike": 49550.0,
-          "call_gex": 51.56,
+          "call_gex": 51.55,
           "put_gex": -18.25,
           "net_gex": 33.3
         },
         {
           "strike": 49600.0,
-          "call_gex": 175.36,
-          "put_gex": -104.79,
-          "net_gex": 70.57
+          "call_gex": 175.29,
+          "put_gex": -104.75,
+          "net_gex": 70.54
         },
         {
           "strike": 49650.0,
-          "call_gex": 49.14,
-          "put_gex": -16.91,
-          "net_gex": 32.24
+          "call_gex": 49.11,
+          "put_gex": -16.89,
+          "net_gex": 32.21
         },
         {
           "strike": 49700.0,
-          "call_gex": 171.93,
-          "put_gex": -37.18,
-          "net_gex": 134.75
+          "call_gex": 171.75,
+          "put_gex": -37.14,
+          "net_gex": 134.61
         },
         {
           "strike": 49750.0,
-          "call_gex": 86.52,
-          "put_gex": -14.32,
-          "net_gex": 72.2
+          "call_gex": 86.4,
+          "put_gex": -14.3,
+          "net_gex": 72.1
         },
         {
           "strike": 49800.0,
-          "call_gex": 189.84,
-          "put_gex": -41.78,
-          "net_gex": 148.06
+          "call_gex": 189.52,
+          "put_gex": -41.71,
+          "net_gex": 147.82
         },
         {
           "strike": 49850.0,
-          "call_gex": 66.52,
-          "put_gex": -7.37,
-          "net_gex": 59.15
+          "call_gex": 66.39,
+          "put_gex": -7.36,
+          "net_gex": 59.03
         },
         {
           "strike": 49900.0,
-          "call_gex": 128.74,
-          "put_gex": -11.51,
-          "net_gex": 117.22
+          "call_gex": 128.43,
+          "put_gex": -11.49,
+          "net_gex": 116.95
         },
         {
           "strike": 49950.0,
-          "call_gex": 64.29,
-          "put_gex": -4.29,
-          "net_gex": 60.0
+          "call_gex": 64.11,
+          "put_gex": -4.27,
+          "net_gex": 59.84
         },
         {
           "strike": 50000.0,
-          "call_gex": 323.45,
-          "put_gex": -12.75,
-          "net_gex": 310.7
+          "call_gex": 322.45,
+          "put_gex": -12.71,
+          "net_gex": 309.74
         },
         {
           "strike": 50050.0,
-          "call_gex": 101.19,
-          "put_gex": -1.76,
-          "net_gex": 99.43
+          "call_gex": 100.84,
+          "put_gex": -1.75,
+          "net_gex": 99.09
         },
         {
           "strike": 50100.0,
-          "call_gex": 109.3,
-          "put_gex": -8.26,
-          "net_gex": 101.04
+          "call_gex": 108.88,
+          "put_gex": -8.23,
+          "net_gex": 100.65
         },
         {
           "strike": 50150.0,
-          "call_gex": 55.94,
-          "put_gex": -1.81,
-          "net_gex": 54.13
+          "call_gex": 55.7,
+          "put_gex": -1.8,
+          "net_gex": 53.9
         },
         {
           "strike": 50200.0,
-          "call_gex": 166.04,
+          "call_gex": 165.26,
           "put_gex": -1.57,
-          "net_gex": 164.46
+          "net_gex": 163.7
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 44.22,
-          "put_gex": -20.51,
-          "net_gex": 23.71
+          "call_gex": 44.25,
+          "put_gex": -20.52,
+          "net_gex": 23.73
         },
         {
           "strike": 48450.0,
@@ -3717,9 +3717,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 66.42,
-          "put_gex": -153.34,
-          "net_gex": -86.92
+          "call_gex": 66.47,
+          "put_gex": -153.47,
+          "net_gex": -86.99
         },
         {
           "strike": 48550.0,
@@ -3729,21 +3729,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 62.22,
-          "put_gex": -24.72,
-          "net_gex": 37.5
+          "call_gex": 62.27,
+          "put_gex": -24.74,
+          "net_gex": 37.53
         },
         {
           "strike": 48650.0,
           "call_gex": 0.0,
-          "put_gex": -3.4,
-          "net_gex": -3.4
+          "put_gex": -3.41,
+          "net_gex": -3.41
         },
         {
           "strike": 48700.0,
-          "call_gex": 47.95,
-          "put_gex": -23.55,
-          "net_gex": 24.4
+          "call_gex": 47.99,
+          "put_gex": -23.57,
+          "net_gex": 24.42
         },
         {
           "strike": 48750.0,
@@ -3753,9 +3753,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 27.41,
-          "put_gex": -30.78,
-          "net_gex": -3.37
+          "call_gex": 27.43,
+          "put_gex": -30.81,
+          "net_gex": -3.38
         },
         {
           "strike": 48850.0,
@@ -3765,9 +3765,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 21.53,
-          "put_gex": -8.78,
-          "net_gex": 12.75
+          "call_gex": 21.55,
+          "put_gex": -8.79,
+          "net_gex": 12.76
         },
         {
           "strike": 48950.0,
@@ -3777,9 +3777,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 124.34,
-          "put_gex": -64.34,
-          "net_gex": 60.0
+          "call_gex": 124.43,
+          "put_gex": -64.39,
+          "net_gex": 60.04
         },
         {
           "strike": 49050.0,
@@ -3789,21 +3789,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 123.21,
-          "put_gex": -25.95,
-          "net_gex": 97.26
+          "call_gex": 123.3,
+          "put_gex": -25.97,
+          "net_gex": 97.33
         },
         {
           "strike": 49150.0,
           "call_gex": 8.12,
           "put_gex": -0.2,
-          "net_gex": 7.91
+          "net_gex": 7.92
         },
         {
           "strike": 49200.0,
-          "call_gex": 46.72,
-          "put_gex": -11.48,
-          "net_gex": 35.24
+          "call_gex": 46.76,
+          "put_gex": -11.49,
+          "net_gex": 35.27
         },
         {
           "strike": 49250.0,
@@ -3813,9 +3813,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 19.02,
-          "put_gex": -32.49,
-          "net_gex": -13.47
+          "call_gex": 19.03,
+          "put_gex": -32.51,
+          "net_gex": -13.48
         },
         {
           "strike": 49350.0,
@@ -3825,9 +3825,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 22.37,
-          "put_gex": -14.39,
-          "net_gex": 7.97
+          "call_gex": 22.38,
+          "put_gex": -14.4,
+          "net_gex": 7.98
         },
         {
           "strike": 49450.0,
@@ -3837,9 +3837,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 125.0,
-          "put_gex": -56.97,
-          "net_gex": 68.03
+          "call_gex": 125.08,
+          "put_gex": -57.01,
+          "net_gex": 68.07
         },
         {
           "strike": 49550.0,
@@ -3849,9 +3849,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 24.78,
-          "put_gex": -7.45,
-          "net_gex": 17.33
+          "call_gex": 24.8,
+          "put_gex": -7.46,
+          "net_gex": 17.34
         },
         {
           "strike": 49650.0,
@@ -3861,9 +3861,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 21.82,
-          "put_gex": -9.09,
-          "net_gex": 12.73
+          "call_gex": 21.83,
+          "put_gex": -9.1,
+          "net_gex": 12.74
         },
         {
           "strike": 49750.0,
@@ -3873,8 +3873,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49800.0,
-          "call_gex": 25.51,
-          "put_gex": -21.26,
+          "call_gex": 25.52,
+          "put_gex": -21.27,
           "net_gex": 4.25
         },
         {
@@ -3885,8 +3885,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 17.22,
-          "put_gex": -11.19,
+          "call_gex": 17.23,
+          "put_gex": -11.2,
           "net_gex": 6.03
         },
         {
@@ -3897,9 +3897,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 243.16,
-          "put_gex": -31.42,
-          "net_gex": 211.74
+          "call_gex": 243.26,
+          "put_gex": -31.43,
+          "net_gex": 211.83
         },
         {
           "strike": 50050.0,
@@ -3910,8 +3910,8 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 50100.0,
           "call_gex": 18.78,
-          "put_gex": -3.88,
-          "net_gex": 14.89
+          "put_gex": -3.89,
+          "net_gex": 14.9
         },
         {
           "strike": 50150.0,
@@ -3921,9 +3921,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 31.76,
+          "call_gex": 31.77,
           "put_gex": -5.79,
-          "net_gex": 25.97
+          "net_gex": 25.98
         }
       ]
     },
@@ -3952,711 +3952,711 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 51.9,
-          "put_gex": -280.65,
-          "net_gex": -228.75,
+          "call_gex": 51.96,
+          "put_gex": -281.45,
+          "net_gex": -229.49,
           "vex": 1.36,
-          "gex_plus": -227.39,
+          "gex_plus": -228.13,
           "w1_call": 1.95,
-          "w1_put": -20.11,
+          "w1_put": -20.15,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.22,
-          "mth_put": -20.51,
-          "fri_call": 5.73,
-          "fri_put": -240.03
+          "mth_call": 44.26,
+          "mth_put": -20.52,
+          "fri_call": 5.75,
+          "fri_put": -240.77
         },
         {
           "strike": 48450.0,
           "call_gex": 1.06,
-          "put_gex": -197.65,
-          "net_gex": -196.59,
+          "put_gex": -198.25,
+          "net_gex": -197.19,
           "vex": 0.31,
-          "gex_plus": -196.28,
+          "gex_plus": -196.88,
           "w1_call": 0.65,
-          "w1_put": -6.83,
+          "w1_put": -6.84,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.07,
           "fri_call": 0.41,
-          "fri_put": -189.75
+          "fri_put": -190.34
         },
         {
           "strike": 48500.0,
-          "call_gex": 289.8,
-          "put_gex": -773.35,
-          "net_gex": -483.55,
-          "vex": -1.43,
-          "gex_plus": -484.98,
-          "w1_call": 4.55,
-          "w1_put": -131.74,
+          "call_gex": 290.55,
+          "put_gex": -775.26,
+          "net_gex": -484.71,
+          "vex": -1.44,
+          "gex_plus": -486.14,
+          "w1_call": 4.56,
+          "w1_put": -132.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 66.57,
-          "mth_put": -153.69,
-          "fri_call": 218.68,
-          "fri_put": -487.92
+          "mth_call": 66.63,
+          "mth_put": -153.82,
+          "fri_call": 219.36,
+          "fri_put": -489.44
         },
         {
           "strike": 48550.0,
-          "call_gex": 3.52,
-          "put_gex": -104.25,
-          "net_gex": -100.73,
+          "call_gex": 3.53,
+          "put_gex": -104.56,
+          "net_gex": -101.03,
           "vex": -0.69,
-          "gex_plus": -101.42,
+          "gex_plus": -101.72,
           "w1_call": 0.65,
-          "w1_put": -5.85,
+          "w1_put": -5.86,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.5,
-          "fri_call": 2.87,
-          "fri_put": -96.9
+          "fri_call": 2.88,
+          "fri_put": -97.2
         },
         {
           "strike": 48600.0,
-          "call_gex": 65.37,
-          "put_gex": -273.32,
-          "net_gex": -207.95,
+          "call_gex": 65.43,
+          "put_gex": -274.07,
+          "net_gex": -208.64,
           "vex": -2.24,
-          "gex_plus": -210.18,
+          "gex_plus": -210.88,
           "w1_call": 0.0,
-          "w1_put": -26.62,
+          "w1_put": -26.67,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 62.5,
-          "mth_put": -24.83,
+          "mth_call": 62.56,
+          "mth_put": -24.85,
           "fri_call": 2.87,
-          "fri_put": -221.87
+          "fri_put": -222.55
         },
         {
           "strike": 48650.0,
-          "call_gex": 1.95,
-          "put_gex": -189.32,
-          "net_gex": -187.37,
-          "vex": -2.85,
-          "gex_plus": -190.22,
+          "call_gex": 1.96,
+          "put_gex": -189.87,
+          "net_gex": -187.91,
+          "vex": -2.86,
+          "gex_plus": -190.77,
           "w1_call": 0.32,
-          "w1_put": -13.6,
+          "w1_put": -13.62,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
-          "mth_put": -3.42,
+          "mth_put": -3.43,
           "fri_call": 1.63,
-          "fri_put": -172.3
+          "fri_put": -172.82
         },
         {
           "strike": 48700.0,
-          "call_gex": 58.71,
-          "put_gex": -300.61,
-          "net_gex": -241.9,
-          "vex": -4.65,
-          "gex_plus": -246.55,
+          "call_gex": 58.78,
+          "put_gex": -301.45,
+          "net_gex": -242.66,
+          "vex": -4.67,
+          "gex_plus": -247.33,
           "w1_call": 0.32,
-          "w1_put": -13.54,
+          "w1_put": -13.57,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 48.28,
-          "mth_put": -23.71,
-          "fri_call": 10.11,
-          "fri_put": -263.36
+          "mth_call": 48.32,
+          "mth_put": -23.73,
+          "fri_call": 10.14,
+          "fri_put": -264.15
         },
         {
           "strike": 48750.0,
-          "call_gex": 3.69,
-          "put_gex": -119.79,
-          "net_gex": -116.1,
-          "vex": -2.74,
-          "gex_plus": -118.84,
-          "w1_call": 1.28,
-          "w1_put": -5.45,
+          "call_gex": 3.7,
+          "put_gex": -120.12,
+          "net_gex": -116.43,
+          "vex": -2.75,
+          "gex_plus": -119.17,
+          "w1_call": 1.29,
+          "w1_put": -5.46,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -4.05,
           "fri_call": 2.41,
-          "fri_put": -110.28
+          "fri_put": -110.61
         },
         {
           "strike": 48800.0,
-          "call_gex": 87.67,
-          "put_gex": -342.12,
-          "net_gex": -254.45,
-          "vex": -7.06,
-          "gex_plus": -261.51,
-          "w1_call": 4.46,
-          "w1_put": -14.66,
+          "call_gex": 87.86,
+          "put_gex": -343.02,
+          "net_gex": -255.16,
+          "vex": -7.08,
+          "gex_plus": -262.24,
+          "w1_call": 4.47,
+          "w1_put": -14.69,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 27.66,
-          "mth_put": -31.06,
-          "fri_call": 55.55,
-          "fri_put": -296.4
+          "mth_call": 27.68,
+          "mth_put": -31.08,
+          "fri_call": 55.71,
+          "fri_put": -297.25
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.97,
-          "put_gex": -84.36,
-          "net_gex": -73.39,
+          "call_gex": 11.0,
+          "put_gex": -84.58,
+          "net_gex": -73.58,
           "vex": -2.35,
-          "gex_plus": -75.73,
+          "gex_plus": -75.93,
           "w1_call": 0.0,
-          "w1_put": -9.17,
+          "w1_put": -9.19,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.91,
-          "fri_call": 10.97,
-          "fri_put": -73.28
+          "fri_call": 11.0,
+          "fri_put": -73.48
         },
         {
           "strike": 48900.0,
-          "call_gex": 73.97,
-          "put_gex": -289.65,
-          "net_gex": -215.68,
-          "vex": -7.76,
-          "gex_plus": -223.44,
+          "call_gex": 74.12,
+          "put_gex": -290.4,
+          "net_gex": -216.28,
+          "vex": -7.78,
+          "gex_plus": -224.06,
           "w1_call": 3.14,
-          "w1_put": -13.48,
+          "w1_put": -13.51,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.78,
-          "mth_put": -8.88,
-          "fri_call": 49.05,
-          "fri_put": -267.28
+          "mth_call": 21.79,
+          "mth_put": -8.89,
+          "fri_call": 49.19,
+          "fri_put": -268.0
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.46,
-          "put_gex": -77.78,
-          "net_gex": -70.32,
-          "vex": -2.83,
-          "gex_plus": -73.15,
+          "call_gex": 7.48,
+          "put_gex": -77.97,
+          "net_gex": -70.49,
+          "vex": -2.84,
+          "gex_plus": -73.33,
           "w1_call": 0.62,
-          "w1_put": -7.14,
+          "w1_put": -7.15,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
-          "mth_put": -1.47,
-          "fri_call": 6.84,
-          "fri_put": -69.16
+          "mth_put": -1.48,
+          "fri_call": 6.86,
+          "fri_put": -69.34
         },
         {
           "strike": 49000.0,
-          "call_gex": 291.94,
-          "put_gex": -686.55,
-          "net_gex": -394.61,
-          "vex": -17.43,
-          "gex_plus": -412.04,
-          "w1_call": 26.71,
-          "w1_put": -45.14,
+          "call_gex": 292.42,
+          "put_gex": -688.09,
+          "net_gex": -395.67,
+          "vex": -17.47,
+          "gex_plus": -413.14,
+          "w1_call": 26.76,
+          "w1_put": -45.21,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 126.02,
-          "mth_put": -65.21,
-          "fri_call": 139.2,
-          "fri_put": -576.2
+          "mth_call": 126.12,
+          "mth_put": -65.27,
+          "fri_call": 139.54,
+          "fri_put": -577.61
         },
         {
           "strike": 49050.0,
-          "call_gex": 11.72,
-          "put_gex": -103.3,
-          "net_gex": -91.59,
-          "vex": -4.45,
-          "gex_plus": -96.03,
-          "w1_call": 1.21,
-          "w1_put": -6.37,
+          "call_gex": 11.74,
+          "put_gex": -103.54,
+          "net_gex": -91.8,
+          "vex": -4.46,
+          "gex_plus": -96.25,
+          "w1_call": 1.22,
+          "w1_put": -6.38,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.63,
           "mth_put": -1.46,
-          "fri_call": 9.88,
-          "fri_put": -95.47
+          "fri_call": 9.9,
+          "fri_put": -95.69
         },
         {
           "strike": 49100.0,
-          "call_gex": 233.01,
-          "put_gex": -242.74,
-          "net_gex": -9.72,
+          "call_gex": 233.34,
+          "put_gex": -243.22,
+          "net_gex": -9.88,
           "vex": -0.37,
-          "gex_plus": -10.09,
-          "w1_call": 4.79,
-          "w1_put": -9.88,
+          "gex_plus": -10.25,
+          "w1_call": 4.8,
+          "w1_put": -9.89,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 125.15,
-          "mth_put": -26.36,
-          "fri_call": 103.07,
-          "fri_put": -206.5
+          "mth_call": 125.25,
+          "mth_put": -26.38,
+          "fri_call": 103.3,
+          "fri_put": -206.95
         },
         {
           "strike": 49150.0,
-          "call_gex": 39.03,
-          "put_gex": -81.58,
-          "net_gex": -42.54,
+          "call_gex": 39.1,
+          "put_gex": -81.74,
+          "net_gex": -42.64,
           "vex": -2.41,
-          "gex_plus": -44.95,
+          "gex_plus": -45.05,
           "w1_call": 1.77,
-          "w1_put": -4.13,
+          "w1_put": -4.14,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.25,
+          "mth_call": 8.26,
           "mth_put": -0.21,
-          "fri_call": 29.01,
-          "fri_put": -77.24
+          "fri_call": 29.07,
+          "fri_put": -77.4
         },
         {
           "strike": 49200.0,
-          "call_gex": 185.19,
-          "put_gex": -276.08,
-          "net_gex": -90.88,
-          "vex": -5.49,
-          "gex_plus": -96.37,
-          "w1_call": 9.87,
-          "w1_put": -13.65,
+          "call_gex": 185.48,
+          "put_gex": -276.57,
+          "net_gex": -91.09,
+          "vex": -5.5,
+          "gex_plus": -96.59,
+          "w1_call": 9.89,
+          "w1_put": -13.67,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 47.57,
-          "mth_put": -11.69,
-          "fri_call": 127.76,
-          "fri_put": -250.74
+          "mth_call": 47.6,
+          "mth_put": -11.7,
+          "fri_call": 127.99,
+          "fri_put": -251.21
         },
         {
           "strike": 49250.0,
-          "call_gex": 38.88,
-          "put_gex": -114.26,
-          "net_gex": -75.38,
-          "vex": -4.91,
-          "gex_plus": -80.29,
+          "call_gex": 38.95,
+          "put_gex": -114.45,
+          "net_gex": -75.5,
+          "vex": -4.92,
+          "gex_plus": -80.42,
           "w1_call": 2.86,
-          "w1_put": -10.28,
+          "w1_put": -10.29,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.22,
           "mth_put": -1.22,
-          "fri_call": 34.81,
-          "fri_put": -102.76
+          "fri_call": 34.86,
+          "fri_put": -102.93
         },
         {
           "strike": 49300.0,
-          "call_gex": 166.1,
-          "put_gex": -418.71,
-          "net_gex": -252.61,
-          "vex": -17.51,
-          "gex_plus": -270.12,
-          "w1_call": 13.74,
-          "w1_put": -24.68,
+          "call_gex": 166.33,
+          "put_gex": -419.31,
+          "net_gex": -252.97,
+          "vex": -17.54,
+          "gex_plus": -270.51,
+          "w1_call": 13.76,
+          "w1_put": -24.71,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 19.4,
-          "mth_put": -33.15,
-          "fri_call": 132.96,
-          "fri_put": -360.88
+          "mth_call": 19.42,
+          "mth_put": -33.17,
+          "fri_call": 133.16,
+          "fri_put": -361.43
         },
         {
           "strike": 49350.0,
-          "call_gex": 73.31,
-          "put_gex": -80.16,
-          "net_gex": -6.84,
+          "call_gex": 73.41,
+          "put_gex": -80.26,
+          "net_gex": -6.85,
           "vex": -0.5,
-          "gex_plus": -7.35,
+          "gex_plus": -7.36,
           "w1_call": 3.03,
           "w1_put": -4.68,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.0,
           "mth_put": -1.2,
-          "fri_call": 69.28,
-          "fri_put": -74.28
+          "fri_call": 69.37,
+          "fri_put": -74.37
         },
         {
           "strike": 49400.0,
-          "call_gex": 232.89,
-          "put_gex": -482.27,
-          "net_gex": -249.38,
-          "vex": -19.31,
-          "gex_plus": -268.69,
-          "w1_call": 23.99,
-          "w1_put": -9.43,
+          "call_gex": 233.13,
+          "put_gex": -482.8,
+          "net_gex": -249.66,
+          "vex": -19.33,
+          "gex_plus": -268.99,
+          "w1_call": 24.02,
+          "w1_put": -9.45,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.87,
-          "mth_put": -14.72,
-          "fri_call": 186.03,
-          "fri_put": -458.12
+          "mth_call": 22.89,
+          "mth_put": -14.73,
+          "fri_call": 186.23,
+          "fri_put": -458.62
         },
         {
           "strike": 49450.0,
-          "call_gex": 57.24,
-          "put_gex": -51.55,
-          "net_gex": 5.68,
+          "call_gex": 57.29,
+          "put_gex": -51.6,
+          "net_gex": 5.69,
           "vex": 0.47,
-          "gex_plus": 6.15,
-          "w1_call": 8.71,
+          "gex_plus": 6.16,
+          "w1_call": 8.72,
           "w1_put": -1.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.99,
           "mth_put": -1.58,
-          "fri_call": 47.55,
-          "fri_put": -48.13
+          "fri_call": 47.59,
+          "fri_put": -48.17
         },
         {
           "strike": 49500.0,
-          "call_gex": 420.92,
-          "put_gex": -470.02,
-          "net_gex": -49.1,
+          "call_gex": 421.21,
+          "put_gex": -470.33,
+          "net_gex": -49.12,
           "vex": -4.1,
-          "gex_plus": -53.2,
-          "w1_call": 49.27,
-          "w1_put": -29.15,
+          "gex_plus": -53.22,
+          "w1_call": 49.32,
+          "w1_put": -29.18,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 128.1,
-          "mth_put": -58.39,
-          "fri_call": 243.55,
-          "fri_put": -382.48
+          "mth_call": 128.19,
+          "mth_put": -58.43,
+          "fri_call": 243.71,
+          "fri_put": -382.73
         },
         {
           "strike": 49550.0,
-          "call_gex": 63.97,
-          "put_gex": -23.46,
-          "net_gex": 40.51,
+          "call_gex": 64.0,
+          "put_gex": -23.47,
+          "net_gex": 40.53,
           "vex": 3.64,
-          "gex_plus": 44.15,
+          "gex_plus": 44.17,
           "w1_call": 6.05,
           "w1_put": -2.27,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.35,
           "mth_put": -1.16,
-          "fri_call": 56.57,
-          "fri_put": -20.03
+          "fri_call": 56.59,
+          "fri_put": -20.04
         },
         {
           "strike": 49600.0,
-          "call_gex": 234.13,
-          "put_gex": -127.77,
-          "net_gex": 106.36,
+          "call_gex": 234.19,
+          "put_gex": -127.8,
+          "net_gex": 106.39,
           "vex": 10.02,
-          "gex_plus": 116.38,
-          "w1_call": 15.48,
+          "gex_plus": 116.41,
+          "w1_call": 15.49,
           "w1_put": -4.67,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.45,
-          "mth_put": -7.65,
-          "fri_call": 193.2,
-          "fri_put": -115.45
+          "mth_call": 25.47,
+          "mth_put": -7.66,
+          "fri_call": 193.23,
+          "fri_put": -115.47
         },
         {
           "strike": 49650.0,
           "call_gex": 59.89,
-          "put_gex": -21.1,
+          "put_gex": -21.09,
           "net_gex": 38.8,
           "vex": 3.81,
           "gex_plus": 42.6,
           "w1_call": 3.83,
-          "w1_put": -2.39,
+          "w1_put": -2.4,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.7,
           "mth_put": -0.0,
-          "fri_call": 54.36,
+          "fri_call": 54.35,
           "fri_put": -18.7
         },
         {
           "strike": 49700.0,
-          "call_gex": 243.71,
+          "call_gex": 243.66,
           "put_gex": -60.67,
-          "net_gex": 183.03,
+          "net_gex": 182.99,
           "vex": 18.72,
-          "gex_plus": 201.76,
-          "w1_call": 30.29,
-          "w1_put": -10.02,
+          "gex_plus": 201.71,
+          "w1_call": 30.31,
+          "w1_put": -10.03,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.46,
+          "mth_call": 22.48,
           "mth_put": -9.36,
-          "fri_call": 190.95,
-          "fri_put": -41.29
+          "fri_call": 190.88,
+          "fri_put": -41.28
         },
         {
           "strike": 49750.0,
-          "call_gex": 105.66,
-          "put_gex": -18.56,
-          "net_gex": 87.1,
-          "vex": 9.26,
-          "gex_plus": 96.36,
-          "w1_call": 7.7,
+          "call_gex": 105.6,
+          "put_gex": -18.55,
+          "net_gex": 87.05,
+          "vex": 9.25,
+          "gex_plus": 96.3,
+          "w1_call": 7.71,
           "w1_put": -2.04,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.48,
-          "mth_put": -0.55,
-          "fri_call": 96.48,
-          "fri_put": -15.97
+          "mth_put": -0.56,
+          "fri_call": 96.41,
+          "fri_put": -15.95
         },
         {
           "strike": 49800.0,
-          "call_gex": 282.86,
-          "put_gex": -77.28,
-          "net_gex": 205.58,
-          "vex": 22.7,
-          "gex_plus": 228.28,
-          "w1_call": 44.0,
+          "call_gex": 282.68,
+          "put_gex": -77.25,
+          "net_gex": 205.43,
+          "vex": 22.68,
+          "gex_plus": 228.11,
+          "w1_call": 44.02,
           "w1_put": -8.58,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.31,
-          "mth_put": -21.93,
-          "fri_call": 212.54,
-          "fri_put": -46.77
+          "mth_call": 26.33,
+          "mth_put": -21.94,
+          "fri_call": 212.34,
+          "fri_put": -46.73
         },
         {
           "strike": 49850.0,
-          "call_gex": 86.14,
-          "put_gex": -12.55,
-          "net_gex": 73.58,
-          "vex": 8.42,
-          "gex_plus": 82.0,
+          "call_gex": 86.04,
+          "put_gex": -12.54,
+          "net_gex": 73.5,
+          "vex": 8.41,
+          "gex_plus": 81.91,
           "w1_call": 10.46,
           "w1_put": -4.27,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.9,
           "mth_put": -0.0,
-          "fri_call": 74.78,
-          "fri_put": -8.29
+          "fri_call": 74.68,
+          "fri_put": -8.27
         },
         {
           "strike": 49900.0,
-          "call_gex": 173.23,
-          "put_gex": -33.05,
-          "net_gex": 140.19,
-          "vex": 16.62,
-          "gex_plus": 156.81,
+          "call_gex": 173.01,
+          "put_gex": -33.03,
+          "net_gex": 139.98,
+          "vex": 16.6,
+          "gex_plus": 156.57,
           "w1_call": 10.13,
           "w1_put": -8.48,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 17.8,
-          "mth_put": -11.57,
-          "fri_call": 145.3,
-          "fri_put": -12.99
+          "mth_call": 17.81,
+          "mth_put": -11.58,
+          "fri_call": 145.06,
+          "fri_put": -12.97
         },
         {
           "strike": 49950.0,
-          "call_gex": 75.71,
+          "call_gex": 75.56,
           "put_gex": -7.38,
-          "net_gex": 68.32,
-          "vex": 8.38,
-          "gex_plus": 76.7,
+          "net_gex": 68.19,
+          "vex": 8.36,
+          "gex_plus": 76.55,
           "w1_call": 1.8,
           "w1_put": -2.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.05,
           "mth_put": -0.53,
-          "fri_call": 72.85,
-          "fri_put": -4.86
+          "fri_call": 72.71,
+          "fri_put": -4.85
         },
         {
           "strike": 50000.0,
-          "call_gex": 719.19,
-          "put_gex": -49.38,
-          "net_gex": 669.81,
-          "vex": 85.19,
-          "gex_plus": 755.0,
-          "w1_call": 99.27,
+          "call_gex": 718.44,
+          "put_gex": -49.36,
+          "net_gex": 669.08,
+          "vex": 85.1,
+          "gex_plus": 754.18,
+          "w1_call": 99.25,
           "w1_put": -2.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 251.93,
-          "mth_put": -32.55,
-          "fri_call": 367.99,
-          "fri_put": -14.51
+          "mth_call": 252.04,
+          "mth_put": -32.57,
+          "fri_call": 367.15,
+          "fri_put": -14.47
         },
         {
           "strike": 50050.0,
-          "call_gex": 120.84,
+          "call_gex": 120.54,
           "put_gex": -2.36,
-          "net_gex": 118.48,
-          "vex": 15.49,
-          "gex_plus": 133.97,
+          "net_gex": 118.18,
+          "vex": 15.45,
+          "gex_plus": 133.63,
           "w1_call": 3.55,
           "w1_put": -0.19,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.71,
           "mth_put": -0.17,
-          "fri_call": 115.59,
-          "fri_put": -2.01
+          "fri_call": 115.28,
+          "fri_put": -2.0
         },
         {
           "strike": 50100.0,
-          "call_gex": 152.96,
-          "put_gex": -13.69,
-          "net_gex": 139.27,
-          "vex": 18.8,
-          "gex_plus": 158.07,
+          "call_gex": 152.59,
+          "put_gex": -13.66,
+          "net_gex": 138.93,
+          "vex": 18.75,
+          "gex_plus": 157.68,
           "w1_call": 8.11,
           "w1_put": -0.18,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 19.5,
-          "mth_put": -4.03,
-          "fri_call": 125.35,
-          "fri_put": -9.47
+          "mth_put": -4.04,
+          "fri_call": 124.98,
+          "fri_put": -9.44
         },
         {
           "strike": 50150.0,
-          "call_gex": 70.48,
+          "call_gex": 70.26,
           "put_gex": -2.08,
-          "net_gex": 68.4,
-          "vex": 9.5,
-          "gex_plus": 77.9,
-          "w1_call": 5.91,
+          "net_gex": 68.18,
+          "vex": 9.47,
+          "gex_plus": 77.65,
+          "w1_call": 5.9,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.17,
           "mth_put": -0.0,
-          "fri_call": 64.41,
+          "fri_call": 64.19,
           "fri_put": -2.08
         },
         {
           "strike": 50200.0,
-          "call_gex": 239.71,
-          "put_gex": -8.68,
-          "net_gex": 231.03,
-          "vex": 33.06,
-          "gex_plus": 264.1,
-          "w1_call": 14.72,
+          "call_gex": 238.99,
+          "put_gex": -8.67,
+          "net_gex": 230.32,
+          "vex": 32.96,
+          "gex_plus": 263.28,
+          "w1_call": 14.71,
           "w1_put": -0.84,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 33.05,
-          "mth_put": -6.02,
-          "fri_call": 191.95,
-          "fri_put": -1.82
+          "mth_call": 33.06,
+          "mth_put": -6.03,
+          "fri_call": 191.22,
+          "fri_put": -1.81
         }
       ],
       "weekly_gex": [
         {
           "strike": 48400.0,
           "call_gex": 1.95,
-          "put_gex": -20.11,
-          "net_gex": -18.17
+          "put_gex": -20.15,
+          "net_gex": -18.2
         },
         {
           "strike": 48450.0,
           "call_gex": 0.65,
-          "put_gex": -6.83,
-          "net_gex": -6.18
+          "put_gex": -6.84,
+          "net_gex": -6.19
         },
         {
           "strike": 48500.0,
-          "call_gex": 4.55,
-          "put_gex": -131.74,
-          "net_gex": -127.19
+          "call_gex": 4.56,
+          "put_gex": -132.0,
+          "net_gex": -127.43
         },
         {
           "strike": 48550.0,
           "call_gex": 0.65,
-          "put_gex": -5.85,
-          "net_gex": -5.2
+          "put_gex": -5.86,
+          "net_gex": -5.21
         },
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -26.62,
-          "net_gex": -26.62
+          "put_gex": -26.67,
+          "net_gex": -26.67
         },
         {
           "strike": 48650.0,
           "call_gex": 0.32,
-          "put_gex": -13.6,
-          "net_gex": -13.27
+          "put_gex": -13.62,
+          "net_gex": -13.3
         },
         {
           "strike": 48700.0,
           "call_gex": 0.32,
-          "put_gex": -13.54,
-          "net_gex": -13.22
+          "put_gex": -13.57,
+          "net_gex": -13.24
         },
         {
           "strike": 48750.0,
-          "call_gex": 1.28,
-          "put_gex": -5.45,
-          "net_gex": -4.17
+          "call_gex": 1.29,
+          "put_gex": -5.46,
+          "net_gex": -4.18
         },
         {
           "strike": 48800.0,
-          "call_gex": 4.46,
-          "put_gex": -14.66,
-          "net_gex": -10.2
+          "call_gex": 4.47,
+          "put_gex": -14.69,
+          "net_gex": -10.22
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -9.17,
-          "net_gex": -9.17
+          "put_gex": -9.19,
+          "net_gex": -9.19
         },
         {
           "strike": 48900.0,
           "call_gex": 3.14,
-          "put_gex": -13.48,
-          "net_gex": -10.35
+          "put_gex": -13.51,
+          "net_gex": -10.37
         },
         {
           "strike": 48950.0,
           "call_gex": 0.62,
-          "put_gex": -7.14,
-          "net_gex": -6.52
+          "put_gex": -7.15,
+          "net_gex": -6.53
         },
         {
           "strike": 49000.0,
-          "call_gex": 26.71,
-          "put_gex": -45.14,
-          "net_gex": -18.42
+          "call_gex": 26.76,
+          "put_gex": -45.21,
+          "net_gex": -18.45
         },
         {
           "strike": 49050.0,
-          "call_gex": 1.21,
-          "put_gex": -6.37,
-          "net_gex": -5.16
+          "call_gex": 1.22,
+          "put_gex": -6.38,
+          "net_gex": -5.17
         },
         {
           "strike": 49100.0,
-          "call_gex": 4.79,
-          "put_gex": -9.88,
-          "net_gex": -5.09
+          "call_gex": 4.8,
+          "put_gex": -9.89,
+          "net_gex": -5.1
         },
         {
           "strike": 49150.0,
           "call_gex": 1.77,
-          "put_gex": -4.13,
+          "put_gex": -4.14,
           "net_gex": -2.36
         },
         {
           "strike": 49200.0,
-          "call_gex": 9.87,
-          "put_gex": -13.65,
-          "net_gex": -3.77
+          "call_gex": 9.89,
+          "put_gex": -13.67,
+          "net_gex": -3.78
         },
         {
           "strike": 49250.0,
           "call_gex": 2.86,
-          "put_gex": -10.28,
-          "net_gex": -7.42
+          "put_gex": -10.29,
+          "net_gex": -7.43
         },
         {
           "strike": 49300.0,
-          "call_gex": 13.74,
-          "put_gex": -24.68,
-          "net_gex": -10.94
+          "call_gex": 13.76,
+          "put_gex": -24.71,
+          "net_gex": -10.95
         },
         {
           "strike": 49350.0,
@@ -4666,21 +4666,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 23.99,
-          "put_gex": -9.43,
-          "net_gex": 14.56
+          "call_gex": 24.02,
+          "put_gex": -9.45,
+          "net_gex": 14.57
         },
         {
           "strike": 49450.0,
-          "call_gex": 8.71,
+          "call_gex": 8.72,
           "put_gex": -1.85,
-          "net_gex": 6.86
+          "net_gex": 6.87
         },
         {
           "strike": 49500.0,
-          "call_gex": 49.27,
-          "put_gex": -29.15,
-          "net_gex": 20.12
+          "call_gex": 49.32,
+          "put_gex": -29.18,
+          "net_gex": 20.14
         },
         {
           "strike": 49550.0,
@@ -4690,33 +4690,33 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 15.48,
+          "call_gex": 15.49,
           "put_gex": -4.67,
-          "net_gex": 10.81
+          "net_gex": 10.82
         },
         {
           "strike": 49650.0,
           "call_gex": 3.83,
-          "put_gex": -2.39,
+          "put_gex": -2.4,
           "net_gex": 1.44
         },
         {
           "strike": 49700.0,
-          "call_gex": 30.29,
-          "put_gex": -10.02,
-          "net_gex": 20.27
+          "call_gex": 30.31,
+          "put_gex": -10.03,
+          "net_gex": 20.28
         },
         {
           "strike": 49750.0,
-          "call_gex": 7.7,
+          "call_gex": 7.71,
           "put_gex": -2.04,
-          "net_gex": 5.66
+          "net_gex": 5.67
         },
         {
           "strike": 49800.0,
-          "call_gex": 44.0,
+          "call_gex": 44.02,
           "put_gex": -8.58,
-          "net_gex": 35.42
+          "net_gex": 35.43
         },
         {
           "strike": 49850.0,
@@ -4738,9 +4738,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 99.27,
+          "call_gex": 99.25,
           "put_gex": -2.32,
-          "net_gex": 96.94
+          "net_gex": 96.93
         },
         {
           "strike": 50050.0,
@@ -4756,247 +4756,247 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50150.0,
-          "call_gex": 5.91,
+          "call_gex": 5.9,
           "put_gex": -0.0,
-          "net_gex": 5.91
+          "net_gex": 5.9
         },
         {
           "strike": 50200.0,
-          "call_gex": 14.72,
+          "call_gex": 14.71,
           "put_gex": -0.84,
-          "net_gex": 13.88
+          "net_gex": 13.87
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 5.73,
-          "put_gex": -240.03,
-          "net_gex": -234.29
+          "call_gex": 5.75,
+          "put_gex": -240.77,
+          "net_gex": -235.02
         },
         {
           "strike": 48450.0,
           "call_gex": 0.41,
-          "put_gex": -189.75,
-          "net_gex": -189.34
+          "put_gex": -190.34,
+          "net_gex": -189.93
         },
         {
           "strike": 48500.0,
-          "call_gex": 218.68,
-          "put_gex": -487.92,
-          "net_gex": -269.24
+          "call_gex": 219.36,
+          "put_gex": -489.44,
+          "net_gex": -270.08
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.87,
-          "put_gex": -96.9,
-          "net_gex": -94.03
+          "call_gex": 2.88,
+          "put_gex": -97.2,
+          "net_gex": -94.32
         },
         {
           "strike": 48600.0,
           "call_gex": 2.87,
-          "put_gex": -221.87,
-          "net_gex": -219.0
+          "put_gex": -222.55,
+          "net_gex": -219.67
         },
         {
           "strike": 48650.0,
           "call_gex": 1.63,
-          "put_gex": -172.3,
-          "net_gex": -170.67
+          "put_gex": -172.82,
+          "net_gex": -171.19
         },
         {
           "strike": 48700.0,
-          "call_gex": 10.11,
-          "put_gex": -263.36,
-          "net_gex": -253.25
+          "call_gex": 10.14,
+          "put_gex": -264.15,
+          "net_gex": -254.01
         },
         {
           "strike": 48750.0,
           "call_gex": 2.41,
-          "put_gex": -110.28,
-          "net_gex": -107.88
+          "put_gex": -110.61,
+          "net_gex": -108.19
         },
         {
           "strike": 48800.0,
-          "call_gex": 55.55,
-          "put_gex": -296.4,
-          "net_gex": -240.85
+          "call_gex": 55.71,
+          "put_gex": -297.25,
+          "net_gex": -241.54
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.97,
-          "put_gex": -73.28,
-          "net_gex": -62.3
+          "call_gex": 11.0,
+          "put_gex": -73.48,
+          "net_gex": -62.48
         },
         {
           "strike": 48900.0,
-          "call_gex": 49.05,
-          "put_gex": -267.28,
-          "net_gex": -218.23
+          "call_gex": 49.19,
+          "put_gex": -268.0,
+          "net_gex": -218.82
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.84,
-          "put_gex": -69.16,
-          "net_gex": -62.32
+          "call_gex": 6.86,
+          "put_gex": -69.34,
+          "net_gex": -62.48
         },
         {
           "strike": 49000.0,
-          "call_gex": 139.2,
-          "put_gex": -576.2,
-          "net_gex": -437.0
+          "call_gex": 139.54,
+          "put_gex": -577.61,
+          "net_gex": -438.07
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.88,
-          "put_gex": -95.47,
-          "net_gex": -85.6
+          "call_gex": 9.9,
+          "put_gex": -95.69,
+          "net_gex": -85.8
         },
         {
           "strike": 49100.0,
-          "call_gex": 103.07,
-          "put_gex": -206.5,
-          "net_gex": -103.43
+          "call_gex": 103.3,
+          "put_gex": -206.95,
+          "net_gex": -103.66
         },
         {
           "strike": 49150.0,
-          "call_gex": 29.01,
-          "put_gex": -77.24,
-          "net_gex": -48.23
+          "call_gex": 29.07,
+          "put_gex": -77.4,
+          "net_gex": -48.33
         },
         {
           "strike": 49200.0,
-          "call_gex": 127.76,
-          "put_gex": -250.74,
-          "net_gex": -122.99
+          "call_gex": 127.99,
+          "put_gex": -251.21,
+          "net_gex": -123.22
         },
         {
           "strike": 49250.0,
-          "call_gex": 34.81,
-          "put_gex": -102.76,
-          "net_gex": -67.95
+          "call_gex": 34.86,
+          "put_gex": -102.93,
+          "net_gex": -68.07
         },
         {
           "strike": 49300.0,
-          "call_gex": 132.96,
-          "put_gex": -360.88,
-          "net_gex": -227.93
+          "call_gex": 133.16,
+          "put_gex": -361.43,
+          "net_gex": -228.27
         },
         {
           "strike": 49350.0,
-          "call_gex": 69.28,
-          "put_gex": -74.28,
-          "net_gex": -4.99
+          "call_gex": 69.37,
+          "put_gex": -74.37,
+          "net_gex": -5.0
         },
         {
           "strike": 49400.0,
-          "call_gex": 186.03,
-          "put_gex": -458.12,
-          "net_gex": -272.09
+          "call_gex": 186.23,
+          "put_gex": -458.62,
+          "net_gex": -272.39
         },
         {
           "strike": 49450.0,
-          "call_gex": 47.55,
-          "put_gex": -48.13,
+          "call_gex": 47.59,
+          "put_gex": -48.17,
           "net_gex": -0.58
         },
         {
           "strike": 49500.0,
-          "call_gex": 243.55,
-          "put_gex": -382.48,
-          "net_gex": -138.93
+          "call_gex": 243.71,
+          "put_gex": -382.73,
+          "net_gex": -139.02
         },
         {
           "strike": 49550.0,
-          "call_gex": 56.57,
-          "put_gex": -20.03,
-          "net_gex": 36.54
+          "call_gex": 56.59,
+          "put_gex": -20.04,
+          "net_gex": 36.55
         },
         {
           "strike": 49600.0,
-          "call_gex": 193.2,
-          "put_gex": -115.45,
-          "net_gex": 77.75
+          "call_gex": 193.23,
+          "put_gex": -115.47,
+          "net_gex": 77.76
         },
         {
           "strike": 49650.0,
-          "call_gex": 54.36,
+          "call_gex": 54.35,
           "put_gex": -18.7,
-          "net_gex": 35.66
+          "net_gex": 35.65
         },
         {
           "strike": 49700.0,
-          "call_gex": 190.95,
-          "put_gex": -41.29,
-          "net_gex": 149.66
+          "call_gex": 190.88,
+          "put_gex": -41.28,
+          "net_gex": 149.6
         },
         {
           "strike": 49750.0,
-          "call_gex": 96.48,
-          "put_gex": -15.97,
-          "net_gex": 80.51
+          "call_gex": 96.41,
+          "put_gex": -15.95,
+          "net_gex": 80.46
         },
         {
           "strike": 49800.0,
-          "call_gex": 212.54,
-          "put_gex": -46.77,
-          "net_gex": 165.77
+          "call_gex": 212.34,
+          "put_gex": -46.73,
+          "net_gex": 165.61
         },
         {
           "strike": 49850.0,
-          "call_gex": 74.78,
-          "put_gex": -8.29,
-          "net_gex": 66.49
+          "call_gex": 74.68,
+          "put_gex": -8.27,
+          "net_gex": 66.41
         },
         {
           "strike": 49900.0,
-          "call_gex": 145.3,
-          "put_gex": -12.99,
-          "net_gex": 132.3
+          "call_gex": 145.06,
+          "put_gex": -12.97,
+          "net_gex": 132.09
         },
         {
           "strike": 49950.0,
-          "call_gex": 72.85,
-          "put_gex": -4.86,
-          "net_gex": 67.99
+          "call_gex": 72.71,
+          "put_gex": -4.85,
+          "net_gex": 67.86
         },
         {
           "strike": 50000.0,
-          "call_gex": 367.99,
-          "put_gex": -14.51,
-          "net_gex": 353.49
+          "call_gex": 367.15,
+          "put_gex": -14.47,
+          "net_gex": 352.68
         },
         {
           "strike": 50050.0,
-          "call_gex": 115.59,
-          "put_gex": -2.01,
-          "net_gex": 113.58
+          "call_gex": 115.28,
+          "put_gex": -2.0,
+          "net_gex": 113.28
         },
         {
           "strike": 50100.0,
-          "call_gex": 125.35,
-          "put_gex": -9.47,
-          "net_gex": 115.88
+          "call_gex": 124.98,
+          "put_gex": -9.44,
+          "net_gex": 115.53
         },
         {
           "strike": 50150.0,
-          "call_gex": 64.41,
+          "call_gex": 64.19,
           "put_gex": -2.08,
-          "net_gex": 62.32
+          "net_gex": 62.11
         },
         {
           "strike": 50200.0,
-          "call_gex": 191.95,
-          "put_gex": -1.82,
-          "net_gex": 190.13
+          "call_gex": 191.22,
+          "put_gex": -1.81,
+          "net_gex": 189.41
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 44.22,
-          "put_gex": -20.51,
-          "net_gex": 23.71
+          "call_gex": 44.26,
+          "put_gex": -20.52,
+          "net_gex": 23.73
         },
         {
           "strike": 48450.0,
@@ -5006,9 +5006,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 66.57,
-          "put_gex": -153.69,
-          "net_gex": -87.12
+          "call_gex": 66.63,
+          "put_gex": -153.82,
+          "net_gex": -87.2
         },
         {
           "strike": 48550.0,
@@ -5018,21 +5018,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 62.5,
-          "put_gex": -24.83,
-          "net_gex": 37.67
+          "call_gex": 62.56,
+          "put_gex": -24.85,
+          "net_gex": 37.71
         },
         {
           "strike": 48650.0,
           "call_gex": 0.0,
-          "put_gex": -3.42,
-          "net_gex": -3.42
+          "put_gex": -3.43,
+          "net_gex": -3.43
         },
         {
           "strike": 48700.0,
-          "call_gex": 48.28,
-          "put_gex": -23.71,
-          "net_gex": 24.57
+          "call_gex": 48.32,
+          "put_gex": -23.73,
+          "net_gex": 24.59
         },
         {
           "strike": 48750.0,
@@ -5042,9 +5042,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 27.66,
-          "put_gex": -31.06,
-          "net_gex": -3.4
+          "call_gex": 27.68,
+          "put_gex": -31.08,
+          "net_gex": -3.41
         },
         {
           "strike": 48850.0,
@@ -5054,45 +5054,45 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 21.78,
-          "put_gex": -8.88,
-          "net_gex": 12.9
+          "call_gex": 21.79,
+          "put_gex": -8.89,
+          "net_gex": 12.91
         },
         {
           "strike": 48950.0,
           "call_gex": 0.0,
-          "put_gex": -1.47,
-          "net_gex": -1.47
+          "put_gex": -1.48,
+          "net_gex": -1.48
         },
         {
           "strike": 49000.0,
-          "call_gex": 126.02,
-          "put_gex": -65.21,
-          "net_gex": 60.81
+          "call_gex": 126.12,
+          "put_gex": -65.27,
+          "net_gex": 60.86
         },
         {
           "strike": 49050.0,
           "call_gex": 0.63,
           "put_gex": -1.46,
-          "net_gex": -0.83
+          "net_gex": -0.84
         },
         {
           "strike": 49100.0,
-          "call_gex": 125.15,
-          "put_gex": -26.36,
-          "net_gex": 98.79
+          "call_gex": 125.25,
+          "put_gex": -26.38,
+          "net_gex": 98.87
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.25,
+          "call_gex": 8.26,
           "put_gex": -0.21,
           "net_gex": 8.05
         },
         {
           "strike": 49200.0,
-          "call_gex": 47.57,
-          "put_gex": -11.69,
-          "net_gex": 35.88
+          "call_gex": 47.6,
+          "put_gex": -11.7,
+          "net_gex": 35.91
         },
         {
           "strike": 49250.0,
@@ -5102,9 +5102,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 19.4,
-          "put_gex": -33.15,
-          "net_gex": -13.74
+          "call_gex": 19.42,
+          "put_gex": -33.17,
+          "net_gex": -13.75
         },
         {
           "strike": 49350.0,
@@ -5114,9 +5114,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 22.87,
-          "put_gex": -14.72,
-          "net_gex": 8.15
+          "call_gex": 22.89,
+          "put_gex": -14.73,
+          "net_gex": 8.16
         },
         {
           "strike": 49450.0,
@@ -5126,9 +5126,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 128.1,
-          "put_gex": -58.39,
-          "net_gex": 69.71
+          "call_gex": 128.19,
+          "put_gex": -58.43,
+          "net_gex": 69.76
         },
         {
           "strike": 49550.0,
@@ -5138,9 +5138,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 25.45,
-          "put_gex": -7.65,
-          "net_gex": 17.8
+          "call_gex": 25.47,
+          "put_gex": -7.66,
+          "net_gex": 17.81
         },
         {
           "strike": 49650.0,
@@ -5150,20 +5150,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 22.46,
+          "call_gex": 22.48,
           "put_gex": -9.36,
-          "net_gex": 13.1
+          "net_gex": 13.11
         },
         {
           "strike": 49750.0,
           "call_gex": 1.48,
-          "put_gex": -0.55,
-          "net_gex": 0.92
+          "put_gex": -0.56,
+          "net_gex": 0.93
         },
         {
           "strike": 49800.0,
-          "call_gex": 26.31,
-          "put_gex": -21.93,
+          "call_gex": 26.33,
+          "put_gex": -21.94,
           "net_gex": 4.39
         },
         {
@@ -5174,8 +5174,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 17.8,
-          "put_gex": -11.57,
+          "call_gex": 17.81,
+          "put_gex": -11.58,
           "net_gex": 6.23
         },
         {
@@ -5186,9 +5186,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 251.93,
-          "put_gex": -32.55,
-          "net_gex": 219.38
+          "call_gex": 252.04,
+          "put_gex": -32.57,
+          "net_gex": 219.47
         },
         {
           "strike": 50050.0,
@@ -5199,8 +5199,8 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 50100.0,
           "call_gex": 19.5,
-          "put_gex": -4.03,
-          "net_gex": 15.46
+          "put_gex": -4.04,
+          "net_gex": 15.47
         },
         {
           "strike": 50150.0,
@@ -5210,9 +5210,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 33.05,
-          "put_gex": -6.02,
-          "net_gex": 27.03
+          "call_gex": 33.06,
+          "put_gex": -6.03,
+          "net_gex": 27.04
         }
       ]
     },
@@ -5268,27 +5268,27 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 41.7,
-          "put_gex": -157.68,
-          "net_gex": -115.98,
-          "vex": 12.6,
-          "gex_plus": -103.38,
+          "call_gex": 41.72,
+          "put_gex": -157.58,
+          "net_gex": -115.86,
+          "vex": 12.58,
+          "gex_plus": -103.27,
           "w1_call": 1.31,
-          "w1_put": -13.52,
+          "w1_put": -13.53,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 37.36,
-          "mth_put": -17.33,
+          "mth_call": 37.38,
+          "mth_put": -17.34,
           "fri_call": 3.03,
-          "fri_put": -126.83
+          "fri_put": -126.71
         },
         {
           "strike": 48450.0,
           "call_gex": 0.68,
-          "put_gex": -110.73,
-          "net_gex": -110.05,
-          "vex": 11.46,
-          "gex_plus": -98.59,
+          "put_gex": -110.67,
+          "net_gex": -109.99,
+          "vex": 11.45,
+          "gex_plus": -98.54,
           "w1_call": 0.45,
           "w1_put": -4.73,
           "w2_call": 0.0,
@@ -5296,23 +5296,23 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -0.92,
           "fri_call": 0.23,
-          "fri_put": -105.09
+          "fri_put": -105.03
         },
         {
           "strike": 48500.0,
           "call_gex": 187.88,
-          "put_gex": -510.36,
-          "net_gex": -322.48,
+          "put_gex": -510.4,
+          "net_gex": -322.52,
           "vex": 32.09,
-          "gex_plus": -290.39,
+          "gex_plus": -290.43,
           "w1_call": 3.25,
-          "w1_put": -93.93,
+          "w1_put": -93.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 57.7,
-          "mth_put": -133.22,
-          "fri_call": 126.93,
-          "fri_put": -283.21
+          "mth_call": 57.74,
+          "mth_put": -133.3,
+          "fri_call": 126.89,
+          "fri_put": -283.12
         },
         {
           "strike": 48550.0,
@@ -5328,543 +5328,543 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.32,
           "fri_call": 1.75,
-          "fri_put": -58.95
+          "fri_put": -58.94
         },
         {
           "strike": 48600.0,
-          "call_gex": 57.4,
-          "put_gex": -183.64,
-          "net_gex": -126.24,
+          "call_gex": 57.44,
+          "put_gex": -183.7,
+          "net_gex": -126.27,
           "vex": 11.61,
-          "gex_plus": -114.64,
+          "gex_plus": -114.66,
           "w1_call": 0.0,
-          "w1_put": -20.13,
+          "w1_put": -20.14,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 55.57,
-          "mth_put": -22.08,
+          "mth_call": 55.61,
+          "mth_put": -22.09,
           "fri_call": 1.83,
-          "fri_put": -141.44
+          "fri_put": -141.47
         },
         {
           "strike": 48650.0,
           "call_gex": 1.34,
-          "put_gex": -128.77,
-          "net_gex": -127.43,
+          "put_gex": -128.84,
+          "net_gex": -127.49,
           "vex": 11.13,
-          "gex_plus": -116.3,
+          "gex_plus": -116.36,
           "w1_call": 0.25,
-          "w1_put": -10.59,
+          "w1_put": -10.6,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.08,
           "fri_call": 1.09,
-          "fri_put": -115.1
+          "fri_put": -115.16
         },
         {
           "strike": 48700.0,
-          "call_gex": 51.36,
-          "put_gex": -216.83,
-          "net_gex": -165.47,
-          "vex": 13.8,
-          "gex_plus": -151.67,
+          "call_gex": 51.4,
+          "put_gex": -216.99,
+          "net_gex": -165.59,
+          "vex": 13.81,
+          "gex_plus": -151.78,
           "w1_call": 0.26,
-          "w1_put": -10.86,
+          "w1_put": -10.87,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.03,
-          "mth_put": -21.62,
+          "mth_call": 44.06,
+          "mth_put": -21.64,
           "fri_call": 7.08,
-          "fri_put": -184.35
+          "fri_put": -184.49
         },
         {
           "strike": 48750.0,
-          "call_gex": 2.82,
-          "put_gex": -89.13,
-          "net_gex": -86.31,
-          "vex": 6.81,
-          "gex_plus": -79.49,
+          "call_gex": 2.83,
+          "put_gex": -89.22,
+          "net_gex": -86.39,
+          "vex": 6.82,
+          "gex_plus": -79.57,
           "w1_call": 1.06,
-          "w1_put": -4.5,
+          "w1_put": -4.51,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.74,
-          "fri_call": 1.76,
-          "fri_put": -80.89
+          "fri_call": 1.77,
+          "fri_put": -80.97
         },
         {
           "strike": 48800.0,
-          "call_gex": 72.35,
-          "put_gex": -269.29,
-          "net_gex": -196.94,
-          "vex": 14.73,
-          "gex_plus": -182.21,
-          "w1_call": 3.79,
-          "w1_put": -12.46,
+          "call_gex": 72.42,
+          "put_gex": -269.6,
+          "net_gex": -197.17,
+          "vex": 14.75,
+          "gex_plus": -182.42,
+          "w1_call": 3.8,
+          "w1_put": -12.48,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.87,
-          "mth_put": -29.05,
-          "fri_call": 42.69,
-          "fri_put": -227.78
+          "mth_call": 25.89,
+          "mth_put": -29.07,
+          "fri_call": 42.74,
+          "fri_put": -228.05
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.83,
-          "put_gex": -68.84,
-          "net_gex": -60.0,
+          "call_gex": 8.85,
+          "put_gex": -68.93,
+          "net_gex": -60.08,
           "vex": 4.24,
-          "gex_plus": -55.77,
+          "gex_plus": -55.84,
           "w1_call": 0.0,
-          "w1_put": -8.03,
+          "w1_put": -8.04,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.81,
-          "fri_call": 8.83,
-          "fri_put": -59.0
+          "fri_call": 8.85,
+          "fri_put": -59.08
         },
         {
           "strike": 48900.0,
-          "call_gex": 65.09,
-          "put_gex": -246.13,
-          "net_gex": -181.04,
-          "vex": 12.06,
-          "gex_plus": -168.98,
+          "call_gex": 65.18,
+          "put_gex": -246.51,
+          "net_gex": -181.33,
+          "vex": 12.08,
+          "gex_plus": -169.25,
           "w1_call": 2.83,
-          "w1_put": -12.15,
+          "w1_put": -12.17,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.89,
+          "mth_call": 20.91,
           "mth_put": -8.52,
-          "fri_call": 41.38,
-          "fri_put": -225.46
+          "fri_call": 41.44,
+          "fri_put": -225.82
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.62,
-          "put_gex": -69.18,
-          "net_gex": -62.55,
+          "call_gex": 6.63,
+          "put_gex": -69.29,
+          "net_gex": -62.66,
           "vex": 3.9,
-          "gex_plus": -58.66,
+          "gex_plus": -58.76,
           "w1_call": 0.58,
-          "w1_put": -6.62,
+          "w1_put": -6.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.43,
-          "fri_call": 6.04,
-          "fri_put": -61.12
+          "fri_call": 6.06,
+          "fri_put": -61.23
         },
         {
           "strike": 49000.0,
-          "call_gex": 278.35,
-          "put_gex": -640.66,
-          "net_gex": -362.31,
-          "vex": 21.17,
-          "gex_plus": -341.14,
-          "w1_call": 25.51,
-          "w1_put": -43.11,
+          "call_gex": 278.73,
+          "put_gex": -641.81,
+          "net_gex": -363.07,
+          "vex": 21.22,
+          "gex_plus": -341.86,
+          "w1_call": 25.55,
+          "w1_put": -43.17,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 123.98,
-          "mth_put": -64.16,
-          "fri_call": 128.86,
-          "fri_put": -533.39
+          "mth_call": 124.07,
+          "mth_put": -64.21,
+          "fri_call": 129.11,
+          "fri_put": -534.43
         },
         {
           "strike": 49050.0,
-          "call_gex": 11.39,
-          "put_gex": -100.3,
-          "net_gex": -88.9,
-          "vex": 4.8,
-          "gex_plus": -84.1,
+          "call_gex": 11.42,
+          "put_gex": -100.5,
+          "net_gex": -89.09,
+          "vex": 4.81,
+          "gex_plus": -84.28,
           "w1_call": 1.19,
-          "w1_put": -6.26,
+          "w1_put": -6.27,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.62,
           "mth_put": -1.46,
-          "fri_call": 9.58,
-          "fri_put": -92.58
+          "fri_call": 9.6,
+          "fri_put": -92.77
         },
         {
           "strike": 49100.0,
-          "call_gex": 235.8,
-          "put_gex": -246.34,
-          "net_gex": -10.53,
-          "vex": 0.68,
-          "gex_plus": -9.86,
+          "call_gex": 236.14,
+          "put_gex": -246.84,
+          "net_gex": -10.7,
+          "vex": 0.69,
+          "gex_plus": -10.01,
           "w1_call": 4.85,
-          "w1_put": -10.0,
+          "w1_put": -10.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 126.26,
-          "mth_put": -26.59,
-          "fri_call": 104.69,
-          "fri_put": -209.75
+          "mth_call": 126.36,
+          "mth_put": -26.61,
+          "fri_call": 104.93,
+          "fri_put": -210.22
         },
         {
           "strike": 49150.0,
-          "call_gex": 41.14,
-          "put_gex": -86.69,
-          "net_gex": -45.55,
+          "call_gex": 41.22,
+          "put_gex": -86.89,
+          "net_gex": -45.67,
           "vex": 2.1,
-          "gex_plus": -43.45,
-          "w1_call": 1.84,
-          "w1_put": -4.3,
+          "gex_plus": -43.57,
+          "w1_call": 1.85,
+          "w1_put": -4.31,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.43,
+          "mth_call": 8.44,
           "mth_put": -0.21,
-          "fri_call": 30.86,
-          "fri_put": -82.17
+          "fri_call": 30.93,
+          "fri_put": -82.37
         },
         {
           "strike": 49200.0,
-          "call_gex": 202.15,
-          "put_gex": -306.12,
-          "net_gex": -103.97,
-          "vex": 4.38,
-          "gex_plus": -99.59,
-          "w1_call": 10.59,
-          "w1_put": -14.64,
+          "call_gex": 202.57,
+          "put_gex": -306.86,
+          "net_gex": -104.29,
+          "vex": 4.39,
+          "gex_plus": -99.9,
+          "w1_call": 10.61,
+          "w1_put": -14.66,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 49.21,
-          "mth_put": -12.09,
-          "fri_call": 142.35,
-          "fri_put": -279.39
+          "mth_call": 49.25,
+          "mth_put": -12.1,
+          "fri_call": 142.71,
+          "fri_put": -280.09
         },
         {
           "strike": 49250.0,
-          "call_gex": 45.05,
-          "put_gex": -132.54,
-          "net_gex": -87.5,
+          "call_gex": 45.16,
+          "put_gex": -132.88,
+          "net_gex": -87.72,
           "vex": 3.28,
-          "gex_plus": -84.22,
-          "w1_call": 3.15,
-          "w1_put": -11.35,
+          "gex_plus": -84.43,
+          "w1_call": 3.16,
+          "w1_put": -11.37,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.28,
           "mth_put": -1.28,
-          "fri_call": 40.62,
-          "fri_put": -119.92
+          "fri_call": 40.72,
+          "fri_put": -120.23
         },
         {
           "strike": 49300.0,
-          "call_gex": 198.69,
-          "put_gex": -504.25,
-          "net_gex": -305.56,
-          "vex": 10.16,
-          "gex_plus": -295.41,
-          "w1_call": 15.62,
-          "w1_put": -28.04,
+          "call_gex": 199.18,
+          "put_gex": -505.53,
+          "net_gex": -306.36,
+          "vex": 10.19,
+          "gex_plus": -296.17,
+          "w1_call": 15.64,
+          "w1_put": -28.1,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.58,
-          "mth_put": -35.16,
-          "fri_call": 162.49,
-          "fri_put": -441.04
+          "mth_call": 20.6,
+          "mth_put": -35.19,
+          "fri_call": 162.93,
+          "fri_put": -442.25
         },
         {
           "strike": 49350.0,
-          "call_gex": 93.29,
-          "put_gex": -101.82,
-          "net_gex": -8.54,
+          "call_gex": 93.54,
+          "put_gex": -102.1,
+          "net_gex": -8.56,
           "vex": 0.25,
-          "gex_plus": -8.29,
-          "w1_call": 3.54,
-          "w1_put": -5.47,
+          "gex_plus": -8.31,
+          "w1_call": 3.55,
+          "w1_put": -5.48,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.08,
           "mth_put": -1.29,
-          "fri_call": 88.67,
-          "fri_put": -95.06
+          "fri_call": 88.92,
+          "fri_put": -95.33
         },
         {
           "strike": 49400.0,
-          "call_gex": 303.07,
-          "put_gex": -641.34,
-          "net_gex": -338.26,
-          "vex": 8.5,
-          "gex_plus": -329.76,
-          "w1_call": 28.89,
-          "w1_put": -11.36,
+          "call_gex": 303.87,
+          "put_gex": -643.14,
+          "net_gex": -339.28,
+          "vex": 8.53,
+          "gex_plus": -330.75,
+          "w1_call": 28.94,
+          "w1_put": -11.38,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.87,
-          "mth_put": -16.01,
-          "fri_call": 249.31,
-          "fri_put": -613.97
+          "mth_call": 24.9,
+          "mth_put": -16.02,
+          "fri_call": 250.03,
+          "fri_put": -615.74
         },
         {
           "strike": 49450.0,
-          "call_gex": 78.6,
-          "put_gex": -71.57,
-          "net_gex": 7.03,
+          "call_gex": 78.82,
+          "put_gex": -71.77,
+          "net_gex": 7.04,
           "vex": -0.15,
-          "gex_plus": 6.89,
-          "w1_call": 10.79,
+          "gex_plus": 6.9,
+          "w1_call": 10.81,
           "w1_put": -2.29,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.09,
           "mth_put": -1.74,
-          "fri_call": 66.72,
-          "fri_put": -67.54
+          "fri_call": 66.92,
+          "fri_put": -67.74
         },
         {
           "strike": 49500.0,
-          "call_gex": 563.57,
-          "put_gex": -664.31,
-          "net_gex": -100.74,
-          "vex": 1.82,
-          "gex_plus": -98.91,
-          "w1_call": 62.84,
-          "w1_put": -37.18,
+          "call_gex": 564.89,
+          "put_gex": -666.12,
+          "net_gex": -101.24,
+          "vex": 1.83,
+          "gex_plus": -99.4,
+          "w1_call": 62.96,
+          "w1_put": -37.25,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 142.86,
-          "mth_put": -65.11,
-          "fri_call": 357.87,
-          "fri_put": -562.01
+          "mth_call": 142.98,
+          "mth_put": -65.17,
+          "fri_call": 358.95,
+          "fri_put": -563.71
         },
         {
           "strike": 49550.0,
-          "call_gex": 96.5,
-          "put_gex": -35.1,
-          "net_gex": 61.39,
+          "call_gex": 96.78,
+          "put_gex": -35.2,
+          "net_gex": 61.58,
           "vex": -0.78,
-          "gex_plus": 60.61,
-          "w1_call": 7.94,
+          "gex_plus": 60.79,
+          "w1_call": 7.95,
           "w1_put": -2.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.53,
           "mth_put": -1.31,
-          "fri_call": 87.03,
-          "fri_put": -30.81
+          "fri_call": 87.3,
+          "fri_put": -30.91
         },
         {
           "strike": 49600.0,
-          "call_gex": 361.21,
-          "put_gex": -201.02,
-          "net_gex": 160.19,
+          "call_gex": 362.23,
+          "put_gex": -201.61,
+          "net_gex": 160.62,
           "vex": -1.35,
-          "gex_plus": 158.84,
-          "w1_call": 20.92,
-          "w1_put": -6.31,
+          "gex_plus": 159.27,
+          "w1_call": 20.96,
+          "w1_put": -6.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 29.1,
-          "mth_put": -8.75,
-          "fri_call": 311.19,
-          "fri_put": -185.96
+          "mth_call": 29.13,
+          "mth_put": -8.76,
+          "fri_call": 312.15,
+          "fri_put": -186.53
         },
         {
           "strike": 49650.0,
-          "call_gex": 98.96,
-          "put_gex": -34.87,
-          "net_gex": 64.1,
+          "call_gex": 99.26,
+          "put_gex": -34.97,
+          "net_gex": 64.29,
           "vex": -0.29,
-          "gex_plus": 63.81,
-          "w1_call": 5.33,
-          "w1_put": -3.33,
+          "gex_plus": 64.0,
+          "w1_call": 5.34,
+          "w1_put": -3.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.97,
           "mth_put": -0.0,
-          "fri_call": 91.67,
-          "fri_put": -31.54
+          "fri_call": 91.95,
+          "fri_put": -31.63
         },
         {
           "strike": 49700.0,
-          "call_gex": 406.77,
-          "put_gex": -98.21,
-          "net_gex": 308.57,
+          "call_gex": 407.93,
+          "put_gex": -98.47,
+          "net_gex": 309.46,
           "vex": -0.1,
-          "gex_plus": 308.47,
-          "w1_call": 43.35,
-          "w1_put": -14.34,
+          "gex_plus": 309.36,
+          "w1_call": 43.43,
+          "w1_put": -14.37,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.33,
-          "mth_put": -10.97,
-          "fri_call": 337.1,
-          "fri_put": -72.9
+          "mth_call": 26.35,
+          "mth_put": -10.98,
+          "fri_call": 338.15,
+          "fri_put": -73.12
         },
         {
           "strike": 49750.0,
-          "call_gex": 191.39,
-          "put_gex": -33.17,
-          "net_gex": 158.22,
+          "call_gex": 191.97,
+          "put_gex": -33.26,
+          "net_gex": 158.7,
           "vex": 0.59,
-          "gex_plus": 158.81,
-          "w1_call": 11.34,
-          "w1_put": -3.0,
+          "gex_plus": 159.29,
+          "w1_call": 11.36,
+          "w1_put": -3.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.76,
           "mth_put": -0.66,
-          "fri_call": 178.29,
-          "fri_put": -29.5
+          "fri_call": 178.84,
+          "fri_put": -29.6
         },
         {
           "strike": 49800.0,
-          "call_gex": 509.45,
-          "put_gex": -129.83,
-          "net_gex": 379.62,
-          "vex": 2.97,
-          "gex_plus": 382.59,
-          "w1_call": 66.67,
-          "w1_put": -13.0,
+          "call_gex": 510.88,
+          "put_gex": -130.16,
+          "net_gex": 380.72,
+          "vex": 2.98,
+          "gex_plus": 383.7,
+          "w1_call": 66.8,
+          "w1_put": -13.03,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.62,
-          "mth_put": -26.35,
-          "fri_call": 411.16,
-          "fri_put": -90.48
+          "mth_call": 31.64,
+          "mth_put": -26.37,
+          "fri_call": 412.43,
+          "fri_put": -90.76
         },
         {
           "strike": 49850.0,
-          "call_gex": 168.81,
-          "put_gex": -23.43,
-          "net_gex": 145.38,
+          "call_gex": 169.31,
+          "put_gex": -23.5,
+          "net_gex": 145.82,
           "vex": 1.73,
-          "gex_plus": 147.11,
-          "w1_call": 16.3,
-          "w1_put": -6.65,
+          "gex_plus": 147.55,
+          "w1_call": 16.34,
+          "w1_put": -6.67,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.1,
           "mth_put": -0.0,
-          "fri_call": 151.41,
-          "fri_put": -16.78
+          "fri_call": 151.88,
+          "fri_put": -16.83
         },
         {
           "strike": 49900.0,
-          "call_gex": 346.12,
-          "put_gex": -55.4,
-          "net_gex": 290.73,
-          "vex": 4.65,
-          "gex_plus": 295.37,
-          "w1_call": 16.26,
-          "w1_put": -13.6,
+          "call_gex": 347.11,
+          "put_gex": -55.52,
+          "net_gex": 291.59,
+          "vex": 4.66,
+          "gex_plus": 296.25,
+          "w1_call": 16.29,
+          "w1_put": -13.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.93,
-          "mth_put": -14.25,
-          "fri_call": 307.94,
-          "fri_put": -27.54
+          "mth_call": 21.95,
+          "mth_put": -14.27,
+          "fri_call": 308.87,
+          "fri_put": -27.62
         },
         {
           "strike": 49950.0,
-          "call_gex": 165.89,
-          "put_gex": -14.73,
-          "net_gex": 151.15,
+          "call_gex": 166.38,
+          "put_gex": -14.77,
+          "net_gex": 151.6,
           "vex": 3.03,
-          "gex_plus": 154.18,
-          "w1_call": 2.97,
-          "w1_put": -3.3,
+          "gex_plus": 154.64,
+          "w1_call": 2.98,
+          "w1_put": -3.31,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.31,
+          "mth_call": 1.32,
           "mth_put": -0.66,
-          "fri_call": 161.6,
-          "fri_put": -10.77
+          "fri_call": 162.08,
+          "fri_put": -10.81
         },
         {
           "strike": 50000.0,
-          "call_gex": 1341.0,
-          "put_gex": -78.72,
-          "net_gex": 1262.28,
-          "vex": 30.88,
-          "gex_plus": 1293.16,
-          "w1_call": 168.62,
-          "w1_put": -3.94,
+          "call_gex": 1344.08,
+          "put_gex": -78.86,
+          "net_gex": 1265.22,
+          "vex": 30.95,
+          "gex_plus": 1296.17,
+          "w1_call": 168.93,
+          "w1_put": -3.95,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 318.07,
-          "mth_put": -41.1,
-          "fri_call": 854.32,
-          "fri_put": -33.68
+          "mth_call": 318.33,
+          "mth_put": -41.13,
+          "fri_call": 856.82,
+          "fri_put": -33.78
         },
         {
           "strike": 50050.0,
-          "call_gex": 289.21,
-          "put_gex": -5.42,
-          "net_gex": 283.79,
-          "vex": 8.0,
-          "gex_plus": 291.79,
-          "w1_call": 6.21,
+          "call_gex": 290.03,
+          "put_gex": -5.44,
+          "net_gex": 284.59,
+          "vex": 8.02,
+          "gex_plus": 292.61,
+          "w1_call": 6.22,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 2.18,
           "mth_put": -0.22,
-          "fri_call": 280.82,
-          "fri_put": -4.88
+          "fri_call": 281.63,
+          "fri_put": -4.89
         },
         {
           "strike": 50100.0,
-          "call_gex": 358.53,
-          "put_gex": -29.63,
-          "net_gex": 328.9,
-          "vex": 10.63,
-          "gex_plus": 339.54,
-          "w1_call": 14.59,
+          "call_gex": 359.46,
+          "put_gex": -29.7,
+          "net_gex": 329.76,
+          "vex": 10.66,
+          "gex_plus": 340.42,
+          "w1_call": 14.61,
           "w1_put": -0.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.23,
+          "mth_call": 25.25,
           "mth_put": -5.22,
-          "fri_call": 318.71,
-          "fri_put": -24.08
+          "fri_call": 319.6,
+          "fri_put": -24.15
         },
         {
           "strike": 50150.0,
-          "call_gex": 182.51,
-          "put_gex": -5.54,
-          "net_gex": 176.97,
-          "vex": 6.43,
-          "gex_plus": 183.39,
-          "w1_call": 10.93,
+          "call_gex": 182.99,
+          "put_gex": -5.56,
+          "net_gex": 177.43,
+          "vex": 6.44,
+          "gex_plus": 183.87,
+          "w1_call": 10.95,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.22,
           "mth_put": -0.0,
-          "fri_call": 171.36,
-          "fri_put": -5.54
+          "fri_call": 171.82,
+          "fri_put": -5.56
         },
         {
           "strike": 50200.0,
-          "call_gex": 606.24,
-          "put_gex": -14.65,
-          "net_gex": 591.59,
-          "vex": 23.93,
-          "gex_plus": 615.53,
-          "w1_call": 28.01,
+          "call_gex": 607.7,
+          "put_gex": -14.67,
+          "net_gex": 593.03,
+          "vex": 23.99,
+          "gex_plus": 617.02,
+          "w1_call": 28.06,
           "w1_put": -1.59,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 43.84,
-          "mth_put": -7.99,
-          "fri_call": 534.39,
-          "fri_put": -5.06
+          "mth_call": 43.87,
+          "mth_put": -8.0,
+          "fri_call": 535.77,
+          "fri_put": -5.08
         }
       ],
       "weekly_gex": [
         {
           "strike": 48400.0,
           "call_gex": 1.31,
-          "put_gex": -13.52,
-          "net_gex": -12.21
+          "put_gex": -13.53,
+          "net_gex": -12.22
         },
         {
           "strike": 48450.0,
@@ -5875,8 +5875,8 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48500.0,
           "call_gex": 3.25,
-          "put_gex": -93.93,
-          "net_gex": -90.68
+          "put_gex": -93.99,
+          "net_gex": -90.74
         },
         {
           "strike": 48550.0,
@@ -5887,432 +5887,432 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -20.13,
-          "net_gex": -20.13
+          "put_gex": -20.14,
+          "net_gex": -20.14
         },
         {
           "strike": 48650.0,
           "call_gex": 0.25,
-          "put_gex": -10.59,
-          "net_gex": -10.33
+          "put_gex": -10.6,
+          "net_gex": -10.34
         },
         {
           "strike": 48700.0,
           "call_gex": 0.26,
-          "put_gex": -10.86,
-          "net_gex": -10.6
+          "put_gex": -10.87,
+          "net_gex": -10.61
         },
         {
           "strike": 48750.0,
           "call_gex": 1.06,
-          "put_gex": -4.5,
-          "net_gex": -3.44
+          "put_gex": -4.51,
+          "net_gex": -3.45
         },
         {
           "strike": 48800.0,
-          "call_gex": 3.79,
-          "put_gex": -12.46,
-          "net_gex": -8.67
+          "call_gex": 3.8,
+          "put_gex": -12.48,
+          "net_gex": -8.68
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -8.03,
-          "net_gex": -8.03
+          "put_gex": -8.04,
+          "net_gex": -8.04
         },
         {
           "strike": 48900.0,
           "call_gex": 2.83,
-          "put_gex": -12.15,
-          "net_gex": -9.32
+          "put_gex": -12.17,
+          "net_gex": -9.34
         },
         {
           "strike": 48950.0,
           "call_gex": 0.58,
-          "put_gex": -6.62,
-          "net_gex": -6.05
+          "put_gex": -6.63,
+          "net_gex": -6.06
         },
         {
           "strike": 49000.0,
-          "call_gex": 25.51,
-          "put_gex": -43.11,
-          "net_gex": -17.6
+          "call_gex": 25.55,
+          "put_gex": -43.17,
+          "net_gex": -17.62
         },
         {
           "strike": 49050.0,
           "call_gex": 1.19,
-          "put_gex": -6.26,
-          "net_gex": -5.07
+          "put_gex": -6.27,
+          "net_gex": -5.08
         },
         {
           "strike": 49100.0,
           "call_gex": 4.85,
-          "put_gex": -10.0,
-          "net_gex": -5.15
+          "put_gex": -10.01,
+          "net_gex": -5.16
         },
         {
           "strike": 49150.0,
-          "call_gex": 1.84,
-          "put_gex": -4.3,
+          "call_gex": 1.85,
+          "put_gex": -4.31,
           "net_gex": -2.46
         },
         {
           "strike": 49200.0,
-          "call_gex": 10.59,
-          "put_gex": -14.64,
-          "net_gex": -4.05
+          "call_gex": 10.61,
+          "put_gex": -14.66,
+          "net_gex": -4.06
         },
         {
           "strike": 49250.0,
-          "call_gex": 3.15,
-          "put_gex": -11.35,
-          "net_gex": -8.2
+          "call_gex": 3.16,
+          "put_gex": -11.37,
+          "net_gex": -8.21
         },
         {
           "strike": 49300.0,
-          "call_gex": 15.62,
-          "put_gex": -28.04,
-          "net_gex": -12.43
+          "call_gex": 15.64,
+          "put_gex": -28.1,
+          "net_gex": -12.45
         },
         {
           "strike": 49350.0,
-          "call_gex": 3.54,
-          "put_gex": -5.47,
+          "call_gex": 3.55,
+          "put_gex": -5.48,
           "net_gex": -1.93
         },
         {
           "strike": 49400.0,
-          "call_gex": 28.89,
-          "put_gex": -11.36,
-          "net_gex": 17.53
+          "call_gex": 28.94,
+          "put_gex": -11.38,
+          "net_gex": 17.56
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.79,
+          "call_gex": 10.81,
           "put_gex": -2.29,
-          "net_gex": 8.5
+          "net_gex": 8.52
         },
         {
           "strike": 49500.0,
-          "call_gex": 62.84,
-          "put_gex": -37.18,
-          "net_gex": 25.66
+          "call_gex": 62.96,
+          "put_gex": -37.25,
+          "net_gex": 25.71
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.94,
+          "call_gex": 7.95,
           "put_gex": -2.98,
-          "net_gex": 4.96
+          "net_gex": 4.97
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.92,
-          "put_gex": -6.31,
-          "net_gex": 14.61
+          "call_gex": 20.96,
+          "put_gex": -6.32,
+          "net_gex": 14.64
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.33,
-          "put_gex": -3.33,
+          "call_gex": 5.34,
+          "put_gex": -3.34,
           "net_gex": 2.0
         },
         {
           "strike": 49700.0,
-          "call_gex": 43.35,
-          "put_gex": -14.34,
-          "net_gex": 29.01
+          "call_gex": 43.43,
+          "put_gex": -14.37,
+          "net_gex": 29.07
         },
         {
           "strike": 49750.0,
-          "call_gex": 11.34,
-          "put_gex": -3.0,
-          "net_gex": 8.34
+          "call_gex": 11.36,
+          "put_gex": -3.01,
+          "net_gex": 8.36
         },
         {
           "strike": 49800.0,
-          "call_gex": 66.67,
-          "put_gex": -13.0,
-          "net_gex": 53.67
+          "call_gex": 66.8,
+          "put_gex": -13.03,
+          "net_gex": 53.77
         },
         {
           "strike": 49850.0,
-          "call_gex": 16.3,
-          "put_gex": -6.65,
-          "net_gex": 9.65
+          "call_gex": 16.34,
+          "put_gex": -6.67,
+          "net_gex": 9.67
         },
         {
           "strike": 49900.0,
-          "call_gex": 16.26,
-          "put_gex": -13.6,
-          "net_gex": 2.65
+          "call_gex": 16.29,
+          "put_gex": -13.63,
+          "net_gex": 2.66
         },
         {
           "strike": 49950.0,
-          "call_gex": 2.97,
-          "put_gex": -3.3,
+          "call_gex": 2.98,
+          "put_gex": -3.31,
           "net_gex": -0.33
         },
         {
           "strike": 50000.0,
-          "call_gex": 168.62,
-          "put_gex": -3.94,
-          "net_gex": 164.67
+          "call_gex": 168.93,
+          "put_gex": -3.95,
+          "net_gex": 164.98
         },
         {
           "strike": 50050.0,
-          "call_gex": 6.21,
+          "call_gex": 6.22,
           "put_gex": -0.33,
-          "net_gex": 5.88
+          "net_gex": 5.89
         },
         {
           "strike": 50100.0,
-          "call_gex": 14.59,
+          "call_gex": 14.61,
           "put_gex": -0.32,
-          "net_gex": 14.26
+          "net_gex": 14.29
         },
         {
           "strike": 50150.0,
-          "call_gex": 10.93,
+          "call_gex": 10.95,
           "put_gex": -0.0,
-          "net_gex": 10.93
+          "net_gex": 10.95
         },
         {
           "strike": 50200.0,
-          "call_gex": 28.01,
+          "call_gex": 28.06,
           "put_gex": -1.59,
-          "net_gex": 26.42
+          "net_gex": 26.46
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
           "call_gex": 3.03,
-          "put_gex": -126.83,
-          "net_gex": -123.8
+          "put_gex": -126.71,
+          "net_gex": -123.69
         },
         {
           "strike": 48450.0,
           "call_gex": 0.23,
-          "put_gex": -105.09,
-          "net_gex": -104.86
+          "put_gex": -105.03,
+          "net_gex": -104.8
         },
         {
           "strike": 48500.0,
-          "call_gex": 126.93,
-          "put_gex": -283.21,
-          "net_gex": -156.28
+          "call_gex": 126.89,
+          "put_gex": -283.12,
+          "net_gex": -156.23
         },
         {
           "strike": 48550.0,
           "call_gex": 1.75,
-          "put_gex": -58.95,
-          "net_gex": -57.2
+          "put_gex": -58.94,
+          "net_gex": -57.19
         },
         {
           "strike": 48600.0,
           "call_gex": 1.83,
-          "put_gex": -141.44,
-          "net_gex": -139.61
+          "put_gex": -141.47,
+          "net_gex": -139.64
         },
         {
           "strike": 48650.0,
           "call_gex": 1.09,
-          "put_gex": -115.1,
-          "net_gex": -114.01
+          "put_gex": -115.16,
+          "net_gex": -114.07
         },
         {
           "strike": 48700.0,
           "call_gex": 7.08,
-          "put_gex": -184.35,
-          "net_gex": -177.27
+          "put_gex": -184.49,
+          "net_gex": -177.4
         },
         {
           "strike": 48750.0,
-          "call_gex": 1.76,
-          "put_gex": -80.89,
-          "net_gex": -79.12
+          "call_gex": 1.77,
+          "put_gex": -80.97,
+          "net_gex": -79.2
         },
         {
           "strike": 48800.0,
-          "call_gex": 42.69,
-          "put_gex": -227.78,
-          "net_gex": -185.09
+          "call_gex": 42.74,
+          "put_gex": -228.05,
+          "net_gex": -185.31
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.83,
-          "put_gex": -59.0,
-          "net_gex": -50.16
+          "call_gex": 8.85,
+          "put_gex": -59.08,
+          "net_gex": -50.23
         },
         {
           "strike": 48900.0,
-          "call_gex": 41.38,
-          "put_gex": -225.46,
-          "net_gex": -184.08
+          "call_gex": 41.44,
+          "put_gex": -225.82,
+          "net_gex": -184.38
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.04,
-          "put_gex": -61.12,
-          "net_gex": -55.07
+          "call_gex": 6.06,
+          "put_gex": -61.23,
+          "net_gex": -55.17
         },
         {
           "strike": 49000.0,
-          "call_gex": 128.86,
-          "put_gex": -533.39,
-          "net_gex": -404.54
+          "call_gex": 129.11,
+          "put_gex": -534.43,
+          "net_gex": -405.32
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.58,
-          "put_gex": -92.58,
-          "net_gex": -83.0
+          "call_gex": 9.6,
+          "put_gex": -92.77,
+          "net_gex": -83.18
         },
         {
           "strike": 49100.0,
-          "call_gex": 104.69,
-          "put_gex": -209.75,
-          "net_gex": -105.05
+          "call_gex": 104.93,
+          "put_gex": -210.22,
+          "net_gex": -105.29
         },
         {
           "strike": 49150.0,
-          "call_gex": 30.86,
-          "put_gex": -82.17,
-          "net_gex": -51.31
+          "call_gex": 30.93,
+          "put_gex": -82.37,
+          "net_gex": -51.43
         },
         {
           "strike": 49200.0,
-          "call_gex": 142.35,
-          "put_gex": -279.39,
-          "net_gex": -137.04
+          "call_gex": 142.71,
+          "put_gex": -280.09,
+          "net_gex": -137.38
         },
         {
           "strike": 49250.0,
-          "call_gex": 40.62,
-          "put_gex": -119.92,
-          "net_gex": -79.3
+          "call_gex": 40.72,
+          "put_gex": -120.23,
+          "net_gex": -79.51
         },
         {
           "strike": 49300.0,
-          "call_gex": 162.49,
-          "put_gex": -441.04,
-          "net_gex": -278.55
+          "call_gex": 162.93,
+          "put_gex": -442.25,
+          "net_gex": -279.31
         },
         {
           "strike": 49350.0,
-          "call_gex": 88.67,
-          "put_gex": -95.06,
-          "net_gex": -6.39
+          "call_gex": 88.92,
+          "put_gex": -95.33,
+          "net_gex": -6.41
         },
         {
           "strike": 49400.0,
-          "call_gex": 249.31,
-          "put_gex": -613.97,
-          "net_gex": -364.66
+          "call_gex": 250.03,
+          "put_gex": -615.74,
+          "net_gex": -365.71
         },
         {
           "strike": 49450.0,
-          "call_gex": 66.72,
-          "put_gex": -67.54,
+          "call_gex": 66.92,
+          "put_gex": -67.74,
           "net_gex": -0.82
         },
         {
           "strike": 49500.0,
-          "call_gex": 357.87,
-          "put_gex": -562.01,
-          "net_gex": -204.14
+          "call_gex": 358.95,
+          "put_gex": -563.71,
+          "net_gex": -204.76
         },
         {
           "strike": 49550.0,
-          "call_gex": 87.03,
-          "put_gex": -30.81,
-          "net_gex": 56.22
+          "call_gex": 87.3,
+          "put_gex": -30.91,
+          "net_gex": 56.39
         },
         {
           "strike": 49600.0,
-          "call_gex": 311.19,
-          "put_gex": -185.96,
-          "net_gex": 125.23
+          "call_gex": 312.15,
+          "put_gex": -186.53,
+          "net_gex": 125.62
         },
         {
           "strike": 49650.0,
-          "call_gex": 91.67,
-          "put_gex": -31.54,
-          "net_gex": 60.13
+          "call_gex": 91.95,
+          "put_gex": -31.63,
+          "net_gex": 60.32
         },
         {
           "strike": 49700.0,
-          "call_gex": 337.1,
-          "put_gex": -72.9,
-          "net_gex": 264.2
+          "call_gex": 338.15,
+          "put_gex": -73.12,
+          "net_gex": 265.02
         },
         {
           "strike": 49750.0,
-          "call_gex": 178.29,
-          "put_gex": -29.5,
-          "net_gex": 148.79
+          "call_gex": 178.84,
+          "put_gex": -29.6,
+          "net_gex": 149.25
         },
         {
           "strike": 49800.0,
-          "call_gex": 411.16,
-          "put_gex": -90.48,
-          "net_gex": 320.68
+          "call_gex": 412.43,
+          "put_gex": -90.76,
+          "net_gex": 321.67
         },
         {
           "strike": 49850.0,
-          "call_gex": 151.41,
-          "put_gex": -16.78,
-          "net_gex": 134.64
+          "call_gex": 151.88,
+          "put_gex": -16.83,
+          "net_gex": 135.05
         },
         {
           "strike": 49900.0,
-          "call_gex": 307.94,
-          "put_gex": -27.54,
-          "net_gex": 280.4
+          "call_gex": 308.87,
+          "put_gex": -27.62,
+          "net_gex": 281.25
         },
         {
           "strike": 49950.0,
-          "call_gex": 161.6,
-          "put_gex": -10.77,
-          "net_gex": 150.83
+          "call_gex": 162.08,
+          "put_gex": -10.81,
+          "net_gex": 151.28
         },
         {
           "strike": 50000.0,
-          "call_gex": 854.32,
-          "put_gex": -33.68,
-          "net_gex": 820.64
+          "call_gex": 856.82,
+          "put_gex": -33.78,
+          "net_gex": 823.04
         },
         {
           "strike": 50050.0,
-          "call_gex": 280.82,
-          "put_gex": -4.88,
-          "net_gex": 275.95
+          "call_gex": 281.63,
+          "put_gex": -4.89,
+          "net_gex": 276.74
         },
         {
           "strike": 50100.0,
-          "call_gex": 318.71,
-          "put_gex": -24.08,
-          "net_gex": 294.63
+          "call_gex": 319.6,
+          "put_gex": -24.15,
+          "net_gex": 295.45
         },
         {
           "strike": 50150.0,
-          "call_gex": 171.36,
-          "put_gex": -5.54,
-          "net_gex": 165.82
+          "call_gex": 171.82,
+          "put_gex": -5.56,
+          "net_gex": 166.27
         },
         {
           "strike": 50200.0,
-          "call_gex": 534.39,
-          "put_gex": -5.06,
-          "net_gex": 529.33
+          "call_gex": 535.77,
+          "put_gex": -5.08,
+          "net_gex": 530.69
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 37.36,
-          "put_gex": -17.33,
-          "net_gex": 20.03
+          "call_gex": 37.38,
+          "put_gex": -17.34,
+          "net_gex": 20.05
         },
         {
           "strike": 48450.0,
@@ -6322,9 +6322,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 57.7,
-          "put_gex": -133.22,
-          "net_gex": -75.51
+          "call_gex": 57.74,
+          "put_gex": -133.3,
+          "net_gex": -75.56
         },
         {
           "strike": 48550.0,
@@ -6334,9 +6334,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 55.57,
-          "put_gex": -22.08,
-          "net_gex": 33.5
+          "call_gex": 55.61,
+          "put_gex": -22.09,
+          "net_gex": 33.52
         },
         {
           "strike": 48650.0,
@@ -6346,9 +6346,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 44.03,
-          "put_gex": -21.62,
-          "net_gex": 22.4
+          "call_gex": 44.06,
+          "put_gex": -21.64,
+          "net_gex": 22.42
         },
         {
           "strike": 48750.0,
@@ -6358,9 +6358,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 25.87,
-          "put_gex": -29.05,
-          "net_gex": -3.18
+          "call_gex": 25.89,
+          "put_gex": -29.07,
+          "net_gex": -3.19
         },
         {
           "strike": 48850.0,
@@ -6370,9 +6370,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 20.89,
+          "call_gex": 20.91,
           "put_gex": -8.52,
-          "net_gex": 12.37
+          "net_gex": 12.38
         },
         {
           "strike": 48950.0,
@@ -6382,9 +6382,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 123.98,
-          "put_gex": -64.16,
-          "net_gex": 59.82
+          "call_gex": 124.07,
+          "put_gex": -64.21,
+          "net_gex": 59.87
         },
         {
           "strike": 49050.0,
@@ -6394,21 +6394,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 126.26,
-          "put_gex": -26.59,
-          "net_gex": 99.67
+          "call_gex": 126.36,
+          "put_gex": -26.61,
+          "net_gex": 99.75
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.43,
+          "call_gex": 8.44,
           "put_gex": -0.21,
-          "net_gex": 8.22
+          "net_gex": 8.23
         },
         {
           "strike": 49200.0,
-          "call_gex": 49.21,
-          "put_gex": -12.09,
-          "net_gex": 37.12
+          "call_gex": 49.25,
+          "put_gex": -12.1,
+          "net_gex": 37.15
         },
         {
           "strike": 49250.0,
@@ -6418,9 +6418,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.58,
-          "put_gex": -35.16,
-          "net_gex": -14.58
+          "call_gex": 20.6,
+          "put_gex": -35.19,
+          "net_gex": -14.59
         },
         {
           "strike": 49350.0,
@@ -6430,9 +6430,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 24.87,
-          "put_gex": -16.01,
-          "net_gex": 8.87
+          "call_gex": 24.9,
+          "put_gex": -16.02,
+          "net_gex": 8.88
         },
         {
           "strike": 49450.0,
@@ -6442,9 +6442,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 142.86,
-          "put_gex": -65.11,
-          "net_gex": 77.74
+          "call_gex": 142.98,
+          "put_gex": -65.17,
+          "net_gex": 77.81
         },
         {
           "strike": 49550.0,
@@ -6454,9 +6454,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 29.1,
-          "put_gex": -8.75,
-          "net_gex": 20.35
+          "call_gex": 29.13,
+          "put_gex": -8.76,
+          "net_gex": 20.37
         },
         {
           "strike": 49650.0,
@@ -6466,9 +6466,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 26.33,
-          "put_gex": -10.97,
-          "net_gex": 15.36
+          "call_gex": 26.35,
+          "put_gex": -10.98,
+          "net_gex": 15.37
         },
         {
           "strike": 49750.0,
@@ -6478,8 +6478,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49800.0,
-          "call_gex": 31.62,
-          "put_gex": -26.35,
+          "call_gex": 31.64,
+          "put_gex": -26.37,
           "net_gex": 5.27
         },
         {
@@ -6490,21 +6490,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 21.93,
-          "put_gex": -14.25,
+          "call_gex": 21.95,
+          "put_gex": -14.27,
           "net_gex": 7.68
         },
         {
           "strike": 49950.0,
-          "call_gex": 1.31,
+          "call_gex": 1.32,
           "put_gex": -0.66,
           "net_gex": 0.66
         },
         {
           "strike": 50000.0,
-          "call_gex": 318.07,
-          "put_gex": -41.1,
-          "net_gex": 276.97
+          "call_gex": 318.33,
+          "put_gex": -41.13,
+          "net_gex": 277.2
         },
         {
           "strike": 50050.0,
@@ -6514,9 +6514,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 25.23,
+          "call_gex": 25.25,
           "put_gex": -5.22,
-          "net_gex": 20.01
+          "net_gex": 20.02
         },
         {
           "strike": 50150.0,
@@ -6526,9 +6526,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 43.84,
-          "put_gex": -7.99,
-          "net_gex": 35.85
+          "call_gex": 43.87,
+          "put_gex": -8.0,
+          "net_gex": 35.88
         }
       ]
     },
@@ -6557,27 +6557,27 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 42.67,
-          "put_gex": -167.67,
-          "net_gex": -125.0,
-          "vex": 12.82,
-          "gex_plus": -112.18,
+          "call_gex": 42.69,
+          "put_gex": -167.63,
+          "net_gex": -124.93,
+          "vex": 12.81,
+          "gex_plus": -112.12,
           "w1_call": 1.37,
           "w1_put": -14.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 38.06,
-          "mth_put": -17.65,
+          "mth_call": 38.08,
+          "mth_put": -17.66,
           "fri_call": 3.25,
-          "fri_put": -135.91
+          "fri_put": -135.84
         },
         {
           "strike": 48450.0,
           "call_gex": 0.71,
-          "put_gex": -118.16,
-          "net_gex": -117.45,
+          "put_gex": -118.14,
+          "net_gex": -117.43,
           "vex": 11.52,
-          "gex_plus": -105.92,
+          "gex_plus": -105.9,
           "w1_call": 0.47,
           "w1_put": -4.93,
           "w2_call": 0.0,
@@ -6585,567 +6585,567 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -0.93,
           "fri_call": 0.24,
-          "fri_put": -112.3
+          "fri_put": -112.28
         },
         {
           "strike": 48500.0,
-          "call_gex": 197.34,
-          "put_gex": -535.04,
-          "net_gex": -337.7,
-          "vex": 31.57,
-          "gex_plus": -306.13,
+          "call_gex": 197.38,
+          "put_gex": -535.22,
+          "net_gex": -337.83,
+          "vex": 31.59,
+          "gex_plus": -306.25,
           "w1_call": 3.38,
-          "w1_put": -97.73,
+          "w1_put": -97.81,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 58.69,
-          "mth_put": -135.5,
-          "fri_call": 135.27,
-          "fri_put": -301.81
+          "mth_call": 58.73,
+          "mth_put": -135.58,
+          "fri_call": 135.28,
+          "fri_put": -301.83
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.35,
-          "put_gex": -68.44,
-          "net_gex": -66.09,
+          "call_gex": 2.36,
+          "put_gex": -68.47,
+          "net_gex": -66.11,
           "vex": 5.93,
-          "gex_plus": -60.16,
+          "gex_plus": -60.18,
           "w1_call": 0.5,
-          "w1_put": -4.46,
+          "w1_put": -4.47,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.34,
           "fri_call": 1.86,
-          "fri_put": -62.64
+          "fri_put": -62.66
         },
         {
           "strike": 48600.0,
-          "call_gex": 58.38,
-          "put_gex": -193.19,
-          "net_gex": -134.81,
-          "vex": 11.58,
-          "gex_plus": -123.23,
+          "call_gex": 58.41,
+          "put_gex": -193.31,
+          "net_gex": -134.9,
+          "vex": 11.59,
+          "gex_plus": -123.31,
           "w1_call": 0.0,
-          "w1_put": -20.87,
+          "w1_put": -20.89,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 56.44,
-          "mth_put": -22.42,
+          "mth_call": 56.48,
+          "mth_put": -22.44,
           "fri_call": 1.94,
-          "fri_put": -149.9
+          "fri_put": -149.99
         },
         {
           "strike": 48650.0,
           "call_gex": 1.41,
-          "put_gex": -135.74,
-          "net_gex": -134.33,
-          "vex": 10.92,
-          "gex_plus": -123.4,
+          "put_gex": -135.85,
+          "net_gex": -134.44,
+          "vex": 10.93,
+          "gex_plus": -123.51,
           "w1_call": 0.26,
-          "w1_put": -10.96,
+          "w1_put": -10.97,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.13,
           "fri_call": 1.15,
-          "fri_put": -121.65
+          "fri_put": -121.75
         },
         {
           "strike": 48700.0,
-          "call_gex": 52.38,
-          "put_gex": -227.46,
-          "net_gex": -175.08,
-          "vex": 13.54,
-          "gex_plus": -161.54,
+          "call_gex": 52.42,
+          "put_gex": -227.69,
+          "net_gex": -175.28,
+          "vex": 13.56,
+          "gex_plus": -161.72,
           "w1_call": 0.27,
-          "w1_put": -11.22,
+          "w1_put": -11.23,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.65,
-          "mth_put": -21.93,
-          "fri_call": 7.46,
-          "fri_put": -194.31
+          "mth_call": 44.68,
+          "mth_put": -21.94,
+          "fri_call": 7.47,
+          "fri_put": -194.52
         },
         {
           "strike": 48750.0,
           "call_gex": 2.95,
-          "put_gex": -93.46,
-          "net_gex": -90.51,
-          "vex": 6.6,
-          "gex_plus": -83.91,
+          "put_gex": -93.58,
+          "net_gex": -90.62,
+          "vex": 6.61,
+          "gex_plus": -84.02,
           "w1_call": 1.09,
-          "w1_put": -4.64,
+          "w1_put": -4.65,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.79,
           "fri_call": 1.86,
-          "fri_put": -85.02
+          "fri_put": -85.13
         },
         {
           "strike": 48800.0,
-          "call_gex": 74.85,
-          "put_gex": -281.02,
-          "net_gex": -206.17,
-          "vex": 14.18,
-          "gex_plus": -191.99,
+          "call_gex": 74.94,
+          "put_gex": -281.41,
+          "net_gex": -206.47,
+          "vex": 14.2,
+          "gex_plus": -192.27,
           "w1_call": 3.91,
-          "w1_put": -12.83,
+          "w1_put": -12.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.19,
-          "mth_put": -29.42,
-          "fri_call": 44.75,
-          "fri_put": -238.77
+          "mth_call": 26.21,
+          "mth_put": -29.44,
+          "fri_call": 44.82,
+          "fri_put": -239.12
         },
         {
           "strike": 48850.0,
-          "call_gex": 9.24,
-          "put_gex": -71.76,
-          "net_gex": -62.52,
+          "call_gex": 9.25,
+          "put_gex": -71.88,
+          "net_gex": -62.62,
           "vex": 4.04,
-          "gex_plus": -58.49,
+          "gex_plus": -58.58,
           "w1_call": 0.0,
-          "w1_put": -8.25,
+          "w1_put": -8.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.83,
-          "fri_call": 9.24,
-          "fri_put": -61.68
+          "fri_call": 9.25,
+          "fri_put": -61.78
         },
         {
           "strike": 48900.0,
-          "call_gex": 67.16,
-          "put_gex": -256.13,
-          "net_gex": -188.97,
-          "vex": 11.45,
-          "gex_plus": -177.53,
+          "call_gex": 67.26,
+          "put_gex": -256.59,
+          "net_gex": -189.33,
+          "vex": 11.47,
+          "gex_plus": -177.86,
           "w1_call": 2.9,
-          "w1_put": -12.47,
+          "w1_put": -12.49,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.12,
-          "mth_put": -8.61,
-          "fri_call": 43.14,
-          "fri_put": -235.05
+          "mth_call": 21.14,
+          "mth_put": -8.62,
+          "fri_call": 43.22,
+          "fri_put": -235.49
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.87,
-          "put_gex": -71.78,
-          "net_gex": -64.9,
-          "vex": 3.65,
-          "gex_plus": -61.25,
+          "call_gex": 6.89,
+          "put_gex": -71.92,
+          "net_gex": -65.03,
+          "vex": 3.66,
+          "gex_plus": -61.37,
           "w1_call": 0.59,
-          "w1_put": -6.79,
+          "w1_put": -6.8,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.45,
-          "fri_call": 6.28,
-          "fri_put": -63.54
+          "fri_call": 6.3,
+          "fri_put": -63.67
         },
         {
           "strike": 49000.0,
-          "call_gex": 284.87,
-          "put_gex": -661.92,
-          "net_gex": -377.05,
-          "vex": 19.76,
-          "gex_plus": -357.29,
-          "w1_call": 26.1,
-          "w1_put": -44.09,
+          "call_gex": 285.3,
+          "put_gex": -663.24,
+          "net_gex": -377.94,
+          "vex": 19.81,
+          "gex_plus": -358.13,
+          "w1_call": 26.14,
+          "w1_put": -44.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 125.17,
-          "mth_put": -64.77,
-          "fri_call": 133.61,
-          "fri_put": -553.06
+          "mth_call": 125.27,
+          "mth_put": -64.82,
+          "fri_call": 133.9,
+          "fri_put": -554.25
         },
         {
           "strike": 49050.0,
-          "call_gex": 11.75,
-          "put_gex": -103.59,
-          "net_gex": -91.84,
-          "vex": 4.41,
-          "gex_plus": -87.44,
+          "call_gex": 11.78,
+          "put_gex": -103.83,
+          "net_gex": -92.05,
+          "vex": 4.42,
+          "gex_plus": -87.63,
           "w1_call": 1.22,
-          "w1_put": -6.39,
+          "w1_put": -6.41,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.63,
           "mth_put": -1.47,
-          "fri_call": 9.9,
-          "fri_put": -95.73
+          "fri_call": 9.93,
+          "fri_put": -95.95
         },
         {
           "strike": 49100.0,
-          "call_gex": 240.19,
-          "put_gex": -253.29,
-          "net_gex": -13.11,
-          "vex": 0.73,
-          "gex_plus": -12.38,
-          "w1_call": 4.94,
-          "w1_put": -10.19,
+          "call_gex": 240.56,
+          "put_gex": -253.86,
+          "net_gex": -13.3,
+          "vex": 0.74,
+          "gex_plus": -12.56,
+          "w1_call": 4.95,
+          "w1_put": -10.21,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 127.29,
-          "mth_put": -26.81,
-          "fri_call": 107.96,
-          "fri_put": -216.3
+          "mth_call": 127.39,
+          "mth_put": -26.83,
+          "fri_call": 108.22,
+          "fri_put": -216.82
         },
         {
           "strike": 49150.0,
-          "call_gex": 42.11,
-          "put_gex": -89.1,
-          "net_gex": -46.99,
+          "call_gex": 42.2,
+          "put_gex": -89.32,
+          "net_gex": -47.12,
           "vex": 1.88,
-          "gex_plus": -45.11,
+          "gex_plus": -45.24,
           "w1_call": 1.88,
-          "w1_put": -4.38,
+          "w1_put": -4.39,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.49,
+          "mth_call": 8.5,
           "mth_put": -0.21,
-          "fri_call": 31.74,
-          "fri_put": -84.51
+          "fri_call": 31.82,
+          "fri_put": -84.73
         },
         {
           "strike": 49200.0,
-          "call_gex": 206.29,
-          "put_gex": -313.59,
-          "net_gex": -107.3,
-          "vex": 3.87,
-          "gex_plus": -103.43,
-          "w1_call": 10.76,
-          "w1_put": -14.87,
+          "call_gex": 206.74,
+          "put_gex": -314.4,
+          "net_gex": -107.65,
+          "vex": 3.89,
+          "gex_plus": -103.77,
+          "w1_call": 10.78,
+          "w1_put": -14.9,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 49.53,
-          "mth_put": -12.17,
-          "fri_call": 146.0,
-          "fri_put": -286.55
+          "mth_call": 49.57,
+          "mth_put": -12.18,
+          "fri_call": 146.39,
+          "fri_put": -287.32
         },
         {
           "strike": 49250.0,
-          "call_gex": 46.03,
-          "put_gex": -135.45,
-          "net_gex": -89.42,
-          "vex": 2.81,
-          "gex_plus": -86.61,
+          "call_gex": 46.15,
+          "put_gex": -135.81,
+          "net_gex": -89.66,
+          "vex": 2.82,
+          "gex_plus": -86.85,
           "w1_call": 3.2,
-          "w1_put": -11.51,
+          "w1_put": -11.53,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.29,
           "mth_put": -1.29,
-          "fri_call": 41.55,
-          "fri_put": -122.66
+          "fri_call": 41.66,
+          "fri_put": -123.0
         },
         {
           "strike": 49300.0,
-          "call_gex": 202.25,
-          "put_gex": -513.64,
-          "net_gex": -311.39,
-          "vex": 8.48,
-          "gex_plus": -302.91,
-          "w1_call": 15.81,
-          "w1_put": -28.39,
+          "call_gex": 202.77,
+          "put_gex": -515.01,
+          "net_gex": -312.23,
+          "vex": 8.5,
+          "gex_plus": -303.73,
+          "w1_call": 15.84,
+          "w1_put": -28.44,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.69,
-          "mth_put": -35.34,
-          "fri_call": 165.75,
-          "fri_put": -449.91
+          "mth_call": 20.71,
+          "mth_put": -35.37,
+          "fri_call": 166.23,
+          "fri_put": -451.19
         },
         {
           "strike": 49350.0,
-          "call_gex": 94.87,
-          "put_gex": -103.54,
-          "net_gex": -8.67,
+          "call_gex": 95.14,
+          "put_gex": -103.83,
+          "net_gex": -8.69,
           "vex": 0.2,
-          "gex_plus": -8.47,
+          "gex_plus": -8.49,
           "w1_call": 3.58,
-          "w1_put": -5.53,
+          "w1_put": -5.54,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.08,
           "mth_put": -1.3,
-          "fri_call": 90.21,
-          "fri_put": -96.71
+          "fri_call": 90.47,
+          "fri_put": -96.99
         },
         {
           "strike": 49400.0,
-          "call_gex": 307.06,
-          "put_gex": -650.45,
-          "net_gex": -343.39,
-          "vex": 6.56,
-          "gex_plus": -336.83,
-          "w1_call": 29.15,
-          "w1_put": -11.46,
+          "call_gex": 307.89,
+          "put_gex": -652.34,
+          "net_gex": -344.45,
+          "vex": 6.59,
+          "gex_plus": -337.87,
+          "w1_call": 29.2,
+          "w1_put": -11.48,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.97,
-          "mth_put": -16.07,
-          "fri_call": 252.95,
-          "fri_put": -622.92
+          "mth_call": 24.99,
+          "mth_put": -16.08,
+          "fri_call": 253.7,
+          "fri_put": -624.78
         },
         {
           "strike": 49450.0,
-          "call_gex": 79.47,
-          "put_gex": -72.39,
-          "net_gex": 7.08,
+          "call_gex": 79.7,
+          "put_gex": -72.6,
+          "net_gex": 7.09,
           "vex": -0.1,
-          "gex_plus": 6.98,
-          "w1_call": 10.87,
+          "gex_plus": 6.99,
+          "w1_call": 10.89,
           "w1_put": -2.31,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.09,
           "mth_put": -1.74,
-          "fri_call": 67.51,
-          "fri_put": -68.34
+          "fri_call": 67.72,
+          "fri_put": -68.55
         },
         {
           "strike": 49500.0,
-          "call_gex": 567.49,
-          "put_gex": -669.78,
-          "net_gex": -102.28,
-          "vex": 1.23,
-          "gex_plus": -101.05,
-          "w1_call": 63.19,
-          "w1_put": -37.39,
+          "call_gex": 568.85,
+          "put_gex": -671.65,
+          "net_gex": -102.8,
+          "vex": 1.24,
+          "gex_plus": -101.56,
+          "w1_call": 63.31,
+          "w1_put": -37.46,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 143.17,
-          "mth_put": -65.26,
-          "fri_call": 361.13,
-          "fri_put": -567.14
+          "mth_call": 143.29,
+          "mth_put": -65.31,
+          "fri_call": 362.24,
+          "fri_put": -568.88
         },
         {
           "strike": 49550.0,
-          "call_gex": 97.08,
-          "put_gex": -35.31,
-          "net_gex": 61.77,
+          "call_gex": 97.37,
+          "put_gex": -35.41,
+          "net_gex": 61.96,
           "vex": -0.41,
-          "gex_plus": 61.36,
-          "w1_call": 7.97,
+          "gex_plus": 61.54,
+          "w1_call": 7.98,
           "w1_put": -2.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.53,
           "mth_put": -1.31,
-          "fri_call": 87.59,
-          "fri_put": -31.01
+          "fri_call": 87.86,
+          "fri_put": -31.11
         },
         {
           "strike": 49600.0,
-          "call_gex": 362.42,
-          "put_gex": -201.73,
-          "net_gex": 160.69,
+          "call_gex": 363.46,
+          "put_gex": -202.33,
+          "net_gex": 161.13,
           "vex": -0.38,
-          "gex_plus": 160.31,
-          "w1_call": 20.96,
-          "w1_put": -6.32,
+          "gex_plus": 160.75,
+          "w1_call": 21.0,
+          "w1_put": -6.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 29.12,
-          "mth_put": -8.76,
-          "fri_call": 312.34,
-          "fri_put": -186.65
+          "mth_call": 29.15,
+          "mth_put": -8.77,
+          "fri_call": 313.31,
+          "fri_put": -187.23
         },
         {
           "strike": 49650.0,
-          "call_gex": 99.06,
-          "put_gex": -34.9,
-          "net_gex": 64.16,
+          "call_gex": 99.36,
+          "put_gex": -35.0,
+          "net_gex": 64.35,
           "vex": 0.1,
-          "gex_plus": 64.26,
-          "w1_call": 5.33,
-          "w1_put": -3.33,
+          "gex_plus": 64.45,
+          "w1_call": 5.34,
+          "w1_put": -3.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.97,
           "mth_put": -0.0,
-          "fri_call": 91.76,
-          "fri_put": -31.57
+          "fri_call": 92.04,
+          "fri_put": -31.67
         },
         {
           "strike": 49700.0,
-          "call_gex": 406.13,
-          "put_gex": -98.06,
-          "net_gex": 308.07,
+          "call_gex": 407.28,
+          "put_gex": -98.32,
+          "net_gex": 308.96,
           "vex": 1.76,
-          "gex_plus": 309.83,
-          "w1_call": 43.29,
-          "w1_put": -14.32,
+          "gex_plus": 310.72,
+          "w1_call": 43.38,
+          "w1_put": -14.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.31,
-          "mth_put": -10.96,
-          "fri_call": 336.53,
-          "fri_put": -72.77
+          "mth_call": 26.33,
+          "mth_put": -10.97,
+          "fri_call": 337.57,
+          "fri_put": -73.0
         },
         {
           "strike": 49750.0,
-          "call_gex": 190.57,
-          "put_gex": -33.03,
-          "net_gex": 157.55,
-          "vex": 1.53,
-          "gex_plus": 159.08,
-          "w1_call": 11.31,
-          "w1_put": -2.99,
+          "call_gex": 191.14,
+          "put_gex": -33.12,
+          "net_gex": 158.02,
+          "vex": 1.54,
+          "gex_plus": 159.56,
+          "w1_call": 11.33,
+          "w1_put": -3.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.75,
+          "mth_call": 1.76,
           "mth_put": -0.66,
-          "fri_call": 177.51,
-          "fri_put": -29.38
+          "fri_call": 178.06,
+          "fri_put": -29.47
         },
         {
           "strike": 49800.0,
-          "call_gex": 506.18,
-          "put_gex": -129.08,
-          "net_gex": 377.1,
-          "vex": 5.23,
-          "gex_plus": 382.33,
-          "w1_call": 66.37,
-          "w1_put": -12.94,
+          "call_gex": 507.58,
+          "put_gex": -129.4,
+          "net_gex": 378.18,
+          "vex": 5.24,
+          "gex_plus": 383.42,
+          "w1_call": 66.5,
+          "w1_put": -12.97,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.55,
-          "mth_put": -26.29,
-          "fri_call": 408.26,
-          "fri_put": -89.84
+          "mth_call": 31.58,
+          "mth_put": -26.31,
+          "fri_call": 409.51,
+          "fri_put": -90.12
         },
         {
           "strike": 49850.0,
-          "call_gex": 167.24,
-          "put_gex": -23.23,
-          "net_gex": 144.01,
-          "vex": 2.58,
-          "gex_plus": 146.59,
-          "w1_call": 16.2,
-          "w1_put": -6.61,
+          "call_gex": 167.72,
+          "put_gex": -23.29,
+          "net_gex": 144.43,
+          "vex": 2.59,
+          "gex_plus": 147.02,
+          "w1_call": 16.23,
+          "w1_put": -6.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.09,
+          "mth_call": 1.1,
           "mth_put": -0.0,
-          "fri_call": 149.94,
-          "fri_put": -16.61
+          "fri_call": 150.4,
+          "fri_put": -16.66
         },
         {
           "strike": 49900.0,
-          "call_gex": 342.11,
-          "put_gex": -54.9,
-          "net_gex": 287.22,
-          "vex": 6.32,
-          "gex_plus": 293.53,
-          "w1_call": 16.13,
-          "w1_put": -13.5,
+          "call_gex": 343.06,
+          "put_gex": -55.01,
+          "net_gex": 288.05,
+          "vex": 6.34,
+          "gex_plus": 294.38,
+          "w1_call": 16.16,
+          "w1_put": -13.52,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.85,
-          "mth_put": -14.2,
-          "fri_call": 304.13,
-          "fri_put": -27.2
+          "mth_call": 21.87,
+          "mth_put": -14.21,
+          "fri_call": 305.03,
+          "fri_put": -27.28
         },
         {
           "strike": 49950.0,
-          "call_gex": 163.43,
-          "put_gex": -14.54,
-          "net_gex": 148.89,
-          "vex": 3.88,
-          "gex_plus": 152.77,
+          "call_gex": 163.9,
+          "put_gex": -14.58,
+          "net_gex": 149.32,
+          "vex": 3.89,
+          "gex_plus": 153.21,
           "w1_call": 2.95,
-          "w1_put": -3.27,
+          "w1_put": -3.28,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.31,
           "mth_put": -0.65,
-          "fri_call": 159.18,
-          "fri_put": -10.61
+          "fri_call": 159.64,
+          "fri_put": -10.64
         },
         {
           "strike": 50000.0,
-          "call_gex": 1322.44,
-          "put_gex": -77.88,
-          "net_gex": 1244.57,
-          "vex": 37.95,
-          "gex_plus": 1282.51,
-          "w1_call": 166.73,
-          "w1_put": -3.9,
+          "call_gex": 1325.37,
+          "put_gex": -78.01,
+          "net_gex": 1247.36,
+          "vex": 38.03,
+          "gex_plus": 1285.39,
+          "w1_call": 167.03,
+          "w1_put": -3.91,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 316.45,
-          "mth_put": -40.89,
-          "fri_call": 839.26,
-          "fri_put": -33.09
+          "mth_call": 316.71,
+          "mth_put": -40.92,
+          "fri_call": 841.63,
+          "fri_put": -33.18
         },
         {
           "strike": 50050.0,
-          "call_gex": 283.44,
-          "put_gex": -5.32,
-          "net_gex": 278.12,
-          "vex": 9.51,
-          "gex_plus": 287.63,
-          "w1_call": 6.13,
+          "call_gex": 284.2,
+          "put_gex": -5.33,
+          "net_gex": 278.87,
+          "vex": 9.54,
+          "gex_plus": 288.4,
+          "w1_call": 6.14,
           "w1_put": -0.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 2.17,
           "mth_put": -0.22,
-          "fri_call": 275.14,
-          "fri_put": -4.78
+          "fri_call": 275.89,
+          "fri_put": -4.79
         },
         {
           "strike": 50100.0,
-          "call_gex": 350.87,
-          "put_gex": -29.04,
-          "net_gex": 321.83,
-          "vex": 12.34,
-          "gex_plus": 334.18,
-          "w1_call": 14.38,
+          "call_gex": 351.74,
+          "put_gex": -29.11,
+          "net_gex": 322.63,
+          "vex": 12.37,
+          "gex_plus": 335.0,
+          "w1_call": 14.4,
           "w1_put": -0.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.06,
+          "mth_call": 25.08,
           "mth_put": -5.19,
-          "fri_call": 311.43,
-          "fri_put": -23.53
+          "fri_call": 312.25,
+          "fri_put": -23.6
         },
         {
           "strike": 50150.0,
-          "call_gex": 177.97,
-          "put_gex": -5.4,
-          "net_gex": 172.57,
-          "vex": 7.31,
-          "gex_plus": 179.87,
-          "w1_call": 10.75,
+          "call_gex": 178.41,
+          "put_gex": -5.41,
+          "net_gex": 172.99,
+          "vex": 7.32,
+          "gex_plus": 180.32,
+          "w1_call": 10.77,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.22,
           "mth_put": -0.0,
-          "fri_call": 167.0,
-          "fri_put": -5.4
+          "fri_call": 167.42,
+          "fri_put": -5.41
         },
         {
           "strike": 50200.0,
-          "call_gex": 590.41,
-          "put_gex": -14.41,
-          "net_gex": 575.99,
-          "vex": 26.77,
-          "gex_plus": 602.76,
-          "w1_call": 27.51,
-          "w1_put": -1.56,
+          "call_gex": 591.73,
+          "put_gex": -14.43,
+          "net_gex": 577.3,
+          "vex": 26.83,
+          "gex_plus": 604.13,
+          "w1_call": 27.56,
+          "w1_put": -1.57,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 43.49,
+          "mth_call": 43.52,
           "mth_put": -7.93,
-          "fri_call": 519.4,
-          "fri_put": -4.92
+          "fri_call": 520.65,
+          "fri_put": -4.93
         }
       ],
       "weekly_gex": [
@@ -7153,7 +7153,7 @@ window.GEX_EMBEDDED_DATA = {
           "strike": 48400.0,
           "call_gex": 1.37,
           "put_gex": -14.12,
-          "net_gex": -12.75
+          "net_gex": -12.76
         },
         {
           "strike": 48450.0,
@@ -7164,444 +7164,444 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48500.0,
           "call_gex": 3.38,
-          "put_gex": -97.73,
-          "net_gex": -94.35
+          "put_gex": -97.81,
+          "net_gex": -94.43
         },
         {
           "strike": 48550.0,
           "call_gex": 0.5,
-          "put_gex": -4.46,
+          "put_gex": -4.47,
           "net_gex": -3.97
         },
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -20.87,
-          "net_gex": -20.87
+          "put_gex": -20.89,
+          "net_gex": -20.89
         },
         {
           "strike": 48650.0,
           "call_gex": 0.26,
-          "put_gex": -10.96,
-          "net_gex": -10.7
+          "put_gex": -10.97,
+          "net_gex": -10.71
         },
         {
           "strike": 48700.0,
           "call_gex": 0.27,
-          "put_gex": -11.22,
-          "net_gex": -10.95
+          "put_gex": -11.23,
+          "net_gex": -10.96
         },
         {
           "strike": 48750.0,
           "call_gex": 1.09,
-          "put_gex": -4.64,
-          "net_gex": -3.55
+          "put_gex": -4.65,
+          "net_gex": -3.56
         },
         {
           "strike": 48800.0,
           "call_gex": 3.91,
-          "put_gex": -12.83,
-          "net_gex": -8.93
+          "put_gex": -12.85,
+          "net_gex": -8.94
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -8.25,
-          "net_gex": -8.25
+          "put_gex": -8.26,
+          "net_gex": -8.26
         },
         {
           "strike": 48900.0,
           "call_gex": 2.9,
-          "put_gex": -12.47,
-          "net_gex": -9.57
+          "put_gex": -12.49,
+          "net_gex": -9.58
         },
         {
           "strike": 48950.0,
           "call_gex": 0.59,
-          "put_gex": -6.79,
-          "net_gex": -6.2
+          "put_gex": -6.8,
+          "net_gex": -6.21
         },
         {
           "strike": 49000.0,
-          "call_gex": 26.1,
-          "put_gex": -44.09,
-          "net_gex": -18.0
+          "call_gex": 26.14,
+          "put_gex": -44.16,
+          "net_gex": -18.03
         },
         {
           "strike": 49050.0,
           "call_gex": 1.22,
-          "put_gex": -6.39,
-          "net_gex": -5.18
+          "put_gex": -6.41,
+          "net_gex": -5.19
         },
         {
           "strike": 49100.0,
-          "call_gex": 4.94,
-          "put_gex": -10.19,
-          "net_gex": -5.25
+          "call_gex": 4.95,
+          "put_gex": -10.21,
+          "net_gex": -5.26
         },
         {
           "strike": 49150.0,
           "call_gex": 1.88,
-          "put_gex": -4.38,
-          "net_gex": -2.5
+          "put_gex": -4.39,
+          "net_gex": -2.51
         },
         {
           "strike": 49200.0,
-          "call_gex": 10.76,
-          "put_gex": -14.87,
-          "net_gex": -4.11
+          "call_gex": 10.78,
+          "put_gex": -14.9,
+          "net_gex": -4.12
         },
         {
           "strike": 49250.0,
           "call_gex": 3.2,
-          "put_gex": -11.51,
-          "net_gex": -8.31
+          "put_gex": -11.53,
+          "net_gex": -8.33
         },
         {
           "strike": 49300.0,
-          "call_gex": 15.81,
-          "put_gex": -28.39,
-          "net_gex": -12.58
+          "call_gex": 15.84,
+          "put_gex": -28.44,
+          "net_gex": -12.61
         },
         {
           "strike": 49350.0,
           "call_gex": 3.58,
-          "put_gex": -5.53,
-          "net_gex": -1.95
+          "put_gex": -5.54,
+          "net_gex": -1.96
         },
         {
           "strike": 49400.0,
-          "call_gex": 29.15,
-          "put_gex": -11.46,
-          "net_gex": 17.68
+          "call_gex": 29.2,
+          "put_gex": -11.48,
+          "net_gex": 17.72
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.87,
+          "call_gex": 10.89,
           "put_gex": -2.31,
-          "net_gex": 8.56
+          "net_gex": 8.58
         },
         {
           "strike": 49500.0,
-          "call_gex": 63.19,
-          "put_gex": -37.39,
-          "net_gex": 25.81
+          "call_gex": 63.31,
+          "put_gex": -37.46,
+          "net_gex": 25.86
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.97,
+          "call_gex": 7.98,
           "put_gex": -2.99,
-          "net_gex": 4.98
+          "net_gex": 4.99
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.96,
-          "put_gex": -6.32,
-          "net_gex": 14.64
+          "call_gex": 21.0,
+          "put_gex": -6.33,
+          "net_gex": 14.67
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.33,
-          "put_gex": -3.33,
+          "call_gex": 5.34,
+          "put_gex": -3.34,
           "net_gex": 2.0
         },
         {
           "strike": 49700.0,
-          "call_gex": 43.29,
-          "put_gex": -14.32,
-          "net_gex": 28.97
+          "call_gex": 43.38,
+          "put_gex": -14.35,
+          "net_gex": 29.03
         },
         {
           "strike": 49750.0,
-          "call_gex": 11.31,
-          "put_gex": -2.99,
-          "net_gex": 8.32
+          "call_gex": 11.33,
+          "put_gex": -3.0,
+          "net_gex": 8.33
         },
         {
           "strike": 49800.0,
-          "call_gex": 66.37,
-          "put_gex": -12.94,
-          "net_gex": 53.43
+          "call_gex": 66.5,
+          "put_gex": -12.97,
+          "net_gex": 53.53
         },
         {
           "strike": 49850.0,
-          "call_gex": 16.2,
-          "put_gex": -6.61,
-          "net_gex": 9.59
+          "call_gex": 16.23,
+          "put_gex": -6.63,
+          "net_gex": 9.61
         },
         {
           "strike": 49900.0,
-          "call_gex": 16.13,
-          "put_gex": -13.5,
-          "net_gex": 2.63
+          "call_gex": 16.16,
+          "put_gex": -13.52,
+          "net_gex": 2.64
         },
         {
           "strike": 49950.0,
           "call_gex": 2.95,
-          "put_gex": -3.27,
+          "put_gex": -3.28,
           "net_gex": -0.33
         },
         {
           "strike": 50000.0,
-          "call_gex": 166.73,
-          "put_gex": -3.9,
-          "net_gex": 162.83
+          "call_gex": 167.03,
+          "put_gex": -3.91,
+          "net_gex": 163.12
         },
         {
           "strike": 50050.0,
-          "call_gex": 6.13,
+          "call_gex": 6.14,
           "put_gex": -0.32,
-          "net_gex": 5.8
+          "net_gex": 5.81
         },
         {
           "strike": 50100.0,
-          "call_gex": 14.38,
+          "call_gex": 14.4,
           "put_gex": -0.32,
-          "net_gex": 14.06
+          "net_gex": 14.08
         },
         {
           "strike": 50150.0,
-          "call_gex": 10.75,
+          "call_gex": 10.77,
           "put_gex": -0.0,
-          "net_gex": 10.75
+          "net_gex": 10.77
         },
         {
           "strike": 50200.0,
-          "call_gex": 27.51,
-          "put_gex": -1.56,
-          "net_gex": 25.95
+          "call_gex": 27.56,
+          "put_gex": -1.57,
+          "net_gex": 25.99
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
           "call_gex": 3.25,
-          "put_gex": -135.91,
-          "net_gex": -132.66
+          "put_gex": -135.84,
+          "net_gex": -132.6
         },
         {
           "strike": 48450.0,
           "call_gex": 0.24,
-          "put_gex": -112.3,
-          "net_gex": -112.06
+          "put_gex": -112.28,
+          "net_gex": -112.03
         },
         {
           "strike": 48500.0,
-          "call_gex": 135.27,
-          "put_gex": -301.81,
-          "net_gex": -166.54
+          "call_gex": 135.28,
+          "put_gex": -301.83,
+          "net_gex": -166.55
         },
         {
           "strike": 48550.0,
           "call_gex": 1.86,
-          "put_gex": -62.64,
-          "net_gex": -60.78
+          "put_gex": -62.66,
+          "net_gex": -60.81
         },
         {
           "strike": 48600.0,
           "call_gex": 1.94,
-          "put_gex": -149.9,
-          "net_gex": -147.96
+          "put_gex": -149.99,
+          "net_gex": -148.05
         },
         {
           "strike": 48650.0,
           "call_gex": 1.15,
-          "put_gex": -121.65,
-          "net_gex": -120.5
+          "put_gex": -121.75,
+          "net_gex": -120.6
         },
         {
           "strike": 48700.0,
-          "call_gex": 7.46,
-          "put_gex": -194.31,
-          "net_gex": -186.85
+          "call_gex": 7.47,
+          "put_gex": -194.52,
+          "net_gex": -187.05
         },
         {
           "strike": 48750.0,
           "call_gex": 1.86,
-          "put_gex": -85.02,
-          "net_gex": -83.17
+          "put_gex": -85.13,
+          "net_gex": -83.27
         },
         {
           "strike": 48800.0,
-          "call_gex": 44.75,
-          "put_gex": -238.77,
-          "net_gex": -194.02
+          "call_gex": 44.82,
+          "put_gex": -239.12,
+          "net_gex": -194.31
         },
         {
           "strike": 48850.0,
-          "call_gex": 9.24,
-          "put_gex": -61.68,
-          "net_gex": -52.44
+          "call_gex": 9.25,
+          "put_gex": -61.78,
+          "net_gex": -52.53
         },
         {
           "strike": 48900.0,
-          "call_gex": 43.14,
-          "put_gex": -235.05,
-          "net_gex": -191.91
+          "call_gex": 43.22,
+          "put_gex": -235.49,
+          "net_gex": -192.27
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.28,
-          "put_gex": -63.54,
-          "net_gex": -57.26
+          "call_gex": 6.3,
+          "put_gex": -63.67,
+          "net_gex": -57.37
         },
         {
           "strike": 49000.0,
-          "call_gex": 133.61,
-          "put_gex": -553.06,
-          "net_gex": -419.45
+          "call_gex": 133.9,
+          "put_gex": -554.25,
+          "net_gex": -420.36
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.9,
-          "put_gex": -95.73,
-          "net_gex": -85.83
+          "call_gex": 9.93,
+          "put_gex": -95.95,
+          "net_gex": -86.03
         },
         {
           "strike": 49100.0,
-          "call_gex": 107.96,
-          "put_gex": -216.3,
-          "net_gex": -108.34
+          "call_gex": 108.22,
+          "put_gex": -216.82,
+          "net_gex": -108.6
         },
         {
           "strike": 49150.0,
-          "call_gex": 31.74,
-          "put_gex": -84.51,
-          "net_gex": -52.77
+          "call_gex": 31.82,
+          "put_gex": -84.73,
+          "net_gex": -52.91
         },
         {
           "strike": 49200.0,
-          "call_gex": 146.0,
-          "put_gex": -286.55,
-          "net_gex": -140.55
+          "call_gex": 146.39,
+          "put_gex": -287.32,
+          "net_gex": -140.93
         },
         {
           "strike": 49250.0,
-          "call_gex": 41.55,
-          "put_gex": -122.66,
-          "net_gex": -81.11
+          "call_gex": 41.66,
+          "put_gex": -123.0,
+          "net_gex": -81.34
         },
         {
           "strike": 49300.0,
-          "call_gex": 165.75,
-          "put_gex": -449.91,
-          "net_gex": -284.15
+          "call_gex": 166.23,
+          "put_gex": -451.19,
+          "net_gex": -284.96
         },
         {
           "strike": 49350.0,
-          "call_gex": 90.21,
-          "put_gex": -96.71,
-          "net_gex": -6.5
+          "call_gex": 90.47,
+          "put_gex": -96.99,
+          "net_gex": -6.52
         },
         {
           "strike": 49400.0,
-          "call_gex": 252.95,
-          "put_gex": -622.92,
-          "net_gex": -369.98
+          "call_gex": 253.7,
+          "put_gex": -624.78,
+          "net_gex": -371.08
         },
         {
           "strike": 49450.0,
-          "call_gex": 67.51,
-          "put_gex": -68.34,
+          "call_gex": 67.72,
+          "put_gex": -68.55,
           "net_gex": -0.83
         },
         {
           "strike": 49500.0,
-          "call_gex": 361.13,
-          "put_gex": -567.14,
-          "net_gex": -206.0
+          "call_gex": 362.24,
+          "put_gex": -568.88,
+          "net_gex": -206.64
         },
         {
           "strike": 49550.0,
-          "call_gex": 87.59,
-          "put_gex": -31.01,
-          "net_gex": 56.58
+          "call_gex": 87.86,
+          "put_gex": -31.11,
+          "net_gex": 56.75
         },
         {
           "strike": 49600.0,
-          "call_gex": 312.34,
-          "put_gex": -186.65,
-          "net_gex": 125.69
+          "call_gex": 313.31,
+          "put_gex": -187.23,
+          "net_gex": 126.08
         },
         {
           "strike": 49650.0,
-          "call_gex": 91.76,
-          "put_gex": -31.57,
-          "net_gex": 60.19
+          "call_gex": 92.04,
+          "put_gex": -31.67,
+          "net_gex": 60.38
         },
         {
           "strike": 49700.0,
-          "call_gex": 336.53,
-          "put_gex": -72.77,
-          "net_gex": 263.75
+          "call_gex": 337.57,
+          "put_gex": -73.0,
+          "net_gex": 264.57
         },
         {
           "strike": 49750.0,
-          "call_gex": 177.51,
-          "put_gex": -29.38,
-          "net_gex": 148.13
+          "call_gex": 178.06,
+          "put_gex": -29.47,
+          "net_gex": 148.59
         },
         {
           "strike": 49800.0,
-          "call_gex": 408.26,
-          "put_gex": -89.84,
-          "net_gex": 318.42
+          "call_gex": 409.51,
+          "put_gex": -90.12,
+          "net_gex": 319.39
         },
         {
           "strike": 49850.0,
-          "call_gex": 149.94,
-          "put_gex": -16.61,
-          "net_gex": 133.33
+          "call_gex": 150.4,
+          "put_gex": -16.66,
+          "net_gex": 133.73
         },
         {
           "strike": 49900.0,
-          "call_gex": 304.13,
-          "put_gex": -27.2,
-          "net_gex": 276.94
+          "call_gex": 305.03,
+          "put_gex": -27.28,
+          "net_gex": 277.75
         },
         {
           "strike": 49950.0,
-          "call_gex": 159.18,
-          "put_gex": -10.61,
-          "net_gex": 148.56
+          "call_gex": 159.64,
+          "put_gex": -10.64,
+          "net_gex": 148.99
         },
         {
           "strike": 50000.0,
-          "call_gex": 839.26,
-          "put_gex": -33.09,
-          "net_gex": 806.18
+          "call_gex": 841.63,
+          "put_gex": -33.18,
+          "net_gex": 808.45
         },
         {
           "strike": 50050.0,
-          "call_gex": 275.14,
-          "put_gex": -4.78,
-          "net_gex": 270.36
+          "call_gex": 275.89,
+          "put_gex": -4.79,
+          "net_gex": 271.1
         },
         {
           "strike": 50100.0,
-          "call_gex": 311.43,
-          "put_gex": -23.53,
-          "net_gex": 287.9
+          "call_gex": 312.25,
+          "put_gex": -23.6,
+          "net_gex": 288.66
         },
         {
           "strike": 50150.0,
-          "call_gex": 167.0,
-          "put_gex": -5.4,
-          "net_gex": 161.6
+          "call_gex": 167.42,
+          "put_gex": -5.41,
+          "net_gex": 162.01
         },
         {
           "strike": 50200.0,
-          "call_gex": 519.4,
-          "put_gex": -4.92,
-          "net_gex": 514.48
+          "call_gex": 520.65,
+          "put_gex": -4.93,
+          "net_gex": 515.72
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 38.06,
-          "put_gex": -17.65,
-          "net_gex": 20.41
+          "call_gex": 38.08,
+          "put_gex": -17.66,
+          "net_gex": 20.42
         },
         {
           "strike": 48450.0,
@@ -7611,9 +7611,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 58.69,
-          "put_gex": -135.5,
-          "net_gex": -76.81
+          "call_gex": 58.73,
+          "put_gex": -135.58,
+          "net_gex": -76.86
         },
         {
           "strike": 48550.0,
@@ -7623,9 +7623,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 56.44,
-          "put_gex": -22.42,
-          "net_gex": 34.02
+          "call_gex": 56.48,
+          "put_gex": -22.44,
+          "net_gex": 34.04
         },
         {
           "strike": 48650.0,
@@ -7635,9 +7635,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 44.65,
-          "put_gex": -21.93,
-          "net_gex": 22.72
+          "call_gex": 44.68,
+          "put_gex": -21.94,
+          "net_gex": 22.73
         },
         {
           "strike": 48750.0,
@@ -7647,9 +7647,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 26.19,
-          "put_gex": -29.42,
-          "net_gex": -3.22
+          "call_gex": 26.21,
+          "put_gex": -29.44,
+          "net_gex": -3.23
         },
         {
           "strike": 48850.0,
@@ -7659,9 +7659,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 21.12,
-          "put_gex": -8.61,
-          "net_gex": 12.51
+          "call_gex": 21.14,
+          "put_gex": -8.62,
+          "net_gex": 12.52
         },
         {
           "strike": 48950.0,
@@ -7671,9 +7671,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 125.17,
-          "put_gex": -64.77,
-          "net_gex": 60.4
+          "call_gex": 125.27,
+          "put_gex": -64.82,
+          "net_gex": 60.45
         },
         {
           "strike": 49050.0,
@@ -7683,21 +7683,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 127.29,
-          "put_gex": -26.81,
-          "net_gex": 100.48
+          "call_gex": 127.39,
+          "put_gex": -26.83,
+          "net_gex": 100.56
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.49,
+          "call_gex": 8.5,
           "put_gex": -0.21,
-          "net_gex": 8.28
+          "net_gex": 8.29
         },
         {
           "strike": 49200.0,
-          "call_gex": 49.53,
-          "put_gex": -12.17,
-          "net_gex": 37.36
+          "call_gex": 49.57,
+          "put_gex": -12.18,
+          "net_gex": 37.39
         },
         {
           "strike": 49250.0,
@@ -7707,9 +7707,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.69,
-          "put_gex": -35.34,
-          "net_gex": -14.66
+          "call_gex": 20.71,
+          "put_gex": -35.37,
+          "net_gex": -14.67
         },
         {
           "strike": 49350.0,
@@ -7719,9 +7719,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 24.97,
-          "put_gex": -16.07,
-          "net_gex": 8.9
+          "call_gex": 24.99,
+          "put_gex": -16.08,
+          "net_gex": 8.91
         },
         {
           "strike": 49450.0,
@@ -7731,9 +7731,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 143.17,
-          "put_gex": -65.26,
-          "net_gex": 77.91
+          "call_gex": 143.29,
+          "put_gex": -65.31,
+          "net_gex": 77.98
         },
         {
           "strike": 49550.0,
@@ -7743,9 +7743,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 29.12,
-          "put_gex": -8.76,
-          "net_gex": 20.36
+          "call_gex": 29.15,
+          "put_gex": -8.77,
+          "net_gex": 20.38
         },
         {
           "strike": 49650.0,
@@ -7755,32 +7755,32 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 26.31,
-          "put_gex": -10.96,
-          "net_gex": 15.35
+          "call_gex": 26.33,
+          "put_gex": -10.97,
+          "net_gex": 15.36
         },
         {
           "strike": 49750.0,
-          "call_gex": 1.75,
+          "call_gex": 1.76,
           "put_gex": -0.66,
           "net_gex": 1.1
         },
         {
           "strike": 49800.0,
-          "call_gex": 31.55,
-          "put_gex": -26.29,
+          "call_gex": 31.58,
+          "put_gex": -26.31,
           "net_gex": 5.26
         },
         {
           "strike": 49850.0,
-          "call_gex": 1.09,
+          "call_gex": 1.1,
           "put_gex": -0.0,
-          "net_gex": 1.09
+          "net_gex": 1.1
         },
         {
           "strike": 49900.0,
-          "call_gex": 21.85,
-          "put_gex": -14.2,
+          "call_gex": 21.87,
+          "put_gex": -14.21,
           "net_gex": 7.65
         },
         {
@@ -7791,9 +7791,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 316.45,
-          "put_gex": -40.89,
-          "net_gex": 275.57
+          "call_gex": 316.71,
+          "put_gex": -40.92,
+          "net_gex": 275.79
         },
         {
           "strike": 50050.0,
@@ -7803,9 +7803,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 25.06,
+          "call_gex": 25.08,
           "put_gex": -5.19,
-          "net_gex": 19.88
+          "net_gex": 19.89
         },
         {
           "strike": 50150.0,
@@ -7815,9 +7815,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 43.49,
+          "call_gex": 43.52,
           "put_gex": -7.93,
-          "net_gex": 35.56
+          "net_gex": 35.59
         }
       ]
     },
@@ -7846,27 +7846,27 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 40.2,
-          "put_gex": -142.91,
-          "net_gex": -102.71,
-          "vex": 12.09,
-          "gex_plus": -90.63,
+          "call_gex": 40.21,
+          "put_gex": -142.74,
+          "net_gex": -102.53,
+          "vex": 12.06,
+          "gex_plus": -90.46,
           "w1_call": 1.22,
           "w1_put": -12.61,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 36.27,
-          "mth_put": -16.82,
+          "mth_call": 36.28,
+          "mth_put": -16.83,
           "fri_call": 2.71,
-          "fri_put": -113.48
+          "fri_put": -113.3
         },
         {
           "strike": 48450.0,
           "call_gex": 0.63,
-          "put_gex": -99.73,
-          "net_gex": -99.1,
-          "vex": 11.22,
-          "gex_plus": -87.89,
+          "put_gex": -99.61,
+          "net_gex": -98.98,
+          "vex": 11.2,
+          "gex_plus": -87.78,
           "w1_call": 0.42,
           "w1_put": -4.42,
           "w2_call": 0.0,
@@ -7874,31 +7874,31 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -0.89,
           "fri_call": 0.2,
-          "fri_put": -94.42
+          "fri_put": -94.3
         },
         {
           "strike": 48500.0,
-          "call_gex": 173.69,
-          "put_gex": -473.19,
-          "net_gex": -299.49,
+          "call_gex": 173.62,
+          "put_gex": -473.04,
+          "net_gex": -299.43,
           "vex": 32.5,
-          "gex_plus": -266.99,
-          "w1_call": 3.04,
-          "w1_put": -88.08,
+          "gex_plus": -266.93,
+          "w1_call": 3.05,
+          "w1_put": -88.11,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 56.14,
-          "mth_put": -129.6,
-          "fri_call": 114.51,
-          "fri_put": -255.5
+          "mth_call": 56.17,
+          "mth_put": -129.67,
+          "fri_call": 114.4,
+          "fri_put": -255.26
         },
         {
           "strike": 48550.0,
           "call_gex": 2.03,
-          "put_gex": -58.72,
-          "net_gex": -56.69,
+          "put_gex": -58.69,
+          "net_gex": -56.66,
           "vex": 5.94,
-          "gex_plus": -50.75,
+          "gex_plus": -50.72,
           "w1_call": 0.45,
           "w1_put": -4.04,
           "w2_call": 0.0,
@@ -7906,23 +7906,23 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.28,
           "fri_call": 1.58,
-          "fri_put": -53.4
+          "fri_put": -53.36
         },
         {
           "strike": 48600.0,
-          "call_gex": 55.85,
-          "put_gex": -169.16,
-          "net_gex": -113.31,
-          "vex": 11.45,
-          "gex_plus": -101.87,
+          "call_gex": 55.88,
+          "put_gex": -169.13,
+          "net_gex": -113.26,
+          "vex": 11.44,
+          "gex_plus": -101.82,
           "w1_call": 0.0,
-          "w1_put": -18.97,
+          "w1_put": -18.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 54.19,
-          "mth_put": -21.53,
+          "mth_call": 54.22,
+          "mth_put": -21.54,
           "fri_call": 1.66,
-          "fri_put": -128.66
+          "fri_put": -128.61
         },
         {
           "strike": 48650.0,
@@ -7932,37 +7932,37 @@ window.GEX_EMBEDDED_DATA = {
           "vex": 11.27,
           "gex_plus": -105.65,
           "w1_call": 0.24,
-          "w1_put": -10.0,
+          "w1_put": -10.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.01,
           "fri_call": 0.99,
-          "fri_put": -105.14
+          "fri_put": -105.13
         },
         {
           "strike": 48700.0,
-          "call_gex": 49.76,
-          "put_gex": -200.51,
-          "net_gex": -150.74,
+          "call_gex": 49.79,
+          "put_gex": -200.56,
+          "net_gex": -150.77,
           "vex": 13.94,
-          "gex_plus": -136.81,
-          "w1_call": 0.24,
-          "w1_put": -10.29,
+          "gex_plus": -136.83,
+          "w1_call": 0.25,
+          "w1_put": -10.3,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 43.02,
-          "mth_put": -21.13,
+          "mth_call": 43.05,
+          "mth_put": -21.14,
           "fri_call": 6.49,
-          "fri_put": -169.09
+          "fri_put": -169.12
         },
         {
           "strike": 48750.0,
           "call_gex": 2.63,
-          "put_gex": -82.43,
-          "net_gex": -79.8,
+          "put_gex": -82.47,
+          "net_gex": -79.84,
           "vex": 7.02,
-          "gex_plus": -72.78,
+          "gex_plus": -72.81,
           "w1_call": 1.01,
           "w1_put": -4.28,
           "w2_call": 0.0,
@@ -7970,471 +7970,471 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -3.66,
           "fri_call": 1.63,
-          "fri_put": -74.5
+          "fri_put": -74.53
         },
         {
           "strike": 48800.0,
-          "call_gex": 68.43,
-          "put_gex": -250.97,
-          "net_gex": -182.54,
-          "vex": 15.31,
-          "gex_plus": -167.24,
-          "w1_call": 3.61,
-          "w1_put": -11.87,
+          "call_gex": 68.47,
+          "put_gex": -251.14,
+          "net_gex": -182.67,
+          "vex": 15.32,
+          "gex_plus": -167.35,
+          "w1_call": 3.62,
+          "w1_put": -11.88,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.33,
-          "mth_put": -28.45,
-          "fri_call": 39.48,
-          "fri_put": -210.65
+          "mth_call": 25.35,
+          "mth_put": -28.47,
+          "fri_call": 39.51,
+          "fri_put": -210.79
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.2,
-          "put_gex": -64.22,
-          "net_gex": -56.02,
-          "vex": 4.46,
-          "gex_plus": -51.56,
+          "call_gex": 8.21,
+          "put_gex": -64.28,
+          "net_gex": -56.07,
+          "vex": 4.47,
+          "gex_plus": -51.61,
           "w1_call": 0.0,
           "w1_put": -7.67,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.77,
-          "fri_call": 8.2,
-          "fri_put": -54.79
+          "fri_call": 8.21,
+          "fri_put": -54.84
         },
         {
           "strike": 48900.0,
-          "call_gex": 61.79,
-          "put_gex": -230.21,
-          "net_gex": -168.42,
-          "vex": 12.74,
-          "gex_plus": -155.68,
-          "w1_call": 2.7,
-          "w1_put": -11.63,
+          "call_gex": 61.85,
+          "put_gex": -230.47,
+          "net_gex": -168.62,
+          "vex": 12.76,
+          "gex_plus": -155.86,
+          "w1_call": 2.71,
+          "w1_put": -11.64,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.51,
-          "mth_put": -8.36,
-          "fri_call": 38.58,
-          "fri_put": -210.22
+          "mth_call": 20.52,
+          "mth_put": -8.37,
+          "fri_call": 38.63,
+          "fri_put": -210.46
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.21,
-          "put_gex": -64.99,
-          "net_gex": -58.77,
-          "vex": 4.19,
-          "gex_plus": -54.58,
+          "call_gex": 6.22,
+          "put_gex": -65.07,
+          "net_gex": -58.85,
+          "vex": 4.2,
+          "gex_plus": -54.66,
           "w1_call": 0.55,
-          "w1_put": -6.36,
+          "w1_put": -6.37,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.41,
-          "fri_call": 5.66,
-          "fri_put": -57.22
+          "fri_call": 5.67,
+          "fri_put": -57.3
         },
         {
           "strike": 49000.0,
-          "call_gex": 267.66,
-          "put_gex": -606.03,
-          "net_gex": -338.38,
-          "vex": 22.84,
-          "gex_plus": -315.54,
-          "w1_call": 24.55,
-          "w1_put": -41.48,
+          "call_gex": 267.97,
+          "put_gex": -606.91,
+          "net_gex": -338.94,
+          "vex": 22.88,
+          "gex_plus": -316.07,
+          "w1_call": 24.58,
+          "w1_put": -41.54,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 121.97,
-          "mth_put": -63.12,
-          "fri_call": 121.14,
-          "fri_put": -501.43
+          "mth_call": 122.06,
+          "mth_put": -63.16,
+          "fri_call": 121.32,
+          "fri_put": -502.21
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.81,
-          "put_gex": -94.86,
-          "net_gex": -84.06,
-          "vex": 5.3,
-          "gex_plus": -78.76,
+          "call_gex": 10.82,
+          "put_gex": -95.03,
+          "net_gex": -84.2,
+          "vex": 5.31,
+          "gex_plus": -78.89,
           "w1_call": 1.15,
-          "w1_put": -6.04,
+          "w1_put": -6.05,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.61,
           "mth_put": -1.43,
-          "fri_call": 9.04,
-          "fri_put": -87.39
+          "fri_call": 9.06,
+          "fri_put": -87.54
         },
         {
           "strike": 49100.0,
-          "call_gex": 228.41,
-          "put_gex": -234.69,
-          "net_gex": -6.28,
-          "vex": 0.52,
-          "gex_plus": -5.76,
+          "call_gex": 228.7,
+          "put_gex": -235.1,
+          "net_gex": -6.4,
+          "vex": 0.53,
+          "gex_plus": -5.88,
           "w1_call": 4.69,
-          "w1_put": -9.67,
+          "w1_put": -9.68,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 124.49,
-          "mth_put": -26.22,
-          "fri_call": 99.23,
-          "fri_put": -198.8
+          "mth_call": 124.59,
+          "mth_put": -26.24,
+          "fri_call": 99.42,
+          "fri_put": -199.18
         },
         {
           "strike": 49150.0,
-          "call_gex": 39.48,
-          "put_gex": -82.58,
-          "net_gex": -43.1,
-          "vex": 2.37,
-          "gex_plus": -40.73,
+          "call_gex": 39.55,
+          "put_gex": -82.75,
+          "net_gex": -43.2,
+          "vex": 2.38,
+          "gex_plus": -40.82,
           "w1_call": 1.79,
-          "w1_put": -4.17,
+          "w1_put": -4.18,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.32,
+          "mth_call": 8.33,
           "mth_put": -0.21,
-          "fri_call": 29.37,
-          "fri_put": -78.2
+          "fri_call": 29.43,
+          "fri_put": -78.36
         },
         {
           "strike": 49200.0,
-          "call_gex": 194.95,
-          "put_gex": -293.16,
-          "net_gex": -98.21,
-          "vex": 5.03,
-          "gex_plus": -93.18,
-          "w1_call": 10.29,
-          "w1_put": -14.23,
+          "call_gex": 195.3,
+          "put_gex": -293.78,
+          "net_gex": -98.48,
+          "vex": 5.04,
+          "gex_plus": -93.43,
+          "w1_call": 10.31,
+          "w1_put": -14.25,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 48.63,
-          "mth_put": -11.95,
-          "fri_call": 136.03,
-          "fri_put": -266.98
+          "mth_call": 48.66,
+          "mth_put": -11.96,
+          "fri_call": 136.33,
+          "fri_put": -267.57
         },
         {
           "strike": 49250.0,
-          "call_gex": 43.31,
-          "put_gex": -127.38,
-          "net_gex": -84.07,
-          "vex": 3.91,
-          "gex_plus": -80.17,
-          "w1_call": 3.07,
-          "w1_put": -11.06,
+          "call_gex": 43.41,
+          "put_gex": -127.67,
+          "net_gex": -84.27,
+          "vex": 3.92,
+          "gex_plus": -80.35,
+          "w1_call": 3.08,
+          "w1_put": -11.08,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.27,
           "mth_put": -1.27,
-          "fri_call": 38.97,
-          "fri_put": -115.06
+          "fri_call": 39.06,
+          "fri_put": -115.33
         },
         {
           "strike": 49300.0,
-          "call_gex": 192.18,
-          "put_gex": -487.13,
-          "net_gex": -294.94,
-          "vex": 12.47,
-          "gex_plus": -282.47,
-          "w1_call": 15.26,
-          "w1_put": -27.4,
+          "call_gex": 192.62,
+          "put_gex": -488.26,
+          "net_gex": -295.64,
+          "vex": 12.5,
+          "gex_plus": -283.14,
+          "w1_call": 15.28,
+          "w1_put": -27.45,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.38,
-          "mth_put": -34.82,
-          "fri_call": 156.54,
-          "fri_put": -424.9
+          "mth_call": 20.4,
+          "mth_put": -34.85,
+          "fri_call": 156.93,
+          "fri_put": -425.95
         },
         {
           "strike": 49350.0,
-          "call_gex": 90.31,
-          "put_gex": -98.59,
-          "net_gex": -8.29,
+          "call_gex": 90.54,
+          "put_gex": -98.84,
+          "net_gex": -8.31,
           "vex": 0.32,
-          "gex_plus": -7.97,
+          "gex_plus": -7.99,
           "w1_call": 3.47,
-          "w1_put": -5.36,
+          "w1_put": -5.37,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.07,
           "mth_put": -1.28,
-          "fri_call": 85.77,
-          "fri_put": -91.95
+          "fri_call": 86.0,
+          "fri_put": -92.19
         },
         {
           "strike": 49400.0,
-          "call_gex": 295.2,
-          "put_gex": -623.37,
-          "net_gex": -328.16,
-          "vex": 11.22,
-          "gex_plus": -316.94,
-          "w1_call": 28.37,
-          "w1_put": -11.16,
+          "call_gex": 295.93,
+          "put_gex": -625.01,
+          "net_gex": -329.08,
+          "vex": 11.25,
+          "gex_plus": -317.83,
+          "w1_call": 28.42,
+          "w1_put": -11.18,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.69,
-          "mth_put": -15.89,
-          "fri_call": 242.15,
-          "fri_put": -596.32
+          "mth_call": 24.71,
+          "mth_put": -15.9,
+          "fri_call": 242.8,
+          "fri_put": -597.93
         },
         {
           "strike": 49450.0,
-          "call_gex": 76.77,
-          "put_gex": -69.85,
-          "net_gex": 6.93,
+          "call_gex": 76.97,
+          "put_gex": -70.04,
+          "net_gex": 6.94,
           "vex": -0.21,
-          "gex_plus": 6.72,
-          "w1_call": 10.62,
-          "w1_put": -2.25,
+          "gex_plus": 6.73,
+          "w1_call": 10.64,
+          "w1_put": -2.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.08,
           "mth_put": -1.73,
-          "fri_call": 65.07,
-          "fri_put": -65.87
+          "fri_call": 65.25,
+          "fri_put": -66.05
         },
         {
           "strike": 49500.0,
-          "call_gex": 554.55,
-          "put_gex": -651.78,
-          "net_gex": -97.23,
-          "vex": 2.64,
-          "gex_plus": -94.58,
-          "w1_call": 62.03,
-          "w1_put": -36.7,
+          "call_gex": 555.79,
+          "put_gex": -653.48,
+          "net_gex": -97.69,
+          "vex": 2.66,
+          "gex_plus": -95.03,
+          "w1_call": 62.15,
+          "w1_put": -36.77,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 142.1,
-          "mth_put": -64.77,
-          "fri_call": 350.42,
-          "fri_put": -550.31
+          "mth_call": 142.22,
+          "mth_put": -64.82,
+          "fri_call": 351.42,
+          "fri_put": -551.89
         },
         {
           "strike": 49550.0,
-          "call_gex": 94.94,
-          "put_gex": -34.54,
-          "net_gex": 60.39,
-          "vex": -1.31,
-          "gex_plus": 59.08,
-          "w1_call": 7.85,
+          "call_gex": 95.21,
+          "put_gex": -34.64,
+          "net_gex": 60.57,
+          "vex": -1.32,
+          "gex_plus": 59.25,
+          "w1_call": 7.87,
           "w1_put": -2.95,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.52,
-          "mth_put": -1.3,
-          "fri_call": 85.56,
-          "fri_put": -30.3
+          "mth_put": -1.31,
+          "fri_call": 85.82,
+          "fri_put": -30.38
         },
         {
           "strike": 49600.0,
-          "call_gex": 356.95,
-          "put_gex": -198.55,
-          "net_gex": 158.4,
-          "vex": -2.76,
-          "gex_plus": 155.63,
-          "w1_call": 20.75,
-          "w1_put": -6.26,
+          "call_gex": 357.93,
+          "put_gex": -199.12,
+          "net_gex": 158.81,
+          "vex": -2.77,
+          "gex_plus": 156.04,
+          "w1_call": 20.79,
+          "w1_put": -6.27,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 29.01,
+          "mth_call": 29.03,
           "mth_put": -8.73,
-          "fri_call": 307.19,
-          "fri_put": -183.57
+          "fri_call": 308.11,
+          "fri_put": -184.12
         },
         {
           "strike": 49650.0,
-          "call_gex": 98.12,
-          "put_gex": -34.57,
-          "net_gex": 63.55,
+          "call_gex": 98.41,
+          "put_gex": -34.67,
+          "net_gex": 63.74,
           "vex": -0.86,
-          "gex_plus": 62.69,
-          "w1_call": 5.3,
-          "w1_put": -3.31,
+          "gex_plus": 62.88,
+          "w1_call": 5.31,
+          "w1_put": -3.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.97,
           "mth_put": -0.0,
-          "fri_call": 90.85,
-          "fri_put": -31.26
+          "fri_call": 91.13,
+          "fri_put": -31.35
         },
         {
           "strike": 49700.0,
-          "call_gex": 404.99,
-          "put_gex": -97.8,
-          "net_gex": 307.19,
-          "vex": -2.87,
-          "gex_plus": 304.31,
-          "w1_call": 43.22,
-          "w1_put": -14.3,
+          "call_gex": 406.13,
+          "put_gex": -98.06,
+          "net_gex": 308.07,
+          "vex": -2.88,
+          "gex_plus": 305.18,
+          "w1_call": 43.31,
+          "w1_put": -14.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.3,
-          "mth_put": -10.96,
-          "fri_call": 335.46,
-          "fri_put": -72.54
+          "mth_call": 26.33,
+          "mth_put": -10.97,
+          "fri_call": 336.49,
+          "fri_put": -72.77
         },
         {
           "strike": 49750.0,
-          "call_gex": 191.24,
-          "put_gex": -33.14,
-          "net_gex": 158.1,
-          "vex": -0.84,
-          "gex_plus": 157.25,
-          "w1_call": 11.34,
-          "w1_put": -3.0,
+          "call_gex": 191.81,
+          "put_gex": -33.24,
+          "net_gex": 158.58,
+          "vex": -0.85,
+          "gex_plus": 157.73,
+          "w1_call": 11.36,
+          "w1_put": -3.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.76,
           "mth_put": -0.66,
-          "fri_call": 178.14,
-          "fri_put": -29.48
+          "fri_call": 178.69,
+          "fri_put": -29.57
         },
         {
           "strike": 49800.0,
-          "call_gex": 510.95,
-          "put_gex": -130.18,
-          "net_gex": 380.77,
+          "call_gex": 512.39,
+          "put_gex": -130.51,
+          "net_gex": 381.88,
           "vex": -0.46,
-          "gex_plus": 380.31,
-          "w1_call": 66.82,
-          "w1_put": -13.03,
+          "gex_plus": 381.42,
+          "w1_call": 66.95,
+          "w1_put": -13.06,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.66,
-          "mth_put": -26.38,
-          "fri_call": 412.48,
-          "fri_put": -90.77
+          "mth_call": 31.69,
+          "mth_put": -26.4,
+          "fri_call": 413.76,
+          "fri_put": -91.05
         },
         {
           "strike": 49850.0,
-          "call_gex": 169.99,
-          "put_gex": -23.59,
-          "net_gex": 146.41,
+          "call_gex": 170.5,
+          "put_gex": -23.65,
+          "net_gex": 146.85,
           "vex": 0.42,
-          "gex_plus": 146.82,
-          "w1_call": 16.38,
-          "w1_put": -6.69,
+          "gex_plus": 147.27,
+          "w1_call": 16.41,
+          "w1_put": -6.7,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.1,
           "mth_put": -0.0,
-          "fri_call": 152.51,
-          "fri_put": -16.9
+          "fri_call": 152.99,
+          "fri_put": -16.95
         },
         {
           "strike": 49900.0,
-          "call_gex": 349.8,
-          "put_gex": -55.86,
-          "net_gex": 293.95,
+          "call_gex": 350.82,
+          "put_gex": -55.98,
+          "net_gex": 294.84,
           "vex": 2.04,
-          "gex_plus": 295.98,
-          "w1_call": 16.37,
-          "w1_put": -13.7,
+          "gex_plus": 296.88,
+          "w1_call": 16.41,
+          "w1_put": -13.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.01,
-          "mth_put": -14.3,
-          "fri_call": 311.42,
-          "fri_put": -27.85
+          "mth_call": 22.02,
+          "mth_put": -14.32,
+          "fri_call": 312.39,
+          "fri_put": -27.94
         },
         {
           "strike": 49950.0,
-          "call_gex": 168.41,
-          "put_gex": -14.94,
-          "net_gex": 153.47,
-          "vex": 1.68,
-          "gex_plus": 155.16,
-          "w1_call": 3.0,
+          "call_gex": 168.92,
+          "put_gex": -14.98,
+          "net_gex": 153.94,
+          "vex": 1.69,
+          "gex_plus": 155.63,
+          "w1_call": 3.01,
           "w1_put": -3.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.32,
           "mth_put": -0.66,
-          "fri_call": 164.08,
-          "fri_put": -10.94
+          "fri_call": 164.59,
+          "fri_put": -10.97
         },
         {
           "strike": 50000.0,
-          "call_gex": 1361.52,
-          "put_gex": -79.66,
-          "net_gex": 1281.86,
-          "vex": 19.76,
-          "gex_plus": 1301.62,
-          "w1_call": 170.7,
-          "w1_put": -3.99,
+          "call_gex": 1364.76,
+          "put_gex": -79.81,
+          "net_gex": 1284.96,
+          "vex": 19.81,
+          "gex_plus": 1304.76,
+          "w1_call": 171.03,
+          "w1_put": -4.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 319.87,
-          "mth_put": -41.33,
-          "fri_call": 870.95,
-          "fri_put": -34.34
+          "mth_call": 320.14,
+          "mth_put": -41.36,
+          "fri_call": 873.6,
+          "fri_put": -34.44
         },
         {
           "strike": 50050.0,
-          "call_gex": 295.94,
-          "put_gex": -5.54,
-          "net_gex": 290.39,
-          "vex": 5.56,
-          "gex_plus": 295.95,
-          "w1_call": 6.3,
+          "call_gex": 296.81,
+          "put_gex": -5.56,
+          "net_gex": 291.25,
+          "vex": 5.57,
+          "gex_plus": 296.82,
+          "w1_call": 6.31,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 2.2,
           "mth_put": -0.22,
-          "fri_call": 287.44,
-          "fri_put": -4.99
+          "fri_call": 288.3,
+          "fri_put": -5.01
         },
         {
           "strike": 50100.0,
-          "call_gex": 367.8,
-          "put_gex": -30.34,
-          "net_gex": 337.46,
-          "vex": 7.86,
-          "gex_plus": 345.32,
-          "w1_call": 14.84,
+          "call_gex": 368.81,
+          "put_gex": -30.42,
+          "net_gex": 338.4,
+          "vex": 7.88,
+          "gex_plus": 346.28,
+          "w1_call": 14.87,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.43,
+          "mth_call": 25.45,
           "mth_put": -5.26,
-          "fri_call": 327.53,
-          "fri_put": -24.75
+          "fri_call": 328.5,
+          "fri_put": -24.82
         },
         {
           "strike": 50150.0,
-          "call_gex": 188.18,
-          "put_gex": -5.72,
-          "net_gex": 182.46,
-          "vex": 4.98,
-          "gex_plus": 187.44,
-          "w1_call": 11.15,
+          "call_gex": 188.71,
+          "put_gex": -5.73,
+          "net_gex": 182.97,
+          "vex": 4.99,
+          "gex_plus": 187.96,
+          "w1_call": 11.17,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.22,
           "mth_put": -0.0,
-          "fri_call": 176.81,
-          "fri_put": -5.72
+          "fri_call": 177.32,
+          "fri_put": -5.73
         },
         {
           "strike": 50200.0,
-          "call_gex": 626.51,
-          "put_gex": -14.94,
-          "net_gex": 611.57,
-          "vex": 19.21,
-          "gex_plus": 630.78,
-          "w1_call": 28.64,
+          "call_gex": 628.14,
+          "put_gex": -14.97,
+          "net_gex": 613.18,
+          "vex": 19.26,
+          "gex_plus": 632.43,
+          "w1_call": 28.69,
           "w1_put": -1.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.28,
-          "mth_put": -8.07,
-          "fri_call": 553.59,
-          "fri_put": -5.25
+          "mth_call": 44.31,
+          "mth_put": -8.08,
+          "fri_call": 555.14,
+          "fri_put": -5.26
         }
       ],
       "weekly_gex": [
@@ -8452,9 +8452,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 3.04,
-          "put_gex": -88.08,
-          "net_gex": -85.04
+          "call_gex": 3.05,
+          "put_gex": -88.11,
+          "net_gex": -85.07
         },
         {
           "strike": 48550.0,
@@ -8465,20 +8465,20 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -18.97,
-          "net_gex": -18.97
+          "put_gex": -18.98,
+          "net_gex": -18.98
         },
         {
           "strike": 48650.0,
           "call_gex": 0.24,
-          "put_gex": -10.0,
+          "put_gex": -10.01,
           "net_gex": -9.77
         },
         {
           "strike": 48700.0,
-          "call_gex": 0.24,
-          "put_gex": -10.29,
-          "net_gex": -10.04
+          "call_gex": 0.25,
+          "put_gex": -10.3,
+          "net_gex": -10.05
         },
         {
           "strike": 48750.0,
@@ -8488,8 +8488,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 3.61,
-          "put_gex": -11.87,
+          "call_gex": 3.62,
+          "put_gex": -11.88,
           "net_gex": -8.26
         },
         {
@@ -8500,397 +8500,397 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 2.7,
-          "put_gex": -11.63,
-          "net_gex": -8.93
+          "call_gex": 2.71,
+          "put_gex": -11.64,
+          "net_gex": -8.94
         },
         {
           "strike": 48950.0,
           "call_gex": 0.55,
-          "put_gex": -6.36,
+          "put_gex": -6.37,
           "net_gex": -5.81
         },
         {
           "strike": 49000.0,
-          "call_gex": 24.55,
-          "put_gex": -41.48,
-          "net_gex": -16.93
+          "call_gex": 24.58,
+          "put_gex": -41.54,
+          "net_gex": -16.95
         },
         {
           "strike": 49050.0,
           "call_gex": 1.15,
-          "put_gex": -6.04,
-          "net_gex": -4.89
+          "put_gex": -6.05,
+          "net_gex": -4.9
         },
         {
           "strike": 49100.0,
           "call_gex": 4.69,
-          "put_gex": -9.67,
-          "net_gex": -4.98
+          "put_gex": -9.68,
+          "net_gex": -4.99
         },
         {
           "strike": 49150.0,
           "call_gex": 1.79,
-          "put_gex": -4.17,
-          "net_gex": -2.38
+          "put_gex": -4.18,
+          "net_gex": -2.39
         },
         {
           "strike": 49200.0,
-          "call_gex": 10.29,
-          "put_gex": -14.23,
+          "call_gex": 10.31,
+          "put_gex": -14.25,
           "net_gex": -3.94
         },
         {
           "strike": 49250.0,
-          "call_gex": 3.07,
-          "put_gex": -11.06,
-          "net_gex": -7.99
+          "call_gex": 3.08,
+          "put_gex": -11.08,
+          "net_gex": -8.0
         },
         {
           "strike": 49300.0,
-          "call_gex": 15.26,
-          "put_gex": -27.4,
-          "net_gex": -12.14
+          "call_gex": 15.28,
+          "put_gex": -27.45,
+          "net_gex": -12.17
         },
         {
           "strike": 49350.0,
           "call_gex": 3.47,
-          "put_gex": -5.36,
+          "put_gex": -5.37,
           "net_gex": -1.89
         },
         {
           "strike": 49400.0,
-          "call_gex": 28.37,
-          "put_gex": -11.16,
-          "net_gex": 17.21
+          "call_gex": 28.42,
+          "put_gex": -11.18,
+          "net_gex": 17.24
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.62,
-          "put_gex": -2.25,
-          "net_gex": 8.37
+          "call_gex": 10.64,
+          "put_gex": -2.26,
+          "net_gex": 8.39
         },
         {
           "strike": 49500.0,
-          "call_gex": 62.03,
-          "put_gex": -36.7,
-          "net_gex": 25.33
+          "call_gex": 62.15,
+          "put_gex": -36.77,
+          "net_gex": 25.38
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.85,
+          "call_gex": 7.87,
           "put_gex": -2.95,
-          "net_gex": 4.91
+          "net_gex": 4.92
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.75,
-          "put_gex": -6.26,
-          "net_gex": 14.49
+          "call_gex": 20.79,
+          "put_gex": -6.27,
+          "net_gex": 14.52
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.3,
-          "put_gex": -3.31,
+          "call_gex": 5.31,
+          "put_gex": -3.32,
           "net_gex": 1.99
         },
         {
           "strike": 49700.0,
-          "call_gex": 43.22,
-          "put_gex": -14.3,
-          "net_gex": 28.93
+          "call_gex": 43.31,
+          "put_gex": -14.32,
+          "net_gex": 28.98
         },
         {
           "strike": 49750.0,
-          "call_gex": 11.34,
-          "put_gex": -3.0,
-          "net_gex": 8.34
+          "call_gex": 11.36,
+          "put_gex": -3.01,
+          "net_gex": 8.35
         },
         {
           "strike": 49800.0,
-          "call_gex": 66.82,
-          "put_gex": -13.03,
-          "net_gex": 53.79
+          "call_gex": 66.95,
+          "put_gex": -13.06,
+          "net_gex": 53.89
         },
         {
           "strike": 49850.0,
-          "call_gex": 16.38,
-          "put_gex": -6.69,
-          "net_gex": 9.7
+          "call_gex": 16.41,
+          "put_gex": -6.7,
+          "net_gex": 9.71
         },
         {
           "strike": 49900.0,
-          "call_gex": 16.37,
-          "put_gex": -13.7,
-          "net_gex": 2.67
+          "call_gex": 16.41,
+          "put_gex": -13.73,
+          "net_gex": 2.68
         },
         {
           "strike": 49950.0,
-          "call_gex": 3.0,
+          "call_gex": 3.01,
           "put_gex": -3.34,
           "net_gex": -0.33
         },
         {
           "strike": 50000.0,
-          "call_gex": 170.7,
-          "put_gex": -3.99,
-          "net_gex": 166.71
+          "call_gex": 171.03,
+          "put_gex": -4.0,
+          "net_gex": 167.03
         },
         {
           "strike": 50050.0,
-          "call_gex": 6.3,
+          "call_gex": 6.31,
           "put_gex": -0.33,
-          "net_gex": 5.97
+          "net_gex": 5.98
         },
         {
           "strike": 50100.0,
-          "call_gex": 14.84,
+          "call_gex": 14.87,
           "put_gex": -0.33,
-          "net_gex": 14.51
+          "net_gex": 14.54
         },
         {
           "strike": 50150.0,
-          "call_gex": 11.15,
+          "call_gex": 11.17,
           "put_gex": -0.0,
-          "net_gex": 11.15
+          "net_gex": 11.17
         },
         {
           "strike": 50200.0,
-          "call_gex": 28.64,
+          "call_gex": 28.69,
           "put_gex": -1.63,
-          "net_gex": 27.01
+          "net_gex": 27.06
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
           "call_gex": 2.71,
-          "put_gex": -113.48,
-          "net_gex": -110.77
+          "put_gex": -113.3,
+          "net_gex": -110.59
         },
         {
           "strike": 48450.0,
           "call_gex": 0.2,
-          "put_gex": -94.42,
-          "net_gex": -94.21
+          "put_gex": -94.3,
+          "net_gex": -94.09
         },
         {
           "strike": 48500.0,
-          "call_gex": 114.51,
-          "put_gex": -255.5,
-          "net_gex": -140.99
+          "call_gex": 114.4,
+          "put_gex": -255.26,
+          "net_gex": -140.85
         },
         {
           "strike": 48550.0,
           "call_gex": 1.58,
-          "put_gex": -53.4,
-          "net_gex": -51.82
+          "put_gex": -53.36,
+          "net_gex": -51.78
         },
         {
           "strike": 48600.0,
           "call_gex": 1.66,
-          "put_gex": -128.66,
-          "net_gex": -127.0
+          "put_gex": -128.61,
+          "net_gex": -126.95
         },
         {
           "strike": 48650.0,
           "call_gex": 0.99,
-          "put_gex": -105.14,
-          "net_gex": -104.14
+          "put_gex": -105.13,
+          "net_gex": -104.13
         },
         {
           "strike": 48700.0,
           "call_gex": 6.49,
-          "put_gex": -169.09,
-          "net_gex": -162.59
+          "put_gex": -169.12,
+          "net_gex": -162.62
         },
         {
           "strike": 48750.0,
           "call_gex": 1.63,
-          "put_gex": -74.5,
-          "net_gex": -72.87
+          "put_gex": -74.53,
+          "net_gex": -72.9
         },
         {
           "strike": 48800.0,
-          "call_gex": 39.48,
-          "put_gex": -210.65,
-          "net_gex": -171.17
+          "call_gex": 39.51,
+          "put_gex": -210.79,
+          "net_gex": -171.29
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.2,
-          "put_gex": -54.79,
-          "net_gex": -46.58
+          "call_gex": 8.21,
+          "put_gex": -54.84,
+          "net_gex": -46.63
         },
         {
           "strike": 48900.0,
-          "call_gex": 38.58,
-          "put_gex": -210.22,
-          "net_gex": -171.64
+          "call_gex": 38.63,
+          "put_gex": -210.46,
+          "net_gex": -171.84
         },
         {
           "strike": 48950.0,
-          "call_gex": 5.66,
-          "put_gex": -57.22,
-          "net_gex": -51.56
+          "call_gex": 5.67,
+          "put_gex": -57.3,
+          "net_gex": -51.63
         },
         {
           "strike": 49000.0,
-          "call_gex": 121.14,
-          "put_gex": -501.43,
-          "net_gex": -380.3
+          "call_gex": 121.32,
+          "put_gex": -502.21,
+          "net_gex": -380.89
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.04,
-          "put_gex": -87.39,
-          "net_gex": -78.35
+          "call_gex": 9.06,
+          "put_gex": -87.54,
+          "net_gex": -78.48
         },
         {
           "strike": 49100.0,
-          "call_gex": 99.23,
-          "put_gex": -198.8,
-          "net_gex": -99.57
+          "call_gex": 99.42,
+          "put_gex": -199.18,
+          "net_gex": -99.76
         },
         {
           "strike": 49150.0,
-          "call_gex": 29.37,
-          "put_gex": -78.2,
-          "net_gex": -48.83
+          "call_gex": 29.43,
+          "put_gex": -78.36,
+          "net_gex": -48.93
         },
         {
           "strike": 49200.0,
-          "call_gex": 136.03,
-          "put_gex": -266.98,
-          "net_gex": -130.95
+          "call_gex": 136.33,
+          "put_gex": -267.57,
+          "net_gex": -131.24
         },
         {
           "strike": 49250.0,
-          "call_gex": 38.97,
-          "put_gex": -115.06,
-          "net_gex": -76.09
+          "call_gex": 39.06,
+          "put_gex": -115.33,
+          "net_gex": -76.27
         },
         {
           "strike": 49300.0,
-          "call_gex": 156.54,
-          "put_gex": -424.9,
-          "net_gex": -268.36
+          "call_gex": 156.93,
+          "put_gex": -425.95,
+          "net_gex": -269.02
         },
         {
           "strike": 49350.0,
-          "call_gex": 85.77,
-          "put_gex": -91.95,
-          "net_gex": -6.18
+          "call_gex": 86.0,
+          "put_gex": -92.19,
+          "net_gex": -6.2
         },
         {
           "strike": 49400.0,
-          "call_gex": 242.15,
-          "put_gex": -596.32,
-          "net_gex": -354.18
+          "call_gex": 242.8,
+          "put_gex": -597.93,
+          "net_gex": -355.13
         },
         {
           "strike": 49450.0,
-          "call_gex": 65.07,
-          "put_gex": -65.87,
+          "call_gex": 65.25,
+          "put_gex": -66.05,
           "net_gex": -0.8
         },
         {
           "strike": 49500.0,
-          "call_gex": 350.42,
-          "put_gex": -550.31,
-          "net_gex": -199.89
+          "call_gex": 351.42,
+          "put_gex": -551.89,
+          "net_gex": -200.47
         },
         {
           "strike": 49550.0,
-          "call_gex": 85.56,
-          "put_gex": -30.3,
-          "net_gex": 55.27
+          "call_gex": 85.82,
+          "put_gex": -30.38,
+          "net_gex": 55.43
         },
         {
           "strike": 49600.0,
-          "call_gex": 307.19,
-          "put_gex": -183.57,
-          "net_gex": 123.62
+          "call_gex": 308.11,
+          "put_gex": -184.12,
+          "net_gex": 123.99
         },
         {
           "strike": 49650.0,
-          "call_gex": 90.85,
-          "put_gex": -31.26,
-          "net_gex": 59.6
+          "call_gex": 91.13,
+          "put_gex": -31.35,
+          "net_gex": 59.78
         },
         {
           "strike": 49700.0,
-          "call_gex": 335.46,
-          "put_gex": -72.54,
-          "net_gex": 262.92
+          "call_gex": 336.49,
+          "put_gex": -72.77,
+          "net_gex": 263.73
         },
         {
           "strike": 49750.0,
-          "call_gex": 178.14,
-          "put_gex": -29.48,
-          "net_gex": 148.66
+          "call_gex": 178.69,
+          "put_gex": -29.57,
+          "net_gex": 149.12
         },
         {
           "strike": 49800.0,
-          "call_gex": 412.48,
-          "put_gex": -90.77,
-          "net_gex": 321.71
+          "call_gex": 413.76,
+          "put_gex": -91.05,
+          "net_gex": 322.71
         },
         {
           "strike": 49850.0,
-          "call_gex": 152.51,
-          "put_gex": -16.9,
-          "net_gex": 135.61
+          "call_gex": 152.99,
+          "put_gex": -16.95,
+          "net_gex": 136.03
         },
         {
           "strike": 49900.0,
-          "call_gex": 311.42,
-          "put_gex": -27.85,
-          "net_gex": 283.57
+          "call_gex": 312.39,
+          "put_gex": -27.94,
+          "net_gex": 284.45
         },
         {
           "strike": 49950.0,
-          "call_gex": 164.08,
-          "put_gex": -10.94,
-          "net_gex": 153.15
+          "call_gex": 164.59,
+          "put_gex": -10.97,
+          "net_gex": 153.62
         },
         {
           "strike": 50000.0,
-          "call_gex": 870.95,
-          "put_gex": -34.34,
-          "net_gex": 836.61
+          "call_gex": 873.6,
+          "put_gex": -34.44,
+          "net_gex": 839.16
         },
         {
           "strike": 50050.0,
-          "call_gex": 287.44,
-          "put_gex": -4.99,
-          "net_gex": 282.45
+          "call_gex": 288.3,
+          "put_gex": -5.01,
+          "net_gex": 283.3
         },
         {
           "strike": 50100.0,
-          "call_gex": 327.53,
-          "put_gex": -24.75,
-          "net_gex": 302.78
+          "call_gex": 328.5,
+          "put_gex": -24.82,
+          "net_gex": 303.67
         },
         {
           "strike": 50150.0,
-          "call_gex": 176.81,
-          "put_gex": -5.72,
-          "net_gex": 171.09
+          "call_gex": 177.32,
+          "put_gex": -5.73,
+          "net_gex": 171.59
         },
         {
           "strike": 50200.0,
-          "call_gex": 553.59,
-          "put_gex": -5.25,
-          "net_gex": 548.34
+          "call_gex": 555.14,
+          "put_gex": -5.26,
+          "net_gex": 549.88
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 36.27,
-          "put_gex": -16.82,
-          "net_gex": 19.45
+          "call_gex": 36.28,
+          "put_gex": -16.83,
+          "net_gex": 19.46
         },
         {
           "strike": 48450.0,
@@ -8900,9 +8900,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 56.14,
-          "put_gex": -129.6,
-          "net_gex": -73.46
+          "call_gex": 56.17,
+          "put_gex": -129.67,
+          "net_gex": -73.5
         },
         {
           "strike": 48550.0,
@@ -8912,9 +8912,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 54.19,
-          "put_gex": -21.53,
-          "net_gex": 32.66
+          "call_gex": 54.22,
+          "put_gex": -21.54,
+          "net_gex": 32.68
         },
         {
           "strike": 48650.0,
@@ -8924,9 +8924,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 43.02,
-          "put_gex": -21.13,
-          "net_gex": 21.89
+          "call_gex": 43.05,
+          "put_gex": -21.14,
+          "net_gex": 21.91
         },
         {
           "strike": 48750.0,
@@ -8936,8 +8936,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 25.33,
-          "put_gex": -28.45,
+          "call_gex": 25.35,
+          "put_gex": -28.47,
           "net_gex": -3.12
         },
         {
@@ -8948,9 +8948,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 20.51,
-          "put_gex": -8.36,
-          "net_gex": 12.14
+          "call_gex": 20.52,
+          "put_gex": -8.37,
+          "net_gex": 12.15
         },
         {
           "strike": 48950.0,
@@ -8960,9 +8960,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 121.97,
-          "put_gex": -63.12,
-          "net_gex": 58.85
+          "call_gex": 122.06,
+          "put_gex": -63.16,
+          "net_gex": 58.9
         },
         {
           "strike": 49050.0,
@@ -8972,21 +8972,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 124.49,
-          "put_gex": -26.22,
-          "net_gex": 98.27
+          "call_gex": 124.59,
+          "put_gex": -26.24,
+          "net_gex": 98.35
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.32,
+          "call_gex": 8.33,
           "put_gex": -0.21,
-          "net_gex": 8.11
+          "net_gex": 8.12
         },
         {
           "strike": 49200.0,
-          "call_gex": 48.63,
-          "put_gex": -11.95,
-          "net_gex": 36.68
+          "call_gex": 48.66,
+          "put_gex": -11.96,
+          "net_gex": 36.71
         },
         {
           "strike": 49250.0,
@@ -8996,9 +8996,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.38,
-          "put_gex": -34.82,
-          "net_gex": -14.44
+          "call_gex": 20.4,
+          "put_gex": -34.85,
+          "net_gex": -14.45
         },
         {
           "strike": 49350.0,
@@ -9008,9 +9008,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 24.69,
-          "put_gex": -15.89,
-          "net_gex": 8.8
+          "call_gex": 24.71,
+          "put_gex": -15.9,
+          "net_gex": 8.81
         },
         {
           "strike": 49450.0,
@@ -9020,21 +9020,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 142.1,
-          "put_gex": -64.77,
-          "net_gex": 77.33
+          "call_gex": 142.22,
+          "put_gex": -64.82,
+          "net_gex": 77.4
         },
         {
           "strike": 49550.0,
           "call_gex": 1.52,
-          "put_gex": -1.3,
+          "put_gex": -1.31,
           "net_gex": 0.22
         },
         {
           "strike": 49600.0,
-          "call_gex": 29.01,
+          "call_gex": 29.03,
           "put_gex": -8.73,
-          "net_gex": 20.29
+          "net_gex": 20.3
         },
         {
           "strike": 49650.0,
@@ -9044,9 +9044,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 26.3,
-          "put_gex": -10.96,
-          "net_gex": 15.34
+          "call_gex": 26.33,
+          "put_gex": -10.97,
+          "net_gex": 15.36
         },
         {
           "strike": 49750.0,
@@ -9056,8 +9056,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49800.0,
-          "call_gex": 31.66,
-          "put_gex": -26.38,
+          "call_gex": 31.69,
+          "put_gex": -26.4,
           "net_gex": 5.28
         },
         {
@@ -9068,9 +9068,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 22.01,
-          "put_gex": -14.3,
-          "net_gex": 7.7
+          "call_gex": 22.02,
+          "put_gex": -14.32,
+          "net_gex": 7.71
         },
         {
           "strike": 49950.0,
@@ -9080,9 +9080,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 319.87,
-          "put_gex": -41.33,
-          "net_gex": 278.54
+          "call_gex": 320.14,
+          "put_gex": -41.36,
+          "net_gex": 278.77
         },
         {
           "strike": 50050.0,
@@ -9092,9 +9092,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 25.43,
+          "call_gex": 25.45,
           "put_gex": -5.26,
-          "net_gex": 20.17
+          "net_gex": 20.18
         },
         {
           "strike": 50150.0,
@@ -9104,9 +9104,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 44.28,
-          "put_gex": -8.07,
-          "net_gex": 36.21
+          "call_gex": 44.31,
+          "put_gex": -8.08,
+          "net_gex": 36.24
         }
       ]
     },
@@ -9135,27 +9135,27 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 38.33,
-          "put_gex": -125.73,
-          "net_gex": -87.4,
-          "vex": 11.24,
-          "gex_plus": -76.16,
+          "call_gex": 38.34,
+          "put_gex": -125.49,
+          "net_gex": -87.15,
+          "vex": 11.21,
+          "gex_plus": -75.94,
           "w1_call": 1.11,
           "w1_put": -11.51,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 34.87,
-          "mth_put": -16.17,
+          "mth_call": 34.89,
+          "mth_put": -16.18,
           "fri_call": 2.34,
-          "fri_put": -98.05
+          "fri_put": -97.8
         },
         {
           "strike": 48450.0,
           "call_gex": 0.56,
-          "put_gex": -86.89,
-          "net_gex": -86.33,
-          "vex": 10.71,
-          "gex_plus": -75.61,
+          "put_gex": -86.71,
+          "net_gex": -86.15,
+          "vex": 10.69,
+          "gex_plus": -75.46,
           "w1_call": 0.39,
           "w1_put": -4.05,
           "w2_call": 0.0,
@@ -9163,31 +9163,31 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -0.86,
           "fri_call": 0.18,
-          "fri_put": -81.99
+          "fri_put": -81.81
         },
         {
           "strike": 48500.0,
-          "call_gex": 156.86,
-          "put_gex": -428.84,
-          "net_gex": -271.98,
-          "vex": 32.48,
-          "gex_plus": -239.5,
+          "call_gex": 156.7,
+          "put_gex": -428.5,
+          "net_gex": -271.79,
+          "vex": 32.46,
+          "gex_plus": -239.33,
           "w1_call": 2.8,
           "w1_put": -80.9,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 54.13,
-          "mth_put": -124.96,
-          "fri_call": 99.94,
-          "fri_put": -222.98
+          "mth_call": 54.15,
+          "mth_put": -125.02,
+          "fri_call": 99.75,
+          "fri_put": -222.57
         },
         {
           "strike": 48550.0,
           "call_gex": 1.8,
-          "put_gex": -51.79,
-          "net_gex": -49.99,
-          "vex": 5.78,
-          "gex_plus": -44.21,
+          "put_gex": -51.73,
+          "net_gex": -49.92,
+          "vex": 5.77,
+          "gex_plus": -44.15,
           "w1_call": 0.41,
           "w1_put": -3.72,
           "w2_call": 0.0,
@@ -9195,31 +9195,31 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.24,
           "fri_call": 1.39,
-          "fri_put": -46.83
+          "fri_put": -46.76
         },
         {
           "strike": 48600.0,
-          "call_gex": 53.85,
-          "put_gex": -151.75,
-          "net_gex": -97.9,
-          "vex": 10.96,
-          "gex_plus": -86.94,
+          "call_gex": 53.88,
+          "put_gex": -151.64,
+          "net_gex": -97.76,
+          "vex": 10.95,
+          "gex_plus": -86.81,
           "w1_call": 0.0,
-          "w1_put": -17.53,
+          "w1_put": -17.54,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 52.39,
-          "mth_put": -20.81,
+          "mth_call": 52.41,
+          "mth_put": -20.82,
           "fri_call": 1.46,
-          "fri_put": -113.41
+          "fri_put": -113.27
         },
         {
           "strike": 48650.0,
           "call_gex": 1.1,
-          "put_gex": -105.32,
-          "net_gex": -104.22,
-          "vex": 11.18,
-          "gex_plus": -93.04,
+          "put_gex": -105.25,
+          "net_gex": -104.15,
+          "vex": 11.17,
+          "gex_plus": -92.97,
           "w1_call": 0.22,
           "w1_put": -9.28,
           "w2_call": 0.0,
@@ -9227,63 +9227,63 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -2.91,
           "fri_call": 0.88,
-          "fri_put": -93.13
+          "fri_put": -93.06
         },
         {
           "strike": 48700.0,
-          "call_gex": 47.72,
-          "put_gex": -180.59,
-          "net_gex": -132.87,
-          "vex": 13.74,
-          "gex_plus": -119.13,
+          "call_gex": 47.74,
+          "put_gex": -180.52,
+          "net_gex": -132.78,
+          "vex": 13.73,
+          "gex_plus": -119.05,
           "w1_call": 0.23,
           "w1_put": -9.57,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 41.71,
-          "mth_put": -20.48,
+          "mth_call": 41.73,
+          "mth_put": -20.5,
           "fri_call": 5.78,
-          "fri_put": -150.53
+          "fri_put": -150.45
         },
         {
           "strike": 48750.0,
           "call_gex": 2.39,
-          "put_gex": -74.2,
-          "net_gex": -71.8,
+          "put_gex": -74.18,
+          "net_gex": -71.79,
           "vex": 7.1,
-          "gex_plus": -64.7,
+          "gex_plus": -64.69,
           "w1_call": 0.94,
           "w1_put": -3.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
-          "mth_put": -3.55,
+          "mth_put": -3.56,
           "fri_call": 1.45,
-          "fri_put": -66.65
+          "fri_put": -66.64
         },
         {
           "strike": 48800.0,
-          "call_gex": 63.5,
-          "put_gex": -228.17,
-          "net_gex": -164.67,
-          "vex": 15.6,
-          "gex_plus": -149.06,
+          "call_gex": 63.52,
+          "put_gex": -228.2,
+          "net_gex": -164.68,
+          "vex": 15.61,
+          "gex_plus": -149.07,
           "w1_call": 3.38,
-          "w1_put": -11.11,
+          "w1_put": -11.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.63,
-          "mth_put": -27.66,
+          "mth_call": 24.64,
+          "mth_put": -27.67,
           "fri_call": 35.5,
           "fri_put": -189.41
         },
         {
           "strike": 48850.0,
           "call_gex": 7.41,
-          "put_gex": -58.43,
-          "net_gex": -51.02,
+          "put_gex": -58.45,
+          "net_gex": -51.03,
           "vex": 4.62,
-          "gex_plus": -46.4,
+          "gex_plus": -46.41,
           "w1_call": 0.0,
           "w1_put": -7.2,
           "w2_call": 0.0,
@@ -9291,439 +9291,439 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.73,
           "fri_call": 7.41,
-          "fri_put": -49.51
+          "fri_put": -49.52
         },
         {
           "strike": 48900.0,
-          "call_gex": 57.57,
-          "put_gex": -210.01,
-          "net_gex": -152.44,
-          "vex": 13.2,
-          "gex_plus": -139.24,
+          "call_gex": 57.6,
+          "put_gex": -210.13,
+          "net_gex": -152.52,
+          "vex": 13.21,
+          "gex_plus": -139.32,
           "w1_call": 2.55,
-          "w1_put": -10.95,
+          "w1_put": -10.96,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 19.99,
+          "mth_call": 20.0,
           "mth_put": -8.15,
-          "fri_call": 35.04,
-          "fri_put": -190.91
+          "fri_call": 35.06,
+          "fri_put": -191.01
         },
         {
           "strike": 48950.0,
           "call_gex": 5.69,
-          "put_gex": -59.6,
-          "net_gex": -53.91,
-          "vex": 4.43,
-          "gex_plus": -49.48,
+          "put_gex": -59.65,
+          "net_gex": -53.96,
+          "vex": 4.44,
+          "gex_plus": -49.52,
           "w1_call": 0.52,
           "w1_put": -6.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.37,
-          "fri_call": 5.16,
-          "fri_put": -52.22
+          "fri_call": 5.17,
+          "fri_put": -52.26
         },
         {
           "strike": 49000.0,
-          "call_gex": 253.56,
-          "put_gex": -560.88,
-          "net_gex": -307.32,
-          "vex": 24.1,
-          "gex_plus": -283.22,
-          "w1_call": 23.26,
-          "w1_put": -39.31,
+          "call_gex": 253.78,
+          "put_gex": -561.43,
+          "net_gex": -307.65,
+          "vex": 24.13,
+          "gex_plus": -283.52,
+          "w1_call": 23.29,
+          "w1_put": -39.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 119.2,
-          "mth_put": -61.68,
-          "fri_call": 111.1,
-          "fri_put": -459.89
+          "mth_call": 119.28,
+          "mth_put": -61.72,
+          "fri_call": 111.21,
+          "fri_put": -460.35
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.03,
-          "put_gex": -87.69,
-          "net_gex": -77.66,
-          "vex": 5.74,
-          "gex_plus": -71.92,
-          "w1_call": 1.09,
-          "w1_put": -5.74,
+          "call_gex": 10.04,
+          "put_gex": -87.8,
+          "net_gex": -77.76,
+          "vex": 5.75,
+          "gex_plus": -72.01,
+          "w1_call": 1.1,
+          "w1_put": -5.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.6,
           "mth_put": -1.4,
-          "fri_call": 8.33,
-          "fri_put": -80.55
+          "fri_call": 8.34,
+          "fri_put": -80.64
         },
         {
           "strike": 49100.0,
-          "call_gex": 218.37,
-          "put_gex": -219.05,
-          "net_gex": -0.68,
-          "vex": 0.19,
-          "gex_plus": -0.48,
-          "w1_call": 4.47,
-          "w1_put": -9.22,
+          "call_gex": 218.59,
+          "put_gex": -219.34,
+          "net_gex": -0.75,
+          "vex": 0.2,
+          "gex_plus": -0.55,
+          "w1_call": 4.48,
+          "w1_put": -9.23,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 121.99,
-          "mth_put": -25.69,
-          "fri_call": 91.91,
-          "fri_put": -184.14
+          "mth_call": 122.08,
+          "mth_put": -25.71,
+          "fri_call": 92.04,
+          "fri_put": -184.4
         },
         {
           "strike": 49150.0,
-          "call_gex": 37.22,
-          "put_gex": -76.99,
-          "net_gex": -39.77,
-          "vex": 2.62,
-          "gex_plus": -37.15,
+          "call_gex": 37.27,
+          "put_gex": -77.11,
+          "net_gex": -39.84,
+          "vex": 2.63,
+          "gex_plus": -37.21,
           "w1_call": 1.71,
-          "w1_put": -3.99,
+          "w1_put": -4.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 8.17,
           "mth_put": -0.2,
-          "fri_call": 27.34,
-          "fri_put": -72.79
+          "fri_call": 27.38,
+          "fri_put": -72.91
         },
         {
           "strike": 49200.0,
-          "call_gex": 184.9,
-          "put_gex": -275.13,
-          "net_gex": -90.23,
-          "vex": 5.61,
-          "gex_plus": -84.62,
-          "w1_call": 9.88,
-          "w1_put": -13.65,
+          "call_gex": 185.18,
+          "put_gex": -275.61,
+          "net_gex": -90.43,
+          "vex": 5.62,
+          "gex_plus": -84.81,
+          "w1_call": 9.89,
+          "w1_put": -13.67,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 47.78,
-          "mth_put": -11.74,
-          "fri_call": 127.25,
-          "fri_put": -249.74
+          "mth_call": 47.81,
+          "mth_put": -11.75,
+          "fri_call": 127.47,
+          "fri_put": -250.19
         },
         {
           "strike": 49250.0,
-          "call_gex": 40.84,
-          "put_gex": -120.05,
-          "net_gex": -79.21,
-          "vex": 4.55,
-          "gex_plus": -74.66,
+          "call_gex": 40.91,
+          "put_gex": -120.28,
+          "net_gex": -79.36,
+          "vex": 4.56,
+          "gex_plus": -74.81,
           "w1_call": 2.96,
-          "w1_put": -10.64,
+          "w1_put": -10.66,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.25,
           "mth_put": -1.25,
-          "fri_call": 36.63,
-          "fri_put": -108.16
+          "fri_call": 36.71,
+          "fri_put": -108.37
         },
         {
           "strike": 49300.0,
-          "call_gex": 182.69,
-          "put_gex": -462.15,
-          "net_gex": -279.46,
-          "vex": 14.87,
-          "gex_plus": -264.59,
-          "w1_call": 14.73,
-          "w1_put": -26.45,
+          "call_gex": 183.05,
+          "put_gex": -463.07,
+          "net_gex": -280.03,
+          "vex": 14.9,
+          "gex_plus": -265.13,
+          "w1_call": 14.75,
+          "w1_put": -26.49,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.08,
-          "mth_put": -34.31,
-          "fri_call": 147.88,
-          "fri_put": -401.39
+          "mth_call": 20.1,
+          "mth_put": -34.33,
+          "fri_call": 148.2,
+          "fri_put": -402.25
         },
         {
           "strike": 49350.0,
-          "call_gex": 85.84,
-          "put_gex": -93.75,
-          "net_gex": -7.91,
+          "call_gex": 86.03,
+          "put_gex": -93.96,
+          "net_gex": -7.93,
           "vex": 0.39,
-          "gex_plus": -7.52,
+          "gex_plus": -7.54,
           "w1_call": 3.36,
-          "w1_put": -5.19,
+          "w1_put": -5.2,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.05,
-          "mth_put": -1.26,
-          "fri_call": 81.43,
-          "fri_put": -87.3
+          "mth_put": -1.27,
+          "fri_call": 81.61,
+          "fri_put": -87.49
         },
         {
           "strike": 49400.0,
-          "call_gex": 282.95,
-          "put_gex": -595.42,
-          "net_gex": -312.47,
-          "vex": 14.09,
-          "gex_plus": -298.38,
-          "w1_call": 27.55,
-          "w1_put": -10.84,
+          "call_gex": 283.57,
+          "put_gex": -596.82,
+          "net_gex": -313.25,
+          "vex": 14.13,
+          "gex_plus": -299.12,
+          "w1_call": 27.6,
+          "w1_put": -10.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.39,
-          "mth_put": -15.69,
-          "fri_call": 231.01,
-          "fri_put": -568.89
+          "mth_call": 24.41,
+          "mth_put": -15.71,
+          "fri_call": 231.56,
+          "fri_put": -570.26
         },
         {
           "strike": 49450.0,
-          "call_gex": 73.8,
-          "put_gex": -67.05,
-          "net_gex": 6.75,
+          "call_gex": 73.97,
+          "put_gex": -67.21,
+          "net_gex": 6.76,
           "vex": -0.27,
-          "gex_plus": 6.47,
-          "w1_call": 10.35,
+          "gex_plus": 6.49,
+          "w1_call": 10.37,
           "w1_put": -2.2,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.07,
           "mth_put": -1.71,
-          "fri_call": 62.38,
-          "fri_put": -63.15
+          "fri_call": 62.54,
+          "fri_put": -63.31
         },
         {
           "strike": 49500.0,
-          "call_gex": 538.94,
-          "put_gex": -630.17,
-          "net_gex": -91.23,
-          "vex": 3.48,
-          "gex_plus": -87.74,
-          "w1_call": 60.62,
-          "w1_put": -35.86,
+          "call_gex": 540.06,
+          "put_gex": -631.69,
+          "net_gex": -91.63,
+          "vex": 3.5,
+          "gex_plus": -88.13,
+          "w1_call": 60.72,
+          "w1_put": -35.93,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 140.74,
-          "mth_put": -64.15,
-          "fri_call": 337.59,
-          "fri_put": -530.16
+          "mth_call": 140.85,
+          "mth_put": -64.2,
+          "fri_call": 338.48,
+          "fri_put": -531.56
         },
         {
           "strike": 49550.0,
-          "call_gex": 92.04,
-          "put_gex": -33.51,
-          "net_gex": 58.53,
-          "vex": -1.91,
-          "gex_plus": 56.62,
-          "w1_call": 7.7,
+          "call_gex": 92.28,
+          "put_gex": -33.6,
+          "net_gex": 58.69,
+          "vex": -1.92,
+          "gex_plus": 56.77,
+          "w1_call": 7.71,
           "w1_put": -2.89,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.51,
           "mth_put": -1.29,
-          "fri_call": 82.84,
-          "fri_put": -29.33
+          "fri_call": 83.06,
+          "fri_put": -29.41
         },
         {
           "strike": 49600.0,
-          "call_gex": 348.06,
-          "put_gex": -193.4,
-          "net_gex": 154.66,
-          "vex": -4.39,
-          "gex_plus": 150.27,
-          "w1_call": 20.4,
-          "w1_put": -6.15,
+          "call_gex": 348.96,
+          "put_gex": -193.93,
+          "net_gex": 155.04,
+          "vex": -4.4,
+          "gex_plus": 150.64,
+          "w1_call": 20.44,
+          "w1_put": -6.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 28.81,
-          "mth_put": -8.66,
-          "fri_call": 298.85,
-          "fri_put": -178.59
+          "mth_call": 28.83,
+          "mth_put": -8.67,
+          "fri_call": 299.69,
+          "fri_put": -179.09
         },
         {
           "strike": 49650.0,
-          "call_gex": 96.0,
-          "put_gex": -33.82,
-          "net_gex": 62.18,
+          "call_gex": 96.27,
+          "put_gex": -33.92,
+          "net_gex": 62.35,
           "vex": -1.52,
-          "gex_plus": 60.66,
-          "w1_call": 5.22,
+          "gex_plus": 60.83,
+          "w1_call": 5.23,
           "w1_put": -3.27,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.96,
           "mth_put": -0.0,
-          "fri_call": 88.82,
-          "fri_put": -30.56
+          "fri_call": 89.08,
+          "fri_put": -30.65
         },
         {
           "strike": 49700.0,
-          "call_gex": 398.5,
-          "put_gex": -96.32,
-          "net_gex": 302.18,
-          "vex": -6.13,
-          "gex_plus": 296.06,
-          "w1_call": 42.76,
-          "w1_put": -14.14,
+          "call_gex": 399.58,
+          "put_gex": -96.57,
+          "net_gex": 303.01,
+          "vex": -6.14,
+          "gex_plus": 296.87,
+          "w1_call": 42.84,
+          "w1_put": -14.17,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.19,
-          "mth_put": -10.91,
-          "fri_call": 329.56,
-          "fri_put": -71.27
+          "mth_call": 26.21,
+          "mth_put": -10.92,
+          "fri_call": 330.53,
+          "fri_put": -71.48
         },
         {
           "strike": 49750.0,
-          "call_gex": 188.86,
-          "put_gex": -32.74,
-          "net_gex": 156.13,
-          "vex": -2.54,
-          "gex_plus": 153.59,
-          "w1_call": 11.25,
+          "call_gex": 189.42,
+          "put_gex": -32.83,
+          "net_gex": 156.59,
+          "vex": -2.55,
+          "gex_plus": 154.04,
+          "w1_call": 11.27,
           "w1_put": -2.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.75,
           "mth_put": -0.66,
-          "fri_call": 175.86,
-          "fri_put": -29.1
+          "fri_call": 176.39,
+          "fri_put": -29.19
         },
         {
           "strike": 49800.0,
-          "call_gex": 507.29,
-          "put_gex": -129.35,
-          "net_gex": 377.94,
-          "vex": -4.58,
-          "gex_plus": 373.36,
-          "w1_call": 66.5,
-          "w1_put": -12.97,
+          "call_gex": 508.7,
+          "put_gex": -129.67,
+          "net_gex": 379.02,
+          "vex": -4.6,
+          "gex_plus": 374.42,
+          "w1_call": 66.63,
+          "w1_put": -12.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.61,
-          "mth_put": -26.34,
-          "fri_call": 409.18,
-          "fri_put": -90.05
+          "mth_call": 31.63,
+          "mth_put": -26.36,
+          "fri_call": 410.43,
+          "fri_put": -90.32
         },
         {
           "strike": 49850.0,
-          "call_gex": 169.48,
-          "put_gex": -23.52,
-          "net_gex": 145.96,
+          "call_gex": 169.99,
+          "put_gex": -23.59,
+          "net_gex": 146.4,
           "vex": -1.18,
-          "gex_plus": 144.78,
-          "w1_call": 16.35,
-          "w1_put": -6.68,
+          "gex_plus": 145.22,
+          "w1_call": 16.39,
+          "w1_put": -6.69,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.1,
           "mth_put": -0.0,
-          "fri_call": 152.03,
-          "fri_put": -16.85
+          "fri_call": 152.5,
+          "fri_put": -16.9
         },
         {
           "strike": 49900.0,
-          "call_gex": 350.37,
-          "put_gex": -55.94,
-          "net_gex": 294.44,
-          "vex": -1.17,
-          "gex_plus": 293.27,
-          "w1_call": 16.4,
-          "w1_put": -13.72,
+          "call_gex": 351.39,
+          "put_gex": -56.06,
+          "net_gex": 295.33,
+          "vex": -1.18,
+          "gex_plus": 294.16,
+          "w1_call": 16.43,
+          "w1_put": -13.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.03,
-          "mth_put": -14.32,
-          "fri_call": 311.95,
-          "fri_put": -27.9
+          "mth_call": 22.05,
+          "mth_put": -14.33,
+          "fri_call": 312.92,
+          "fri_put": -27.98
         },
         {
           "strike": 49950.0,
-          "call_gex": 169.5,
-          "put_gex": -15.02,
-          "net_gex": 154.48,
+          "call_gex": 170.02,
+          "put_gex": -15.06,
+          "net_gex": 154.96,
           "vex": 0.01,
-          "gex_plus": 154.49,
+          "gex_plus": 154.97,
           "w1_call": 3.02,
-          "w1_put": -3.35,
+          "w1_put": -3.36,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.32,
           "mth_put": -0.66,
-          "fri_call": 165.16,
-          "fri_put": -11.01
+          "fri_call": 165.68,
+          "fri_put": -11.05
         },
         {
           "strike": 50000.0,
-          "call_gex": 1373.92,
-          "put_gex": -80.23,
-          "net_gex": 1293.69,
-          "vex": 5.82,
-          "gex_plus": 1299.51,
-          "w1_call": 171.97,
-          "w1_put": -4.02,
+          "call_gex": 1377.26,
+          "put_gex": -80.38,
+          "net_gex": 1296.88,
+          "vex": 5.83,
+          "gex_plus": 1302.71,
+          "w1_call": 172.3,
+          "w1_put": -4.03,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 321.02,
-          "mth_put": -41.48,
-          "fri_call": 880.94,
-          "fri_put": -34.73
+          "mth_call": 321.29,
+          "mth_put": -41.51,
+          "fri_call": 883.68,
+          "fri_put": -34.84
         },
         {
           "strike": 50050.0,
-          "call_gex": 300.72,
-          "put_gex": -5.63,
-          "net_gex": 295.09,
-          "vex": 2.42,
-          "gex_plus": 297.52,
-          "w1_call": 6.36,
-          "w1_put": -0.33,
+          "call_gex": 301.64,
+          "put_gex": -5.65,
+          "net_gex": 295.99,
+          "vex": 2.43,
+          "gex_plus": 298.42,
+          "w1_call": 6.38,
+          "w1_put": -0.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 2.21,
           "mth_put": -0.22,
-          "fri_call": 292.15,
-          "fri_put": -5.07
+          "fri_call": 293.05,
+          "fri_put": -5.09
         },
         {
           "strike": 50100.0,
-          "call_gex": 375.14,
-          "put_gex": -30.91,
-          "net_gex": 344.24,
-          "vex": 4.26,
-          "gex_plus": 348.49,
-          "w1_call": 15.04,
+          "call_gex": 376.22,
+          "put_gex": -30.99,
+          "net_gex": 345.23,
+          "vex": 4.27,
+          "gex_plus": 349.5,
+          "w1_call": 15.07,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.58,
-          "mth_put": -5.29,
-          "fri_call": 334.51,
-          "fri_put": -25.28
+          "mth_call": 25.61,
+          "mth_put": -5.3,
+          "fri_call": 335.54,
+          "fri_put": -25.36
         },
         {
           "strike": 50150.0,
-          "call_gex": 193.01,
-          "put_gex": -5.87,
-          "net_gex": 187.14,
-          "vex": 3.06,
-          "gex_plus": 190.2,
-          "w1_call": 11.33,
+          "call_gex": 193.58,
+          "put_gex": -5.88,
+          "net_gex": 187.69,
+          "vex": 3.07,
+          "gex_plus": 190.76,
+          "w1_call": 11.35,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.22,
           "mth_put": -0.0,
-          "fri_call": 181.45,
-          "fri_put": -5.87
+          "fri_call": 182.0,
+          "fri_put": -5.88
         },
         {
           "strike": 50200.0,
-          "call_gex": 644.75,
-          "put_gex": -15.21,
-          "net_gex": 629.54,
-          "vex": 12.9,
-          "gex_plus": 642.44,
-          "w1_call": 29.21,
+          "call_gex": 646.55,
+          "put_gex": -15.24,
+          "net_gex": 631.31,
+          "vex": 12.93,
+          "gex_plus": 644.24,
+          "w1_call": 29.26,
           "w1_put": -1.66,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.67,
-          "mth_put": -8.14,
-          "fri_call": 570.87,
-          "fri_put": -5.41
+          "mth_call": 44.71,
+          "mth_put": -8.15,
+          "fri_call": 572.58,
+          "fri_put": -5.43
         }
       ],
       "weekly_gex": [
@@ -9754,14 +9754,14 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -17.53,
-          "net_gex": -17.53
+          "put_gex": -17.54,
+          "net_gex": -17.54
         },
         {
           "strike": 48650.0,
           "call_gex": 0.22,
           "put_gex": -9.28,
-          "net_gex": -9.05
+          "net_gex": -9.06
         },
         {
           "strike": 48700.0,
@@ -9778,7 +9778,7 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48800.0,
           "call_gex": 3.38,
-          "put_gex": -11.11,
+          "put_gex": -11.12,
           "net_gex": -7.73
         },
         {
@@ -9790,214 +9790,214 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48900.0,
           "call_gex": 2.55,
-          "put_gex": -10.95,
+          "put_gex": -10.96,
           "net_gex": -8.41
         },
         {
           "strike": 48950.0,
           "call_gex": 0.52,
           "put_gex": -6.01,
-          "net_gex": -5.48
+          "net_gex": -5.49
         },
         {
           "strike": 49000.0,
-          "call_gex": 23.26,
-          "put_gex": -39.31,
-          "net_gex": -16.04
+          "call_gex": 23.29,
+          "put_gex": -39.35,
+          "net_gex": -16.06
         },
         {
           "strike": 49050.0,
-          "call_gex": 1.09,
-          "put_gex": -5.74,
+          "call_gex": 1.1,
+          "put_gex": -5.75,
           "net_gex": -4.65
         },
         {
           "strike": 49100.0,
-          "call_gex": 4.47,
-          "put_gex": -9.22,
-          "net_gex": -4.75
+          "call_gex": 4.48,
+          "put_gex": -9.23,
+          "net_gex": -4.76
         },
         {
           "strike": 49150.0,
           "call_gex": 1.71,
-          "put_gex": -3.99,
+          "put_gex": -4.0,
           "net_gex": -2.28
         },
         {
           "strike": 49200.0,
-          "call_gex": 9.88,
-          "put_gex": -13.65,
+          "call_gex": 9.89,
+          "put_gex": -13.67,
           "net_gex": -3.78
         },
         {
           "strike": 49250.0,
           "call_gex": 2.96,
-          "put_gex": -10.64,
-          "net_gex": -7.69
+          "put_gex": -10.66,
+          "net_gex": -7.7
         },
         {
           "strike": 49300.0,
-          "call_gex": 14.73,
-          "put_gex": -26.45,
-          "net_gex": -11.72
+          "call_gex": 14.75,
+          "put_gex": -26.49,
+          "net_gex": -11.74
         },
         {
           "strike": 49350.0,
           "call_gex": 3.36,
-          "put_gex": -5.19,
+          "put_gex": -5.2,
           "net_gex": -1.83
         },
         {
           "strike": 49400.0,
-          "call_gex": 27.55,
-          "put_gex": -10.84,
-          "net_gex": 16.72
+          "call_gex": 27.6,
+          "put_gex": -10.85,
+          "net_gex": 16.75
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.35,
+          "call_gex": 10.37,
           "put_gex": -2.2,
-          "net_gex": 8.15
+          "net_gex": 8.17
         },
         {
           "strike": 49500.0,
-          "call_gex": 60.62,
-          "put_gex": -35.86,
-          "net_gex": 24.75
+          "call_gex": 60.72,
+          "put_gex": -35.93,
+          "net_gex": 24.8
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.7,
+          "call_gex": 7.71,
           "put_gex": -2.89,
-          "net_gex": 4.81
+          "net_gex": 4.82
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.4,
-          "put_gex": -6.15,
-          "net_gex": 14.25
+          "call_gex": 20.44,
+          "put_gex": -6.16,
+          "net_gex": 14.27
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.22,
+          "call_gex": 5.23,
           "put_gex": -3.27,
           "net_gex": 1.96
         },
         {
           "strike": 49700.0,
-          "call_gex": 42.76,
-          "put_gex": -14.14,
-          "net_gex": 28.61
+          "call_gex": 42.84,
+          "put_gex": -14.17,
+          "net_gex": 28.67
         },
         {
           "strike": 49750.0,
-          "call_gex": 11.25,
+          "call_gex": 11.27,
           "put_gex": -2.98,
-          "net_gex": 8.27
+          "net_gex": 8.29
         },
         {
           "strike": 49800.0,
-          "call_gex": 66.5,
-          "put_gex": -12.97,
-          "net_gex": 53.53
+          "call_gex": 66.63,
+          "put_gex": -12.99,
+          "net_gex": 53.64
         },
         {
           "strike": 49850.0,
-          "call_gex": 16.35,
-          "put_gex": -6.68,
-          "net_gex": 9.68
+          "call_gex": 16.39,
+          "put_gex": -6.69,
+          "net_gex": 9.7
         },
         {
           "strike": 49900.0,
-          "call_gex": 16.4,
-          "put_gex": -13.72,
+          "call_gex": 16.43,
+          "put_gex": -13.75,
           "net_gex": 2.68
         },
         {
           "strike": 49950.0,
           "call_gex": 3.02,
-          "put_gex": -3.35,
+          "put_gex": -3.36,
           "net_gex": -0.34
         },
         {
           "strike": 50000.0,
-          "call_gex": 171.97,
-          "put_gex": -4.02,
-          "net_gex": 167.94
+          "call_gex": 172.3,
+          "put_gex": -4.03,
+          "net_gex": 168.27
         },
         {
           "strike": 50050.0,
-          "call_gex": 6.36,
-          "put_gex": -0.33,
-          "net_gex": 6.03
+          "call_gex": 6.38,
+          "put_gex": -0.34,
+          "net_gex": 6.04
         },
         {
           "strike": 50100.0,
-          "call_gex": 15.04,
+          "call_gex": 15.07,
           "put_gex": -0.33,
-          "net_gex": 14.71
+          "net_gex": 14.74
         },
         {
           "strike": 50150.0,
-          "call_gex": 11.33,
+          "call_gex": 11.35,
           "put_gex": -0.0,
-          "net_gex": 11.33
+          "net_gex": 11.35
         },
         {
           "strike": 50200.0,
-          "call_gex": 29.21,
+          "call_gex": 29.26,
           "put_gex": -1.66,
-          "net_gex": 27.55
+          "net_gex": 27.6
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
           "call_gex": 2.34,
-          "put_gex": -98.05,
-          "net_gex": -95.71
+          "put_gex": -97.8,
+          "net_gex": -95.46
         },
         {
           "strike": 48450.0,
           "call_gex": 0.18,
-          "put_gex": -81.99,
-          "net_gex": -81.81
+          "put_gex": -81.81,
+          "net_gex": -81.63
         },
         {
           "strike": 48500.0,
-          "call_gex": 99.94,
-          "put_gex": -222.98,
-          "net_gex": -123.04
+          "call_gex": 99.75,
+          "put_gex": -222.57,
+          "net_gex": -122.82
         },
         {
           "strike": 48550.0,
           "call_gex": 1.39,
-          "put_gex": -46.83,
-          "net_gex": -45.44
+          "put_gex": -46.76,
+          "net_gex": -45.38
         },
         {
           "strike": 48600.0,
           "call_gex": 1.46,
-          "put_gex": -113.41,
-          "net_gex": -111.94
+          "put_gex": -113.27,
+          "net_gex": -111.81
         },
         {
           "strike": 48650.0,
           "call_gex": 0.88,
-          "put_gex": -93.13,
-          "net_gex": -92.25
+          "put_gex": -93.06,
+          "net_gex": -92.18
         },
         {
           "strike": 48700.0,
           "call_gex": 5.78,
-          "put_gex": -150.53,
-          "net_gex": -144.75
+          "put_gex": -150.45,
+          "net_gex": -144.67
         },
         {
           "strike": 48750.0,
           "call_gex": 1.45,
-          "put_gex": -66.65,
-          "net_gex": -65.2
+          "put_gex": -66.64,
+          "net_gex": -65.18
         },
         {
           "strike": 48800.0,
@@ -10008,178 +10008,178 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48850.0,
           "call_gex": 7.41,
-          "put_gex": -49.51,
-          "net_gex": -42.09
+          "put_gex": -49.52,
+          "net_gex": -42.11
         },
         {
           "strike": 48900.0,
-          "call_gex": 35.04,
-          "put_gex": -190.91,
-          "net_gex": -155.87
+          "call_gex": 35.06,
+          "put_gex": -191.01,
+          "net_gex": -155.95
         },
         {
           "strike": 48950.0,
-          "call_gex": 5.16,
-          "put_gex": -52.22,
-          "net_gex": -47.06
+          "call_gex": 5.17,
+          "put_gex": -52.26,
+          "net_gex": -47.09
         },
         {
           "strike": 49000.0,
-          "call_gex": 111.1,
-          "put_gex": -459.89,
-          "net_gex": -348.79
+          "call_gex": 111.21,
+          "put_gex": -460.35,
+          "net_gex": -349.14
         },
         {
           "strike": 49050.0,
-          "call_gex": 8.33,
-          "put_gex": -80.55,
-          "net_gex": -72.21
+          "call_gex": 8.34,
+          "put_gex": -80.64,
+          "net_gex": -72.3
         },
         {
           "strike": 49100.0,
-          "call_gex": 91.91,
-          "put_gex": -184.14,
-          "net_gex": -92.23
+          "call_gex": 92.04,
+          "put_gex": -184.4,
+          "net_gex": -92.36
         },
         {
           "strike": 49150.0,
-          "call_gex": 27.34,
-          "put_gex": -72.79,
-          "net_gex": -45.46
+          "call_gex": 27.38,
+          "put_gex": -72.91,
+          "net_gex": -45.53
         },
         {
           "strike": 49200.0,
-          "call_gex": 127.25,
-          "put_gex": -249.74,
-          "net_gex": -122.5
+          "call_gex": 127.47,
+          "put_gex": -250.19,
+          "net_gex": -122.72
         },
         {
           "strike": 49250.0,
-          "call_gex": 36.63,
-          "put_gex": -108.16,
-          "net_gex": -71.52
+          "call_gex": 36.71,
+          "put_gex": -108.37,
+          "net_gex": -71.67
         },
         {
           "strike": 49300.0,
-          "call_gex": 147.88,
-          "put_gex": -401.39,
-          "net_gex": -253.51
+          "call_gex": 148.2,
+          "put_gex": -402.25,
+          "net_gex": -254.05
         },
         {
           "strike": 49350.0,
-          "call_gex": 81.43,
-          "put_gex": -87.3,
-          "net_gex": -5.87
+          "call_gex": 81.61,
+          "put_gex": -87.49,
+          "net_gex": -5.88
         },
         {
           "strike": 49400.0,
-          "call_gex": 231.01,
-          "put_gex": -568.89,
-          "net_gex": -337.89
+          "call_gex": 231.56,
+          "put_gex": -570.26,
+          "net_gex": -338.7
         },
         {
           "strike": 49450.0,
-          "call_gex": 62.38,
-          "put_gex": -63.15,
+          "call_gex": 62.54,
+          "put_gex": -63.31,
           "net_gex": -0.77
         },
         {
           "strike": 49500.0,
-          "call_gex": 337.59,
-          "put_gex": -530.16,
-          "net_gex": -192.57
+          "call_gex": 338.48,
+          "put_gex": -531.56,
+          "net_gex": -193.08
         },
         {
           "strike": 49550.0,
-          "call_gex": 82.84,
-          "put_gex": -29.33,
-          "net_gex": 53.51
+          "call_gex": 83.06,
+          "put_gex": -29.41,
+          "net_gex": 53.65
         },
         {
           "strike": 49600.0,
-          "call_gex": 298.85,
-          "put_gex": -178.59,
-          "net_gex": 120.26
+          "call_gex": 299.69,
+          "put_gex": -179.09,
+          "net_gex": 120.6
         },
         {
           "strike": 49650.0,
-          "call_gex": 88.82,
-          "put_gex": -30.56,
-          "net_gex": 58.26
+          "call_gex": 89.08,
+          "put_gex": -30.65,
+          "net_gex": 58.43
         },
         {
           "strike": 49700.0,
-          "call_gex": 329.56,
-          "put_gex": -71.27,
-          "net_gex": 258.29
+          "call_gex": 330.53,
+          "put_gex": -71.48,
+          "net_gex": 259.06
         },
         {
           "strike": 49750.0,
-          "call_gex": 175.86,
-          "put_gex": -29.1,
-          "net_gex": 146.76
+          "call_gex": 176.39,
+          "put_gex": -29.19,
+          "net_gex": 147.2
         },
         {
           "strike": 49800.0,
-          "call_gex": 409.18,
-          "put_gex": -90.05,
-          "net_gex": 319.14
+          "call_gex": 410.43,
+          "put_gex": -90.32,
+          "net_gex": 320.11
         },
         {
           "strike": 49850.0,
-          "call_gex": 152.03,
-          "put_gex": -16.85,
-          "net_gex": 135.18
+          "call_gex": 152.5,
+          "put_gex": -16.9,
+          "net_gex": 135.6
         },
         {
           "strike": 49900.0,
-          "call_gex": 311.95,
-          "put_gex": -27.9,
-          "net_gex": 284.05
+          "call_gex": 312.92,
+          "put_gex": -27.98,
+          "net_gex": 284.94
         },
         {
           "strike": 49950.0,
-          "call_gex": 165.16,
-          "put_gex": -11.01,
-          "net_gex": 154.15
+          "call_gex": 165.68,
+          "put_gex": -11.05,
+          "net_gex": 154.63
         },
         {
           "strike": 50000.0,
-          "call_gex": 880.94,
-          "put_gex": -34.73,
-          "net_gex": 846.21
+          "call_gex": 883.68,
+          "put_gex": -34.84,
+          "net_gex": 848.84
         },
         {
           "strike": 50050.0,
-          "call_gex": 292.15,
-          "put_gex": -5.07,
-          "net_gex": 287.08
+          "call_gex": 293.05,
+          "put_gex": -5.09,
+          "net_gex": 287.97
         },
         {
           "strike": 50100.0,
-          "call_gex": 334.51,
-          "put_gex": -25.28,
-          "net_gex": 309.24
+          "call_gex": 335.54,
+          "put_gex": -25.36,
+          "net_gex": 310.18
         },
         {
           "strike": 50150.0,
-          "call_gex": 181.45,
-          "put_gex": -5.87,
-          "net_gex": 175.59
+          "call_gex": 182.0,
+          "put_gex": -5.88,
+          "net_gex": 176.12
         },
         {
           "strike": 50200.0,
-          "call_gex": 570.87,
-          "put_gex": -5.41,
-          "net_gex": 565.47
+          "call_gex": 572.58,
+          "put_gex": -5.43,
+          "net_gex": 567.15
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 34.87,
-          "put_gex": -16.17,
-          "net_gex": 18.7
+          "call_gex": 34.89,
+          "put_gex": -16.18,
+          "net_gex": 18.71
         },
         {
           "strike": 48450.0,
@@ -10189,9 +10189,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 54.13,
-          "put_gex": -124.96,
-          "net_gex": -70.83
+          "call_gex": 54.15,
+          "put_gex": -125.02,
+          "net_gex": -70.87
         },
         {
           "strike": 48550.0,
@@ -10201,9 +10201,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 52.39,
-          "put_gex": -20.81,
-          "net_gex": 31.58
+          "call_gex": 52.41,
+          "put_gex": -20.82,
+          "net_gex": 31.59
         },
         {
           "strike": 48650.0,
@@ -10213,20 +10213,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 41.71,
-          "put_gex": -20.48,
-          "net_gex": 21.22
+          "call_gex": 41.73,
+          "put_gex": -20.5,
+          "net_gex": 21.24
         },
         {
           "strike": 48750.0,
           "call_gex": 0.0,
-          "put_gex": -3.55,
-          "net_gex": -3.55
+          "put_gex": -3.56,
+          "net_gex": -3.56
         },
         {
           "strike": 48800.0,
-          "call_gex": 24.63,
-          "put_gex": -27.66,
+          "call_gex": 24.64,
+          "put_gex": -27.67,
           "net_gex": -3.03
         },
         {
@@ -10237,7 +10237,7 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 19.99,
+          "call_gex": 20.0,
           "put_gex": -8.15,
           "net_gex": 11.84
         },
@@ -10249,9 +10249,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 119.2,
-          "put_gex": -61.68,
-          "net_gex": 57.52
+          "call_gex": 119.28,
+          "put_gex": -61.72,
+          "net_gex": 57.56
         },
         {
           "strike": 49050.0,
@@ -10261,21 +10261,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 121.99,
-          "put_gex": -25.69,
-          "net_gex": 96.3
+          "call_gex": 122.08,
+          "put_gex": -25.71,
+          "net_gex": 96.37
         },
         {
           "strike": 49150.0,
           "call_gex": 8.17,
           "put_gex": -0.2,
-          "net_gex": 7.96
+          "net_gex": 7.97
         },
         {
           "strike": 49200.0,
-          "call_gex": 47.78,
-          "put_gex": -11.74,
-          "net_gex": 36.04
+          "call_gex": 47.81,
+          "put_gex": -11.75,
+          "net_gex": 36.06
         },
         {
           "strike": 49250.0,
@@ -10285,21 +10285,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.08,
-          "put_gex": -34.31,
-          "net_gex": -14.22
+          "call_gex": 20.1,
+          "put_gex": -34.33,
+          "net_gex": -14.24
         },
         {
           "strike": 49350.0,
           "call_gex": 1.05,
-          "put_gex": -1.26,
+          "put_gex": -1.27,
           "net_gex": -0.21
         },
         {
           "strike": 49400.0,
-          "call_gex": 24.39,
-          "put_gex": -15.69,
-          "net_gex": 8.69
+          "call_gex": 24.41,
+          "put_gex": -15.71,
+          "net_gex": 8.7
         },
         {
           "strike": 49450.0,
@@ -10309,9 +10309,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 140.74,
-          "put_gex": -64.15,
-          "net_gex": 76.59
+          "call_gex": 140.85,
+          "put_gex": -64.2,
+          "net_gex": 76.65
         },
         {
           "strike": 49550.0,
@@ -10321,9 +10321,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 28.81,
-          "put_gex": -8.66,
-          "net_gex": 20.14
+          "call_gex": 28.83,
+          "put_gex": -8.67,
+          "net_gex": 20.16
         },
         {
           "strike": 49650.0,
@@ -10333,20 +10333,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 26.19,
-          "put_gex": -10.91,
-          "net_gex": 15.28
+          "call_gex": 26.21,
+          "put_gex": -10.92,
+          "net_gex": 15.29
         },
         {
           "strike": 49750.0,
           "call_gex": 1.75,
           "put_gex": -0.66,
-          "net_gex": 1.09
+          "net_gex": 1.1
         },
         {
           "strike": 49800.0,
-          "call_gex": 31.61,
-          "put_gex": -26.34,
+          "call_gex": 31.63,
+          "put_gex": -26.36,
           "net_gex": 5.27
         },
         {
@@ -10357,9 +10357,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 22.03,
-          "put_gex": -14.32,
-          "net_gex": 7.71
+          "call_gex": 22.05,
+          "put_gex": -14.33,
+          "net_gex": 7.72
         },
         {
           "strike": 49950.0,
@@ -10369,9 +10369,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 321.02,
-          "put_gex": -41.48,
-          "net_gex": 279.54
+          "call_gex": 321.29,
+          "put_gex": -41.51,
+          "net_gex": 279.77
         },
         {
           "strike": 50050.0,
@@ -10381,9 +10381,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 25.58,
-          "put_gex": -5.29,
-          "net_gex": 20.29
+          "call_gex": 25.61,
+          "put_gex": -5.3,
+          "net_gex": 20.31
         },
         {
           "strike": 50150.0,
@@ -10393,9 +10393,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 44.67,
-          "put_gex": -8.14,
-          "net_gex": 36.53
+          "call_gex": 44.71,
+          "put_gex": -8.15,
+          "net_gex": 36.56
         }
       ]
     },
@@ -10424,59 +10424,59 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 40.42,
-          "put_gex": -145.05,
-          "net_gex": -104.63,
-          "vex": 12.17,
-          "gex_plus": -92.45,
+          "call_gex": 40.43,
+          "put_gex": -144.88,
+          "net_gex": -104.45,
+          "vex": 12.15,
+          "gex_plus": -92.3,
           "w1_call": 1.23,
           "w1_put": -12.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 36.43,
+          "mth_call": 36.45,
           "mth_put": -16.9,
-          "fri_call": 2.76,
-          "fri_put": -115.41
+          "fri_call": 2.75,
+          "fri_put": -115.23
         },
         {
           "strike": 48450.0,
           "call_gex": 0.63,
-          "put_gex": -101.32,
-          "net_gex": -100.69,
-          "vex": 11.26,
-          "gex_plus": -89.43,
+          "put_gex": -101.21,
+          "net_gex": -100.58,
+          "vex": 11.25,
+          "gex_plus": -89.33,
           "w1_call": 0.43,
-          "w1_put": -4.46,
+          "w1_put": -4.47,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -0.89,
           "fri_call": 0.21,
-          "fri_put": -95.96
+          "fri_put": -95.85
         },
         {
           "strike": 48500.0,
-          "call_gex": 175.76,
-          "put_gex": -478.61,
-          "net_gex": -302.85,
-          "vex": 32.47,
-          "gex_plus": -270.38,
-          "w1_call": 3.07,
-          "w1_put": -88.95,
+          "call_gex": 175.69,
+          "put_gex": -478.49,
+          "net_gex": -302.8,
+          "vex": 32.46,
+          "gex_plus": -270.34,
+          "w1_call": 3.08,
+          "w1_put": -88.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 56.37,
-          "mth_put": -130.14,
-          "fri_call": 116.32,
-          "fri_put": -259.53
+          "mth_call": 56.4,
+          "mth_put": -130.21,
+          "fri_call": 116.21,
+          "fri_put": -259.3
         },
         {
           "strike": 48550.0,
           "call_gex": 2.06,
-          "put_gex": -59.57,
-          "net_gex": -57.51,
+          "put_gex": -59.54,
+          "net_gex": -57.48,
           "vex": 5.95,
-          "gex_plus": -51.56,
+          "gex_plus": -51.54,
           "w1_call": 0.45,
           "w1_put": -4.08,
           "w2_call": 0.0,
@@ -10484,33 +10484,33 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.29,
           "fri_call": 1.61,
-          "fri_put": -54.21
+          "fri_put": -54.18
         },
         {
           "strike": 48600.0,
-          "call_gex": 56.08,
-          "put_gex": -171.28,
-          "net_gex": -115.2,
+          "call_gex": 56.11,
+          "put_gex": -171.27,
+          "net_gex": -115.16,
           "vex": 11.48,
-          "gex_plus": -103.72,
+          "gex_plus": -103.68,
           "w1_call": 0.0,
-          "w1_put": -19.14,
+          "w1_put": -19.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 54.39,
-          "mth_put": -21.61,
+          "mth_call": 54.43,
+          "mth_put": -21.62,
           "fri_call": 1.69,
-          "fri_put": -130.53
+          "fri_put": -130.49
         },
         {
           "strike": 48650.0,
           "call_gex": 1.25,
-          "put_gex": -119.71,
-          "net_gex": -118.46,
+          "put_gex": -119.72,
+          "net_gex": -118.47,
           "vex": 11.26,
-          "gex_plus": -107.2,
+          "gex_plus": -107.21,
           "w1_call": 0.24,
-          "w1_put": -10.09,
+          "w1_put": -10.1,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
@@ -10520,499 +10520,499 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 50.0,
-          "put_gex": -202.91,
-          "net_gex": -152.91,
-          "vex": 13.93,
-          "gex_plus": -138.98,
+          "call_gex": 50.03,
+          "put_gex": -202.98,
+          "net_gex": -152.95,
+          "vex": 13.94,
+          "gex_plus": -139.01,
           "w1_call": 0.25,
-          "w1_put": -10.37,
+          "w1_put": -10.38,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 43.17,
-          "mth_put": -21.21,
+          "mth_call": 43.2,
+          "mth_put": -21.22,
           "fri_call": 6.58,
-          "fri_put": -171.33
+          "fri_put": -171.38
         },
         {
           "strike": 48750.0,
           "call_gex": 2.66,
-          "put_gex": -83.42,
-          "net_gex": -80.76,
+          "put_gex": -83.47,
+          "net_gex": -80.81,
           "vex": 7.0,
-          "gex_plus": -73.76,
-          "w1_call": 1.01,
+          "gex_plus": -73.8,
+          "w1_call": 1.02,
           "w1_put": -4.31,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
-          "mth_put": -3.67,
+          "mth_put": -3.68,
           "fri_call": 1.65,
-          "fri_put": -75.44
+          "fri_put": -75.48
         },
         {
           "strike": 48800.0,
-          "call_gex": 69.01,
-          "put_gex": -253.69,
-          "net_gex": -184.68,
-          "vex": 15.24,
-          "gex_plus": -169.44,
+          "call_gex": 69.06,
+          "put_gex": -253.88,
+          "net_gex": -184.82,
+          "vex": 15.25,
+          "gex_plus": -169.57,
           "w1_call": 3.64,
-          "w1_put": -11.96,
+          "w1_put": -11.97,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.42,
-          "mth_put": -28.54,
-          "fri_call": 39.96,
-          "fri_put": -213.19
+          "mth_call": 25.43,
+          "mth_put": -28.56,
+          "fri_call": 39.99,
+          "fri_put": -213.35
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.3,
-          "put_gex": -64.91,
-          "net_gex": -56.62,
-          "vex": 4.43,
-          "gex_plus": -52.18,
+          "call_gex": 8.31,
+          "put_gex": -64.98,
+          "net_gex": -56.67,
+          "vex": 4.44,
+          "gex_plus": -52.23,
           "w1_call": 0.0,
-          "w1_put": -7.72,
+          "w1_put": -7.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.78,
-          "fri_call": 8.3,
-          "fri_put": -55.41
+          "fri_call": 8.31,
+          "fri_put": -55.47
         },
         {
           "strike": 48900.0,
-          "call_gex": 62.29,
-          "put_gex": -232.6,
-          "net_gex": -170.31,
-          "vex": 12.66,
-          "gex_plus": -157.65,
-          "w1_call": 2.72,
-          "w1_put": -11.71,
+          "call_gex": 62.35,
+          "put_gex": -232.88,
+          "net_gex": -170.52,
+          "vex": 12.67,
+          "gex_plus": -157.85,
+          "w1_call": 2.73,
+          "w1_put": -11.72,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.56,
+          "mth_call": 20.58,
           "mth_put": -8.39,
-          "fri_call": 39.0,
-          "fri_put": -212.5
+          "fri_call": 39.05,
+          "fri_put": -212.76
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.27,
-          "put_gex": -65.62,
-          "net_gex": -59.34,
-          "vex": 4.15,
-          "gex_plus": -55.19,
+          "call_gex": 6.28,
+          "put_gex": -65.71,
+          "net_gex": -59.43,
+          "vex": 4.16,
+          "gex_plus": -55.27,
           "w1_call": 0.56,
-          "w1_put": -6.4,
+          "w1_put": -6.41,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.41,
-          "fri_call": 5.72,
-          "fri_put": -57.81
+          "fri_call": 5.73,
+          "fri_put": -57.89
         },
         {
           "strike": 49000.0,
-          "call_gex": 269.28,
-          "put_gex": -611.28,
-          "net_gex": -341.99,
-          "vex": 22.63,
-          "gex_plus": -319.37,
-          "w1_call": 24.7,
-          "w1_put": -41.73,
+          "call_gex": 269.6,
+          "put_gex": -612.19,
+          "net_gex": -342.59,
+          "vex": 22.67,
+          "gex_plus": -319.92,
+          "w1_call": 24.73,
+          "w1_put": -41.79,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 122.28,
-          "mth_put": -63.28,
-          "fri_call": 122.3,
-          "fri_put": -506.27
+          "mth_call": 122.37,
+          "mth_put": -63.32,
+          "fri_call": 122.5,
+          "fri_put": -507.08
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.89,
-          "put_gex": -95.69,
-          "net_gex": -84.8,
-          "vex": 5.23,
-          "gex_plus": -79.56,
+          "call_gex": 10.91,
+          "put_gex": -95.86,
+          "net_gex": -84.95,
+          "vex": 5.24,
+          "gex_plus": -79.7,
           "w1_call": 1.16,
           "w1_put": -6.08,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.62,
           "mth_put": -1.44,
-          "fri_call": 9.12,
-          "fri_put": -88.18
+          "fri_call": 9.14,
+          "fri_put": -88.34
         },
         {
           "strike": 49100.0,
-          "call_gex": 229.54,
-          "put_gex": -236.47,
-          "net_gex": -6.93,
-          "vex": 0.55,
-          "gex_plus": -6.38,
-          "w1_call": 4.71,
-          "w1_put": -9.72,
+          "call_gex": 229.84,
+          "put_gex": -236.9,
+          "net_gex": -7.06,
+          "vex": 0.56,
+          "gex_plus": -6.5,
+          "w1_call": 4.72,
+          "w1_put": -9.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 124.77,
-          "mth_put": -26.28,
-          "fri_call": 100.06,
-          "fri_put": -200.47
+          "mth_call": 124.86,
+          "mth_put": -26.3,
+          "fri_call": 100.26,
+          "fri_put": -200.87
         },
         {
           "strike": 49150.0,
-          "call_gex": 39.74,
-          "put_gex": -83.22,
-          "net_gex": -43.48,
+          "call_gex": 39.81,
+          "put_gex": -83.39,
+          "net_gex": -43.58,
           "vex": 2.34,
-          "gex_plus": -41.14,
+          "gex_plus": -41.24,
           "w1_call": 1.8,
-          "w1_put": -4.19,
+          "w1_put": -4.2,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.34,
+          "mth_call": 8.35,
           "mth_put": -0.21,
-          "fri_call": 29.6,
-          "fri_put": -78.82
+          "fri_call": 29.66,
+          "fri_put": -78.98
         },
         {
           "strike": 49200.0,
-          "call_gex": 196.07,
-          "put_gex": -295.17,
-          "net_gex": -99.1,
-          "vex": 4.94,
-          "gex_plus": -94.16,
-          "w1_call": 10.34,
-          "w1_put": -14.29,
+          "call_gex": 196.44,
+          "put_gex": -295.82,
+          "net_gex": -99.38,
+          "vex": 4.96,
+          "gex_plus": -94.42,
+          "w1_call": 10.36,
+          "w1_put": -14.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 48.72,
-          "mth_put": -11.97,
-          "fri_call": 137.01,
-          "fri_put": -268.91
+          "mth_call": 48.76,
+          "mth_put": -11.98,
+          "fri_call": 137.32,
+          "fri_put": -269.52
         },
         {
           "strike": 49250.0,
-          "call_gex": 43.58,
-          "put_gex": -128.19,
-          "net_gex": -84.61,
-          "vex": 3.82,
-          "gex_plus": -80.79,
+          "call_gex": 43.68,
+          "put_gex": -128.49,
+          "net_gex": -84.81,
+          "vex": 3.83,
+          "gex_plus": -80.98,
           "w1_call": 3.09,
-          "w1_put": -11.11,
+          "w1_put": -11.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.27,
           "mth_put": -1.27,
-          "fri_call": 39.23,
-          "fri_put": -115.82
+          "fri_call": 39.32,
+          "fri_put": -116.1
         },
         {
           "strike": 49300.0,
-          "call_gex": 193.22,
-          "put_gex": -489.84,
-          "net_gex": -296.63,
-          "vex": 12.15,
-          "gex_plus": -284.48,
-          "w1_call": 15.32,
-          "w1_put": -27.51,
+          "call_gex": 193.66,
+          "put_gex": -491.0,
+          "net_gex": -297.34,
+          "vex": 12.18,
+          "gex_plus": -285.16,
+          "w1_call": 15.34,
+          "w1_put": -27.55,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.42,
-          "mth_put": -34.88,
-          "fri_call": 157.49,
-          "fri_put": -427.46
+          "mth_call": 20.43,
+          "mth_put": -34.91,
+          "fri_call": 157.88,
+          "fri_put": -428.54
         },
         {
           "strike": 49350.0,
-          "call_gex": 90.79,
-          "put_gex": -99.11,
-          "net_gex": -8.33,
+          "call_gex": 91.02,
+          "put_gex": -99.37,
+          "net_gex": -8.35,
           "vex": 0.31,
-          "gex_plus": -8.02,
-          "w1_call": 3.48,
-          "w1_put": -5.38,
+          "gex_plus": -8.04,
+          "w1_call": 3.49,
+          "w1_put": -5.39,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.07,
           "mth_put": -1.28,
-          "fri_call": 86.24,
-          "fri_put": -92.45
+          "fri_call": 86.47,
+          "fri_put": -92.7
         },
         {
           "strike": 49400.0,
-          "call_gex": 296.49,
-          "put_gex": -626.3,
-          "net_gex": -329.81,
-          "vex": 10.84,
-          "gex_plus": -318.97,
-          "w1_call": 28.45,
-          "w1_put": -11.19,
+          "call_gex": 297.23,
+          "put_gex": -627.97,
+          "net_gex": -330.75,
+          "vex": 10.87,
+          "gex_plus": -319.88,
+          "w1_call": 28.51,
+          "w1_put": -11.21,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.72,
-          "mth_put": -15.91,
-          "fri_call": 243.32,
-          "fri_put": -599.2
+          "mth_call": 24.74,
+          "mth_put": -15.92,
+          "fri_call": 243.98,
+          "fri_put": -600.84
         },
         {
           "strike": 49450.0,
-          "call_gex": 77.08,
-          "put_gex": -70.13,
-          "net_gex": 6.94,
+          "call_gex": 77.28,
+          "put_gex": -70.33,
+          "net_gex": 6.96,
           "vex": -0.2,
-          "gex_plus": 6.75,
-          "w1_call": 10.65,
+          "gex_plus": 6.76,
+          "w1_call": 10.67,
           "w1_put": -2.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.08,
           "mth_put": -1.73,
-          "fri_call": 65.34,
-          "fri_put": -66.15
+          "fri_call": 65.53,
+          "fri_put": -66.33
         },
         {
           "strike": 49500.0,
-          "call_gex": 556.1,
-          "put_gex": -653.92,
-          "net_gex": -97.82,
-          "vex": 2.53,
-          "gex_plus": -95.29,
-          "w1_call": 62.17,
-          "w1_put": -36.78,
+          "call_gex": 557.35,
+          "put_gex": -655.65,
+          "net_gex": -98.3,
+          "vex": 2.54,
+          "gex_plus": -95.75,
+          "w1_call": 62.29,
+          "w1_put": -36.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 142.23,
-          "mth_put": -64.83,
-          "fri_call": 351.69,
-          "fri_put": -552.31
+          "mth_call": 142.35,
+          "mth_put": -64.88,
+          "fri_call": 352.71,
+          "fri_put": -553.91
         },
         {
           "strike": 49550.0,
-          "call_gex": 95.22,
-          "put_gex": -34.64,
-          "net_gex": 60.57,
+          "call_gex": 95.49,
+          "put_gex": -34.74,
+          "net_gex": 60.75,
           "vex": -1.24,
-          "gex_plus": 59.34,
-          "w1_call": 7.87,
-          "w1_put": -2.95,
+          "gex_plus": 59.51,
+          "w1_call": 7.88,
+          "w1_put": -2.96,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.52,
           "mth_put": -1.31,
-          "fri_call": 85.82,
-          "fri_put": -30.39
+          "fri_call": 86.08,
+          "fri_put": -30.48
         },
         {
           "strike": 49600.0,
-          "call_gex": 357.75,
-          "put_gex": -199.02,
-          "net_gex": 158.73,
-          "vex": -2.56,
-          "gex_plus": 156.18,
-          "w1_call": 20.78,
-          "w1_put": -6.27,
+          "call_gex": 358.74,
+          "put_gex": -199.59,
+          "net_gex": 159.15,
+          "vex": -2.57,
+          "gex_plus": 156.59,
+          "w1_call": 20.82,
+          "w1_put": -6.28,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 29.03,
-          "mth_put": -8.73,
-          "fri_call": 307.94,
-          "fri_put": -184.02
+          "mth_call": 29.05,
+          "mth_put": -8.74,
+          "fri_call": 308.87,
+          "fri_put": -184.57
         },
         {
           "strike": 49650.0,
-          "call_gex": 98.29,
-          "put_gex": -34.63,
-          "net_gex": 63.67,
+          "call_gex": 98.59,
+          "put_gex": -34.73,
+          "net_gex": 63.85,
           "vex": -0.78,
-          "gex_plus": 62.89,
-          "w1_call": 5.3,
-          "w1_put": -3.31,
+          "gex_plus": 63.08,
+          "w1_call": 5.31,
+          "w1_put": -3.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.97,
           "mth_put": -0.0,
-          "fri_call": 91.02,
-          "fri_put": -31.31
+          "fri_call": 91.3,
+          "fri_put": -31.41
         },
         {
           "strike": 49700.0,
-          "call_gex": 405.45,
-          "put_gex": -97.91,
-          "net_gex": 307.55,
-          "vex": -2.47,
-          "gex_plus": 305.08,
-          "w1_call": 43.26,
-          "w1_put": -14.31,
+          "call_gex": 406.6,
+          "put_gex": -98.17,
+          "net_gex": 308.43,
+          "vex": -2.48,
+          "gex_plus": 305.95,
+          "w1_call": 43.34,
+          "w1_put": -14.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.31,
-          "mth_put": -10.96,
-          "fri_call": 335.89,
-          "fri_put": -72.64
+          "mth_call": 26.33,
+          "mth_put": -10.97,
+          "fri_call": 336.92,
+          "fri_put": -72.86
         },
         {
           "strike": 49750.0,
-          "call_gex": 191.36,
-          "put_gex": -33.16,
-          "net_gex": 158.2,
+          "call_gex": 191.94,
+          "put_gex": -33.26,
+          "net_gex": 158.68,
           "vex": -0.64,
-          "gex_plus": 157.57,
-          "w1_call": 11.34,
-          "w1_put": -3.0,
+          "gex_plus": 158.04,
+          "w1_call": 11.36,
+          "w1_put": -3.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.76,
           "mth_put": -0.66,
-          "fri_call": 178.26,
-          "fri_put": -29.5
+          "fri_call": 178.82,
+          "fri_put": -29.59
         },
         {
           "strike": 49800.0,
-          "call_gex": 510.99,
-          "put_gex": -130.19,
-          "net_gex": 380.8,
+          "call_gex": 512.43,
+          "put_gex": -130.52,
+          "net_gex": 381.91,
           "vex": 0.04,
-          "gex_plus": 380.84,
-          "w1_call": 66.82,
-          "w1_put": -13.03,
+          "gex_plus": 381.95,
+          "w1_call": 66.95,
+          "w1_put": -13.06,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.66,
-          "mth_put": -26.38,
-          "fri_call": 412.51,
-          "fri_put": -90.78
+          "mth_call": 31.68,
+          "mth_put": -26.4,
+          "fri_call": 413.8,
+          "fri_put": -91.06
         },
         {
           "strike": 49850.0,
-          "call_gex": 169.91,
-          "put_gex": -23.57,
-          "net_gex": 146.34,
+          "call_gex": 170.42,
+          "put_gex": -23.64,
+          "net_gex": 146.78,
           "vex": 0.61,
-          "gex_plus": 146.95,
-          "w1_call": 16.38,
-          "w1_put": -6.68,
+          "gex_plus": 147.39,
+          "w1_call": 16.41,
+          "w1_put": -6.7,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.1,
           "mth_put": -0.0,
-          "fri_call": 152.43,
-          "fri_put": -16.89
+          "fri_call": 152.91,
+          "fri_put": -16.94
         },
         {
           "strike": 49900.0,
-          "call_gex": 349.44,
-          "put_gex": -55.81,
-          "net_gex": 293.63,
-          "vex": 2.42,
-          "gex_plus": 296.06,
-          "w1_call": 16.36,
-          "w1_put": -13.69,
+          "call_gex": 350.46,
+          "put_gex": -55.94,
+          "net_gex": 294.52,
+          "vex": 2.43,
+          "gex_plus": 296.95,
+          "w1_call": 16.39,
+          "w1_put": -13.72,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.0,
-          "mth_put": -14.3,
-          "fri_call": 311.08,
-          "fri_put": -27.82
+          "mth_call": 22.02,
+          "mth_put": -14.31,
+          "fri_call": 312.04,
+          "fri_put": -27.91
         },
         {
           "strike": 49950.0,
-          "call_gex": 168.13,
-          "put_gex": -14.91,
-          "net_gex": 153.21,
-          "vex": 1.88,
-          "gex_plus": 155.1,
-          "w1_call": 3.0,
-          "w1_put": -3.33,
+          "call_gex": 168.64,
+          "put_gex": -14.95,
+          "net_gex": 153.68,
+          "vex": 1.89,
+          "gex_plus": 155.57,
+          "w1_call": 3.01,
+          "w1_put": -3.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.32,
           "mth_put": -0.66,
-          "fri_call": 163.81,
-          "fri_put": -10.92
+          "fri_call": 164.31,
+          "fri_put": -10.95
         },
         {
           "strike": 50000.0,
-          "call_gex": 1359.08,
-          "put_gex": -79.55,
-          "net_gex": 1279.54,
-          "vex": 21.42,
-          "gex_plus": 1300.96,
-          "w1_call": 170.45,
+          "call_gex": 1362.31,
+          "put_gex": -79.69,
+          "net_gex": 1282.62,
+          "vex": 21.47,
+          "gex_plus": 1304.08,
+          "w1_call": 170.78,
           "w1_put": -3.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 319.65,
-          "mth_put": -41.3,
-          "fri_call": 868.98,
-          "fri_put": -34.26
+          "mth_call": 319.92,
+          "mth_put": -41.34,
+          "fri_call": 871.61,
+          "fri_put": -34.36
         },
         {
           "strike": 50050.0,
-          "call_gex": 295.1,
-          "put_gex": -5.53,
-          "net_gex": 289.58,
-          "vex": 5.92,
-          "gex_plus": 295.5,
-          "w1_call": 6.29,
+          "call_gex": 295.97,
+          "put_gex": -5.54,
+          "net_gex": 290.43,
+          "vex": 5.94,
+          "gex_plus": 296.37,
+          "w1_call": 6.3,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 2.19,
+          "mth_call": 2.2,
           "mth_put": -0.22,
-          "fri_call": 286.62,
-          "fri_put": -4.98
+          "fri_call": 287.48,
+          "fri_put": -4.99
         },
         {
           "strike": 50100.0,
-          "call_gex": 366.62,
-          "put_gex": -30.25,
-          "net_gex": 336.37,
-          "vex": 8.28,
-          "gex_plus": 344.65,
-          "w1_call": 14.81,
+          "call_gex": 367.62,
+          "put_gex": -30.33,
+          "net_gex": 337.3,
+          "vex": 8.3,
+          "gex_plus": 345.6,
+          "w1_call": 14.84,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.4,
+          "mth_call": 25.42,
           "mth_put": -5.26,
-          "fri_call": 326.41,
-          "fri_put": -24.67
+          "fri_call": 327.36,
+          "fri_put": -24.74
         },
         {
           "strike": 50150.0,
-          "call_gex": 187.44,
-          "put_gex": -5.69,
-          "net_gex": 181.74,
-          "vex": 5.2,
-          "gex_plus": 186.94,
-          "w1_call": 11.12,
+          "call_gex": 187.96,
+          "put_gex": -5.71,
+          "net_gex": 182.25,
+          "vex": 5.21,
+          "gex_plus": 187.46,
+          "w1_call": 11.14,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.22,
           "mth_put": -0.0,
-          "fri_call": 176.1,
-          "fri_put": -5.69
+          "fri_call": 176.6,
+          "fri_put": -5.71
         },
         {
           "strike": 50200.0,
-          "call_gex": 623.82,
-          "put_gex": -14.9,
-          "net_gex": 608.92,
-          "vex": 19.93,
-          "gex_plus": 628.85,
-          "w1_call": 28.56,
-          "w1_put": -1.62,
+          "call_gex": 625.43,
+          "put_gex": -14.93,
+          "net_gex": 610.51,
+          "vex": 19.98,
+          "gex_plus": 630.49,
+          "w1_call": 28.61,
+          "w1_put": -1.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.22,
-          "mth_put": -8.06,
-          "fri_call": 551.05,
-          "fri_put": -5.22
+          "mth_call": 44.26,
+          "mth_put": -8.07,
+          "fri_call": 552.57,
+          "fri_put": -5.24
         }
       ],
       "weekly_gex": [
@@ -11025,14 +11025,14 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48450.0,
           "call_gex": 0.43,
-          "put_gex": -4.46,
+          "put_gex": -4.47,
           "net_gex": -4.04
         },
         {
           "strike": 48500.0,
-          "call_gex": 3.07,
-          "put_gex": -88.95,
-          "net_gex": -85.87
+          "call_gex": 3.08,
+          "put_gex": -88.98,
+          "net_gex": -85.9
         },
         {
           "strike": 48550.0,
@@ -11043,232 +11043,232 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -19.14,
-          "net_gex": -19.14
+          "put_gex": -19.16,
+          "net_gex": -19.16
         },
         {
           "strike": 48650.0,
           "call_gex": 0.24,
-          "put_gex": -10.09,
-          "net_gex": -9.85
+          "put_gex": -10.1,
+          "net_gex": -9.86
         },
         {
           "strike": 48700.0,
           "call_gex": 0.25,
-          "put_gex": -10.37,
-          "net_gex": -10.12
+          "put_gex": -10.38,
+          "net_gex": -10.13
         },
         {
           "strike": 48750.0,
-          "call_gex": 1.01,
+          "call_gex": 1.02,
           "put_gex": -4.31,
           "net_gex": -3.3
         },
         {
           "strike": 48800.0,
           "call_gex": 3.64,
-          "put_gex": -11.96,
-          "net_gex": -8.32
+          "put_gex": -11.97,
+          "net_gex": -8.33
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -7.72,
-          "net_gex": -7.72
+          "put_gex": -7.73,
+          "net_gex": -7.73
         },
         {
           "strike": 48900.0,
-          "call_gex": 2.72,
-          "put_gex": -11.71,
-          "net_gex": -8.99
+          "call_gex": 2.73,
+          "put_gex": -11.72,
+          "net_gex": -9.0
         },
         {
           "strike": 48950.0,
           "call_gex": 0.56,
-          "put_gex": -6.4,
-          "net_gex": -5.84
+          "put_gex": -6.41,
+          "net_gex": -5.85
         },
         {
           "strike": 49000.0,
-          "call_gex": 24.7,
-          "put_gex": -41.73,
-          "net_gex": -17.03
+          "call_gex": 24.73,
+          "put_gex": -41.79,
+          "net_gex": -17.06
         },
         {
           "strike": 49050.0,
           "call_gex": 1.16,
           "put_gex": -6.08,
-          "net_gex": -4.92
+          "net_gex": -4.93
         },
         {
           "strike": 49100.0,
-          "call_gex": 4.71,
-          "put_gex": -9.72,
+          "call_gex": 4.72,
+          "put_gex": -9.73,
           "net_gex": -5.01
         },
         {
           "strike": 49150.0,
           "call_gex": 1.8,
-          "put_gex": -4.19,
+          "put_gex": -4.2,
           "net_gex": -2.4
         },
         {
           "strike": 49200.0,
-          "call_gex": 10.34,
-          "put_gex": -14.29,
-          "net_gex": -3.95
+          "call_gex": 10.36,
+          "put_gex": -14.32,
+          "net_gex": -3.96
         },
         {
           "strike": 49250.0,
           "call_gex": 3.09,
-          "put_gex": -11.11,
-          "net_gex": -8.02
+          "put_gex": -11.12,
+          "net_gex": -8.03
         },
         {
           "strike": 49300.0,
-          "call_gex": 15.32,
-          "put_gex": -27.51,
-          "net_gex": -12.19
+          "call_gex": 15.34,
+          "put_gex": -27.55,
+          "net_gex": -12.21
         },
         {
           "strike": 49350.0,
-          "call_gex": 3.48,
-          "put_gex": -5.38,
+          "call_gex": 3.49,
+          "put_gex": -5.39,
           "net_gex": -1.9
         },
         {
           "strike": 49400.0,
-          "call_gex": 28.45,
-          "put_gex": -11.19,
-          "net_gex": 17.26
+          "call_gex": 28.51,
+          "put_gex": -11.21,
+          "net_gex": 17.3
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.65,
+          "call_gex": 10.67,
           "put_gex": -2.26,
-          "net_gex": 8.39
+          "net_gex": 8.41
         },
         {
           "strike": 49500.0,
-          "call_gex": 62.17,
-          "put_gex": -36.78,
-          "net_gex": 25.39
+          "call_gex": 62.29,
+          "put_gex": -36.85,
+          "net_gex": 25.44
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.87,
-          "put_gex": -2.95,
-          "net_gex": 4.92
+          "call_gex": 7.88,
+          "put_gex": -2.96,
+          "net_gex": 4.93
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.78,
-          "put_gex": -6.27,
-          "net_gex": 14.51
+          "call_gex": 20.82,
+          "put_gex": -6.28,
+          "net_gex": 14.54
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.3,
-          "put_gex": -3.31,
+          "call_gex": 5.31,
+          "put_gex": -3.32,
           "net_gex": 1.99
         },
         {
           "strike": 49700.0,
-          "call_gex": 43.26,
-          "put_gex": -14.31,
-          "net_gex": 28.95
+          "call_gex": 43.34,
+          "put_gex": -14.34,
+          "net_gex": 29.0
         },
         {
           "strike": 49750.0,
-          "call_gex": 11.34,
-          "put_gex": -3.0,
-          "net_gex": 8.34
+          "call_gex": 11.36,
+          "put_gex": -3.01,
+          "net_gex": 8.36
         },
         {
           "strike": 49800.0,
-          "call_gex": 66.82,
-          "put_gex": -13.03,
-          "net_gex": 53.79
+          "call_gex": 66.95,
+          "put_gex": -13.06,
+          "net_gex": 53.9
         },
         {
           "strike": 49850.0,
-          "call_gex": 16.38,
-          "put_gex": -6.68,
-          "net_gex": 9.69
+          "call_gex": 16.41,
+          "put_gex": -6.7,
+          "net_gex": 9.71
         },
         {
           "strike": 49900.0,
-          "call_gex": 16.36,
-          "put_gex": -13.69,
-          "net_gex": 2.67
+          "call_gex": 16.39,
+          "put_gex": -13.72,
+          "net_gex": 2.68
         },
         {
           "strike": 49950.0,
-          "call_gex": 3.0,
-          "put_gex": -3.33,
+          "call_gex": 3.01,
+          "put_gex": -3.34,
           "net_gex": -0.33
         },
         {
           "strike": 50000.0,
-          "call_gex": 170.45,
+          "call_gex": 170.78,
           "put_gex": -3.99,
-          "net_gex": 166.47
+          "net_gex": 166.78
         },
         {
           "strike": 50050.0,
-          "call_gex": 6.29,
+          "call_gex": 6.3,
           "put_gex": -0.33,
-          "net_gex": 5.96
+          "net_gex": 5.97
         },
         {
           "strike": 50100.0,
-          "call_gex": 14.81,
+          "call_gex": 14.84,
           "put_gex": -0.33,
-          "net_gex": 14.48
+          "net_gex": 14.51
         },
         {
           "strike": 50150.0,
-          "call_gex": 11.12,
+          "call_gex": 11.14,
           "put_gex": -0.0,
-          "net_gex": 11.12
+          "net_gex": 11.14
         },
         {
           "strike": 50200.0,
-          "call_gex": 28.56,
-          "put_gex": -1.62,
-          "net_gex": 26.94
+          "call_gex": 28.61,
+          "put_gex": -1.63,
+          "net_gex": 26.98
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 2.76,
-          "put_gex": -115.41,
-          "net_gex": -112.65
+          "call_gex": 2.75,
+          "put_gex": -115.23,
+          "net_gex": -112.48
         },
         {
           "strike": 48450.0,
           "call_gex": 0.21,
-          "put_gex": -95.96,
-          "net_gex": -95.75
+          "put_gex": -95.85,
+          "net_gex": -95.64
         },
         {
           "strike": 48500.0,
-          "call_gex": 116.32,
-          "put_gex": -259.53,
-          "net_gex": -143.21
+          "call_gex": 116.21,
+          "put_gex": -259.3,
+          "net_gex": -143.08
         },
         {
           "strike": 48550.0,
           "call_gex": 1.61,
-          "put_gex": -54.21,
-          "net_gex": -52.6
+          "put_gex": -54.18,
+          "net_gex": -52.57
         },
         {
           "strike": 48600.0,
           "call_gex": 1.69,
-          "put_gex": -130.53,
-          "net_gex": -128.84
+          "put_gex": -130.49,
+          "net_gex": -128.8
         },
         {
           "strike": 48650.0,
@@ -11279,196 +11279,196 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48700.0,
           "call_gex": 6.58,
-          "put_gex": -171.33,
-          "net_gex": -164.76
+          "put_gex": -171.38,
+          "net_gex": -164.8
         },
         {
           "strike": 48750.0,
           "call_gex": 1.65,
-          "put_gex": -75.44,
-          "net_gex": -73.8
+          "put_gex": -75.48,
+          "net_gex": -73.83
         },
         {
           "strike": 48800.0,
-          "call_gex": 39.96,
-          "put_gex": -213.19,
-          "net_gex": -173.23
+          "call_gex": 39.99,
+          "put_gex": -213.35,
+          "net_gex": -173.37
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.3,
-          "put_gex": -55.41,
-          "net_gex": -47.12
+          "call_gex": 8.31,
+          "put_gex": -55.47,
+          "net_gex": -47.16
         },
         {
           "strike": 48900.0,
-          "call_gex": 39.0,
-          "put_gex": -212.5,
-          "net_gex": -173.5
+          "call_gex": 39.05,
+          "put_gex": -212.76,
+          "net_gex": -173.71
         },
         {
           "strike": 48950.0,
-          "call_gex": 5.72,
-          "put_gex": -57.81,
-          "net_gex": -52.09
+          "call_gex": 5.73,
+          "put_gex": -57.89,
+          "net_gex": -52.16
         },
         {
           "strike": 49000.0,
-          "call_gex": 122.3,
-          "put_gex": -506.27,
-          "net_gex": -383.96
+          "call_gex": 122.5,
+          "put_gex": -507.08,
+          "net_gex": -384.58
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.12,
-          "put_gex": -88.18,
-          "net_gex": -79.06
+          "call_gex": 9.14,
+          "put_gex": -88.34,
+          "net_gex": -79.2
         },
         {
           "strike": 49100.0,
-          "call_gex": 100.06,
-          "put_gex": -200.47,
-          "net_gex": -100.41
+          "call_gex": 100.26,
+          "put_gex": -200.87,
+          "net_gex": -100.61
         },
         {
           "strike": 49150.0,
-          "call_gex": 29.6,
-          "put_gex": -78.82,
-          "net_gex": -49.21
+          "call_gex": 29.66,
+          "put_gex": -78.98,
+          "net_gex": -49.32
         },
         {
           "strike": 49200.0,
-          "call_gex": 137.01,
-          "put_gex": -268.91,
-          "net_gex": -131.9
+          "call_gex": 137.32,
+          "put_gex": -269.52,
+          "net_gex": -132.2
         },
         {
           "strike": 49250.0,
-          "call_gex": 39.23,
-          "put_gex": -115.82,
-          "net_gex": -76.59
+          "call_gex": 39.32,
+          "put_gex": -116.1,
+          "net_gex": -76.77
         },
         {
           "strike": 49300.0,
-          "call_gex": 157.49,
-          "put_gex": -427.46,
-          "net_gex": -269.98
+          "call_gex": 157.88,
+          "put_gex": -428.54,
+          "net_gex": -270.66
         },
         {
           "strike": 49350.0,
-          "call_gex": 86.24,
-          "put_gex": -92.45,
-          "net_gex": -6.22
+          "call_gex": 86.47,
+          "put_gex": -92.7,
+          "net_gex": -6.23
         },
         {
           "strike": 49400.0,
-          "call_gex": 243.32,
-          "put_gex": -599.2,
-          "net_gex": -355.89
+          "call_gex": 243.98,
+          "put_gex": -600.84,
+          "net_gex": -356.86
         },
         {
           "strike": 49450.0,
-          "call_gex": 65.34,
-          "put_gex": -66.15,
+          "call_gex": 65.53,
+          "put_gex": -66.33,
           "net_gex": -0.8
         },
         {
           "strike": 49500.0,
-          "call_gex": 351.69,
-          "put_gex": -552.31,
-          "net_gex": -200.62
+          "call_gex": 352.71,
+          "put_gex": -553.91,
+          "net_gex": -201.2
         },
         {
           "strike": 49550.0,
-          "call_gex": 85.82,
-          "put_gex": -30.39,
-          "net_gex": 55.44
+          "call_gex": 86.08,
+          "put_gex": -30.48,
+          "net_gex": 55.6
         },
         {
           "strike": 49600.0,
-          "call_gex": 307.94,
-          "put_gex": -184.02,
-          "net_gex": 123.92
+          "call_gex": 308.87,
+          "put_gex": -184.57,
+          "net_gex": 124.3
         },
         {
           "strike": 49650.0,
-          "call_gex": 91.02,
-          "put_gex": -31.31,
-          "net_gex": 59.71
+          "call_gex": 91.3,
+          "put_gex": -31.41,
+          "net_gex": 59.89
         },
         {
           "strike": 49700.0,
-          "call_gex": 335.89,
-          "put_gex": -72.64,
-          "net_gex": 263.25
+          "call_gex": 336.92,
+          "put_gex": -72.86,
+          "net_gex": 264.06
         },
         {
           "strike": 49750.0,
-          "call_gex": 178.26,
-          "put_gex": -29.5,
-          "net_gex": 148.76
+          "call_gex": 178.82,
+          "put_gex": -29.59,
+          "net_gex": 149.22
         },
         {
           "strike": 49800.0,
-          "call_gex": 412.51,
-          "put_gex": -90.78,
-          "net_gex": 321.73
+          "call_gex": 413.8,
+          "put_gex": -91.06,
+          "net_gex": 322.74
         },
         {
           "strike": 49850.0,
-          "call_gex": 152.43,
-          "put_gex": -16.89,
-          "net_gex": 135.54
+          "call_gex": 152.91,
+          "put_gex": -16.94,
+          "net_gex": 135.97
         },
         {
           "strike": 49900.0,
-          "call_gex": 311.08,
-          "put_gex": -27.82,
-          "net_gex": 283.26
+          "call_gex": 312.04,
+          "put_gex": -27.91,
+          "net_gex": 284.14
         },
         {
           "strike": 49950.0,
-          "call_gex": 163.81,
-          "put_gex": -10.92,
-          "net_gex": 152.89
+          "call_gex": 164.31,
+          "put_gex": -10.95,
+          "net_gex": 153.36
         },
         {
           "strike": 50000.0,
-          "call_gex": 868.98,
-          "put_gex": -34.26,
-          "net_gex": 834.72
+          "call_gex": 871.61,
+          "put_gex": -34.36,
+          "net_gex": 837.25
         },
         {
           "strike": 50050.0,
-          "call_gex": 286.62,
-          "put_gex": -4.98,
-          "net_gex": 281.65
+          "call_gex": 287.48,
+          "put_gex": -4.99,
+          "net_gex": 282.49
         },
         {
           "strike": 50100.0,
-          "call_gex": 326.41,
-          "put_gex": -24.67,
-          "net_gex": 301.75
+          "call_gex": 327.36,
+          "put_gex": -24.74,
+          "net_gex": 302.63
         },
         {
           "strike": 50150.0,
-          "call_gex": 176.1,
-          "put_gex": -5.69,
-          "net_gex": 170.41
+          "call_gex": 176.6,
+          "put_gex": -5.71,
+          "net_gex": 170.89
         },
         {
           "strike": 50200.0,
-          "call_gex": 551.05,
-          "put_gex": -5.22,
-          "net_gex": 545.82
+          "call_gex": 552.57,
+          "put_gex": -5.24,
+          "net_gex": 547.33
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 36.43,
+          "call_gex": 36.45,
           "put_gex": -16.9,
-          "net_gex": 19.53
+          "net_gex": 19.54
         },
         {
           "strike": 48450.0,
@@ -11478,9 +11478,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 56.37,
-          "put_gex": -130.14,
-          "net_gex": -73.77
+          "call_gex": 56.4,
+          "put_gex": -130.21,
+          "net_gex": -73.81
         },
         {
           "strike": 48550.0,
@@ -11490,9 +11490,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 54.39,
-          "put_gex": -21.61,
-          "net_gex": 32.79
+          "call_gex": 54.43,
+          "put_gex": -21.62,
+          "net_gex": 32.81
         },
         {
           "strike": 48650.0,
@@ -11502,20 +11502,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 43.17,
-          "put_gex": -21.21,
-          "net_gex": 21.97
+          "call_gex": 43.2,
+          "put_gex": -21.22,
+          "net_gex": 21.98
         },
         {
           "strike": 48750.0,
           "call_gex": 0.0,
-          "put_gex": -3.67,
-          "net_gex": -3.67
+          "put_gex": -3.68,
+          "net_gex": -3.68
         },
         {
           "strike": 48800.0,
-          "call_gex": 25.42,
-          "put_gex": -28.54,
+          "call_gex": 25.43,
+          "put_gex": -28.56,
           "net_gex": -3.13
         },
         {
@@ -11526,9 +11526,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 20.56,
+          "call_gex": 20.58,
           "put_gex": -8.39,
-          "net_gex": 12.18
+          "net_gex": 12.19
         },
         {
           "strike": 48950.0,
@@ -11538,9 +11538,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 122.28,
-          "put_gex": -63.28,
-          "net_gex": 59.0
+          "call_gex": 122.37,
+          "put_gex": -63.32,
+          "net_gex": 59.05
         },
         {
           "strike": 49050.0,
@@ -11550,21 +11550,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 124.77,
-          "put_gex": -26.28,
-          "net_gex": 98.49
+          "call_gex": 124.86,
+          "put_gex": -26.3,
+          "net_gex": 98.57
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.34,
+          "call_gex": 8.35,
           "put_gex": -0.21,
-          "net_gex": 8.13
+          "net_gex": 8.14
         },
         {
           "strike": 49200.0,
-          "call_gex": 48.72,
-          "put_gex": -11.97,
-          "net_gex": 36.75
+          "call_gex": 48.76,
+          "put_gex": -11.98,
+          "net_gex": 36.78
         },
         {
           "strike": 49250.0,
@@ -11574,9 +11574,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.42,
-          "put_gex": -34.88,
-          "net_gex": -14.46
+          "call_gex": 20.43,
+          "put_gex": -34.91,
+          "net_gex": -14.47
         },
         {
           "strike": 49350.0,
@@ -11586,9 +11586,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 24.72,
-          "put_gex": -15.91,
-          "net_gex": 8.81
+          "call_gex": 24.74,
+          "put_gex": -15.92,
+          "net_gex": 8.82
         },
         {
           "strike": 49450.0,
@@ -11598,9 +11598,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 142.23,
-          "put_gex": -64.83,
-          "net_gex": 77.4
+          "call_gex": 142.35,
+          "put_gex": -64.88,
+          "net_gex": 77.47
         },
         {
           "strike": 49550.0,
@@ -11610,9 +11610,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 29.03,
-          "put_gex": -8.73,
-          "net_gex": 20.3
+          "call_gex": 29.05,
+          "put_gex": -8.74,
+          "net_gex": 20.31
         },
         {
           "strike": 49650.0,
@@ -11622,9 +11622,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 26.31,
-          "put_gex": -10.96,
-          "net_gex": 15.35
+          "call_gex": 26.33,
+          "put_gex": -10.97,
+          "net_gex": 15.36
         },
         {
           "strike": 49750.0,
@@ -11634,8 +11634,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49800.0,
-          "call_gex": 31.66,
-          "put_gex": -26.38,
+          "call_gex": 31.68,
+          "put_gex": -26.4,
           "net_gex": 5.28
         },
         {
@@ -11646,9 +11646,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 22.0,
-          "put_gex": -14.3,
-          "net_gex": 7.7
+          "call_gex": 22.02,
+          "put_gex": -14.31,
+          "net_gex": 7.71
         },
         {
           "strike": 49950.0,
@@ -11658,21 +11658,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 319.65,
-          "put_gex": -41.3,
-          "net_gex": 278.35
+          "call_gex": 319.92,
+          "put_gex": -41.34,
+          "net_gex": 278.58
         },
         {
           "strike": 50050.0,
-          "call_gex": 2.19,
+          "call_gex": 2.2,
           "put_gex": -0.22,
-          "net_gex": 1.97
+          "net_gex": 1.98
         },
         {
           "strike": 50100.0,
-          "call_gex": 25.4,
+          "call_gex": 25.42,
           "put_gex": -5.26,
-          "net_gex": 20.15
+          "net_gex": 20.16
         },
         {
           "strike": 50150.0,
@@ -11682,9 +11682,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 44.22,
-          "put_gex": -8.06,
-          "net_gex": 36.16
+          "call_gex": 44.26,
+          "put_gex": -8.07,
+          "net_gex": 36.19
         }
       ]
     },
@@ -11717,27 +11717,27 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 46.6,
-          "put_gex": -211.67,
-          "net_gex": -165.07,
-          "vex": 12.51,
-          "gex_plus": -152.57,
+          "call_gex": 46.64,
+          "put_gex": -211.91,
+          "net_gex": -165.27,
+          "vex": 12.52,
+          "gex_plus": -152.75,
           "w1_call": 1.61,
-          "w1_put": -16.6,
+          "w1_put": -16.62,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 40.79,
-          "mth_put": -18.92,
+          "mth_call": 40.81,
+          "mth_put": -18.93,
           "fri_call": 4.21,
-          "fri_put": -176.16
+          "fri_put": -176.36
         },
         {
           "strike": 48450.0,
           "call_gex": 0.86,
-          "put_gex": -150.53,
-          "net_gex": -149.67,
-          "vex": 10.68,
-          "gex_plus": -138.99,
+          "put_gex": -150.73,
+          "net_gex": -149.87,
+          "vex": 10.69,
+          "gex_plus": -139.18,
           "w1_call": 0.55,
           "w1_put": -5.75,
           "w2_call": 0.0,
@@ -11745,1023 +11745,1023 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.0,
           "fri_call": 0.31,
-          "fri_put": -143.79
+          "fri_put": -143.98
         },
         {
           "strike": 48500.0,
-          "call_gex": 237.48,
-          "put_gex": -639.12,
-          "net_gex": -401.65,
-          "vex": 26.82,
-          "gex_plus": -374.83,
-          "w1_call": 3.91,
-          "w1_put": -113.15,
+          "call_gex": 237.79,
+          "put_gex": -639.97,
+          "net_gex": -402.18,
+          "vex": 26.85,
+          "gex_plus": -375.32,
+          "w1_call": 3.92,
+          "w1_put": -113.3,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 62.48,
-          "mth_put": -144.24,
-          "fri_call": 171.09,
-          "fri_put": -381.73
+          "mth_call": 62.52,
+          "mth_put": -144.35,
+          "fri_call": 171.35,
+          "fri_put": -382.32
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.89,
-          "put_gex": -84.81,
-          "net_gex": -81.92,
+          "call_gex": 2.9,
+          "put_gex": -84.96,
+          "net_gex": -82.06,
           "vex": 5.16,
-          "gex_plus": -76.77,
+          "gex_plus": -76.9,
           "w1_call": 0.57,
-          "w1_put": -5.13,
+          "w1_put": -5.14,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.42,
-          "fri_call": 2.32,
-          "fri_put": -78.27
+          "fri_call": 2.33,
+          "fri_put": -78.4
         },
         {
           "strike": 48600.0,
-          "call_gex": 62.07,
-          "put_gex": -232.51,
-          "net_gex": -170.44,
-          "vex": 10.07,
-          "gex_plus": -160.37,
+          "call_gex": 62.12,
+          "put_gex": -232.92,
+          "net_gex": -170.8,
+          "vex": 10.09,
+          "gex_plus": -160.71,
           "w1_call": 0.0,
-          "w1_put": -23.8,
+          "w1_put": -23.83,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 59.69,
-          "mth_put": -23.71,
+          "mth_call": 59.73,
+          "mth_put": -23.73,
           "fri_call": 2.39,
-          "fri_put": -185.01
+          "fri_put": -185.36
         },
         {
           "strike": 48650.0,
           "call_gex": 1.7,
-          "put_gex": -164.02,
-          "net_gex": -162.32,
-          "vex": 8.85,
-          "gex_plus": -153.47,
+          "put_gex": -164.35,
+          "net_gex": -162.65,
+          "vex": 8.87,
+          "gex_plus": -153.78,
           "w1_call": 0.3,
-          "w1_put": -12.4,
+          "w1_put": -12.42,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.3,
-          "fri_call": 1.4,
-          "fri_put": -148.32
+          "fri_call": 1.41,
+          "fri_put": -148.63
         },
         {
           "strike": 48700.0,
-          "call_gex": 56.19,
-          "put_gex": -269.68,
-          "net_gex": -213.49,
-          "vex": 10.8,
-          "gex_plus": -202.69,
+          "call_gex": 56.25,
+          "put_gex": -270.24,
+          "net_gex": -213.99,
+          "vex": 10.82,
+          "gex_plus": -203.17,
           "w1_call": 0.3,
-          "w1_put": -12.6,
+          "w1_put": -12.62,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 46.9,
-          "mth_put": -23.04,
-          "fri_call": 8.99,
-          "fri_put": -234.04
+          "mth_call": 46.94,
+          "mth_put": -23.05,
+          "fri_call": 9.01,
+          "fri_put": -234.56
         },
         {
           "strike": 48750.0,
-          "call_gex": 3.42,
-          "put_gex": -110.31,
-          "net_gex": -106.89,
-          "vex": 4.93,
-          "gex_plus": -101.95,
+          "call_gex": 3.43,
+          "put_gex": -110.56,
+          "net_gex": -107.13,
+          "vex": 4.95,
+          "gex_plus": -102.19,
           "w1_call": 1.22,
-          "w1_put": -5.17,
+          "w1_put": -5.18,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.97,
           "fri_call": 2.21,
-          "fri_put": -101.17
+          "fri_put": -101.41
         },
         {
           "strike": 48800.0,
-          "call_gex": 84.26,
-          "put_gex": -325.56,
-          "net_gex": -241.31,
-          "vex": 10.14,
-          "gex_plus": -231.17,
-          "w1_call": 4.32,
-          "w1_put": -14.19,
+          "call_gex": 84.42,
+          "put_gex": -326.31,
+          "net_gex": -241.9,
+          "vex": 10.17,
+          "gex_plus": -231.73,
+          "w1_call": 4.33,
+          "w1_put": -14.22,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 27.33,
-          "mth_put": -30.7,
-          "fri_call": 52.6,
-          "fri_put": -280.67
+          "mth_call": 27.36,
+          "mth_put": -30.72,
+          "fri_call": 52.73,
+          "fri_put": -281.37
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.72,
-          "put_gex": -82.58,
-          "net_gex": -71.86,
+          "call_gex": 10.75,
+          "put_gex": -82.79,
+          "net_gex": -72.04,
           "vex": 2.72,
-          "gex_plus": -69.14,
+          "gex_plus": -69.31,
           "w1_call": 0.0,
-          "w1_put": -9.06,
+          "w1_put": -9.07,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.9,
-          "fri_call": 10.72,
-          "fri_put": -71.62
+          "fri_call": 10.75,
+          "fri_put": -71.81
         },
         {
           "strike": 48900.0,
-          "call_gex": 74.55,
-          "put_gex": -292.17,
-          "net_gex": -217.63,
-          "vex": 7.36,
-          "gex_plus": -210.27,
+          "call_gex": 74.7,
+          "put_gex": -292.94,
+          "net_gex": -218.23,
+          "vex": 7.38,
+          "gex_plus": -210.86,
           "w1_call": 3.16,
-          "w1_put": -13.58,
+          "w1_put": -13.6,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.9,
-          "mth_put": -8.93,
-          "fri_call": 49.49,
-          "fri_put": -269.66
+          "mth_call": 21.92,
+          "mth_put": -8.94,
+          "fri_call": 49.62,
+          "fri_put": -270.4
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.76,
-          "put_gex": -80.85,
-          "net_gex": -73.09,
+          "call_gex": 7.78,
+          "put_gex": -81.07,
+          "net_gex": -73.29,
           "vex": 2.16,
-          "gex_plus": -70.94,
+          "gex_plus": -71.13,
           "w1_call": 0.64,
-          "w1_put": -7.34,
+          "w1_put": -7.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.5,
-          "fri_call": 7.12,
-          "fri_put": -72.02
+          "fri_call": 7.14,
+          "fri_put": -72.22
         },
         {
           "strike": 49000.0,
-          "call_gex": 306.52,
-          "put_gex": -733.29,
-          "net_gex": -426.78,
-          "vex": 10.93,
-          "gex_plus": -415.85,
-          "w1_call": 27.99,
-          "w1_put": -47.3,
+          "call_gex": 307.11,
+          "put_gex": -735.22,
+          "net_gex": -428.12,
+          "vex": 10.97,
+          "gex_plus": -417.15,
+          "w1_call": 28.05,
+          "w1_put": -47.39,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 128.92,
-          "mth_put": -66.71,
-          "fri_call": 149.61,
-          "fri_put": -619.28
+          "mth_call": 129.02,
+          "mth_put": -66.77,
+          "fri_call": 150.04,
+          "fri_put": -621.07
         },
         {
           "strike": 49050.0,
-          "call_gex": 12.9,
-          "put_gex": -114.22,
-          "net_gex": -101.32,
-          "vex": 2.15,
-          "gex_plus": -99.17,
+          "call_gex": 12.93,
+          "put_gex": -114.55,
+          "net_gex": -101.61,
+          "vex": 2.16,
+          "gex_plus": -99.46,
           "w1_call": 1.3,
-          "w1_put": -6.81,
+          "w1_put": -6.82,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.65,
           "mth_put": -1.51,
-          "fri_call": 10.96,
-          "fri_put": -105.9
+          "fri_call": 10.99,
+          "fri_put": -106.22
         },
         {
           "strike": 49100.0,
-          "call_gex": 253.46,
-          "put_gex": -274.6,
-          "net_gex": -21.14,
+          "call_gex": 253.93,
+          "put_gex": -275.35,
+          "net_gex": -21.43,
           "vex": 0.52,
-          "gex_plus": -20.63,
-          "w1_call": 5.22,
-          "w1_put": -10.77,
+          "gex_plus": -20.9,
+          "w1_call": 5.23,
+          "w1_put": -10.79,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 130.24,
-          "mth_put": -27.43,
-          "fri_call": 118.0,
-          "fri_put": -236.4
+          "mth_call": 130.35,
+          "mth_put": -27.45,
+          "fri_call": 118.35,
+          "fri_put": -237.11
         },
         {
           "strike": 49150.0,
-          "call_gex": 44.9,
-          "put_gex": -96.06,
-          "net_gex": -51.16,
-          "vex": 0.67,
-          "gex_plus": -50.49,
+          "call_gex": 45.02,
+          "put_gex": -96.35,
+          "net_gex": -51.33,
+          "vex": 0.68,
+          "gex_plus": -50.66,
           "w1_call": 1.97,
-          "w1_put": -4.59,
+          "w1_put": -4.6,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.66,
+          "mth_call": 8.67,
           "mth_put": -0.22,
-          "fri_call": 34.27,
-          "fri_put": -91.26
+          "fri_call": 34.38,
+          "fri_put": -91.53
         },
         {
           "strike": 49200.0,
-          "call_gex": 217.31,
-          "put_gex": -333.56,
-          "net_gex": -116.25,
-          "vex": 1.08,
-          "gex_plus": -115.17,
-          "w1_call": 11.2,
-          "w1_put": -15.48,
+          "call_gex": 217.86,
+          "put_gex": -334.55,
+          "net_gex": -116.69,
+          "vex": 1.09,
+          "gex_plus": -115.6,
+          "w1_call": 11.22,
+          "w1_put": -15.51,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 50.35,
-          "mth_put": -12.37,
-          "fri_call": 155.77,
-          "fri_put": -305.72
+          "mth_call": 50.39,
+          "mth_put": -12.38,
+          "fri_call": 156.25,
+          "fri_put": -306.66
         },
         {
           "strike": 49250.0,
-          "call_gex": 48.4,
-          "put_gex": -142.48,
-          "net_gex": -94.08,
+          "call_gex": 48.54,
+          "put_gex": -142.91,
+          "net_gex": -94.37,
           "vex": 0.44,
-          "gex_plus": -93.65,
-          "w1_call": 3.3,
-          "w1_put": -11.89,
+          "gex_plus": -93.93,
+          "w1_call": 3.31,
+          "w1_put": -11.91,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.3,
-          "mth_put": -1.3,
-          "fri_call": 43.79,
-          "fri_put": -129.29
+          "mth_call": 1.31,
+          "mth_put": -1.31,
+          "fri_call": 43.93,
+          "fri_put": -129.69
         },
         {
           "strike": 49300.0,
-          "call_gex": 209.73,
-          "put_gex": -533.35,
-          "net_gex": -323.63,
+          "call_gex": 210.31,
+          "put_gex": -534.9,
+          "net_gex": -324.59,
           "vex": 0.15,
-          "gex_plus": -323.48,
-          "w1_call": 16.21,
-          "w1_put": -29.11,
+          "gex_plus": -324.44,
+          "w1_call": 16.24,
+          "w1_put": -29.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.89,
-          "mth_put": -35.69,
-          "fri_call": 172.62,
-          "fri_put": -468.55
+          "mth_call": 20.91,
+          "mth_put": -35.72,
+          "fri_call": 173.16,
+          "fri_put": -470.01
         },
         {
           "strike": 49350.0,
-          "call_gex": 97.55,
-          "put_gex": -106.44,
-          "net_gex": -8.89,
+          "call_gex": 97.85,
+          "put_gex": -106.77,
+          "net_gex": -8.92,
           "vex": -0.03,
-          "gex_plus": -8.93,
-          "w1_call": 3.64,
-          "w1_put": -5.63,
+          "gex_plus": -8.95,
+          "w1_call": 3.65,
+          "w1_put": -5.64,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.09,
           "mth_put": -1.31,
-          "fri_call": 92.82,
-          "fri_put": -99.51
+          "fri_call": 93.11,
+          "fri_put": -99.82
         },
         {
           "strike": 49400.0,
-          "call_gex": 311.65,
-          "put_gex": -661.01,
-          "net_gex": -349.36,
-          "vex": -2.67,
-          "gex_plus": -352.03,
-          "w1_call": 29.43,
-          "w1_put": -11.57,
+          "call_gex": 312.52,
+          "put_gex": -663.01,
+          "net_gex": -350.48,
+          "vex": -2.68,
+          "gex_plus": -353.16,
+          "w1_call": 29.49,
+          "w1_put": -11.6,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.05,
-          "mth_put": -16.12,
-          "fri_call": 257.17,
-          "fri_put": -633.32
+          "mth_call": 25.07,
+          "mth_put": -16.13,
+          "fri_call": 257.96,
+          "fri_put": -635.28
         },
         {
           "strike": 49450.0,
-          "call_gex": 79.8,
-          "put_gex": -72.7,
-          "net_gex": 7.1,
+          "call_gex": 80.03,
+          "put_gex": -72.92,
+          "net_gex": 7.11,
           "vex": 0.09,
-          "gex_plus": 7.18,
-          "w1_call": 10.89,
-          "w1_put": -2.31,
+          "gex_plus": 7.2,
+          "w1_call": 10.91,
+          "w1_put": -2.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.09,
           "mth_put": -1.74,
-          "fri_call": 67.82,
-          "fri_put": -68.65
+          "fri_call": 68.03,
+          "fri_put": -68.86
         },
         {
           "strike": 49500.0,
-          "call_gex": 564.01,
-          "put_gex": -665.15,
-          "net_gex": -101.14,
+          "call_gex": 565.34,
+          "put_gex": -666.98,
+          "net_gex": -101.64,
           "vex": -1.49,
-          "gex_plus": -102.62,
-          "w1_call": 62.86,
-          "w1_put": -37.19,
+          "gex_plus": -103.14,
+          "w1_call": 62.98,
+          "w1_put": -37.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 142.71,
-          "mth_put": -65.05,
-          "fri_call": 358.44,
-          "fri_put": -562.92
+          "mth_call": 142.83,
+          "mth_put": -65.1,
+          "fri_call": 359.53,
+          "fri_put": -564.62
         },
         {
           "strike": 49550.0,
-          "call_gex": 95.29,
-          "put_gex": -34.67,
-          "net_gex": 60.62,
+          "call_gex": 95.56,
+          "put_gex": -34.76,
+          "net_gex": 60.79,
           "vex": 1.22,
-          "gex_plus": 61.84,
-          "w1_call": 7.87,
-          "w1_put": -2.95,
+          "gex_plus": 62.01,
+          "w1_call": 7.88,
+          "w1_put": -2.96,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.52,
           "mth_put": -1.3,
-          "fri_call": 85.9,
-          "fri_put": -30.41
+          "fri_call": 86.16,
+          "fri_put": -30.5
         },
         {
           "strike": 49600.0,
-          "call_gex": 352.05,
-          "put_gex": -195.74,
-          "net_gex": 156.31,
-          "vex": 3.81,
-          "gex_plus": 160.13,
-          "w1_call": 20.54,
-          "w1_put": -6.19,
+          "call_gex": 353.0,
+          "put_gex": -196.29,
+          "net_gex": 156.71,
+          "vex": 3.82,
+          "gex_plus": 160.53,
+          "w1_call": 20.58,
+          "w1_put": -6.21,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 28.84,
-          "mth_put": -8.67,
-          "fri_call": 302.67,
-          "fri_put": -180.87
+          "mth_call": 28.86,
+          "mth_put": -8.68,
+          "fri_call": 303.56,
+          "fri_put": -181.4
         },
         {
           "strike": 49650.0,
-          "call_gex": 94.99,
-          "put_gex": -33.47,
-          "net_gex": 61.52,
-          "vex": 1.74,
-          "gex_plus": 63.27,
-          "w1_call": 5.18,
-          "w1_put": -3.24,
+          "call_gex": 95.25,
+          "put_gex": -33.56,
+          "net_gex": 61.69,
+          "vex": 1.75,
+          "gex_plus": 63.44,
+          "w1_call": 5.19,
+          "w1_put": -3.25,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.95,
           "mth_put": -0.0,
-          "fri_call": 87.86,
-          "fri_put": -30.23
+          "fri_call": 88.11,
+          "fri_put": -30.31
         },
         {
           "strike": 49700.0,
-          "call_gex": 386.08,
-          "put_gex": -93.46,
-          "net_gex": 292.62,
-          "vex": 9.5,
-          "gex_plus": 302.12,
-          "w1_call": 41.79,
-          "w1_put": -13.82,
+          "call_gex": 387.06,
+          "put_gex": -93.69,
+          "net_gex": 293.37,
+          "vex": 9.53,
+          "gex_plus": 302.9,
+          "w1_call": 41.87,
+          "w1_put": -13.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.89,
+          "mth_call": 25.91,
           "mth_put": -10.79,
-          "fri_call": 318.4,
-          "fri_put": -68.85
+          "fri_call": 319.28,
+          "fri_put": -69.05
         },
         {
           "strike": 49750.0,
-          "call_gex": 178.51,
-          "put_gex": -30.98,
-          "net_gex": 147.54,
-          "vex": 5.38,
-          "gex_plus": 152.92,
-          "w1_call": 10.84,
+          "call_gex": 178.98,
+          "put_gex": -31.06,
+          "net_gex": 147.92,
+          "vex": 5.4,
+          "gex_plus": 153.32,
+          "w1_call": 10.86,
           "w1_put": -2.87,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.72,
-          "mth_put": -0.64,
-          "fri_call": 165.96,
-          "fri_put": -27.46
+          "mth_put": -0.65,
+          "fri_call": 166.4,
+          "fri_put": -27.54
         },
         {
           "strike": 49800.0,
-          "call_gex": 471.12,
-          "put_gex": -121.01,
-          "net_gex": 350.11,
-          "vex": 14.22,
-          "gex_plus": 364.34,
-          "w1_call": 63.12,
-          "w1_put": -12.31,
+          "call_gex": 472.23,
+          "put_gex": -121.26,
+          "net_gex": 350.96,
+          "vex": 14.26,
+          "gex_plus": 365.22,
+          "w1_call": 63.23,
+          "w1_put": -12.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 30.84,
-          "mth_put": -25.7,
-          "fri_call": 377.16,
-          "fri_put": -83.0
+          "mth_call": 30.87,
+          "mth_put": -25.72,
+          "fri_call": 378.13,
+          "fri_put": -83.21
         },
         {
           "strike": 49850.0,
-          "call_gex": 153.24,
-          "put_gex": -21.41,
-          "net_gex": 131.83,
-          "vex": 5.89,
-          "gex_plus": 137.72,
-          "w1_call": 15.29,
-          "w1_put": -6.24,
+          "call_gex": 153.6,
+          "put_gex": -21.46,
+          "net_gex": 132.15,
+          "vex": 5.9,
+          "gex_plus": 138.05,
+          "w1_call": 15.32,
+          "w1_put": -6.25,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.07,
           "mth_put": -0.0,
-          "fri_call": 136.88,
-          "fri_put": -15.17
+          "fri_call": 137.22,
+          "fri_put": -15.2
         },
         {
           "strike": 49900.0,
-          "call_gex": 310.69,
-          "put_gex": -50.97,
-          "net_gex": 259.71,
-          "vex": 12.67,
-          "gex_plus": 272.38,
-          "w1_call": 15.11,
-          "w1_put": -12.64,
+          "call_gex": 311.36,
+          "put_gex": -51.06,
+          "net_gex": 260.3,
+          "vex": 12.69,
+          "gex_plus": 273.0,
+          "w1_call": 15.14,
+          "w1_put": -12.66,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.22,
-          "mth_put": -13.79,
-          "fri_call": 274.35,
-          "fri_put": -24.54
+          "mth_call": 21.24,
+          "mth_put": -13.81,
+          "fri_call": 274.99,
+          "fri_put": -24.59
         },
         {
           "strike": 49950.0,
-          "call_gex": 145.9,
-          "put_gex": -13.14,
-          "net_gex": 132.76,
-          "vex": 7.01,
-          "gex_plus": 139.77,
+          "call_gex": 146.21,
+          "put_gex": -13.16,
+          "net_gex": 133.05,
+          "vex": 7.03,
+          "gex_plus": 140.08,
           "w1_call": 2.74,
-          "w1_put": -3.04,
+          "w1_put": -3.05,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.27,
           "mth_put": -0.63,
-          "fri_call": 141.89,
-          "fri_put": -9.46
+          "fri_call": 142.2,
+          "fri_put": -9.48
         },
         {
           "strike": 50000.0,
-          "call_gex": 1198.57,
-          "put_gex": -72.2,
-          "net_gex": 1126.37,
-          "vex": 64.51,
-          "gex_plus": 1190.88,
-          "w1_call": 153.9,
-          "w1_put": -3.6,
+          "call_gex": 1200.54,
+          "put_gex": -72.3,
+          "net_gex": 1128.25,
+          "vex": 64.62,
+          "gex_plus": 1192.86,
+          "w1_call": 154.14,
+          "w1_put": -3.61,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 305.38,
-          "mth_put": -39.46,
-          "fri_call": 739.29,
-          "fri_put": -29.15
+          "mth_call": 305.61,
+          "mth_put": -39.49,
+          "fri_call": 740.79,
+          "fri_put": -29.2
         },
         {
           "strike": 50050.0,
-          "call_gex": 247.2,
-          "put_gex": -4.66,
-          "net_gex": 242.54,
-          "vex": 14.79,
-          "gex_plus": 257.33,
-          "w1_call": 5.61,
+          "call_gex": 247.66,
+          "put_gex": -4.67,
+          "net_gex": 242.99,
+          "vex": 14.81,
+          "gex_plus": 257.8,
+          "w1_call": 5.62,
           "w1_put": -0.3,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 2.09,
           "mth_put": -0.21,
-          "fri_call": 239.51,
-          "fri_put": -4.16
+          "fri_call": 239.95,
+          "fri_put": -4.17
         },
         {
           "strike": 50100.0,
-          "call_gex": 305.01,
-          "put_gex": -25.51,
-          "net_gex": 279.5,
-          "vex": 18.2,
-          "gex_plus": 297.7,
-          "w1_call": 13.07,
+          "call_gex": 305.5,
+          "put_gex": -25.55,
+          "net_gex": 279.95,
+          "vex": 18.23,
+          "gex_plus": 298.19,
+          "w1_call": 13.09,
           "w1_put": -0.29,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.03,
-          "mth_put": -4.97,
-          "fri_call": 267.9,
-          "fri_put": -20.24
+          "mth_call": 24.05,
+          "mth_put": -4.98,
+          "fri_call": 268.36,
+          "fri_put": -20.28
         },
         {
           "strike": 50150.0,
-          "call_gex": 151.88,
-          "put_gex": -4.59,
-          "net_gex": 147.29,
-          "vex": 10.18,
-          "gex_plus": 157.47,
-          "w1_call": 9.71,
+          "call_gex": 152.11,
+          "put_gex": -4.6,
+          "net_gex": 147.51,
+          "vex": 10.19,
+          "gex_plus": 157.7,
+          "w1_call": 9.72,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.21,
           "mth_put": -0.0,
-          "fri_call": 141.97,
-          "fri_put": -4.59
+          "fri_call": 142.18,
+          "fri_put": -4.6
         },
         {
           "strike": 50200.0,
-          "call_gex": 502.43,
-          "put_gex": -13.09,
-          "net_gex": 489.34,
-          "vex": 35.85,
-          "gex_plus": 525.19,
-          "w1_call": 24.65,
+          "call_gex": 503.07,
+          "put_gex": -13.1,
+          "net_gex": 489.97,
+          "vex": 35.89,
+          "gex_plus": 525.86,
+          "w1_call": 24.68,
           "w1_put": -1.4,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 41.43,
-          "mth_put": -7.55,
-          "fri_call": 436.35,
-          "fri_put": -4.13
+          "mth_call": 41.46,
+          "mth_put": -7.56,
+          "fri_call": 436.92,
+          "fri_put": -4.14
         }
       ],
       "weekly_gex": [
         {
           "strike": 48400.0,
           "call_gex": 1.61,
-          "put_gex": -16.6,
-          "net_gex": -14.99
+          "put_gex": -16.62,
+          "net_gex": -15.01
         },
         {
           "strike": 48450.0,
           "call_gex": 0.55,
           "put_gex": -5.75,
-          "net_gex": -5.2
+          "net_gex": -5.21
         },
         {
           "strike": 48500.0,
-          "call_gex": 3.91,
-          "put_gex": -113.15,
-          "net_gex": -109.24
+          "call_gex": 3.92,
+          "put_gex": -113.3,
+          "net_gex": -109.39
         },
         {
           "strike": 48550.0,
           "call_gex": 0.57,
-          "put_gex": -5.13,
+          "put_gex": -5.14,
           "net_gex": -4.56
         },
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -23.8,
-          "net_gex": -23.8
+          "put_gex": -23.83,
+          "net_gex": -23.83
         },
         {
           "strike": 48650.0,
           "call_gex": 0.3,
-          "put_gex": -12.4,
-          "net_gex": -12.1
+          "put_gex": -12.42,
+          "net_gex": -12.12
         },
         {
           "strike": 48700.0,
           "call_gex": 0.3,
-          "put_gex": -12.6,
-          "net_gex": -12.3
+          "put_gex": -12.62,
+          "net_gex": -12.32
         },
         {
           "strike": 48750.0,
           "call_gex": 1.22,
-          "put_gex": -5.17,
+          "put_gex": -5.18,
           "net_gex": -3.96
         },
         {
           "strike": 48800.0,
-          "call_gex": 4.32,
-          "put_gex": -14.19,
-          "net_gex": -9.87
+          "call_gex": 4.33,
+          "put_gex": -14.22,
+          "net_gex": -9.89
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -9.06,
-          "net_gex": -9.06
+          "put_gex": -9.07,
+          "net_gex": -9.07
         },
         {
           "strike": 48900.0,
           "call_gex": 3.16,
-          "put_gex": -13.58,
-          "net_gex": -10.42
+          "put_gex": -13.6,
+          "net_gex": -10.44
         },
         {
           "strike": 48950.0,
           "call_gex": 0.64,
-          "put_gex": -7.34,
-          "net_gex": -6.7
+          "put_gex": -7.35,
+          "net_gex": -6.71
         },
         {
           "strike": 49000.0,
-          "call_gex": 27.99,
-          "put_gex": -47.3,
-          "net_gex": -19.31
+          "call_gex": 28.05,
+          "put_gex": -47.39,
+          "net_gex": -19.34
         },
         {
           "strike": 49050.0,
           "call_gex": 1.3,
-          "put_gex": -6.81,
-          "net_gex": -5.51
+          "put_gex": -6.82,
+          "net_gex": -5.52
         },
         {
           "strike": 49100.0,
-          "call_gex": 5.22,
-          "put_gex": -10.77,
-          "net_gex": -5.55
+          "call_gex": 5.23,
+          "put_gex": -10.79,
+          "net_gex": -5.56
         },
         {
           "strike": 49150.0,
           "call_gex": 1.97,
-          "put_gex": -4.59,
-          "net_gex": -2.62
+          "put_gex": -4.6,
+          "net_gex": -2.63
         },
         {
           "strike": 49200.0,
-          "call_gex": 11.2,
-          "put_gex": -15.48,
-          "net_gex": -4.28
+          "call_gex": 11.22,
+          "put_gex": -15.51,
+          "net_gex": -4.29
         },
         {
           "strike": 49250.0,
-          "call_gex": 3.3,
-          "put_gex": -11.89,
-          "net_gex": -8.59
+          "call_gex": 3.31,
+          "put_gex": -11.91,
+          "net_gex": -8.6
         },
         {
           "strike": 49300.0,
-          "call_gex": 16.21,
-          "put_gex": -29.11,
-          "net_gex": -12.9
+          "call_gex": 16.24,
+          "put_gex": -29.16,
+          "net_gex": -12.92
         },
         {
           "strike": 49350.0,
-          "call_gex": 3.64,
-          "put_gex": -5.63,
+          "call_gex": 3.65,
+          "put_gex": -5.64,
           "net_gex": -1.99
         },
         {
           "strike": 49400.0,
-          "call_gex": 29.43,
-          "put_gex": -11.57,
-          "net_gex": 17.86
+          "call_gex": 29.49,
+          "put_gex": -11.6,
+          "net_gex": 17.89
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.89,
-          "put_gex": -2.31,
-          "net_gex": 8.58
+          "call_gex": 10.91,
+          "put_gex": -2.32,
+          "net_gex": 8.6
         },
         {
           "strike": 49500.0,
-          "call_gex": 62.86,
-          "put_gex": -37.19,
-          "net_gex": 25.67
+          "call_gex": 62.98,
+          "put_gex": -37.26,
+          "net_gex": 25.72
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.87,
-          "put_gex": -2.95,
-          "net_gex": 4.92
+          "call_gex": 7.88,
+          "put_gex": -2.96,
+          "net_gex": 4.93
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.54,
-          "put_gex": -6.19,
-          "net_gex": 14.34
+          "call_gex": 20.58,
+          "put_gex": -6.21,
+          "net_gex": 14.37
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.18,
-          "put_gex": -3.24,
-          "net_gex": 1.94
+          "call_gex": 5.19,
+          "put_gex": -3.25,
+          "net_gex": 1.95
         },
         {
           "strike": 49700.0,
-          "call_gex": 41.79,
-          "put_gex": -13.82,
-          "net_gex": 27.97
+          "call_gex": 41.87,
+          "put_gex": -13.85,
+          "net_gex": 28.02
         },
         {
           "strike": 49750.0,
-          "call_gex": 10.84,
+          "call_gex": 10.86,
           "put_gex": -2.87,
-          "net_gex": 7.97
+          "net_gex": 7.98
         },
         {
           "strike": 49800.0,
-          "call_gex": 63.12,
-          "put_gex": -12.31,
-          "net_gex": 50.81
+          "call_gex": 63.23,
+          "put_gex": -12.33,
+          "net_gex": 50.9
         },
         {
           "strike": 49850.0,
-          "call_gex": 15.29,
-          "put_gex": -6.24,
-          "net_gex": 9.05
+          "call_gex": 15.32,
+          "put_gex": -6.25,
+          "net_gex": 9.07
         },
         {
           "strike": 49900.0,
-          "call_gex": 15.11,
-          "put_gex": -12.64,
+          "call_gex": 15.14,
+          "put_gex": -12.66,
           "net_gex": 2.47
         },
         {
           "strike": 49950.0,
           "call_gex": 2.74,
-          "put_gex": -3.04,
+          "put_gex": -3.05,
           "net_gex": -0.3
         },
         {
           "strike": 50000.0,
-          "call_gex": 153.9,
-          "put_gex": -3.6,
-          "net_gex": 150.3
+          "call_gex": 154.14,
+          "put_gex": -3.61,
+          "net_gex": 150.53
         },
         {
           "strike": 50050.0,
-          "call_gex": 5.61,
+          "call_gex": 5.62,
           "put_gex": -0.3,
           "net_gex": 5.32
         },
         {
           "strike": 50100.0,
-          "call_gex": 13.07,
+          "call_gex": 13.09,
           "put_gex": -0.29,
-          "net_gex": 12.78
+          "net_gex": 12.8
         },
         {
           "strike": 50150.0,
-          "call_gex": 9.71,
+          "call_gex": 9.72,
           "put_gex": -0.0,
-          "net_gex": 9.71
+          "net_gex": 9.72
         },
         {
           "strike": 50200.0,
-          "call_gex": 24.65,
+          "call_gex": 24.68,
           "put_gex": -1.4,
-          "net_gex": 23.25
+          "net_gex": 23.28
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
           "call_gex": 4.21,
-          "put_gex": -176.16,
-          "net_gex": -171.95
+          "put_gex": -176.36,
+          "net_gex": -172.15
         },
         {
           "strike": 48450.0,
           "call_gex": 0.31,
-          "put_gex": -143.79,
-          "net_gex": -143.48
+          "put_gex": -143.98,
+          "net_gex": -143.67
         },
         {
           "strike": 48500.0,
-          "call_gex": 171.09,
-          "put_gex": -381.73,
-          "net_gex": -210.64
+          "call_gex": 171.35,
+          "put_gex": -382.32,
+          "net_gex": -210.97
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.32,
-          "put_gex": -78.27,
-          "net_gex": -75.95
+          "call_gex": 2.33,
+          "put_gex": -78.4,
+          "net_gex": -76.08
         },
         {
           "strike": 48600.0,
           "call_gex": 2.39,
-          "put_gex": -185.01,
-          "net_gex": -182.62
+          "put_gex": -185.36,
+          "net_gex": -182.97
         },
         {
           "strike": 48650.0,
-          "call_gex": 1.4,
-          "put_gex": -148.32,
-          "net_gex": -146.92
+          "call_gex": 1.41,
+          "put_gex": -148.63,
+          "net_gex": -147.23
         },
         {
           "strike": 48700.0,
-          "call_gex": 8.99,
-          "put_gex": -234.04,
-          "net_gex": -225.05
+          "call_gex": 9.01,
+          "put_gex": -234.56,
+          "net_gex": -225.56
         },
         {
           "strike": 48750.0,
           "call_gex": 2.21,
-          "put_gex": -101.17,
-          "net_gex": -98.96
+          "put_gex": -101.41,
+          "net_gex": -99.2
         },
         {
           "strike": 48800.0,
-          "call_gex": 52.6,
-          "put_gex": -280.67,
-          "net_gex": -228.07
+          "call_gex": 52.73,
+          "put_gex": -281.37,
+          "net_gex": -228.64
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.72,
-          "put_gex": -71.62,
-          "net_gex": -60.9
+          "call_gex": 10.75,
+          "put_gex": -71.81,
+          "net_gex": -61.06
         },
         {
           "strike": 48900.0,
-          "call_gex": 49.49,
-          "put_gex": -269.66,
-          "net_gex": -220.17
+          "call_gex": 49.62,
+          "put_gex": -270.4,
+          "net_gex": -220.77
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.12,
-          "put_gex": -72.02,
-          "net_gex": -64.9
+          "call_gex": 7.14,
+          "put_gex": -72.22,
+          "net_gex": -65.08
         },
         {
           "strike": 49000.0,
-          "call_gex": 149.61,
-          "put_gex": -619.28,
-          "net_gex": -469.68
+          "call_gex": 150.04,
+          "put_gex": -621.07,
+          "net_gex": -471.03
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.96,
-          "put_gex": -105.9,
-          "net_gex": -94.95
+          "call_gex": 10.99,
+          "put_gex": -106.22,
+          "net_gex": -95.23
         },
         {
           "strike": 49100.0,
-          "call_gex": 118.0,
-          "put_gex": -236.4,
-          "net_gex": -118.41
+          "call_gex": 118.35,
+          "put_gex": -237.11,
+          "net_gex": -118.76
         },
         {
           "strike": 49150.0,
-          "call_gex": 34.27,
-          "put_gex": -91.26,
-          "net_gex": -56.98
+          "call_gex": 34.38,
+          "put_gex": -91.53,
+          "net_gex": -57.16
         },
         {
           "strike": 49200.0,
-          "call_gex": 155.77,
-          "put_gex": -305.72,
-          "net_gex": -149.95
+          "call_gex": 156.25,
+          "put_gex": -306.66,
+          "net_gex": -150.41
         },
         {
           "strike": 49250.0,
-          "call_gex": 43.79,
-          "put_gex": -129.29,
-          "net_gex": -85.5
+          "call_gex": 43.93,
+          "put_gex": -129.69,
+          "net_gex": -85.76
         },
         {
           "strike": 49300.0,
-          "call_gex": 172.62,
-          "put_gex": -468.55,
-          "net_gex": -295.93
+          "call_gex": 173.16,
+          "put_gex": -470.01,
+          "net_gex": -296.85
         },
         {
           "strike": 49350.0,
-          "call_gex": 92.82,
-          "put_gex": -99.51,
-          "net_gex": -6.69
+          "call_gex": 93.11,
+          "put_gex": -99.82,
+          "net_gex": -6.71
         },
         {
           "strike": 49400.0,
-          "call_gex": 257.17,
-          "put_gex": -633.32,
-          "net_gex": -376.15
+          "call_gex": 257.96,
+          "put_gex": -635.28,
+          "net_gex": -377.31
         },
         {
           "strike": 49450.0,
-          "call_gex": 67.82,
-          "put_gex": -68.65,
+          "call_gex": 68.03,
+          "put_gex": -68.86,
           "net_gex": -0.83
         },
         {
           "strike": 49500.0,
-          "call_gex": 358.44,
-          "put_gex": -562.92,
-          "net_gex": -204.47
+          "call_gex": 359.53,
+          "put_gex": -564.62,
+          "net_gex": -205.09
         },
         {
           "strike": 49550.0,
-          "call_gex": 85.9,
-          "put_gex": -30.41,
-          "net_gex": 55.48
+          "call_gex": 86.16,
+          "put_gex": -30.5,
+          "net_gex": 55.65
         },
         {
           "strike": 49600.0,
-          "call_gex": 302.67,
-          "put_gex": -180.87,
-          "net_gex": 121.8
+          "call_gex": 303.56,
+          "put_gex": -181.4,
+          "net_gex": 122.16
         },
         {
           "strike": 49650.0,
-          "call_gex": 87.86,
-          "put_gex": -30.23,
-          "net_gex": 57.63
+          "call_gex": 88.11,
+          "put_gex": -30.31,
+          "net_gex": 57.8
         },
         {
           "strike": 49700.0,
-          "call_gex": 318.4,
-          "put_gex": -68.85,
-          "net_gex": 249.55
+          "call_gex": 319.28,
+          "put_gex": -69.05,
+          "net_gex": 250.24
         },
         {
           "strike": 49750.0,
-          "call_gex": 165.96,
-          "put_gex": -27.46,
-          "net_gex": 138.49
+          "call_gex": 166.4,
+          "put_gex": -27.54,
+          "net_gex": 138.86
         },
         {
           "strike": 49800.0,
-          "call_gex": 377.16,
-          "put_gex": -83.0,
-          "net_gex": 294.17
+          "call_gex": 378.13,
+          "put_gex": -83.21,
+          "net_gex": 294.92
         },
         {
           "strike": 49850.0,
-          "call_gex": 136.88,
-          "put_gex": -15.17,
-          "net_gex": 121.71
+          "call_gex": 137.22,
+          "put_gex": -15.2,
+          "net_gex": 122.01
         },
         {
           "strike": 49900.0,
-          "call_gex": 274.35,
-          "put_gex": -24.54,
-          "net_gex": 249.82
+          "call_gex": 274.99,
+          "put_gex": -24.59,
+          "net_gex": 250.4
         },
         {
           "strike": 49950.0,
-          "call_gex": 141.89,
-          "put_gex": -9.46,
-          "net_gex": 132.43
+          "call_gex": 142.2,
+          "put_gex": -9.48,
+          "net_gex": 132.72
         },
         {
           "strike": 50000.0,
-          "call_gex": 739.29,
-          "put_gex": -29.15,
-          "net_gex": 710.15
+          "call_gex": 740.79,
+          "put_gex": -29.2,
+          "net_gex": 711.59
         },
         {
           "strike": 50050.0,
-          "call_gex": 239.51,
-          "put_gex": -4.16,
-          "net_gex": 235.35
+          "call_gex": 239.95,
+          "put_gex": -4.17,
+          "net_gex": 235.79
         },
         {
           "strike": 50100.0,
-          "call_gex": 267.9,
-          "put_gex": -20.24,
-          "net_gex": 247.66
+          "call_gex": 268.36,
+          "put_gex": -20.28,
+          "net_gex": 248.08
         },
         {
           "strike": 50150.0,
-          "call_gex": 141.97,
-          "put_gex": -4.59,
-          "net_gex": 137.38
+          "call_gex": 142.18,
+          "put_gex": -4.6,
+          "net_gex": 137.59
         },
         {
           "strike": 50200.0,
-          "call_gex": 436.35,
-          "put_gex": -4.13,
-          "net_gex": 432.21
+          "call_gex": 436.92,
+          "put_gex": -4.14,
+          "net_gex": 432.78
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 40.79,
-          "put_gex": -18.92,
-          "net_gex": 21.87
+          "call_gex": 40.81,
+          "put_gex": -18.93,
+          "net_gex": 21.89
         },
         {
           "strike": 48450.0,
@@ -12771,9 +12771,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 62.48,
-          "put_gex": -144.24,
-          "net_gex": -81.76
+          "call_gex": 62.52,
+          "put_gex": -144.35,
+          "net_gex": -81.82
         },
         {
           "strike": 48550.0,
@@ -12783,9 +12783,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 59.69,
-          "put_gex": -23.71,
-          "net_gex": 35.97
+          "call_gex": 59.73,
+          "put_gex": -23.73,
+          "net_gex": 36.0
         },
         {
           "strike": 48650.0,
@@ -12795,9 +12795,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 46.9,
-          "put_gex": -23.04,
-          "net_gex": 23.87
+          "call_gex": 46.94,
+          "put_gex": -23.05,
+          "net_gex": 23.88
         },
         {
           "strike": 48750.0,
@@ -12807,9 +12807,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 27.33,
-          "put_gex": -30.7,
-          "net_gex": -3.36
+          "call_gex": 27.36,
+          "put_gex": -30.72,
+          "net_gex": -3.37
         },
         {
           "strike": 48850.0,
@@ -12819,9 +12819,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 21.9,
-          "put_gex": -8.93,
-          "net_gex": 12.97
+          "call_gex": 21.92,
+          "put_gex": -8.94,
+          "net_gex": 12.98
         },
         {
           "strike": 48950.0,
@@ -12831,9 +12831,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 128.92,
-          "put_gex": -66.71,
-          "net_gex": 62.21
+          "call_gex": 129.02,
+          "put_gex": -66.77,
+          "net_gex": 62.26
         },
         {
           "strike": 49050.0,
@@ -12843,33 +12843,33 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 130.24,
-          "put_gex": -27.43,
-          "net_gex": 102.81
+          "call_gex": 130.35,
+          "put_gex": -27.45,
+          "net_gex": 102.89
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.66,
+          "call_gex": 8.67,
           "put_gex": -0.22,
           "net_gex": 8.45
         },
         {
           "strike": 49200.0,
-          "call_gex": 50.35,
-          "put_gex": -12.37,
-          "net_gex": 37.98
+          "call_gex": 50.39,
+          "put_gex": -12.38,
+          "net_gex": 38.01
         },
         {
           "strike": 49250.0,
-          "call_gex": 1.3,
-          "put_gex": -1.3,
+          "call_gex": 1.31,
+          "put_gex": -1.31,
           "net_gex": 0.0
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.89,
-          "put_gex": -35.69,
-          "net_gex": -14.8
+          "call_gex": 20.91,
+          "put_gex": -35.72,
+          "net_gex": -14.81
         },
         {
           "strike": 49350.0,
@@ -12879,9 +12879,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 25.05,
-          "put_gex": -16.12,
-          "net_gex": 8.93
+          "call_gex": 25.07,
+          "put_gex": -16.13,
+          "net_gex": 8.94
         },
         {
           "strike": 49450.0,
@@ -12891,9 +12891,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 142.71,
-          "put_gex": -65.05,
-          "net_gex": 77.66
+          "call_gex": 142.83,
+          "put_gex": -65.1,
+          "net_gex": 77.73
         },
         {
           "strike": 49550.0,
@@ -12903,9 +12903,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 28.84,
-          "put_gex": -8.67,
-          "net_gex": 20.17
+          "call_gex": 28.86,
+          "put_gex": -8.68,
+          "net_gex": 20.18
         },
         {
           "strike": 49650.0,
@@ -12915,20 +12915,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 25.89,
+          "call_gex": 25.91,
           "put_gex": -10.79,
-          "net_gex": 15.1
+          "net_gex": 15.11
         },
         {
           "strike": 49750.0,
           "call_gex": 1.72,
-          "put_gex": -0.64,
-          "net_gex": 1.07
+          "put_gex": -0.65,
+          "net_gex": 1.08
         },
         {
           "strike": 49800.0,
-          "call_gex": 30.84,
-          "put_gex": -25.7,
+          "call_gex": 30.87,
+          "put_gex": -25.72,
           "net_gex": 5.14
         },
         {
@@ -12939,8 +12939,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 21.22,
-          "put_gex": -13.79,
+          "call_gex": 21.24,
+          "put_gex": -13.81,
           "net_gex": 7.43
         },
         {
@@ -12951,9 +12951,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 305.38,
-          "put_gex": -39.46,
-          "net_gex": 265.92
+          "call_gex": 305.61,
+          "put_gex": -39.49,
+          "net_gex": 266.13
         },
         {
           "strike": 50050.0,
@@ -12963,9 +12963,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 24.03,
-          "put_gex": -4.97,
-          "net_gex": 19.06
+          "call_gex": 24.05,
+          "put_gex": -4.98,
+          "net_gex": 19.07
         },
         {
           "strike": 50150.0,
@@ -12975,9 +12975,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 41.43,
-          "put_gex": -7.55,
-          "net_gex": 33.88
+          "call_gex": 41.46,
+          "put_gex": -7.56,
+          "net_gex": 33.9
         }
       ]
     },
@@ -13010,594 +13010,594 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 51.33,
-          "put_gex": -272.47,
-          "net_gex": -221.14,
-          "vex": 5.56,
-          "gex_plus": -215.58,
+          "call_gex": 51.39,
+          "put_gex": -273.2,
+          "net_gex": -221.81,
+          "vex": 5.58,
+          "gex_plus": -216.23,
           "w1_call": 1.91,
-          "w1_put": -19.72,
+          "w1_put": -19.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 43.87,
-          "mth_put": -20.35,
-          "fri_call": 5.55,
-          "fri_put": -232.41
+          "mth_call": 43.91,
+          "mth_put": -20.36,
+          "fri_call": 5.57,
+          "fri_put": -233.08
         },
         {
           "strike": 48450.0,
           "call_gex": 1.04,
-          "put_gex": -193.15,
-          "net_gex": -192.1,
-          "vex": 3.99,
-          "gex_plus": -188.11,
+          "put_gex": -193.71,
+          "net_gex": -192.66,
+          "vex": 4.01,
+          "gex_plus": -188.66,
           "w1_call": 0.64,
-          "w1_put": -6.73,
+          "w1_put": -6.74,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.06,
           "fri_call": 0.4,
-          "fri_put": -185.35
+          "fri_put": -185.9
         },
         {
           "strike": 48500.0,
-          "call_gex": 286.37,
-          "put_gex": -764.62,
-          "net_gex": -478.25,
-          "vex": 7.77,
-          "gex_plus": -470.48,
-          "w1_call": 4.51,
-          "w1_put": -130.59,
+          "call_gex": 287.09,
+          "put_gex": -766.45,
+          "net_gex": -479.36,
+          "vex": 7.79,
+          "gex_plus": -471.57,
+          "w1_call": 4.52,
+          "w1_put": -130.84,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 66.37,
-          "mth_put": -153.22,
-          "fri_call": 215.5,
-          "fri_put": -480.81
+          "mth_call": 66.42,
+          "mth_put": -153.34,
+          "fri_call": 216.14,
+          "fri_put": -482.26
         },
         {
           "strike": 48550.0,
-          "call_gex": 3.51,
-          "put_gex": -103.66,
-          "net_gex": -100.16,
+          "call_gex": 3.52,
+          "put_gex": -103.97,
+          "net_gex": -100.45,
           "vex": 1.24,
-          "gex_plus": -98.92,
+          "gex_plus": -99.21,
           "w1_call": 0.65,
-          "w1_put": -5.83,
+          "w1_put": -5.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.5,
-          "fri_call": 2.86,
-          "fri_put": -96.33
+          "fri_call": 2.87,
+          "fri_put": -96.63
         },
         {
           "strike": 48600.0,
-          "call_gex": 65.48,
-          "put_gex": -274.06,
-          "net_gex": -208.58,
-          "vex": 1.76,
-          "gex_plus": -206.82,
+          "call_gex": 65.54,
+          "put_gex": -274.82,
+          "net_gex": -209.28,
+          "vex": 1.77,
+          "gex_plus": -207.51,
           "w1_call": 0.0,
-          "w1_put": -26.68,
+          "w1_put": -26.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 62.61,
-          "mth_put": -24.87,
-          "fri_call": 2.87,
-          "fri_put": -222.51
+          "mth_call": 62.66,
+          "mth_put": -24.89,
+          "fri_call": 2.88,
+          "fri_put": -223.2
         },
         {
           "strike": 48650.0,
-          "call_gex": 1.97,
-          "put_gex": -191.46,
-          "net_gex": -189.49,
-          "vex": 0.75,
-          "gex_plus": -188.73,
+          "call_gex": 1.98,
+          "put_gex": -192.03,
+          "net_gex": -190.05,
+          "vex": 0.76,
+          "gex_plus": -189.29,
           "w1_call": 0.33,
-          "w1_put": -13.7,
+          "w1_put": -13.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.44,
           "fri_call": 1.65,
-          "fri_put": -174.32
+          "fri_put": -174.86
         },
         {
           "strike": 48700.0,
-          "call_gex": 59.24,
-          "put_gex": -306.38,
-          "net_gex": -247.15,
+          "call_gex": 59.31,
+          "put_gex": -307.27,
+          "net_gex": -247.96,
           "vex": -0.0,
-          "gex_plus": -247.15,
+          "gex_plus": -247.96,
           "w1_call": 0.33,
-          "w1_put": -13.72,
+          "w1_put": -13.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 48.59,
-          "mth_put": -23.86,
-          "fri_call": 10.32,
-          "fri_put": -268.8
+          "mth_call": 48.63,
+          "mth_put": -23.88,
+          "fri_call": 10.35,
+          "fri_put": -269.63
         },
         {
           "strike": 48750.0,
-          "call_gex": 3.78,
-          "put_gex": -123.19,
-          "net_gex": -119.41,
-          "vex": -0.52,
-          "gex_plus": -119.93,
+          "call_gex": 3.79,
+          "put_gex": -123.56,
+          "net_gex": -119.76,
+          "vex": -0.53,
+          "gex_plus": -120.29,
           "w1_call": 1.31,
-          "w1_put": -5.56,
+          "w1_put": -5.57,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -4.09,
-          "fri_call": 2.48,
-          "fri_put": -113.55
+          "fri_call": 2.49,
+          "fri_put": -113.9
         },
         {
           "strike": 48800.0,
-          "call_gex": 90.23,
-          "put_gex": -354.28,
-          "net_gex": -264.05,
-          "vex": -2.25,
-          "gex_plus": -266.3,
-          "w1_call": 4.57,
-          "w1_put": -15.02,
+          "call_gex": 90.44,
+          "put_gex": -355.29,
+          "net_gex": -264.84,
+          "vex": -2.26,
+          "gex_plus": -267.1,
+          "w1_call": 4.58,
+          "w1_put": -15.05,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 27.97,
-          "mth_put": -31.41,
-          "fri_call": 57.7,
-          "fri_put": -307.85
+          "mth_call": 27.99,
+          "mth_put": -31.43,
+          "fri_call": 57.88,
+          "fri_put": -308.81
         },
         {
           "strike": 48850.0,
-          "call_gex": 11.5,
-          "put_gex": -88.16,
-          "net_gex": -76.66,
+          "call_gex": 11.53,
+          "put_gex": -88.41,
+          "net_gex": -76.88,
           "vex": -0.98,
-          "gex_plus": -77.64,
+          "gex_plus": -77.86,
           "w1_call": 0.0,
-          "w1_put": -9.45,
+          "w1_put": -9.47,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.94,
-          "fri_call": 11.5,
-          "fri_put": -76.78
+          "fri_call": 11.53,
+          "fri_put": -77.01
         },
         {
           "strike": 48900.0,
-          "call_gex": 77.22,
-          "put_gex": -305.49,
-          "net_gex": -228.27,
-          "vex": -3.83,
-          "gex_plus": -232.1,
+          "call_gex": 77.4,
+          "put_gex": -306.38,
+          "net_gex": -228.98,
+          "vex": -3.84,
+          "gex_plus": -232.82,
           "w1_call": 3.25,
-          "w1_put": -13.97,
+          "w1_put": -13.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.12,
-          "mth_put": -9.02,
-          "fri_call": 51.85,
-          "fri_put": -282.5
+          "mth_call": 22.14,
+          "mth_put": -9.03,
+          "fri_call": 52.0,
+          "fri_put": -283.36
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.94,
-          "put_gex": -82.68,
-          "net_gex": -74.74,
-          "vex": -1.57,
-          "gex_plus": -76.31,
+          "call_gex": 7.96,
+          "put_gex": -82.91,
+          "net_gex": -74.95,
+          "vex": -1.58,
+          "gex_plus": -76.53,
           "w1_call": 0.65,
-          "w1_put": -7.44,
+          "w1_put": -7.45,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.5,
-          "fri_call": 7.29,
-          "fri_put": -73.74
+          "fri_call": 7.31,
+          "fri_put": -73.96
         },
         {
           "strike": 49000.0,
-          "call_gex": 306.33,
-          "put_gex": -733.54,
-          "net_gex": -427.21,
-          "vex": -10.66,
-          "gex_plus": -437.87,
-          "w1_call": 27.97,
-          "w1_put": -47.26,
+          "call_gex": 306.92,
+          "put_gex": -735.48,
+          "net_gex": -428.56,
+          "vex": -10.69,
+          "gex_plus": -439.25,
+          "w1_call": 28.03,
+          "w1_put": -47.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 128.65,
-          "mth_put": -66.57,
-          "fri_call": 149.71,
-          "fri_put": -619.7
+          "mth_call": 128.75,
+          "mth_put": -66.63,
+          "fri_call": 150.14,
+          "fri_put": -621.5
         },
         {
           "strike": 49050.0,
-          "call_gex": 12.63,
-          "put_gex": -111.78,
-          "net_gex": -99.15,
-          "vex": -2.91,
-          "gex_plus": -102.05,
+          "call_gex": 12.67,
+          "put_gex": -112.09,
+          "net_gex": -99.42,
+          "vex": -2.92,
+          "gex_plus": -102.34,
           "w1_call": 1.28,
-          "w1_put": -6.71,
+          "w1_put": -6.72,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.64,
-          "mth_put": -1.49,
-          "fri_call": 10.71,
-          "fri_put": -103.58
+          "mth_put": -1.5,
+          "fri_call": 10.75,
+          "fri_put": -103.87
         },
         {
           "strike": 49100.0,
-          "call_gex": 246.23,
-          "put_gex": -263.48,
-          "net_gex": -17.25,
+          "call_gex": 246.65,
+          "put_gex": -264.14,
+          "net_gex": -17.48,
           "vex": -0.43,
-          "gex_plus": -17.67,
-          "w1_call": 5.07,
-          "w1_put": -10.45,
+          "gex_plus": -17.92,
+          "w1_call": 5.08,
+          "w1_put": -10.47,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 128.36,
-          "mth_put": -27.04,
-          "fri_call": 112.8,
-          "fri_put": -225.99
+          "mth_call": 128.47,
+          "mth_put": -27.06,
+          "fri_call": 113.11,
+          "fri_put": -226.61
         },
         {
           "strike": 49150.0,
-          "call_gex": 42.39,
-          "put_gex": -89.87,
-          "net_gex": -47.48,
-          "vex": -1.77,
-          "gex_plus": -49.25,
-          "w1_call": 1.88,
+          "call_gex": 42.49,
+          "put_gex": -90.11,
+          "net_gex": -47.62,
+          "vex": -1.78,
+          "gex_plus": -49.4,
+          "w1_call": 1.89,
           "w1_put": -4.4,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 8.49,
           "mth_put": -0.21,
-          "fri_call": 32.02,
-          "fri_put": -85.26
+          "fri_call": 32.11,
+          "fri_put": -85.49
         },
         {
           "strike": 49200.0,
-          "call_gex": 201.84,
-          "put_gex": -305.85,
-          "net_gex": -104.01,
-          "vex": -4.29,
-          "gex_plus": -108.3,
-          "w1_call": 10.56,
-          "w1_put": -14.6,
+          "call_gex": 202.26,
+          "put_gex": -306.59,
+          "net_gex": -104.34,
+          "vex": -4.3,
+          "gex_plus": -108.64,
+          "w1_call": 10.58,
+          "w1_put": -14.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 49.02,
-          "mth_put": -12.04,
-          "fri_call": 142.26,
-          "fri_put": -279.2
+          "mth_call": 49.05,
+          "mth_put": -12.05,
+          "fri_call": 142.62,
+          "fri_put": -279.91
         },
         {
           "strike": 49250.0,
-          "call_gex": 43.43,
-          "put_gex": -127.74,
-          "net_gex": -84.31,
-          "vex": -3.87,
-          "gex_plus": -88.18,
-          "w1_call": 3.07,
-          "w1_put": -11.06,
+          "call_gex": 43.53,
+          "put_gex": -128.04,
+          "net_gex": -84.51,
+          "vex": -3.88,
+          "gex_plus": -88.39,
+          "w1_call": 3.08,
+          "w1_put": -11.08,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.26,
           "mth_put": -1.26,
-          "fri_call": 39.09,
-          "fri_put": -115.42
+          "fri_call": 39.19,
+          "fri_put": -115.7
         },
         {
           "strike": 49300.0,
-          "call_gex": 185.59,
-          "put_gex": -469.88,
-          "net_gex": -284.29,
-          "vex": -14.25,
-          "gex_plus": -298.54,
-          "w1_call": 14.86,
-          "w1_put": -26.69,
+          "call_gex": 185.97,
+          "put_gex": -470.88,
+          "net_gex": -284.91,
+          "vex": -14.28,
+          "gex_plus": -299.18,
+          "w1_call": 14.89,
+          "w1_put": -26.74,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.09,
-          "mth_put": -34.32,
-          "fri_call": 150.63,
-          "fri_put": -408.86
+          "mth_call": 20.11,
+          "mth_put": -34.35,
+          "fri_call": 150.98,
+          "fri_put": -409.8
         },
         {
           "strike": 49350.0,
-          "call_gex": 83.51,
-          "put_gex": -91.22,
-          "net_gex": -7.71,
+          "call_gex": 83.68,
+          "put_gex": -91.41,
+          "net_gex": -7.72,
           "vex": -0.42,
-          "gex_plus": -8.13,
-          "w1_call": 3.29,
+          "gex_plus": -8.14,
+          "w1_call": 3.3,
           "w1_put": -5.09,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.04,
           "mth_put": -1.25,
-          "fri_call": 79.18,
-          "fri_put": -84.88
+          "fri_call": 79.34,
+          "fri_put": -85.06
         },
         {
           "strike": 49400.0,
-          "call_gex": 264.46,
-          "put_gex": -553.7,
-          "net_gex": -289.24,
-          "vex": -16.84,
-          "gex_plus": -306.08,
-          "w1_call": 26.23,
-          "w1_put": -10.32,
+          "call_gex": 264.94,
+          "put_gex": -554.77,
+          "net_gex": -289.83,
+          "vex": -16.87,
+          "gex_plus": -306.7,
+          "w1_call": 26.27,
+          "w1_put": -10.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 23.79,
-          "mth_put": -15.31,
-          "fri_call": 214.43,
-          "fri_put": -528.08
+          "mth_call": 23.81,
+          "mth_put": -15.32,
+          "fri_call": 214.86,
+          "fri_put": -529.12
         },
         {
           "strike": 49450.0,
-          "call_gex": 65.88,
-          "put_gex": -59.63,
-          "net_gex": 6.25,
+          "call_gex": 66.0,
+          "put_gex": -59.74,
+          "net_gex": 6.26,
           "vex": 0.39,
-          "gex_plus": 6.64,
-          "w1_call": 9.57,
+          "gex_plus": 6.65,
+          "w1_call": 9.59,
           "w1_put": -2.03,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.03,
-          "mth_put": -1.64,
-          "fri_call": 55.28,
-          "fri_put": -55.96
+          "mth_put": -1.65,
+          "fri_call": 55.38,
+          "fri_put": -56.06
         },
         {
           "strike": 49500.0,
-          "call_gex": 473.96,
-          "put_gex": -541.79,
-          "net_gex": -67.83,
-          "vex": -4.4,
-          "gex_plus": -72.23,
-          "w1_call": 54.46,
-          "w1_put": -32.22,
+          "call_gex": 474.6,
+          "put_gex": -542.62,
+          "net_gex": -68.02,
+          "vex": -4.41,
+          "gex_plus": -72.42,
+          "w1_call": 54.54,
+          "w1_put": -32.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 133.88,
-          "mth_put": -61.02,
-          "fri_call": 285.62,
-          "fri_put": -448.55
+          "mth_call": 133.97,
+          "mth_put": -61.06,
+          "fri_call": 286.09,
+          "fri_put": -449.29
         },
         {
           "strike": 49550.0,
-          "call_gex": 75.05,
-          "put_gex": -27.43,
-          "net_gex": 47.62,
-          "vex": 3.36,
-          "gex_plus": 50.99,
-          "w1_call": 6.72,
+          "call_gex": 75.16,
+          "put_gex": -27.47,
+          "net_gex": 47.69,
+          "vex": 3.37,
+          "gex_plus": 51.06,
+          "w1_call": 6.73,
           "w1_put": -2.52,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.42,
           "mth_put": -1.22,
-          "fri_call": 66.91,
-          "fri_put": -23.69
+          "fri_call": 67.01,
+          "fri_put": -23.73
         },
         {
           "strike": 49600.0,
-          "call_gex": 274.53,
-          "put_gex": -151.0,
-          "net_gex": 123.53,
-          "vex": 9.26,
-          "gex_plus": 132.79,
-          "w1_call": 17.3,
+          "call_gex": 274.85,
+          "put_gex": -151.18,
+          "net_gex": 123.67,
+          "vex": 9.27,
+          "gex_plus": 132.94,
+          "w1_call": 17.32,
           "w1_put": -5.22,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.72,
+          "mth_call": 26.74,
           "mth_put": -8.04,
-          "fri_call": 230.5,
-          "fri_put": -137.74
+          "fri_call": 230.79,
+          "fri_put": -137.91
         },
         {
           "strike": 49650.0,
-          "call_gex": 71.51,
-          "put_gex": -25.19,
-          "net_gex": 46.32,
-          "vex": 3.65,
-          "gex_plus": 49.97,
-          "w1_call": 4.3,
+          "call_gex": 71.59,
+          "put_gex": -25.22,
+          "net_gex": 46.36,
+          "vex": 3.66,
+          "gex_plus": 50.02,
+          "w1_call": 4.31,
           "w1_put": -2.69,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.79,
           "mth_put": -0.0,
-          "fri_call": 65.41,
-          "fri_put": -22.51
+          "fri_call": 65.48,
+          "fri_put": -22.53
         },
         {
           "strike": 49700.0,
-          "call_gex": 289.68,
-          "put_gex": -71.31,
-          "net_gex": 218.37,
-          "vex": 18.14,
-          "gex_plus": 236.51,
-          "w1_call": 34.22,
-          "w1_put": -11.32,
+          "call_gex": 289.92,
+          "put_gex": -71.37,
+          "net_gex": 218.55,
+          "vex": 18.15,
+          "gex_plus": 236.7,
+          "w1_call": 34.25,
+          "w1_put": -11.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 23.7,
-          "mth_put": -9.87,
-          "fri_call": 231.77,
-          "fri_put": -50.12
+          "mth_call": 23.71,
+          "mth_put": -9.88,
+          "fri_call": 231.96,
+          "fri_put": -50.16
         },
         {
           "strike": 49750.0,
-          "call_gex": 128.42,
-          "put_gex": -22.45,
-          "net_gex": 105.97,
+          "call_gex": 128.5,
+          "put_gex": -22.46,
+          "net_gex": 106.04,
           "vex": 9.23,
-          "gex_plus": 115.2,
-          "w1_call": 8.75,
+          "gex_plus": 115.27,
+          "w1_call": 8.76,
           "w1_put": -2.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.56,
+          "mth_call": 1.57,
           "mth_put": -0.59,
-          "fri_call": 118.11,
-          "fri_put": -19.55
+          "fri_call": 118.18,
+          "fri_put": -19.56
         },
         {
           "strike": 49800.0,
-          "call_gex": 340.56,
-          "put_gex": -90.79,
-          "net_gex": 249.77,
-          "vex": 22.78,
-          "gex_plus": 272.55,
-          "w1_call": 50.23,
+          "call_gex": 340.71,
+          "put_gex": -90.83,
+          "net_gex": 249.88,
+          "vex": 22.79,
+          "gex_plus": 272.66,
+          "w1_call": 50.28,
           "w1_put": -9.8,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 27.89,
-          "mth_put": -23.24,
-          "fri_call": 262.44,
-          "fri_put": -57.75
+          "mth_call": 27.91,
+          "mth_put": -23.25,
+          "fri_call": 262.52,
+          "fri_put": -57.77
         },
         {
           "strike": 49850.0,
-          "call_gex": 106.09,
+          "call_gex": 106.1,
           "put_gex": -15.22,
-          "net_gex": 90.87,
-          "vex": 8.65,
-          "gex_plus": 99.52,
-          "w1_call": 12.0,
+          "net_gex": 90.88,
+          "vex": 8.66,
+          "gex_plus": 99.53,
+          "w1_call": 12.01,
           "w1_put": -4.9,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.96,
           "mth_put": -0.0,
-          "fri_call": 93.12,
+          "fri_call": 93.13,
           "fri_put": -10.32
         },
         {
           "strike": 49900.0,
-          "call_gex": 213.15,
-          "put_gex": -38.43,
-          "net_gex": 174.72,
-          "vex": 17.36,
-          "gex_plus": 192.08,
-          "w1_call": 11.69,
-          "w1_put": -9.78,
+          "call_gex": 213.13,
+          "put_gex": -38.44,
+          "net_gex": 174.69,
+          "vex": 17.35,
+          "gex_plus": 192.05,
+          "w1_call": 11.7,
+          "w1_put": -9.79,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 18.96,
-          "mth_put": -12.32,
-          "fri_call": 182.5,
+          "mth_call": 18.97,
+          "mth_put": -12.33,
+          "fri_call": 182.46,
           "fri_put": -16.32
         },
         {
           "strike": 49950.0,
-          "call_gex": 95.5,
+          "call_gex": 95.46,
           "put_gex": -9.04,
-          "net_gex": 86.47,
-          "vex": 8.94,
-          "gex_plus": 95.4,
+          "net_gex": 86.43,
+          "vex": 8.93,
+          "gex_plus": 95.36,
           "w1_call": 2.09,
           "w1_put": -2.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.12,
+          "mth_call": 1.13,
           "mth_put": -0.56,
-          "fri_call": 92.29,
+          "fri_call": 92.24,
           "fri_put": -6.15
         },
         {
           "strike": 50000.0,
-          "call_gex": 855.44,
-          "put_gex": -56.06,
-          "net_gex": 799.37,
-          "vex": 86.27,
-          "gex_plus": 885.64,
-          "w1_call": 115.78,
+          "call_gex": 855.28,
+          "put_gex": -56.07,
+          "net_gex": 799.21,
+          "vex": 86.25,
+          "gex_plus": 885.46,
+          "w1_call": 115.83,
           "w1_put": -2.71,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 269.48,
-          "mth_put": -34.82,
-          "fri_call": 470.18,
-          "fri_put": -18.54
+          "mth_call": 269.63,
+          "mth_put": -34.84,
+          "fri_call": 469.81,
+          "fri_put": -18.52
         },
         {
           "strike": 50050.0,
-          "call_gex": 154.94,
+          "call_gex": 154.78,
           "put_gex": -2.99,
-          "net_gex": 151.95,
-          "vex": 16.95,
-          "gex_plus": 168.9,
+          "net_gex": 151.79,
+          "vex": 16.93,
+          "gex_plus": 168.72,
           "w1_call": 4.16,
           "w1_put": -0.22,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.83,
           "mth_put": -0.18,
-          "fri_call": 148.94,
-          "fri_put": -2.59
+          "fri_call": 148.78,
+          "fri_put": -2.58
         },
         {
           "strike": 50100.0,
-          "call_gex": 193.43,
-          "put_gex": -16.86,
-          "net_gex": 176.57,
-          "vex": 20.43,
-          "gex_plus": 197.0,
-          "w1_call": 9.56,
+          "call_gex": 193.21,
+          "put_gex": -16.84,
+          "net_gex": 176.37,
+          "vex": 20.41,
+          "gex_plus": 196.78,
+          "w1_call": 9.57,
           "w1_put": -0.21,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.95,
-          "mth_put": -4.33,
-          "fri_call": 162.91,
-          "fri_put": -12.31
+          "mth_call": 20.96,
+          "mth_put": -4.34,
+          "fri_call": 162.69,
+          "fri_put": -12.29
         },
         {
           "strike": 50150.0,
-          "call_gex": 91.6,
-          "put_gex": -2.73,
-          "net_gex": 88.87,
-          "vex": 10.63,
-          "gex_plus": 99.5,
+          "call_gex": 91.46,
+          "put_gex": -2.72,
+          "net_gex": 88.73,
+          "vex": 10.62,
+          "gex_plus": 99.35,
           "w1_call": 7.0,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.18,
           "mth_put": -0.0,
-          "fri_call": 84.42,
-          "fri_put": -2.73
+          "fri_call": 84.28,
+          "fri_put": -2.72
         },
         {
           "strike": 50200.0,
-          "call_gex": 306.95,
+          "call_gex": 306.45,
           "put_gex": -9.9,
-          "net_gex": 297.05,
-          "vex": 36.79,
-          "gex_plus": 333.84,
+          "net_gex": 296.55,
+          "vex": 36.73,
+          "gex_plus": 333.28,
           "w1_call": 17.53,
           "w1_put": -1.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 35.68,
-          "mth_put": -6.5,
-          "fri_call": 253.74,
+          "mth_call": 35.7,
+          "mth_put": -6.51,
+          "fri_call": 253.22,
           "fri_put": -2.4
         }
       ],
@@ -13605,187 +13605,187 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48400.0,
           "call_gex": 1.91,
-          "put_gex": -19.72,
-          "net_gex": -17.81
+          "put_gex": -19.75,
+          "net_gex": -17.84
         },
         {
           "strike": 48450.0,
           "call_gex": 0.64,
-          "put_gex": -6.73,
-          "net_gex": -6.09
+          "put_gex": -6.74,
+          "net_gex": -6.1
         },
         {
           "strike": 48500.0,
-          "call_gex": 4.51,
-          "put_gex": -130.59,
-          "net_gex": -126.08
+          "call_gex": 4.52,
+          "put_gex": -130.84,
+          "net_gex": -126.32
         },
         {
           "strike": 48550.0,
           "call_gex": 0.65,
-          "put_gex": -5.83,
-          "net_gex": -5.19
+          "put_gex": -5.85,
+          "net_gex": -5.2
         },
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -26.68,
-          "net_gex": -26.68
+          "put_gex": -26.73,
+          "net_gex": -26.73
         },
         {
           "strike": 48650.0,
           "call_gex": 0.33,
-          "put_gex": -13.7,
-          "net_gex": -13.38
+          "put_gex": -13.73,
+          "net_gex": -13.4
         },
         {
           "strike": 48700.0,
           "call_gex": 0.33,
-          "put_gex": -13.72,
-          "net_gex": -13.4
+          "put_gex": -13.75,
+          "net_gex": -13.42
         },
         {
           "strike": 48750.0,
           "call_gex": 1.31,
-          "put_gex": -5.56,
-          "net_gex": -4.25
+          "put_gex": -5.57,
+          "net_gex": -4.26
         },
         {
           "strike": 48800.0,
-          "call_gex": 4.57,
-          "put_gex": -15.02,
-          "net_gex": -10.45
+          "call_gex": 4.58,
+          "put_gex": -15.05,
+          "net_gex": -10.47
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -9.45,
-          "net_gex": -9.45
+          "put_gex": -9.47,
+          "net_gex": -9.47
         },
         {
           "strike": 48900.0,
           "call_gex": 3.25,
-          "put_gex": -13.97,
-          "net_gex": -10.72
+          "put_gex": -13.99,
+          "net_gex": -10.74
         },
         {
           "strike": 48950.0,
           "call_gex": 0.65,
-          "put_gex": -7.44,
-          "net_gex": -6.79
+          "put_gex": -7.45,
+          "net_gex": -6.8
         },
         {
           "strike": 49000.0,
-          "call_gex": 27.97,
-          "put_gex": -47.26,
-          "net_gex": -19.29
+          "call_gex": 28.03,
+          "put_gex": -47.35,
+          "net_gex": -19.33
         },
         {
           "strike": 49050.0,
           "call_gex": 1.28,
-          "put_gex": -6.71,
-          "net_gex": -5.43
+          "put_gex": -6.72,
+          "net_gex": -5.44
         },
         {
           "strike": 49100.0,
-          "call_gex": 5.07,
-          "put_gex": -10.45,
-          "net_gex": -5.39
+          "call_gex": 5.08,
+          "put_gex": -10.47,
+          "net_gex": -5.4
         },
         {
           "strike": 49150.0,
-          "call_gex": 1.88,
+          "call_gex": 1.89,
           "put_gex": -4.4,
-          "net_gex": -2.51
+          "net_gex": -2.52
         },
         {
           "strike": 49200.0,
-          "call_gex": 10.56,
-          "put_gex": -14.6,
-          "net_gex": -4.04
+          "call_gex": 10.58,
+          "put_gex": -14.63,
+          "net_gex": -4.05
         },
         {
           "strike": 49250.0,
-          "call_gex": 3.07,
-          "put_gex": -11.06,
-          "net_gex": -7.99
+          "call_gex": 3.08,
+          "put_gex": -11.08,
+          "net_gex": -8.0
         },
         {
           "strike": 49300.0,
-          "call_gex": 14.86,
-          "put_gex": -26.69,
-          "net_gex": -11.83
+          "call_gex": 14.89,
+          "put_gex": -26.74,
+          "net_gex": -11.85
         },
         {
           "strike": 49350.0,
-          "call_gex": 3.29,
+          "call_gex": 3.3,
           "put_gex": -5.09,
           "net_gex": -1.8
         },
         {
           "strike": 49400.0,
-          "call_gex": 26.23,
-          "put_gex": -10.32,
-          "net_gex": 15.92
+          "call_gex": 26.27,
+          "put_gex": -10.33,
+          "net_gex": 15.94
         },
         {
           "strike": 49450.0,
-          "call_gex": 9.57,
+          "call_gex": 9.59,
           "put_gex": -2.03,
-          "net_gex": 7.54
+          "net_gex": 7.55
         },
         {
           "strike": 49500.0,
-          "call_gex": 54.46,
-          "put_gex": -32.22,
-          "net_gex": 22.24
+          "call_gex": 54.54,
+          "put_gex": -32.26,
+          "net_gex": 22.27
         },
         {
           "strike": 49550.0,
-          "call_gex": 6.72,
+          "call_gex": 6.73,
           "put_gex": -2.52,
           "net_gex": 4.2
         },
         {
           "strike": 49600.0,
-          "call_gex": 17.3,
+          "call_gex": 17.32,
           "put_gex": -5.22,
-          "net_gex": 12.08
+          "net_gex": 12.1
         },
         {
           "strike": 49650.0,
-          "call_gex": 4.3,
+          "call_gex": 4.31,
           "put_gex": -2.69,
-          "net_gex": 1.61
+          "net_gex": 1.62
         },
         {
           "strike": 49700.0,
-          "call_gex": 34.22,
-          "put_gex": -11.32,
-          "net_gex": 22.9
+          "call_gex": 34.25,
+          "put_gex": -11.33,
+          "net_gex": 22.92
         },
         {
           "strike": 49750.0,
-          "call_gex": 8.75,
+          "call_gex": 8.76,
           "put_gex": -2.32,
-          "net_gex": 6.43
+          "net_gex": 6.44
         },
         {
           "strike": 49800.0,
-          "call_gex": 50.23,
+          "call_gex": 50.28,
           "put_gex": -9.8,
-          "net_gex": 40.44
+          "net_gex": 40.47
         },
         {
           "strike": 49850.0,
-          "call_gex": 12.0,
+          "call_gex": 12.01,
           "put_gex": -4.9,
-          "net_gex": 7.1
+          "net_gex": 7.11
         },
         {
           "strike": 49900.0,
-          "call_gex": 11.69,
-          "put_gex": -9.78,
+          "call_gex": 11.7,
+          "put_gex": -9.79,
           "net_gex": 1.91
         },
         {
@@ -13796,19 +13796,19 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 115.78,
+          "call_gex": 115.83,
           "put_gex": -2.71,
-          "net_gex": 113.07
+          "net_gex": 113.12
         },
         {
           "strike": 50050.0,
           "call_gex": 4.16,
           "put_gex": -0.22,
-          "net_gex": 3.94
+          "net_gex": 3.95
         },
         {
           "strike": 50100.0,
-          "call_gex": 9.56,
+          "call_gex": 9.57,
           "put_gex": -0.21,
           "net_gex": 9.35
         },
@@ -13828,233 +13828,233 @@ window.GEX_EMBEDDED_DATA = {
       "friday_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 5.55,
-          "put_gex": -232.41,
-          "net_gex": -226.85
+          "call_gex": 5.57,
+          "put_gex": -233.08,
+          "net_gex": -227.51
         },
         {
           "strike": 48450.0,
           "call_gex": 0.4,
-          "put_gex": -185.35,
-          "net_gex": -184.95
+          "put_gex": -185.9,
+          "net_gex": -185.5
         },
         {
           "strike": 48500.0,
-          "call_gex": 215.5,
-          "put_gex": -480.81,
-          "net_gex": -265.32
+          "call_gex": 216.14,
+          "put_gex": -482.26,
+          "net_gex": -266.12
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.86,
-          "put_gex": -96.33,
-          "net_gex": -93.47
+          "call_gex": 2.87,
+          "put_gex": -96.63,
+          "net_gex": -93.76
         },
         {
           "strike": 48600.0,
-          "call_gex": 2.87,
-          "put_gex": -222.51,
-          "net_gex": -219.64
+          "call_gex": 2.88,
+          "put_gex": -223.2,
+          "net_gex": -220.31
         },
         {
           "strike": 48650.0,
           "call_gex": 1.65,
-          "put_gex": -174.32,
-          "net_gex": -172.67
+          "put_gex": -174.86,
+          "net_gex": -173.21
         },
         {
           "strike": 48700.0,
-          "call_gex": 10.32,
-          "put_gex": -268.8,
-          "net_gex": -258.47
+          "call_gex": 10.35,
+          "put_gex": -269.63,
+          "net_gex": -259.28
         },
         {
           "strike": 48750.0,
-          "call_gex": 2.48,
-          "put_gex": -113.55,
-          "net_gex": -111.07
+          "call_gex": 2.49,
+          "put_gex": -113.9,
+          "net_gex": -111.42
         },
         {
           "strike": 48800.0,
-          "call_gex": 57.7,
-          "put_gex": -307.85,
-          "net_gex": -250.16
+          "call_gex": 57.88,
+          "put_gex": -308.81,
+          "net_gex": -250.93
         },
         {
           "strike": 48850.0,
-          "call_gex": 11.5,
-          "put_gex": -76.78,
-          "net_gex": -65.28
+          "call_gex": 11.53,
+          "put_gex": -77.01,
+          "net_gex": -65.48
         },
         {
           "strike": 48900.0,
-          "call_gex": 51.85,
-          "put_gex": -282.5,
-          "net_gex": -230.65
+          "call_gex": 52.0,
+          "put_gex": -283.36,
+          "net_gex": -231.35
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.29,
-          "put_gex": -73.74,
-          "net_gex": -66.45
+          "call_gex": 7.31,
+          "put_gex": -73.96,
+          "net_gex": -66.64
         },
         {
           "strike": 49000.0,
-          "call_gex": 149.71,
-          "put_gex": -619.7,
-          "net_gex": -469.99
+          "call_gex": 150.14,
+          "put_gex": -621.5,
+          "net_gex": -471.36
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.71,
-          "put_gex": -103.58,
-          "net_gex": -92.86
+          "call_gex": 10.75,
+          "put_gex": -103.87,
+          "net_gex": -93.13
         },
         {
           "strike": 49100.0,
-          "call_gex": 112.8,
-          "put_gex": -225.99,
-          "net_gex": -113.19
+          "call_gex": 113.11,
+          "put_gex": -226.61,
+          "net_gex": -113.5
         },
         {
           "strike": 49150.0,
-          "call_gex": 32.02,
-          "put_gex": -85.26,
-          "net_gex": -53.24
+          "call_gex": 32.11,
+          "put_gex": -85.49,
+          "net_gex": -53.38
         },
         {
           "strike": 49200.0,
-          "call_gex": 142.26,
-          "put_gex": -279.2,
-          "net_gex": -136.95
+          "call_gex": 142.62,
+          "put_gex": -279.91,
+          "net_gex": -137.29
         },
         {
           "strike": 49250.0,
-          "call_gex": 39.09,
-          "put_gex": -115.42,
-          "net_gex": -76.32
+          "call_gex": 39.19,
+          "put_gex": -115.7,
+          "net_gex": -76.51
         },
         {
           "strike": 49300.0,
-          "call_gex": 150.63,
-          "put_gex": -408.86,
-          "net_gex": -258.23
+          "call_gex": 150.98,
+          "put_gex": -409.8,
+          "net_gex": -258.82
         },
         {
           "strike": 49350.0,
-          "call_gex": 79.18,
-          "put_gex": -84.88,
-          "net_gex": -5.71
+          "call_gex": 79.34,
+          "put_gex": -85.06,
+          "net_gex": -5.72
         },
         {
           "strike": 49400.0,
-          "call_gex": 214.43,
-          "put_gex": -528.08,
-          "net_gex": -313.64
+          "call_gex": 214.86,
+          "put_gex": -529.12,
+          "net_gex": -314.26
         },
         {
           "strike": 49450.0,
-          "call_gex": 55.28,
-          "put_gex": -55.96,
+          "call_gex": 55.38,
+          "put_gex": -56.06,
           "net_gex": -0.68
         },
         {
           "strike": 49500.0,
-          "call_gex": 285.62,
-          "put_gex": -448.55,
-          "net_gex": -162.93
+          "call_gex": 286.09,
+          "put_gex": -449.29,
+          "net_gex": -163.2
         },
         {
           "strike": 49550.0,
-          "call_gex": 66.91,
-          "put_gex": -23.69,
-          "net_gex": 43.22
+          "call_gex": 67.01,
+          "put_gex": -23.73,
+          "net_gex": 43.28
         },
         {
           "strike": 49600.0,
-          "call_gex": 230.5,
-          "put_gex": -137.74,
-          "net_gex": 92.76
+          "call_gex": 230.79,
+          "put_gex": -137.91,
+          "net_gex": 92.88
         },
         {
           "strike": 49650.0,
-          "call_gex": 65.41,
-          "put_gex": -22.51,
-          "net_gex": 42.91
+          "call_gex": 65.48,
+          "put_gex": -22.53,
+          "net_gex": 42.95
         },
         {
           "strike": 49700.0,
-          "call_gex": 231.77,
-          "put_gex": -50.12,
-          "net_gex": 181.65
+          "call_gex": 231.96,
+          "put_gex": -50.16,
+          "net_gex": 181.8
         },
         {
           "strike": 49750.0,
-          "call_gex": 118.11,
-          "put_gex": -19.55,
-          "net_gex": 98.56
+          "call_gex": 118.18,
+          "put_gex": -19.56,
+          "net_gex": 98.62
         },
         {
           "strike": 49800.0,
-          "call_gex": 262.44,
-          "put_gex": -57.75,
-          "net_gex": 204.69
+          "call_gex": 262.52,
+          "put_gex": -57.77,
+          "net_gex": 204.75
         },
         {
           "strike": 49850.0,
-          "call_gex": 93.12,
+          "call_gex": 93.13,
           "put_gex": -10.32,
           "net_gex": 82.81
         },
         {
           "strike": 49900.0,
-          "call_gex": 182.5,
+          "call_gex": 182.46,
           "put_gex": -16.32,
-          "net_gex": 166.18
+          "net_gex": 166.14
         },
         {
           "strike": 49950.0,
-          "call_gex": 92.29,
+          "call_gex": 92.24,
           "put_gex": -6.15,
-          "net_gex": 86.14
+          "net_gex": 86.09
         },
         {
           "strike": 50000.0,
-          "call_gex": 470.18,
-          "put_gex": -18.54,
-          "net_gex": 451.64
+          "call_gex": 469.81,
+          "put_gex": -18.52,
+          "net_gex": 451.29
         },
         {
           "strike": 50050.0,
-          "call_gex": 148.94,
-          "put_gex": -2.59,
-          "net_gex": 146.36
+          "call_gex": 148.78,
+          "put_gex": -2.58,
+          "net_gex": 146.2
         },
         {
           "strike": 50100.0,
-          "call_gex": 162.91,
-          "put_gex": -12.31,
-          "net_gex": 150.6
+          "call_gex": 162.69,
+          "put_gex": -12.29,
+          "net_gex": 150.39
         },
         {
           "strike": 50150.0,
-          "call_gex": 84.42,
-          "put_gex": -2.73,
-          "net_gex": 81.69
+          "call_gex": 84.28,
+          "put_gex": -2.72,
+          "net_gex": 81.55
         },
         {
           "strike": 50200.0,
-          "call_gex": 253.74,
+          "call_gex": 253.22,
           "put_gex": -2.4,
-          "net_gex": 251.33
+          "net_gex": 250.82
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 43.87,
-          "put_gex": -20.35,
-          "net_gex": 23.52
+          "call_gex": 43.91,
+          "put_gex": -20.36,
+          "net_gex": 23.54
         },
         {
           "strike": 48450.0,
@@ -14064,9 +14064,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 66.37,
-          "put_gex": -153.22,
-          "net_gex": -86.85
+          "call_gex": 66.42,
+          "put_gex": -153.34,
+          "net_gex": -86.92
         },
         {
           "strike": 48550.0,
@@ -14076,9 +14076,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 62.61,
-          "put_gex": -24.87,
-          "net_gex": 37.74
+          "call_gex": 62.66,
+          "put_gex": -24.89,
+          "net_gex": 37.77
         },
         {
           "strike": 48650.0,
@@ -14088,9 +14088,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 48.59,
-          "put_gex": -23.86,
-          "net_gex": 24.72
+          "call_gex": 48.63,
+          "put_gex": -23.88,
+          "net_gex": 24.74
         },
         {
           "strike": 48750.0,
@@ -14100,8 +14100,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 27.97,
-          "put_gex": -31.41,
+          "call_gex": 27.99,
+          "put_gex": -31.43,
           "net_gex": -3.44
         },
         {
@@ -14112,9 +14112,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 22.12,
-          "put_gex": -9.02,
-          "net_gex": 13.1
+          "call_gex": 22.14,
+          "put_gex": -9.03,
+          "net_gex": 13.11
         },
         {
           "strike": 48950.0,
@@ -14124,33 +14124,33 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 128.65,
-          "put_gex": -66.57,
-          "net_gex": 62.08
+          "call_gex": 128.75,
+          "put_gex": -66.63,
+          "net_gex": 62.13
         },
         {
           "strike": 49050.0,
           "call_gex": 0.64,
-          "put_gex": -1.49,
+          "put_gex": -1.5,
           "net_gex": -0.85
         },
         {
           "strike": 49100.0,
-          "call_gex": 128.36,
-          "put_gex": -27.04,
-          "net_gex": 101.33
+          "call_gex": 128.47,
+          "put_gex": -27.06,
+          "net_gex": 101.41
         },
         {
           "strike": 49150.0,
           "call_gex": 8.49,
           "put_gex": -0.21,
-          "net_gex": 8.27
+          "net_gex": 8.28
         },
         {
           "strike": 49200.0,
-          "call_gex": 49.02,
-          "put_gex": -12.04,
-          "net_gex": 36.97
+          "call_gex": 49.05,
+          "put_gex": -12.05,
+          "net_gex": 37.0
         },
         {
           "strike": 49250.0,
@@ -14160,9 +14160,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.09,
-          "put_gex": -34.32,
-          "net_gex": -14.23
+          "call_gex": 20.11,
+          "put_gex": -34.35,
+          "net_gex": -14.24
         },
         {
           "strike": 49350.0,
@@ -14172,21 +14172,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 23.79,
-          "put_gex": -15.31,
-          "net_gex": 8.48
+          "call_gex": 23.81,
+          "put_gex": -15.32,
+          "net_gex": 8.49
         },
         {
           "strike": 49450.0,
           "call_gex": 1.03,
-          "put_gex": -1.64,
+          "put_gex": -1.65,
           "net_gex": -0.62
         },
         {
           "strike": 49500.0,
-          "call_gex": 133.88,
-          "put_gex": -61.02,
-          "net_gex": 72.86
+          "call_gex": 133.97,
+          "put_gex": -61.06,
+          "net_gex": 72.91
         },
         {
           "strike": 49550.0,
@@ -14196,9 +14196,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 26.72,
+          "call_gex": 26.74,
           "put_gex": -8.04,
-          "net_gex": 18.69
+          "net_gex": 18.7
         },
         {
           "strike": 49650.0,
@@ -14208,20 +14208,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 23.7,
-          "put_gex": -9.87,
-          "net_gex": 13.82
+          "call_gex": 23.71,
+          "put_gex": -9.88,
+          "net_gex": 13.83
         },
         {
           "strike": 49750.0,
-          "call_gex": 1.56,
+          "call_gex": 1.57,
           "put_gex": -0.59,
           "net_gex": 0.98
         },
         {
           "strike": 49800.0,
-          "call_gex": 27.89,
-          "put_gex": -23.24,
+          "call_gex": 27.91,
+          "put_gex": -23.25,
           "net_gex": 4.65
         },
         {
@@ -14232,21 +14232,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 18.96,
-          "put_gex": -12.32,
-          "net_gex": 6.63
+          "call_gex": 18.97,
+          "put_gex": -12.33,
+          "net_gex": 6.64
         },
         {
           "strike": 49950.0,
-          "call_gex": 1.12,
+          "call_gex": 1.13,
           "put_gex": -0.56,
           "net_gex": 0.56
         },
         {
           "strike": 50000.0,
-          "call_gex": 269.48,
-          "put_gex": -34.82,
-          "net_gex": 234.66
+          "call_gex": 269.63,
+          "put_gex": -34.84,
+          "net_gex": 234.79
         },
         {
           "strike": 50050.0,
@@ -14256,8 +14256,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 20.95,
-          "put_gex": -4.33,
+          "call_gex": 20.96,
+          "put_gex": -4.34,
           "net_gex": 16.62
         },
         {
@@ -14268,9 +14268,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 35.68,
-          "put_gex": -6.5,
-          "net_gex": 29.18
+          "call_gex": 35.7,
+          "put_gex": -6.51,
+          "net_gex": 29.19
         }
       ]
     }
@@ -14301,27 +14301,27 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 42.67,
-          "put_gex": -167.67,
-          "net_gex": -125.0,
-          "vex": 12.82,
-          "gex_plus": -112.18,
+          "call_gex": 42.69,
+          "put_gex": -167.63,
+          "net_gex": -124.93,
+          "vex": 12.81,
+          "gex_plus": -112.12,
           "w1_call": 1.37,
           "w1_put": -14.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 38.06,
-          "mth_put": -17.65,
+          "mth_call": 38.08,
+          "mth_put": -17.66,
           "fri_call": 3.25,
-          "fri_put": -135.91
+          "fri_put": -135.84
         },
         {
           "strike": 48450.0,
           "call_gex": 0.71,
-          "put_gex": -118.16,
-          "net_gex": -117.45,
+          "put_gex": -118.14,
+          "net_gex": -117.43,
           "vex": 11.52,
-          "gex_plus": -105.92,
+          "gex_plus": -105.9,
           "w1_call": 0.47,
           "w1_put": -4.93,
           "w2_call": 0.0,
@@ -14329,567 +14329,567 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -0.93,
           "fri_call": 0.24,
-          "fri_put": -112.3
+          "fri_put": -112.28
         },
         {
           "strike": 48500.0,
-          "call_gex": 197.34,
-          "put_gex": -535.04,
-          "net_gex": -337.7,
-          "vex": 31.57,
-          "gex_plus": -306.13,
+          "call_gex": 197.38,
+          "put_gex": -535.22,
+          "net_gex": -337.83,
+          "vex": 31.59,
+          "gex_plus": -306.25,
           "w1_call": 3.38,
-          "w1_put": -97.73,
+          "w1_put": -97.81,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 58.69,
-          "mth_put": -135.5,
-          "fri_call": 135.27,
-          "fri_put": -301.81
+          "mth_call": 58.73,
+          "mth_put": -135.58,
+          "fri_call": 135.28,
+          "fri_put": -301.83
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.35,
-          "put_gex": -68.44,
-          "net_gex": -66.09,
+          "call_gex": 2.36,
+          "put_gex": -68.47,
+          "net_gex": -66.11,
           "vex": 5.93,
-          "gex_plus": -60.16,
+          "gex_plus": -60.18,
           "w1_call": 0.5,
-          "w1_put": -4.46,
+          "w1_put": -4.47,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.34,
           "fri_call": 1.86,
-          "fri_put": -62.64
+          "fri_put": -62.66
         },
         {
           "strike": 48600.0,
-          "call_gex": 58.38,
-          "put_gex": -193.19,
-          "net_gex": -134.81,
-          "vex": 11.58,
-          "gex_plus": -123.23,
+          "call_gex": 58.41,
+          "put_gex": -193.31,
+          "net_gex": -134.9,
+          "vex": 11.59,
+          "gex_plus": -123.31,
           "w1_call": 0.0,
-          "w1_put": -20.87,
+          "w1_put": -20.89,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 56.44,
-          "mth_put": -22.42,
+          "mth_call": 56.48,
+          "mth_put": -22.44,
           "fri_call": 1.94,
-          "fri_put": -149.9
+          "fri_put": -149.99
         },
         {
           "strike": 48650.0,
           "call_gex": 1.41,
-          "put_gex": -135.74,
-          "net_gex": -134.33,
-          "vex": 10.92,
-          "gex_plus": -123.4,
+          "put_gex": -135.85,
+          "net_gex": -134.44,
+          "vex": 10.93,
+          "gex_plus": -123.51,
           "w1_call": 0.26,
-          "w1_put": -10.96,
+          "w1_put": -10.97,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.13,
           "fri_call": 1.15,
-          "fri_put": -121.65
+          "fri_put": -121.75
         },
         {
           "strike": 48700.0,
-          "call_gex": 52.38,
-          "put_gex": -227.46,
-          "net_gex": -175.08,
-          "vex": 13.54,
-          "gex_plus": -161.54,
+          "call_gex": 52.42,
+          "put_gex": -227.69,
+          "net_gex": -175.28,
+          "vex": 13.56,
+          "gex_plus": -161.72,
           "w1_call": 0.27,
-          "w1_put": -11.22,
+          "w1_put": -11.23,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.65,
-          "mth_put": -21.93,
-          "fri_call": 7.46,
-          "fri_put": -194.31
+          "mth_call": 44.68,
+          "mth_put": -21.94,
+          "fri_call": 7.47,
+          "fri_put": -194.52
         },
         {
           "strike": 48750.0,
           "call_gex": 2.95,
-          "put_gex": -93.46,
-          "net_gex": -90.51,
-          "vex": 6.6,
-          "gex_plus": -83.91,
+          "put_gex": -93.58,
+          "net_gex": -90.62,
+          "vex": 6.61,
+          "gex_plus": -84.02,
           "w1_call": 1.09,
-          "w1_put": -4.64,
+          "w1_put": -4.65,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.79,
           "fri_call": 1.86,
-          "fri_put": -85.02
+          "fri_put": -85.13
         },
         {
           "strike": 48800.0,
-          "call_gex": 74.85,
-          "put_gex": -281.02,
-          "net_gex": -206.17,
-          "vex": 14.18,
-          "gex_plus": -191.99,
+          "call_gex": 74.94,
+          "put_gex": -281.41,
+          "net_gex": -206.47,
+          "vex": 14.2,
+          "gex_plus": -192.27,
           "w1_call": 3.91,
-          "w1_put": -12.83,
+          "w1_put": -12.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.19,
-          "mth_put": -29.42,
-          "fri_call": 44.75,
-          "fri_put": -238.77
+          "mth_call": 26.21,
+          "mth_put": -29.44,
+          "fri_call": 44.82,
+          "fri_put": -239.12
         },
         {
           "strike": 48850.0,
-          "call_gex": 9.24,
-          "put_gex": -71.76,
-          "net_gex": -62.52,
+          "call_gex": 9.25,
+          "put_gex": -71.88,
+          "net_gex": -62.62,
           "vex": 4.04,
-          "gex_plus": -58.49,
+          "gex_plus": -58.58,
           "w1_call": 0.0,
-          "w1_put": -8.25,
+          "w1_put": -8.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.83,
-          "fri_call": 9.24,
-          "fri_put": -61.68
+          "fri_call": 9.25,
+          "fri_put": -61.78
         },
         {
           "strike": 48900.0,
-          "call_gex": 67.16,
-          "put_gex": -256.13,
-          "net_gex": -188.97,
-          "vex": 11.45,
-          "gex_plus": -177.53,
+          "call_gex": 67.26,
+          "put_gex": -256.59,
+          "net_gex": -189.33,
+          "vex": 11.47,
+          "gex_plus": -177.86,
           "w1_call": 2.9,
-          "w1_put": -12.47,
+          "w1_put": -12.49,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.12,
-          "mth_put": -8.61,
-          "fri_call": 43.14,
-          "fri_put": -235.05
+          "mth_call": 21.14,
+          "mth_put": -8.62,
+          "fri_call": 43.22,
+          "fri_put": -235.49
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.87,
-          "put_gex": -71.78,
-          "net_gex": -64.9,
-          "vex": 3.65,
-          "gex_plus": -61.25,
+          "call_gex": 6.89,
+          "put_gex": -71.92,
+          "net_gex": -65.03,
+          "vex": 3.66,
+          "gex_plus": -61.37,
           "w1_call": 0.59,
-          "w1_put": -6.79,
+          "w1_put": -6.8,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.45,
-          "fri_call": 6.28,
-          "fri_put": -63.54
+          "fri_call": 6.3,
+          "fri_put": -63.67
         },
         {
           "strike": 49000.0,
-          "call_gex": 284.87,
-          "put_gex": -661.92,
-          "net_gex": -377.05,
-          "vex": 19.76,
-          "gex_plus": -357.29,
-          "w1_call": 26.1,
-          "w1_put": -44.09,
+          "call_gex": 285.3,
+          "put_gex": -663.24,
+          "net_gex": -377.94,
+          "vex": 19.81,
+          "gex_plus": -358.13,
+          "w1_call": 26.14,
+          "w1_put": -44.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 125.17,
-          "mth_put": -64.77,
-          "fri_call": 133.61,
-          "fri_put": -553.06
+          "mth_call": 125.27,
+          "mth_put": -64.82,
+          "fri_call": 133.9,
+          "fri_put": -554.25
         },
         {
           "strike": 49050.0,
-          "call_gex": 11.75,
-          "put_gex": -103.59,
-          "net_gex": -91.84,
-          "vex": 4.41,
-          "gex_plus": -87.44,
+          "call_gex": 11.78,
+          "put_gex": -103.83,
+          "net_gex": -92.05,
+          "vex": 4.42,
+          "gex_plus": -87.63,
           "w1_call": 1.22,
-          "w1_put": -6.39,
+          "w1_put": -6.41,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.63,
           "mth_put": -1.47,
-          "fri_call": 9.9,
-          "fri_put": -95.73
+          "fri_call": 9.93,
+          "fri_put": -95.95
         },
         {
           "strike": 49100.0,
-          "call_gex": 240.19,
-          "put_gex": -253.29,
-          "net_gex": -13.11,
-          "vex": 0.73,
-          "gex_plus": -12.38,
-          "w1_call": 4.94,
-          "w1_put": -10.19,
+          "call_gex": 240.56,
+          "put_gex": -253.86,
+          "net_gex": -13.3,
+          "vex": 0.74,
+          "gex_plus": -12.56,
+          "w1_call": 4.95,
+          "w1_put": -10.21,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 127.29,
-          "mth_put": -26.81,
-          "fri_call": 107.96,
-          "fri_put": -216.3
+          "mth_call": 127.39,
+          "mth_put": -26.83,
+          "fri_call": 108.22,
+          "fri_put": -216.82
         },
         {
           "strike": 49150.0,
-          "call_gex": 42.11,
-          "put_gex": -89.1,
-          "net_gex": -46.99,
+          "call_gex": 42.2,
+          "put_gex": -89.32,
+          "net_gex": -47.12,
           "vex": 1.88,
-          "gex_plus": -45.11,
+          "gex_plus": -45.24,
           "w1_call": 1.88,
-          "w1_put": -4.38,
+          "w1_put": -4.39,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.49,
+          "mth_call": 8.5,
           "mth_put": -0.21,
-          "fri_call": 31.74,
-          "fri_put": -84.51
+          "fri_call": 31.82,
+          "fri_put": -84.73
         },
         {
           "strike": 49200.0,
-          "call_gex": 206.29,
-          "put_gex": -313.59,
-          "net_gex": -107.3,
-          "vex": 3.87,
-          "gex_plus": -103.43,
-          "w1_call": 10.76,
-          "w1_put": -14.87,
+          "call_gex": 206.74,
+          "put_gex": -314.4,
+          "net_gex": -107.65,
+          "vex": 3.89,
+          "gex_plus": -103.77,
+          "w1_call": 10.78,
+          "w1_put": -14.9,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 49.53,
-          "mth_put": -12.17,
-          "fri_call": 146.0,
-          "fri_put": -286.55
+          "mth_call": 49.57,
+          "mth_put": -12.18,
+          "fri_call": 146.39,
+          "fri_put": -287.32
         },
         {
           "strike": 49250.0,
-          "call_gex": 46.03,
-          "put_gex": -135.45,
-          "net_gex": -89.42,
-          "vex": 2.81,
-          "gex_plus": -86.61,
+          "call_gex": 46.15,
+          "put_gex": -135.81,
+          "net_gex": -89.66,
+          "vex": 2.82,
+          "gex_plus": -86.85,
           "w1_call": 3.2,
-          "w1_put": -11.51,
+          "w1_put": -11.53,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.29,
           "mth_put": -1.29,
-          "fri_call": 41.55,
-          "fri_put": -122.66
+          "fri_call": 41.66,
+          "fri_put": -123.0
         },
         {
           "strike": 49300.0,
-          "call_gex": 202.25,
-          "put_gex": -513.64,
-          "net_gex": -311.39,
-          "vex": 8.48,
-          "gex_plus": -302.91,
-          "w1_call": 15.81,
-          "w1_put": -28.39,
+          "call_gex": 202.77,
+          "put_gex": -515.01,
+          "net_gex": -312.23,
+          "vex": 8.5,
+          "gex_plus": -303.73,
+          "w1_call": 15.84,
+          "w1_put": -28.44,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.69,
-          "mth_put": -35.34,
-          "fri_call": 165.75,
-          "fri_put": -449.91
+          "mth_call": 20.71,
+          "mth_put": -35.37,
+          "fri_call": 166.23,
+          "fri_put": -451.19
         },
         {
           "strike": 49350.0,
-          "call_gex": 94.87,
-          "put_gex": -103.54,
-          "net_gex": -8.67,
+          "call_gex": 95.14,
+          "put_gex": -103.83,
+          "net_gex": -8.69,
           "vex": 0.2,
-          "gex_plus": -8.47,
+          "gex_plus": -8.49,
           "w1_call": 3.58,
-          "w1_put": -5.53,
+          "w1_put": -5.54,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.08,
           "mth_put": -1.3,
-          "fri_call": 90.21,
-          "fri_put": -96.71
+          "fri_call": 90.47,
+          "fri_put": -96.99
         },
         {
           "strike": 49400.0,
-          "call_gex": 307.06,
-          "put_gex": -650.45,
-          "net_gex": -343.39,
-          "vex": 6.56,
-          "gex_plus": -336.83,
-          "w1_call": 29.15,
-          "w1_put": -11.46,
+          "call_gex": 307.89,
+          "put_gex": -652.34,
+          "net_gex": -344.45,
+          "vex": 6.59,
+          "gex_plus": -337.87,
+          "w1_call": 29.2,
+          "w1_put": -11.48,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.97,
-          "mth_put": -16.07,
-          "fri_call": 252.95,
-          "fri_put": -622.92
+          "mth_call": 24.99,
+          "mth_put": -16.08,
+          "fri_call": 253.7,
+          "fri_put": -624.78
         },
         {
           "strike": 49450.0,
-          "call_gex": 79.47,
-          "put_gex": -72.39,
-          "net_gex": 7.08,
+          "call_gex": 79.7,
+          "put_gex": -72.6,
+          "net_gex": 7.09,
           "vex": -0.1,
-          "gex_plus": 6.98,
-          "w1_call": 10.87,
+          "gex_plus": 6.99,
+          "w1_call": 10.89,
           "w1_put": -2.31,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.09,
           "mth_put": -1.74,
-          "fri_call": 67.51,
-          "fri_put": -68.34
+          "fri_call": 67.72,
+          "fri_put": -68.55
         },
         {
           "strike": 49500.0,
-          "call_gex": 567.49,
-          "put_gex": -669.78,
-          "net_gex": -102.28,
-          "vex": 1.23,
-          "gex_plus": -101.05,
-          "w1_call": 63.19,
-          "w1_put": -37.39,
+          "call_gex": 568.85,
+          "put_gex": -671.65,
+          "net_gex": -102.8,
+          "vex": 1.24,
+          "gex_plus": -101.56,
+          "w1_call": 63.31,
+          "w1_put": -37.46,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 143.17,
-          "mth_put": -65.26,
-          "fri_call": 361.13,
-          "fri_put": -567.14
+          "mth_call": 143.29,
+          "mth_put": -65.31,
+          "fri_call": 362.24,
+          "fri_put": -568.88
         },
         {
           "strike": 49550.0,
-          "call_gex": 97.08,
-          "put_gex": -35.31,
-          "net_gex": 61.77,
+          "call_gex": 97.37,
+          "put_gex": -35.41,
+          "net_gex": 61.96,
           "vex": -0.41,
-          "gex_plus": 61.36,
-          "w1_call": 7.97,
+          "gex_plus": 61.54,
+          "w1_call": 7.98,
           "w1_put": -2.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.53,
           "mth_put": -1.31,
-          "fri_call": 87.59,
-          "fri_put": -31.01
+          "fri_call": 87.86,
+          "fri_put": -31.11
         },
         {
           "strike": 49600.0,
-          "call_gex": 362.42,
-          "put_gex": -201.73,
-          "net_gex": 160.69,
+          "call_gex": 363.46,
+          "put_gex": -202.33,
+          "net_gex": 161.13,
           "vex": -0.38,
-          "gex_plus": 160.31,
-          "w1_call": 20.96,
-          "w1_put": -6.32,
+          "gex_plus": 160.75,
+          "w1_call": 21.0,
+          "w1_put": -6.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 29.12,
-          "mth_put": -8.76,
-          "fri_call": 312.34,
-          "fri_put": -186.65
+          "mth_call": 29.15,
+          "mth_put": -8.77,
+          "fri_call": 313.31,
+          "fri_put": -187.23
         },
         {
           "strike": 49650.0,
-          "call_gex": 99.06,
-          "put_gex": -34.9,
-          "net_gex": 64.16,
+          "call_gex": 99.36,
+          "put_gex": -35.0,
+          "net_gex": 64.35,
           "vex": 0.1,
-          "gex_plus": 64.26,
-          "w1_call": 5.33,
-          "w1_put": -3.33,
+          "gex_plus": 64.45,
+          "w1_call": 5.34,
+          "w1_put": -3.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.97,
           "mth_put": -0.0,
-          "fri_call": 91.76,
-          "fri_put": -31.57
+          "fri_call": 92.04,
+          "fri_put": -31.67
         },
         {
           "strike": 49700.0,
-          "call_gex": 406.13,
-          "put_gex": -98.06,
-          "net_gex": 308.07,
+          "call_gex": 407.28,
+          "put_gex": -98.32,
+          "net_gex": 308.96,
           "vex": 1.76,
-          "gex_plus": 309.83,
-          "w1_call": 43.29,
-          "w1_put": -14.32,
+          "gex_plus": 310.72,
+          "w1_call": 43.38,
+          "w1_put": -14.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.31,
-          "mth_put": -10.96,
-          "fri_call": 336.53,
-          "fri_put": -72.77
+          "mth_call": 26.33,
+          "mth_put": -10.97,
+          "fri_call": 337.57,
+          "fri_put": -73.0
         },
         {
           "strike": 49750.0,
-          "call_gex": 190.57,
-          "put_gex": -33.03,
-          "net_gex": 157.55,
-          "vex": 1.53,
-          "gex_plus": 159.08,
-          "w1_call": 11.31,
-          "w1_put": -2.99,
+          "call_gex": 191.14,
+          "put_gex": -33.12,
+          "net_gex": 158.02,
+          "vex": 1.54,
+          "gex_plus": 159.56,
+          "w1_call": 11.33,
+          "w1_put": -3.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.75,
+          "mth_call": 1.76,
           "mth_put": -0.66,
-          "fri_call": 177.51,
-          "fri_put": -29.38
+          "fri_call": 178.06,
+          "fri_put": -29.47
         },
         {
           "strike": 49800.0,
-          "call_gex": 506.18,
-          "put_gex": -129.08,
-          "net_gex": 377.1,
-          "vex": 5.23,
-          "gex_plus": 382.33,
-          "w1_call": 66.37,
-          "w1_put": -12.94,
+          "call_gex": 507.58,
+          "put_gex": -129.4,
+          "net_gex": 378.18,
+          "vex": 5.24,
+          "gex_plus": 383.42,
+          "w1_call": 66.5,
+          "w1_put": -12.97,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.55,
-          "mth_put": -26.29,
-          "fri_call": 408.26,
-          "fri_put": -89.84
+          "mth_call": 31.58,
+          "mth_put": -26.31,
+          "fri_call": 409.51,
+          "fri_put": -90.12
         },
         {
           "strike": 49850.0,
-          "call_gex": 167.24,
-          "put_gex": -23.23,
-          "net_gex": 144.01,
-          "vex": 2.58,
-          "gex_plus": 146.59,
-          "w1_call": 16.2,
-          "w1_put": -6.61,
+          "call_gex": 167.72,
+          "put_gex": -23.29,
+          "net_gex": 144.43,
+          "vex": 2.59,
+          "gex_plus": 147.02,
+          "w1_call": 16.23,
+          "w1_put": -6.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.09,
+          "mth_call": 1.1,
           "mth_put": -0.0,
-          "fri_call": 149.94,
-          "fri_put": -16.61
+          "fri_call": 150.4,
+          "fri_put": -16.66
         },
         {
           "strike": 49900.0,
-          "call_gex": 342.11,
-          "put_gex": -54.9,
-          "net_gex": 287.22,
-          "vex": 6.32,
-          "gex_plus": 293.53,
-          "w1_call": 16.13,
-          "w1_put": -13.5,
+          "call_gex": 343.06,
+          "put_gex": -55.01,
+          "net_gex": 288.05,
+          "vex": 6.34,
+          "gex_plus": 294.38,
+          "w1_call": 16.16,
+          "w1_put": -13.52,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.85,
-          "mth_put": -14.2,
-          "fri_call": 304.13,
-          "fri_put": -27.2
+          "mth_call": 21.87,
+          "mth_put": -14.21,
+          "fri_call": 305.03,
+          "fri_put": -27.28
         },
         {
           "strike": 49950.0,
-          "call_gex": 163.43,
-          "put_gex": -14.54,
-          "net_gex": 148.89,
-          "vex": 3.88,
-          "gex_plus": 152.77,
+          "call_gex": 163.9,
+          "put_gex": -14.58,
+          "net_gex": 149.32,
+          "vex": 3.89,
+          "gex_plus": 153.21,
           "w1_call": 2.95,
-          "w1_put": -3.27,
+          "w1_put": -3.28,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.31,
           "mth_put": -0.65,
-          "fri_call": 159.18,
-          "fri_put": -10.61
+          "fri_call": 159.64,
+          "fri_put": -10.64
         },
         {
           "strike": 50000.0,
-          "call_gex": 1322.44,
-          "put_gex": -77.88,
-          "net_gex": 1244.57,
-          "vex": 37.95,
-          "gex_plus": 1282.51,
-          "w1_call": 166.73,
-          "w1_put": -3.9,
+          "call_gex": 1325.37,
+          "put_gex": -78.01,
+          "net_gex": 1247.36,
+          "vex": 38.03,
+          "gex_plus": 1285.39,
+          "w1_call": 167.03,
+          "w1_put": -3.91,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 316.45,
-          "mth_put": -40.89,
-          "fri_call": 839.26,
-          "fri_put": -33.09
+          "mth_call": 316.71,
+          "mth_put": -40.92,
+          "fri_call": 841.63,
+          "fri_put": -33.18
         },
         {
           "strike": 50050.0,
-          "call_gex": 283.44,
-          "put_gex": -5.32,
-          "net_gex": 278.12,
-          "vex": 9.51,
-          "gex_plus": 287.63,
-          "w1_call": 6.13,
+          "call_gex": 284.2,
+          "put_gex": -5.33,
+          "net_gex": 278.87,
+          "vex": 9.54,
+          "gex_plus": 288.4,
+          "w1_call": 6.14,
           "w1_put": -0.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 2.17,
           "mth_put": -0.22,
-          "fri_call": 275.14,
-          "fri_put": -4.78
+          "fri_call": 275.89,
+          "fri_put": -4.79
         },
         {
           "strike": 50100.0,
-          "call_gex": 350.87,
-          "put_gex": -29.04,
-          "net_gex": 321.83,
-          "vex": 12.34,
-          "gex_plus": 334.18,
-          "w1_call": 14.38,
+          "call_gex": 351.74,
+          "put_gex": -29.11,
+          "net_gex": 322.63,
+          "vex": 12.37,
+          "gex_plus": 335.0,
+          "w1_call": 14.4,
           "w1_put": -0.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.06,
+          "mth_call": 25.08,
           "mth_put": -5.19,
-          "fri_call": 311.43,
-          "fri_put": -23.53
+          "fri_call": 312.25,
+          "fri_put": -23.6
         },
         {
           "strike": 50150.0,
-          "call_gex": 177.97,
-          "put_gex": -5.4,
-          "net_gex": 172.57,
-          "vex": 7.31,
-          "gex_plus": 179.87,
-          "w1_call": 10.75,
+          "call_gex": 178.41,
+          "put_gex": -5.41,
+          "net_gex": 172.99,
+          "vex": 7.32,
+          "gex_plus": 180.32,
+          "w1_call": 10.77,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.22,
           "mth_put": -0.0,
-          "fri_call": 167.0,
-          "fri_put": -5.4
+          "fri_call": 167.42,
+          "fri_put": -5.41
         },
         {
           "strike": 50200.0,
-          "call_gex": 590.41,
-          "put_gex": -14.41,
-          "net_gex": 575.99,
-          "vex": 26.77,
-          "gex_plus": 602.76,
-          "w1_call": 27.51,
-          "w1_put": -1.56,
+          "call_gex": 591.73,
+          "put_gex": -14.43,
+          "net_gex": 577.3,
+          "vex": 26.83,
+          "gex_plus": 604.13,
+          "w1_call": 27.56,
+          "w1_put": -1.57,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 43.49,
+          "mth_call": 43.52,
           "mth_put": -7.93,
-          "fri_call": 519.4,
-          "fri_put": -4.92
+          "fri_call": 520.65,
+          "fri_put": -4.93
         }
       ],
       "weekly_gex": [
@@ -14897,7 +14897,7 @@ window.GEX_EMBEDDED_DATA = {
           "strike": 48400.0,
           "call_gex": 1.37,
           "put_gex": -14.12,
-          "net_gex": -12.75
+          "net_gex": -12.76
         },
         {
           "strike": 48450.0,
@@ -14908,444 +14908,444 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48500.0,
           "call_gex": 3.38,
-          "put_gex": -97.73,
-          "net_gex": -94.35
+          "put_gex": -97.81,
+          "net_gex": -94.43
         },
         {
           "strike": 48550.0,
           "call_gex": 0.5,
-          "put_gex": -4.46,
+          "put_gex": -4.47,
           "net_gex": -3.97
         },
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -20.87,
-          "net_gex": -20.87
+          "put_gex": -20.89,
+          "net_gex": -20.89
         },
         {
           "strike": 48650.0,
           "call_gex": 0.26,
-          "put_gex": -10.96,
-          "net_gex": -10.7
+          "put_gex": -10.97,
+          "net_gex": -10.71
         },
         {
           "strike": 48700.0,
           "call_gex": 0.27,
-          "put_gex": -11.22,
-          "net_gex": -10.95
+          "put_gex": -11.23,
+          "net_gex": -10.96
         },
         {
           "strike": 48750.0,
           "call_gex": 1.09,
-          "put_gex": -4.64,
-          "net_gex": -3.55
+          "put_gex": -4.65,
+          "net_gex": -3.56
         },
         {
           "strike": 48800.0,
           "call_gex": 3.91,
-          "put_gex": -12.83,
-          "net_gex": -8.93
+          "put_gex": -12.85,
+          "net_gex": -8.94
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -8.25,
-          "net_gex": -8.25
+          "put_gex": -8.26,
+          "net_gex": -8.26
         },
         {
           "strike": 48900.0,
           "call_gex": 2.9,
-          "put_gex": -12.47,
-          "net_gex": -9.57
+          "put_gex": -12.49,
+          "net_gex": -9.58
         },
         {
           "strike": 48950.0,
           "call_gex": 0.59,
-          "put_gex": -6.79,
-          "net_gex": -6.2
+          "put_gex": -6.8,
+          "net_gex": -6.21
         },
         {
           "strike": 49000.0,
-          "call_gex": 26.1,
-          "put_gex": -44.09,
-          "net_gex": -18.0
+          "call_gex": 26.14,
+          "put_gex": -44.16,
+          "net_gex": -18.03
         },
         {
           "strike": 49050.0,
           "call_gex": 1.22,
-          "put_gex": -6.39,
-          "net_gex": -5.18
+          "put_gex": -6.41,
+          "net_gex": -5.19
         },
         {
           "strike": 49100.0,
-          "call_gex": 4.94,
-          "put_gex": -10.19,
-          "net_gex": -5.25
+          "call_gex": 4.95,
+          "put_gex": -10.21,
+          "net_gex": -5.26
         },
         {
           "strike": 49150.0,
           "call_gex": 1.88,
-          "put_gex": -4.38,
-          "net_gex": -2.5
+          "put_gex": -4.39,
+          "net_gex": -2.51
         },
         {
           "strike": 49200.0,
-          "call_gex": 10.76,
-          "put_gex": -14.87,
-          "net_gex": -4.11
+          "call_gex": 10.78,
+          "put_gex": -14.9,
+          "net_gex": -4.12
         },
         {
           "strike": 49250.0,
           "call_gex": 3.2,
-          "put_gex": -11.51,
-          "net_gex": -8.31
+          "put_gex": -11.53,
+          "net_gex": -8.33
         },
         {
           "strike": 49300.0,
-          "call_gex": 15.81,
-          "put_gex": -28.39,
-          "net_gex": -12.58
+          "call_gex": 15.84,
+          "put_gex": -28.44,
+          "net_gex": -12.61
         },
         {
           "strike": 49350.0,
           "call_gex": 3.58,
-          "put_gex": -5.53,
-          "net_gex": -1.95
+          "put_gex": -5.54,
+          "net_gex": -1.96
         },
         {
           "strike": 49400.0,
-          "call_gex": 29.15,
-          "put_gex": -11.46,
-          "net_gex": 17.68
+          "call_gex": 29.2,
+          "put_gex": -11.48,
+          "net_gex": 17.72
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.87,
+          "call_gex": 10.89,
           "put_gex": -2.31,
-          "net_gex": 8.56
+          "net_gex": 8.58
         },
         {
           "strike": 49500.0,
-          "call_gex": 63.19,
-          "put_gex": -37.39,
-          "net_gex": 25.81
+          "call_gex": 63.31,
+          "put_gex": -37.46,
+          "net_gex": 25.86
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.97,
+          "call_gex": 7.98,
           "put_gex": -2.99,
-          "net_gex": 4.98
+          "net_gex": 4.99
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.96,
-          "put_gex": -6.32,
-          "net_gex": 14.64
+          "call_gex": 21.0,
+          "put_gex": -6.33,
+          "net_gex": 14.67
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.33,
-          "put_gex": -3.33,
+          "call_gex": 5.34,
+          "put_gex": -3.34,
           "net_gex": 2.0
         },
         {
           "strike": 49700.0,
-          "call_gex": 43.29,
-          "put_gex": -14.32,
-          "net_gex": 28.97
+          "call_gex": 43.38,
+          "put_gex": -14.35,
+          "net_gex": 29.03
         },
         {
           "strike": 49750.0,
-          "call_gex": 11.31,
-          "put_gex": -2.99,
-          "net_gex": 8.32
+          "call_gex": 11.33,
+          "put_gex": -3.0,
+          "net_gex": 8.33
         },
         {
           "strike": 49800.0,
-          "call_gex": 66.37,
-          "put_gex": -12.94,
-          "net_gex": 53.43
+          "call_gex": 66.5,
+          "put_gex": -12.97,
+          "net_gex": 53.53
         },
         {
           "strike": 49850.0,
-          "call_gex": 16.2,
-          "put_gex": -6.61,
-          "net_gex": 9.59
+          "call_gex": 16.23,
+          "put_gex": -6.63,
+          "net_gex": 9.61
         },
         {
           "strike": 49900.0,
-          "call_gex": 16.13,
-          "put_gex": -13.5,
-          "net_gex": 2.63
+          "call_gex": 16.16,
+          "put_gex": -13.52,
+          "net_gex": 2.64
         },
         {
           "strike": 49950.0,
           "call_gex": 2.95,
-          "put_gex": -3.27,
+          "put_gex": -3.28,
           "net_gex": -0.33
         },
         {
           "strike": 50000.0,
-          "call_gex": 166.73,
-          "put_gex": -3.9,
-          "net_gex": 162.83
+          "call_gex": 167.03,
+          "put_gex": -3.91,
+          "net_gex": 163.12
         },
         {
           "strike": 50050.0,
-          "call_gex": 6.13,
+          "call_gex": 6.14,
           "put_gex": -0.32,
-          "net_gex": 5.8
+          "net_gex": 5.81
         },
         {
           "strike": 50100.0,
-          "call_gex": 14.38,
+          "call_gex": 14.4,
           "put_gex": -0.32,
-          "net_gex": 14.06
+          "net_gex": 14.08
         },
         {
           "strike": 50150.0,
-          "call_gex": 10.75,
+          "call_gex": 10.77,
           "put_gex": -0.0,
-          "net_gex": 10.75
+          "net_gex": 10.77
         },
         {
           "strike": 50200.0,
-          "call_gex": 27.51,
-          "put_gex": -1.56,
-          "net_gex": 25.95
+          "call_gex": 27.56,
+          "put_gex": -1.57,
+          "net_gex": 25.99
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
           "call_gex": 3.25,
-          "put_gex": -135.91,
-          "net_gex": -132.66
+          "put_gex": -135.84,
+          "net_gex": -132.6
         },
         {
           "strike": 48450.0,
           "call_gex": 0.24,
-          "put_gex": -112.3,
-          "net_gex": -112.06
+          "put_gex": -112.28,
+          "net_gex": -112.03
         },
         {
           "strike": 48500.0,
-          "call_gex": 135.27,
-          "put_gex": -301.81,
-          "net_gex": -166.54
+          "call_gex": 135.28,
+          "put_gex": -301.83,
+          "net_gex": -166.55
         },
         {
           "strike": 48550.0,
           "call_gex": 1.86,
-          "put_gex": -62.64,
-          "net_gex": -60.78
+          "put_gex": -62.66,
+          "net_gex": -60.81
         },
         {
           "strike": 48600.0,
           "call_gex": 1.94,
-          "put_gex": -149.9,
-          "net_gex": -147.96
+          "put_gex": -149.99,
+          "net_gex": -148.05
         },
         {
           "strike": 48650.0,
           "call_gex": 1.15,
-          "put_gex": -121.65,
-          "net_gex": -120.5
+          "put_gex": -121.75,
+          "net_gex": -120.6
         },
         {
           "strike": 48700.0,
-          "call_gex": 7.46,
-          "put_gex": -194.31,
-          "net_gex": -186.85
+          "call_gex": 7.47,
+          "put_gex": -194.52,
+          "net_gex": -187.05
         },
         {
           "strike": 48750.0,
           "call_gex": 1.86,
-          "put_gex": -85.02,
-          "net_gex": -83.17
+          "put_gex": -85.13,
+          "net_gex": -83.27
         },
         {
           "strike": 48800.0,
-          "call_gex": 44.75,
-          "put_gex": -238.77,
-          "net_gex": -194.02
+          "call_gex": 44.82,
+          "put_gex": -239.12,
+          "net_gex": -194.31
         },
         {
           "strike": 48850.0,
-          "call_gex": 9.24,
-          "put_gex": -61.68,
-          "net_gex": -52.44
+          "call_gex": 9.25,
+          "put_gex": -61.78,
+          "net_gex": -52.53
         },
         {
           "strike": 48900.0,
-          "call_gex": 43.14,
-          "put_gex": -235.05,
-          "net_gex": -191.91
+          "call_gex": 43.22,
+          "put_gex": -235.49,
+          "net_gex": -192.27
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.28,
-          "put_gex": -63.54,
-          "net_gex": -57.26
+          "call_gex": 6.3,
+          "put_gex": -63.67,
+          "net_gex": -57.37
         },
         {
           "strike": 49000.0,
-          "call_gex": 133.61,
-          "put_gex": -553.06,
-          "net_gex": -419.45
+          "call_gex": 133.9,
+          "put_gex": -554.25,
+          "net_gex": -420.36
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.9,
-          "put_gex": -95.73,
-          "net_gex": -85.83
+          "call_gex": 9.93,
+          "put_gex": -95.95,
+          "net_gex": -86.03
         },
         {
           "strike": 49100.0,
-          "call_gex": 107.96,
-          "put_gex": -216.3,
-          "net_gex": -108.34
+          "call_gex": 108.22,
+          "put_gex": -216.82,
+          "net_gex": -108.6
         },
         {
           "strike": 49150.0,
-          "call_gex": 31.74,
-          "put_gex": -84.51,
-          "net_gex": -52.77
+          "call_gex": 31.82,
+          "put_gex": -84.73,
+          "net_gex": -52.91
         },
         {
           "strike": 49200.0,
-          "call_gex": 146.0,
-          "put_gex": -286.55,
-          "net_gex": -140.55
+          "call_gex": 146.39,
+          "put_gex": -287.32,
+          "net_gex": -140.93
         },
         {
           "strike": 49250.0,
-          "call_gex": 41.55,
-          "put_gex": -122.66,
-          "net_gex": -81.11
+          "call_gex": 41.66,
+          "put_gex": -123.0,
+          "net_gex": -81.34
         },
         {
           "strike": 49300.0,
-          "call_gex": 165.75,
-          "put_gex": -449.91,
-          "net_gex": -284.15
+          "call_gex": 166.23,
+          "put_gex": -451.19,
+          "net_gex": -284.96
         },
         {
           "strike": 49350.0,
-          "call_gex": 90.21,
-          "put_gex": -96.71,
-          "net_gex": -6.5
+          "call_gex": 90.47,
+          "put_gex": -96.99,
+          "net_gex": -6.52
         },
         {
           "strike": 49400.0,
-          "call_gex": 252.95,
-          "put_gex": -622.92,
-          "net_gex": -369.98
+          "call_gex": 253.7,
+          "put_gex": -624.78,
+          "net_gex": -371.08
         },
         {
           "strike": 49450.0,
-          "call_gex": 67.51,
-          "put_gex": -68.34,
+          "call_gex": 67.72,
+          "put_gex": -68.55,
           "net_gex": -0.83
         },
         {
           "strike": 49500.0,
-          "call_gex": 361.13,
-          "put_gex": -567.14,
-          "net_gex": -206.0
+          "call_gex": 362.24,
+          "put_gex": -568.88,
+          "net_gex": -206.64
         },
         {
           "strike": 49550.0,
-          "call_gex": 87.59,
-          "put_gex": -31.01,
-          "net_gex": 56.58
+          "call_gex": 87.86,
+          "put_gex": -31.11,
+          "net_gex": 56.75
         },
         {
           "strike": 49600.0,
-          "call_gex": 312.34,
-          "put_gex": -186.65,
-          "net_gex": 125.69
+          "call_gex": 313.31,
+          "put_gex": -187.23,
+          "net_gex": 126.08
         },
         {
           "strike": 49650.0,
-          "call_gex": 91.76,
-          "put_gex": -31.57,
-          "net_gex": 60.19
+          "call_gex": 92.04,
+          "put_gex": -31.67,
+          "net_gex": 60.38
         },
         {
           "strike": 49700.0,
-          "call_gex": 336.53,
-          "put_gex": -72.77,
-          "net_gex": 263.75
+          "call_gex": 337.57,
+          "put_gex": -73.0,
+          "net_gex": 264.57
         },
         {
           "strike": 49750.0,
-          "call_gex": 177.51,
-          "put_gex": -29.38,
-          "net_gex": 148.13
+          "call_gex": 178.06,
+          "put_gex": -29.47,
+          "net_gex": 148.59
         },
         {
           "strike": 49800.0,
-          "call_gex": 408.26,
-          "put_gex": -89.84,
-          "net_gex": 318.42
+          "call_gex": 409.51,
+          "put_gex": -90.12,
+          "net_gex": 319.39
         },
         {
           "strike": 49850.0,
-          "call_gex": 149.94,
-          "put_gex": -16.61,
-          "net_gex": 133.33
+          "call_gex": 150.4,
+          "put_gex": -16.66,
+          "net_gex": 133.73
         },
         {
           "strike": 49900.0,
-          "call_gex": 304.13,
-          "put_gex": -27.2,
-          "net_gex": 276.94
+          "call_gex": 305.03,
+          "put_gex": -27.28,
+          "net_gex": 277.75
         },
         {
           "strike": 49950.0,
-          "call_gex": 159.18,
-          "put_gex": -10.61,
-          "net_gex": 148.56
+          "call_gex": 159.64,
+          "put_gex": -10.64,
+          "net_gex": 148.99
         },
         {
           "strike": 50000.0,
-          "call_gex": 839.26,
-          "put_gex": -33.09,
-          "net_gex": 806.18
+          "call_gex": 841.63,
+          "put_gex": -33.18,
+          "net_gex": 808.45
         },
         {
           "strike": 50050.0,
-          "call_gex": 275.14,
-          "put_gex": -4.78,
-          "net_gex": 270.36
+          "call_gex": 275.89,
+          "put_gex": -4.79,
+          "net_gex": 271.1
         },
         {
           "strike": 50100.0,
-          "call_gex": 311.43,
-          "put_gex": -23.53,
-          "net_gex": 287.9
+          "call_gex": 312.25,
+          "put_gex": -23.6,
+          "net_gex": 288.66
         },
         {
           "strike": 50150.0,
-          "call_gex": 167.0,
-          "put_gex": -5.4,
-          "net_gex": 161.6
+          "call_gex": 167.42,
+          "put_gex": -5.41,
+          "net_gex": 162.01
         },
         {
           "strike": 50200.0,
-          "call_gex": 519.4,
-          "put_gex": -4.92,
-          "net_gex": 514.48
+          "call_gex": 520.65,
+          "put_gex": -4.93,
+          "net_gex": 515.72
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 38.06,
-          "put_gex": -17.65,
-          "net_gex": 20.41
+          "call_gex": 38.08,
+          "put_gex": -17.66,
+          "net_gex": 20.42
         },
         {
           "strike": 48450.0,
@@ -15355,9 +15355,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 58.69,
-          "put_gex": -135.5,
-          "net_gex": -76.81
+          "call_gex": 58.73,
+          "put_gex": -135.58,
+          "net_gex": -76.86
         },
         {
           "strike": 48550.0,
@@ -15367,9 +15367,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 56.44,
-          "put_gex": -22.42,
-          "net_gex": 34.02
+          "call_gex": 56.48,
+          "put_gex": -22.44,
+          "net_gex": 34.04
         },
         {
           "strike": 48650.0,
@@ -15379,9 +15379,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 44.65,
-          "put_gex": -21.93,
-          "net_gex": 22.72
+          "call_gex": 44.68,
+          "put_gex": -21.94,
+          "net_gex": 22.73
         },
         {
           "strike": 48750.0,
@@ -15391,9 +15391,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 26.19,
-          "put_gex": -29.42,
-          "net_gex": -3.22
+          "call_gex": 26.21,
+          "put_gex": -29.44,
+          "net_gex": -3.23
         },
         {
           "strike": 48850.0,
@@ -15403,9 +15403,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 21.12,
-          "put_gex": -8.61,
-          "net_gex": 12.51
+          "call_gex": 21.14,
+          "put_gex": -8.62,
+          "net_gex": 12.52
         },
         {
           "strike": 48950.0,
@@ -15415,9 +15415,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 125.17,
-          "put_gex": -64.77,
-          "net_gex": 60.4
+          "call_gex": 125.27,
+          "put_gex": -64.82,
+          "net_gex": 60.45
         },
         {
           "strike": 49050.0,
@@ -15427,21 +15427,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 127.29,
-          "put_gex": -26.81,
-          "net_gex": 100.48
+          "call_gex": 127.39,
+          "put_gex": -26.83,
+          "net_gex": 100.56
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.49,
+          "call_gex": 8.5,
           "put_gex": -0.21,
-          "net_gex": 8.28
+          "net_gex": 8.29
         },
         {
           "strike": 49200.0,
-          "call_gex": 49.53,
-          "put_gex": -12.17,
-          "net_gex": 37.36
+          "call_gex": 49.57,
+          "put_gex": -12.18,
+          "net_gex": 37.39
         },
         {
           "strike": 49250.0,
@@ -15451,9 +15451,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.69,
-          "put_gex": -35.34,
-          "net_gex": -14.66
+          "call_gex": 20.71,
+          "put_gex": -35.37,
+          "net_gex": -14.67
         },
         {
           "strike": 49350.0,
@@ -15463,9 +15463,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 24.97,
-          "put_gex": -16.07,
-          "net_gex": 8.9
+          "call_gex": 24.99,
+          "put_gex": -16.08,
+          "net_gex": 8.91
         },
         {
           "strike": 49450.0,
@@ -15475,9 +15475,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 143.17,
-          "put_gex": -65.26,
-          "net_gex": 77.91
+          "call_gex": 143.29,
+          "put_gex": -65.31,
+          "net_gex": 77.98
         },
         {
           "strike": 49550.0,
@@ -15487,9 +15487,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 29.12,
-          "put_gex": -8.76,
-          "net_gex": 20.36
+          "call_gex": 29.15,
+          "put_gex": -8.77,
+          "net_gex": 20.38
         },
         {
           "strike": 49650.0,
@@ -15499,32 +15499,32 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 26.31,
-          "put_gex": -10.96,
-          "net_gex": 15.35
+          "call_gex": 26.33,
+          "put_gex": -10.97,
+          "net_gex": 15.36
         },
         {
           "strike": 49750.0,
-          "call_gex": 1.75,
+          "call_gex": 1.76,
           "put_gex": -0.66,
           "net_gex": 1.1
         },
         {
           "strike": 49800.0,
-          "call_gex": 31.55,
-          "put_gex": -26.29,
+          "call_gex": 31.58,
+          "put_gex": -26.31,
           "net_gex": 5.26
         },
         {
           "strike": 49850.0,
-          "call_gex": 1.09,
+          "call_gex": 1.1,
           "put_gex": -0.0,
-          "net_gex": 1.09
+          "net_gex": 1.1
         },
         {
           "strike": 49900.0,
-          "call_gex": 21.85,
-          "put_gex": -14.2,
+          "call_gex": 21.87,
+          "put_gex": -14.21,
           "net_gex": 7.65
         },
         {
@@ -15535,9 +15535,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 316.45,
-          "put_gex": -40.89,
-          "net_gex": 275.57
+          "call_gex": 316.71,
+          "put_gex": -40.92,
+          "net_gex": 275.79
         },
         {
           "strike": 50050.0,
@@ -15547,9 +15547,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 25.06,
+          "call_gex": 25.08,
           "put_gex": -5.19,
-          "net_gex": 19.88
+          "net_gex": 19.89
         },
         {
           "strike": 50150.0,
@@ -15559,9 +15559,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 43.49,
+          "call_gex": 43.52,
           "put_gex": -7.93,
-          "net_gex": 35.56
+          "net_gex": 35.59
         }
       ]
     },
@@ -15590,27 +15590,27 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 40.2,
-          "put_gex": -142.91,
-          "net_gex": -102.71,
-          "vex": 12.09,
-          "gex_plus": -90.63,
+          "call_gex": 40.21,
+          "put_gex": -142.74,
+          "net_gex": -102.53,
+          "vex": 12.06,
+          "gex_plus": -90.46,
           "w1_call": 1.22,
           "w1_put": -12.61,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 36.27,
-          "mth_put": -16.82,
+          "mth_call": 36.28,
+          "mth_put": -16.83,
           "fri_call": 2.71,
-          "fri_put": -113.48
+          "fri_put": -113.3
         },
         {
           "strike": 48450.0,
           "call_gex": 0.63,
-          "put_gex": -99.73,
-          "net_gex": -99.1,
-          "vex": 11.22,
-          "gex_plus": -87.89,
+          "put_gex": -99.61,
+          "net_gex": -98.98,
+          "vex": 11.2,
+          "gex_plus": -87.78,
           "w1_call": 0.42,
           "w1_put": -4.42,
           "w2_call": 0.0,
@@ -15618,31 +15618,31 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -0.89,
           "fri_call": 0.2,
-          "fri_put": -94.42
+          "fri_put": -94.3
         },
         {
           "strike": 48500.0,
-          "call_gex": 173.69,
-          "put_gex": -473.19,
-          "net_gex": -299.49,
+          "call_gex": 173.62,
+          "put_gex": -473.04,
+          "net_gex": -299.43,
           "vex": 32.5,
-          "gex_plus": -266.99,
-          "w1_call": 3.04,
-          "w1_put": -88.08,
+          "gex_plus": -266.93,
+          "w1_call": 3.05,
+          "w1_put": -88.11,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 56.14,
-          "mth_put": -129.6,
-          "fri_call": 114.51,
-          "fri_put": -255.5
+          "mth_call": 56.17,
+          "mth_put": -129.67,
+          "fri_call": 114.4,
+          "fri_put": -255.26
         },
         {
           "strike": 48550.0,
           "call_gex": 2.03,
-          "put_gex": -58.72,
-          "net_gex": -56.69,
+          "put_gex": -58.69,
+          "net_gex": -56.66,
           "vex": 5.94,
-          "gex_plus": -50.75,
+          "gex_plus": -50.72,
           "w1_call": 0.45,
           "w1_put": -4.04,
           "w2_call": 0.0,
@@ -15650,23 +15650,23 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.28,
           "fri_call": 1.58,
-          "fri_put": -53.4
+          "fri_put": -53.36
         },
         {
           "strike": 48600.0,
-          "call_gex": 55.85,
-          "put_gex": -169.16,
-          "net_gex": -113.31,
-          "vex": 11.45,
-          "gex_plus": -101.87,
+          "call_gex": 55.88,
+          "put_gex": -169.13,
+          "net_gex": -113.26,
+          "vex": 11.44,
+          "gex_plus": -101.82,
           "w1_call": 0.0,
-          "w1_put": -18.97,
+          "w1_put": -18.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 54.19,
-          "mth_put": -21.53,
+          "mth_call": 54.22,
+          "mth_put": -21.54,
           "fri_call": 1.66,
-          "fri_put": -128.66
+          "fri_put": -128.61
         },
         {
           "strike": 48650.0,
@@ -15676,37 +15676,37 @@ window.GEX_EMBEDDED_DATA = {
           "vex": 11.27,
           "gex_plus": -105.65,
           "w1_call": 0.24,
-          "w1_put": -10.0,
+          "w1_put": -10.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.01,
           "fri_call": 0.99,
-          "fri_put": -105.14
+          "fri_put": -105.13
         },
         {
           "strike": 48700.0,
-          "call_gex": 49.76,
-          "put_gex": -200.51,
-          "net_gex": -150.74,
+          "call_gex": 49.79,
+          "put_gex": -200.56,
+          "net_gex": -150.77,
           "vex": 13.94,
-          "gex_plus": -136.81,
-          "w1_call": 0.24,
-          "w1_put": -10.29,
+          "gex_plus": -136.83,
+          "w1_call": 0.25,
+          "w1_put": -10.3,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 43.02,
-          "mth_put": -21.13,
+          "mth_call": 43.05,
+          "mth_put": -21.14,
           "fri_call": 6.49,
-          "fri_put": -169.09
+          "fri_put": -169.12
         },
         {
           "strike": 48750.0,
           "call_gex": 2.63,
-          "put_gex": -82.43,
-          "net_gex": -79.8,
+          "put_gex": -82.47,
+          "net_gex": -79.84,
           "vex": 7.02,
-          "gex_plus": -72.78,
+          "gex_plus": -72.81,
           "w1_call": 1.01,
           "w1_put": -4.28,
           "w2_call": 0.0,
@@ -15714,471 +15714,471 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -3.66,
           "fri_call": 1.63,
-          "fri_put": -74.5
+          "fri_put": -74.53
         },
         {
           "strike": 48800.0,
-          "call_gex": 68.43,
-          "put_gex": -250.97,
-          "net_gex": -182.54,
-          "vex": 15.31,
-          "gex_plus": -167.24,
-          "w1_call": 3.61,
-          "w1_put": -11.87,
+          "call_gex": 68.47,
+          "put_gex": -251.14,
+          "net_gex": -182.67,
+          "vex": 15.32,
+          "gex_plus": -167.35,
+          "w1_call": 3.62,
+          "w1_put": -11.88,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.33,
-          "mth_put": -28.45,
-          "fri_call": 39.48,
-          "fri_put": -210.65
+          "mth_call": 25.35,
+          "mth_put": -28.47,
+          "fri_call": 39.51,
+          "fri_put": -210.79
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.2,
-          "put_gex": -64.22,
-          "net_gex": -56.02,
-          "vex": 4.46,
-          "gex_plus": -51.56,
+          "call_gex": 8.21,
+          "put_gex": -64.28,
+          "net_gex": -56.07,
+          "vex": 4.47,
+          "gex_plus": -51.61,
           "w1_call": 0.0,
           "w1_put": -7.67,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.77,
-          "fri_call": 8.2,
-          "fri_put": -54.79
+          "fri_call": 8.21,
+          "fri_put": -54.84
         },
         {
           "strike": 48900.0,
-          "call_gex": 61.79,
-          "put_gex": -230.21,
-          "net_gex": -168.42,
-          "vex": 12.74,
-          "gex_plus": -155.68,
-          "w1_call": 2.7,
-          "w1_put": -11.63,
+          "call_gex": 61.85,
+          "put_gex": -230.47,
+          "net_gex": -168.62,
+          "vex": 12.76,
+          "gex_plus": -155.86,
+          "w1_call": 2.71,
+          "w1_put": -11.64,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.51,
-          "mth_put": -8.36,
-          "fri_call": 38.58,
-          "fri_put": -210.22
+          "mth_call": 20.52,
+          "mth_put": -8.37,
+          "fri_call": 38.63,
+          "fri_put": -210.46
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.21,
-          "put_gex": -64.99,
-          "net_gex": -58.77,
-          "vex": 4.19,
-          "gex_plus": -54.58,
+          "call_gex": 6.22,
+          "put_gex": -65.07,
+          "net_gex": -58.85,
+          "vex": 4.2,
+          "gex_plus": -54.66,
           "w1_call": 0.55,
-          "w1_put": -6.36,
+          "w1_put": -6.37,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.41,
-          "fri_call": 5.66,
-          "fri_put": -57.22
+          "fri_call": 5.67,
+          "fri_put": -57.3
         },
         {
           "strike": 49000.0,
-          "call_gex": 267.66,
-          "put_gex": -606.03,
-          "net_gex": -338.38,
-          "vex": 22.84,
-          "gex_plus": -315.54,
-          "w1_call": 24.55,
-          "w1_put": -41.48,
+          "call_gex": 267.97,
+          "put_gex": -606.91,
+          "net_gex": -338.94,
+          "vex": 22.88,
+          "gex_plus": -316.07,
+          "w1_call": 24.58,
+          "w1_put": -41.54,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 121.97,
-          "mth_put": -63.12,
-          "fri_call": 121.14,
-          "fri_put": -501.43
+          "mth_call": 122.06,
+          "mth_put": -63.16,
+          "fri_call": 121.32,
+          "fri_put": -502.21
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.81,
-          "put_gex": -94.86,
-          "net_gex": -84.06,
-          "vex": 5.3,
-          "gex_plus": -78.76,
+          "call_gex": 10.82,
+          "put_gex": -95.03,
+          "net_gex": -84.2,
+          "vex": 5.31,
+          "gex_plus": -78.89,
           "w1_call": 1.15,
-          "w1_put": -6.04,
+          "w1_put": -6.05,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.61,
           "mth_put": -1.43,
-          "fri_call": 9.04,
-          "fri_put": -87.39
+          "fri_call": 9.06,
+          "fri_put": -87.54
         },
         {
           "strike": 49100.0,
-          "call_gex": 228.41,
-          "put_gex": -234.69,
-          "net_gex": -6.28,
-          "vex": 0.52,
-          "gex_plus": -5.76,
+          "call_gex": 228.7,
+          "put_gex": -235.1,
+          "net_gex": -6.4,
+          "vex": 0.53,
+          "gex_plus": -5.88,
           "w1_call": 4.69,
-          "w1_put": -9.67,
+          "w1_put": -9.68,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 124.49,
-          "mth_put": -26.22,
-          "fri_call": 99.23,
-          "fri_put": -198.8
+          "mth_call": 124.59,
+          "mth_put": -26.24,
+          "fri_call": 99.42,
+          "fri_put": -199.18
         },
         {
           "strike": 49150.0,
-          "call_gex": 39.48,
-          "put_gex": -82.58,
-          "net_gex": -43.1,
-          "vex": 2.37,
-          "gex_plus": -40.73,
+          "call_gex": 39.55,
+          "put_gex": -82.75,
+          "net_gex": -43.2,
+          "vex": 2.38,
+          "gex_plus": -40.82,
           "w1_call": 1.79,
-          "w1_put": -4.17,
+          "w1_put": -4.18,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.32,
+          "mth_call": 8.33,
           "mth_put": -0.21,
-          "fri_call": 29.37,
-          "fri_put": -78.2
+          "fri_call": 29.43,
+          "fri_put": -78.36
         },
         {
           "strike": 49200.0,
-          "call_gex": 194.95,
-          "put_gex": -293.16,
-          "net_gex": -98.21,
-          "vex": 5.03,
-          "gex_plus": -93.18,
-          "w1_call": 10.29,
-          "w1_put": -14.23,
+          "call_gex": 195.3,
+          "put_gex": -293.78,
+          "net_gex": -98.48,
+          "vex": 5.04,
+          "gex_plus": -93.43,
+          "w1_call": 10.31,
+          "w1_put": -14.25,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 48.63,
-          "mth_put": -11.95,
-          "fri_call": 136.03,
-          "fri_put": -266.98
+          "mth_call": 48.66,
+          "mth_put": -11.96,
+          "fri_call": 136.33,
+          "fri_put": -267.57
         },
         {
           "strike": 49250.0,
-          "call_gex": 43.31,
-          "put_gex": -127.38,
-          "net_gex": -84.07,
-          "vex": 3.91,
-          "gex_plus": -80.17,
-          "w1_call": 3.07,
-          "w1_put": -11.06,
+          "call_gex": 43.41,
+          "put_gex": -127.67,
+          "net_gex": -84.27,
+          "vex": 3.92,
+          "gex_plus": -80.35,
+          "w1_call": 3.08,
+          "w1_put": -11.08,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.27,
           "mth_put": -1.27,
-          "fri_call": 38.97,
-          "fri_put": -115.06
+          "fri_call": 39.06,
+          "fri_put": -115.33
         },
         {
           "strike": 49300.0,
-          "call_gex": 192.18,
-          "put_gex": -487.13,
-          "net_gex": -294.94,
-          "vex": 12.47,
-          "gex_plus": -282.47,
-          "w1_call": 15.26,
-          "w1_put": -27.4,
+          "call_gex": 192.62,
+          "put_gex": -488.26,
+          "net_gex": -295.64,
+          "vex": 12.5,
+          "gex_plus": -283.14,
+          "w1_call": 15.28,
+          "w1_put": -27.45,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.38,
-          "mth_put": -34.82,
-          "fri_call": 156.54,
-          "fri_put": -424.9
+          "mth_call": 20.4,
+          "mth_put": -34.85,
+          "fri_call": 156.93,
+          "fri_put": -425.95
         },
         {
           "strike": 49350.0,
-          "call_gex": 90.31,
-          "put_gex": -98.59,
-          "net_gex": -8.29,
+          "call_gex": 90.54,
+          "put_gex": -98.84,
+          "net_gex": -8.31,
           "vex": 0.32,
-          "gex_plus": -7.97,
+          "gex_plus": -7.99,
           "w1_call": 3.47,
-          "w1_put": -5.36,
+          "w1_put": -5.37,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.07,
           "mth_put": -1.28,
-          "fri_call": 85.77,
-          "fri_put": -91.95
+          "fri_call": 86.0,
+          "fri_put": -92.19
         },
         {
           "strike": 49400.0,
-          "call_gex": 295.2,
-          "put_gex": -623.37,
-          "net_gex": -328.16,
-          "vex": 11.22,
-          "gex_plus": -316.94,
-          "w1_call": 28.37,
-          "w1_put": -11.16,
+          "call_gex": 295.93,
+          "put_gex": -625.01,
+          "net_gex": -329.08,
+          "vex": 11.25,
+          "gex_plus": -317.83,
+          "w1_call": 28.42,
+          "w1_put": -11.18,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.69,
-          "mth_put": -15.89,
-          "fri_call": 242.15,
-          "fri_put": -596.32
+          "mth_call": 24.71,
+          "mth_put": -15.9,
+          "fri_call": 242.8,
+          "fri_put": -597.93
         },
         {
           "strike": 49450.0,
-          "call_gex": 76.77,
-          "put_gex": -69.85,
-          "net_gex": 6.93,
+          "call_gex": 76.97,
+          "put_gex": -70.04,
+          "net_gex": 6.94,
           "vex": -0.21,
-          "gex_plus": 6.72,
-          "w1_call": 10.62,
-          "w1_put": -2.25,
+          "gex_plus": 6.73,
+          "w1_call": 10.64,
+          "w1_put": -2.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.08,
           "mth_put": -1.73,
-          "fri_call": 65.07,
-          "fri_put": -65.87
+          "fri_call": 65.25,
+          "fri_put": -66.05
         },
         {
           "strike": 49500.0,
-          "call_gex": 554.55,
-          "put_gex": -651.78,
-          "net_gex": -97.23,
-          "vex": 2.64,
-          "gex_plus": -94.58,
-          "w1_call": 62.03,
-          "w1_put": -36.7,
+          "call_gex": 555.79,
+          "put_gex": -653.48,
+          "net_gex": -97.69,
+          "vex": 2.66,
+          "gex_plus": -95.03,
+          "w1_call": 62.15,
+          "w1_put": -36.77,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 142.1,
-          "mth_put": -64.77,
-          "fri_call": 350.42,
-          "fri_put": -550.31
+          "mth_call": 142.22,
+          "mth_put": -64.82,
+          "fri_call": 351.42,
+          "fri_put": -551.89
         },
         {
           "strike": 49550.0,
-          "call_gex": 94.94,
-          "put_gex": -34.54,
-          "net_gex": 60.39,
-          "vex": -1.31,
-          "gex_plus": 59.08,
-          "w1_call": 7.85,
+          "call_gex": 95.21,
+          "put_gex": -34.64,
+          "net_gex": 60.57,
+          "vex": -1.32,
+          "gex_plus": 59.25,
+          "w1_call": 7.87,
           "w1_put": -2.95,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.52,
-          "mth_put": -1.3,
-          "fri_call": 85.56,
-          "fri_put": -30.3
+          "mth_put": -1.31,
+          "fri_call": 85.82,
+          "fri_put": -30.38
         },
         {
           "strike": 49600.0,
-          "call_gex": 356.95,
-          "put_gex": -198.55,
-          "net_gex": 158.4,
-          "vex": -2.76,
-          "gex_plus": 155.63,
-          "w1_call": 20.75,
-          "w1_put": -6.26,
+          "call_gex": 357.93,
+          "put_gex": -199.12,
+          "net_gex": 158.81,
+          "vex": -2.77,
+          "gex_plus": 156.04,
+          "w1_call": 20.79,
+          "w1_put": -6.27,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 29.01,
+          "mth_call": 29.03,
           "mth_put": -8.73,
-          "fri_call": 307.19,
-          "fri_put": -183.57
+          "fri_call": 308.11,
+          "fri_put": -184.12
         },
         {
           "strike": 49650.0,
-          "call_gex": 98.12,
-          "put_gex": -34.57,
-          "net_gex": 63.55,
+          "call_gex": 98.41,
+          "put_gex": -34.67,
+          "net_gex": 63.74,
           "vex": -0.86,
-          "gex_plus": 62.69,
-          "w1_call": 5.3,
-          "w1_put": -3.31,
+          "gex_plus": 62.88,
+          "w1_call": 5.31,
+          "w1_put": -3.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.97,
           "mth_put": -0.0,
-          "fri_call": 90.85,
-          "fri_put": -31.26
+          "fri_call": 91.13,
+          "fri_put": -31.35
         },
         {
           "strike": 49700.0,
-          "call_gex": 404.99,
-          "put_gex": -97.8,
-          "net_gex": 307.19,
-          "vex": -2.87,
-          "gex_plus": 304.31,
-          "w1_call": 43.22,
-          "w1_put": -14.3,
+          "call_gex": 406.13,
+          "put_gex": -98.06,
+          "net_gex": 308.07,
+          "vex": -2.88,
+          "gex_plus": 305.18,
+          "w1_call": 43.31,
+          "w1_put": -14.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.3,
-          "mth_put": -10.96,
-          "fri_call": 335.46,
-          "fri_put": -72.54
+          "mth_call": 26.33,
+          "mth_put": -10.97,
+          "fri_call": 336.49,
+          "fri_put": -72.77
         },
         {
           "strike": 49750.0,
-          "call_gex": 191.24,
-          "put_gex": -33.14,
-          "net_gex": 158.1,
-          "vex": -0.84,
-          "gex_plus": 157.25,
-          "w1_call": 11.34,
-          "w1_put": -3.0,
+          "call_gex": 191.81,
+          "put_gex": -33.24,
+          "net_gex": 158.58,
+          "vex": -0.85,
+          "gex_plus": 157.73,
+          "w1_call": 11.36,
+          "w1_put": -3.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.76,
           "mth_put": -0.66,
-          "fri_call": 178.14,
-          "fri_put": -29.48
+          "fri_call": 178.69,
+          "fri_put": -29.57
         },
         {
           "strike": 49800.0,
-          "call_gex": 510.95,
-          "put_gex": -130.18,
-          "net_gex": 380.77,
+          "call_gex": 512.39,
+          "put_gex": -130.51,
+          "net_gex": 381.88,
           "vex": -0.46,
-          "gex_plus": 380.31,
-          "w1_call": 66.82,
-          "w1_put": -13.03,
+          "gex_plus": 381.42,
+          "w1_call": 66.95,
+          "w1_put": -13.06,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.66,
-          "mth_put": -26.38,
-          "fri_call": 412.48,
-          "fri_put": -90.77
+          "mth_call": 31.69,
+          "mth_put": -26.4,
+          "fri_call": 413.76,
+          "fri_put": -91.05
         },
         {
           "strike": 49850.0,
-          "call_gex": 169.99,
-          "put_gex": -23.59,
-          "net_gex": 146.41,
+          "call_gex": 170.5,
+          "put_gex": -23.65,
+          "net_gex": 146.85,
           "vex": 0.42,
-          "gex_plus": 146.82,
-          "w1_call": 16.38,
-          "w1_put": -6.69,
+          "gex_plus": 147.27,
+          "w1_call": 16.41,
+          "w1_put": -6.7,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.1,
           "mth_put": -0.0,
-          "fri_call": 152.51,
-          "fri_put": -16.9
+          "fri_call": 152.99,
+          "fri_put": -16.95
         },
         {
           "strike": 49900.0,
-          "call_gex": 349.8,
-          "put_gex": -55.86,
-          "net_gex": 293.95,
+          "call_gex": 350.82,
+          "put_gex": -55.98,
+          "net_gex": 294.84,
           "vex": 2.04,
-          "gex_plus": 295.98,
-          "w1_call": 16.37,
-          "w1_put": -13.7,
+          "gex_plus": 296.88,
+          "w1_call": 16.41,
+          "w1_put": -13.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.01,
-          "mth_put": -14.3,
-          "fri_call": 311.42,
-          "fri_put": -27.85
+          "mth_call": 22.02,
+          "mth_put": -14.32,
+          "fri_call": 312.39,
+          "fri_put": -27.94
         },
         {
           "strike": 49950.0,
-          "call_gex": 168.41,
-          "put_gex": -14.94,
-          "net_gex": 153.47,
-          "vex": 1.68,
-          "gex_plus": 155.16,
-          "w1_call": 3.0,
+          "call_gex": 168.92,
+          "put_gex": -14.98,
+          "net_gex": 153.94,
+          "vex": 1.69,
+          "gex_plus": 155.63,
+          "w1_call": 3.01,
           "w1_put": -3.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.32,
           "mth_put": -0.66,
-          "fri_call": 164.08,
-          "fri_put": -10.94
+          "fri_call": 164.59,
+          "fri_put": -10.97
         },
         {
           "strike": 50000.0,
-          "call_gex": 1361.52,
-          "put_gex": -79.66,
-          "net_gex": 1281.86,
-          "vex": 19.76,
-          "gex_plus": 1301.62,
-          "w1_call": 170.7,
-          "w1_put": -3.99,
+          "call_gex": 1364.76,
+          "put_gex": -79.81,
+          "net_gex": 1284.96,
+          "vex": 19.81,
+          "gex_plus": 1304.76,
+          "w1_call": 171.03,
+          "w1_put": -4.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 319.87,
-          "mth_put": -41.33,
-          "fri_call": 870.95,
-          "fri_put": -34.34
+          "mth_call": 320.14,
+          "mth_put": -41.36,
+          "fri_call": 873.6,
+          "fri_put": -34.44
         },
         {
           "strike": 50050.0,
-          "call_gex": 295.94,
-          "put_gex": -5.54,
-          "net_gex": 290.39,
-          "vex": 5.56,
-          "gex_plus": 295.95,
-          "w1_call": 6.3,
+          "call_gex": 296.81,
+          "put_gex": -5.56,
+          "net_gex": 291.25,
+          "vex": 5.57,
+          "gex_plus": 296.82,
+          "w1_call": 6.31,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 2.2,
           "mth_put": -0.22,
-          "fri_call": 287.44,
-          "fri_put": -4.99
+          "fri_call": 288.3,
+          "fri_put": -5.01
         },
         {
           "strike": 50100.0,
-          "call_gex": 367.8,
-          "put_gex": -30.34,
-          "net_gex": 337.46,
-          "vex": 7.86,
-          "gex_plus": 345.32,
-          "w1_call": 14.84,
+          "call_gex": 368.81,
+          "put_gex": -30.42,
+          "net_gex": 338.4,
+          "vex": 7.88,
+          "gex_plus": 346.28,
+          "w1_call": 14.87,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.43,
+          "mth_call": 25.45,
           "mth_put": -5.26,
-          "fri_call": 327.53,
-          "fri_put": -24.75
+          "fri_call": 328.5,
+          "fri_put": -24.82
         },
         {
           "strike": 50150.0,
-          "call_gex": 188.18,
-          "put_gex": -5.72,
-          "net_gex": 182.46,
-          "vex": 4.98,
-          "gex_plus": 187.44,
-          "w1_call": 11.15,
+          "call_gex": 188.71,
+          "put_gex": -5.73,
+          "net_gex": 182.97,
+          "vex": 4.99,
+          "gex_plus": 187.96,
+          "w1_call": 11.17,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.22,
           "mth_put": -0.0,
-          "fri_call": 176.81,
-          "fri_put": -5.72
+          "fri_call": 177.32,
+          "fri_put": -5.73
         },
         {
           "strike": 50200.0,
-          "call_gex": 626.51,
-          "put_gex": -14.94,
-          "net_gex": 611.57,
-          "vex": 19.21,
-          "gex_plus": 630.78,
-          "w1_call": 28.64,
+          "call_gex": 628.14,
+          "put_gex": -14.97,
+          "net_gex": 613.18,
+          "vex": 19.26,
+          "gex_plus": 632.43,
+          "w1_call": 28.69,
           "w1_put": -1.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.28,
-          "mth_put": -8.07,
-          "fri_call": 553.59,
-          "fri_put": -5.25
+          "mth_call": 44.31,
+          "mth_put": -8.08,
+          "fri_call": 555.14,
+          "fri_put": -5.26
         }
       ],
       "weekly_gex": [
@@ -16196,9 +16196,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 3.04,
-          "put_gex": -88.08,
-          "net_gex": -85.04
+          "call_gex": 3.05,
+          "put_gex": -88.11,
+          "net_gex": -85.07
         },
         {
           "strike": 48550.0,
@@ -16209,20 +16209,20 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -18.97,
-          "net_gex": -18.97
+          "put_gex": -18.98,
+          "net_gex": -18.98
         },
         {
           "strike": 48650.0,
           "call_gex": 0.24,
-          "put_gex": -10.0,
+          "put_gex": -10.01,
           "net_gex": -9.77
         },
         {
           "strike": 48700.0,
-          "call_gex": 0.24,
-          "put_gex": -10.29,
-          "net_gex": -10.04
+          "call_gex": 0.25,
+          "put_gex": -10.3,
+          "net_gex": -10.05
         },
         {
           "strike": 48750.0,
@@ -16232,8 +16232,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 3.61,
-          "put_gex": -11.87,
+          "call_gex": 3.62,
+          "put_gex": -11.88,
           "net_gex": -8.26
         },
         {
@@ -16244,397 +16244,397 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 2.7,
-          "put_gex": -11.63,
-          "net_gex": -8.93
+          "call_gex": 2.71,
+          "put_gex": -11.64,
+          "net_gex": -8.94
         },
         {
           "strike": 48950.0,
           "call_gex": 0.55,
-          "put_gex": -6.36,
+          "put_gex": -6.37,
           "net_gex": -5.81
         },
         {
           "strike": 49000.0,
-          "call_gex": 24.55,
-          "put_gex": -41.48,
-          "net_gex": -16.93
+          "call_gex": 24.58,
+          "put_gex": -41.54,
+          "net_gex": -16.95
         },
         {
           "strike": 49050.0,
           "call_gex": 1.15,
-          "put_gex": -6.04,
-          "net_gex": -4.89
+          "put_gex": -6.05,
+          "net_gex": -4.9
         },
         {
           "strike": 49100.0,
           "call_gex": 4.69,
-          "put_gex": -9.67,
-          "net_gex": -4.98
+          "put_gex": -9.68,
+          "net_gex": -4.99
         },
         {
           "strike": 49150.0,
           "call_gex": 1.79,
-          "put_gex": -4.17,
-          "net_gex": -2.38
+          "put_gex": -4.18,
+          "net_gex": -2.39
         },
         {
           "strike": 49200.0,
-          "call_gex": 10.29,
-          "put_gex": -14.23,
+          "call_gex": 10.31,
+          "put_gex": -14.25,
           "net_gex": -3.94
         },
         {
           "strike": 49250.0,
-          "call_gex": 3.07,
-          "put_gex": -11.06,
-          "net_gex": -7.99
+          "call_gex": 3.08,
+          "put_gex": -11.08,
+          "net_gex": -8.0
         },
         {
           "strike": 49300.0,
-          "call_gex": 15.26,
-          "put_gex": -27.4,
-          "net_gex": -12.14
+          "call_gex": 15.28,
+          "put_gex": -27.45,
+          "net_gex": -12.17
         },
         {
           "strike": 49350.0,
           "call_gex": 3.47,
-          "put_gex": -5.36,
+          "put_gex": -5.37,
           "net_gex": -1.89
         },
         {
           "strike": 49400.0,
-          "call_gex": 28.37,
-          "put_gex": -11.16,
-          "net_gex": 17.21
+          "call_gex": 28.42,
+          "put_gex": -11.18,
+          "net_gex": 17.24
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.62,
-          "put_gex": -2.25,
-          "net_gex": 8.37
+          "call_gex": 10.64,
+          "put_gex": -2.26,
+          "net_gex": 8.39
         },
         {
           "strike": 49500.0,
-          "call_gex": 62.03,
-          "put_gex": -36.7,
-          "net_gex": 25.33
+          "call_gex": 62.15,
+          "put_gex": -36.77,
+          "net_gex": 25.38
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.85,
+          "call_gex": 7.87,
           "put_gex": -2.95,
-          "net_gex": 4.91
+          "net_gex": 4.92
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.75,
-          "put_gex": -6.26,
-          "net_gex": 14.49
+          "call_gex": 20.79,
+          "put_gex": -6.27,
+          "net_gex": 14.52
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.3,
-          "put_gex": -3.31,
+          "call_gex": 5.31,
+          "put_gex": -3.32,
           "net_gex": 1.99
         },
         {
           "strike": 49700.0,
-          "call_gex": 43.22,
-          "put_gex": -14.3,
-          "net_gex": 28.93
+          "call_gex": 43.31,
+          "put_gex": -14.32,
+          "net_gex": 28.98
         },
         {
           "strike": 49750.0,
-          "call_gex": 11.34,
-          "put_gex": -3.0,
-          "net_gex": 8.34
+          "call_gex": 11.36,
+          "put_gex": -3.01,
+          "net_gex": 8.35
         },
         {
           "strike": 49800.0,
-          "call_gex": 66.82,
-          "put_gex": -13.03,
-          "net_gex": 53.79
+          "call_gex": 66.95,
+          "put_gex": -13.06,
+          "net_gex": 53.89
         },
         {
           "strike": 49850.0,
-          "call_gex": 16.38,
-          "put_gex": -6.69,
-          "net_gex": 9.7
+          "call_gex": 16.41,
+          "put_gex": -6.7,
+          "net_gex": 9.71
         },
         {
           "strike": 49900.0,
-          "call_gex": 16.37,
-          "put_gex": -13.7,
-          "net_gex": 2.67
+          "call_gex": 16.41,
+          "put_gex": -13.73,
+          "net_gex": 2.68
         },
         {
           "strike": 49950.0,
-          "call_gex": 3.0,
+          "call_gex": 3.01,
           "put_gex": -3.34,
           "net_gex": -0.33
         },
         {
           "strike": 50000.0,
-          "call_gex": 170.7,
-          "put_gex": -3.99,
-          "net_gex": 166.71
+          "call_gex": 171.03,
+          "put_gex": -4.0,
+          "net_gex": 167.03
         },
         {
           "strike": 50050.0,
-          "call_gex": 6.3,
+          "call_gex": 6.31,
           "put_gex": -0.33,
-          "net_gex": 5.97
+          "net_gex": 5.98
         },
         {
           "strike": 50100.0,
-          "call_gex": 14.84,
+          "call_gex": 14.87,
           "put_gex": -0.33,
-          "net_gex": 14.51
+          "net_gex": 14.54
         },
         {
           "strike": 50150.0,
-          "call_gex": 11.15,
+          "call_gex": 11.17,
           "put_gex": -0.0,
-          "net_gex": 11.15
+          "net_gex": 11.17
         },
         {
           "strike": 50200.0,
-          "call_gex": 28.64,
+          "call_gex": 28.69,
           "put_gex": -1.63,
-          "net_gex": 27.01
+          "net_gex": 27.06
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
           "call_gex": 2.71,
-          "put_gex": -113.48,
-          "net_gex": -110.77
+          "put_gex": -113.3,
+          "net_gex": -110.59
         },
         {
           "strike": 48450.0,
           "call_gex": 0.2,
-          "put_gex": -94.42,
-          "net_gex": -94.21
+          "put_gex": -94.3,
+          "net_gex": -94.09
         },
         {
           "strike": 48500.0,
-          "call_gex": 114.51,
-          "put_gex": -255.5,
-          "net_gex": -140.99
+          "call_gex": 114.4,
+          "put_gex": -255.26,
+          "net_gex": -140.85
         },
         {
           "strike": 48550.0,
           "call_gex": 1.58,
-          "put_gex": -53.4,
-          "net_gex": -51.82
+          "put_gex": -53.36,
+          "net_gex": -51.78
         },
         {
           "strike": 48600.0,
           "call_gex": 1.66,
-          "put_gex": -128.66,
-          "net_gex": -127.0
+          "put_gex": -128.61,
+          "net_gex": -126.95
         },
         {
           "strike": 48650.0,
           "call_gex": 0.99,
-          "put_gex": -105.14,
-          "net_gex": -104.14
+          "put_gex": -105.13,
+          "net_gex": -104.13
         },
         {
           "strike": 48700.0,
           "call_gex": 6.49,
-          "put_gex": -169.09,
-          "net_gex": -162.59
+          "put_gex": -169.12,
+          "net_gex": -162.62
         },
         {
           "strike": 48750.0,
           "call_gex": 1.63,
-          "put_gex": -74.5,
-          "net_gex": -72.87
+          "put_gex": -74.53,
+          "net_gex": -72.9
         },
         {
           "strike": 48800.0,
-          "call_gex": 39.48,
-          "put_gex": -210.65,
-          "net_gex": -171.17
+          "call_gex": 39.51,
+          "put_gex": -210.79,
+          "net_gex": -171.29
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.2,
-          "put_gex": -54.79,
-          "net_gex": -46.58
+          "call_gex": 8.21,
+          "put_gex": -54.84,
+          "net_gex": -46.63
         },
         {
           "strike": 48900.0,
-          "call_gex": 38.58,
-          "put_gex": -210.22,
-          "net_gex": -171.64
+          "call_gex": 38.63,
+          "put_gex": -210.46,
+          "net_gex": -171.84
         },
         {
           "strike": 48950.0,
-          "call_gex": 5.66,
-          "put_gex": -57.22,
-          "net_gex": -51.56
+          "call_gex": 5.67,
+          "put_gex": -57.3,
+          "net_gex": -51.63
         },
         {
           "strike": 49000.0,
-          "call_gex": 121.14,
-          "put_gex": -501.43,
-          "net_gex": -380.3
+          "call_gex": 121.32,
+          "put_gex": -502.21,
+          "net_gex": -380.89
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.04,
-          "put_gex": -87.39,
-          "net_gex": -78.35
+          "call_gex": 9.06,
+          "put_gex": -87.54,
+          "net_gex": -78.48
         },
         {
           "strike": 49100.0,
-          "call_gex": 99.23,
-          "put_gex": -198.8,
-          "net_gex": -99.57
+          "call_gex": 99.42,
+          "put_gex": -199.18,
+          "net_gex": -99.76
         },
         {
           "strike": 49150.0,
-          "call_gex": 29.37,
-          "put_gex": -78.2,
-          "net_gex": -48.83
+          "call_gex": 29.43,
+          "put_gex": -78.36,
+          "net_gex": -48.93
         },
         {
           "strike": 49200.0,
-          "call_gex": 136.03,
-          "put_gex": -266.98,
-          "net_gex": -130.95
+          "call_gex": 136.33,
+          "put_gex": -267.57,
+          "net_gex": -131.24
         },
         {
           "strike": 49250.0,
-          "call_gex": 38.97,
-          "put_gex": -115.06,
-          "net_gex": -76.09
+          "call_gex": 39.06,
+          "put_gex": -115.33,
+          "net_gex": -76.27
         },
         {
           "strike": 49300.0,
-          "call_gex": 156.54,
-          "put_gex": -424.9,
-          "net_gex": -268.36
+          "call_gex": 156.93,
+          "put_gex": -425.95,
+          "net_gex": -269.02
         },
         {
           "strike": 49350.0,
-          "call_gex": 85.77,
-          "put_gex": -91.95,
-          "net_gex": -6.18
+          "call_gex": 86.0,
+          "put_gex": -92.19,
+          "net_gex": -6.2
         },
         {
           "strike": 49400.0,
-          "call_gex": 242.15,
-          "put_gex": -596.32,
-          "net_gex": -354.18
+          "call_gex": 242.8,
+          "put_gex": -597.93,
+          "net_gex": -355.13
         },
         {
           "strike": 49450.0,
-          "call_gex": 65.07,
-          "put_gex": -65.87,
+          "call_gex": 65.25,
+          "put_gex": -66.05,
           "net_gex": -0.8
         },
         {
           "strike": 49500.0,
-          "call_gex": 350.42,
-          "put_gex": -550.31,
-          "net_gex": -199.89
+          "call_gex": 351.42,
+          "put_gex": -551.89,
+          "net_gex": -200.47
         },
         {
           "strike": 49550.0,
-          "call_gex": 85.56,
-          "put_gex": -30.3,
-          "net_gex": 55.27
+          "call_gex": 85.82,
+          "put_gex": -30.38,
+          "net_gex": 55.43
         },
         {
           "strike": 49600.0,
-          "call_gex": 307.19,
-          "put_gex": -183.57,
-          "net_gex": 123.62
+          "call_gex": 308.11,
+          "put_gex": -184.12,
+          "net_gex": 123.99
         },
         {
           "strike": 49650.0,
-          "call_gex": 90.85,
-          "put_gex": -31.26,
-          "net_gex": 59.6
+          "call_gex": 91.13,
+          "put_gex": -31.35,
+          "net_gex": 59.78
         },
         {
           "strike": 49700.0,
-          "call_gex": 335.46,
-          "put_gex": -72.54,
-          "net_gex": 262.92
+          "call_gex": 336.49,
+          "put_gex": -72.77,
+          "net_gex": 263.73
         },
         {
           "strike": 49750.0,
-          "call_gex": 178.14,
-          "put_gex": -29.48,
-          "net_gex": 148.66
+          "call_gex": 178.69,
+          "put_gex": -29.57,
+          "net_gex": 149.12
         },
         {
           "strike": 49800.0,
-          "call_gex": 412.48,
-          "put_gex": -90.77,
-          "net_gex": 321.71
+          "call_gex": 413.76,
+          "put_gex": -91.05,
+          "net_gex": 322.71
         },
         {
           "strike": 49850.0,
-          "call_gex": 152.51,
-          "put_gex": -16.9,
-          "net_gex": 135.61
+          "call_gex": 152.99,
+          "put_gex": -16.95,
+          "net_gex": 136.03
         },
         {
           "strike": 49900.0,
-          "call_gex": 311.42,
-          "put_gex": -27.85,
-          "net_gex": 283.57
+          "call_gex": 312.39,
+          "put_gex": -27.94,
+          "net_gex": 284.45
         },
         {
           "strike": 49950.0,
-          "call_gex": 164.08,
-          "put_gex": -10.94,
-          "net_gex": 153.15
+          "call_gex": 164.59,
+          "put_gex": -10.97,
+          "net_gex": 153.62
         },
         {
           "strike": 50000.0,
-          "call_gex": 870.95,
-          "put_gex": -34.34,
-          "net_gex": 836.61
+          "call_gex": 873.6,
+          "put_gex": -34.44,
+          "net_gex": 839.16
         },
         {
           "strike": 50050.0,
-          "call_gex": 287.44,
-          "put_gex": -4.99,
-          "net_gex": 282.45
+          "call_gex": 288.3,
+          "put_gex": -5.01,
+          "net_gex": 283.3
         },
         {
           "strike": 50100.0,
-          "call_gex": 327.53,
-          "put_gex": -24.75,
-          "net_gex": 302.78
+          "call_gex": 328.5,
+          "put_gex": -24.82,
+          "net_gex": 303.67
         },
         {
           "strike": 50150.0,
-          "call_gex": 176.81,
-          "put_gex": -5.72,
-          "net_gex": 171.09
+          "call_gex": 177.32,
+          "put_gex": -5.73,
+          "net_gex": 171.59
         },
         {
           "strike": 50200.0,
-          "call_gex": 553.59,
-          "put_gex": -5.25,
-          "net_gex": 548.34
+          "call_gex": 555.14,
+          "put_gex": -5.26,
+          "net_gex": 549.88
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 36.27,
-          "put_gex": -16.82,
-          "net_gex": 19.45
+          "call_gex": 36.28,
+          "put_gex": -16.83,
+          "net_gex": 19.46
         },
         {
           "strike": 48450.0,
@@ -16644,9 +16644,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 56.14,
-          "put_gex": -129.6,
-          "net_gex": -73.46
+          "call_gex": 56.17,
+          "put_gex": -129.67,
+          "net_gex": -73.5
         },
         {
           "strike": 48550.0,
@@ -16656,9 +16656,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 54.19,
-          "put_gex": -21.53,
-          "net_gex": 32.66
+          "call_gex": 54.22,
+          "put_gex": -21.54,
+          "net_gex": 32.68
         },
         {
           "strike": 48650.0,
@@ -16668,9 +16668,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 43.02,
-          "put_gex": -21.13,
-          "net_gex": 21.89
+          "call_gex": 43.05,
+          "put_gex": -21.14,
+          "net_gex": 21.91
         },
         {
           "strike": 48750.0,
@@ -16680,8 +16680,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 25.33,
-          "put_gex": -28.45,
+          "call_gex": 25.35,
+          "put_gex": -28.47,
           "net_gex": -3.12
         },
         {
@@ -16692,9 +16692,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 20.51,
-          "put_gex": -8.36,
-          "net_gex": 12.14
+          "call_gex": 20.52,
+          "put_gex": -8.37,
+          "net_gex": 12.15
         },
         {
           "strike": 48950.0,
@@ -16704,9 +16704,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 121.97,
-          "put_gex": -63.12,
-          "net_gex": 58.85
+          "call_gex": 122.06,
+          "put_gex": -63.16,
+          "net_gex": 58.9
         },
         {
           "strike": 49050.0,
@@ -16716,21 +16716,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 124.49,
-          "put_gex": -26.22,
-          "net_gex": 98.27
+          "call_gex": 124.59,
+          "put_gex": -26.24,
+          "net_gex": 98.35
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.32,
+          "call_gex": 8.33,
           "put_gex": -0.21,
-          "net_gex": 8.11
+          "net_gex": 8.12
         },
         {
           "strike": 49200.0,
-          "call_gex": 48.63,
-          "put_gex": -11.95,
-          "net_gex": 36.68
+          "call_gex": 48.66,
+          "put_gex": -11.96,
+          "net_gex": 36.71
         },
         {
           "strike": 49250.0,
@@ -16740,9 +16740,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.38,
-          "put_gex": -34.82,
-          "net_gex": -14.44
+          "call_gex": 20.4,
+          "put_gex": -34.85,
+          "net_gex": -14.45
         },
         {
           "strike": 49350.0,
@@ -16752,9 +16752,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 24.69,
-          "put_gex": -15.89,
-          "net_gex": 8.8
+          "call_gex": 24.71,
+          "put_gex": -15.9,
+          "net_gex": 8.81
         },
         {
           "strike": 49450.0,
@@ -16764,21 +16764,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 142.1,
-          "put_gex": -64.77,
-          "net_gex": 77.33
+          "call_gex": 142.22,
+          "put_gex": -64.82,
+          "net_gex": 77.4
         },
         {
           "strike": 49550.0,
           "call_gex": 1.52,
-          "put_gex": -1.3,
+          "put_gex": -1.31,
           "net_gex": 0.22
         },
         {
           "strike": 49600.0,
-          "call_gex": 29.01,
+          "call_gex": 29.03,
           "put_gex": -8.73,
-          "net_gex": 20.29
+          "net_gex": 20.3
         },
         {
           "strike": 49650.0,
@@ -16788,9 +16788,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 26.3,
-          "put_gex": -10.96,
-          "net_gex": 15.34
+          "call_gex": 26.33,
+          "put_gex": -10.97,
+          "net_gex": 15.36
         },
         {
           "strike": 49750.0,
@@ -16800,8 +16800,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49800.0,
-          "call_gex": 31.66,
-          "put_gex": -26.38,
+          "call_gex": 31.69,
+          "put_gex": -26.4,
           "net_gex": 5.28
         },
         {
@@ -16812,9 +16812,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 22.01,
-          "put_gex": -14.3,
-          "net_gex": 7.7
+          "call_gex": 22.02,
+          "put_gex": -14.32,
+          "net_gex": 7.71
         },
         {
           "strike": 49950.0,
@@ -16824,9 +16824,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 319.87,
-          "put_gex": -41.33,
-          "net_gex": 278.54
+          "call_gex": 320.14,
+          "put_gex": -41.36,
+          "net_gex": 278.77
         },
         {
           "strike": 50050.0,
@@ -16836,9 +16836,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 25.43,
+          "call_gex": 25.45,
           "put_gex": -5.26,
-          "net_gex": 20.17
+          "net_gex": 20.18
         },
         {
           "strike": 50150.0,
@@ -16848,9 +16848,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 44.28,
-          "put_gex": -8.07,
-          "net_gex": 36.21
+          "call_gex": 44.31,
+          "put_gex": -8.08,
+          "net_gex": 36.24
         }
       ]
     },
@@ -16879,27 +16879,27 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 38.33,
-          "put_gex": -125.73,
-          "net_gex": -87.4,
-          "vex": 11.24,
-          "gex_plus": -76.16,
+          "call_gex": 38.34,
+          "put_gex": -125.49,
+          "net_gex": -87.15,
+          "vex": 11.21,
+          "gex_plus": -75.94,
           "w1_call": 1.11,
           "w1_put": -11.51,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 34.87,
-          "mth_put": -16.17,
+          "mth_call": 34.89,
+          "mth_put": -16.18,
           "fri_call": 2.34,
-          "fri_put": -98.05
+          "fri_put": -97.8
         },
         {
           "strike": 48450.0,
           "call_gex": 0.56,
-          "put_gex": -86.89,
-          "net_gex": -86.33,
-          "vex": 10.71,
-          "gex_plus": -75.61,
+          "put_gex": -86.71,
+          "net_gex": -86.15,
+          "vex": 10.69,
+          "gex_plus": -75.46,
           "w1_call": 0.39,
           "w1_put": -4.05,
           "w2_call": 0.0,
@@ -16907,31 +16907,31 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -0.86,
           "fri_call": 0.18,
-          "fri_put": -81.99
+          "fri_put": -81.81
         },
         {
           "strike": 48500.0,
-          "call_gex": 156.86,
-          "put_gex": -428.84,
-          "net_gex": -271.98,
-          "vex": 32.48,
-          "gex_plus": -239.5,
+          "call_gex": 156.7,
+          "put_gex": -428.5,
+          "net_gex": -271.79,
+          "vex": 32.46,
+          "gex_plus": -239.33,
           "w1_call": 2.8,
           "w1_put": -80.9,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 54.13,
-          "mth_put": -124.96,
-          "fri_call": 99.94,
-          "fri_put": -222.98
+          "mth_call": 54.15,
+          "mth_put": -125.02,
+          "fri_call": 99.75,
+          "fri_put": -222.57
         },
         {
           "strike": 48550.0,
           "call_gex": 1.8,
-          "put_gex": -51.79,
-          "net_gex": -49.99,
-          "vex": 5.78,
-          "gex_plus": -44.21,
+          "put_gex": -51.73,
+          "net_gex": -49.92,
+          "vex": 5.77,
+          "gex_plus": -44.15,
           "w1_call": 0.41,
           "w1_put": -3.72,
           "w2_call": 0.0,
@@ -16939,31 +16939,31 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.24,
           "fri_call": 1.39,
-          "fri_put": -46.83
+          "fri_put": -46.76
         },
         {
           "strike": 48600.0,
-          "call_gex": 53.85,
-          "put_gex": -151.75,
-          "net_gex": -97.9,
-          "vex": 10.96,
-          "gex_plus": -86.94,
+          "call_gex": 53.88,
+          "put_gex": -151.64,
+          "net_gex": -97.76,
+          "vex": 10.95,
+          "gex_plus": -86.81,
           "w1_call": 0.0,
-          "w1_put": -17.53,
+          "w1_put": -17.54,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 52.39,
-          "mth_put": -20.81,
+          "mth_call": 52.41,
+          "mth_put": -20.82,
           "fri_call": 1.46,
-          "fri_put": -113.41
+          "fri_put": -113.27
         },
         {
           "strike": 48650.0,
           "call_gex": 1.1,
-          "put_gex": -105.32,
-          "net_gex": -104.22,
-          "vex": 11.18,
-          "gex_plus": -93.04,
+          "put_gex": -105.25,
+          "net_gex": -104.15,
+          "vex": 11.17,
+          "gex_plus": -92.97,
           "w1_call": 0.22,
           "w1_put": -9.28,
           "w2_call": 0.0,
@@ -16971,63 +16971,63 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -2.91,
           "fri_call": 0.88,
-          "fri_put": -93.13
+          "fri_put": -93.06
         },
         {
           "strike": 48700.0,
-          "call_gex": 47.72,
-          "put_gex": -180.59,
-          "net_gex": -132.87,
-          "vex": 13.74,
-          "gex_plus": -119.13,
+          "call_gex": 47.74,
+          "put_gex": -180.52,
+          "net_gex": -132.78,
+          "vex": 13.73,
+          "gex_plus": -119.05,
           "w1_call": 0.23,
           "w1_put": -9.57,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 41.71,
-          "mth_put": -20.48,
+          "mth_call": 41.73,
+          "mth_put": -20.5,
           "fri_call": 5.78,
-          "fri_put": -150.53
+          "fri_put": -150.45
         },
         {
           "strike": 48750.0,
           "call_gex": 2.39,
-          "put_gex": -74.2,
-          "net_gex": -71.8,
+          "put_gex": -74.18,
+          "net_gex": -71.79,
           "vex": 7.1,
-          "gex_plus": -64.7,
+          "gex_plus": -64.69,
           "w1_call": 0.94,
           "w1_put": -3.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
-          "mth_put": -3.55,
+          "mth_put": -3.56,
           "fri_call": 1.45,
-          "fri_put": -66.65
+          "fri_put": -66.64
         },
         {
           "strike": 48800.0,
-          "call_gex": 63.5,
-          "put_gex": -228.17,
-          "net_gex": -164.67,
-          "vex": 15.6,
-          "gex_plus": -149.06,
+          "call_gex": 63.52,
+          "put_gex": -228.2,
+          "net_gex": -164.68,
+          "vex": 15.61,
+          "gex_plus": -149.07,
           "w1_call": 3.38,
-          "w1_put": -11.11,
+          "w1_put": -11.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.63,
-          "mth_put": -27.66,
+          "mth_call": 24.64,
+          "mth_put": -27.67,
           "fri_call": 35.5,
           "fri_put": -189.41
         },
         {
           "strike": 48850.0,
           "call_gex": 7.41,
-          "put_gex": -58.43,
-          "net_gex": -51.02,
+          "put_gex": -58.45,
+          "net_gex": -51.03,
           "vex": 4.62,
-          "gex_plus": -46.4,
+          "gex_plus": -46.41,
           "w1_call": 0.0,
           "w1_put": -7.2,
           "w2_call": 0.0,
@@ -17035,439 +17035,439 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.73,
           "fri_call": 7.41,
-          "fri_put": -49.51
+          "fri_put": -49.52
         },
         {
           "strike": 48900.0,
-          "call_gex": 57.57,
-          "put_gex": -210.01,
-          "net_gex": -152.44,
-          "vex": 13.2,
-          "gex_plus": -139.24,
+          "call_gex": 57.6,
+          "put_gex": -210.13,
+          "net_gex": -152.52,
+          "vex": 13.21,
+          "gex_plus": -139.32,
           "w1_call": 2.55,
-          "w1_put": -10.95,
+          "w1_put": -10.96,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 19.99,
+          "mth_call": 20.0,
           "mth_put": -8.15,
-          "fri_call": 35.04,
-          "fri_put": -190.91
+          "fri_call": 35.06,
+          "fri_put": -191.01
         },
         {
           "strike": 48950.0,
           "call_gex": 5.69,
-          "put_gex": -59.6,
-          "net_gex": -53.91,
-          "vex": 4.43,
-          "gex_plus": -49.48,
+          "put_gex": -59.65,
+          "net_gex": -53.96,
+          "vex": 4.44,
+          "gex_plus": -49.52,
           "w1_call": 0.52,
           "w1_put": -6.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.37,
-          "fri_call": 5.16,
-          "fri_put": -52.22
+          "fri_call": 5.17,
+          "fri_put": -52.26
         },
         {
           "strike": 49000.0,
-          "call_gex": 253.56,
-          "put_gex": -560.88,
-          "net_gex": -307.32,
-          "vex": 24.1,
-          "gex_plus": -283.22,
-          "w1_call": 23.26,
-          "w1_put": -39.31,
+          "call_gex": 253.78,
+          "put_gex": -561.43,
+          "net_gex": -307.65,
+          "vex": 24.13,
+          "gex_plus": -283.52,
+          "w1_call": 23.29,
+          "w1_put": -39.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 119.2,
-          "mth_put": -61.68,
-          "fri_call": 111.1,
-          "fri_put": -459.89
+          "mth_call": 119.28,
+          "mth_put": -61.72,
+          "fri_call": 111.21,
+          "fri_put": -460.35
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.03,
-          "put_gex": -87.69,
-          "net_gex": -77.66,
-          "vex": 5.74,
-          "gex_plus": -71.92,
-          "w1_call": 1.09,
-          "w1_put": -5.74,
+          "call_gex": 10.04,
+          "put_gex": -87.8,
+          "net_gex": -77.76,
+          "vex": 5.75,
+          "gex_plus": -72.01,
+          "w1_call": 1.1,
+          "w1_put": -5.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.6,
           "mth_put": -1.4,
-          "fri_call": 8.33,
-          "fri_put": -80.55
+          "fri_call": 8.34,
+          "fri_put": -80.64
         },
         {
           "strike": 49100.0,
-          "call_gex": 218.37,
-          "put_gex": -219.05,
-          "net_gex": -0.68,
-          "vex": 0.19,
-          "gex_plus": -0.48,
-          "w1_call": 4.47,
-          "w1_put": -9.22,
+          "call_gex": 218.59,
+          "put_gex": -219.34,
+          "net_gex": -0.75,
+          "vex": 0.2,
+          "gex_plus": -0.55,
+          "w1_call": 4.48,
+          "w1_put": -9.23,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 121.99,
-          "mth_put": -25.69,
-          "fri_call": 91.91,
-          "fri_put": -184.14
+          "mth_call": 122.08,
+          "mth_put": -25.71,
+          "fri_call": 92.04,
+          "fri_put": -184.4
         },
         {
           "strike": 49150.0,
-          "call_gex": 37.22,
-          "put_gex": -76.99,
-          "net_gex": -39.77,
-          "vex": 2.62,
-          "gex_plus": -37.15,
+          "call_gex": 37.27,
+          "put_gex": -77.11,
+          "net_gex": -39.84,
+          "vex": 2.63,
+          "gex_plus": -37.21,
           "w1_call": 1.71,
-          "w1_put": -3.99,
+          "w1_put": -4.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 8.17,
           "mth_put": -0.2,
-          "fri_call": 27.34,
-          "fri_put": -72.79
+          "fri_call": 27.38,
+          "fri_put": -72.91
         },
         {
           "strike": 49200.0,
-          "call_gex": 184.9,
-          "put_gex": -275.13,
-          "net_gex": -90.23,
-          "vex": 5.61,
-          "gex_plus": -84.62,
-          "w1_call": 9.88,
-          "w1_put": -13.65,
+          "call_gex": 185.18,
+          "put_gex": -275.61,
+          "net_gex": -90.43,
+          "vex": 5.62,
+          "gex_plus": -84.81,
+          "w1_call": 9.89,
+          "w1_put": -13.67,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 47.78,
-          "mth_put": -11.74,
-          "fri_call": 127.25,
-          "fri_put": -249.74
+          "mth_call": 47.81,
+          "mth_put": -11.75,
+          "fri_call": 127.47,
+          "fri_put": -250.19
         },
         {
           "strike": 49250.0,
-          "call_gex": 40.84,
-          "put_gex": -120.05,
-          "net_gex": -79.21,
-          "vex": 4.55,
-          "gex_plus": -74.66,
+          "call_gex": 40.91,
+          "put_gex": -120.28,
+          "net_gex": -79.36,
+          "vex": 4.56,
+          "gex_plus": -74.81,
           "w1_call": 2.96,
-          "w1_put": -10.64,
+          "w1_put": -10.66,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.25,
           "mth_put": -1.25,
-          "fri_call": 36.63,
-          "fri_put": -108.16
+          "fri_call": 36.71,
+          "fri_put": -108.37
         },
         {
           "strike": 49300.0,
-          "call_gex": 182.69,
-          "put_gex": -462.15,
-          "net_gex": -279.46,
-          "vex": 14.87,
-          "gex_plus": -264.59,
-          "w1_call": 14.73,
-          "w1_put": -26.45,
+          "call_gex": 183.05,
+          "put_gex": -463.07,
+          "net_gex": -280.03,
+          "vex": 14.9,
+          "gex_plus": -265.13,
+          "w1_call": 14.75,
+          "w1_put": -26.49,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.08,
-          "mth_put": -34.31,
-          "fri_call": 147.88,
-          "fri_put": -401.39
+          "mth_call": 20.1,
+          "mth_put": -34.33,
+          "fri_call": 148.2,
+          "fri_put": -402.25
         },
         {
           "strike": 49350.0,
-          "call_gex": 85.84,
-          "put_gex": -93.75,
-          "net_gex": -7.91,
+          "call_gex": 86.03,
+          "put_gex": -93.96,
+          "net_gex": -7.93,
           "vex": 0.39,
-          "gex_plus": -7.52,
+          "gex_plus": -7.54,
           "w1_call": 3.36,
-          "w1_put": -5.19,
+          "w1_put": -5.2,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.05,
-          "mth_put": -1.26,
-          "fri_call": 81.43,
-          "fri_put": -87.3
+          "mth_put": -1.27,
+          "fri_call": 81.61,
+          "fri_put": -87.49
         },
         {
           "strike": 49400.0,
-          "call_gex": 282.95,
-          "put_gex": -595.42,
-          "net_gex": -312.47,
-          "vex": 14.09,
-          "gex_plus": -298.38,
-          "w1_call": 27.55,
-          "w1_put": -10.84,
+          "call_gex": 283.57,
+          "put_gex": -596.82,
+          "net_gex": -313.25,
+          "vex": 14.13,
+          "gex_plus": -299.12,
+          "w1_call": 27.6,
+          "w1_put": -10.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.39,
-          "mth_put": -15.69,
-          "fri_call": 231.01,
-          "fri_put": -568.89
+          "mth_call": 24.41,
+          "mth_put": -15.71,
+          "fri_call": 231.56,
+          "fri_put": -570.26
         },
         {
           "strike": 49450.0,
-          "call_gex": 73.8,
-          "put_gex": -67.05,
-          "net_gex": 6.75,
+          "call_gex": 73.97,
+          "put_gex": -67.21,
+          "net_gex": 6.76,
           "vex": -0.27,
-          "gex_plus": 6.47,
-          "w1_call": 10.35,
+          "gex_plus": 6.49,
+          "w1_call": 10.37,
           "w1_put": -2.2,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.07,
           "mth_put": -1.71,
-          "fri_call": 62.38,
-          "fri_put": -63.15
+          "fri_call": 62.54,
+          "fri_put": -63.31
         },
         {
           "strike": 49500.0,
-          "call_gex": 538.94,
-          "put_gex": -630.17,
-          "net_gex": -91.23,
-          "vex": 3.48,
-          "gex_plus": -87.74,
-          "w1_call": 60.62,
-          "w1_put": -35.86,
+          "call_gex": 540.06,
+          "put_gex": -631.69,
+          "net_gex": -91.63,
+          "vex": 3.5,
+          "gex_plus": -88.13,
+          "w1_call": 60.72,
+          "w1_put": -35.93,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 140.74,
-          "mth_put": -64.15,
-          "fri_call": 337.59,
-          "fri_put": -530.16
+          "mth_call": 140.85,
+          "mth_put": -64.2,
+          "fri_call": 338.48,
+          "fri_put": -531.56
         },
         {
           "strike": 49550.0,
-          "call_gex": 92.04,
-          "put_gex": -33.51,
-          "net_gex": 58.53,
-          "vex": -1.91,
-          "gex_plus": 56.62,
-          "w1_call": 7.7,
+          "call_gex": 92.28,
+          "put_gex": -33.6,
+          "net_gex": 58.69,
+          "vex": -1.92,
+          "gex_plus": 56.77,
+          "w1_call": 7.71,
           "w1_put": -2.89,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.51,
           "mth_put": -1.29,
-          "fri_call": 82.84,
-          "fri_put": -29.33
+          "fri_call": 83.06,
+          "fri_put": -29.41
         },
         {
           "strike": 49600.0,
-          "call_gex": 348.06,
-          "put_gex": -193.4,
-          "net_gex": 154.66,
-          "vex": -4.39,
-          "gex_plus": 150.27,
-          "w1_call": 20.4,
-          "w1_put": -6.15,
+          "call_gex": 348.96,
+          "put_gex": -193.93,
+          "net_gex": 155.04,
+          "vex": -4.4,
+          "gex_plus": 150.64,
+          "w1_call": 20.44,
+          "w1_put": -6.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 28.81,
-          "mth_put": -8.66,
-          "fri_call": 298.85,
-          "fri_put": -178.59
+          "mth_call": 28.83,
+          "mth_put": -8.67,
+          "fri_call": 299.69,
+          "fri_put": -179.09
         },
         {
           "strike": 49650.0,
-          "call_gex": 96.0,
-          "put_gex": -33.82,
-          "net_gex": 62.18,
+          "call_gex": 96.27,
+          "put_gex": -33.92,
+          "net_gex": 62.35,
           "vex": -1.52,
-          "gex_plus": 60.66,
-          "w1_call": 5.22,
+          "gex_plus": 60.83,
+          "w1_call": 5.23,
           "w1_put": -3.27,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.96,
           "mth_put": -0.0,
-          "fri_call": 88.82,
-          "fri_put": -30.56
+          "fri_call": 89.08,
+          "fri_put": -30.65
         },
         {
           "strike": 49700.0,
-          "call_gex": 398.5,
-          "put_gex": -96.32,
-          "net_gex": 302.18,
-          "vex": -6.13,
-          "gex_plus": 296.06,
-          "w1_call": 42.76,
-          "w1_put": -14.14,
+          "call_gex": 399.58,
+          "put_gex": -96.57,
+          "net_gex": 303.01,
+          "vex": -6.14,
+          "gex_plus": 296.87,
+          "w1_call": 42.84,
+          "w1_put": -14.17,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.19,
-          "mth_put": -10.91,
-          "fri_call": 329.56,
-          "fri_put": -71.27
+          "mth_call": 26.21,
+          "mth_put": -10.92,
+          "fri_call": 330.53,
+          "fri_put": -71.48
         },
         {
           "strike": 49750.0,
-          "call_gex": 188.86,
-          "put_gex": -32.74,
-          "net_gex": 156.13,
-          "vex": -2.54,
-          "gex_plus": 153.59,
-          "w1_call": 11.25,
+          "call_gex": 189.42,
+          "put_gex": -32.83,
+          "net_gex": 156.59,
+          "vex": -2.55,
+          "gex_plus": 154.04,
+          "w1_call": 11.27,
           "w1_put": -2.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.75,
           "mth_put": -0.66,
-          "fri_call": 175.86,
-          "fri_put": -29.1
+          "fri_call": 176.39,
+          "fri_put": -29.19
         },
         {
           "strike": 49800.0,
-          "call_gex": 507.29,
-          "put_gex": -129.35,
-          "net_gex": 377.94,
-          "vex": -4.58,
-          "gex_plus": 373.36,
-          "w1_call": 66.5,
-          "w1_put": -12.97,
+          "call_gex": 508.7,
+          "put_gex": -129.67,
+          "net_gex": 379.02,
+          "vex": -4.6,
+          "gex_plus": 374.42,
+          "w1_call": 66.63,
+          "w1_put": -12.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.61,
-          "mth_put": -26.34,
-          "fri_call": 409.18,
-          "fri_put": -90.05
+          "mth_call": 31.63,
+          "mth_put": -26.36,
+          "fri_call": 410.43,
+          "fri_put": -90.32
         },
         {
           "strike": 49850.0,
-          "call_gex": 169.48,
-          "put_gex": -23.52,
-          "net_gex": 145.96,
+          "call_gex": 169.99,
+          "put_gex": -23.59,
+          "net_gex": 146.4,
           "vex": -1.18,
-          "gex_plus": 144.78,
-          "w1_call": 16.35,
-          "w1_put": -6.68,
+          "gex_plus": 145.22,
+          "w1_call": 16.39,
+          "w1_put": -6.69,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.1,
           "mth_put": -0.0,
-          "fri_call": 152.03,
-          "fri_put": -16.85
+          "fri_call": 152.5,
+          "fri_put": -16.9
         },
         {
           "strike": 49900.0,
-          "call_gex": 350.37,
-          "put_gex": -55.94,
-          "net_gex": 294.44,
-          "vex": -1.17,
-          "gex_plus": 293.27,
-          "w1_call": 16.4,
-          "w1_put": -13.72,
+          "call_gex": 351.39,
+          "put_gex": -56.06,
+          "net_gex": 295.33,
+          "vex": -1.18,
+          "gex_plus": 294.16,
+          "w1_call": 16.43,
+          "w1_put": -13.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.03,
-          "mth_put": -14.32,
-          "fri_call": 311.95,
-          "fri_put": -27.9
+          "mth_call": 22.05,
+          "mth_put": -14.33,
+          "fri_call": 312.92,
+          "fri_put": -27.98
         },
         {
           "strike": 49950.0,
-          "call_gex": 169.5,
-          "put_gex": -15.02,
-          "net_gex": 154.48,
+          "call_gex": 170.02,
+          "put_gex": -15.06,
+          "net_gex": 154.96,
           "vex": 0.01,
-          "gex_plus": 154.49,
+          "gex_plus": 154.97,
           "w1_call": 3.02,
-          "w1_put": -3.35,
+          "w1_put": -3.36,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.32,
           "mth_put": -0.66,
-          "fri_call": 165.16,
-          "fri_put": -11.01
+          "fri_call": 165.68,
+          "fri_put": -11.05
         },
         {
           "strike": 50000.0,
-          "call_gex": 1373.92,
-          "put_gex": -80.23,
-          "net_gex": 1293.69,
-          "vex": 5.82,
-          "gex_plus": 1299.51,
-          "w1_call": 171.97,
-          "w1_put": -4.02,
+          "call_gex": 1377.26,
+          "put_gex": -80.38,
+          "net_gex": 1296.88,
+          "vex": 5.83,
+          "gex_plus": 1302.71,
+          "w1_call": 172.3,
+          "w1_put": -4.03,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 321.02,
-          "mth_put": -41.48,
-          "fri_call": 880.94,
-          "fri_put": -34.73
+          "mth_call": 321.29,
+          "mth_put": -41.51,
+          "fri_call": 883.68,
+          "fri_put": -34.84
         },
         {
           "strike": 50050.0,
-          "call_gex": 300.72,
-          "put_gex": -5.63,
-          "net_gex": 295.09,
-          "vex": 2.42,
-          "gex_plus": 297.52,
-          "w1_call": 6.36,
-          "w1_put": -0.33,
+          "call_gex": 301.64,
+          "put_gex": -5.65,
+          "net_gex": 295.99,
+          "vex": 2.43,
+          "gex_plus": 298.42,
+          "w1_call": 6.38,
+          "w1_put": -0.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 2.21,
           "mth_put": -0.22,
-          "fri_call": 292.15,
-          "fri_put": -5.07
+          "fri_call": 293.05,
+          "fri_put": -5.09
         },
         {
           "strike": 50100.0,
-          "call_gex": 375.14,
-          "put_gex": -30.91,
-          "net_gex": 344.24,
-          "vex": 4.26,
-          "gex_plus": 348.49,
-          "w1_call": 15.04,
+          "call_gex": 376.22,
+          "put_gex": -30.99,
+          "net_gex": 345.23,
+          "vex": 4.27,
+          "gex_plus": 349.5,
+          "w1_call": 15.07,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.58,
-          "mth_put": -5.29,
-          "fri_call": 334.51,
-          "fri_put": -25.28
+          "mth_call": 25.61,
+          "mth_put": -5.3,
+          "fri_call": 335.54,
+          "fri_put": -25.36
         },
         {
           "strike": 50150.0,
-          "call_gex": 193.01,
-          "put_gex": -5.87,
-          "net_gex": 187.14,
-          "vex": 3.06,
-          "gex_plus": 190.2,
-          "w1_call": 11.33,
+          "call_gex": 193.58,
+          "put_gex": -5.88,
+          "net_gex": 187.69,
+          "vex": 3.07,
+          "gex_plus": 190.76,
+          "w1_call": 11.35,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.22,
           "mth_put": -0.0,
-          "fri_call": 181.45,
-          "fri_put": -5.87
+          "fri_call": 182.0,
+          "fri_put": -5.88
         },
         {
           "strike": 50200.0,
-          "call_gex": 644.75,
-          "put_gex": -15.21,
-          "net_gex": 629.54,
-          "vex": 12.9,
-          "gex_plus": 642.44,
-          "w1_call": 29.21,
+          "call_gex": 646.55,
+          "put_gex": -15.24,
+          "net_gex": 631.31,
+          "vex": 12.93,
+          "gex_plus": 644.24,
+          "w1_call": 29.26,
           "w1_put": -1.66,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.67,
-          "mth_put": -8.14,
-          "fri_call": 570.87,
-          "fri_put": -5.41
+          "mth_call": 44.71,
+          "mth_put": -8.15,
+          "fri_call": 572.58,
+          "fri_put": -5.43
         }
       ],
       "weekly_gex": [
@@ -17498,14 +17498,14 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -17.53,
-          "net_gex": -17.53
+          "put_gex": -17.54,
+          "net_gex": -17.54
         },
         {
           "strike": 48650.0,
           "call_gex": 0.22,
           "put_gex": -9.28,
-          "net_gex": -9.05
+          "net_gex": -9.06
         },
         {
           "strike": 48700.0,
@@ -17522,7 +17522,7 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48800.0,
           "call_gex": 3.38,
-          "put_gex": -11.11,
+          "put_gex": -11.12,
           "net_gex": -7.73
         },
         {
@@ -17534,214 +17534,214 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48900.0,
           "call_gex": 2.55,
-          "put_gex": -10.95,
+          "put_gex": -10.96,
           "net_gex": -8.41
         },
         {
           "strike": 48950.0,
           "call_gex": 0.52,
           "put_gex": -6.01,
-          "net_gex": -5.48
+          "net_gex": -5.49
         },
         {
           "strike": 49000.0,
-          "call_gex": 23.26,
-          "put_gex": -39.31,
-          "net_gex": -16.04
+          "call_gex": 23.29,
+          "put_gex": -39.35,
+          "net_gex": -16.06
         },
         {
           "strike": 49050.0,
-          "call_gex": 1.09,
-          "put_gex": -5.74,
+          "call_gex": 1.1,
+          "put_gex": -5.75,
           "net_gex": -4.65
         },
         {
           "strike": 49100.0,
-          "call_gex": 4.47,
-          "put_gex": -9.22,
-          "net_gex": -4.75
+          "call_gex": 4.48,
+          "put_gex": -9.23,
+          "net_gex": -4.76
         },
         {
           "strike": 49150.0,
           "call_gex": 1.71,
-          "put_gex": -3.99,
+          "put_gex": -4.0,
           "net_gex": -2.28
         },
         {
           "strike": 49200.0,
-          "call_gex": 9.88,
-          "put_gex": -13.65,
+          "call_gex": 9.89,
+          "put_gex": -13.67,
           "net_gex": -3.78
         },
         {
           "strike": 49250.0,
           "call_gex": 2.96,
-          "put_gex": -10.64,
-          "net_gex": -7.69
+          "put_gex": -10.66,
+          "net_gex": -7.7
         },
         {
           "strike": 49300.0,
-          "call_gex": 14.73,
-          "put_gex": -26.45,
-          "net_gex": -11.72
+          "call_gex": 14.75,
+          "put_gex": -26.49,
+          "net_gex": -11.74
         },
         {
           "strike": 49350.0,
           "call_gex": 3.36,
-          "put_gex": -5.19,
+          "put_gex": -5.2,
           "net_gex": -1.83
         },
         {
           "strike": 49400.0,
-          "call_gex": 27.55,
-          "put_gex": -10.84,
-          "net_gex": 16.72
+          "call_gex": 27.6,
+          "put_gex": -10.85,
+          "net_gex": 16.75
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.35,
+          "call_gex": 10.37,
           "put_gex": -2.2,
-          "net_gex": 8.15
+          "net_gex": 8.17
         },
         {
           "strike": 49500.0,
-          "call_gex": 60.62,
-          "put_gex": -35.86,
-          "net_gex": 24.75
+          "call_gex": 60.72,
+          "put_gex": -35.93,
+          "net_gex": 24.8
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.7,
+          "call_gex": 7.71,
           "put_gex": -2.89,
-          "net_gex": 4.81
+          "net_gex": 4.82
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.4,
-          "put_gex": -6.15,
-          "net_gex": 14.25
+          "call_gex": 20.44,
+          "put_gex": -6.16,
+          "net_gex": 14.27
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.22,
+          "call_gex": 5.23,
           "put_gex": -3.27,
           "net_gex": 1.96
         },
         {
           "strike": 49700.0,
-          "call_gex": 42.76,
-          "put_gex": -14.14,
-          "net_gex": 28.61
+          "call_gex": 42.84,
+          "put_gex": -14.17,
+          "net_gex": 28.67
         },
         {
           "strike": 49750.0,
-          "call_gex": 11.25,
+          "call_gex": 11.27,
           "put_gex": -2.98,
-          "net_gex": 8.27
+          "net_gex": 8.29
         },
         {
           "strike": 49800.0,
-          "call_gex": 66.5,
-          "put_gex": -12.97,
-          "net_gex": 53.53
+          "call_gex": 66.63,
+          "put_gex": -12.99,
+          "net_gex": 53.64
         },
         {
           "strike": 49850.0,
-          "call_gex": 16.35,
-          "put_gex": -6.68,
-          "net_gex": 9.68
+          "call_gex": 16.39,
+          "put_gex": -6.69,
+          "net_gex": 9.7
         },
         {
           "strike": 49900.0,
-          "call_gex": 16.4,
-          "put_gex": -13.72,
+          "call_gex": 16.43,
+          "put_gex": -13.75,
           "net_gex": 2.68
         },
         {
           "strike": 49950.0,
           "call_gex": 3.02,
-          "put_gex": -3.35,
+          "put_gex": -3.36,
           "net_gex": -0.34
         },
         {
           "strike": 50000.0,
-          "call_gex": 171.97,
-          "put_gex": -4.02,
-          "net_gex": 167.94
+          "call_gex": 172.3,
+          "put_gex": -4.03,
+          "net_gex": 168.27
         },
         {
           "strike": 50050.0,
-          "call_gex": 6.36,
-          "put_gex": -0.33,
-          "net_gex": 6.03
+          "call_gex": 6.38,
+          "put_gex": -0.34,
+          "net_gex": 6.04
         },
         {
           "strike": 50100.0,
-          "call_gex": 15.04,
+          "call_gex": 15.07,
           "put_gex": -0.33,
-          "net_gex": 14.71
+          "net_gex": 14.74
         },
         {
           "strike": 50150.0,
-          "call_gex": 11.33,
+          "call_gex": 11.35,
           "put_gex": -0.0,
-          "net_gex": 11.33
+          "net_gex": 11.35
         },
         {
           "strike": 50200.0,
-          "call_gex": 29.21,
+          "call_gex": 29.26,
           "put_gex": -1.66,
-          "net_gex": 27.55
+          "net_gex": 27.6
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
           "call_gex": 2.34,
-          "put_gex": -98.05,
-          "net_gex": -95.71
+          "put_gex": -97.8,
+          "net_gex": -95.46
         },
         {
           "strike": 48450.0,
           "call_gex": 0.18,
-          "put_gex": -81.99,
-          "net_gex": -81.81
+          "put_gex": -81.81,
+          "net_gex": -81.63
         },
         {
           "strike": 48500.0,
-          "call_gex": 99.94,
-          "put_gex": -222.98,
-          "net_gex": -123.04
+          "call_gex": 99.75,
+          "put_gex": -222.57,
+          "net_gex": -122.82
         },
         {
           "strike": 48550.0,
           "call_gex": 1.39,
-          "put_gex": -46.83,
-          "net_gex": -45.44
+          "put_gex": -46.76,
+          "net_gex": -45.38
         },
         {
           "strike": 48600.0,
           "call_gex": 1.46,
-          "put_gex": -113.41,
-          "net_gex": -111.94
+          "put_gex": -113.27,
+          "net_gex": -111.81
         },
         {
           "strike": 48650.0,
           "call_gex": 0.88,
-          "put_gex": -93.13,
-          "net_gex": -92.25
+          "put_gex": -93.06,
+          "net_gex": -92.18
         },
         {
           "strike": 48700.0,
           "call_gex": 5.78,
-          "put_gex": -150.53,
-          "net_gex": -144.75
+          "put_gex": -150.45,
+          "net_gex": -144.67
         },
         {
           "strike": 48750.0,
           "call_gex": 1.45,
-          "put_gex": -66.65,
-          "net_gex": -65.2
+          "put_gex": -66.64,
+          "net_gex": -65.18
         },
         {
           "strike": 48800.0,
@@ -17752,178 +17752,178 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48850.0,
           "call_gex": 7.41,
-          "put_gex": -49.51,
-          "net_gex": -42.09
+          "put_gex": -49.52,
+          "net_gex": -42.11
         },
         {
           "strike": 48900.0,
-          "call_gex": 35.04,
-          "put_gex": -190.91,
-          "net_gex": -155.87
+          "call_gex": 35.06,
+          "put_gex": -191.01,
+          "net_gex": -155.95
         },
         {
           "strike": 48950.0,
-          "call_gex": 5.16,
-          "put_gex": -52.22,
-          "net_gex": -47.06
+          "call_gex": 5.17,
+          "put_gex": -52.26,
+          "net_gex": -47.09
         },
         {
           "strike": 49000.0,
-          "call_gex": 111.1,
-          "put_gex": -459.89,
-          "net_gex": -348.79
+          "call_gex": 111.21,
+          "put_gex": -460.35,
+          "net_gex": -349.14
         },
         {
           "strike": 49050.0,
-          "call_gex": 8.33,
-          "put_gex": -80.55,
-          "net_gex": -72.21
+          "call_gex": 8.34,
+          "put_gex": -80.64,
+          "net_gex": -72.3
         },
         {
           "strike": 49100.0,
-          "call_gex": 91.91,
-          "put_gex": -184.14,
-          "net_gex": -92.23
+          "call_gex": 92.04,
+          "put_gex": -184.4,
+          "net_gex": -92.36
         },
         {
           "strike": 49150.0,
-          "call_gex": 27.34,
-          "put_gex": -72.79,
-          "net_gex": -45.46
+          "call_gex": 27.38,
+          "put_gex": -72.91,
+          "net_gex": -45.53
         },
         {
           "strike": 49200.0,
-          "call_gex": 127.25,
-          "put_gex": -249.74,
-          "net_gex": -122.5
+          "call_gex": 127.47,
+          "put_gex": -250.19,
+          "net_gex": -122.72
         },
         {
           "strike": 49250.0,
-          "call_gex": 36.63,
-          "put_gex": -108.16,
-          "net_gex": -71.52
+          "call_gex": 36.71,
+          "put_gex": -108.37,
+          "net_gex": -71.67
         },
         {
           "strike": 49300.0,
-          "call_gex": 147.88,
-          "put_gex": -401.39,
-          "net_gex": -253.51
+          "call_gex": 148.2,
+          "put_gex": -402.25,
+          "net_gex": -254.05
         },
         {
           "strike": 49350.0,
-          "call_gex": 81.43,
-          "put_gex": -87.3,
-          "net_gex": -5.87
+          "call_gex": 81.61,
+          "put_gex": -87.49,
+          "net_gex": -5.88
         },
         {
           "strike": 49400.0,
-          "call_gex": 231.01,
-          "put_gex": -568.89,
-          "net_gex": -337.89
+          "call_gex": 231.56,
+          "put_gex": -570.26,
+          "net_gex": -338.7
         },
         {
           "strike": 49450.0,
-          "call_gex": 62.38,
-          "put_gex": -63.15,
+          "call_gex": 62.54,
+          "put_gex": -63.31,
           "net_gex": -0.77
         },
         {
           "strike": 49500.0,
-          "call_gex": 337.59,
-          "put_gex": -530.16,
-          "net_gex": -192.57
+          "call_gex": 338.48,
+          "put_gex": -531.56,
+          "net_gex": -193.08
         },
         {
           "strike": 49550.0,
-          "call_gex": 82.84,
-          "put_gex": -29.33,
-          "net_gex": 53.51
+          "call_gex": 83.06,
+          "put_gex": -29.41,
+          "net_gex": 53.65
         },
         {
           "strike": 49600.0,
-          "call_gex": 298.85,
-          "put_gex": -178.59,
-          "net_gex": 120.26
+          "call_gex": 299.69,
+          "put_gex": -179.09,
+          "net_gex": 120.6
         },
         {
           "strike": 49650.0,
-          "call_gex": 88.82,
-          "put_gex": -30.56,
-          "net_gex": 58.26
+          "call_gex": 89.08,
+          "put_gex": -30.65,
+          "net_gex": 58.43
         },
         {
           "strike": 49700.0,
-          "call_gex": 329.56,
-          "put_gex": -71.27,
-          "net_gex": 258.29
+          "call_gex": 330.53,
+          "put_gex": -71.48,
+          "net_gex": 259.06
         },
         {
           "strike": 49750.0,
-          "call_gex": 175.86,
-          "put_gex": -29.1,
-          "net_gex": 146.76
+          "call_gex": 176.39,
+          "put_gex": -29.19,
+          "net_gex": 147.2
         },
         {
           "strike": 49800.0,
-          "call_gex": 409.18,
-          "put_gex": -90.05,
-          "net_gex": 319.14
+          "call_gex": 410.43,
+          "put_gex": -90.32,
+          "net_gex": 320.11
         },
         {
           "strike": 49850.0,
-          "call_gex": 152.03,
-          "put_gex": -16.85,
-          "net_gex": 135.18
+          "call_gex": 152.5,
+          "put_gex": -16.9,
+          "net_gex": 135.6
         },
         {
           "strike": 49900.0,
-          "call_gex": 311.95,
-          "put_gex": -27.9,
-          "net_gex": 284.05
+          "call_gex": 312.92,
+          "put_gex": -27.98,
+          "net_gex": 284.94
         },
         {
           "strike": 49950.0,
-          "call_gex": 165.16,
-          "put_gex": -11.01,
-          "net_gex": 154.15
+          "call_gex": 165.68,
+          "put_gex": -11.05,
+          "net_gex": 154.63
         },
         {
           "strike": 50000.0,
-          "call_gex": 880.94,
-          "put_gex": -34.73,
-          "net_gex": 846.21
+          "call_gex": 883.68,
+          "put_gex": -34.84,
+          "net_gex": 848.84
         },
         {
           "strike": 50050.0,
-          "call_gex": 292.15,
-          "put_gex": -5.07,
-          "net_gex": 287.08
+          "call_gex": 293.05,
+          "put_gex": -5.09,
+          "net_gex": 287.97
         },
         {
           "strike": 50100.0,
-          "call_gex": 334.51,
-          "put_gex": -25.28,
-          "net_gex": 309.24
+          "call_gex": 335.54,
+          "put_gex": -25.36,
+          "net_gex": 310.18
         },
         {
           "strike": 50150.0,
-          "call_gex": 181.45,
-          "put_gex": -5.87,
-          "net_gex": 175.59
+          "call_gex": 182.0,
+          "put_gex": -5.88,
+          "net_gex": 176.12
         },
         {
           "strike": 50200.0,
-          "call_gex": 570.87,
-          "put_gex": -5.41,
-          "net_gex": 565.47
+          "call_gex": 572.58,
+          "put_gex": -5.43,
+          "net_gex": 567.15
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 34.87,
-          "put_gex": -16.17,
-          "net_gex": 18.7
+          "call_gex": 34.89,
+          "put_gex": -16.18,
+          "net_gex": 18.71
         },
         {
           "strike": 48450.0,
@@ -17933,9 +17933,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 54.13,
-          "put_gex": -124.96,
-          "net_gex": -70.83
+          "call_gex": 54.15,
+          "put_gex": -125.02,
+          "net_gex": -70.87
         },
         {
           "strike": 48550.0,
@@ -17945,9 +17945,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 52.39,
-          "put_gex": -20.81,
-          "net_gex": 31.58
+          "call_gex": 52.41,
+          "put_gex": -20.82,
+          "net_gex": 31.59
         },
         {
           "strike": 48650.0,
@@ -17957,20 +17957,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 41.71,
-          "put_gex": -20.48,
-          "net_gex": 21.22
+          "call_gex": 41.73,
+          "put_gex": -20.5,
+          "net_gex": 21.24
         },
         {
           "strike": 48750.0,
           "call_gex": 0.0,
-          "put_gex": -3.55,
-          "net_gex": -3.55
+          "put_gex": -3.56,
+          "net_gex": -3.56
         },
         {
           "strike": 48800.0,
-          "call_gex": 24.63,
-          "put_gex": -27.66,
+          "call_gex": 24.64,
+          "put_gex": -27.67,
           "net_gex": -3.03
         },
         {
@@ -17981,7 +17981,7 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 19.99,
+          "call_gex": 20.0,
           "put_gex": -8.15,
           "net_gex": 11.84
         },
@@ -17993,9 +17993,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 119.2,
-          "put_gex": -61.68,
-          "net_gex": 57.52
+          "call_gex": 119.28,
+          "put_gex": -61.72,
+          "net_gex": 57.56
         },
         {
           "strike": 49050.0,
@@ -18005,21 +18005,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 121.99,
-          "put_gex": -25.69,
-          "net_gex": 96.3
+          "call_gex": 122.08,
+          "put_gex": -25.71,
+          "net_gex": 96.37
         },
         {
           "strike": 49150.0,
           "call_gex": 8.17,
           "put_gex": -0.2,
-          "net_gex": 7.96
+          "net_gex": 7.97
         },
         {
           "strike": 49200.0,
-          "call_gex": 47.78,
-          "put_gex": -11.74,
-          "net_gex": 36.04
+          "call_gex": 47.81,
+          "put_gex": -11.75,
+          "net_gex": 36.06
         },
         {
           "strike": 49250.0,
@@ -18029,21 +18029,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.08,
-          "put_gex": -34.31,
-          "net_gex": -14.22
+          "call_gex": 20.1,
+          "put_gex": -34.33,
+          "net_gex": -14.24
         },
         {
           "strike": 49350.0,
           "call_gex": 1.05,
-          "put_gex": -1.26,
+          "put_gex": -1.27,
           "net_gex": -0.21
         },
         {
           "strike": 49400.0,
-          "call_gex": 24.39,
-          "put_gex": -15.69,
-          "net_gex": 8.69
+          "call_gex": 24.41,
+          "put_gex": -15.71,
+          "net_gex": 8.7
         },
         {
           "strike": 49450.0,
@@ -18053,9 +18053,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 140.74,
-          "put_gex": -64.15,
-          "net_gex": 76.59
+          "call_gex": 140.85,
+          "put_gex": -64.2,
+          "net_gex": 76.65
         },
         {
           "strike": 49550.0,
@@ -18065,9 +18065,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 28.81,
-          "put_gex": -8.66,
-          "net_gex": 20.14
+          "call_gex": 28.83,
+          "put_gex": -8.67,
+          "net_gex": 20.16
         },
         {
           "strike": 49650.0,
@@ -18077,20 +18077,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 26.19,
-          "put_gex": -10.91,
-          "net_gex": 15.28
+          "call_gex": 26.21,
+          "put_gex": -10.92,
+          "net_gex": 15.29
         },
         {
           "strike": 49750.0,
           "call_gex": 1.75,
           "put_gex": -0.66,
-          "net_gex": 1.09
+          "net_gex": 1.1
         },
         {
           "strike": 49800.0,
-          "call_gex": 31.61,
-          "put_gex": -26.34,
+          "call_gex": 31.63,
+          "put_gex": -26.36,
           "net_gex": 5.27
         },
         {
@@ -18101,9 +18101,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 22.03,
-          "put_gex": -14.32,
-          "net_gex": 7.71
+          "call_gex": 22.05,
+          "put_gex": -14.33,
+          "net_gex": 7.72
         },
         {
           "strike": 49950.0,
@@ -18113,9 +18113,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 321.02,
-          "put_gex": -41.48,
-          "net_gex": 279.54
+          "call_gex": 321.29,
+          "put_gex": -41.51,
+          "net_gex": 279.77
         },
         {
           "strike": 50050.0,
@@ -18125,9 +18125,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 25.58,
-          "put_gex": -5.29,
-          "net_gex": 20.29
+          "call_gex": 25.61,
+          "put_gex": -5.3,
+          "net_gex": 20.31
         },
         {
           "strike": 50150.0,
@@ -18137,9 +18137,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 44.67,
-          "put_gex": -8.14,
-          "net_gex": 36.53
+          "call_gex": 44.71,
+          "put_gex": -8.15,
+          "net_gex": 36.56
         }
       ]
     },
@@ -18168,59 +18168,59 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 40.42,
-          "put_gex": -145.05,
-          "net_gex": -104.63,
-          "vex": 12.17,
-          "gex_plus": -92.45,
+          "call_gex": 40.43,
+          "put_gex": -144.88,
+          "net_gex": -104.45,
+          "vex": 12.15,
+          "gex_plus": -92.3,
           "w1_call": 1.23,
           "w1_put": -12.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 36.43,
+          "mth_call": 36.45,
           "mth_put": -16.9,
-          "fri_call": 2.76,
-          "fri_put": -115.41
+          "fri_call": 2.75,
+          "fri_put": -115.23
         },
         {
           "strike": 48450.0,
           "call_gex": 0.63,
-          "put_gex": -101.32,
-          "net_gex": -100.69,
-          "vex": 11.26,
-          "gex_plus": -89.43,
+          "put_gex": -101.21,
+          "net_gex": -100.58,
+          "vex": 11.25,
+          "gex_plus": -89.33,
           "w1_call": 0.43,
-          "w1_put": -4.46,
+          "w1_put": -4.47,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -0.89,
           "fri_call": 0.21,
-          "fri_put": -95.96
+          "fri_put": -95.85
         },
         {
           "strike": 48500.0,
-          "call_gex": 175.76,
-          "put_gex": -478.61,
-          "net_gex": -302.85,
-          "vex": 32.47,
-          "gex_plus": -270.38,
-          "w1_call": 3.07,
-          "w1_put": -88.95,
+          "call_gex": 175.69,
+          "put_gex": -478.49,
+          "net_gex": -302.8,
+          "vex": 32.46,
+          "gex_plus": -270.34,
+          "w1_call": 3.08,
+          "w1_put": -88.98,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 56.37,
-          "mth_put": -130.14,
-          "fri_call": 116.32,
-          "fri_put": -259.53
+          "mth_call": 56.4,
+          "mth_put": -130.21,
+          "fri_call": 116.21,
+          "fri_put": -259.3
         },
         {
           "strike": 48550.0,
           "call_gex": 2.06,
-          "put_gex": -59.57,
-          "net_gex": -57.51,
+          "put_gex": -59.54,
+          "net_gex": -57.48,
           "vex": 5.95,
-          "gex_plus": -51.56,
+          "gex_plus": -51.54,
           "w1_call": 0.45,
           "w1_put": -4.08,
           "w2_call": 0.0,
@@ -18228,33 +18228,33 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.29,
           "fri_call": 1.61,
-          "fri_put": -54.21
+          "fri_put": -54.18
         },
         {
           "strike": 48600.0,
-          "call_gex": 56.08,
-          "put_gex": -171.28,
-          "net_gex": -115.2,
+          "call_gex": 56.11,
+          "put_gex": -171.27,
+          "net_gex": -115.16,
           "vex": 11.48,
-          "gex_plus": -103.72,
+          "gex_plus": -103.68,
           "w1_call": 0.0,
-          "w1_put": -19.14,
+          "w1_put": -19.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 54.39,
-          "mth_put": -21.61,
+          "mth_call": 54.43,
+          "mth_put": -21.62,
           "fri_call": 1.69,
-          "fri_put": -130.53
+          "fri_put": -130.49
         },
         {
           "strike": 48650.0,
           "call_gex": 1.25,
-          "put_gex": -119.71,
-          "net_gex": -118.46,
+          "put_gex": -119.72,
+          "net_gex": -118.47,
           "vex": 11.26,
-          "gex_plus": -107.2,
+          "gex_plus": -107.21,
           "w1_call": 0.24,
-          "w1_put": -10.09,
+          "w1_put": -10.1,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
@@ -18264,499 +18264,499 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 50.0,
-          "put_gex": -202.91,
-          "net_gex": -152.91,
-          "vex": 13.93,
-          "gex_plus": -138.98,
+          "call_gex": 50.03,
+          "put_gex": -202.98,
+          "net_gex": -152.95,
+          "vex": 13.94,
+          "gex_plus": -139.01,
           "w1_call": 0.25,
-          "w1_put": -10.37,
+          "w1_put": -10.38,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 43.17,
-          "mth_put": -21.21,
+          "mth_call": 43.2,
+          "mth_put": -21.22,
           "fri_call": 6.58,
-          "fri_put": -171.33
+          "fri_put": -171.38
         },
         {
           "strike": 48750.0,
           "call_gex": 2.66,
-          "put_gex": -83.42,
-          "net_gex": -80.76,
+          "put_gex": -83.47,
+          "net_gex": -80.81,
           "vex": 7.0,
-          "gex_plus": -73.76,
-          "w1_call": 1.01,
+          "gex_plus": -73.8,
+          "w1_call": 1.02,
           "w1_put": -4.31,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
-          "mth_put": -3.67,
+          "mth_put": -3.68,
           "fri_call": 1.65,
-          "fri_put": -75.44
+          "fri_put": -75.48
         },
         {
           "strike": 48800.0,
-          "call_gex": 69.01,
-          "put_gex": -253.69,
-          "net_gex": -184.68,
-          "vex": 15.24,
-          "gex_plus": -169.44,
+          "call_gex": 69.06,
+          "put_gex": -253.88,
+          "net_gex": -184.82,
+          "vex": 15.25,
+          "gex_plus": -169.57,
           "w1_call": 3.64,
-          "w1_put": -11.96,
+          "w1_put": -11.97,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.42,
-          "mth_put": -28.54,
-          "fri_call": 39.96,
-          "fri_put": -213.19
+          "mth_call": 25.43,
+          "mth_put": -28.56,
+          "fri_call": 39.99,
+          "fri_put": -213.35
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.3,
-          "put_gex": -64.91,
-          "net_gex": -56.62,
-          "vex": 4.43,
-          "gex_plus": -52.18,
+          "call_gex": 8.31,
+          "put_gex": -64.98,
+          "net_gex": -56.67,
+          "vex": 4.44,
+          "gex_plus": -52.23,
           "w1_call": 0.0,
-          "w1_put": -7.72,
+          "w1_put": -7.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.78,
-          "fri_call": 8.3,
-          "fri_put": -55.41
+          "fri_call": 8.31,
+          "fri_put": -55.47
         },
         {
           "strike": 48900.0,
-          "call_gex": 62.29,
-          "put_gex": -232.6,
-          "net_gex": -170.31,
-          "vex": 12.66,
-          "gex_plus": -157.65,
-          "w1_call": 2.72,
-          "w1_put": -11.71,
+          "call_gex": 62.35,
+          "put_gex": -232.88,
+          "net_gex": -170.52,
+          "vex": 12.67,
+          "gex_plus": -157.85,
+          "w1_call": 2.73,
+          "w1_put": -11.72,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.56,
+          "mth_call": 20.58,
           "mth_put": -8.39,
-          "fri_call": 39.0,
-          "fri_put": -212.5
+          "fri_call": 39.05,
+          "fri_put": -212.76
         },
         {
           "strike": 48950.0,
-          "call_gex": 6.27,
-          "put_gex": -65.62,
-          "net_gex": -59.34,
-          "vex": 4.15,
-          "gex_plus": -55.19,
+          "call_gex": 6.28,
+          "put_gex": -65.71,
+          "net_gex": -59.43,
+          "vex": 4.16,
+          "gex_plus": -55.27,
           "w1_call": 0.56,
-          "w1_put": -6.4,
+          "w1_put": -6.41,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.41,
-          "fri_call": 5.72,
-          "fri_put": -57.81
+          "fri_call": 5.73,
+          "fri_put": -57.89
         },
         {
           "strike": 49000.0,
-          "call_gex": 269.28,
-          "put_gex": -611.28,
-          "net_gex": -341.99,
-          "vex": 22.63,
-          "gex_plus": -319.37,
-          "w1_call": 24.7,
-          "w1_put": -41.73,
+          "call_gex": 269.6,
+          "put_gex": -612.19,
+          "net_gex": -342.59,
+          "vex": 22.67,
+          "gex_plus": -319.92,
+          "w1_call": 24.73,
+          "w1_put": -41.79,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 122.28,
-          "mth_put": -63.28,
-          "fri_call": 122.3,
-          "fri_put": -506.27
+          "mth_call": 122.37,
+          "mth_put": -63.32,
+          "fri_call": 122.5,
+          "fri_put": -507.08
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.89,
-          "put_gex": -95.69,
-          "net_gex": -84.8,
-          "vex": 5.23,
-          "gex_plus": -79.56,
+          "call_gex": 10.91,
+          "put_gex": -95.86,
+          "net_gex": -84.95,
+          "vex": 5.24,
+          "gex_plus": -79.7,
           "w1_call": 1.16,
           "w1_put": -6.08,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.62,
           "mth_put": -1.44,
-          "fri_call": 9.12,
-          "fri_put": -88.18
+          "fri_call": 9.14,
+          "fri_put": -88.34
         },
         {
           "strike": 49100.0,
-          "call_gex": 229.54,
-          "put_gex": -236.47,
-          "net_gex": -6.93,
-          "vex": 0.55,
-          "gex_plus": -6.38,
-          "w1_call": 4.71,
-          "w1_put": -9.72,
+          "call_gex": 229.84,
+          "put_gex": -236.9,
+          "net_gex": -7.06,
+          "vex": 0.56,
+          "gex_plus": -6.5,
+          "w1_call": 4.72,
+          "w1_put": -9.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 124.77,
-          "mth_put": -26.28,
-          "fri_call": 100.06,
-          "fri_put": -200.47
+          "mth_call": 124.86,
+          "mth_put": -26.3,
+          "fri_call": 100.26,
+          "fri_put": -200.87
         },
         {
           "strike": 49150.0,
-          "call_gex": 39.74,
-          "put_gex": -83.22,
-          "net_gex": -43.48,
+          "call_gex": 39.81,
+          "put_gex": -83.39,
+          "net_gex": -43.58,
           "vex": 2.34,
-          "gex_plus": -41.14,
+          "gex_plus": -41.24,
           "w1_call": 1.8,
-          "w1_put": -4.19,
+          "w1_put": -4.2,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.34,
+          "mth_call": 8.35,
           "mth_put": -0.21,
-          "fri_call": 29.6,
-          "fri_put": -78.82
+          "fri_call": 29.66,
+          "fri_put": -78.98
         },
         {
           "strike": 49200.0,
-          "call_gex": 196.07,
-          "put_gex": -295.17,
-          "net_gex": -99.1,
-          "vex": 4.94,
-          "gex_plus": -94.16,
-          "w1_call": 10.34,
-          "w1_put": -14.29,
+          "call_gex": 196.44,
+          "put_gex": -295.82,
+          "net_gex": -99.38,
+          "vex": 4.96,
+          "gex_plus": -94.42,
+          "w1_call": 10.36,
+          "w1_put": -14.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 48.72,
-          "mth_put": -11.97,
-          "fri_call": 137.01,
-          "fri_put": -268.91
+          "mth_call": 48.76,
+          "mth_put": -11.98,
+          "fri_call": 137.32,
+          "fri_put": -269.52
         },
         {
           "strike": 49250.0,
-          "call_gex": 43.58,
-          "put_gex": -128.19,
-          "net_gex": -84.61,
-          "vex": 3.82,
-          "gex_plus": -80.79,
+          "call_gex": 43.68,
+          "put_gex": -128.49,
+          "net_gex": -84.81,
+          "vex": 3.83,
+          "gex_plus": -80.98,
           "w1_call": 3.09,
-          "w1_put": -11.11,
+          "w1_put": -11.12,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.27,
           "mth_put": -1.27,
-          "fri_call": 39.23,
-          "fri_put": -115.82
+          "fri_call": 39.32,
+          "fri_put": -116.1
         },
         {
           "strike": 49300.0,
-          "call_gex": 193.22,
-          "put_gex": -489.84,
-          "net_gex": -296.63,
-          "vex": 12.15,
-          "gex_plus": -284.48,
-          "w1_call": 15.32,
-          "w1_put": -27.51,
+          "call_gex": 193.66,
+          "put_gex": -491.0,
+          "net_gex": -297.34,
+          "vex": 12.18,
+          "gex_plus": -285.16,
+          "w1_call": 15.34,
+          "w1_put": -27.55,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.42,
-          "mth_put": -34.88,
-          "fri_call": 157.49,
-          "fri_put": -427.46
+          "mth_call": 20.43,
+          "mth_put": -34.91,
+          "fri_call": 157.88,
+          "fri_put": -428.54
         },
         {
           "strike": 49350.0,
-          "call_gex": 90.79,
-          "put_gex": -99.11,
-          "net_gex": -8.33,
+          "call_gex": 91.02,
+          "put_gex": -99.37,
+          "net_gex": -8.35,
           "vex": 0.31,
-          "gex_plus": -8.02,
-          "w1_call": 3.48,
-          "w1_put": -5.38,
+          "gex_plus": -8.04,
+          "w1_call": 3.49,
+          "w1_put": -5.39,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.07,
           "mth_put": -1.28,
-          "fri_call": 86.24,
-          "fri_put": -92.45
+          "fri_call": 86.47,
+          "fri_put": -92.7
         },
         {
           "strike": 49400.0,
-          "call_gex": 296.49,
-          "put_gex": -626.3,
-          "net_gex": -329.81,
-          "vex": 10.84,
-          "gex_plus": -318.97,
-          "w1_call": 28.45,
-          "w1_put": -11.19,
+          "call_gex": 297.23,
+          "put_gex": -627.97,
+          "net_gex": -330.75,
+          "vex": 10.87,
+          "gex_plus": -319.88,
+          "w1_call": 28.51,
+          "w1_put": -11.21,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.72,
-          "mth_put": -15.91,
-          "fri_call": 243.32,
-          "fri_put": -599.2
+          "mth_call": 24.74,
+          "mth_put": -15.92,
+          "fri_call": 243.98,
+          "fri_put": -600.84
         },
         {
           "strike": 49450.0,
-          "call_gex": 77.08,
-          "put_gex": -70.13,
-          "net_gex": 6.94,
+          "call_gex": 77.28,
+          "put_gex": -70.33,
+          "net_gex": 6.96,
           "vex": -0.2,
-          "gex_plus": 6.75,
-          "w1_call": 10.65,
+          "gex_plus": 6.76,
+          "w1_call": 10.67,
           "w1_put": -2.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.08,
           "mth_put": -1.73,
-          "fri_call": 65.34,
-          "fri_put": -66.15
+          "fri_call": 65.53,
+          "fri_put": -66.33
         },
         {
           "strike": 49500.0,
-          "call_gex": 556.1,
-          "put_gex": -653.92,
-          "net_gex": -97.82,
-          "vex": 2.53,
-          "gex_plus": -95.29,
-          "w1_call": 62.17,
-          "w1_put": -36.78,
+          "call_gex": 557.35,
+          "put_gex": -655.65,
+          "net_gex": -98.3,
+          "vex": 2.54,
+          "gex_plus": -95.75,
+          "w1_call": 62.29,
+          "w1_put": -36.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 142.23,
-          "mth_put": -64.83,
-          "fri_call": 351.69,
-          "fri_put": -552.31
+          "mth_call": 142.35,
+          "mth_put": -64.88,
+          "fri_call": 352.71,
+          "fri_put": -553.91
         },
         {
           "strike": 49550.0,
-          "call_gex": 95.22,
-          "put_gex": -34.64,
-          "net_gex": 60.57,
+          "call_gex": 95.49,
+          "put_gex": -34.74,
+          "net_gex": 60.75,
           "vex": -1.24,
-          "gex_plus": 59.34,
-          "w1_call": 7.87,
-          "w1_put": -2.95,
+          "gex_plus": 59.51,
+          "w1_call": 7.88,
+          "w1_put": -2.96,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.52,
           "mth_put": -1.31,
-          "fri_call": 85.82,
-          "fri_put": -30.39
+          "fri_call": 86.08,
+          "fri_put": -30.48
         },
         {
           "strike": 49600.0,
-          "call_gex": 357.75,
-          "put_gex": -199.02,
-          "net_gex": 158.73,
-          "vex": -2.56,
-          "gex_plus": 156.18,
-          "w1_call": 20.78,
-          "w1_put": -6.27,
+          "call_gex": 358.74,
+          "put_gex": -199.59,
+          "net_gex": 159.15,
+          "vex": -2.57,
+          "gex_plus": 156.59,
+          "w1_call": 20.82,
+          "w1_put": -6.28,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 29.03,
-          "mth_put": -8.73,
-          "fri_call": 307.94,
-          "fri_put": -184.02
+          "mth_call": 29.05,
+          "mth_put": -8.74,
+          "fri_call": 308.87,
+          "fri_put": -184.57
         },
         {
           "strike": 49650.0,
-          "call_gex": 98.29,
-          "put_gex": -34.63,
-          "net_gex": 63.67,
+          "call_gex": 98.59,
+          "put_gex": -34.73,
+          "net_gex": 63.85,
           "vex": -0.78,
-          "gex_plus": 62.89,
-          "w1_call": 5.3,
-          "w1_put": -3.31,
+          "gex_plus": 63.08,
+          "w1_call": 5.31,
+          "w1_put": -3.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.97,
           "mth_put": -0.0,
-          "fri_call": 91.02,
-          "fri_put": -31.31
+          "fri_call": 91.3,
+          "fri_put": -31.41
         },
         {
           "strike": 49700.0,
-          "call_gex": 405.45,
-          "put_gex": -97.91,
-          "net_gex": 307.55,
-          "vex": -2.47,
-          "gex_plus": 305.08,
-          "w1_call": 43.26,
-          "w1_put": -14.31,
+          "call_gex": 406.6,
+          "put_gex": -98.17,
+          "net_gex": 308.43,
+          "vex": -2.48,
+          "gex_plus": 305.95,
+          "w1_call": 43.34,
+          "w1_put": -14.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.31,
-          "mth_put": -10.96,
-          "fri_call": 335.89,
-          "fri_put": -72.64
+          "mth_call": 26.33,
+          "mth_put": -10.97,
+          "fri_call": 336.92,
+          "fri_put": -72.86
         },
         {
           "strike": 49750.0,
-          "call_gex": 191.36,
-          "put_gex": -33.16,
-          "net_gex": 158.2,
+          "call_gex": 191.94,
+          "put_gex": -33.26,
+          "net_gex": 158.68,
           "vex": -0.64,
-          "gex_plus": 157.57,
-          "w1_call": 11.34,
-          "w1_put": -3.0,
+          "gex_plus": 158.04,
+          "w1_call": 11.36,
+          "w1_put": -3.01,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.76,
           "mth_put": -0.66,
-          "fri_call": 178.26,
-          "fri_put": -29.5
+          "fri_call": 178.82,
+          "fri_put": -29.59
         },
         {
           "strike": 49800.0,
-          "call_gex": 510.99,
-          "put_gex": -130.19,
-          "net_gex": 380.8,
+          "call_gex": 512.43,
+          "put_gex": -130.52,
+          "net_gex": 381.91,
           "vex": 0.04,
-          "gex_plus": 380.84,
-          "w1_call": 66.82,
-          "w1_put": -13.03,
+          "gex_plus": 381.95,
+          "w1_call": 66.95,
+          "w1_put": -13.06,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 31.66,
-          "mth_put": -26.38,
-          "fri_call": 412.51,
-          "fri_put": -90.78
+          "mth_call": 31.68,
+          "mth_put": -26.4,
+          "fri_call": 413.8,
+          "fri_put": -91.06
         },
         {
           "strike": 49850.0,
-          "call_gex": 169.91,
-          "put_gex": -23.57,
-          "net_gex": 146.34,
+          "call_gex": 170.42,
+          "put_gex": -23.64,
+          "net_gex": 146.78,
           "vex": 0.61,
-          "gex_plus": 146.95,
-          "w1_call": 16.38,
-          "w1_put": -6.68,
+          "gex_plus": 147.39,
+          "w1_call": 16.41,
+          "w1_put": -6.7,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.1,
           "mth_put": -0.0,
-          "fri_call": 152.43,
-          "fri_put": -16.89
+          "fri_call": 152.91,
+          "fri_put": -16.94
         },
         {
           "strike": 49900.0,
-          "call_gex": 349.44,
-          "put_gex": -55.81,
-          "net_gex": 293.63,
-          "vex": 2.42,
-          "gex_plus": 296.06,
-          "w1_call": 16.36,
-          "w1_put": -13.69,
+          "call_gex": 350.46,
+          "put_gex": -55.94,
+          "net_gex": 294.52,
+          "vex": 2.43,
+          "gex_plus": 296.95,
+          "w1_call": 16.39,
+          "w1_put": -13.72,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.0,
-          "mth_put": -14.3,
-          "fri_call": 311.08,
-          "fri_put": -27.82
+          "mth_call": 22.02,
+          "mth_put": -14.31,
+          "fri_call": 312.04,
+          "fri_put": -27.91
         },
         {
           "strike": 49950.0,
-          "call_gex": 168.13,
-          "put_gex": -14.91,
-          "net_gex": 153.21,
-          "vex": 1.88,
-          "gex_plus": 155.1,
-          "w1_call": 3.0,
-          "w1_put": -3.33,
+          "call_gex": 168.64,
+          "put_gex": -14.95,
+          "net_gex": 153.68,
+          "vex": 1.89,
+          "gex_plus": 155.57,
+          "w1_call": 3.01,
+          "w1_put": -3.34,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.32,
           "mth_put": -0.66,
-          "fri_call": 163.81,
-          "fri_put": -10.92
+          "fri_call": 164.31,
+          "fri_put": -10.95
         },
         {
           "strike": 50000.0,
-          "call_gex": 1359.08,
-          "put_gex": -79.55,
-          "net_gex": 1279.54,
-          "vex": 21.42,
-          "gex_plus": 1300.96,
-          "w1_call": 170.45,
+          "call_gex": 1362.31,
+          "put_gex": -79.69,
+          "net_gex": 1282.62,
+          "vex": 21.47,
+          "gex_plus": 1304.08,
+          "w1_call": 170.78,
           "w1_put": -3.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 319.65,
-          "mth_put": -41.3,
-          "fri_call": 868.98,
-          "fri_put": -34.26
+          "mth_call": 319.92,
+          "mth_put": -41.34,
+          "fri_call": 871.61,
+          "fri_put": -34.36
         },
         {
           "strike": 50050.0,
-          "call_gex": 295.1,
-          "put_gex": -5.53,
-          "net_gex": 289.58,
-          "vex": 5.92,
-          "gex_plus": 295.5,
-          "w1_call": 6.29,
+          "call_gex": 295.97,
+          "put_gex": -5.54,
+          "net_gex": 290.43,
+          "vex": 5.94,
+          "gex_plus": 296.37,
+          "w1_call": 6.3,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 2.19,
+          "mth_call": 2.2,
           "mth_put": -0.22,
-          "fri_call": 286.62,
-          "fri_put": -4.98
+          "fri_call": 287.48,
+          "fri_put": -4.99
         },
         {
           "strike": 50100.0,
-          "call_gex": 366.62,
-          "put_gex": -30.25,
-          "net_gex": 336.37,
-          "vex": 8.28,
-          "gex_plus": 344.65,
-          "w1_call": 14.81,
+          "call_gex": 367.62,
+          "put_gex": -30.33,
+          "net_gex": 337.3,
+          "vex": 8.3,
+          "gex_plus": 345.6,
+          "w1_call": 14.84,
           "w1_put": -0.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.4,
+          "mth_call": 25.42,
           "mth_put": -5.26,
-          "fri_call": 326.41,
-          "fri_put": -24.67
+          "fri_call": 327.36,
+          "fri_put": -24.74
         },
         {
           "strike": 50150.0,
-          "call_gex": 187.44,
-          "put_gex": -5.69,
-          "net_gex": 181.74,
-          "vex": 5.2,
-          "gex_plus": 186.94,
-          "w1_call": 11.12,
+          "call_gex": 187.96,
+          "put_gex": -5.71,
+          "net_gex": 182.25,
+          "vex": 5.21,
+          "gex_plus": 187.46,
+          "w1_call": 11.14,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.22,
           "mth_put": -0.0,
-          "fri_call": 176.1,
-          "fri_put": -5.69
+          "fri_call": 176.6,
+          "fri_put": -5.71
         },
         {
           "strike": 50200.0,
-          "call_gex": 623.82,
-          "put_gex": -14.9,
-          "net_gex": 608.92,
-          "vex": 19.93,
-          "gex_plus": 628.85,
-          "w1_call": 28.56,
-          "w1_put": -1.62,
+          "call_gex": 625.43,
+          "put_gex": -14.93,
+          "net_gex": 610.51,
+          "vex": 19.98,
+          "gex_plus": 630.49,
+          "w1_call": 28.61,
+          "w1_put": -1.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 44.22,
-          "mth_put": -8.06,
-          "fri_call": 551.05,
-          "fri_put": -5.22
+          "mth_call": 44.26,
+          "mth_put": -8.07,
+          "fri_call": 552.57,
+          "fri_put": -5.24
         }
       ],
       "weekly_gex": [
@@ -18769,14 +18769,14 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48450.0,
           "call_gex": 0.43,
-          "put_gex": -4.46,
+          "put_gex": -4.47,
           "net_gex": -4.04
         },
         {
           "strike": 48500.0,
-          "call_gex": 3.07,
-          "put_gex": -88.95,
-          "net_gex": -85.87
+          "call_gex": 3.08,
+          "put_gex": -88.98,
+          "net_gex": -85.9
         },
         {
           "strike": 48550.0,
@@ -18787,232 +18787,232 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -19.14,
-          "net_gex": -19.14
+          "put_gex": -19.16,
+          "net_gex": -19.16
         },
         {
           "strike": 48650.0,
           "call_gex": 0.24,
-          "put_gex": -10.09,
-          "net_gex": -9.85
+          "put_gex": -10.1,
+          "net_gex": -9.86
         },
         {
           "strike": 48700.0,
           "call_gex": 0.25,
-          "put_gex": -10.37,
-          "net_gex": -10.12
+          "put_gex": -10.38,
+          "net_gex": -10.13
         },
         {
           "strike": 48750.0,
-          "call_gex": 1.01,
+          "call_gex": 1.02,
           "put_gex": -4.31,
           "net_gex": -3.3
         },
         {
           "strike": 48800.0,
           "call_gex": 3.64,
-          "put_gex": -11.96,
-          "net_gex": -8.32
+          "put_gex": -11.97,
+          "net_gex": -8.33
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -7.72,
-          "net_gex": -7.72
+          "put_gex": -7.73,
+          "net_gex": -7.73
         },
         {
           "strike": 48900.0,
-          "call_gex": 2.72,
-          "put_gex": -11.71,
-          "net_gex": -8.99
+          "call_gex": 2.73,
+          "put_gex": -11.72,
+          "net_gex": -9.0
         },
         {
           "strike": 48950.0,
           "call_gex": 0.56,
-          "put_gex": -6.4,
-          "net_gex": -5.84
+          "put_gex": -6.41,
+          "net_gex": -5.85
         },
         {
           "strike": 49000.0,
-          "call_gex": 24.7,
-          "put_gex": -41.73,
-          "net_gex": -17.03
+          "call_gex": 24.73,
+          "put_gex": -41.79,
+          "net_gex": -17.06
         },
         {
           "strike": 49050.0,
           "call_gex": 1.16,
           "put_gex": -6.08,
-          "net_gex": -4.92
+          "net_gex": -4.93
         },
         {
           "strike": 49100.0,
-          "call_gex": 4.71,
-          "put_gex": -9.72,
+          "call_gex": 4.72,
+          "put_gex": -9.73,
           "net_gex": -5.01
         },
         {
           "strike": 49150.0,
           "call_gex": 1.8,
-          "put_gex": -4.19,
+          "put_gex": -4.2,
           "net_gex": -2.4
         },
         {
           "strike": 49200.0,
-          "call_gex": 10.34,
-          "put_gex": -14.29,
-          "net_gex": -3.95
+          "call_gex": 10.36,
+          "put_gex": -14.32,
+          "net_gex": -3.96
         },
         {
           "strike": 49250.0,
           "call_gex": 3.09,
-          "put_gex": -11.11,
-          "net_gex": -8.02
+          "put_gex": -11.12,
+          "net_gex": -8.03
         },
         {
           "strike": 49300.0,
-          "call_gex": 15.32,
-          "put_gex": -27.51,
-          "net_gex": -12.19
+          "call_gex": 15.34,
+          "put_gex": -27.55,
+          "net_gex": -12.21
         },
         {
           "strike": 49350.0,
-          "call_gex": 3.48,
-          "put_gex": -5.38,
+          "call_gex": 3.49,
+          "put_gex": -5.39,
           "net_gex": -1.9
         },
         {
           "strike": 49400.0,
-          "call_gex": 28.45,
-          "put_gex": -11.19,
-          "net_gex": 17.26
+          "call_gex": 28.51,
+          "put_gex": -11.21,
+          "net_gex": 17.3
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.65,
+          "call_gex": 10.67,
           "put_gex": -2.26,
-          "net_gex": 8.39
+          "net_gex": 8.41
         },
         {
           "strike": 49500.0,
-          "call_gex": 62.17,
-          "put_gex": -36.78,
-          "net_gex": 25.39
+          "call_gex": 62.29,
+          "put_gex": -36.85,
+          "net_gex": 25.44
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.87,
-          "put_gex": -2.95,
-          "net_gex": 4.92
+          "call_gex": 7.88,
+          "put_gex": -2.96,
+          "net_gex": 4.93
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.78,
-          "put_gex": -6.27,
-          "net_gex": 14.51
+          "call_gex": 20.82,
+          "put_gex": -6.28,
+          "net_gex": 14.54
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.3,
-          "put_gex": -3.31,
+          "call_gex": 5.31,
+          "put_gex": -3.32,
           "net_gex": 1.99
         },
         {
           "strike": 49700.0,
-          "call_gex": 43.26,
-          "put_gex": -14.31,
-          "net_gex": 28.95
+          "call_gex": 43.34,
+          "put_gex": -14.34,
+          "net_gex": 29.0
         },
         {
           "strike": 49750.0,
-          "call_gex": 11.34,
-          "put_gex": -3.0,
-          "net_gex": 8.34
+          "call_gex": 11.36,
+          "put_gex": -3.01,
+          "net_gex": 8.36
         },
         {
           "strike": 49800.0,
-          "call_gex": 66.82,
-          "put_gex": -13.03,
-          "net_gex": 53.79
+          "call_gex": 66.95,
+          "put_gex": -13.06,
+          "net_gex": 53.9
         },
         {
           "strike": 49850.0,
-          "call_gex": 16.38,
-          "put_gex": -6.68,
-          "net_gex": 9.69
+          "call_gex": 16.41,
+          "put_gex": -6.7,
+          "net_gex": 9.71
         },
         {
           "strike": 49900.0,
-          "call_gex": 16.36,
-          "put_gex": -13.69,
-          "net_gex": 2.67
+          "call_gex": 16.39,
+          "put_gex": -13.72,
+          "net_gex": 2.68
         },
         {
           "strike": 49950.0,
-          "call_gex": 3.0,
-          "put_gex": -3.33,
+          "call_gex": 3.01,
+          "put_gex": -3.34,
           "net_gex": -0.33
         },
         {
           "strike": 50000.0,
-          "call_gex": 170.45,
+          "call_gex": 170.78,
           "put_gex": -3.99,
-          "net_gex": 166.47
+          "net_gex": 166.78
         },
         {
           "strike": 50050.0,
-          "call_gex": 6.29,
+          "call_gex": 6.3,
           "put_gex": -0.33,
-          "net_gex": 5.96
+          "net_gex": 5.97
         },
         {
           "strike": 50100.0,
-          "call_gex": 14.81,
+          "call_gex": 14.84,
           "put_gex": -0.33,
-          "net_gex": 14.48
+          "net_gex": 14.51
         },
         {
           "strike": 50150.0,
-          "call_gex": 11.12,
+          "call_gex": 11.14,
           "put_gex": -0.0,
-          "net_gex": 11.12
+          "net_gex": 11.14
         },
         {
           "strike": 50200.0,
-          "call_gex": 28.56,
-          "put_gex": -1.62,
-          "net_gex": 26.94
+          "call_gex": 28.61,
+          "put_gex": -1.63,
+          "net_gex": 26.98
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 2.76,
-          "put_gex": -115.41,
-          "net_gex": -112.65
+          "call_gex": 2.75,
+          "put_gex": -115.23,
+          "net_gex": -112.48
         },
         {
           "strike": 48450.0,
           "call_gex": 0.21,
-          "put_gex": -95.96,
-          "net_gex": -95.75
+          "put_gex": -95.85,
+          "net_gex": -95.64
         },
         {
           "strike": 48500.0,
-          "call_gex": 116.32,
-          "put_gex": -259.53,
-          "net_gex": -143.21
+          "call_gex": 116.21,
+          "put_gex": -259.3,
+          "net_gex": -143.08
         },
         {
           "strike": 48550.0,
           "call_gex": 1.61,
-          "put_gex": -54.21,
-          "net_gex": -52.6
+          "put_gex": -54.18,
+          "net_gex": -52.57
         },
         {
           "strike": 48600.0,
           "call_gex": 1.69,
-          "put_gex": -130.53,
-          "net_gex": -128.84
+          "put_gex": -130.49,
+          "net_gex": -128.8
         },
         {
           "strike": 48650.0,
@@ -19023,196 +19023,196 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48700.0,
           "call_gex": 6.58,
-          "put_gex": -171.33,
-          "net_gex": -164.76
+          "put_gex": -171.38,
+          "net_gex": -164.8
         },
         {
           "strike": 48750.0,
           "call_gex": 1.65,
-          "put_gex": -75.44,
-          "net_gex": -73.8
+          "put_gex": -75.48,
+          "net_gex": -73.83
         },
         {
           "strike": 48800.0,
-          "call_gex": 39.96,
-          "put_gex": -213.19,
-          "net_gex": -173.23
+          "call_gex": 39.99,
+          "put_gex": -213.35,
+          "net_gex": -173.37
         },
         {
           "strike": 48850.0,
-          "call_gex": 8.3,
-          "put_gex": -55.41,
-          "net_gex": -47.12
+          "call_gex": 8.31,
+          "put_gex": -55.47,
+          "net_gex": -47.16
         },
         {
           "strike": 48900.0,
-          "call_gex": 39.0,
-          "put_gex": -212.5,
-          "net_gex": -173.5
+          "call_gex": 39.05,
+          "put_gex": -212.76,
+          "net_gex": -173.71
         },
         {
           "strike": 48950.0,
-          "call_gex": 5.72,
-          "put_gex": -57.81,
-          "net_gex": -52.09
+          "call_gex": 5.73,
+          "put_gex": -57.89,
+          "net_gex": -52.16
         },
         {
           "strike": 49000.0,
-          "call_gex": 122.3,
-          "put_gex": -506.27,
-          "net_gex": -383.96
+          "call_gex": 122.5,
+          "put_gex": -507.08,
+          "net_gex": -384.58
         },
         {
           "strike": 49050.0,
-          "call_gex": 9.12,
-          "put_gex": -88.18,
-          "net_gex": -79.06
+          "call_gex": 9.14,
+          "put_gex": -88.34,
+          "net_gex": -79.2
         },
         {
           "strike": 49100.0,
-          "call_gex": 100.06,
-          "put_gex": -200.47,
-          "net_gex": -100.41
+          "call_gex": 100.26,
+          "put_gex": -200.87,
+          "net_gex": -100.61
         },
         {
           "strike": 49150.0,
-          "call_gex": 29.6,
-          "put_gex": -78.82,
-          "net_gex": -49.21
+          "call_gex": 29.66,
+          "put_gex": -78.98,
+          "net_gex": -49.32
         },
         {
           "strike": 49200.0,
-          "call_gex": 137.01,
-          "put_gex": -268.91,
-          "net_gex": -131.9
+          "call_gex": 137.32,
+          "put_gex": -269.52,
+          "net_gex": -132.2
         },
         {
           "strike": 49250.0,
-          "call_gex": 39.23,
-          "put_gex": -115.82,
-          "net_gex": -76.59
+          "call_gex": 39.32,
+          "put_gex": -116.1,
+          "net_gex": -76.77
         },
         {
           "strike": 49300.0,
-          "call_gex": 157.49,
-          "put_gex": -427.46,
-          "net_gex": -269.98
+          "call_gex": 157.88,
+          "put_gex": -428.54,
+          "net_gex": -270.66
         },
         {
           "strike": 49350.0,
-          "call_gex": 86.24,
-          "put_gex": -92.45,
-          "net_gex": -6.22
+          "call_gex": 86.47,
+          "put_gex": -92.7,
+          "net_gex": -6.23
         },
         {
           "strike": 49400.0,
-          "call_gex": 243.32,
-          "put_gex": -599.2,
-          "net_gex": -355.89
+          "call_gex": 243.98,
+          "put_gex": -600.84,
+          "net_gex": -356.86
         },
         {
           "strike": 49450.0,
-          "call_gex": 65.34,
-          "put_gex": -66.15,
+          "call_gex": 65.53,
+          "put_gex": -66.33,
           "net_gex": -0.8
         },
         {
           "strike": 49500.0,
-          "call_gex": 351.69,
-          "put_gex": -552.31,
-          "net_gex": -200.62
+          "call_gex": 352.71,
+          "put_gex": -553.91,
+          "net_gex": -201.2
         },
         {
           "strike": 49550.0,
-          "call_gex": 85.82,
-          "put_gex": -30.39,
-          "net_gex": 55.44
+          "call_gex": 86.08,
+          "put_gex": -30.48,
+          "net_gex": 55.6
         },
         {
           "strike": 49600.0,
-          "call_gex": 307.94,
-          "put_gex": -184.02,
-          "net_gex": 123.92
+          "call_gex": 308.87,
+          "put_gex": -184.57,
+          "net_gex": 124.3
         },
         {
           "strike": 49650.0,
-          "call_gex": 91.02,
-          "put_gex": -31.31,
-          "net_gex": 59.71
+          "call_gex": 91.3,
+          "put_gex": -31.41,
+          "net_gex": 59.89
         },
         {
           "strike": 49700.0,
-          "call_gex": 335.89,
-          "put_gex": -72.64,
-          "net_gex": 263.25
+          "call_gex": 336.92,
+          "put_gex": -72.86,
+          "net_gex": 264.06
         },
         {
           "strike": 49750.0,
-          "call_gex": 178.26,
-          "put_gex": -29.5,
-          "net_gex": 148.76
+          "call_gex": 178.82,
+          "put_gex": -29.59,
+          "net_gex": 149.22
         },
         {
           "strike": 49800.0,
-          "call_gex": 412.51,
-          "put_gex": -90.78,
-          "net_gex": 321.73
+          "call_gex": 413.8,
+          "put_gex": -91.06,
+          "net_gex": 322.74
         },
         {
           "strike": 49850.0,
-          "call_gex": 152.43,
-          "put_gex": -16.89,
-          "net_gex": 135.54
+          "call_gex": 152.91,
+          "put_gex": -16.94,
+          "net_gex": 135.97
         },
         {
           "strike": 49900.0,
-          "call_gex": 311.08,
-          "put_gex": -27.82,
-          "net_gex": 283.26
+          "call_gex": 312.04,
+          "put_gex": -27.91,
+          "net_gex": 284.14
         },
         {
           "strike": 49950.0,
-          "call_gex": 163.81,
-          "put_gex": -10.92,
-          "net_gex": 152.89
+          "call_gex": 164.31,
+          "put_gex": -10.95,
+          "net_gex": 153.36
         },
         {
           "strike": 50000.0,
-          "call_gex": 868.98,
-          "put_gex": -34.26,
-          "net_gex": 834.72
+          "call_gex": 871.61,
+          "put_gex": -34.36,
+          "net_gex": 837.25
         },
         {
           "strike": 50050.0,
-          "call_gex": 286.62,
-          "put_gex": -4.98,
-          "net_gex": 281.65
+          "call_gex": 287.48,
+          "put_gex": -4.99,
+          "net_gex": 282.49
         },
         {
           "strike": 50100.0,
-          "call_gex": 326.41,
-          "put_gex": -24.67,
-          "net_gex": 301.75
+          "call_gex": 327.36,
+          "put_gex": -24.74,
+          "net_gex": 302.63
         },
         {
           "strike": 50150.0,
-          "call_gex": 176.1,
-          "put_gex": -5.69,
-          "net_gex": 170.41
+          "call_gex": 176.6,
+          "put_gex": -5.71,
+          "net_gex": 170.89
         },
         {
           "strike": 50200.0,
-          "call_gex": 551.05,
-          "put_gex": -5.22,
-          "net_gex": 545.82
+          "call_gex": 552.57,
+          "put_gex": -5.24,
+          "net_gex": 547.33
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 36.43,
+          "call_gex": 36.45,
           "put_gex": -16.9,
-          "net_gex": 19.53
+          "net_gex": 19.54
         },
         {
           "strike": 48450.0,
@@ -19222,9 +19222,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 56.37,
-          "put_gex": -130.14,
-          "net_gex": -73.77
+          "call_gex": 56.4,
+          "put_gex": -130.21,
+          "net_gex": -73.81
         },
         {
           "strike": 48550.0,
@@ -19234,9 +19234,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 54.39,
-          "put_gex": -21.61,
-          "net_gex": 32.79
+          "call_gex": 54.43,
+          "put_gex": -21.62,
+          "net_gex": 32.81
         },
         {
           "strike": 48650.0,
@@ -19246,20 +19246,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 43.17,
-          "put_gex": -21.21,
-          "net_gex": 21.97
+          "call_gex": 43.2,
+          "put_gex": -21.22,
+          "net_gex": 21.98
         },
         {
           "strike": 48750.0,
           "call_gex": 0.0,
-          "put_gex": -3.67,
-          "net_gex": -3.67
+          "put_gex": -3.68,
+          "net_gex": -3.68
         },
         {
           "strike": 48800.0,
-          "call_gex": 25.42,
-          "put_gex": -28.54,
+          "call_gex": 25.43,
+          "put_gex": -28.56,
           "net_gex": -3.13
         },
         {
@@ -19270,9 +19270,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 20.56,
+          "call_gex": 20.58,
           "put_gex": -8.39,
-          "net_gex": 12.18
+          "net_gex": 12.19
         },
         {
           "strike": 48950.0,
@@ -19282,9 +19282,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 122.28,
-          "put_gex": -63.28,
-          "net_gex": 59.0
+          "call_gex": 122.37,
+          "put_gex": -63.32,
+          "net_gex": 59.05
         },
         {
           "strike": 49050.0,
@@ -19294,21 +19294,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 124.77,
-          "put_gex": -26.28,
-          "net_gex": 98.49
+          "call_gex": 124.86,
+          "put_gex": -26.3,
+          "net_gex": 98.57
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.34,
+          "call_gex": 8.35,
           "put_gex": -0.21,
-          "net_gex": 8.13
+          "net_gex": 8.14
         },
         {
           "strike": 49200.0,
-          "call_gex": 48.72,
-          "put_gex": -11.97,
-          "net_gex": 36.75
+          "call_gex": 48.76,
+          "put_gex": -11.98,
+          "net_gex": 36.78
         },
         {
           "strike": 49250.0,
@@ -19318,9 +19318,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.42,
-          "put_gex": -34.88,
-          "net_gex": -14.46
+          "call_gex": 20.43,
+          "put_gex": -34.91,
+          "net_gex": -14.47
         },
         {
           "strike": 49350.0,
@@ -19330,9 +19330,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 24.72,
-          "put_gex": -15.91,
-          "net_gex": 8.81
+          "call_gex": 24.74,
+          "put_gex": -15.92,
+          "net_gex": 8.82
         },
         {
           "strike": 49450.0,
@@ -19342,9 +19342,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 142.23,
-          "put_gex": -64.83,
-          "net_gex": 77.4
+          "call_gex": 142.35,
+          "put_gex": -64.88,
+          "net_gex": 77.47
         },
         {
           "strike": 49550.0,
@@ -19354,9 +19354,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 29.03,
-          "put_gex": -8.73,
-          "net_gex": 20.3
+          "call_gex": 29.05,
+          "put_gex": -8.74,
+          "net_gex": 20.31
         },
         {
           "strike": 49650.0,
@@ -19366,9 +19366,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 26.31,
-          "put_gex": -10.96,
-          "net_gex": 15.35
+          "call_gex": 26.33,
+          "put_gex": -10.97,
+          "net_gex": 15.36
         },
         {
           "strike": 49750.0,
@@ -19378,8 +19378,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49800.0,
-          "call_gex": 31.66,
-          "put_gex": -26.38,
+          "call_gex": 31.68,
+          "put_gex": -26.4,
           "net_gex": 5.28
         },
         {
@@ -19390,9 +19390,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 22.0,
-          "put_gex": -14.3,
-          "net_gex": 7.7
+          "call_gex": 22.02,
+          "put_gex": -14.31,
+          "net_gex": 7.71
         },
         {
           "strike": 49950.0,
@@ -19402,21 +19402,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 319.65,
-          "put_gex": -41.3,
-          "net_gex": 278.35
+          "call_gex": 319.92,
+          "put_gex": -41.34,
+          "net_gex": 278.58
         },
         {
           "strike": 50050.0,
-          "call_gex": 2.19,
+          "call_gex": 2.2,
           "put_gex": -0.22,
-          "net_gex": 1.97
+          "net_gex": 1.98
         },
         {
           "strike": 50100.0,
-          "call_gex": 25.4,
+          "call_gex": 25.42,
           "put_gex": -5.26,
-          "net_gex": 20.15
+          "net_gex": 20.16
         },
         {
           "strike": 50150.0,
@@ -19426,9 +19426,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 44.22,
-          "put_gex": -8.06,
-          "net_gex": 36.16
+          "call_gex": 44.26,
+          "put_gex": -8.07,
+          "net_gex": 36.19
         }
       ]
     },
@@ -19461,27 +19461,27 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 46.6,
-          "put_gex": -211.67,
-          "net_gex": -165.07,
-          "vex": 12.51,
-          "gex_plus": -152.57,
+          "call_gex": 46.64,
+          "put_gex": -211.91,
+          "net_gex": -165.27,
+          "vex": 12.52,
+          "gex_plus": -152.75,
           "w1_call": 1.61,
-          "w1_put": -16.6,
+          "w1_put": -16.62,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 40.79,
-          "mth_put": -18.92,
+          "mth_call": 40.81,
+          "mth_put": -18.93,
           "fri_call": 4.21,
-          "fri_put": -176.16
+          "fri_put": -176.36
         },
         {
           "strike": 48450.0,
           "call_gex": 0.86,
-          "put_gex": -150.53,
-          "net_gex": -149.67,
-          "vex": 10.68,
-          "gex_plus": -138.99,
+          "put_gex": -150.73,
+          "net_gex": -149.87,
+          "vex": 10.69,
+          "gex_plus": -139.18,
           "w1_call": 0.55,
           "w1_put": -5.75,
           "w2_call": 0.0,
@@ -19489,1023 +19489,1023 @@ window.GEX_EMBEDDED_DATA = {
           "mth_call": 0.0,
           "mth_put": -1.0,
           "fri_call": 0.31,
-          "fri_put": -143.79
+          "fri_put": -143.98
         },
         {
           "strike": 48500.0,
-          "call_gex": 237.48,
-          "put_gex": -639.12,
-          "net_gex": -401.65,
-          "vex": 26.82,
-          "gex_plus": -374.83,
-          "w1_call": 3.91,
-          "w1_put": -113.15,
+          "call_gex": 237.79,
+          "put_gex": -639.97,
+          "net_gex": -402.18,
+          "vex": 26.85,
+          "gex_plus": -375.32,
+          "w1_call": 3.92,
+          "w1_put": -113.3,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 62.48,
-          "mth_put": -144.24,
-          "fri_call": 171.09,
-          "fri_put": -381.73
+          "mth_call": 62.52,
+          "mth_put": -144.35,
+          "fri_call": 171.35,
+          "fri_put": -382.32
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.89,
-          "put_gex": -84.81,
-          "net_gex": -81.92,
+          "call_gex": 2.9,
+          "put_gex": -84.96,
+          "net_gex": -82.06,
           "vex": 5.16,
-          "gex_plus": -76.77,
+          "gex_plus": -76.9,
           "w1_call": 0.57,
-          "w1_put": -5.13,
+          "w1_put": -5.14,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.42,
-          "fri_call": 2.32,
-          "fri_put": -78.27
+          "fri_call": 2.33,
+          "fri_put": -78.4
         },
         {
           "strike": 48600.0,
-          "call_gex": 62.07,
-          "put_gex": -232.51,
-          "net_gex": -170.44,
-          "vex": 10.07,
-          "gex_plus": -160.37,
+          "call_gex": 62.12,
+          "put_gex": -232.92,
+          "net_gex": -170.8,
+          "vex": 10.09,
+          "gex_plus": -160.71,
           "w1_call": 0.0,
-          "w1_put": -23.8,
+          "w1_put": -23.83,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 59.69,
-          "mth_put": -23.71,
+          "mth_call": 59.73,
+          "mth_put": -23.73,
           "fri_call": 2.39,
-          "fri_put": -185.01
+          "fri_put": -185.36
         },
         {
           "strike": 48650.0,
           "call_gex": 1.7,
-          "put_gex": -164.02,
-          "net_gex": -162.32,
-          "vex": 8.85,
-          "gex_plus": -153.47,
+          "put_gex": -164.35,
+          "net_gex": -162.65,
+          "vex": 8.87,
+          "gex_plus": -153.78,
           "w1_call": 0.3,
-          "w1_put": -12.4,
+          "w1_put": -12.42,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.3,
-          "fri_call": 1.4,
-          "fri_put": -148.32
+          "fri_call": 1.41,
+          "fri_put": -148.63
         },
         {
           "strike": 48700.0,
-          "call_gex": 56.19,
-          "put_gex": -269.68,
-          "net_gex": -213.49,
-          "vex": 10.8,
-          "gex_plus": -202.69,
+          "call_gex": 56.25,
+          "put_gex": -270.24,
+          "net_gex": -213.99,
+          "vex": 10.82,
+          "gex_plus": -203.17,
           "w1_call": 0.3,
-          "w1_put": -12.6,
+          "w1_put": -12.62,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 46.9,
-          "mth_put": -23.04,
-          "fri_call": 8.99,
-          "fri_put": -234.04
+          "mth_call": 46.94,
+          "mth_put": -23.05,
+          "fri_call": 9.01,
+          "fri_put": -234.56
         },
         {
           "strike": 48750.0,
-          "call_gex": 3.42,
-          "put_gex": -110.31,
-          "net_gex": -106.89,
-          "vex": 4.93,
-          "gex_plus": -101.95,
+          "call_gex": 3.43,
+          "put_gex": -110.56,
+          "net_gex": -107.13,
+          "vex": 4.95,
+          "gex_plus": -102.19,
           "w1_call": 1.22,
-          "w1_put": -5.17,
+          "w1_put": -5.18,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.97,
           "fri_call": 2.21,
-          "fri_put": -101.17
+          "fri_put": -101.41
         },
         {
           "strike": 48800.0,
-          "call_gex": 84.26,
-          "put_gex": -325.56,
-          "net_gex": -241.31,
-          "vex": 10.14,
-          "gex_plus": -231.17,
-          "w1_call": 4.32,
-          "w1_put": -14.19,
+          "call_gex": 84.42,
+          "put_gex": -326.31,
+          "net_gex": -241.9,
+          "vex": 10.17,
+          "gex_plus": -231.73,
+          "w1_call": 4.33,
+          "w1_put": -14.22,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 27.33,
-          "mth_put": -30.7,
-          "fri_call": 52.6,
-          "fri_put": -280.67
+          "mth_call": 27.36,
+          "mth_put": -30.72,
+          "fri_call": 52.73,
+          "fri_put": -281.37
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.72,
-          "put_gex": -82.58,
-          "net_gex": -71.86,
+          "call_gex": 10.75,
+          "put_gex": -82.79,
+          "net_gex": -72.04,
           "vex": 2.72,
-          "gex_plus": -69.14,
+          "gex_plus": -69.31,
           "w1_call": 0.0,
-          "w1_put": -9.06,
+          "w1_put": -9.07,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.9,
-          "fri_call": 10.72,
-          "fri_put": -71.62
+          "fri_call": 10.75,
+          "fri_put": -71.81
         },
         {
           "strike": 48900.0,
-          "call_gex": 74.55,
-          "put_gex": -292.17,
-          "net_gex": -217.63,
-          "vex": 7.36,
-          "gex_plus": -210.27,
+          "call_gex": 74.7,
+          "put_gex": -292.94,
+          "net_gex": -218.23,
+          "vex": 7.38,
+          "gex_plus": -210.86,
           "w1_call": 3.16,
-          "w1_put": -13.58,
+          "w1_put": -13.6,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.9,
-          "mth_put": -8.93,
-          "fri_call": 49.49,
-          "fri_put": -269.66
+          "mth_call": 21.92,
+          "mth_put": -8.94,
+          "fri_call": 49.62,
+          "fri_put": -270.4
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.76,
-          "put_gex": -80.85,
-          "net_gex": -73.09,
+          "call_gex": 7.78,
+          "put_gex": -81.07,
+          "net_gex": -73.29,
           "vex": 2.16,
-          "gex_plus": -70.94,
+          "gex_plus": -71.13,
           "w1_call": 0.64,
-          "w1_put": -7.34,
+          "w1_put": -7.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.5,
-          "fri_call": 7.12,
-          "fri_put": -72.02
+          "fri_call": 7.14,
+          "fri_put": -72.22
         },
         {
           "strike": 49000.0,
-          "call_gex": 306.52,
-          "put_gex": -733.29,
-          "net_gex": -426.78,
-          "vex": 10.93,
-          "gex_plus": -415.85,
-          "w1_call": 27.99,
-          "w1_put": -47.3,
+          "call_gex": 307.11,
+          "put_gex": -735.22,
+          "net_gex": -428.12,
+          "vex": 10.97,
+          "gex_plus": -417.15,
+          "w1_call": 28.05,
+          "w1_put": -47.39,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 128.92,
-          "mth_put": -66.71,
-          "fri_call": 149.61,
-          "fri_put": -619.28
+          "mth_call": 129.02,
+          "mth_put": -66.77,
+          "fri_call": 150.04,
+          "fri_put": -621.07
         },
         {
           "strike": 49050.0,
-          "call_gex": 12.9,
-          "put_gex": -114.22,
-          "net_gex": -101.32,
-          "vex": 2.15,
-          "gex_plus": -99.17,
+          "call_gex": 12.93,
+          "put_gex": -114.55,
+          "net_gex": -101.61,
+          "vex": 2.16,
+          "gex_plus": -99.46,
           "w1_call": 1.3,
-          "w1_put": -6.81,
+          "w1_put": -6.82,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.65,
           "mth_put": -1.51,
-          "fri_call": 10.96,
-          "fri_put": -105.9
+          "fri_call": 10.99,
+          "fri_put": -106.22
         },
         {
           "strike": 49100.0,
-          "call_gex": 253.46,
-          "put_gex": -274.6,
-          "net_gex": -21.14,
+          "call_gex": 253.93,
+          "put_gex": -275.35,
+          "net_gex": -21.43,
           "vex": 0.52,
-          "gex_plus": -20.63,
-          "w1_call": 5.22,
-          "w1_put": -10.77,
+          "gex_plus": -20.9,
+          "w1_call": 5.23,
+          "w1_put": -10.79,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 130.24,
-          "mth_put": -27.43,
-          "fri_call": 118.0,
-          "fri_put": -236.4
+          "mth_call": 130.35,
+          "mth_put": -27.45,
+          "fri_call": 118.35,
+          "fri_put": -237.11
         },
         {
           "strike": 49150.0,
-          "call_gex": 44.9,
-          "put_gex": -96.06,
-          "net_gex": -51.16,
-          "vex": 0.67,
-          "gex_plus": -50.49,
+          "call_gex": 45.02,
+          "put_gex": -96.35,
+          "net_gex": -51.33,
+          "vex": 0.68,
+          "gex_plus": -50.66,
           "w1_call": 1.97,
-          "w1_put": -4.59,
+          "w1_put": -4.6,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 8.66,
+          "mth_call": 8.67,
           "mth_put": -0.22,
-          "fri_call": 34.27,
-          "fri_put": -91.26
+          "fri_call": 34.38,
+          "fri_put": -91.53
         },
         {
           "strike": 49200.0,
-          "call_gex": 217.31,
-          "put_gex": -333.56,
-          "net_gex": -116.25,
-          "vex": 1.08,
-          "gex_plus": -115.17,
-          "w1_call": 11.2,
-          "w1_put": -15.48,
+          "call_gex": 217.86,
+          "put_gex": -334.55,
+          "net_gex": -116.69,
+          "vex": 1.09,
+          "gex_plus": -115.6,
+          "w1_call": 11.22,
+          "w1_put": -15.51,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 50.35,
-          "mth_put": -12.37,
-          "fri_call": 155.77,
-          "fri_put": -305.72
+          "mth_call": 50.39,
+          "mth_put": -12.38,
+          "fri_call": 156.25,
+          "fri_put": -306.66
         },
         {
           "strike": 49250.0,
-          "call_gex": 48.4,
-          "put_gex": -142.48,
-          "net_gex": -94.08,
+          "call_gex": 48.54,
+          "put_gex": -142.91,
+          "net_gex": -94.37,
           "vex": 0.44,
-          "gex_plus": -93.65,
-          "w1_call": 3.3,
-          "w1_put": -11.89,
+          "gex_plus": -93.93,
+          "w1_call": 3.31,
+          "w1_put": -11.91,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.3,
-          "mth_put": -1.3,
-          "fri_call": 43.79,
-          "fri_put": -129.29
+          "mth_call": 1.31,
+          "mth_put": -1.31,
+          "fri_call": 43.93,
+          "fri_put": -129.69
         },
         {
           "strike": 49300.0,
-          "call_gex": 209.73,
-          "put_gex": -533.35,
-          "net_gex": -323.63,
+          "call_gex": 210.31,
+          "put_gex": -534.9,
+          "net_gex": -324.59,
           "vex": 0.15,
-          "gex_plus": -323.48,
-          "w1_call": 16.21,
-          "w1_put": -29.11,
+          "gex_plus": -324.44,
+          "w1_call": 16.24,
+          "w1_put": -29.16,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.89,
-          "mth_put": -35.69,
-          "fri_call": 172.62,
-          "fri_put": -468.55
+          "mth_call": 20.91,
+          "mth_put": -35.72,
+          "fri_call": 173.16,
+          "fri_put": -470.01
         },
         {
           "strike": 49350.0,
-          "call_gex": 97.55,
-          "put_gex": -106.44,
-          "net_gex": -8.89,
+          "call_gex": 97.85,
+          "put_gex": -106.77,
+          "net_gex": -8.92,
           "vex": -0.03,
-          "gex_plus": -8.93,
-          "w1_call": 3.64,
-          "w1_put": -5.63,
+          "gex_plus": -8.95,
+          "w1_call": 3.65,
+          "w1_put": -5.64,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.09,
           "mth_put": -1.31,
-          "fri_call": 92.82,
-          "fri_put": -99.51
+          "fri_call": 93.11,
+          "fri_put": -99.82
         },
         {
           "strike": 49400.0,
-          "call_gex": 311.65,
-          "put_gex": -661.01,
-          "net_gex": -349.36,
-          "vex": -2.67,
-          "gex_plus": -352.03,
-          "w1_call": 29.43,
-          "w1_put": -11.57,
+          "call_gex": 312.52,
+          "put_gex": -663.01,
+          "net_gex": -350.48,
+          "vex": -2.68,
+          "gex_plus": -353.16,
+          "w1_call": 29.49,
+          "w1_put": -11.6,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.05,
-          "mth_put": -16.12,
-          "fri_call": 257.17,
-          "fri_put": -633.32
+          "mth_call": 25.07,
+          "mth_put": -16.13,
+          "fri_call": 257.96,
+          "fri_put": -635.28
         },
         {
           "strike": 49450.0,
-          "call_gex": 79.8,
-          "put_gex": -72.7,
-          "net_gex": 7.1,
+          "call_gex": 80.03,
+          "put_gex": -72.92,
+          "net_gex": 7.11,
           "vex": 0.09,
-          "gex_plus": 7.18,
-          "w1_call": 10.89,
-          "w1_put": -2.31,
+          "gex_plus": 7.2,
+          "w1_call": 10.91,
+          "w1_put": -2.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.09,
           "mth_put": -1.74,
-          "fri_call": 67.82,
-          "fri_put": -68.65
+          "fri_call": 68.03,
+          "fri_put": -68.86
         },
         {
           "strike": 49500.0,
-          "call_gex": 564.01,
-          "put_gex": -665.15,
-          "net_gex": -101.14,
+          "call_gex": 565.34,
+          "put_gex": -666.98,
+          "net_gex": -101.64,
           "vex": -1.49,
-          "gex_plus": -102.62,
-          "w1_call": 62.86,
-          "w1_put": -37.19,
+          "gex_plus": -103.14,
+          "w1_call": 62.98,
+          "w1_put": -37.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 142.71,
-          "mth_put": -65.05,
-          "fri_call": 358.44,
-          "fri_put": -562.92
+          "mth_call": 142.83,
+          "mth_put": -65.1,
+          "fri_call": 359.53,
+          "fri_put": -564.62
         },
         {
           "strike": 49550.0,
-          "call_gex": 95.29,
-          "put_gex": -34.67,
-          "net_gex": 60.62,
+          "call_gex": 95.56,
+          "put_gex": -34.76,
+          "net_gex": 60.79,
           "vex": 1.22,
-          "gex_plus": 61.84,
-          "w1_call": 7.87,
-          "w1_put": -2.95,
+          "gex_plus": 62.01,
+          "w1_call": 7.88,
+          "w1_put": -2.96,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.52,
           "mth_put": -1.3,
-          "fri_call": 85.9,
-          "fri_put": -30.41
+          "fri_call": 86.16,
+          "fri_put": -30.5
         },
         {
           "strike": 49600.0,
-          "call_gex": 352.05,
-          "put_gex": -195.74,
-          "net_gex": 156.31,
-          "vex": 3.81,
-          "gex_plus": 160.13,
-          "w1_call": 20.54,
-          "w1_put": -6.19,
+          "call_gex": 353.0,
+          "put_gex": -196.29,
+          "net_gex": 156.71,
+          "vex": 3.82,
+          "gex_plus": 160.53,
+          "w1_call": 20.58,
+          "w1_put": -6.21,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 28.84,
-          "mth_put": -8.67,
-          "fri_call": 302.67,
-          "fri_put": -180.87
+          "mth_call": 28.86,
+          "mth_put": -8.68,
+          "fri_call": 303.56,
+          "fri_put": -181.4
         },
         {
           "strike": 49650.0,
-          "call_gex": 94.99,
-          "put_gex": -33.47,
-          "net_gex": 61.52,
-          "vex": 1.74,
-          "gex_plus": 63.27,
-          "w1_call": 5.18,
-          "w1_put": -3.24,
+          "call_gex": 95.25,
+          "put_gex": -33.56,
+          "net_gex": 61.69,
+          "vex": 1.75,
+          "gex_plus": 63.44,
+          "w1_call": 5.19,
+          "w1_put": -3.25,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.95,
           "mth_put": -0.0,
-          "fri_call": 87.86,
-          "fri_put": -30.23
+          "fri_call": 88.11,
+          "fri_put": -30.31
         },
         {
           "strike": 49700.0,
-          "call_gex": 386.08,
-          "put_gex": -93.46,
-          "net_gex": 292.62,
-          "vex": 9.5,
-          "gex_plus": 302.12,
-          "w1_call": 41.79,
-          "w1_put": -13.82,
+          "call_gex": 387.06,
+          "put_gex": -93.69,
+          "net_gex": 293.37,
+          "vex": 9.53,
+          "gex_plus": 302.9,
+          "w1_call": 41.87,
+          "w1_put": -13.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 25.89,
+          "mth_call": 25.91,
           "mth_put": -10.79,
-          "fri_call": 318.4,
-          "fri_put": -68.85
+          "fri_call": 319.28,
+          "fri_put": -69.05
         },
         {
           "strike": 49750.0,
-          "call_gex": 178.51,
-          "put_gex": -30.98,
-          "net_gex": 147.54,
-          "vex": 5.38,
-          "gex_plus": 152.92,
-          "w1_call": 10.84,
+          "call_gex": 178.98,
+          "put_gex": -31.06,
+          "net_gex": 147.92,
+          "vex": 5.4,
+          "gex_plus": 153.32,
+          "w1_call": 10.86,
           "w1_put": -2.87,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.72,
-          "mth_put": -0.64,
-          "fri_call": 165.96,
-          "fri_put": -27.46
+          "mth_put": -0.65,
+          "fri_call": 166.4,
+          "fri_put": -27.54
         },
         {
           "strike": 49800.0,
-          "call_gex": 471.12,
-          "put_gex": -121.01,
-          "net_gex": 350.11,
-          "vex": 14.22,
-          "gex_plus": 364.34,
-          "w1_call": 63.12,
-          "w1_put": -12.31,
+          "call_gex": 472.23,
+          "put_gex": -121.26,
+          "net_gex": 350.96,
+          "vex": 14.26,
+          "gex_plus": 365.22,
+          "w1_call": 63.23,
+          "w1_put": -12.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 30.84,
-          "mth_put": -25.7,
-          "fri_call": 377.16,
-          "fri_put": -83.0
+          "mth_call": 30.87,
+          "mth_put": -25.72,
+          "fri_call": 378.13,
+          "fri_put": -83.21
         },
         {
           "strike": 49850.0,
-          "call_gex": 153.24,
-          "put_gex": -21.41,
-          "net_gex": 131.83,
-          "vex": 5.89,
-          "gex_plus": 137.72,
-          "w1_call": 15.29,
-          "w1_put": -6.24,
+          "call_gex": 153.6,
+          "put_gex": -21.46,
+          "net_gex": 132.15,
+          "vex": 5.9,
+          "gex_plus": 138.05,
+          "w1_call": 15.32,
+          "w1_put": -6.25,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.07,
           "mth_put": -0.0,
-          "fri_call": 136.88,
-          "fri_put": -15.17
+          "fri_call": 137.22,
+          "fri_put": -15.2
         },
         {
           "strike": 49900.0,
-          "call_gex": 310.69,
-          "put_gex": -50.97,
-          "net_gex": 259.71,
-          "vex": 12.67,
-          "gex_plus": 272.38,
-          "w1_call": 15.11,
-          "w1_put": -12.64,
+          "call_gex": 311.36,
+          "put_gex": -51.06,
+          "net_gex": 260.3,
+          "vex": 12.69,
+          "gex_plus": 273.0,
+          "w1_call": 15.14,
+          "w1_put": -12.66,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 21.22,
-          "mth_put": -13.79,
-          "fri_call": 274.35,
-          "fri_put": -24.54
+          "mth_call": 21.24,
+          "mth_put": -13.81,
+          "fri_call": 274.99,
+          "fri_put": -24.59
         },
         {
           "strike": 49950.0,
-          "call_gex": 145.9,
-          "put_gex": -13.14,
-          "net_gex": 132.76,
-          "vex": 7.01,
-          "gex_plus": 139.77,
+          "call_gex": 146.21,
+          "put_gex": -13.16,
+          "net_gex": 133.05,
+          "vex": 7.03,
+          "gex_plus": 140.08,
           "w1_call": 2.74,
-          "w1_put": -3.04,
+          "w1_put": -3.05,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.27,
           "mth_put": -0.63,
-          "fri_call": 141.89,
-          "fri_put": -9.46
+          "fri_call": 142.2,
+          "fri_put": -9.48
         },
         {
           "strike": 50000.0,
-          "call_gex": 1198.57,
-          "put_gex": -72.2,
-          "net_gex": 1126.37,
-          "vex": 64.51,
-          "gex_plus": 1190.88,
-          "w1_call": 153.9,
-          "w1_put": -3.6,
+          "call_gex": 1200.54,
+          "put_gex": -72.3,
+          "net_gex": 1128.25,
+          "vex": 64.62,
+          "gex_plus": 1192.86,
+          "w1_call": 154.14,
+          "w1_put": -3.61,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 305.38,
-          "mth_put": -39.46,
-          "fri_call": 739.29,
-          "fri_put": -29.15
+          "mth_call": 305.61,
+          "mth_put": -39.49,
+          "fri_call": 740.79,
+          "fri_put": -29.2
         },
         {
           "strike": 50050.0,
-          "call_gex": 247.2,
-          "put_gex": -4.66,
-          "net_gex": 242.54,
-          "vex": 14.79,
-          "gex_plus": 257.33,
-          "w1_call": 5.61,
+          "call_gex": 247.66,
+          "put_gex": -4.67,
+          "net_gex": 242.99,
+          "vex": 14.81,
+          "gex_plus": 257.8,
+          "w1_call": 5.62,
           "w1_put": -0.3,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 2.09,
           "mth_put": -0.21,
-          "fri_call": 239.51,
-          "fri_put": -4.16
+          "fri_call": 239.95,
+          "fri_put": -4.17
         },
         {
           "strike": 50100.0,
-          "call_gex": 305.01,
-          "put_gex": -25.51,
-          "net_gex": 279.5,
-          "vex": 18.2,
-          "gex_plus": 297.7,
-          "w1_call": 13.07,
+          "call_gex": 305.5,
+          "put_gex": -25.55,
+          "net_gex": 279.95,
+          "vex": 18.23,
+          "gex_plus": 298.19,
+          "w1_call": 13.09,
           "w1_put": -0.29,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 24.03,
-          "mth_put": -4.97,
-          "fri_call": 267.9,
-          "fri_put": -20.24
+          "mth_call": 24.05,
+          "mth_put": -4.98,
+          "fri_call": 268.36,
+          "fri_put": -20.28
         },
         {
           "strike": 50150.0,
-          "call_gex": 151.88,
-          "put_gex": -4.59,
-          "net_gex": 147.29,
-          "vex": 10.18,
-          "gex_plus": 157.47,
-          "w1_call": 9.71,
+          "call_gex": 152.11,
+          "put_gex": -4.6,
+          "net_gex": 147.51,
+          "vex": 10.19,
+          "gex_plus": 157.7,
+          "w1_call": 9.72,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.21,
           "mth_put": -0.0,
-          "fri_call": 141.97,
-          "fri_put": -4.59
+          "fri_call": 142.18,
+          "fri_put": -4.6
         },
         {
           "strike": 50200.0,
-          "call_gex": 502.43,
-          "put_gex": -13.09,
-          "net_gex": 489.34,
-          "vex": 35.85,
-          "gex_plus": 525.19,
-          "w1_call": 24.65,
+          "call_gex": 503.07,
+          "put_gex": -13.1,
+          "net_gex": 489.97,
+          "vex": 35.89,
+          "gex_plus": 525.86,
+          "w1_call": 24.68,
           "w1_put": -1.4,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 41.43,
-          "mth_put": -7.55,
-          "fri_call": 436.35,
-          "fri_put": -4.13
+          "mth_call": 41.46,
+          "mth_put": -7.56,
+          "fri_call": 436.92,
+          "fri_put": -4.14
         }
       ],
       "weekly_gex": [
         {
           "strike": 48400.0,
           "call_gex": 1.61,
-          "put_gex": -16.6,
-          "net_gex": -14.99
+          "put_gex": -16.62,
+          "net_gex": -15.01
         },
         {
           "strike": 48450.0,
           "call_gex": 0.55,
           "put_gex": -5.75,
-          "net_gex": -5.2
+          "net_gex": -5.21
         },
         {
           "strike": 48500.0,
-          "call_gex": 3.91,
-          "put_gex": -113.15,
-          "net_gex": -109.24
+          "call_gex": 3.92,
+          "put_gex": -113.3,
+          "net_gex": -109.39
         },
         {
           "strike": 48550.0,
           "call_gex": 0.57,
-          "put_gex": -5.13,
+          "put_gex": -5.14,
           "net_gex": -4.56
         },
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -23.8,
-          "net_gex": -23.8
+          "put_gex": -23.83,
+          "net_gex": -23.83
         },
         {
           "strike": 48650.0,
           "call_gex": 0.3,
-          "put_gex": -12.4,
-          "net_gex": -12.1
+          "put_gex": -12.42,
+          "net_gex": -12.12
         },
         {
           "strike": 48700.0,
           "call_gex": 0.3,
-          "put_gex": -12.6,
-          "net_gex": -12.3
+          "put_gex": -12.62,
+          "net_gex": -12.32
         },
         {
           "strike": 48750.0,
           "call_gex": 1.22,
-          "put_gex": -5.17,
+          "put_gex": -5.18,
           "net_gex": -3.96
         },
         {
           "strike": 48800.0,
-          "call_gex": 4.32,
-          "put_gex": -14.19,
-          "net_gex": -9.87
+          "call_gex": 4.33,
+          "put_gex": -14.22,
+          "net_gex": -9.89
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -9.06,
-          "net_gex": -9.06
+          "put_gex": -9.07,
+          "net_gex": -9.07
         },
         {
           "strike": 48900.0,
           "call_gex": 3.16,
-          "put_gex": -13.58,
-          "net_gex": -10.42
+          "put_gex": -13.6,
+          "net_gex": -10.44
         },
         {
           "strike": 48950.0,
           "call_gex": 0.64,
-          "put_gex": -7.34,
-          "net_gex": -6.7
+          "put_gex": -7.35,
+          "net_gex": -6.71
         },
         {
           "strike": 49000.0,
-          "call_gex": 27.99,
-          "put_gex": -47.3,
-          "net_gex": -19.31
+          "call_gex": 28.05,
+          "put_gex": -47.39,
+          "net_gex": -19.34
         },
         {
           "strike": 49050.0,
           "call_gex": 1.3,
-          "put_gex": -6.81,
-          "net_gex": -5.51
+          "put_gex": -6.82,
+          "net_gex": -5.52
         },
         {
           "strike": 49100.0,
-          "call_gex": 5.22,
-          "put_gex": -10.77,
-          "net_gex": -5.55
+          "call_gex": 5.23,
+          "put_gex": -10.79,
+          "net_gex": -5.56
         },
         {
           "strike": 49150.0,
           "call_gex": 1.97,
-          "put_gex": -4.59,
-          "net_gex": -2.62
+          "put_gex": -4.6,
+          "net_gex": -2.63
         },
         {
           "strike": 49200.0,
-          "call_gex": 11.2,
-          "put_gex": -15.48,
-          "net_gex": -4.28
+          "call_gex": 11.22,
+          "put_gex": -15.51,
+          "net_gex": -4.29
         },
         {
           "strike": 49250.0,
-          "call_gex": 3.3,
-          "put_gex": -11.89,
-          "net_gex": -8.59
+          "call_gex": 3.31,
+          "put_gex": -11.91,
+          "net_gex": -8.6
         },
         {
           "strike": 49300.0,
-          "call_gex": 16.21,
-          "put_gex": -29.11,
-          "net_gex": -12.9
+          "call_gex": 16.24,
+          "put_gex": -29.16,
+          "net_gex": -12.92
         },
         {
           "strike": 49350.0,
-          "call_gex": 3.64,
-          "put_gex": -5.63,
+          "call_gex": 3.65,
+          "put_gex": -5.64,
           "net_gex": -1.99
         },
         {
           "strike": 49400.0,
-          "call_gex": 29.43,
-          "put_gex": -11.57,
-          "net_gex": 17.86
+          "call_gex": 29.49,
+          "put_gex": -11.6,
+          "net_gex": 17.89
         },
         {
           "strike": 49450.0,
-          "call_gex": 10.89,
-          "put_gex": -2.31,
-          "net_gex": 8.58
+          "call_gex": 10.91,
+          "put_gex": -2.32,
+          "net_gex": 8.6
         },
         {
           "strike": 49500.0,
-          "call_gex": 62.86,
-          "put_gex": -37.19,
-          "net_gex": 25.67
+          "call_gex": 62.98,
+          "put_gex": -37.26,
+          "net_gex": 25.72
         },
         {
           "strike": 49550.0,
-          "call_gex": 7.87,
-          "put_gex": -2.95,
-          "net_gex": 4.92
+          "call_gex": 7.88,
+          "put_gex": -2.96,
+          "net_gex": 4.93
         },
         {
           "strike": 49600.0,
-          "call_gex": 20.54,
-          "put_gex": -6.19,
-          "net_gex": 14.34
+          "call_gex": 20.58,
+          "put_gex": -6.21,
+          "net_gex": 14.37
         },
         {
           "strike": 49650.0,
-          "call_gex": 5.18,
-          "put_gex": -3.24,
-          "net_gex": 1.94
+          "call_gex": 5.19,
+          "put_gex": -3.25,
+          "net_gex": 1.95
         },
         {
           "strike": 49700.0,
-          "call_gex": 41.79,
-          "put_gex": -13.82,
-          "net_gex": 27.97
+          "call_gex": 41.87,
+          "put_gex": -13.85,
+          "net_gex": 28.02
         },
         {
           "strike": 49750.0,
-          "call_gex": 10.84,
+          "call_gex": 10.86,
           "put_gex": -2.87,
-          "net_gex": 7.97
+          "net_gex": 7.98
         },
         {
           "strike": 49800.0,
-          "call_gex": 63.12,
-          "put_gex": -12.31,
-          "net_gex": 50.81
+          "call_gex": 63.23,
+          "put_gex": -12.33,
+          "net_gex": 50.9
         },
         {
           "strike": 49850.0,
-          "call_gex": 15.29,
-          "put_gex": -6.24,
-          "net_gex": 9.05
+          "call_gex": 15.32,
+          "put_gex": -6.25,
+          "net_gex": 9.07
         },
         {
           "strike": 49900.0,
-          "call_gex": 15.11,
-          "put_gex": -12.64,
+          "call_gex": 15.14,
+          "put_gex": -12.66,
           "net_gex": 2.47
         },
         {
           "strike": 49950.0,
           "call_gex": 2.74,
-          "put_gex": -3.04,
+          "put_gex": -3.05,
           "net_gex": -0.3
         },
         {
           "strike": 50000.0,
-          "call_gex": 153.9,
-          "put_gex": -3.6,
-          "net_gex": 150.3
+          "call_gex": 154.14,
+          "put_gex": -3.61,
+          "net_gex": 150.53
         },
         {
           "strike": 50050.0,
-          "call_gex": 5.61,
+          "call_gex": 5.62,
           "put_gex": -0.3,
           "net_gex": 5.32
         },
         {
           "strike": 50100.0,
-          "call_gex": 13.07,
+          "call_gex": 13.09,
           "put_gex": -0.29,
-          "net_gex": 12.78
+          "net_gex": 12.8
         },
         {
           "strike": 50150.0,
-          "call_gex": 9.71,
+          "call_gex": 9.72,
           "put_gex": -0.0,
-          "net_gex": 9.71
+          "net_gex": 9.72
         },
         {
           "strike": 50200.0,
-          "call_gex": 24.65,
+          "call_gex": 24.68,
           "put_gex": -1.4,
-          "net_gex": 23.25
+          "net_gex": 23.28
         }
       ],
       "friday_gex": [
         {
           "strike": 48400.0,
           "call_gex": 4.21,
-          "put_gex": -176.16,
-          "net_gex": -171.95
+          "put_gex": -176.36,
+          "net_gex": -172.15
         },
         {
           "strike": 48450.0,
           "call_gex": 0.31,
-          "put_gex": -143.79,
-          "net_gex": -143.48
+          "put_gex": -143.98,
+          "net_gex": -143.67
         },
         {
           "strike": 48500.0,
-          "call_gex": 171.09,
-          "put_gex": -381.73,
-          "net_gex": -210.64
+          "call_gex": 171.35,
+          "put_gex": -382.32,
+          "net_gex": -210.97
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.32,
-          "put_gex": -78.27,
-          "net_gex": -75.95
+          "call_gex": 2.33,
+          "put_gex": -78.4,
+          "net_gex": -76.08
         },
         {
           "strike": 48600.0,
           "call_gex": 2.39,
-          "put_gex": -185.01,
-          "net_gex": -182.62
+          "put_gex": -185.36,
+          "net_gex": -182.97
         },
         {
           "strike": 48650.0,
-          "call_gex": 1.4,
-          "put_gex": -148.32,
-          "net_gex": -146.92
+          "call_gex": 1.41,
+          "put_gex": -148.63,
+          "net_gex": -147.23
         },
         {
           "strike": 48700.0,
-          "call_gex": 8.99,
-          "put_gex": -234.04,
-          "net_gex": -225.05
+          "call_gex": 9.01,
+          "put_gex": -234.56,
+          "net_gex": -225.56
         },
         {
           "strike": 48750.0,
           "call_gex": 2.21,
-          "put_gex": -101.17,
-          "net_gex": -98.96
+          "put_gex": -101.41,
+          "net_gex": -99.2
         },
         {
           "strike": 48800.0,
-          "call_gex": 52.6,
-          "put_gex": -280.67,
-          "net_gex": -228.07
+          "call_gex": 52.73,
+          "put_gex": -281.37,
+          "net_gex": -228.64
         },
         {
           "strike": 48850.0,
-          "call_gex": 10.72,
-          "put_gex": -71.62,
-          "net_gex": -60.9
+          "call_gex": 10.75,
+          "put_gex": -71.81,
+          "net_gex": -61.06
         },
         {
           "strike": 48900.0,
-          "call_gex": 49.49,
-          "put_gex": -269.66,
-          "net_gex": -220.17
+          "call_gex": 49.62,
+          "put_gex": -270.4,
+          "net_gex": -220.77
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.12,
-          "put_gex": -72.02,
-          "net_gex": -64.9
+          "call_gex": 7.14,
+          "put_gex": -72.22,
+          "net_gex": -65.08
         },
         {
           "strike": 49000.0,
-          "call_gex": 149.61,
-          "put_gex": -619.28,
-          "net_gex": -469.68
+          "call_gex": 150.04,
+          "put_gex": -621.07,
+          "net_gex": -471.03
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.96,
-          "put_gex": -105.9,
-          "net_gex": -94.95
+          "call_gex": 10.99,
+          "put_gex": -106.22,
+          "net_gex": -95.23
         },
         {
           "strike": 49100.0,
-          "call_gex": 118.0,
-          "put_gex": -236.4,
-          "net_gex": -118.41
+          "call_gex": 118.35,
+          "put_gex": -237.11,
+          "net_gex": -118.76
         },
         {
           "strike": 49150.0,
-          "call_gex": 34.27,
-          "put_gex": -91.26,
-          "net_gex": -56.98
+          "call_gex": 34.38,
+          "put_gex": -91.53,
+          "net_gex": -57.16
         },
         {
           "strike": 49200.0,
-          "call_gex": 155.77,
-          "put_gex": -305.72,
-          "net_gex": -149.95
+          "call_gex": 156.25,
+          "put_gex": -306.66,
+          "net_gex": -150.41
         },
         {
           "strike": 49250.0,
-          "call_gex": 43.79,
-          "put_gex": -129.29,
-          "net_gex": -85.5
+          "call_gex": 43.93,
+          "put_gex": -129.69,
+          "net_gex": -85.76
         },
         {
           "strike": 49300.0,
-          "call_gex": 172.62,
-          "put_gex": -468.55,
-          "net_gex": -295.93
+          "call_gex": 173.16,
+          "put_gex": -470.01,
+          "net_gex": -296.85
         },
         {
           "strike": 49350.0,
-          "call_gex": 92.82,
-          "put_gex": -99.51,
-          "net_gex": -6.69
+          "call_gex": 93.11,
+          "put_gex": -99.82,
+          "net_gex": -6.71
         },
         {
           "strike": 49400.0,
-          "call_gex": 257.17,
-          "put_gex": -633.32,
-          "net_gex": -376.15
+          "call_gex": 257.96,
+          "put_gex": -635.28,
+          "net_gex": -377.31
         },
         {
           "strike": 49450.0,
-          "call_gex": 67.82,
-          "put_gex": -68.65,
+          "call_gex": 68.03,
+          "put_gex": -68.86,
           "net_gex": -0.83
         },
         {
           "strike": 49500.0,
-          "call_gex": 358.44,
-          "put_gex": -562.92,
-          "net_gex": -204.47
+          "call_gex": 359.53,
+          "put_gex": -564.62,
+          "net_gex": -205.09
         },
         {
           "strike": 49550.0,
-          "call_gex": 85.9,
-          "put_gex": -30.41,
-          "net_gex": 55.48
+          "call_gex": 86.16,
+          "put_gex": -30.5,
+          "net_gex": 55.65
         },
         {
           "strike": 49600.0,
-          "call_gex": 302.67,
-          "put_gex": -180.87,
-          "net_gex": 121.8
+          "call_gex": 303.56,
+          "put_gex": -181.4,
+          "net_gex": 122.16
         },
         {
           "strike": 49650.0,
-          "call_gex": 87.86,
-          "put_gex": -30.23,
-          "net_gex": 57.63
+          "call_gex": 88.11,
+          "put_gex": -30.31,
+          "net_gex": 57.8
         },
         {
           "strike": 49700.0,
-          "call_gex": 318.4,
-          "put_gex": -68.85,
-          "net_gex": 249.55
+          "call_gex": 319.28,
+          "put_gex": -69.05,
+          "net_gex": 250.24
         },
         {
           "strike": 49750.0,
-          "call_gex": 165.96,
-          "put_gex": -27.46,
-          "net_gex": 138.49
+          "call_gex": 166.4,
+          "put_gex": -27.54,
+          "net_gex": 138.86
         },
         {
           "strike": 49800.0,
-          "call_gex": 377.16,
-          "put_gex": -83.0,
-          "net_gex": 294.17
+          "call_gex": 378.13,
+          "put_gex": -83.21,
+          "net_gex": 294.92
         },
         {
           "strike": 49850.0,
-          "call_gex": 136.88,
-          "put_gex": -15.17,
-          "net_gex": 121.71
+          "call_gex": 137.22,
+          "put_gex": -15.2,
+          "net_gex": 122.01
         },
         {
           "strike": 49900.0,
-          "call_gex": 274.35,
-          "put_gex": -24.54,
-          "net_gex": 249.82
+          "call_gex": 274.99,
+          "put_gex": -24.59,
+          "net_gex": 250.4
         },
         {
           "strike": 49950.0,
-          "call_gex": 141.89,
-          "put_gex": -9.46,
-          "net_gex": 132.43
+          "call_gex": 142.2,
+          "put_gex": -9.48,
+          "net_gex": 132.72
         },
         {
           "strike": 50000.0,
-          "call_gex": 739.29,
-          "put_gex": -29.15,
-          "net_gex": 710.15
+          "call_gex": 740.79,
+          "put_gex": -29.2,
+          "net_gex": 711.59
         },
         {
           "strike": 50050.0,
-          "call_gex": 239.51,
-          "put_gex": -4.16,
-          "net_gex": 235.35
+          "call_gex": 239.95,
+          "put_gex": -4.17,
+          "net_gex": 235.79
         },
         {
           "strike": 50100.0,
-          "call_gex": 267.9,
-          "put_gex": -20.24,
-          "net_gex": 247.66
+          "call_gex": 268.36,
+          "put_gex": -20.28,
+          "net_gex": 248.08
         },
         {
           "strike": 50150.0,
-          "call_gex": 141.97,
-          "put_gex": -4.59,
-          "net_gex": 137.38
+          "call_gex": 142.18,
+          "put_gex": -4.6,
+          "net_gex": 137.59
         },
         {
           "strike": 50200.0,
-          "call_gex": 436.35,
-          "put_gex": -4.13,
-          "net_gex": 432.21
+          "call_gex": 436.92,
+          "put_gex": -4.14,
+          "net_gex": 432.78
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 40.79,
-          "put_gex": -18.92,
-          "net_gex": 21.87
+          "call_gex": 40.81,
+          "put_gex": -18.93,
+          "net_gex": 21.89
         },
         {
           "strike": 48450.0,
@@ -20515,9 +20515,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 62.48,
-          "put_gex": -144.24,
-          "net_gex": -81.76
+          "call_gex": 62.52,
+          "put_gex": -144.35,
+          "net_gex": -81.82
         },
         {
           "strike": 48550.0,
@@ -20527,9 +20527,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 59.69,
-          "put_gex": -23.71,
-          "net_gex": 35.97
+          "call_gex": 59.73,
+          "put_gex": -23.73,
+          "net_gex": 36.0
         },
         {
           "strike": 48650.0,
@@ -20539,9 +20539,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 46.9,
-          "put_gex": -23.04,
-          "net_gex": 23.87
+          "call_gex": 46.94,
+          "put_gex": -23.05,
+          "net_gex": 23.88
         },
         {
           "strike": 48750.0,
@@ -20551,9 +20551,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 27.33,
-          "put_gex": -30.7,
-          "net_gex": -3.36
+          "call_gex": 27.36,
+          "put_gex": -30.72,
+          "net_gex": -3.37
         },
         {
           "strike": 48850.0,
@@ -20563,9 +20563,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 21.9,
-          "put_gex": -8.93,
-          "net_gex": 12.97
+          "call_gex": 21.92,
+          "put_gex": -8.94,
+          "net_gex": 12.98
         },
         {
           "strike": 48950.0,
@@ -20575,9 +20575,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 128.92,
-          "put_gex": -66.71,
-          "net_gex": 62.21
+          "call_gex": 129.02,
+          "put_gex": -66.77,
+          "net_gex": 62.26
         },
         {
           "strike": 49050.0,
@@ -20587,33 +20587,33 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49100.0,
-          "call_gex": 130.24,
-          "put_gex": -27.43,
-          "net_gex": 102.81
+          "call_gex": 130.35,
+          "put_gex": -27.45,
+          "net_gex": 102.89
         },
         {
           "strike": 49150.0,
-          "call_gex": 8.66,
+          "call_gex": 8.67,
           "put_gex": -0.22,
           "net_gex": 8.45
         },
         {
           "strike": 49200.0,
-          "call_gex": 50.35,
-          "put_gex": -12.37,
-          "net_gex": 37.98
+          "call_gex": 50.39,
+          "put_gex": -12.38,
+          "net_gex": 38.01
         },
         {
           "strike": 49250.0,
-          "call_gex": 1.3,
-          "put_gex": -1.3,
+          "call_gex": 1.31,
+          "put_gex": -1.31,
           "net_gex": 0.0
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.89,
-          "put_gex": -35.69,
-          "net_gex": -14.8
+          "call_gex": 20.91,
+          "put_gex": -35.72,
+          "net_gex": -14.81
         },
         {
           "strike": 49350.0,
@@ -20623,9 +20623,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 25.05,
-          "put_gex": -16.12,
-          "net_gex": 8.93
+          "call_gex": 25.07,
+          "put_gex": -16.13,
+          "net_gex": 8.94
         },
         {
           "strike": 49450.0,
@@ -20635,9 +20635,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49500.0,
-          "call_gex": 142.71,
-          "put_gex": -65.05,
-          "net_gex": 77.66
+          "call_gex": 142.83,
+          "put_gex": -65.1,
+          "net_gex": 77.73
         },
         {
           "strike": 49550.0,
@@ -20647,9 +20647,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 28.84,
-          "put_gex": -8.67,
-          "net_gex": 20.17
+          "call_gex": 28.86,
+          "put_gex": -8.68,
+          "net_gex": 20.18
         },
         {
           "strike": 49650.0,
@@ -20659,20 +20659,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 25.89,
+          "call_gex": 25.91,
           "put_gex": -10.79,
-          "net_gex": 15.1
+          "net_gex": 15.11
         },
         {
           "strike": 49750.0,
           "call_gex": 1.72,
-          "put_gex": -0.64,
-          "net_gex": 1.07
+          "put_gex": -0.65,
+          "net_gex": 1.08
         },
         {
           "strike": 49800.0,
-          "call_gex": 30.84,
-          "put_gex": -25.7,
+          "call_gex": 30.87,
+          "put_gex": -25.72,
           "net_gex": 5.14
         },
         {
@@ -20683,8 +20683,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 21.22,
-          "put_gex": -13.79,
+          "call_gex": 21.24,
+          "put_gex": -13.81,
           "net_gex": 7.43
         },
         {
@@ -20695,9 +20695,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 305.38,
-          "put_gex": -39.46,
-          "net_gex": 265.92
+          "call_gex": 305.61,
+          "put_gex": -39.49,
+          "net_gex": 266.13
         },
         {
           "strike": 50050.0,
@@ -20707,9 +20707,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 24.03,
-          "put_gex": -4.97,
-          "net_gex": 19.06
+          "call_gex": 24.05,
+          "put_gex": -4.98,
+          "net_gex": 19.07
         },
         {
           "strike": 50150.0,
@@ -20719,9 +20719,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 41.43,
-          "put_gex": -7.55,
-          "net_gex": 33.88
+          "call_gex": 41.46,
+          "put_gex": -7.56,
+          "net_gex": 33.9
         }
       ]
     },
@@ -20754,594 +20754,594 @@ window.GEX_EMBEDDED_DATA = {
       "total_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 51.33,
-          "put_gex": -272.47,
-          "net_gex": -221.14,
-          "vex": 5.56,
-          "gex_plus": -215.58,
+          "call_gex": 51.39,
+          "put_gex": -273.2,
+          "net_gex": -221.81,
+          "vex": 5.58,
+          "gex_plus": -216.23,
           "w1_call": 1.91,
-          "w1_put": -19.72,
+          "w1_put": -19.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 43.87,
-          "mth_put": -20.35,
-          "fri_call": 5.55,
-          "fri_put": -232.41
+          "mth_call": 43.91,
+          "mth_put": -20.36,
+          "fri_call": 5.57,
+          "fri_put": -233.08
         },
         {
           "strike": 48450.0,
           "call_gex": 1.04,
-          "put_gex": -193.15,
-          "net_gex": -192.1,
-          "vex": 3.99,
-          "gex_plus": -188.11,
+          "put_gex": -193.71,
+          "net_gex": -192.66,
+          "vex": 4.01,
+          "gex_plus": -188.66,
           "w1_call": 0.64,
-          "w1_put": -6.73,
+          "w1_put": -6.74,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.06,
           "fri_call": 0.4,
-          "fri_put": -185.35
+          "fri_put": -185.9
         },
         {
           "strike": 48500.0,
-          "call_gex": 286.37,
-          "put_gex": -764.62,
-          "net_gex": -478.25,
-          "vex": 7.77,
-          "gex_plus": -470.48,
-          "w1_call": 4.51,
-          "w1_put": -130.59,
+          "call_gex": 287.09,
+          "put_gex": -766.45,
+          "net_gex": -479.36,
+          "vex": 7.79,
+          "gex_plus": -471.57,
+          "w1_call": 4.52,
+          "w1_put": -130.84,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 66.37,
-          "mth_put": -153.22,
-          "fri_call": 215.5,
-          "fri_put": -480.81
+          "mth_call": 66.42,
+          "mth_put": -153.34,
+          "fri_call": 216.14,
+          "fri_put": -482.26
         },
         {
           "strike": 48550.0,
-          "call_gex": 3.51,
-          "put_gex": -103.66,
-          "net_gex": -100.16,
+          "call_gex": 3.52,
+          "put_gex": -103.97,
+          "net_gex": -100.45,
           "vex": 1.24,
-          "gex_plus": -98.92,
+          "gex_plus": -99.21,
           "w1_call": 0.65,
-          "w1_put": -5.83,
+          "w1_put": -5.85,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.5,
-          "fri_call": 2.86,
-          "fri_put": -96.33
+          "fri_call": 2.87,
+          "fri_put": -96.63
         },
         {
           "strike": 48600.0,
-          "call_gex": 65.48,
-          "put_gex": -274.06,
-          "net_gex": -208.58,
-          "vex": 1.76,
-          "gex_plus": -206.82,
+          "call_gex": 65.54,
+          "put_gex": -274.82,
+          "net_gex": -209.28,
+          "vex": 1.77,
+          "gex_plus": -207.51,
           "w1_call": 0.0,
-          "w1_put": -26.68,
+          "w1_put": -26.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 62.61,
-          "mth_put": -24.87,
-          "fri_call": 2.87,
-          "fri_put": -222.51
+          "mth_call": 62.66,
+          "mth_put": -24.89,
+          "fri_call": 2.88,
+          "fri_put": -223.2
         },
         {
           "strike": 48650.0,
-          "call_gex": 1.97,
-          "put_gex": -191.46,
-          "net_gex": -189.49,
-          "vex": 0.75,
-          "gex_plus": -188.73,
+          "call_gex": 1.98,
+          "put_gex": -192.03,
+          "net_gex": -190.05,
+          "vex": 0.76,
+          "gex_plus": -189.29,
           "w1_call": 0.33,
-          "w1_put": -13.7,
+          "w1_put": -13.73,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -3.44,
           "fri_call": 1.65,
-          "fri_put": -174.32
+          "fri_put": -174.86
         },
         {
           "strike": 48700.0,
-          "call_gex": 59.24,
-          "put_gex": -306.38,
-          "net_gex": -247.15,
+          "call_gex": 59.31,
+          "put_gex": -307.27,
+          "net_gex": -247.96,
           "vex": -0.0,
-          "gex_plus": -247.15,
+          "gex_plus": -247.96,
           "w1_call": 0.33,
-          "w1_put": -13.72,
+          "w1_put": -13.75,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 48.59,
-          "mth_put": -23.86,
-          "fri_call": 10.32,
-          "fri_put": -268.8
+          "mth_call": 48.63,
+          "mth_put": -23.88,
+          "fri_call": 10.35,
+          "fri_put": -269.63
         },
         {
           "strike": 48750.0,
-          "call_gex": 3.78,
-          "put_gex": -123.19,
-          "net_gex": -119.41,
-          "vex": -0.52,
-          "gex_plus": -119.93,
+          "call_gex": 3.79,
+          "put_gex": -123.56,
+          "net_gex": -119.76,
+          "vex": -0.53,
+          "gex_plus": -120.29,
           "w1_call": 1.31,
-          "w1_put": -5.56,
+          "w1_put": -5.57,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -4.09,
-          "fri_call": 2.48,
-          "fri_put": -113.55
+          "fri_call": 2.49,
+          "fri_put": -113.9
         },
         {
           "strike": 48800.0,
-          "call_gex": 90.23,
-          "put_gex": -354.28,
-          "net_gex": -264.05,
-          "vex": -2.25,
-          "gex_plus": -266.3,
-          "w1_call": 4.57,
-          "w1_put": -15.02,
+          "call_gex": 90.44,
+          "put_gex": -355.29,
+          "net_gex": -264.84,
+          "vex": -2.26,
+          "gex_plus": -267.1,
+          "w1_call": 4.58,
+          "w1_put": -15.05,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 27.97,
-          "mth_put": -31.41,
-          "fri_call": 57.7,
-          "fri_put": -307.85
+          "mth_call": 27.99,
+          "mth_put": -31.43,
+          "fri_call": 57.88,
+          "fri_put": -308.81
         },
         {
           "strike": 48850.0,
-          "call_gex": 11.5,
-          "put_gex": -88.16,
-          "net_gex": -76.66,
+          "call_gex": 11.53,
+          "put_gex": -88.41,
+          "net_gex": -76.88,
           "vex": -0.98,
-          "gex_plus": -77.64,
+          "gex_plus": -77.86,
           "w1_call": 0.0,
-          "w1_put": -9.45,
+          "w1_put": -9.47,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.94,
-          "fri_call": 11.5,
-          "fri_put": -76.78
+          "fri_call": 11.53,
+          "fri_put": -77.01
         },
         {
           "strike": 48900.0,
-          "call_gex": 77.22,
-          "put_gex": -305.49,
-          "net_gex": -228.27,
-          "vex": -3.83,
-          "gex_plus": -232.1,
+          "call_gex": 77.4,
+          "put_gex": -306.38,
+          "net_gex": -228.98,
+          "vex": -3.84,
+          "gex_plus": -232.82,
           "w1_call": 3.25,
-          "w1_put": -13.97,
+          "w1_put": -13.99,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 22.12,
-          "mth_put": -9.02,
-          "fri_call": 51.85,
-          "fri_put": -282.5
+          "mth_call": 22.14,
+          "mth_put": -9.03,
+          "fri_call": 52.0,
+          "fri_put": -283.36
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.94,
-          "put_gex": -82.68,
-          "net_gex": -74.74,
-          "vex": -1.57,
-          "gex_plus": -76.31,
+          "call_gex": 7.96,
+          "put_gex": -82.91,
+          "net_gex": -74.95,
+          "vex": -1.58,
+          "gex_plus": -76.53,
           "w1_call": 0.65,
-          "w1_put": -7.44,
+          "w1_put": -7.45,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.0,
           "mth_put": -1.5,
-          "fri_call": 7.29,
-          "fri_put": -73.74
+          "fri_call": 7.31,
+          "fri_put": -73.96
         },
         {
           "strike": 49000.0,
-          "call_gex": 306.33,
-          "put_gex": -733.54,
-          "net_gex": -427.21,
-          "vex": -10.66,
-          "gex_plus": -437.87,
-          "w1_call": 27.97,
-          "w1_put": -47.26,
+          "call_gex": 306.92,
+          "put_gex": -735.48,
+          "net_gex": -428.56,
+          "vex": -10.69,
+          "gex_plus": -439.25,
+          "w1_call": 28.03,
+          "w1_put": -47.35,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 128.65,
-          "mth_put": -66.57,
-          "fri_call": 149.71,
-          "fri_put": -619.7
+          "mth_call": 128.75,
+          "mth_put": -66.63,
+          "fri_call": 150.14,
+          "fri_put": -621.5
         },
         {
           "strike": 49050.0,
-          "call_gex": 12.63,
-          "put_gex": -111.78,
-          "net_gex": -99.15,
-          "vex": -2.91,
-          "gex_plus": -102.05,
+          "call_gex": 12.67,
+          "put_gex": -112.09,
+          "net_gex": -99.42,
+          "vex": -2.92,
+          "gex_plus": -102.34,
           "w1_call": 1.28,
-          "w1_put": -6.71,
+          "w1_put": -6.72,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.64,
-          "mth_put": -1.49,
-          "fri_call": 10.71,
-          "fri_put": -103.58
+          "mth_put": -1.5,
+          "fri_call": 10.75,
+          "fri_put": -103.87
         },
         {
           "strike": 49100.0,
-          "call_gex": 246.23,
-          "put_gex": -263.48,
-          "net_gex": -17.25,
+          "call_gex": 246.65,
+          "put_gex": -264.14,
+          "net_gex": -17.48,
           "vex": -0.43,
-          "gex_plus": -17.67,
-          "w1_call": 5.07,
-          "w1_put": -10.45,
+          "gex_plus": -17.92,
+          "w1_call": 5.08,
+          "w1_put": -10.47,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 128.36,
-          "mth_put": -27.04,
-          "fri_call": 112.8,
-          "fri_put": -225.99
+          "mth_call": 128.47,
+          "mth_put": -27.06,
+          "fri_call": 113.11,
+          "fri_put": -226.61
         },
         {
           "strike": 49150.0,
-          "call_gex": 42.39,
-          "put_gex": -89.87,
-          "net_gex": -47.48,
-          "vex": -1.77,
-          "gex_plus": -49.25,
-          "w1_call": 1.88,
+          "call_gex": 42.49,
+          "put_gex": -90.11,
+          "net_gex": -47.62,
+          "vex": -1.78,
+          "gex_plus": -49.4,
+          "w1_call": 1.89,
           "w1_put": -4.4,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 8.49,
           "mth_put": -0.21,
-          "fri_call": 32.02,
-          "fri_put": -85.26
+          "fri_call": 32.11,
+          "fri_put": -85.49
         },
         {
           "strike": 49200.0,
-          "call_gex": 201.84,
-          "put_gex": -305.85,
-          "net_gex": -104.01,
-          "vex": -4.29,
-          "gex_plus": -108.3,
-          "w1_call": 10.56,
-          "w1_put": -14.6,
+          "call_gex": 202.26,
+          "put_gex": -306.59,
+          "net_gex": -104.34,
+          "vex": -4.3,
+          "gex_plus": -108.64,
+          "w1_call": 10.58,
+          "w1_put": -14.63,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 49.02,
-          "mth_put": -12.04,
-          "fri_call": 142.26,
-          "fri_put": -279.2
+          "mth_call": 49.05,
+          "mth_put": -12.05,
+          "fri_call": 142.62,
+          "fri_put": -279.91
         },
         {
           "strike": 49250.0,
-          "call_gex": 43.43,
-          "put_gex": -127.74,
-          "net_gex": -84.31,
-          "vex": -3.87,
-          "gex_plus": -88.18,
-          "w1_call": 3.07,
-          "w1_put": -11.06,
+          "call_gex": 43.53,
+          "put_gex": -128.04,
+          "net_gex": -84.51,
+          "vex": -3.88,
+          "gex_plus": -88.39,
+          "w1_call": 3.08,
+          "w1_put": -11.08,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.26,
           "mth_put": -1.26,
-          "fri_call": 39.09,
-          "fri_put": -115.42
+          "fri_call": 39.19,
+          "fri_put": -115.7
         },
         {
           "strike": 49300.0,
-          "call_gex": 185.59,
-          "put_gex": -469.88,
-          "net_gex": -284.29,
-          "vex": -14.25,
-          "gex_plus": -298.54,
-          "w1_call": 14.86,
-          "w1_put": -26.69,
+          "call_gex": 185.97,
+          "put_gex": -470.88,
+          "net_gex": -284.91,
+          "vex": -14.28,
+          "gex_plus": -299.18,
+          "w1_call": 14.89,
+          "w1_put": -26.74,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.09,
-          "mth_put": -34.32,
-          "fri_call": 150.63,
-          "fri_put": -408.86
+          "mth_call": 20.11,
+          "mth_put": -34.35,
+          "fri_call": 150.98,
+          "fri_put": -409.8
         },
         {
           "strike": 49350.0,
-          "call_gex": 83.51,
-          "put_gex": -91.22,
-          "net_gex": -7.71,
+          "call_gex": 83.68,
+          "put_gex": -91.41,
+          "net_gex": -7.72,
           "vex": -0.42,
-          "gex_plus": -8.13,
-          "w1_call": 3.29,
+          "gex_plus": -8.14,
+          "w1_call": 3.3,
           "w1_put": -5.09,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.04,
           "mth_put": -1.25,
-          "fri_call": 79.18,
-          "fri_put": -84.88
+          "fri_call": 79.34,
+          "fri_put": -85.06
         },
         {
           "strike": 49400.0,
-          "call_gex": 264.46,
-          "put_gex": -553.7,
-          "net_gex": -289.24,
-          "vex": -16.84,
-          "gex_plus": -306.08,
-          "w1_call": 26.23,
-          "w1_put": -10.32,
+          "call_gex": 264.94,
+          "put_gex": -554.77,
+          "net_gex": -289.83,
+          "vex": -16.87,
+          "gex_plus": -306.7,
+          "w1_call": 26.27,
+          "w1_put": -10.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 23.79,
-          "mth_put": -15.31,
-          "fri_call": 214.43,
-          "fri_put": -528.08
+          "mth_call": 23.81,
+          "mth_put": -15.32,
+          "fri_call": 214.86,
+          "fri_put": -529.12
         },
         {
           "strike": 49450.0,
-          "call_gex": 65.88,
-          "put_gex": -59.63,
-          "net_gex": 6.25,
+          "call_gex": 66.0,
+          "put_gex": -59.74,
+          "net_gex": 6.26,
           "vex": 0.39,
-          "gex_plus": 6.64,
-          "w1_call": 9.57,
+          "gex_plus": 6.65,
+          "w1_call": 9.59,
           "w1_put": -2.03,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.03,
-          "mth_put": -1.64,
-          "fri_call": 55.28,
-          "fri_put": -55.96
+          "mth_put": -1.65,
+          "fri_call": 55.38,
+          "fri_put": -56.06
         },
         {
           "strike": 49500.0,
-          "call_gex": 473.96,
-          "put_gex": -541.79,
-          "net_gex": -67.83,
-          "vex": -4.4,
-          "gex_plus": -72.23,
-          "w1_call": 54.46,
-          "w1_put": -32.22,
+          "call_gex": 474.6,
+          "put_gex": -542.62,
+          "net_gex": -68.02,
+          "vex": -4.41,
+          "gex_plus": -72.42,
+          "w1_call": 54.54,
+          "w1_put": -32.26,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 133.88,
-          "mth_put": -61.02,
-          "fri_call": 285.62,
-          "fri_put": -448.55
+          "mth_call": 133.97,
+          "mth_put": -61.06,
+          "fri_call": 286.09,
+          "fri_put": -449.29
         },
         {
           "strike": 49550.0,
-          "call_gex": 75.05,
-          "put_gex": -27.43,
-          "net_gex": 47.62,
-          "vex": 3.36,
-          "gex_plus": 50.99,
-          "w1_call": 6.72,
+          "call_gex": 75.16,
+          "put_gex": -27.47,
+          "net_gex": 47.69,
+          "vex": 3.37,
+          "gex_plus": 51.06,
+          "w1_call": 6.73,
           "w1_put": -2.52,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.42,
           "mth_put": -1.22,
-          "fri_call": 66.91,
-          "fri_put": -23.69
+          "fri_call": 67.01,
+          "fri_put": -23.73
         },
         {
           "strike": 49600.0,
-          "call_gex": 274.53,
-          "put_gex": -151.0,
-          "net_gex": 123.53,
-          "vex": 9.26,
-          "gex_plus": 132.79,
-          "w1_call": 17.3,
+          "call_gex": 274.85,
+          "put_gex": -151.18,
+          "net_gex": 123.67,
+          "vex": 9.27,
+          "gex_plus": 132.94,
+          "w1_call": 17.32,
           "w1_put": -5.22,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 26.72,
+          "mth_call": 26.74,
           "mth_put": -8.04,
-          "fri_call": 230.5,
-          "fri_put": -137.74
+          "fri_call": 230.79,
+          "fri_put": -137.91
         },
         {
           "strike": 49650.0,
-          "call_gex": 71.51,
-          "put_gex": -25.19,
-          "net_gex": 46.32,
-          "vex": 3.65,
-          "gex_plus": 49.97,
-          "w1_call": 4.3,
+          "call_gex": 71.59,
+          "put_gex": -25.22,
+          "net_gex": 46.36,
+          "vex": 3.66,
+          "gex_plus": 50.02,
+          "w1_call": 4.31,
           "w1_put": -2.69,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.79,
           "mth_put": -0.0,
-          "fri_call": 65.41,
-          "fri_put": -22.51
+          "fri_call": 65.48,
+          "fri_put": -22.53
         },
         {
           "strike": 49700.0,
-          "call_gex": 289.68,
-          "put_gex": -71.31,
-          "net_gex": 218.37,
-          "vex": 18.14,
-          "gex_plus": 236.51,
-          "w1_call": 34.22,
-          "w1_put": -11.32,
+          "call_gex": 289.92,
+          "put_gex": -71.37,
+          "net_gex": 218.55,
+          "vex": 18.15,
+          "gex_plus": 236.7,
+          "w1_call": 34.25,
+          "w1_put": -11.33,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 23.7,
-          "mth_put": -9.87,
-          "fri_call": 231.77,
-          "fri_put": -50.12
+          "mth_call": 23.71,
+          "mth_put": -9.88,
+          "fri_call": 231.96,
+          "fri_put": -50.16
         },
         {
           "strike": 49750.0,
-          "call_gex": 128.42,
-          "put_gex": -22.45,
-          "net_gex": 105.97,
+          "call_gex": 128.5,
+          "put_gex": -22.46,
+          "net_gex": 106.04,
           "vex": 9.23,
-          "gex_plus": 115.2,
-          "w1_call": 8.75,
+          "gex_plus": 115.27,
+          "w1_call": 8.76,
           "w1_put": -2.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.56,
+          "mth_call": 1.57,
           "mth_put": -0.59,
-          "fri_call": 118.11,
-          "fri_put": -19.55
+          "fri_call": 118.18,
+          "fri_put": -19.56
         },
         {
           "strike": 49800.0,
-          "call_gex": 340.56,
-          "put_gex": -90.79,
-          "net_gex": 249.77,
-          "vex": 22.78,
-          "gex_plus": 272.55,
-          "w1_call": 50.23,
+          "call_gex": 340.71,
+          "put_gex": -90.83,
+          "net_gex": 249.88,
+          "vex": 22.79,
+          "gex_plus": 272.66,
+          "w1_call": 50.28,
           "w1_put": -9.8,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 27.89,
-          "mth_put": -23.24,
-          "fri_call": 262.44,
-          "fri_put": -57.75
+          "mth_call": 27.91,
+          "mth_put": -23.25,
+          "fri_call": 262.52,
+          "fri_put": -57.77
         },
         {
           "strike": 49850.0,
-          "call_gex": 106.09,
+          "call_gex": 106.1,
           "put_gex": -15.22,
-          "net_gex": 90.87,
-          "vex": 8.65,
-          "gex_plus": 99.52,
-          "w1_call": 12.0,
+          "net_gex": 90.88,
+          "vex": 8.66,
+          "gex_plus": 99.53,
+          "w1_call": 12.01,
           "w1_put": -4.9,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.96,
           "mth_put": -0.0,
-          "fri_call": 93.12,
+          "fri_call": 93.13,
           "fri_put": -10.32
         },
         {
           "strike": 49900.0,
-          "call_gex": 213.15,
-          "put_gex": -38.43,
-          "net_gex": 174.72,
-          "vex": 17.36,
-          "gex_plus": 192.08,
-          "w1_call": 11.69,
-          "w1_put": -9.78,
+          "call_gex": 213.13,
+          "put_gex": -38.44,
+          "net_gex": 174.69,
+          "vex": 17.35,
+          "gex_plus": 192.05,
+          "w1_call": 11.7,
+          "w1_put": -9.79,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 18.96,
-          "mth_put": -12.32,
-          "fri_call": 182.5,
+          "mth_call": 18.97,
+          "mth_put": -12.33,
+          "fri_call": 182.46,
           "fri_put": -16.32
         },
         {
           "strike": 49950.0,
-          "call_gex": 95.5,
+          "call_gex": 95.46,
           "put_gex": -9.04,
-          "net_gex": 86.47,
-          "vex": 8.94,
-          "gex_plus": 95.4,
+          "net_gex": 86.43,
+          "vex": 8.93,
+          "gex_plus": 95.36,
           "w1_call": 2.09,
           "w1_put": -2.32,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 1.12,
+          "mth_call": 1.13,
           "mth_put": -0.56,
-          "fri_call": 92.29,
+          "fri_call": 92.24,
           "fri_put": -6.15
         },
         {
           "strike": 50000.0,
-          "call_gex": 855.44,
-          "put_gex": -56.06,
-          "net_gex": 799.37,
-          "vex": 86.27,
-          "gex_plus": 885.64,
-          "w1_call": 115.78,
+          "call_gex": 855.28,
+          "put_gex": -56.07,
+          "net_gex": 799.21,
+          "vex": 86.25,
+          "gex_plus": 885.46,
+          "w1_call": 115.83,
           "w1_put": -2.71,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 269.48,
-          "mth_put": -34.82,
-          "fri_call": 470.18,
-          "fri_put": -18.54
+          "mth_call": 269.63,
+          "mth_put": -34.84,
+          "fri_call": 469.81,
+          "fri_put": -18.52
         },
         {
           "strike": 50050.0,
-          "call_gex": 154.94,
+          "call_gex": 154.78,
           "put_gex": -2.99,
-          "net_gex": 151.95,
-          "vex": 16.95,
-          "gex_plus": 168.9,
+          "net_gex": 151.79,
+          "vex": 16.93,
+          "gex_plus": 168.72,
           "w1_call": 4.16,
           "w1_put": -0.22,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 1.83,
           "mth_put": -0.18,
-          "fri_call": 148.94,
-          "fri_put": -2.59
+          "fri_call": 148.78,
+          "fri_put": -2.58
         },
         {
           "strike": 50100.0,
-          "call_gex": 193.43,
-          "put_gex": -16.86,
-          "net_gex": 176.57,
-          "vex": 20.43,
-          "gex_plus": 197.0,
-          "w1_call": 9.56,
+          "call_gex": 193.21,
+          "put_gex": -16.84,
+          "net_gex": 176.37,
+          "vex": 20.41,
+          "gex_plus": 196.78,
+          "w1_call": 9.57,
           "w1_put": -0.21,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 20.95,
-          "mth_put": -4.33,
-          "fri_call": 162.91,
-          "fri_put": -12.31
+          "mth_call": 20.96,
+          "mth_put": -4.34,
+          "fri_call": 162.69,
+          "fri_put": -12.29
         },
         {
           "strike": 50150.0,
-          "call_gex": 91.6,
-          "put_gex": -2.73,
-          "net_gex": 88.87,
-          "vex": 10.63,
-          "gex_plus": 99.5,
+          "call_gex": 91.46,
+          "put_gex": -2.72,
+          "net_gex": 88.73,
+          "vex": 10.62,
+          "gex_plus": 99.35,
           "w1_call": 7.0,
           "w1_put": -0.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
           "mth_call": 0.18,
           "mth_put": -0.0,
-          "fri_call": 84.42,
-          "fri_put": -2.73
+          "fri_call": 84.28,
+          "fri_put": -2.72
         },
         {
           "strike": 50200.0,
-          "call_gex": 306.95,
+          "call_gex": 306.45,
           "put_gex": -9.9,
-          "net_gex": 297.05,
-          "vex": 36.79,
-          "gex_plus": 333.84,
+          "net_gex": 296.55,
+          "vex": 36.73,
+          "gex_plus": 333.28,
           "w1_call": 17.53,
           "w1_put": -1.0,
           "w2_call": 0.0,
           "w2_put": -0.0,
-          "mth_call": 35.68,
-          "mth_put": -6.5,
-          "fri_call": 253.74,
+          "mth_call": 35.7,
+          "mth_put": -6.51,
+          "fri_call": 253.22,
           "fri_put": -2.4
         }
       ],
@@ -21349,187 +21349,187 @@ window.GEX_EMBEDDED_DATA = {
         {
           "strike": 48400.0,
           "call_gex": 1.91,
-          "put_gex": -19.72,
-          "net_gex": -17.81
+          "put_gex": -19.75,
+          "net_gex": -17.84
         },
         {
           "strike": 48450.0,
           "call_gex": 0.64,
-          "put_gex": -6.73,
-          "net_gex": -6.09
+          "put_gex": -6.74,
+          "net_gex": -6.1
         },
         {
           "strike": 48500.0,
-          "call_gex": 4.51,
-          "put_gex": -130.59,
-          "net_gex": -126.08
+          "call_gex": 4.52,
+          "put_gex": -130.84,
+          "net_gex": -126.32
         },
         {
           "strike": 48550.0,
           "call_gex": 0.65,
-          "put_gex": -5.83,
-          "net_gex": -5.19
+          "put_gex": -5.85,
+          "net_gex": -5.2
         },
         {
           "strike": 48600.0,
           "call_gex": 0.0,
-          "put_gex": -26.68,
-          "net_gex": -26.68
+          "put_gex": -26.73,
+          "net_gex": -26.73
         },
         {
           "strike": 48650.0,
           "call_gex": 0.33,
-          "put_gex": -13.7,
-          "net_gex": -13.38
+          "put_gex": -13.73,
+          "net_gex": -13.4
         },
         {
           "strike": 48700.0,
           "call_gex": 0.33,
-          "put_gex": -13.72,
-          "net_gex": -13.4
+          "put_gex": -13.75,
+          "net_gex": -13.42
         },
         {
           "strike": 48750.0,
           "call_gex": 1.31,
-          "put_gex": -5.56,
-          "net_gex": -4.25
+          "put_gex": -5.57,
+          "net_gex": -4.26
         },
         {
           "strike": 48800.0,
-          "call_gex": 4.57,
-          "put_gex": -15.02,
-          "net_gex": -10.45
+          "call_gex": 4.58,
+          "put_gex": -15.05,
+          "net_gex": -10.47
         },
         {
           "strike": 48850.0,
           "call_gex": 0.0,
-          "put_gex": -9.45,
-          "net_gex": -9.45
+          "put_gex": -9.47,
+          "net_gex": -9.47
         },
         {
           "strike": 48900.0,
           "call_gex": 3.25,
-          "put_gex": -13.97,
-          "net_gex": -10.72
+          "put_gex": -13.99,
+          "net_gex": -10.74
         },
         {
           "strike": 48950.0,
           "call_gex": 0.65,
-          "put_gex": -7.44,
-          "net_gex": -6.79
+          "put_gex": -7.45,
+          "net_gex": -6.8
         },
         {
           "strike": 49000.0,
-          "call_gex": 27.97,
-          "put_gex": -47.26,
-          "net_gex": -19.29
+          "call_gex": 28.03,
+          "put_gex": -47.35,
+          "net_gex": -19.33
         },
         {
           "strike": 49050.0,
           "call_gex": 1.28,
-          "put_gex": -6.71,
-          "net_gex": -5.43
+          "put_gex": -6.72,
+          "net_gex": -5.44
         },
         {
           "strike": 49100.0,
-          "call_gex": 5.07,
-          "put_gex": -10.45,
-          "net_gex": -5.39
+          "call_gex": 5.08,
+          "put_gex": -10.47,
+          "net_gex": -5.4
         },
         {
           "strike": 49150.0,
-          "call_gex": 1.88,
+          "call_gex": 1.89,
           "put_gex": -4.4,
-          "net_gex": -2.51
+          "net_gex": -2.52
         },
         {
           "strike": 49200.0,
-          "call_gex": 10.56,
-          "put_gex": -14.6,
-          "net_gex": -4.04
+          "call_gex": 10.58,
+          "put_gex": -14.63,
+          "net_gex": -4.05
         },
         {
           "strike": 49250.0,
-          "call_gex": 3.07,
-          "put_gex": -11.06,
-          "net_gex": -7.99
+          "call_gex": 3.08,
+          "put_gex": -11.08,
+          "net_gex": -8.0
         },
         {
           "strike": 49300.0,
-          "call_gex": 14.86,
-          "put_gex": -26.69,
-          "net_gex": -11.83
+          "call_gex": 14.89,
+          "put_gex": -26.74,
+          "net_gex": -11.85
         },
         {
           "strike": 49350.0,
-          "call_gex": 3.29,
+          "call_gex": 3.3,
           "put_gex": -5.09,
           "net_gex": -1.8
         },
         {
           "strike": 49400.0,
-          "call_gex": 26.23,
-          "put_gex": -10.32,
-          "net_gex": 15.92
+          "call_gex": 26.27,
+          "put_gex": -10.33,
+          "net_gex": 15.94
         },
         {
           "strike": 49450.0,
-          "call_gex": 9.57,
+          "call_gex": 9.59,
           "put_gex": -2.03,
-          "net_gex": 7.54
+          "net_gex": 7.55
         },
         {
           "strike": 49500.0,
-          "call_gex": 54.46,
-          "put_gex": -32.22,
-          "net_gex": 22.24
+          "call_gex": 54.54,
+          "put_gex": -32.26,
+          "net_gex": 22.27
         },
         {
           "strike": 49550.0,
-          "call_gex": 6.72,
+          "call_gex": 6.73,
           "put_gex": -2.52,
           "net_gex": 4.2
         },
         {
           "strike": 49600.0,
-          "call_gex": 17.3,
+          "call_gex": 17.32,
           "put_gex": -5.22,
-          "net_gex": 12.08
+          "net_gex": 12.1
         },
         {
           "strike": 49650.0,
-          "call_gex": 4.3,
+          "call_gex": 4.31,
           "put_gex": -2.69,
-          "net_gex": 1.61
+          "net_gex": 1.62
         },
         {
           "strike": 49700.0,
-          "call_gex": 34.22,
-          "put_gex": -11.32,
-          "net_gex": 22.9
+          "call_gex": 34.25,
+          "put_gex": -11.33,
+          "net_gex": 22.92
         },
         {
           "strike": 49750.0,
-          "call_gex": 8.75,
+          "call_gex": 8.76,
           "put_gex": -2.32,
-          "net_gex": 6.43
+          "net_gex": 6.44
         },
         {
           "strike": 49800.0,
-          "call_gex": 50.23,
+          "call_gex": 50.28,
           "put_gex": -9.8,
-          "net_gex": 40.44
+          "net_gex": 40.47
         },
         {
           "strike": 49850.0,
-          "call_gex": 12.0,
+          "call_gex": 12.01,
           "put_gex": -4.9,
-          "net_gex": 7.1
+          "net_gex": 7.11
         },
         {
           "strike": 49900.0,
-          "call_gex": 11.69,
-          "put_gex": -9.78,
+          "call_gex": 11.7,
+          "put_gex": -9.79,
           "net_gex": 1.91
         },
         {
@@ -21540,19 +21540,19 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50000.0,
-          "call_gex": 115.78,
+          "call_gex": 115.83,
           "put_gex": -2.71,
-          "net_gex": 113.07
+          "net_gex": 113.12
         },
         {
           "strike": 50050.0,
           "call_gex": 4.16,
           "put_gex": -0.22,
-          "net_gex": 3.94
+          "net_gex": 3.95
         },
         {
           "strike": 50100.0,
-          "call_gex": 9.56,
+          "call_gex": 9.57,
           "put_gex": -0.21,
           "net_gex": 9.35
         },
@@ -21572,233 +21572,233 @@ window.GEX_EMBEDDED_DATA = {
       "friday_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 5.55,
-          "put_gex": -232.41,
-          "net_gex": -226.85
+          "call_gex": 5.57,
+          "put_gex": -233.08,
+          "net_gex": -227.51
         },
         {
           "strike": 48450.0,
           "call_gex": 0.4,
-          "put_gex": -185.35,
-          "net_gex": -184.95
+          "put_gex": -185.9,
+          "net_gex": -185.5
         },
         {
           "strike": 48500.0,
-          "call_gex": 215.5,
-          "put_gex": -480.81,
-          "net_gex": -265.32
+          "call_gex": 216.14,
+          "put_gex": -482.26,
+          "net_gex": -266.12
         },
         {
           "strike": 48550.0,
-          "call_gex": 2.86,
-          "put_gex": -96.33,
-          "net_gex": -93.47
+          "call_gex": 2.87,
+          "put_gex": -96.63,
+          "net_gex": -93.76
         },
         {
           "strike": 48600.0,
-          "call_gex": 2.87,
-          "put_gex": -222.51,
-          "net_gex": -219.64
+          "call_gex": 2.88,
+          "put_gex": -223.2,
+          "net_gex": -220.31
         },
         {
           "strike": 48650.0,
           "call_gex": 1.65,
-          "put_gex": -174.32,
-          "net_gex": -172.67
+          "put_gex": -174.86,
+          "net_gex": -173.21
         },
         {
           "strike": 48700.0,
-          "call_gex": 10.32,
-          "put_gex": -268.8,
-          "net_gex": -258.47
+          "call_gex": 10.35,
+          "put_gex": -269.63,
+          "net_gex": -259.28
         },
         {
           "strike": 48750.0,
-          "call_gex": 2.48,
-          "put_gex": -113.55,
-          "net_gex": -111.07
+          "call_gex": 2.49,
+          "put_gex": -113.9,
+          "net_gex": -111.42
         },
         {
           "strike": 48800.0,
-          "call_gex": 57.7,
-          "put_gex": -307.85,
-          "net_gex": -250.16
+          "call_gex": 57.88,
+          "put_gex": -308.81,
+          "net_gex": -250.93
         },
         {
           "strike": 48850.0,
-          "call_gex": 11.5,
-          "put_gex": -76.78,
-          "net_gex": -65.28
+          "call_gex": 11.53,
+          "put_gex": -77.01,
+          "net_gex": -65.48
         },
         {
           "strike": 48900.0,
-          "call_gex": 51.85,
-          "put_gex": -282.5,
-          "net_gex": -230.65
+          "call_gex": 52.0,
+          "put_gex": -283.36,
+          "net_gex": -231.35
         },
         {
           "strike": 48950.0,
-          "call_gex": 7.29,
-          "put_gex": -73.74,
-          "net_gex": -66.45
+          "call_gex": 7.31,
+          "put_gex": -73.96,
+          "net_gex": -66.64
         },
         {
           "strike": 49000.0,
-          "call_gex": 149.71,
-          "put_gex": -619.7,
-          "net_gex": -469.99
+          "call_gex": 150.14,
+          "put_gex": -621.5,
+          "net_gex": -471.36
         },
         {
           "strike": 49050.0,
-          "call_gex": 10.71,
-          "put_gex": -103.58,
-          "net_gex": -92.86
+          "call_gex": 10.75,
+          "put_gex": -103.87,
+          "net_gex": -93.13
         },
         {
           "strike": 49100.0,
-          "call_gex": 112.8,
-          "put_gex": -225.99,
-          "net_gex": -113.19
+          "call_gex": 113.11,
+          "put_gex": -226.61,
+          "net_gex": -113.5
         },
         {
           "strike": 49150.0,
-          "call_gex": 32.02,
-          "put_gex": -85.26,
-          "net_gex": -53.24
+          "call_gex": 32.11,
+          "put_gex": -85.49,
+          "net_gex": -53.38
         },
         {
           "strike": 49200.0,
-          "call_gex": 142.26,
-          "put_gex": -279.2,
-          "net_gex": -136.95
+          "call_gex": 142.62,
+          "put_gex": -279.91,
+          "net_gex": -137.29
         },
         {
           "strike": 49250.0,
-          "call_gex": 39.09,
-          "put_gex": -115.42,
-          "net_gex": -76.32
+          "call_gex": 39.19,
+          "put_gex": -115.7,
+          "net_gex": -76.51
         },
         {
           "strike": 49300.0,
-          "call_gex": 150.63,
-          "put_gex": -408.86,
-          "net_gex": -258.23
+          "call_gex": 150.98,
+          "put_gex": -409.8,
+          "net_gex": -258.82
         },
         {
           "strike": 49350.0,
-          "call_gex": 79.18,
-          "put_gex": -84.88,
-          "net_gex": -5.71
+          "call_gex": 79.34,
+          "put_gex": -85.06,
+          "net_gex": -5.72
         },
         {
           "strike": 49400.0,
-          "call_gex": 214.43,
-          "put_gex": -528.08,
-          "net_gex": -313.64
+          "call_gex": 214.86,
+          "put_gex": -529.12,
+          "net_gex": -314.26
         },
         {
           "strike": 49450.0,
-          "call_gex": 55.28,
-          "put_gex": -55.96,
+          "call_gex": 55.38,
+          "put_gex": -56.06,
           "net_gex": -0.68
         },
         {
           "strike": 49500.0,
-          "call_gex": 285.62,
-          "put_gex": -448.55,
-          "net_gex": -162.93
+          "call_gex": 286.09,
+          "put_gex": -449.29,
+          "net_gex": -163.2
         },
         {
           "strike": 49550.0,
-          "call_gex": 66.91,
-          "put_gex": -23.69,
-          "net_gex": 43.22
+          "call_gex": 67.01,
+          "put_gex": -23.73,
+          "net_gex": 43.28
         },
         {
           "strike": 49600.0,
-          "call_gex": 230.5,
-          "put_gex": -137.74,
-          "net_gex": 92.76
+          "call_gex": 230.79,
+          "put_gex": -137.91,
+          "net_gex": 92.88
         },
         {
           "strike": 49650.0,
-          "call_gex": 65.41,
-          "put_gex": -22.51,
-          "net_gex": 42.91
+          "call_gex": 65.48,
+          "put_gex": -22.53,
+          "net_gex": 42.95
         },
         {
           "strike": 49700.0,
-          "call_gex": 231.77,
-          "put_gex": -50.12,
-          "net_gex": 181.65
+          "call_gex": 231.96,
+          "put_gex": -50.16,
+          "net_gex": 181.8
         },
         {
           "strike": 49750.0,
-          "call_gex": 118.11,
-          "put_gex": -19.55,
-          "net_gex": 98.56
+          "call_gex": 118.18,
+          "put_gex": -19.56,
+          "net_gex": 98.62
         },
         {
           "strike": 49800.0,
-          "call_gex": 262.44,
-          "put_gex": -57.75,
-          "net_gex": 204.69
+          "call_gex": 262.52,
+          "put_gex": -57.77,
+          "net_gex": 204.75
         },
         {
           "strike": 49850.0,
-          "call_gex": 93.12,
+          "call_gex": 93.13,
           "put_gex": -10.32,
           "net_gex": 82.81
         },
         {
           "strike": 49900.0,
-          "call_gex": 182.5,
+          "call_gex": 182.46,
           "put_gex": -16.32,
-          "net_gex": 166.18
+          "net_gex": 166.14
         },
         {
           "strike": 49950.0,
-          "call_gex": 92.29,
+          "call_gex": 92.24,
           "put_gex": -6.15,
-          "net_gex": 86.14
+          "net_gex": 86.09
         },
         {
           "strike": 50000.0,
-          "call_gex": 470.18,
-          "put_gex": -18.54,
-          "net_gex": 451.64
+          "call_gex": 469.81,
+          "put_gex": -18.52,
+          "net_gex": 451.29
         },
         {
           "strike": 50050.0,
-          "call_gex": 148.94,
-          "put_gex": -2.59,
-          "net_gex": 146.36
+          "call_gex": 148.78,
+          "put_gex": -2.58,
+          "net_gex": 146.2
         },
         {
           "strike": 50100.0,
-          "call_gex": 162.91,
-          "put_gex": -12.31,
-          "net_gex": 150.6
+          "call_gex": 162.69,
+          "put_gex": -12.29,
+          "net_gex": 150.39
         },
         {
           "strike": 50150.0,
-          "call_gex": 84.42,
-          "put_gex": -2.73,
-          "net_gex": 81.69
+          "call_gex": 84.28,
+          "put_gex": -2.72,
+          "net_gex": 81.55
         },
         {
           "strike": 50200.0,
-          "call_gex": 253.74,
+          "call_gex": 253.22,
           "put_gex": -2.4,
-          "net_gex": 251.33
+          "net_gex": 250.82
         }
       ],
       "monthly_gex": [
         {
           "strike": 48400.0,
-          "call_gex": 43.87,
-          "put_gex": -20.35,
-          "net_gex": 23.52
+          "call_gex": 43.91,
+          "put_gex": -20.36,
+          "net_gex": 23.54
         },
         {
           "strike": 48450.0,
@@ -21808,9 +21808,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48500.0,
-          "call_gex": 66.37,
-          "put_gex": -153.22,
-          "net_gex": -86.85
+          "call_gex": 66.42,
+          "put_gex": -153.34,
+          "net_gex": -86.92
         },
         {
           "strike": 48550.0,
@@ -21820,9 +21820,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48600.0,
-          "call_gex": 62.61,
-          "put_gex": -24.87,
-          "net_gex": 37.74
+          "call_gex": 62.66,
+          "put_gex": -24.89,
+          "net_gex": 37.77
         },
         {
           "strike": 48650.0,
@@ -21832,9 +21832,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48700.0,
-          "call_gex": 48.59,
-          "put_gex": -23.86,
-          "net_gex": 24.72
+          "call_gex": 48.63,
+          "put_gex": -23.88,
+          "net_gex": 24.74
         },
         {
           "strike": 48750.0,
@@ -21844,8 +21844,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48800.0,
-          "call_gex": 27.97,
-          "put_gex": -31.41,
+          "call_gex": 27.99,
+          "put_gex": -31.43,
           "net_gex": -3.44
         },
         {
@@ -21856,9 +21856,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 48900.0,
-          "call_gex": 22.12,
-          "put_gex": -9.02,
-          "net_gex": 13.1
+          "call_gex": 22.14,
+          "put_gex": -9.03,
+          "net_gex": 13.11
         },
         {
           "strike": 48950.0,
@@ -21868,33 +21868,33 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49000.0,
-          "call_gex": 128.65,
-          "put_gex": -66.57,
-          "net_gex": 62.08
+          "call_gex": 128.75,
+          "put_gex": -66.63,
+          "net_gex": 62.13
         },
         {
           "strike": 49050.0,
           "call_gex": 0.64,
-          "put_gex": -1.49,
+          "put_gex": -1.5,
           "net_gex": -0.85
         },
         {
           "strike": 49100.0,
-          "call_gex": 128.36,
-          "put_gex": -27.04,
-          "net_gex": 101.33
+          "call_gex": 128.47,
+          "put_gex": -27.06,
+          "net_gex": 101.41
         },
         {
           "strike": 49150.0,
           "call_gex": 8.49,
           "put_gex": -0.21,
-          "net_gex": 8.27
+          "net_gex": 8.28
         },
         {
           "strike": 49200.0,
-          "call_gex": 49.02,
-          "put_gex": -12.04,
-          "net_gex": 36.97
+          "call_gex": 49.05,
+          "put_gex": -12.05,
+          "net_gex": 37.0
         },
         {
           "strike": 49250.0,
@@ -21904,9 +21904,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49300.0,
-          "call_gex": 20.09,
-          "put_gex": -34.32,
-          "net_gex": -14.23
+          "call_gex": 20.11,
+          "put_gex": -34.35,
+          "net_gex": -14.24
         },
         {
           "strike": 49350.0,
@@ -21916,21 +21916,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49400.0,
-          "call_gex": 23.79,
-          "put_gex": -15.31,
-          "net_gex": 8.48
+          "call_gex": 23.81,
+          "put_gex": -15.32,
+          "net_gex": 8.49
         },
         {
           "strike": 49450.0,
           "call_gex": 1.03,
-          "put_gex": -1.64,
+          "put_gex": -1.65,
           "net_gex": -0.62
         },
         {
           "strike": 49500.0,
-          "call_gex": 133.88,
-          "put_gex": -61.02,
-          "net_gex": 72.86
+          "call_gex": 133.97,
+          "put_gex": -61.06,
+          "net_gex": 72.91
         },
         {
           "strike": 49550.0,
@@ -21940,9 +21940,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49600.0,
-          "call_gex": 26.72,
+          "call_gex": 26.74,
           "put_gex": -8.04,
-          "net_gex": 18.69
+          "net_gex": 18.7
         },
         {
           "strike": 49650.0,
@@ -21952,20 +21952,20 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49700.0,
-          "call_gex": 23.7,
-          "put_gex": -9.87,
-          "net_gex": 13.82
+          "call_gex": 23.71,
+          "put_gex": -9.88,
+          "net_gex": 13.83
         },
         {
           "strike": 49750.0,
-          "call_gex": 1.56,
+          "call_gex": 1.57,
           "put_gex": -0.59,
           "net_gex": 0.98
         },
         {
           "strike": 49800.0,
-          "call_gex": 27.89,
-          "put_gex": -23.24,
+          "call_gex": 27.91,
+          "put_gex": -23.25,
           "net_gex": 4.65
         },
         {
@@ -21976,21 +21976,21 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 49900.0,
-          "call_gex": 18.96,
-          "put_gex": -12.32,
-          "net_gex": 6.63
+          "call_gex": 18.97,
+          "put_gex": -12.33,
+          "net_gex": 6.64
         },
         {
           "strike": 49950.0,
-          "call_gex": 1.12,
+          "call_gex": 1.13,
           "put_gex": -0.56,
           "net_gex": 0.56
         },
         {
           "strike": 50000.0,
-          "call_gex": 269.48,
-          "put_gex": -34.82,
-          "net_gex": 234.66
+          "call_gex": 269.63,
+          "put_gex": -34.84,
+          "net_gex": 234.79
         },
         {
           "strike": 50050.0,
@@ -22000,8 +22000,8 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50100.0,
-          "call_gex": 20.95,
-          "put_gex": -4.33,
+          "call_gex": 20.96,
+          "put_gex": -4.34,
           "net_gex": 16.62
         },
         {
@@ -22012,9 +22012,9 @@ window.GEX_EMBEDDED_DATA = {
         },
         {
           "strike": 50200.0,
-          "call_gex": 35.68,
-          "put_gex": -6.5,
-          "net_gex": 29.18
+          "call_gex": 35.7,
+          "put_gex": -6.51,
+          "net_gex": 29.19
         }
       ]
     }
@@ -22676,19 +22676,19 @@ window.GEX_EMBEDDED_DATA = {
     "divergence_desc": "外資期貨淨留倉偏空 (-83,194口)，但前五大特法淨多單高達 +16,695口，顯示法人在現貨一籃子股票進行對沖套利，切勿盲目追空。",
     "divergence_state": "HEDGING_ARBITRAGE"
   },
-  "total_vex": 328.99,
-  "total_gex_val": 236.07,
-  "total_gex_plus": 565.06,
+  "total_vex": 329.61,
+  "total_gex_val": 234.15,
+  "total_gex_plus": 563.76,
   "sector_capital_rotation": {
     "title": "📊 8 大主題族群個股期貨資金輪動矩陣",
     "note": "占比＝族群個股期貨成交值（口數×近月收盤價×契約單位）占全部個股期貨成交值的比例，由期交所官方成交量估算；漲跌幅為族群內標準契約的簡單平均；主題分類為本專案自訂，不是證交所產業別。",
-    "last_updated": "2026-10-09 05:04",
+    "last_updated": "2026-10-09 05:34",
     "sectors": [
       {
         "name": "💻 半導體與晶圓代工",
         "code": "semicon_tech",
-        "share_pct": 32.2,
-        "change_pct": "-0.9%",
+        "share_pct": 32.0,
+        "change_pct": "-0.8%",
         "status": "❄️ 賣壓顯著拉回",
         "color": "var(--put-color)",
         "top_stocks": [
@@ -22701,7 +22701,7 @@ window.GEX_EMBEDDED_DATA = {
         "name": "🤖 AI 伺服器與組裝代工",
         "code": "ai_servers",
         "share_pct": 3.5,
-        "change_pct": "-1.7%",
+        "change_pct": "-1.1%",
         "status": "❄️ 賣壓顯著拉回",
         "color": "var(--put-color)",
         "top_stocks": [
@@ -22714,9 +22714,9 @@ window.GEX_EMBEDDED_DATA = {
         "name": "📡 低軌衛星與網通航太",
         "code": "leo_satellites",
         "share_pct": 0.5,
-        "change_pct": "+0.4%",
-        "status": "📈 買盤點火吸金",
-        "color": "var(--call-color)",
+        "change_pct": "-0.6%",
+        "status": "❄️ 賣壓顯著拉回",
+        "color": "var(--put-color)",
         "top_stocks": [
           "華通期",
           "啟碁期",
@@ -22727,7 +22727,7 @@ window.GEX_EMBEDDED_DATA = {
         "name": "⚡ 重電綠能與儲能太陽能",
         "code": "green_power",
         "share_pct": 0.0,
-        "change_pct": "+0.2%",
+        "change_pct": "-1.1%",
         "status": "❄️ 賣壓顯著拉回",
         "color": "var(--put-color)",
         "top_stocks": [
@@ -22740,7 +22740,7 @@ window.GEX_EMBEDDED_DATA = {
         "name": "🚢 航運物流與水路運輸",
         "code": "maritime_shipping",
         "share_pct": 0.2,
-        "change_pct": "-0.2%",
+        "change_pct": "-0.1%",
         "status": "❄️ 賣壓顯著拉回",
         "color": "var(--put-color)",
         "top_stocks": [
@@ -22753,7 +22753,7 @@ window.GEX_EMBEDDED_DATA = {
         "name": "🏢 營建資產與房產建商",
         "code": "construction_realty",
         "share_pct": 0.0,
-        "change_pct": "+0.8%",
+        "change_pct": "+0.7%",
         "status": "📈 買盤點火吸金",
         "color": "var(--call-color)",
         "top_stocks": [
@@ -22766,9 +22766,9 @@ window.GEX_EMBEDDED_DATA = {
         "name": "🧬 生技醫療與軍工防衛",
         "code": "biotech_defense",
         "share_pct": 0.0,
-        "change_pct": "+1.9%",
-        "status": "🔥 買盤點火狂拉",
-        "color": "var(--call-color)",
+        "change_pct": "-0.3%",
+        "status": "📉 震盪小幅拉回",
+        "color": "var(--put-color)",
         "top_stocks": [
           "漢翔期",
           "美時期",
@@ -22779,9 +22779,9 @@ window.GEX_EMBEDDED_DATA = {
         "name": "🏦 金融金控與傳產原物料",
         "code": "financials_trad",
         "share_pct": 3.0,
-        "change_pct": "+2.3%",
-        "status": "🔥 買盤點火狂拉",
-        "color": "var(--call-color)",
+        "change_pct": "-0.6%",
+        "status": "❄️ 賣壓顯著拉回",
+        "color": "var(--put-color)",
         "top_stocks": [
           "台塑期",
           "南亞期",
@@ -22797,14 +22797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": true,
       "liquidity": "中",
-      "spot_price": 148.5,
-      "spot_volume": 148662,
-      "fut_price": 150.0,
+      "spot_price": 147.5,
+      "spot_volume": 83054,
+      "fut_price": 145.5,
       "fut_volume": 23477,
-      "basis": 1.5,
-      "basis_tag": "🔴 正價差",
-      "change_pct": 0.33,
-      "point_contrib": 0.4,
+      "basis": -2.0,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": -1.36,
+      "point_contrib": -1.7,
       "volume": 23477,
       "ex_date": "07/02",
       "ex_dividend": 3.0,
@@ -22839,7 +22839,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": true,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2409",
@@ -22847,14 +22847,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 37.95,
-      "spot_volume": 349688,
+      "spot_price": 36.6,
+      "spot_volume": 275388,
       "fut_price": 36.15,
       "fut_volume": 18927,
-      "basis": -1.8,
+      "basis": -0.45,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 1.34,
-      "point_contrib": 0.1,
+      "change_pct": -3.56,
+      "point_contrib": -0.1,
       "volume": 18927,
       "ex_date": "07/30",
       "ex_dividend": 0.4,
@@ -22889,7 +22889,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": true,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2330F",
@@ -22897,14 +22897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": true,
       "liquidity": "中",
-      "spot_price": 2585.0,
-      "spot_volume": 16941,
-      "fut_price": 2570.0,
+      "spot_price": 2550.0,
+      "spot_volume": 23145,
+      "fut_price": 2525.0,
       "fut_volume": 18848,
-      "basis": -15.0,
+      "basis": -25.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -1.15,
-      "point_contrib": -245.3,
+      "change_pct": -1.56,
+      "point_contrib": -328.2,
       "volume": 18848,
       "ex_date": "09/18",
       "ex_dividend": 4.0,
@@ -22997,14 +22997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 647.0,
-      "spot_volume": 92783,
+      "spot_price": 635.0,
+      "spot_volume": 47359,
       "fut_price": 641.0,
       "fut_volume": 16378,
-      "basis": -6.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 3.52,
-      "point_contrib": 2.3,
+      "basis": 6.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.85,
+      "point_contrib": -1.2,
       "volume": 16378,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23039,7 +23039,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": true,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1802",
@@ -23047,14 +23047,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 65.7,
-      "spot_volume": 108469,
+      "spot_price": 63.9,
+      "spot_volume": 160355,
       "fut_price": 64.4,
       "fut_volume": 15715,
-      "basis": -1.3,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 9.87,
-      "point_contrib": 0.6,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.74,
+      "point_contrib": -0.2,
       "volume": 15715,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23089,7 +23089,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": true,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1301",
@@ -23097,14 +23097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 75.4,
-      "spot_volume": 117004,
+      "spot_price": 81.3,
+      "spot_volume": 245432,
       "fut_price": 80.7,
       "fut_volume": 13700,
-      "basis": 5.3,
-      "basis_tag": "🔴 正價差",
-      "change_pct": 9.91,
-      "point_contrib": 0.7,
+      "basis": -0.6,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 7.82,
+      "point_contrib": 0.6,
       "volume": 13700,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23147,14 +23147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 52.5,
-      "spot_volume": 101925,
+      "spot_price": 51.0,
+      "spot_volume": 79977,
       "fut_price": 50.9,
       "fut_volume": 10585,
-      "basis": -1.6,
+      "basis": -0.1,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 2.74,
-      "point_contrib": 0.1,
+      "change_pct": -2.86,
+      "point_contrib": -0.1,
       "volume": 10585,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23189,7 +23189,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": true,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6770",
@@ -23197,14 +23197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 72.6,
-      "spot_volume": 92620,
+      "spot_price": 72.2,
+      "spot_volume": 114313,
       "fut_price": 72.1,
       "fut_volume": 10348,
-      "basis": -0.5,
+      "basis": -0.1,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -2.29,
-      "point_contrib": -0.2,
+      "change_pct": -0.55,
+      "point_contrib": -0.0,
       "volume": 10348,
       "ex_date": "08/27",
       "ex_dividend": 0.23,
@@ -23247,14 +23247,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 428.0,
-      "spot_volume": 53327,
+      "spot_price": 420.0,
+      "spot_volume": 64684,
       "fut_price": 422.5,
       "fut_volume": 9525,
-      "basis": -5.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 9.88,
-      "point_contrib": 4.2,
+      "basis": 2.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.87,
+      "point_contrib": -0.8,
       "volume": 9525,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23289,7 +23289,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6182",
@@ -23347,14 +23347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 4835.0,
-      "spot_volume": 7695,
+      "spot_price": 4690.0,
+      "spot_volume": 8868,
       "fut_price": 4710.0,
       "fut_volume": 9009,
-      "basis": -125.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -1.73,
-      "point_contrib": -8.4,
+      "basis": 20.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -3.0,
+      "point_contrib": -14.1,
       "volume": 9009,
       "ex_date": "01/04",
       "ex_dividend": 16.0,
@@ -23397,14 +23397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 314.0,
-      "spot_volume": 119996,
+      "spot_price": 310.0,
+      "spot_volume": 73431,
       "fut_price": 310.5,
       "fut_volume": 7828,
-      "basis": -3.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 7.17,
-      "point_contrib": 2.3,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.27,
+      "point_contrib": -0.4,
       "volume": 7828,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23439,7 +23439,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3008F",
@@ -23447,14 +23447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 6845.0,
-      "spot_volume": 2150,
+      "spot_price": 6660.0,
+      "spot_volume": 1919,
       "fut_price": 6655.0,
       "fut_volume": 7618,
-      "basis": -190.0,
+      "basis": -5.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.15,
-      "point_contrib": -1.0,
+      "change_pct": -2.7,
+      "point_contrib": -18.0,
       "volume": 7618,
       "ex_date": "08/13",
       "ex_dividend": 41.5,
@@ -23497,14 +23497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": true,
       "liquidity": "中",
-      "spot_price": 2585.0,
-      "spot_volume": 16941,
-      "fut_price": 2570.0,
+      "spot_price": 2550.0,
+      "spot_volume": 23145,
+      "fut_price": 2535.0,
       "fut_volume": 7521,
       "basis": -15.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -1.15,
-      "point_contrib": -245.3,
+      "change_pct": -1.17,
+      "point_contrib": -246.1,
       "volume": 7521,
       "ex_date": "09/16",
       "ex_dividend": 7.00000137,
@@ -23547,14 +23547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 304.5,
-      "spot_volume": 18188,
+      "spot_price": 305.5,
+      "spot_volume": 60218,
       "fut_price": 301.5,
       "fut_volume": 7091,
-      "basis": -3.0,
+      "basis": -4.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 3.05,
-      "point_contrib": 0.9,
+      "change_pct": 0.33,
+      "point_contrib": 0.1,
       "volume": 7091,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23597,14 +23597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 179.5,
-      "spot_volume": 63384,
+      "spot_price": 177.0,
+      "spot_volume": 70323,
       "fut_price": 177.0,
       "fut_volume": 7013,
-      "basis": -2.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 1.13,
-      "point_contrib": 0.2,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.39,
+      "point_contrib": -0.2,
       "volume": 7013,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23639,7 +23639,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": true,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2449",
@@ -23647,14 +23647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 299.5,
-      "spot_volume": 23768,
+      "spot_price": 304.5,
+      "spot_volume": 52163,
       "fut_price": 305.5,
       "fut_volume": 6842,
-      "basis": 6.0,
+      "basis": 1.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.5,
-      "point_contrib": 0.1,
+      "change_pct": 1.67,
+      "point_contrib": 0.5,
       "volume": 6842,
       "ex_date": "07/28",
       "ex_dividend": 1.0,
@@ -23797,14 +23797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1990.0,
-      "spot_volume": 10861,
+      "spot_price": 1965.0,
+      "spot_volume": 5522,
       "fut_price": 1977.0,
       "fut_volume": 6043,
-      "basis": -13.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -2.93,
-      "point_contrib": -5.8,
+      "basis": 12.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.26,
+      "point_contrib": -2.5,
       "volume": 6043,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23847,14 +23847,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 4190.0,
-      "spot_volume": 3535,
+      "spot_price": 4345.0,
+      "spot_volume": 4922,
       "fut_price": 4360.0,
       "fut_volume": 5680,
-      "basis": 170.0,
+      "basis": 15.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.24,
-      "point_contrib": 1.0,
+      "change_pct": 3.7,
+      "point_contrib": 16.1,
       "volume": 5680,
       "ex_date": "09/03",
       "ex_dividend": 32.55165664,
@@ -23897,14 +23897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 647.0,
-      "spot_volume": 92783,
+      "spot_price": 635.0,
+      "spot_volume": 47359,
       "fut_price": 640.0,
       "fut_volume": 5342,
-      "basis": -7.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 3.52,
-      "point_contrib": 2.3,
+      "basis": 5.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.85,
+      "point_contrib": -1.2,
       "volume": 5342,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -23939,7 +23939,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": true,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2449F",
@@ -23947,14 +23947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 299.5,
-      "spot_volume": 23768,
+      "spot_price": 304.5,
+      "spot_volume": 52163,
       "fut_price": 306.5,
       "fut_volume": 5049,
-      "basis": 7.0,
+      "basis": 2.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.5,
-      "point_contrib": 0.1,
+      "change_pct": 1.67,
+      "point_contrib": 0.5,
       "volume": 5049,
       "ex_date": "07/28",
       "ex_dividend": 1.0,
@@ -23997,14 +23997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型ETF期貨",
       "has_night": true,
       "liquidity": "中",
-      "spot_price": 116.05,
-      "spot_volume": 61571,
-      "fut_price": 115.7,
+      "spot_price": 114.95,
+      "spot_volume": 99877,
+      "fut_price": 113.55,
       "fut_volume": 5039,
-      "basis": -0.35,
+      "basis": -1.4,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.73,
-      "point_contrib": -1.3,
+      "change_pct": -1.22,
+      "point_contrib": -2.1,
       "volume": 5039,
       "ex_date": "07/16",
       "ex_dividend": 1.0,
@@ -24047,14 +24047,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 514.0,
-      "spot_volume": 38411,
+      "spot_price": 532.0,
+      "spot_volume": 64506,
       "fut_price": 534.0,
       "fut_volume": 4982,
-      "basis": 20.0,
+      "basis": 2.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -2.1,
-      "point_contrib": -1.1,
+      "change_pct": 3.5,
+      "point_contrib": 1.9,
       "volume": 4982,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24089,7 +24089,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2340",
@@ -24097,14 +24097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 48.15,
-      "spot_volume": 44973,
+      "spot_price": 52.9,
+      "spot_volume": 65067,
       "fut_price": 53.6,
       "fut_volume": 4949,
-      "basis": 5.45,
+      "basis": 0.7,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.8,
-      "point_contrib": 0.1,
+      "change_pct": 9.87,
+      "point_contrib": 0.5,
       "volume": 4949,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24147,14 +24147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1245.0,
-      "spot_volume": 11605,
+      "spot_price": 1285.0,
+      "spot_volume": 9733,
       "fut_price": 1272.0,
       "fut_volume": 4844,
-      "basis": 27.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -1.19,
-      "point_contrib": -1.5,
+      "basis": -13.0,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 3.21,
+      "point_contrib": 4.1,
       "volume": 4844,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24189,7 +24189,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3231",
@@ -24197,14 +24197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 185.0,
-      "spot_volume": 26744,
+      "spot_price": 188.5,
+      "spot_volume": 45639,
       "fut_price": 188.5,
       "fut_volume": 4680,
-      "basis": 3.5,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -2.37,
-      "point_contrib": -0.4,
+      "change_pct": 1.89,
+      "point_contrib": 0.4,
       "volume": 4680,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24239,7 +24239,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6669F",
@@ -24248,13 +24248,13 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 2240.0,
-      "spot_volume": 3671,
+      "spot_volume": 2464,
       "fut_price": 2235.0,
       "fut_volume": 4453,
       "basis": -5.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -2.18,
-      "point_contrib": -4.9,
+      "change_pct": 0.0,
+      "point_contrib": 0.0,
       "volume": 4453,
       "ex_date": "09/02",
       "ex_dividend": 0.0,
@@ -24289,7 +24289,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "0050",
@@ -24297,14 +24297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": true,
       "liquidity": "中",
-      "spot_price": 116.05,
-      "spot_volume": 61571,
-      "fut_price": 115.7,
+      "spot_price": 114.95,
+      "spot_volume": 99877,
+      "fut_price": 113.6,
       "fut_volume": 4309,
-      "basis": -0.35,
+      "basis": -1.35,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.73,
-      "point_contrib": -1.3,
+      "change_pct": -1.17,
+      "point_contrib": -2.0,
       "volume": 4309,
       "ex_date": "07/21",
       "ex_dividend": 0.6,
@@ -24347,14 +24347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1480.0,
-      "spot_volume": 8901,
+      "spot_price": 1475.0,
+      "spot_volume": 5362,
       "fut_price": 1466.0,
       "fut_volume": 4219,
-      "basis": -14.0,
+      "basis": -9.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -1.66,
-      "point_contrib": -2.5,
+      "change_pct": -0.34,
+      "point_contrib": -0.5,
       "volume": 4219,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24397,14 +24397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 252.0,
-      "spot_volume": 36168,
+      "spot_price": 249.0,
+      "spot_volume": 40251,
       "fut_price": 249.5,
       "fut_volume": 4106,
-      "basis": -2.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -1.56,
-      "point_contrib": -0.4,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.19,
+      "point_contrib": -0.3,
       "volume": 4106,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24447,14 +24447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 595.0,
-      "spot_volume": 35265,
+      "spot_price": 592.0,
+      "spot_volume": 33690,
       "fut_price": 595.0,
       "fut_volume": 4043,
-      "basis": 0.0,
+      "basis": 3.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 3.66,
-      "point_contrib": 2.2,
+      "change_pct": -0.5,
+      "point_contrib": -0.3,
       "volume": 4043,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24489,7 +24489,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2383F",
@@ -24497,14 +24497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 5950.0,
-      "spot_volume": 2968,
+      "spot_price": 6000.0,
+      "spot_volume": 1859,
       "fut_price": 6015.0,
       "fut_volume": 4032,
-      "basis": 65.0,
+      "basis": 15.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.75,
-      "point_contrib": -4.5,
+      "change_pct": 0.84,
+      "point_contrib": 5.0,
       "volume": 4032,
       "ex_date": "08/28",
       "ex_dividend": 25.0,
@@ -24539,7 +24539,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3324F",
@@ -24597,14 +24597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1085.0,
-      "spot_volume": 6012,
+      "spot_price": 1060.0,
+      "spot_volume": 3077,
       "fut_price": 1040.0,
       "fut_volume": 3832,
-      "basis": -45.0,
+      "basis": -20.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 3.83,
-      "point_contrib": 4.2,
+      "change_pct": -2.3,
+      "point_contrib": -2.4,
       "volume": 3832,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24639,7 +24639,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1326",
@@ -24647,14 +24647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 75.8,
-      "spot_volume": 61381,
+      "spot_price": 77.6,
+      "spot_volume": 82359,
       "fut_price": 77.9,
       "fut_volume": 3711,
-      "basis": 2.1,
+      "basis": 0.3,
       "basis_tag": "🔴 正價差",
-      "change_pct": 3.84,
-      "point_contrib": 0.3,
+      "change_pct": 2.37,
+      "point_contrib": 0.2,
       "volume": 3711,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24697,14 +24697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 11790.0,
-      "spot_volume": 414,
+      "spot_price": 10615.0,
+      "spot_volume": 2003,
       "fut_price": 10735.0,
       "fut_volume": 3626,
-      "basis": -1055.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -10.0,
-      "point_contrib": -117.9,
+      "basis": 120.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -9.97,
+      "point_contrib": -105.8,
       "volume": 3626,
       "ex_date": "08/27",
       "ex_dividend": 51.0,
@@ -24747,14 +24747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 8460.0,
-      "spot_volume": 1576,
+      "spot_price": 8360.0,
+      "spot_volume": 1221,
       "fut_price": 8375.0,
       "fut_volume": 3281,
-      "basis": -85.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 1.01,
-      "point_contrib": 8.5,
+      "basis": 15.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.18,
+      "point_contrib": -9.9,
       "volume": 3281,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24789,7 +24789,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1718",
@@ -24797,14 +24797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 11.3,
-      "spot_volume": 23717,
+      "spot_price": 12.2,
+      "spot_volume": 101238,
       "fut_price": 12.3,
       "fut_volume": 3279,
-      "basis": 1.0,
+      "basis": 0.1,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.44,
-      "point_contrib": -0.0,
+      "change_pct": 7.96,
+      "point_contrib": 0.1,
       "volume": 3279,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24839,7 +24839,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3042",
@@ -24847,14 +24847,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 210.5,
-      "spot_volume": 12723,
+      "spot_price": 211.0,
+      "spot_volume": 12700,
       "fut_price": 209.0,
       "fut_volume": 3135,
-      "basis": -1.5,
+      "basis": -2.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 2.93,
-      "point_contrib": 0.6,
+      "change_pct": 0.24,
+      "point_contrib": 0.1,
       "volume": 3135,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24897,14 +24897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 732.0,
-      "spot_volume": 8235,
+      "spot_price": 744.0,
+      "spot_volume": 15989,
       "fut_price": 746.0,
       "fut_volume": 3118,
-      "basis": 14.0,
+      "basis": 2.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.61,
-      "point_contrib": -1.2,
+      "change_pct": 1.64,
+      "point_contrib": 1.2,
       "volume": 3118,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -24939,7 +24939,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2345F",
@@ -24947,14 +24947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2015.0,
-      "spot_volume": 5207,
+      "spot_price": 2070.0,
+      "spot_volume": 4468,
       "fut_price": 2091.0,
       "fut_volume": 3047,
-      "basis": 76.0,
+      "basis": 21.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.71,
-      "point_contrib": -3.4,
+      "change_pct": 2.73,
+      "point_contrib": 5.7,
       "volume": 3047,
       "ex_date": "07/30",
       "ex_dividend": 15.0,
@@ -24989,7 +24989,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6239",
@@ -24997,14 +24997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 307.5,
-      "spot_volume": 14753,
+      "spot_price": 308.0,
+      "spot_volume": 15955,
       "fut_price": 309.0,
       "fut_volume": 2942,
-      "basis": 1.5,
+      "basis": 1.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.97,
-      "point_contrib": -0.3,
+      "change_pct": 0.16,
+      "point_contrib": 0.0,
       "volume": 2942,
       "ex_date": "07/30",
       "ex_dividend": 4.5,
@@ -25039,7 +25039,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6488",
@@ -25097,14 +25097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 732.0,
-      "spot_volume": 8235,
+      "spot_price": 744.0,
+      "spot_volume": 15989,
       "fut_price": 741.0,
       "fut_volume": 2856,
-      "basis": 9.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -1.61,
-      "point_contrib": -1.2,
+      "basis": -3.0,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 1.64,
+      "point_contrib": 1.2,
       "volume": 2856,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -25139,7 +25139,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3653F",
@@ -25147,14 +25147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 6805.0,
-      "spot_volume": 1021,
+      "spot_price": 7165.0,
+      "spot_volume": 1628,
       "fut_price": 7180.0,
       "fut_volume": 2590,
-      "basis": 375.0,
+      "basis": 15.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -3.88,
-      "point_contrib": -26.4,
+      "change_pct": 5.29,
+      "point_contrib": 37.9,
       "volume": 2590,
       "ex_date": "07/22",
       "ex_dividend": 21.72071283,
@@ -25189,7 +25189,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "8299F",
@@ -25297,14 +25297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 118.0,
-      "spot_volume": 23220,
+      "spot_price": 116.0,
+      "spot_volume": 37118,
       "fut_price": 116.5,
       "fut_volume": 2262,
-      "basis": -1.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -1.26,
-      "point_contrib": -0.1,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.69,
+      "point_contrib": -0.2,
       "volume": 2262,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -25347,14 +25347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 300.0,
-      "spot_volume": 16513,
+      "spot_price": 297.5,
+      "spot_volume": 13602,
       "fut_price": 300.0,
       "fut_volume": 2254,
-      "basis": 0.0,
+      "basis": 2.5,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.33,
-      "point_contrib": 0.1,
+      "change_pct": -0.83,
+      "point_contrib": -0.2,
       "volume": 2254,
       "ex_date": "08/19",
       "ex_dividend": 2.5,
@@ -25389,7 +25389,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6257",
@@ -25397,14 +25397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 278.0,
-      "spot_volume": 47560,
+      "spot_price": 283.0,
+      "spot_volume": 25941,
       "fut_price": 283.0,
       "fut_volume": 2246,
-      "basis": 5.0,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -2.8,
-      "point_contrib": -0.8,
+      "change_pct": 1.8,
+      "point_contrib": 0.5,
       "volume": 2246,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -25439,7 +25439,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "8150",
@@ -25447,14 +25447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 128.5,
-      "spot_volume": 34884,
+      "spot_price": 128.0,
+      "spot_volume": 36975,
       "fut_price": 130.5,
       "fut_volume": 2164,
-      "basis": 2.0,
+      "basis": 2.5,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.78,
-      "point_contrib": 0.1,
+      "change_pct": -0.39,
+      "point_contrib": -0.0,
       "volume": 2164,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -25489,7 +25489,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2313",
@@ -25497,14 +25497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 246.0,
-      "spot_volume": 60718,
+      "spot_price": 248.0,
+      "spot_volume": 23659,
       "fut_price": 249.5,
       "fut_volume": 2081,
-      "basis": 3.5,
+      "basis": 1.5,
       "basis_tag": "🔴 正價差",
-      "change_pct": -2.38,
-      "point_contrib": -0.6,
+      "change_pct": 0.81,
+      "point_contrib": 0.2,
       "volume": 2081,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -25539,7 +25539,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3045",
@@ -25547,14 +25547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 122.5,
-      "spot_volume": 5429,
+      "spot_price": 124.0,
+      "spot_volume": 5981,
       "fut_price": 123.5,
       "fut_volume": 2003,
-      "basis": 1.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -0.41,
-      "point_contrib": -0.1,
+      "basis": -0.5,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 1.22,
+      "point_contrib": 0.2,
       "volume": 2003,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -25589,7 +25589,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "8086",
@@ -25697,14 +25697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1100.0,
-      "spot_volume": 13227,
+      "spot_price": 1075.0,
+      "spot_volume": 7260,
       "fut_price": 1079.0,
       "fut_volume": 1856,
-      "basis": -21.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.8,
-      "point_contrib": 3.1,
+      "basis": 4.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.27,
+      "point_contrib": -2.4,
       "volume": 1856,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -25739,7 +25739,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3374",
@@ -25797,14 +25797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 3545.0,
-      "spot_volume": 3515,
+      "spot_price": 3440.0,
+      "spot_volume": 3162,
       "fut_price": 3465.0,
       "fut_volume": 1753,
-      "basis": -80.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -3.8,
-      "point_contrib": -13.5,
+      "basis": 25.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.96,
+      "point_contrib": -10.2,
       "volume": 1753,
       "ex_date": "08/19",
       "ex_dividend": 20.88160417,
@@ -25847,14 +25847,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 159.5,
-      "spot_volume": 26226,
+      "spot_price": 155.5,
+      "spot_volume": 14944,
       "fut_price": 154.5,
       "fut_volume": 1669,
-      "basis": -5.0,
+      "basis": -1.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 5.98,
-      "point_contrib": 1.0,
+      "change_pct": -2.51,
+      "point_contrib": -0.4,
       "volume": 1669,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -25889,7 +25889,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6505",
@@ -25897,14 +25897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 107.0,
-      "spot_volume": 33569,
+      "spot_price": 110.5,
+      "spot_volume": 41327,
       "fut_price": 111.0,
       "fut_volume": 1635,
-      "basis": 4.0,
+      "basis": 0.5,
       "basis_tag": "🔴 正價差",
-      "change_pct": 5.42,
-      "point_contrib": 0.6,
+      "change_pct": 3.27,
+      "point_contrib": 0.4,
       "volume": 1635,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -26047,13 +26047,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 25.5,
-      "spot_volume": 24862,
+      "spot_price": 25.7,
+      "spot_volume": 33060,
       "fut_price": 25.9,
       "fut_volume": 1545,
-      "basis": 0.4,
+      "basis": 0.2,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.19,
+      "change_pct": 0.78,
       "point_contrib": 0.0,
       "volume": 1545,
       "ex_date": "-",
@@ -26097,14 +26097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 250.5,
-      "spot_volume": 22125,
+      "spot_price": 248.0,
+      "spot_volume": 21683,
       "fut_price": 247.0,
       "fut_volume": 1535,
-      "basis": -3.5,
+      "basis": -1.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 7.05,
-      "point_contrib": 1.8,
+      "change_pct": -1.0,
+      "point_contrib": -0.2,
       "volume": 1535,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -26139,7 +26139,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3533F",
@@ -26147,14 +26147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1825.0,
-      "spot_volume": 962,
+      "spot_price": 1915.0,
+      "spot_volume": 2318,
       "fut_price": 1934.0,
       "fut_volume": 1533,
-      "basis": 109.0,
+      "basis": 19.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -2.14,
-      "point_contrib": -3.9,
+      "change_pct": 4.93,
+      "point_contrib": 9.4,
       "volume": 1533,
       "ex_date": "08/04",
       "ex_dividend": 34.93436024,
@@ -26189,7 +26189,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6213",
@@ -26197,14 +26197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 796.0,
-      "spot_volume": 15950,
+      "spot_price": 806.0,
+      "spot_volume": 5220,
       "fut_price": 811.0,
       "fut_volume": 1508,
-      "basis": 15.0,
+      "basis": 5.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.14,
-      "point_contrib": 0.9,
+      "change_pct": 1.26,
+      "point_contrib": 1.0,
       "volume": 1508,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -26297,14 +26297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2315.0,
-      "spot_volume": 3474,
+      "spot_price": 2360.0,
+      "spot_volume": 3678,
       "fut_price": 2370.0,
       "fut_volume": 1401,
-      "basis": 55.0,
+      "basis": 10.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.43,
-      "point_contrib": -1.0,
+      "change_pct": 1.94,
+      "point_contrib": 4.6,
       "volume": 1401,
       "ex_date": "07/15",
       "ex_dividend": 15.18493889,
@@ -26339,7 +26339,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2481",
@@ -26347,14 +26347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 178.5,
-      "spot_volume": 18329,
+      "spot_price": 172.5,
+      "spot_volume": 16653,
       "fut_price": 171.5,
       "fut_volume": 1388,
-      "basis": -7.0,
+      "basis": -1.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 1.42,
-      "point_contrib": 0.3,
+      "change_pct": -3.36,
+      "point_contrib": -0.6,
       "volume": 1388,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -26389,7 +26389,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "5483",
@@ -26447,14 +26447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 741.0,
-      "spot_volume": 1420,
+      "spot_price": 749.0,
+      "spot_volume": 1176,
       "fut_price": 749.0,
       "fut_volume": 1274,
-      "basis": 8.0,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.85,
-      "point_contrib": -1.4,
+      "change_pct": 1.08,
+      "point_contrib": 0.8,
       "volume": 1274,
       "ex_date": "09/08",
       "ex_dividend": 25.0,
@@ -26489,7 +26489,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
       "is_top10_buy": true,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2308",
@@ -26497,14 +26497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1990.0,
-      "spot_volume": 10861,
+      "spot_price": 1965.0,
+      "spot_volume": 5522,
       "fut_price": 1978.0,
       "fut_volume": 1206,
-      "basis": -12.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -2.93,
-      "point_contrib": -5.8,
+      "basis": 13.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.26,
+      "point_contrib": -2.5,
       "volume": 1206,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -26547,14 +26547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 59.1,
-      "spot_volume": 10003,
+      "spot_price": 59.7,
+      "spot_volume": 18040,
       "fut_price": 60.2,
       "fut_volume": 1139,
-      "basis": 1.1,
+      "basis": 0.5,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.17,
-      "point_contrib": -0.0,
+      "change_pct": 1.02,
+      "point_contrib": 0.1,
       "volume": 1139,
       "ex_date": "07/14",
       "ex_dividend": 2.0,
@@ -26589,7 +26589,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3037",
@@ -26597,14 +26597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1305.0,
-      "spot_volume": 9178,
+      "spot_price": 1270.0,
+      "spot_volume": 8778,
       "fut_price": 1268.0,
       "fut_volume": 1124,
-      "basis": -37.0,
+      "basis": -2.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.38,
-      "point_contrib": -0.5,
+      "change_pct": -2.68,
+      "point_contrib": -3.4,
       "volume": 1124,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -26647,14 +26647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 199.0,
-      "spot_volume": 3492,
+      "spot_price": 195.5,
+      "spot_volume": 1923,
       "fut_price": 194.5,
       "fut_volume": 1057,
-      "basis": -4.5,
+      "basis": -1.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -3.4,
-      "point_contrib": -0.7,
+      "change_pct": -1.76,
+      "point_contrib": -0.3,
       "volume": 1057,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -26697,14 +26697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 365.5,
-      "spot_volume": 14202,
+      "spot_price": 363.0,
+      "spot_volume": 3869,
       "fut_price": 358.5,
       "fut_volume": 1050,
-      "basis": -7.0,
+      "basis": -4.5,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -3.82,
-      "point_contrib": -1.4,
+      "change_pct": -0.68,
+      "point_contrib": -0.2,
       "volume": 1050,
       "ex_date": "08/03",
       "ex_dividend": 12.0,
@@ -26747,14 +26747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 989.0,
-      "spot_volume": 2487,
+      "spot_price": 996.0,
+      "spot_volume": 1843,
       "fut_price": 996.0,
       "fut_volume": 1005,
-      "basis": 7.0,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.1,
-      "point_contrib": -1.1,
+      "change_pct": 0.71,
+      "point_contrib": 0.7,
       "volume": 1005,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -26789,7 +26789,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2382",
@@ -26797,14 +26797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 335.0,
-      "spot_volume": 9720,
+      "spot_price": 325.5,
+      "spot_volume": 17570,
       "fut_price": 327.0,
       "fut_volume": 978,
-      "basis": -8.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.45,
-      "point_contrib": 0.2,
+      "basis": 1.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.84,
+      "point_contrib": -0.9,
       "volume": 978,
       "ex_date": "07/16",
       "ex_dividend": 15.6,
@@ -26839,7 +26839,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3529F",
@@ -26897,14 +26897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 4835.0,
-      "spot_volume": 7695,
+      "spot_price": 4690.0,
+      "spot_volume": 8868,
       "fut_price": 4710.0,
       "fut_volume": 940,
-      "basis": -125.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -1.73,
-      "point_contrib": -8.4,
+      "basis": 20.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -3.0,
+      "point_contrib": -14.1,
       "volume": 940,
       "ex_date": "01/04",
       "ex_dividend": 16.0,
@@ -26947,14 +26947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 559.0,
-      "spot_volume": 15372,
+      "spot_price": 558.0,
+      "spot_volume": 6225,
       "fut_price": 560.0,
       "fut_volume": 866,
-      "basis": 1.0,
+      "basis": 2.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.41,
-      "point_contrib": -0.8,
+      "change_pct": -0.18,
+      "point_contrib": -0.1,
       "volume": 866,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -26997,14 +26997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 39.9,
-      "spot_volume": 47344,
+      "spot_price": 39.1,
+      "spot_volume": 23780,
       "fut_price": 39.2,
       "fut_volume": 859,
-      "basis": -0.7,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.97,
-      "point_contrib": 0.1,
+      "basis": 0.1,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.01,
+      "point_contrib": -0.1,
       "volume": 859,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -27039,7 +27039,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1312",
@@ -27047,13 +27047,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 15.05,
-      "spot_volume": 17604,
+      "spot_price": 15.15,
+      "spot_volume": 22315,
       "fut_price": 15.3,
       "fut_volume": 837,
-      "basis": 0.25,
+      "basis": 0.15,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.35,
+      "change_pct": 0.66,
       "point_contrib": 0.0,
       "volume": 837,
       "ex_date": "-",
@@ -27247,14 +27247,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 513.0,
-      "spot_volume": 10243,
+      "spot_price": 509.0,
+      "spot_volume": 12901,
       "fut_price": 506.0,
       "fut_volume": 686,
-      "basis": -7.0,
+      "basis": -3.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 9.85,
-      "point_contrib": 5.1,
+      "change_pct": -0.78,
+      "point_contrib": -0.4,
       "volume": 686,
       "ex_date": "07/14",
       "ex_dividend": 1.0,
@@ -27289,7 +27289,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "8046",
@@ -27297,14 +27297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1480.0,
-      "spot_volume": 8901,
+      "spot_price": 1475.0,
+      "spot_volume": 5362,
       "fut_price": 1457.0,
       "fut_volume": 685,
-      "basis": -23.0,
+      "basis": -18.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -1.66,
-      "point_contrib": -2.5,
+      "change_pct": -0.34,
+      "point_contrib": -0.5,
       "volume": 685,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -27397,14 +27397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 41.4,
-      "spot_volume": 25774,
+      "spot_price": 41.0,
+      "spot_volume": 24905,
       "fut_price": 40.65,
       "fut_volume": 677,
-      "basis": -0.75,
+      "basis": -0.35,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 5.08,
-      "point_contrib": 0.2,
+      "change_pct": -0.97,
+      "point_contrib": -0.0,
       "volume": 677,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -27439,7 +27439,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6223F",
@@ -27497,14 +27497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2400.0,
-      "spot_volume": 5234,
+      "spot_price": 2330.0,
+      "spot_volume": 1763,
       "fut_price": 2338.0,
       "fut_volume": 672,
-      "basis": -62.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.13,
-      "point_contrib": 5.1,
+      "basis": 8.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.92,
+      "point_contrib": -6.8,
       "volume": 672,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -27539,7 +27539,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3036",
@@ -27548,12 +27548,12 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 215.5,
-      "spot_volume": 6629,
+      "spot_volume": 5320,
       "fut_price": 215.5,
       "fut_volume": 660,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.23,
+      "change_pct": 0.0,
       "point_contrib": 0.0,
       "volume": 660,
       "ex_date": "-",
@@ -27597,13 +27597,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 8.91,
-      "spot_volume": 29544,
+      "spot_price": 9.06,
+      "spot_volume": 56469,
       "fut_price": 9.12,
       "fut_volume": 629,
-      "basis": 0.21,
+      "basis": 0.06,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.83,
+      "change_pct": 1.68,
       "point_contrib": 0.0,
       "volume": 629,
       "ex_date": "-",
@@ -27647,14 +27647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 787.0,
-      "spot_volume": 2624,
+      "spot_price": 778.0,
+      "spot_volume": 1729,
       "fut_price": 780.0,
       "fut_volume": 619,
-      "basis": -7.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -1.01,
-      "point_contrib": -0.8,
+      "basis": 2.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.14,
+      "point_contrib": -0.9,
       "volume": 619,
       "ex_date": "09/02",
       "ex_dividend": 22.99618755,
@@ -27697,14 +27697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1245.0,
-      "spot_volume": 11605,
+      "spot_price": 1285.0,
+      "spot_volume": 9733,
       "fut_price": 1273.0,
       "fut_volume": 602,
-      "basis": 28.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -1.19,
-      "point_contrib": -1.5,
+      "basis": -12.0,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 3.21,
+      "point_contrib": 4.1,
       "volume": 602,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -27739,7 +27739,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2332",
@@ -27747,14 +27747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 21.1,
-      "spot_volume": 9991,
+      "spot_price": 20.8,
+      "spot_volume": 14883,
       "fut_price": 20.95,
       "fut_volume": 595,
-      "basis": -0.15,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 3.43,
-      "point_contrib": 0.1,
+      "basis": 0.15,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.42,
+      "point_contrib": -0.0,
       "volume": 595,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -27789,7 +27789,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1504",
@@ -27797,14 +27797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 73.3,
-      "spot_volume": 29405,
+      "spot_price": 71.7,
+      "spot_volume": 10635,
       "fut_price": 71.2,
       "fut_volume": 584,
-      "basis": -2.1,
+      "basis": -0.5,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 3.09,
-      "point_contrib": 0.2,
+      "change_pct": -2.18,
+      "point_contrib": -0.2,
       "volume": 584,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -27839,7 +27839,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2603",
@@ -27848,13 +27848,13 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 232.5,
-      "spot_volume": 8250,
+      "spot_volume": 6766,
       "fut_price": 234.5,
       "fut_volume": 584,
       "basis": 2.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.69,
-      "point_contrib": -0.4,
+      "change_pct": 0.0,
+      "point_contrib": 0.0,
       "volume": 584,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -27889,7 +27889,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3324",
@@ -27947,13 +27947,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 270.5,
-      "spot_volume": 5153,
+      "spot_price": 267.0,
+      "spot_volume": 6905,
       "fut_price": 267.5,
       "fut_volume": 528,
-      "basis": -3.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -1.1,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.29,
       "point_contrib": -0.3,
       "volume": 528,
       "ex_date": "-",
@@ -27997,14 +27997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 76.3,
-      "spot_volume": 8485,
+      "spot_price": 74.4,
+      "spot_volume": 6386,
       "fut_price": 75.0,
       "fut_volume": 522,
-      "basis": -1.3,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.65,
-      "point_contrib": -0.0,
+      "basis": 0.6,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.49,
+      "point_contrib": -0.2,
       "volume": 522,
       "ex_date": "07/16",
       "ex_dividend": 1.8,
@@ -28047,14 +28047,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 36.1,
-      "spot_volume": 21869,
+      "spot_price": 35.5,
+      "spot_volume": 22142,
       "fut_price": 35.45,
       "fut_volume": 520,
-      "basis": -0.65,
+      "basis": -0.05,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.56,
-      "point_contrib": 0.0,
+      "change_pct": -1.66,
+      "point_contrib": -0.1,
       "volume": 520,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -28089,7 +28089,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "5269F",
@@ -28097,14 +28097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1455.0,
-      "spot_volume": 166,
+      "spot_price": 1490.0,
+      "spot_volume": 419,
       "fut_price": 1496.0,
       "fut_volume": 494,
-      "basis": 41.0,
+      "basis": 6.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.02,
-      "point_contrib": -1.5,
+      "change_pct": 2.41,
+      "point_contrib": 3.6,
       "volume": 494,
       "ex_date": "07/21",
       "ex_dividend": 45.37669932,
@@ -28139,7 +28139,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2882",
@@ -28147,14 +28147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 113.0,
-      "spot_volume": 21904,
+      "spot_price": 110.0,
+      "spot_volume": 19899,
       "fut_price": 110.5,
       "fut_volume": 473,
-      "basis": -2.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.89,
-      "point_contrib": 0.1,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.65,
+      "point_contrib": -0.3,
       "volume": 473,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -28189,7 +28189,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6116",
@@ -28197,14 +28197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 15.5,
-      "spot_volume": 27509,
+      "spot_price": 15.1,
+      "spot_volume": 18900,
       "fut_price": 15.1,
       "fut_volume": 452,
-      "basis": -0.4,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.32,
-      "point_contrib": 0.0,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.58,
+      "point_contrib": -0.0,
       "volume": 452,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -28239,7 +28239,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2353",
@@ -28248,12 +28248,12 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 31.3,
-      "spot_volume": 7746,
+      "spot_volume": 7952,
       "fut_price": 31.25,
       "fut_volume": 435,
       "basis": -0.05,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.81,
+      "change_pct": 0.0,
       "point_contrib": 0.0,
       "volume": 435,
       "ex_date": "-",
@@ -28348,7 +28348,7 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 111.5,
-      "spot_volume": 5741,
+      "spot_volume": 7883,
       "fut_price": 112.5,
       "fut_volume": 422,
       "basis": 1.0,
@@ -28397,14 +28397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1085.0,
-      "spot_volume": 6012,
+      "spot_price": 1060.0,
+      "spot_volume": 3077,
       "fut_price": 1071.0,
       "fut_volume": 422,
-      "basis": -14.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 3.83,
-      "point_contrib": 4.2,
+      "basis": 11.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.3,
+      "point_contrib": -2.4,
       "volume": 422,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -28439,7 +28439,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2376",
@@ -28447,14 +28447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 365.5,
-      "spot_volume": 14202,
+      "spot_price": 363.0,
+      "spot_volume": 3869,
       "fut_price": 359.0,
       "fut_volume": 398,
-      "basis": -6.5,
+      "basis": -4.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -3.82,
-      "point_contrib": -1.4,
+      "change_pct": -0.68,
+      "point_contrib": -0.2,
       "volume": 398,
       "ex_date": "08/03",
       "ex_dividend": 12.0,
@@ -28497,14 +28497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 342.5,
-      "spot_volume": 3604,
+      "spot_price": 332.5,
+      "spot_volume": 2461,
       "fut_price": 336.0,
       "fut_volume": 383,
-      "basis": -6.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.88,
-      "point_contrib": 0.3,
+      "basis": 3.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.92,
+      "point_contrib": -1.0,
       "volume": 383,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -28539,7 +28539,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "5425",
@@ -28597,14 +28597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 529.0,
-      "spot_volume": 2030,
+      "spot_price": 531.0,
+      "spot_volume": 2274,
       "fut_price": 532.0,
       "fut_volume": 374,
-      "basis": 3.0,
+      "basis": 1.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.49,
-      "point_contrib": -0.8,
+      "change_pct": 0.38,
+      "point_contrib": 0.2,
       "volume": 374,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -28639,7 +28639,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2618",
@@ -28647,14 +28647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 41.95,
-      "spot_volume": 7085,
+      "spot_price": 41.4,
+      "spot_volume": 10803,
       "fut_price": 41.4,
       "fut_volume": 373,
-      "basis": -0.55,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.96,
-      "point_contrib": 0.0,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.31,
+      "point_contrib": -0.1,
       "volume": 373,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -28689,7 +28689,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6669",
@@ -28698,13 +28698,13 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 2240.0,
-      "spot_volume": 3671,
+      "spot_volume": 2464,
       "fut_price": 2233.0,
       "fut_volume": 363,
       "basis": -7.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -2.18,
-      "point_contrib": -4.9,
+      "change_pct": 0.0,
+      "point_contrib": 0.0,
       "volume": 363,
       "ex_date": "09/02",
       "ex_dividend": 0.0,
@@ -28739,7 +28739,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2367",
@@ -28747,14 +28747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 47.2,
-      "spot_volume": 16045,
+      "spot_price": 45.9,
+      "spot_volume": 7223,
       "fut_price": 45.2,
       "fut_volume": 354,
-      "basis": -2.0,
+      "basis": -0.7,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.94,
-      "point_contrib": -0.0,
+      "change_pct": -2.75,
+      "point_contrib": -0.1,
       "volume": 354,
       "ex_date": "08/03",
       "ex_dividend": 0.2,
@@ -28797,14 +28797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1330.0,
-      "spot_volume": 749,
+      "spot_price": 1305.0,
+      "spot_volume": 1100,
       "fut_price": 1300.0,
       "fut_volume": 354,
-      "basis": -30.0,
+      "basis": -5.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.37,
-      "point_contrib": -0.5,
+      "change_pct": -1.88,
+      "point_contrib": -2.5,
       "volume": 354,
       "ex_date": "07/16",
       "ex_dividend": 40.0,
@@ -28847,14 +28847,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 43.7,
-      "spot_volume": 13342,
+      "spot_price": 41.55,
+      "spot_volume": 11432,
       "fut_price": 41.05,
       "fut_volume": 350,
-      "basis": -2.65,
+      "basis": -0.5,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 1.86,
-      "point_contrib": 0.1,
+      "change_pct": -4.92,
+      "point_contrib": -0.2,
       "volume": 350,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -28889,7 +28889,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3680F",
@@ -28947,14 +28947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 78.7,
-      "spot_volume": 4148,
+      "spot_price": 80.6,
+      "spot_volume": 4244,
       "fut_price": 80.6,
       "fut_volume": 325,
-      "basis": 1.9,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 4.65,
-      "point_contrib": 0.4,
+      "change_pct": 2.41,
+      "point_contrib": 0.2,
       "volume": 325,
       "ex_date": "08/27",
       "ex_dividend": 4.08423671,
@@ -28997,14 +28997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 42.15,
-      "spot_volume": 27208,
+      "spot_price": 41.0,
+      "spot_volume": 46651,
       "fut_price": 41.1,
       "fut_volume": 316,
-      "basis": -1.05,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 1.69,
-      "point_contrib": 0.1,
+      "basis": 0.1,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.73,
+      "point_contrib": -0.1,
       "volume": 316,
       "ex_date": "07/21",
       "ex_dividend": 1.0,
@@ -29039,7 +29039,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3260",
@@ -29097,14 +29097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 49.8,
-      "spot_volume": 16485,
+      "spot_price": 49.3,
+      "spot_volume": 23894,
       "fut_price": 49.5,
       "fut_volume": 275,
-      "basis": -0.3,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 1.01,
-      "point_contrib": 0.1,
+      "basis": 0.2,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.0,
+      "point_contrib": -0.0,
       "volume": 275,
       "ex_date": "08/13",
       "ex_dividend": 1.75,
@@ -29139,7 +29139,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3293F",
@@ -29197,14 +29197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 3545.0,
-      "spot_volume": 3515,
+      "spot_price": 3440.0,
+      "spot_volume": 3162,
       "fut_price": 3475.0,
       "fut_volume": 270,
-      "basis": -70.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -3.8,
-      "point_contrib": -13.5,
+      "basis": 35.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.96,
+      "point_contrib": -10.2,
       "volume": 270,
       "ex_date": "08/19",
       "ex_dividend": 20.88160417,
@@ -29297,14 +29297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 46.9,
-      "spot_volume": 10570,
+      "spot_price": 45.8,
+      "spot_volume": 8913,
       "fut_price": 46.0,
       "fut_volume": 259,
-      "basis": -0.9,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 3.19,
-      "point_contrib": 0.1,
+      "basis": 0.2,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.35,
+      "point_contrib": -0.1,
       "volume": 259,
       "ex_date": "08/13",
       "ex_dividend": 1.35,
@@ -29339,7 +29339,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2002",
@@ -29348,7 +29348,7 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 18.95,
-      "spot_volume": 22428,
+      "spot_volume": 26713,
       "fut_price": 19.0,
       "fut_volume": 249,
       "basis": 0.05,
@@ -29397,14 +29397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 68.7,
-      "spot_volume": 21099,
+      "spot_price": 67.3,
+      "spot_volume": 24637,
       "fut_price": 67.7,
       "fut_volume": 244,
-      "basis": -1.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.44,
-      "point_contrib": 0.0,
+      "basis": 0.4,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.04,
+      "point_contrib": -0.1,
       "volume": 244,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -29439,7 +29439,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3376",
@@ -29447,14 +29447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 169.0,
-      "spot_volume": 2611,
+      "spot_price": 169.5,
+      "spot_volume": 1971,
       "fut_price": 169.0,
       "fut_volume": 243,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -1.46,
-      "point_contrib": -0.2,
+      "basis": -0.5,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 0.3,
+      "point_contrib": 0.1,
       "volume": 243,
       "ex_date": "08/06",
       "ex_dividend": 3.99966507,
@@ -29489,7 +29489,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "8112",
@@ -29497,14 +29497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 83.7,
-      "spot_volume": 3022,
+      "spot_price": 85.1,
+      "spot_volume": 11966,
       "fut_price": 85.1,
       "fut_volume": 239,
-      "basis": 1.4,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.36,
-      "point_contrib": -0.0,
+      "change_pct": 1.67,
+      "point_contrib": 0.1,
       "volume": 239,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -29539,7 +29539,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2356",
@@ -29547,14 +29547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 58.1,
-      "spot_volume": 9697,
+      "spot_price": 57.5,
+      "spot_volume": 10790,
       "fut_price": 57.4,
       "fut_volume": 236,
-      "basis": -0.7,
+      "basis": -0.1,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.85,
-      "point_contrib": -0.0,
+      "change_pct": -1.03,
+      "point_contrib": -0.1,
       "volume": 236,
       "ex_date": "07/15",
       "ex_dividend": 2.0,
@@ -29597,14 +29597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 786.0,
-      "spot_volume": 2292,
+      "spot_price": 801.0,
+      "spot_volume": 1046,
       "fut_price": 805.0,
       "fut_volume": 232,
-      "basis": 19.0,
+      "basis": 4.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -6.65,
-      "point_contrib": -5.2,
+      "change_pct": 1.91,
+      "point_contrib": 1.5,
       "volume": 232,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -29639,7 +29639,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6285",
@@ -29647,14 +29647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 257.5,
-      "spot_volume": 11372,
+      "spot_price": 256.5,
+      "spot_volume": 3495,
       "fut_price": 257.0,
       "fut_volume": 226,
-      "basis": -0.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.59,
-      "point_contrib": 0.2,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.39,
+      "point_contrib": -0.1,
       "volume": 226,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -29689,7 +29689,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3019",
@@ -29697,14 +29697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 138.0,
-      "spot_volume": 2894,
+      "spot_price": 137.0,
+      "spot_volume": 1612,
       "fut_price": 137.5,
       "fut_volume": 217,
-      "basis": -0.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -2.13,
-      "point_contrib": -0.3,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.72,
+      "point_contrib": -0.1,
       "volume": 217,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -29747,14 +29747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 155.5,
-      "spot_volume": 12226,
+      "spot_price": 153.0,
+      "spot_volume": 14629,
       "fut_price": 153.0,
       "fut_volume": 215,
-      "basis": -2.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.65,
-      "point_contrib": 0.1,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.61,
+      "point_contrib": -0.2,
       "volume": 215,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -29789,7 +29789,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "5009",
@@ -29849,11 +29849,11 @@ window.GEX_EMBEDDED_DATA = {
       "liquidity": "中",
       "spot_price": 24.35,
       "spot_volume": 16794863,
-      "fut_price": 24.42,
+      "fut_price": 24.71,
       "fut_volume": 203,
-      "basis": 0.07,
+      "basis": 0.36,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.16,
+      "change_pct": 1.56,
       "point_contrib": 0.0,
       "volume": 203,
       "ex_date": "08/18",
@@ -29897,14 +29897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 6845.0,
-      "spot_volume": 2150,
+      "spot_price": 6660.0,
+      "spot_volume": 1919,
       "fut_price": 6670.0,
       "fut_volume": 197,
-      "basis": -175.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.15,
-      "point_contrib": -1.0,
+      "basis": 10.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.7,
+      "point_contrib": -18.0,
       "volume": 197,
       "ex_date": "08/13",
       "ex_dividend": 41.5,
@@ -29947,14 +29947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 209.0,
-      "spot_volume": 3130,
+      "spot_price": 202.0,
+      "spot_volume": 3361,
       "fut_price": 201.5,
       "fut_volume": 196,
-      "basis": -7.5,
+      "basis": -0.5,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.71,
-      "point_contrib": -0.1,
+      "change_pct": -3.35,
+      "point_contrib": -0.7,
       "volume": 196,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -30047,14 +30047,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2015.0,
-      "spot_volume": 5207,
+      "spot_price": 2070.0,
+      "spot_volume": 4468,
       "fut_price": 2091.0,
       "fut_volume": 188,
-      "basis": 76.0,
+      "basis": 21.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.71,
-      "point_contrib": -3.4,
+      "change_pct": 2.73,
+      "point_contrib": 5.7,
       "volume": 188,
       "ex_date": "07/30",
       "ex_dividend": 15.0,
@@ -30089,7 +30089,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3714",
@@ -30097,14 +30097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 67.4,
-      "spot_volume": 4384,
+      "spot_price": 67.0,
+      "spot_volume": 4115,
       "fut_price": 66.7,
       "fut_volume": 186,
-      "basis": -0.7,
+      "basis": -0.3,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.6,
-      "point_contrib": 0.0,
+      "change_pct": -0.59,
+      "point_contrib": -0.0,
       "volume": 186,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -30139,7 +30139,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "00929",
@@ -30147,13 +30147,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 30.14,
-      "spot_volume": 22493,
+      "spot_price": 30.03,
+      "spot_volume": 28511,
       "fut_price": 30.08,
       "fut_volume": 171,
-      "basis": -0.06,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.03,
+      "basis": 0.05,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.36,
       "point_contrib": -0.0,
       "volume": 171,
       "ex_date": "10/21",
@@ -30197,14 +30197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 18.0,
-      "spot_volume": 2479,
+      "spot_price": 17.3,
+      "spot_volume": 3338,
       "fut_price": 17.45,
       "fut_volume": 169,
-      "basis": -0.55,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.0,
-      "point_contrib": 0.0,
+      "basis": 0.15,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -3.89,
+      "point_contrib": -0.1,
       "volume": 169,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -30239,7 +30239,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2371",
@@ -30247,14 +30247,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 30.6,
-      "spot_volume": 16830,
+      "spot_price": 30.4,
+      "spot_volume": 6095,
       "fut_price": 30.25,
       "fut_volume": 168,
-      "basis": -0.35,
+      "basis": -0.15,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.0,
-      "point_contrib": 0.0,
+      "change_pct": -0.65,
+      "point_contrib": -0.0,
       "volume": 168,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -30289,7 +30289,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2059",
@@ -30297,14 +30297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 11790.0,
-      "spot_volume": 414,
+      "spot_price": 10615.0,
+      "spot_volume": 2003,
       "fut_price": 10735.0,
       "fut_volume": 165,
-      "basis": -1055.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -10.0,
-      "point_contrib": -117.9,
+      "basis": 120.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -9.97,
+      "point_contrib": -105.8,
       "volume": 165,
       "ex_date": "08/27",
       "ex_dividend": 51.0,
@@ -30347,14 +30347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 241.5,
-      "spot_volume": 4128,
+      "spot_price": 245.5,
+      "spot_volume": 3623,
       "fut_price": 246.5,
       "fut_volume": 161,
-      "basis": 5.0,
+      "basis": 1.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.26,
-      "point_contrib": 0.3,
+      "change_pct": 1.66,
+      "point_contrib": 0.4,
       "volume": 161,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -30397,14 +30397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 38.9,
-      "spot_volume": 13833,
+      "spot_price": 38.65,
+      "spot_volume": 14704,
       "fut_price": 38.8,
       "fut_volume": 158,
-      "basis": -0.1,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.91,
-      "point_contrib": 0.0,
+      "basis": 0.15,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.64,
+      "point_contrib": -0.0,
       "volume": 158,
       "ex_date": "08/11",
       "ex_dividend": 1.3,
@@ -30439,7 +30439,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "9945",
@@ -30447,13 +30447,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 29.3,
-      "spot_volume": 3556,
+      "spot_price": 29.8,
+      "spot_volume": 9925,
       "fut_price": 29.95,
       "fut_volume": 155,
-      "basis": 0.65,
+      "basis": 0.15,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.74,
+      "change_pct": 1.71,
       "point_contrib": 0.1,
       "volume": 155,
       "ex_date": "-",
@@ -30497,14 +30497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 28.6,
-      "spot_volume": 8405,
+      "spot_price": 28.4,
+      "spot_volume": 4384,
       "fut_price": 28.5,
       "fut_volume": 153,
-      "basis": -0.1,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.51,
-      "point_contrib": 0.1,
+      "basis": 0.1,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.7,
+      "point_contrib": -0.0,
       "volume": 153,
       "ex_date": "07/14",
       "ex_dividend": 1.25,
@@ -30539,7 +30539,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2915",
@@ -30547,14 +30547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 58.5,
-      "spot_volume": 1338,
+      "spot_price": 58.9,
+      "spot_volume": 1388,
       "fut_price": 59.1,
       "fut_volume": 153,
-      "basis": 0.6,
+      "basis": 0.2,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.56,
-      "point_contrib": 0.1,
+      "change_pct": 0.68,
+      "point_contrib": 0.0,
       "volume": 153,
       "ex_date": "07/17",
       "ex_dividend": 1.9,
@@ -30597,14 +30597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 44.65,
-      "spot_volume": 19443,
+      "spot_price": 44.05,
+      "spot_volume": 21027,
       "fut_price": 44.3,
       "fut_volume": 149,
-      "basis": -0.35,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.0,
-      "point_contrib": 0.0,
+      "basis": 0.25,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.34,
+      "point_contrib": -0.1,
       "volume": 149,
       "ex_date": "10/07",
       "ex_dividend": 0.0,
@@ -30639,7 +30639,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "00919",
@@ -30647,14 +30647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 31.94,
-      "spot_volume": 36238,
+      "spot_price": 31.65,
+      "spot_volume": 83848,
       "fut_price": 31.65,
       "fut_volume": 149,
-      "basis": -0.29,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.44,
-      "point_contrib": 0.0,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.91,
+      "point_contrib": -0.0,
       "volume": 149,
       "ex_date": "09/16",
       "ex_dividend": 1.1,
@@ -30689,7 +30689,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2027",
@@ -30697,14 +30697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 47.75,
-      "spot_volume": 8402,
+      "spot_price": 48.25,
+      "spot_volume": 11775,
       "fut_price": 48.25,
       "fut_volume": 144,
-      "basis": 0.5,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.1,
-      "point_contrib": 0.0,
+      "change_pct": 1.05,
+      "point_contrib": 0.1,
       "volume": 144,
       "ex_date": "07/14",
       "ex_dividend": 1.5,
@@ -30747,14 +30747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 38.5,
-      "spot_volume": 39336,
+      "spot_price": 37.55,
+      "spot_volume": 48071,
       "fut_price": 37.6,
       "fut_volume": 140,
-      "basis": -0.9,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.26,
-      "point_contrib": 0.1,
+      "basis": 0.05,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.47,
+      "point_contrib": -0.1,
       "volume": 140,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -30789,7 +30789,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2377",
@@ -30797,14 +30797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 156.0,
-      "spot_volume": 3993,
+      "spot_price": 154.5,
+      "spot_volume": 3266,
       "fut_price": 155.0,
       "fut_volume": 138,
-      "basis": -1.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.65,
-      "point_contrib": 0.1,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.96,
+      "point_contrib": -0.1,
       "volume": 138,
       "ex_date": "08/20",
       "ex_dividend": 4.2,
@@ -30839,7 +30839,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3702",
@@ -30847,14 +30847,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 120.0,
-      "spot_volume": 5167,
+      "spot_price": 117.5,
+      "spot_volume": 9697,
       "fut_price": 118.0,
       "fut_volume": 138,
-      "basis": -2.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.84,
-      "point_contrib": 0.1,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.08,
+      "point_contrib": -0.2,
       "volume": 138,
       "ex_date": "08/27",
       "ex_dividend": 3.64323642,
@@ -30889,7 +30889,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1717",
@@ -30897,14 +30897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 75.6,
-      "spot_volume": 8535,
+      "spot_price": 74.4,
+      "spot_volume": 6250,
       "fut_price": 74.1,
       "fut_volume": 137,
-      "basis": -1.5,
+      "basis": -0.3,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.93,
-      "point_contrib": 0.1,
+      "change_pct": -1.59,
+      "point_contrib": -0.1,
       "volume": 137,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -30939,7 +30939,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2201",
@@ -30948,13 +30948,13 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 28.9,
-      "spot_volume": 2096,
+      "spot_volume": 1363,
       "fut_price": 29.1,
       "fut_volume": 132,
       "basis": 0.2,
       "basis_tag": "🔴 正價差",
-      "change_pct": 2.48,
-      "point_contrib": 0.1,
+      "change_pct": 0.0,
+      "point_contrib": 0.0,
       "volume": 132,
       "ex_date": "08/25",
       "ex_dividend": 0.56,
@@ -31048,13 +31048,13 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 127.0,
-      "spot_volume": 2774,
+      "spot_volume": 4126,
       "fut_price": 128.0,
       "fut_volume": 130,
       "basis": 1.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.4,
-      "point_contrib": 0.1,
+      "change_pct": 0.0,
+      "point_contrib": 0.0,
       "volume": 130,
       "ex_date": "08/27",
       "ex_dividend": 3.00907728,
@@ -31097,13 +31097,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 13.95,
-      "spot_volume": 8440,
+      "spot_price": 14.35,
+      "spot_volume": 10111,
       "fut_price": 14.4,
       "fut_volume": 128,
-      "basis": 0.45,
+      "basis": 0.05,
       "basis_tag": "🔴 正價差",
-      "change_pct": 3.33,
+      "change_pct": 2.87,
       "point_contrib": 0.0,
       "volume": 128,
       "ex_date": "07/16",
@@ -31147,14 +31147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 36.6,
-      "spot_volume": 6385,
+      "spot_price": 36.7,
+      "spot_volume": 5360,
       "fut_price": 36.8,
       "fut_volume": 128,
-      "basis": 0.2,
+      "basis": 0.1,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.95,
-      "point_contrib": -0.0,
+      "change_pct": 0.27,
+      "point_contrib": 0.0,
       "volume": 128,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -31189,7 +31189,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3706",
@@ -31197,14 +31197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 80.9,
-      "spot_volume": 3073,
+      "spot_price": 80.6,
+      "spot_volume": 4422,
       "fut_price": 80.6,
       "fut_volume": 125,
-      "basis": -0.3,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.75,
-      "point_contrib": 0.1,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.37,
+      "point_contrib": -0.0,
       "volume": 125,
       "ex_date": "09/09",
       "ex_dividend": 3.0,
@@ -31239,7 +31239,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2354",
@@ -31247,14 +31247,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 62.1,
-      "spot_volume": 5895,
+      "spot_price": 62.0,
+      "spot_volume": 5400,
       "fut_price": 61.8,
       "fut_volume": 119,
-      "basis": -0.3,
+      "basis": -0.2,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.96,
-      "point_contrib": -0.1,
+      "change_pct": -0.16,
+      "point_contrib": -0.0,
       "volume": 119,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -31297,14 +31297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 44.05,
-      "spot_volume": 4699,
+      "spot_price": 43.2,
+      "spot_volume": 4813,
       "fut_price": 43.1,
       "fut_volume": 119,
-      "basis": -0.95,
+      "basis": -0.1,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.57,
-      "point_contrib": 0.0,
+      "change_pct": -1.93,
+      "point_contrib": -0.1,
       "volume": 119,
       "ex_date": "08/17",
       "ex_dividend": 0.79993311,
@@ -31339,7 +31339,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2634",
@@ -31347,13 +31347,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 63.6,
-      "spot_volume": 4788,
+      "spot_price": 63.2,
+      "spot_volume": 3881,
       "fut_price": 63.5,
       "fut_volume": 117,
-      "basis": -0.1,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.78,
+      "basis": 0.3,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.63,
       "point_contrib": -0.0,
       "volume": 117,
       "ex_date": "-",
@@ -31397,14 +31397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 702.0,
-      "spot_volume": 1882,
+      "spot_price": 692.0,
+      "spot_volume": 1034,
       "fut_price": 693.0,
       "fut_volume": 114,
-      "basis": -9.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.86,
-      "point_contrib": 0.6,
+      "basis": 1.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.42,
+      "point_contrib": -1.0,
       "volume": 114,
       "ex_date": "08/05",
       "ex_dividend": 11.0,
@@ -31439,7 +31439,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6139",
@@ -31447,14 +31447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 787.0,
-      "spot_volume": 2624,
+      "spot_price": 778.0,
+      "spot_volume": 1729,
       "fut_price": 783.0,
       "fut_volume": 113,
-      "basis": -4.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -1.01,
-      "point_contrib": -0.8,
+      "basis": 5.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.14,
+      "point_contrib": -0.9,
       "volume": 113,
       "ex_date": "09/02",
       "ex_dividend": 22.99618755,
@@ -31497,14 +31497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 8460.0,
-      "spot_volume": 1576,
+      "spot_price": 8360.0,
+      "spot_volume": 1221,
       "fut_price": 8400.0,
       "fut_volume": 111,
-      "basis": -60.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 1.01,
-      "point_contrib": 8.5,
+      "basis": 40.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.18,
+      "point_contrib": -9.9,
       "volume": 111,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -31539,7 +31539,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3665",
@@ -31547,14 +31547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2315.0,
-      "spot_volume": 3474,
+      "spot_price": 2360.0,
+      "spot_volume": 3678,
       "fut_price": 2360.0,
       "fut_volume": 107,
-      "basis": 45.0,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.43,
-      "point_contrib": -1.0,
+      "change_pct": 1.94,
+      "point_contrib": 4.6,
       "volume": 107,
       "ex_date": "07/15",
       "ex_dividend": 15.18493889,
@@ -31589,7 +31589,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2542",
@@ -31597,14 +31597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 38.8,
-      "spot_volume": 8465,
+      "spot_price": 39.05,
+      "spot_volume": 7886,
       "fut_price": 38.95,
       "fut_volume": 103,
-      "basis": 0.15,
-      "basis_tag": "🔴 正價差",
-      "change_pct": 1.57,
-      "point_contrib": 0.1,
+      "basis": -0.1,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 0.64,
+      "point_contrib": 0.0,
       "volume": 103,
       "ex_date": "09/23",
       "ex_dividend": 4.0,
@@ -31647,14 +31647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 74.0,
-      "spot_volume": 4831,
+      "spot_price": 73.0,
+      "spot_volume": 1875,
       "fut_price": 73.9,
       "fut_volume": 103,
-      "basis": -0.1,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.35,
-      "point_contrib": 0.2,
+      "basis": 0.9,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.35,
+      "point_contrib": -0.1,
       "volume": 103,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -31689,7 +31689,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2383",
@@ -31697,14 +31697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 5950.0,
-      "spot_volume": 2968,
+      "spot_price": 6000.0,
+      "spot_volume": 1859,
       "fut_price": 6005.0,
       "fut_volume": 98,
-      "basis": 55.0,
+      "basis": 5.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.75,
-      "point_contrib": -4.5,
+      "change_pct": 0.84,
+      "point_contrib": 5.0,
       "volume": 98,
       "ex_date": "08/28",
       "ex_dividend": 25.0,
@@ -31739,7 +31739,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2885",
@@ -31747,14 +31747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 70.0,
-      "spot_volume": 15612,
+      "spot_price": 68.3,
+      "spot_volume": 20844,
       "fut_price": 68.5,
       "fut_volume": 96,
-      "basis": -1.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 1.01,
-      "point_contrib": 0.1,
+      "basis": 0.2,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.43,
+      "point_contrib": -0.2,
       "volume": 96,
       "ex_date": "08/18",
       "ex_dividend": 0.0,
@@ -31789,7 +31789,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2329",
@@ -31797,14 +31797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 45.4,
-      "spot_volume": 2203,
+      "spot_price": 44.5,
+      "spot_volume": 4606,
       "fut_price": 44.4,
       "fut_volume": 90,
-      "basis": -1.0,
+      "basis": -0.1,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.11,
-      "point_contrib": 0.0,
+      "change_pct": -1.98,
+      "point_contrib": -0.1,
       "volume": 90,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -31839,7 +31839,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2610",
@@ -31847,14 +31847,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 20.35,
-      "spot_volume": 9470,
+      "spot_price": 20.15,
+      "spot_volume": 8141,
       "fut_price": 20.2,
       "fut_volume": 90,
-      "basis": -0.15,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 1.24,
-      "point_contrib": 0.0,
+      "basis": 0.05,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.98,
+      "point_contrib": -0.0,
       "volume": 90,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -31889,7 +31889,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3653",
@@ -31897,14 +31897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 6805.0,
-      "spot_volume": 1021,
+      "spot_price": 7165.0,
+      "spot_volume": 1628,
       "fut_price": 7135.0,
       "fut_volume": 90,
-      "basis": 330.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -3.88,
-      "point_contrib": -26.4,
+      "basis": -30.0,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 5.29,
+      "point_contrib": 37.9,
       "volume": 90,
       "ex_date": "07/22",
       "ex_dividend": 21.72071283,
@@ -31939,7 +31939,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "9904",
@@ -31947,13 +31947,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 24.95,
-      "spot_volume": 14390,
+      "spot_price": 25.05,
+      "spot_volume": 15263,
       "fut_price": 25.2,
       "fut_volume": 89,
-      "basis": 0.25,
+      "basis": 0.15,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.42,
+      "change_pct": 0.4,
       "point_contrib": 0.0,
       "volume": 89,
       "ex_date": "-",
@@ -31997,14 +31997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 35.22,
-      "spot_volume": 17698,
+      "spot_price": 34.99,
+      "spot_volume": 39641,
       "fut_price": 35.05,
       "fut_volume": 77,
-      "basis": -0.17,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.14,
-      "point_contrib": 0.0,
+      "basis": 0.06,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.65,
+      "point_contrib": -0.0,
       "volume": 77,
       "ex_date": "08/18",
       "ex_dividend": 1.01,
@@ -32039,7 +32039,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1513",
@@ -32047,14 +32047,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 168.0,
-      "spot_volume": 2948,
+      "spot_price": 167.0,
+      "spot_volume": 1474,
       "fut_price": 167.0,
       "fut_volume": 73,
-      "basis": -1.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.6,
-      "point_contrib": 0.1,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.6,
+      "point_contrib": -0.1,
       "volume": 73,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -32089,7 +32089,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2379",
@@ -32097,14 +32097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 741.0,
-      "spot_volume": 1420,
+      "spot_price": 749.0,
+      "spot_volume": 1176,
       "fut_price": 749.0,
       "fut_volume": 72,
-      "basis": 8.0,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.85,
-      "point_contrib": -1.4,
+      "change_pct": 1.08,
+      "point_contrib": 0.8,
       "volume": 72,
       "ex_date": "09/08",
       "ex_dividend": 25.0,
@@ -32139,7 +32139,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人大買 + 期貨大戶做多 (雙向多頭共振)",
       "is_top10_buy": true,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3661",
@@ -32147,14 +32147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 4190.0,
-      "spot_volume": 3535,
+      "spot_price": 4345.0,
+      "spot_volume": 4922,
       "fut_price": 4380.0,
       "fut_volume": 67,
-      "basis": 190.0,
+      "basis": 35.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.24,
-      "point_contrib": 1.0,
+      "change_pct": 3.7,
+      "point_contrib": 16.1,
       "volume": 67,
       "ex_date": "09/03",
       "ex_dividend": 32.55165664,
@@ -32247,14 +32247,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 42.3,
-      "spot_volume": 3877,
+      "spot_price": 42.0,
+      "spot_volume": 3186,
       "fut_price": 41.7,
       "fut_volume": 60,
-      "basis": -0.6,
+      "basis": -0.3,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 1.2,
-      "point_contrib": 0.1,
+      "change_pct": -0.71,
+      "point_contrib": -0.0,
       "volume": 60,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -32289,7 +32289,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "5871",
@@ -32297,14 +32297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 106.0,
-      "spot_volume": 3963,
+      "spot_price": 105.5,
+      "spot_volume": 3191,
       "fut_price": 106.0,
       "fut_volume": 57,
-      "basis": 0.0,
+      "basis": 0.5,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.95,
-      "point_contrib": 0.1,
+      "change_pct": -0.47,
+      "point_contrib": -0.0,
       "volume": 57,
       "ex_date": "07/29",
       "ex_dividend": 5.8,
@@ -32339,7 +32339,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2338",
@@ -32347,14 +32347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 47.8,
-      "spot_volume": 2120,
+      "spot_price": 47.1,
+      "spot_volume": 3311,
       "fut_price": 46.95,
       "fut_volume": 53,
-      "basis": -0.85,
+      "basis": -0.15,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.31,
-      "point_contrib": 0.0,
+      "change_pct": -1.46,
+      "point_contrib": -0.1,
       "volume": 53,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -32389,7 +32389,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2486",
@@ -32397,13 +32397,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 240.0,
-      "spot_volume": 5691,
+      "spot_price": 238.5,
+      "spot_volume": 2524,
       "fut_price": 239.0,
       "fut_volume": 53,
-      "basis": -1.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.41,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.62,
       "point_contrib": -0.1,
       "volume": 53,
       "ex_date": "-",
@@ -32447,14 +32447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 2400.0,
-      "spot_volume": 5234,
+      "spot_price": 2330.0,
+      "spot_volume": 1763,
       "fut_price": 2339.0,
       "fut_volume": 51,
-      "basis": -61.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.13,
-      "point_contrib": 5.1,
+      "basis": 9.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.92,
+      "point_contrib": -6.8,
       "volume": 51,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -32489,7 +32489,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "9938",
@@ -32497,13 +32497,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 39.15,
-      "spot_volume": 1298,
+      "spot_price": 39.55,
+      "spot_volume": 803,
       "fut_price": 39.4,
       "fut_volume": 50,
-      "basis": 0.25,
-      "basis_tag": "🔴 正價差",
-      "change_pct": 0.13,
+      "basis": -0.15,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 1.02,
       "point_contrib": 0.0,
       "volume": 50,
       "ex_date": "08/04",
@@ -32547,14 +32547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 58.45,
-      "spot_volume": 28471,
+      "spot_price": 58.3,
+      "spot_volume": 40857,
       "fut_price": 58.3,
       "fut_volume": 50,
-      "basis": -0.15,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.6,
-      "point_contrib": 0.0,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.26,
+      "point_contrib": -0.0,
       "volume": 50,
       "ex_date": "10/22",
       "ex_dividend": 1.72,
@@ -32589,7 +32589,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2884",
@@ -32597,14 +32597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 45.75,
-      "spot_volume": 11827,
+      "spot_price": 45.0,
+      "spot_volume": 15444,
       "fut_price": 45.15,
       "fut_volume": 49,
-      "basis": -0.6,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.66,
-      "point_contrib": 0.0,
+      "basis": 0.15,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.64,
+      "point_contrib": -0.1,
       "volume": 49,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -32639,7 +32639,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨賣出/借券 + 期貨大戶買進多單 (逆價差套利)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "4938",
@@ -32647,14 +32647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 90.0,
-      "spot_volume": 3371,
+      "spot_price": 89.7,
+      "spot_volume": 4938,
       "fut_price": 89.9,
       "fut_volume": 49,
-      "basis": -0.1,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.0,
-      "point_contrib": 0.0,
+      "basis": 0.2,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.33,
+      "point_contrib": -0.0,
       "volume": 49,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -32689,7 +32689,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3533",
@@ -32697,14 +32697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1825.0,
-      "spot_volume": 962,
+      "spot_price": 1915.0,
+      "spot_volume": 2318,
       "fut_price": 1911.0,
       "fut_volume": 46,
-      "basis": 86.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -2.14,
-      "point_contrib": -3.9,
+      "basis": -4.0,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 4.93,
+      "point_contrib": 9.4,
       "volume": 46,
       "ex_date": "08/04",
       "ex_dividend": 34.93436024,
@@ -32739,7 +32739,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1102",
@@ -32747,13 +32747,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 35.9,
-      "spot_volume": 5747,
+      "spot_price": 36.35,
+      "spot_volume": 10781,
       "fut_price": 36.35,
       "fut_volume": 45,
-      "basis": 0.45,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.27,
+      "change_pct": 1.25,
       "point_contrib": 0.0,
       "volume": 45,
       "ex_date": "07/16",
@@ -32797,14 +32797,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 134.0,
-      "spot_volume": 1032,
+      "spot_price": 132.0,
+      "spot_volume": 1199,
       "fut_price": 131.0,
       "fut_volume": 45,
-      "basis": -3.0,
+      "basis": -1.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.75,
-      "point_contrib": 0.1,
+      "change_pct": -1.49,
+      "point_contrib": -0.2,
       "volume": 45,
       "ex_date": "08/21",
       "ex_dividend": 4.426,
@@ -32839,7 +32839,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2412",
@@ -32847,14 +32847,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 145.5,
-      "spot_volume": 7080,
+      "spot_price": 146.5,
+      "spot_volume": 9157,
       "fut_price": 146.5,
       "fut_volume": 43,
-      "basis": 1.0,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.0,
-      "point_contrib": 0.0,
+      "change_pct": 0.69,
+      "point_contrib": 0.1,
       "volume": 43,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -32897,14 +32897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 39.0,
-      "spot_volume": 6046,
+      "spot_price": 38.25,
+      "spot_volume": 3000,
       "fut_price": 38.45,
       "fut_volume": 42,
-      "basis": -0.55,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 1.69,
-      "point_contrib": 0.1,
+      "basis": 0.2,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.92,
+      "point_contrib": -0.1,
       "volume": 42,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -32939,7 +32939,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2606",
@@ -32947,14 +32947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 74.5,
-      "spot_volume": 1914,
+      "spot_price": 74.9,
+      "spot_volume": 1440,
       "fut_price": 75.6,
       "fut_volume": 41,
-      "basis": 1.1,
+      "basis": 0.7,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.06,
-      "point_contrib": -0.1,
+      "change_pct": 0.54,
+      "point_contrib": 0.0,
       "volume": 41,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -32989,7 +32989,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3044",
@@ -32998,13 +32998,13 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 582.0,
-      "spot_volume": 2557,
+      "spot_volume": 1992,
       "fut_price": 586.0,
       "fut_volume": 40,
       "basis": 4.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.52,
-      "point_contrib": 0.3,
+      "change_pct": 0.0,
+      "point_contrib": 0.0,
       "volume": 40,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -33047,14 +33047,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 75.5,
-      "spot_volume": 15650,
+      "spot_price": 75.6,
+      "spot_volume": 10217,
       "fut_price": 76.1,
       "fut_volume": 39,
-      "basis": 0.6,
+      "basis": 0.5,
       "basis_tag": "🔴 正價差",
-      "change_pct": 2.44,
-      "point_contrib": 0.2,
+      "change_pct": 0.13,
+      "point_contrib": 0.0,
       "volume": 39,
       "ex_date": "07/30",
       "ex_dividend": 3.0,
@@ -33097,14 +33097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 26.55,
-      "spot_volume": 14443,
+      "spot_price": 26.45,
+      "spot_volume": 10231,
       "fut_price": 26.5,
       "fut_volume": 39,
-      "basis": -0.05,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.31,
-      "point_contrib": 0.1,
+      "basis": 0.05,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.38,
+      "point_contrib": -0.0,
       "volume": 39,
       "ex_date": "08/11",
       "ex_dividend": 0.8,
@@ -33139,7 +33139,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1503",
@@ -33147,14 +33147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 199.5,
-      "spot_volume": 1254,
+      "spot_price": 197.0,
+      "spot_volume": 710,
       "fut_price": 196.5,
       "fut_volume": 36,
-      "basis": -3.0,
+      "basis": -0.5,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 1.27,
-      "point_contrib": 0.3,
+      "change_pct": -1.25,
+      "point_contrib": -0.2,
       "volume": 36,
       "ex_date": "07/23",
       "ex_dividend": 5.0,
@@ -33189,7 +33189,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2312",
@@ -33197,14 +33197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 31.05,
-      "spot_volume": 6995,
+      "spot_price": 30.65,
+      "spot_volume": 4780,
       "fut_price": 30.6,
       "fut_volume": 36,
-      "basis": -0.45,
+      "basis": -0.05,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 1.14,
-      "point_contrib": 0.0,
+      "change_pct": -1.29,
+      "point_contrib": -0.0,
       "volume": 36,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -33239,7 +33239,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2355",
@@ -33247,13 +33247,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 44.6,
-      "spot_volume": 2986,
+      "spot_price": 45.2,
+      "spot_volume": 4146,
       "fut_price": 45.1,
       "fut_volume": 35,
-      "basis": 0.5,
-      "basis_tag": "🔴 正價差",
-      "change_pct": 1.83,
+      "basis": -0.1,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 1.35,
       "point_contrib": 0.1,
       "volume": 35,
       "ex_date": "07/21",
@@ -33297,14 +33297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 989.0,
-      "spot_volume": 2487,
+      "spot_price": 996.0,
+      "spot_volume": 1843,
       "fut_price": 994.0,
       "fut_volume": 35,
-      "basis": 5.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -1.1,
-      "point_contrib": -1.1,
+      "basis": -2.0,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 0.71,
+      "point_contrib": 0.7,
       "volume": 35,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -33339,7 +33339,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2328",
@@ -33347,14 +33347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 48.2,
-      "spot_volume": 1314,
+      "spot_price": 48.05,
+      "spot_volume": 878,
       "fut_price": 48.0,
       "fut_volume": 34,
-      "basis": -0.2,
+      "basis": -0.05,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.21,
-      "point_contrib": 0.0,
+      "change_pct": -0.31,
+      "point_contrib": -0.0,
       "volume": 34,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -33389,7 +33389,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3380",
@@ -33397,14 +33397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 30.9,
-      "spot_volume": 1614,
+      "spot_price": 30.3,
+      "spot_volume": 1573,
       "fut_price": 30.1,
       "fut_volume": 34,
-      "basis": -0.8,
+      "basis": -0.2,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.48,
-      "point_contrib": -0.0,
+      "change_pct": -1.94,
+      "point_contrib": -0.1,
       "volume": 34,
       "ex_date": "07/16",
       "ex_dividend": 0.5,
@@ -33447,14 +33447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 428.0,
-      "spot_volume": 568,
+      "spot_price": 421.0,
+      "spot_volume": 360,
       "fut_price": 422.0,
       "fut_volume": 34,
-      "basis": -6.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.76,
-      "point_contrib": 1.2,
+      "basis": 1.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.64,
+      "point_contrib": -0.7,
       "volume": 34,
       "ex_date": "07/31",
       "ex_dividend": 10.0,
@@ -33489,7 +33489,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2049",
@@ -33497,14 +33497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 342.5,
-      "spot_volume": 3604,
+      "spot_price": 332.5,
+      "spot_volume": 2461,
       "fut_price": 333.5,
       "fut_volume": 33,
-      "basis": -9.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.88,
-      "point_contrib": 0.3,
+      "basis": 1.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.92,
+      "point_contrib": -1.0,
       "volume": 33,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -33539,7 +33539,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6269",
@@ -33547,14 +33547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 65.3,
-      "spot_volume": 1215,
+      "spot_price": 63.6,
+      "spot_volume": 2203,
       "fut_price": 63.7,
       "fut_volume": 33,
-      "basis": -1.6,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.77,
-      "point_contrib": 0.1,
+      "basis": 0.1,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.6,
+      "point_contrib": -0.2,
       "volume": 33,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -33589,7 +33589,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "9958F",
@@ -33597,14 +33597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 89.0,
-      "spot_volume": 623,
+      "spot_price": 89.1,
+      "spot_volume": 551,
       "fut_price": 89.3,
       "fut_volume": 31,
-      "basis": 0.3,
+      "basis": 0.2,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.34,
-      "point_contrib": -0.0,
+      "change_pct": 0.11,
+      "point_contrib": 0.0,
       "volume": 31,
       "ex_date": "08/24",
       "ex_dividend": 0.0,
@@ -33639,7 +33639,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1565F",
@@ -33697,14 +33697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 40.75,
-      "spot_volume": 1347,
+      "spot_price": 40.2,
+      "spot_volume": 1774,
       "fut_price": 41.55,
       "fut_volume": 26,
-      "basis": 0.8,
+      "basis": 1.35,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.97,
-      "point_contrib": -0.0,
+      "change_pct": -1.35,
+      "point_contrib": -0.1,
       "volume": 26,
       "ex_date": "07/20",
       "ex_dividend": 1.0,
@@ -33747,14 +33747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 529.0,
-      "spot_volume": 2030,
+      "spot_price": 531.0,
+      "spot_volume": 2274,
       "fut_price": 530.0,
       "fut_volume": 25,
-      "basis": 1.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -1.49,
-      "point_contrib": -0.8,
+      "basis": -1.0,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 0.38,
+      "point_contrib": 0.2,
       "volume": 25,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -33789,7 +33789,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "3680",
@@ -33897,13 +33897,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 71.6,
-      "spot_volume": 435,
+      "spot_price": 72.2,
+      "spot_volume": 540,
       "fut_price": 72.6,
       "fut_volume": 24,
-      "basis": 1.0,
+      "basis": 0.4,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.7,
+      "change_pct": 0.84,
       "point_contrib": 0.1,
       "volume": 24,
       "ex_date": "08/25",
@@ -33947,14 +33947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 80.0,
-      "spot_volume": 1679,
+      "spot_price": 80.8,
+      "spot_volume": 1254,
       "fut_price": 81.3,
       "fut_volume": 23,
-      "basis": 1.3,
+      "basis": 0.5,
       "basis_tag": "🔴 正價差",
-      "change_pct": 2.43,
-      "point_contrib": 0.2,
+      "change_pct": 1.0,
+      "point_contrib": 0.1,
       "volume": 23,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -33997,14 +33997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 28.3,
-      "spot_volume": 19714,
+      "spot_price": 28.45,
+      "spot_volume": 652,
       "fut_price": 28.7,
       "fut_volume": 22,
-      "basis": 0.4,
+      "basis": 0.25,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.98,
-      "point_contrib": 0.1,
+      "change_pct": 0.53,
+      "point_contrib": 0.0,
       "volume": 22,
       "ex_date": "07/13",
       "ex_dividend": 1.0,
@@ -34048,13 +34048,13 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 106.0,
-      "spot_volume": 3772,
+      "spot_volume": 5949,
       "fut_price": 106.5,
       "fut_volume": 22,
       "basis": 0.5,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.44,
-      "point_contrib": 0.2,
+      "change_pct": 0.0,
+      "point_contrib": 0.0,
       "volume": 22,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -34097,14 +34097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1455.0,
-      "spot_volume": 166,
+      "spot_price": 1490.0,
+      "spot_volume": 419,
       "fut_price": 1512.0,
       "fut_volume": 22,
-      "basis": 57.0,
+      "basis": 22.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.02,
-      "point_contrib": -1.5,
+      "change_pct": 2.41,
+      "point_contrib": 3.6,
       "volume": 22,
       "ex_date": "07/21",
       "ex_dividend": 45.37669932,
@@ -34139,7 +34139,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1590",
@@ -34147,14 +34147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1230.0,
-      "spot_volume": 594,
+      "spot_price": 1205.0,
+      "spot_volume": 2064,
       "fut_price": 1210.0,
       "fut_volume": 21,
-      "basis": -20.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.93,
-      "point_contrib": 3.6,
+      "basis": 5.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.03,
+      "point_contrib": -2.4,
       "volume": 21,
       "ex_date": "07/23",
       "ex_dividend": 29.10780001,
@@ -34189,7 +34189,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1904",
@@ -34197,14 +34197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 25.25,
-      "spot_volume": 2126,
+      "spot_price": 25.0,
+      "spot_volume": 1129,
       "fut_price": 25.25,
       "fut_volume": 21,
-      "basis": 0.0,
+      "basis": 0.25,
       "basis_tag": "🔴 正價差",
-      "change_pct": 3.06,
-      "point_contrib": 0.1,
+      "change_pct": -0.99,
+      "point_contrib": -0.0,
       "volume": 21,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -34239,7 +34239,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "0056",
@@ -34247,14 +34247,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 58.45,
-      "spot_volume": 28471,
+      "spot_price": 58.3,
+      "spot_volume": 40857,
       "fut_price": 58.25,
       "fut_volume": 21,
-      "basis": -0.2,
+      "basis": -0.05,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.6,
-      "point_contrib": 0.0,
+      "change_pct": -0.26,
+      "point_contrib": -0.0,
       "volume": 21,
       "ex_date": "10/22",
       "ex_dividend": 1.72,
@@ -34289,7 +34289,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "4123",
@@ -34347,14 +34347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 28.9,
-      "spot_volume": 2820,
+      "spot_price": 28.55,
+      "spot_volume": 4105,
       "fut_price": 28.4,
       "fut_volume": 19,
-      "basis": -0.5,
+      "basis": -0.15,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.35,
-      "point_contrib": 0.0,
+      "change_pct": -1.21,
+      "point_contrib": -0.0,
       "volume": 19,
       "ex_date": "07/23",
       "ex_dividend": 1.0,
@@ -34389,7 +34389,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6510",
@@ -34447,14 +34447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 89.0,
-      "spot_volume": 623,
+      "spot_price": 89.1,
+      "spot_volume": 551,
       "fut_price": 90.0,
       "fut_volume": 19,
-      "basis": 1.0,
+      "basis": 0.9,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.34,
-      "point_contrib": -0.0,
+      "change_pct": 0.11,
+      "point_contrib": 0.0,
       "volume": 19,
       "ex_date": "08/24",
       "ex_dividend": 0.0,
@@ -34489,7 +34489,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2331",
@@ -34497,14 +34497,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 19.0,
-      "spot_volume": 694,
+      "spot_price": 18.8,
+      "spot_volume": 608,
       "fut_price": 18.65,
       "fut_volume": 18,
-      "basis": -0.35,
+      "basis": -0.15,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 1.06,
-      "point_contrib": 0.0,
+      "change_pct": -1.05,
+      "point_contrib": -0.0,
       "volume": 18,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -34539,7 +34539,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2401",
@@ -34547,13 +34547,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 26.45,
-      "spot_volume": 1934,
+      "spot_price": 26.0,
+      "spot_volume": 1959,
       "fut_price": 26.3,
       "fut_volume": 18,
-      "basis": -0.15,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -1.12,
+      "basis": 0.3,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.7,
       "point_contrib": -0.0,
       "volume": 18,
       "ex_date": "-",
@@ -34597,14 +34597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 68.0,
-      "spot_volume": 2297,
+      "spot_price": 67.8,
+      "spot_volume": 1868,
       "fut_price": 68.5,
       "fut_volume": 16,
-      "basis": 0.5,
+      "basis": 0.7,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.19,
-      "point_contrib": 0.1,
+      "change_pct": -0.29,
+      "point_contrib": -0.0,
       "volume": 16,
       "ex_date": "08/04",
       "ex_dividend": 4.5,
@@ -34639,7 +34639,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2404",
@@ -34647,14 +34647,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1330.0,
-      "spot_volume": 749,
+      "spot_price": 1305.0,
+      "spot_volume": 1100,
       "fut_price": 1297.0,
       "fut_volume": 16,
-      "basis": -33.0,
+      "basis": -8.0,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.37,
-      "point_contrib": -0.5,
+      "change_pct": -1.88,
+      "point_contrib": -2.5,
       "volume": 16,
       "ex_date": "07/16",
       "ex_dividend": 40.0,
@@ -34697,14 +34697,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 17.55,
-      "spot_volume": 11374,
+      "spot_price": 17.45,
+      "spot_volume": 18055,
       "fut_price": 17.55,
       "fut_volume": 16,
-      "basis": 0.0,
+      "basis": 0.1,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.15,
-      "point_contrib": 0.0,
+      "change_pct": -0.57,
+      "point_contrib": -0.0,
       "volume": 16,
       "ex_date": "08/04",
       "ex_dividend": 0.3,
@@ -34739,7 +34739,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6443",
@@ -34747,14 +34747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 27.6,
-      "spot_volume": 3731,
+      "spot_price": 27.0,
+      "spot_volume": 2768,
       "fut_price": 26.9,
       "fut_volume": 16,
-      "basis": -0.7,
+      "basis": -0.1,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -1.43,
-      "point_contrib": -0.0,
+      "change_pct": -2.17,
+      "point_contrib": -0.1,
       "volume": 16,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -34847,14 +34847,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 297.0,
-      "spot_volume": 3318,
+      "spot_price": 310.0,
+      "spot_volume": 4198,
       "fut_price": 311.0,
       "fut_volume": 14,
-      "basis": 14.0,
+      "basis": 1.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 2.41,
-      "point_contrib": 0.7,
+      "change_pct": 4.38,
+      "point_contrib": 1.4,
       "volume": 14,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -34897,14 +34897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 202.5,
-      "spot_volume": 2017,
+      "spot_price": 204.0,
+      "spot_volume": 1537,
       "fut_price": 203.5,
       "fut_volume": 14,
-      "basis": 1.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -0.49,
-      "point_contrib": -0.1,
+      "basis": -0.5,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 0.74,
+      "point_contrib": 0.2,
       "volume": 14,
       "ex_date": "08/17",
       "ex_dividend": 6.0,
@@ -34939,7 +34939,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2395",
@@ -34947,14 +34947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 733.0,
-      "spot_volume": 1684,
+      "spot_price": 727.0,
+      "spot_volume": 1858,
       "fut_price": 727.0,
       "fut_volume": 14,
-      "basis": -6.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.68,
-      "point_contrib": -0.5,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.82,
+      "point_contrib": -0.6,
       "volume": 14,
       "ex_date": "07/17",
       "ex_dividend": 11.15855623,
@@ -34997,14 +34997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 67.4,
-      "spot_volume": 1102,
+      "spot_price": 67.8,
+      "spot_volume": 1344,
       "fut_price": 68.5,
       "fut_volume": 14,
-      "basis": 1.1,
+      "basis": 0.7,
       "basis_tag": "🔴 正價差",
-      "change_pct": 2.28,
-      "point_contrib": 0.2,
+      "change_pct": 0.59,
+      "point_contrib": 0.0,
       "volume": 14,
       "ex_date": "08/06",
       "ex_dividend": 2.8,
@@ -35047,14 +35047,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 171.5,
-      "spot_volume": 1937,
+      "spot_price": 168.0,
+      "spot_volume": 1778,
       "fut_price": 168.5,
       "fut_volume": 13,
-      "basis": -3.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.87,
-      "point_contrib": -0.1,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -2.04,
+      "point_contrib": -0.3,
       "volume": 13,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -35097,13 +35097,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 27.75,
-      "spot_volume": 11317,
+      "spot_price": 27.95,
+      "spot_volume": 19003,
       "fut_price": 28.1,
       "fut_volume": 13,
-      "basis": 0.35,
+      "basis": 0.15,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.28,
+      "change_pct": 0.72,
       "point_contrib": 0.0,
       "volume": 13,
       "ex_date": "08/05",
@@ -35147,14 +35147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 71.5,
-      "spot_volume": 1615,
+      "spot_price": 70.9,
+      "spot_volume": 1175,
       "fut_price": 71.6,
       "fut_volume": 12,
-      "basis": 0.1,
+      "basis": 0.7,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.27,
-      "point_contrib": 0.1,
+      "change_pct": -0.84,
+      "point_contrib": -0.1,
       "volume": 12,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -35189,7 +35189,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "5904F",
@@ -35247,14 +35247,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 67.65,
-      "spot_volume": 20225,
+      "spot_price": 67.0,
+      "spot_volume": 19103,
       "fut_price": 67.25,
       "fut_volume": 11,
-      "basis": -0.4,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.44,
-      "point_contrib": -0.0,
+      "basis": 0.25,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.96,
+      "point_contrib": -0.1,
       "volume": 11,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -35297,14 +35297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 46.55,
-      "spot_volume": 598,
+      "spot_price": 46.4,
+      "spot_volume": 393,
       "fut_price": 46.1,
       "fut_volume": 10,
-      "basis": -0.45,
+      "basis": -0.3,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.32,
-      "point_contrib": 0.0,
+      "change_pct": -0.32,
+      "point_contrib": -0.0,
       "volume": 10,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -35339,7 +35339,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1795",
@@ -35347,14 +35347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 182.5,
-      "spot_volume": 1412,
+      "spot_price": 180.5,
+      "spot_volume": 588,
       "fut_price": 181.0,
       "fut_volume": 10,
-      "basis": -1.5,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 3.69,
-      "point_contrib": 0.7,
+      "basis": 0.5,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.1,
+      "point_contrib": -0.2,
       "volume": 10,
       "ex_date": "08/31",
       "ex_dividend": 2.56531681,
@@ -35389,7 +35389,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2515",
@@ -35397,14 +35397,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 12.15,
-      "spot_volume": 12336,
+      "spot_price": 11.95,
+      "spot_volume": 4896,
       "fut_price": 11.95,
       "fut_volume": 10,
-      "basis": -0.2,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 2.53,
-      "point_contrib": 0.0,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.65,
+      "point_contrib": -0.0,
       "volume": 10,
       "ex_date": "07/16",
       "ex_dividend": 0.0,
@@ -35439,7 +35439,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "00940",
@@ -35447,14 +35447,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 13.28,
-      "spot_volume": 13020,
+      "spot_price": 13.21,
+      "spot_volume": 8174,
       "fut_price": 13.26,
       "fut_volume": 10,
-      "basis": -0.02,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.0,
-      "point_contrib": 0.0,
+      "basis": 0.05,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.53,
+      "point_contrib": -0.0,
       "volume": 10,
       "ex_date": "10/07",
       "ex_dividend": 0.055,
@@ -35489,7 +35489,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1565",
@@ -35697,13 +35697,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 32.55,
-      "spot_volume": 5210,
+      "spot_price": 32.05,
+      "spot_volume": 5837,
       "fut_price": 32.15,
       "fut_volume": 7,
-      "basis": -0.4,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.61,
+      "basis": 0.1,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.54,
       "point_contrib": -0.0,
       "volume": 7,
       "ex_date": "08/11",
@@ -35747,14 +35747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 12.9,
-      "spot_volume": 1803,
+      "spot_price": 12.8,
+      "spot_volume": 1054,
       "fut_price": 12.8,
       "fut_volume": 6,
-      "basis": -0.1,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 1.98,
-      "point_contrib": 0.0,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.78,
+      "point_contrib": -0.0,
       "volume": 6,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -35789,7 +35789,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1909",
@@ -35797,13 +35797,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 10.15,
-      "spot_volume": 1424,
+      "spot_price": 10.2,
+      "spot_volume": 984,
       "fut_price": 10.2,
       "fut_volume": 6,
-      "basis": 0.05,
+      "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.5,
+      "change_pct": 0.49,
       "point_contrib": 0.0,
       "volume": 6,
       "ex_date": "-",
@@ -35947,14 +35947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 786.0,
-      "spot_volume": 2292,
+      "spot_price": 801.0,
+      "spot_volume": 1046,
       "fut_price": 805.0,
       "fut_volume": 6,
-      "basis": 19.0,
+      "basis": 4.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -6.65,
-      "point_contrib": -5.2,
+      "change_pct": 1.91,
+      "point_contrib": 1.5,
       "volume": 6,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -35989,7 +35989,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2105",
@@ -35998,12 +35998,12 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 30.35,
-      "spot_volume": 3322,
+      "spot_volume": 2932,
       "fut_price": 30.45,
       "fut_volume": 5,
       "basis": 0.1,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.0,
+      "change_pct": 0.0,
       "point_contrib": 0.0,
       "volume": 5,
       "ex_date": "-",
@@ -36097,14 +36097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 105.0,
-      "spot_volume": 3390,
+      "spot_price": 104.0,
+      "spot_volume": 1970,
       "fut_price": 105.0,
       "fut_volume": 4,
-      "basis": 0.0,
+      "basis": 1.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.47,
-      "point_contrib": -0.0,
+      "change_pct": -0.95,
+      "point_contrib": -0.1,
       "volume": 4,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -36197,14 +36197,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 39.05,
-      "spot_volume": 430,
+      "spot_price": 39.1,
+      "spot_volume": 287,
       "fut_price": 39.15,
       "fut_volume": 4,
-      "basis": 0.1,
+      "basis": 0.05,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.1,
-      "point_contrib": -0.0,
+      "change_pct": 0.13,
+      "point_contrib": 0.0,
       "volume": 4,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -36239,7 +36239,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "00923",
@@ -36247,13 +36247,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 42.79,
-      "spot_volume": 2853,
+      "spot_price": 42.37,
+      "spot_volume": 2441,
       "fut_price": 42.56,
       "fut_volume": 4,
-      "basis": -0.23,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.51,
+      "basis": 0.19,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.98,
       "point_contrib": -0.0,
       "volume": 4,
       "ex_date": "08/18",
@@ -36297,14 +36297,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 702.0,
-      "spot_volume": 1882,
+      "spot_price": 692.0,
+      "spot_volume": 1034,
       "fut_price": 694.0,
       "fut_volume": 3,
-      "basis": -8.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": 0.86,
-      "point_contrib": 0.6,
+      "basis": 2.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.42,
+      "point_contrib": -1.0,
       "volume": 3,
       "ex_date": "08/05",
       "ex_dividend": 11.0,
@@ -36339,7 +36339,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1560",
@@ -36347,13 +36347,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 1020.0,
-      "spot_volume": 963,
+      "spot_price": 1010.0,
+      "spot_volume": 530,
       "fut_price": 1010.0,
       "fut_volume": 3,
-      "basis": -10.0,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.97,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -0.98,
       "point_contrib": -1.0,
       "volume": 3,
       "ex_date": "07/16",
@@ -36547,14 +36547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 395.0,
-      "spot_volume": 592,
+      "spot_price": 399.0,
+      "spot_volume": 894,
       "fut_price": 401.0,
       "fut_volume": 3,
-      "basis": 6.0,
+      "basis": 2.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.37,
-      "point_contrib": -0.5,
+      "change_pct": 1.01,
+      "point_contrib": 0.4,
       "volume": 3,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -36589,7 +36589,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "00636",
@@ -36597,13 +36597,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 26.13,
-      "spot_volume": 141,
+      "spot_price": 26.1,
+      "spot_volume": 887,
       "fut_price": 26.0,
       "fut_volume": 3,
-      "basis": -0.13,
+      "basis": -0.1,
       "basis_tag": "🟢 逆價差",
-      "change_pct": -0.15,
+      "change_pct": -0.11,
       "point_contrib": -0.0,
       "volume": 3,
       "ex_date": "-",
@@ -36647,13 +36647,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 91.0,
-      "spot_volume": 72,
+      "spot_price": 91.3,
+      "spot_volume": 106,
       "fut_price": 91.5,
       "fut_volume": 2,
-      "basis": 0.5,
+      "basis": 0.2,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.22,
+      "change_pct": 0.33,
       "point_contrib": 0.0,
       "volume": 2,
       "ex_date": "08/17",
@@ -36697,13 +36697,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 22.0,
-      "spot_volume": 765,
+      "spot_price": 21.75,
+      "spot_volume": 724,
       "fut_price": 21.75,
       "fut_volume": 2,
-      "basis": -0.25,
-      "basis_tag": "🟢 逆價差",
-      "change_pct": -0.23,
+      "basis": 0.0,
+      "basis_tag": "🔴 正價差",
+      "change_pct": -1.14,
       "point_contrib": -0.0,
       "volume": 2,
       "ex_date": "-",
@@ -36747,11 +36747,11 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 37.0,
-      "spot_volume": 504,
+      "spot_price": 37.35,
+      "spot_volume": 2106,
       "fut_price": 37.65,
       "fut_volume": 2,
-      "basis": 0.65,
+      "basis": 0.3,
       "basis_tag": "🔴 正價差",
       "change_pct": 0.95,
       "point_contrib": 0.0,
@@ -36897,14 +36897,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 36.53,
-      "spot_volume": 15,
+      "spot_price": 36.57,
+      "spot_volume": 34,
       "fut_price": 36.62,
       "fut_volume": 2,
-      "basis": 0.09,
+      "basis": 0.05,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.05,
-      "point_contrib": -0.0,
+      "change_pct": 0.11,
+      "point_contrib": 0.0,
       "volume": 2,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -36939,7 +36939,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "1477",
@@ -36947,14 +36947,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 202.5,
-      "spot_volume": 2017,
+      "spot_price": 204.0,
+      "spot_volume": 1537,
       "fut_price": 205.0,
       "fut_volume": 1,
-      "basis": 2.5,
+      "basis": 1.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.49,
-      "point_contrib": -0.1,
+      "change_pct": 0.74,
+      "point_contrib": 0.2,
       "volume": 1,
       "ex_date": "08/17",
       "ex_dividend": 6.0,
@@ -36989,7 +36989,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "2347",
@@ -36997,14 +36997,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 96.8,
-      "spot_volume": 2349,
+      "spot_price": 96.4,
+      "spot_volume": 1894,
       "fut_price": 97.5,
       "fut_volume": 1,
-      "basis": 0.7,
+      "basis": 1.1,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.04,
-      "point_contrib": 0.1,
+      "change_pct": -0.41,
+      "point_contrib": -0.0,
       "volume": 1,
       "ex_date": "07/13",
       "ex_dividend": 4.2,
@@ -37039,7 +37039,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "3005",
@@ -37047,14 +37047,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 118.0,
-      "spot_volume": 989,
+      "spot_price": 118.5,
+      "spot_volume": 1153,
       "fut_price": 118.0,
       "fut_volume": 1,
-      "basis": 0.0,
-      "basis_tag": "🔴 正價差",
-      "change_pct": -0.42,
-      "point_contrib": -0.0,
+      "basis": -0.5,
+      "basis_tag": "🟢 逆價差",
+      "change_pct": 0.42,
+      "point_contrib": 0.0,
       "volume": 1,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -37089,7 +37089,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨法人買進 + 期貨大戶放空避險 (鎖定獲利/除息保護)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "4743",
@@ -37147,14 +37147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 49.5,
-      "spot_volume": 4928,
+      "spot_price": 49.65,
+      "spot_volume": 4975,
       "fut_price": 49.7,
       "fut_volume": 1,
-      "basis": 0.2,
+      "basis": 0.05,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.43,
-      "point_contrib": 0.1,
+      "change_pct": 0.3,
+      "point_contrib": 0.0,
       "volume": 1,
       "ex_date": "07/28",
       "ex_dividend": 1.8,
@@ -37247,14 +37247,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 15.01,
-      "spot_volume": 150,
+      "spot_price": 14.84,
+      "spot_volume": 977,
       "fut_price": 14.77,
       "fut_volume": 1,
-      "basis": -0.24,
+      "basis": -0.07,
       "basis_tag": "🟢 逆價差",
-      "change_pct": 0.07,
-      "point_contrib": 0.0,
+      "change_pct": -1.13,
+      "point_contrib": -0.0,
       "volume": 1,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -37289,7 +37289,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1210",
@@ -37298,7 +37298,7 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 51.3,
-      "spot_volume": 1170,
+      "spot_volume": 932,
       "fut_price": 51.3,
       "fut_volume": 0,
       "basis": 0.0,
@@ -37347,14 +37347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 37.05,
-      "spot_volume": 4763,
-      "fut_price": 37.05,
+      "spot_price": 36.55,
+      "spot_volume": 1644,
+      "fut_price": 36.55,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 2.35,
-      "point_contrib": 0.1,
+      "change_pct": -1.35,
+      "point_contrib": -0.0,
       "volume": 0,
       "ex_date": "07/22",
       "ex_dividend": 2.0,
@@ -37389,7 +37389,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "1722",
@@ -37397,13 +37397,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 41.3,
-      "spot_volume": 1588,
-      "fut_price": 41.3,
+      "spot_price": 41.45,
+      "spot_volume": 1647,
+      "fut_price": 41.45,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.61,
+      "change_pct": 0.36,
       "point_contrib": 0.0,
       "volume": 0,
       "ex_date": "08/25",
@@ -37447,13 +37447,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 85.9,
-      "spot_volume": 1718,
-      "fut_price": 85.9,
+      "spot_price": 85.3,
+      "spot_volume": 761,
+      "fut_price": 85.3,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.81,
+      "change_pct": -0.7,
       "point_contrib": -0.1,
       "volume": 0,
       "ex_date": "-",
@@ -37547,14 +37547,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 91.2,
-      "spot_volume": 889,
-      "fut_price": 91.2,
+      "spot_price": 91.8,
+      "spot_volume": 413,
+      "fut_price": 91.8,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.0,
-      "point_contrib": 0.0,
+      "change_pct": 0.66,
+      "point_contrib": 0.1,
       "volume": 0,
       "ex_date": "07/22",
       "ex_dividend": 0.0,
@@ -37597,14 +37597,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 25.75,
-      "spot_volume": 2041,
-      "fut_price": 25.75,
+      "spot_price": 25.7,
+      "spot_volume": 4258,
+      "fut_price": 25.7,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.39,
-      "point_contrib": 0.0,
+      "change_pct": -0.19,
+      "point_contrib": -0.0,
       "volume": 0,
       "ex_date": "07/14",
       "ex_dividend": 1.15,
@@ -37639,7 +37639,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "2913",
@@ -37647,13 +37647,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 10.9,
-      "spot_volume": 2165,
-      "fut_price": 10.9,
+      "spot_price": 10.95,
+      "spot_volume": 535,
+      "fut_price": 10.95,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.0,
+      "change_pct": 0.46,
       "point_contrib": 0.0,
       "volume": 0,
       "ex_date": "-",
@@ -37847,13 +37847,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 131.5,
-      "spot_volume": 229,
-      "fut_price": 131.5,
+      "spot_price": 134.5,
+      "spot_volume": 470,
+      "fut_price": 134.5,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 1.94,
+      "change_pct": 2.28,
       "point_contrib": 0.3,
       "volume": 0,
       "ex_date": "08/27",
@@ -37998,13 +37998,13 @@ window.GEX_EMBEDDED_DATA = {
       "has_night": false,
       "liquidity": "中",
       "spot_price": 91.1,
-      "spot_volume": 799,
+      "spot_volume": 827,
       "fut_price": 91.1,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.44,
-      "point_contrib": -0.0,
+      "change_pct": 0.0,
+      "point_contrib": 0.0,
       "volume": 0,
       "ex_date": "08/24",
       "ex_dividend": 2.5,
@@ -38039,7 +38039,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現貨三大法人甩賣 + 期貨大戶放空 (現期雙殺壓制)",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bear"
+      "trend": "Bull"
     },
     {
       "code": "6188",
@@ -38097,14 +38097,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 428.0,
-      "spot_volume": 568,
-      "fut_price": 428.0,
+      "spot_price": 421.0,
+      "spot_volume": 360,
+      "fut_price": 421.0,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 2.76,
-      "point_contrib": 1.2,
+      "change_pct": -1.64,
+      "point_contrib": -0.7,
       "volume": 0,
       "ex_date": "07/31",
       "ex_dividend": 10.0,
@@ -38139,7 +38139,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     },
     {
       "code": "6757",
@@ -38147,14 +38147,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 53.2,
-      "spot_volume": 254,
-      "fut_price": 53.2,
+      "spot_price": 53.3,
+      "spot_volume": 216,
+      "fut_price": 53.3,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.95,
-      "point_contrib": 0.1,
+      "change_pct": 0.19,
+      "point_contrib": 0.0,
       "volume": 0,
       "ex_date": "07/28",
       "ex_dividend": 2.42027,
@@ -38247,13 +38247,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 29.9,
-      "spot_volume": 1126,
-      "fut_price": 29.9,
+      "spot_price": 29.85,
+      "spot_volume": 448,
+      "fut_price": 29.85,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -1.64,
+      "change_pct": -0.17,
       "point_contrib": -0.0,
       "volume": 0,
       "ex_date": "-",
@@ -38347,14 +38347,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "個股期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 127.5,
-      "spot_volume": 722,
-      "fut_price": 127.5,
+      "spot_price": 128.0,
+      "spot_volume": 424,
+      "fut_price": 128.0,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.79,
-      "point_contrib": 0.1,
+      "change_pct": 0.39,
+      "point_contrib": 0.0,
       "volume": 0,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -38397,13 +38397,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 17.01,
-      "spot_volume": 2348,
-      "fut_price": 17.01,
+      "spot_price": 16.91,
+      "spot_volume": 2725,
+      "fut_price": 16.91,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": -0.12,
+      "change_pct": -0.59,
       "point_contrib": -0.0,
       "volume": 0,
       "ex_date": "-",
@@ -38547,13 +38547,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 146.1,
-      "spot_volume": 587,
-      "fut_price": 146.1,
+      "spot_price": 146.75,
+      "spot_volume": 1752,
+      "fut_price": 146.75,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.97,
+      "change_pct": 0.44,
       "point_contrib": 0.1,
       "volume": 0,
       "ex_date": "-",
@@ -38597,13 +38597,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "小型ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 146.1,
-      "spot_volume": 587,
-      "fut_price": 146.1,
+      "spot_price": 146.75,
+      "spot_volume": 1752,
+      "fut_price": 146.75,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.97,
+      "change_pct": 0.44,
       "point_contrib": 0.1,
       "volume": 0,
       "ex_date": "-",
@@ -38697,13 +38697,13 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 17.73,
-      "spot_volume": 1364,
-      "fut_price": 17.73,
+      "spot_price": 17.81,
+      "spot_volume": 1110,
+      "fut_price": 17.81,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.4,
+      "change_pct": 0.45,
       "point_contrib": 0.0,
       "volume": 0,
       "ex_date": "-",
@@ -38747,14 +38747,14 @@ window.GEX_EMBEDDED_DATA = {
       "category": "ETF期貨",
       "has_night": false,
       "liquidity": "中",
-      "spot_price": 47.91,
-      "spot_volume": 1028,
-      "fut_price": 47.91,
+      "spot_price": 47.4,
+      "spot_volume": 548,
+      "fut_price": 47.4,
       "fut_volume": 0,
       "basis": 0.0,
       "basis_tag": "🔴 正價差",
-      "change_pct": 0.82,
-      "point_contrib": 0.0,
+      "change_pct": -1.06,
+      "point_contrib": -0.1,
       "volume": 0,
       "ex_date": "-",
       "ex_dividend": 0.0,
@@ -38789,7 +38789,7 @@ window.GEX_EMBEDDED_DATA = {
       "intent_desc": "現現與期貨籌碼力道平淡/無顯著趨勢",
       "is_top10_buy": false,
       "is_top10_sell": false,
-      "trend": "Bull"
+      "trend": "Bear"
     }
   ],
   "ai_ex_dividend_digest": {
@@ -38885,9 +38885,9 @@ window.GEX_EMBEDDED_DATA = {
       "summary": "台指VIX 24.6、美股VIX 15.4；DXY/US10Y/VIX 即時報價僅供總經氛圍參考，非量化交易訊號。",
       "dxy": {
         "name": "美元指數 (DXY)",
-        "price": 102.12,
-        "change_pct": -0.12,
-        "trend_label": "▼ 較昨日走弱 (-0.12%)",
+        "price": 102.1,
+        "change_pct": -0.14,
+        "trend_label": "▼ 較昨日走弱 (-0.14%)",
         "unit": ""
       },
       "us10y": {
