@@ -729,6 +729,32 @@ function renderDashboard() {
   renderLtBadge('stat-cw-lt-badge', optLt && optLt.call, '#ff5252', '#ffd700');
   renderLtBadge('stat-pw-lt-badge', optLt && optLt.put, '#00e676', '#ffd700');
 
+  // 3.6 牆的到期日組成：該牆所在履約價的 GEX 是哪些到期桶堆出來的。週選到期後那一份就消失（牆會蒸發），月選留得久。
+  // 只用資料檔既有的逐桶 GEX（w1/w2/fri/mth，真實 OI 計算），找不到該履約價就整行留空，不補數。
+  // 注意：這是「牆所屬那一側（買權側／賣權側）」的占比，與引擎牆的定義一致；引擎只算這四個桶，遠月未計入。
+  const renderWallExpiry = (elId, strike, side) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const row = (gexData.total_gex || []).find(r => Number(r.strike) === Number(strike));
+    if (!row) { el.innerText = ''; return; }
+    const dte = gexData.dte_dates || {};
+    const nm = (k) => String(dte[k] || '').replace('結算', '');
+    const parts = [
+      ['fri', `${nm('fri') ? nm('fri') + '週選' : '週五選'}`, Math.abs(row[`fri_${side}`] || 0)],
+      ['w1', `${nm('w1') ? nm('w1') + '週選' : '週三選'}`, Math.abs(row[`w1_${side}`] || 0)],
+      ['w2', `${nm('w2') ? nm('w2') + '週選' : '次週三選'}`, Math.abs(row[`w2_${side}`] || 0)],
+      ['mth', `${nm('m1') || '月選'}月選`, Math.abs(row[`mth_${side}`] || 0)],
+    ];
+    const tot = parts.reduce((a, p) => a + p[2], 0);
+    if (!(tot > 0)) { el.innerText = ''; return; }
+    const txt = parts.filter(p => p[2] / tot >= 0.01).sort((a, b) => b[2] - a[2])
+      .map(p => `${p[1]} ${Math.round(p[2] / tot * 100)}%`).join('｜');
+    el.innerText = `到期組成：${txt}`;
+    el.title = '該履約價 GEX 由各到期桶堆出的占比（僅含引擎納入的 w1/w2/fri/mth 四檔；週選到期後該份消失）。模型輸出，非預測。';
+  };
+  renderWallExpiry('stat-cw-exp', gexData.call_wall_strike, 'call');
+  renderWallExpiry('stat-pw-exp', gexData.put_wall_strike, 'put');
+
   // 5. Max Pain (日盤 vs 夜盤) & 空間籌碼結構拓撲 (Spatial Topology)
   const mpVal = gexData.max_pain_strike || CHART_DEFAULTS.max_pain_strike;
   const pwVal = gexData.put_wall_strike || CHART_DEFAULTS.put_wall_strike;
