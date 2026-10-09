@@ -8,6 +8,12 @@
 
 ---
 
+## 📋 2026-10-09 GEX 範圍盤點與老墨對照（未升版、未改引擎數字）
+
+- 與老墨 MOFI GEX 頁面對照：符號、乘數 50 與通行寫法一致；**我們少乘 0.01（數字為「每 1%」標準值的 100 倍）、σ 用單一 VIX（非每履約價 IV）、只算 w1/w2/fri/mth 四檔且限現價附近履約價**。10/8 實測 OI 涵蓋率：合約 82.3%、再限履約價後 27.0%（口數比例，非 GEX 比例）。翻轉點對 σ 最敏感，牆位置較穩。詳見 [docs/GEX_SCOPE_AND_METHOD_LIMITS.md](docs/GEX_SCOPE_AND_METHOD_LIMITS.md)、[docs/MOFI_GEX_COMPARISON_20261009.md](docs/MOFI_GEX_COMPARISON_20261009.md)。
+- 新增：`audit_vs_official.py` 的「GEX 引擎涵蓋率」資訊項；Call／Put Wall 卡片新增「到期組成」一行（牆所在履約價由哪些到期桶堆出，純讀既有逐桶 GEX）。
+- 待使用者決定（會動交易判斷數字）：補 ×0.01、每履約價 IV（期交所盤後檔已含結算價與最後買賣價）、全合約；建議先做並行第二版＋近 40 日回測。
+
 ## 📋 2026-10-06 ～ 10-08 現況更新（文件同步，未升版）
 
 - **對官方資料逐項對帳**：`scripts/audit_vs_official.py`（獨立向期交所／證交所重抓逐項比對，收盤後執行）；清除虛構資料（Max Pain 改全履約價、寫死的本週焦點週報、CPI／非農規則猜日期改讀 BLS 官方日程檔 `data/us_macro_calendar.json`、板塊輪動寫死占比、融資維持率、假成交量預設值等）。

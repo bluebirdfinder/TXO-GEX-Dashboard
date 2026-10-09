@@ -136,6 +136,30 @@ def check_options(d):
         top_call = max(C, key=C.get); top_put = max(P, key=P.get)
         rec("選擇權", "Call Wall 是否位於 Call 未平倉前三大履約價", d["call_wall_strike"], top_call, d["call_wall_strike"] in sorted(C, key=C.get, reverse=True)[:3], "Call Wall 為 Gamma 加權，不要求等於最大 OI 履約價")
         rec("選擇權", "Put Wall 參考（最大 Put OI 履約價）", d["put_wall_strike"], top_put, None, "Put Wall 為 Gamma 加權的近價牆位，與純 OI 最大處不必相同；僅供參考")
+        # GEX 引擎涵蓋率（資訊用，不判 PASS/FAIL）：引擎只算 w1/w2/fri/mth 四檔、且只取現價附近的履約價，
+        # 這裡量「被納入的 OI 占期交所全部 OI」的比例，讓範圍縮水時看得見。口數比例不等於 GEX 比例（遠端履約價 Gamma 小）。
+        dte_md = set()
+        for v in (d.get("dte_dates") or {}).values():
+            m = re.search(r"(\d+)/(\d+)", str(v))
+            if m:
+                dte_md.add((int(m.group(1)), int(m.group(2))))
+        ks_eng = [r["strike"] for r in d.get("total_gex", []) if "strike" in r]
+        if cs + ps and dte_md and ks_eng:
+            lo, hi = min(ks_eng), max(ks_eng)
+            tot_oi = used_oi = win_oi = 0
+            for code, (cm, pm) in per.items():
+                e = exp.get(code, "")
+                in_eng = len(e) == 8 and (int(e[4:6]), int(e[6:8])) in dte_md
+                for k, oi in list(cm.items()) + list(pm.items()):
+                    tot_oi += oi
+                    if in_eng:
+                        used_oi += oi
+                        if lo <= k <= hi:
+                            win_oi += oi
+            if tot_oi:
+                rec("選擇權", "GEX 引擎涵蓋率（OI 口數）",
+                    f"合約 {used_oi / tot_oi * 100:.1f}%／再限履約價 {lo:.0f}~{hi:.0f} 後 {win_oi / tot_oi * 100:.1f}%", f"全部 {tot_oi:,} 口", None,
+                    "資訊用：引擎只算 w1/w2/fri/mth 四檔且限現價附近履約價；遠月與遠端履約價未計入。詳見 docs/GEX_SCOPE_AND_METHOD_LIMITS.md")
         # 結算日
         dte = d.get("dte_dates", {})
         wexp = sorted(v for k, v in exp.items() if re.search(r"W\d$", k))
