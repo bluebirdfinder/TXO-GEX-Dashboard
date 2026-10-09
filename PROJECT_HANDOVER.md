@@ -10,6 +10,7 @@
 
 | # | 功能 | 說明 |
 |---|---|---|
+| -16 | **📋 2026-10-09 GEX 範圍盤點與通行版(v2)並行累積（未升版、未改引擎數字）** | `scripts/gex_v2.py`／`gex_v2_backfill.py`／`gex_v2_backtest.py`／`gex_v2_daily.py`、`data/gex_v2_history.json`、`audit_vs_official.py` 涵蓋率項、牆卡片「到期組成」；現行引擎少乘 0.01、單一 VIX、4 桶＋±900 的限制見 [docs/GEX_SCOPE_AND_METHOD_LIMITS.md](docs/GEX_SCOPE_AND_METHOD_LIMITS.md)，回測見 [docs/GEX_V2_BACKTEST_20261009.md](docs/GEX_V2_BACKTEST_20261009.md)。兩版並存，是否取代待使用者決定。 |
 | -15 | **📋 2026-10-06～10-08 官方對帳／到期天數／資料完整度／代碼修正（未升版）** | `scripts/fetch_and_calc_vision.py`（到期天數改小數天、未公布時 `not_published`＋`data_completeness`、`gamma_flip_standard_close`、官方臺指 VIX 當波動率）、`scripts/fetch_tw_universe.py`＋`data/tw_symbols_universe.json`（個股期貨代碼以期交所官方表為準）、`scripts/audit_vs_official.py`、`scripts/probe_publish_times.py`、`scripts/fubon_api_provider.py`（大戶散戶動能每分鐘存檔）、`trading room/room.js`（GEX 名稱標籤、Y 軸標籤、ADX 縮放、GC 黃金）。詳見 README／STATUS 的「2026-10-06～10-08 現況更新」、HANDOFF.md K～P 列、docs/VEX_SIGN_AND_FLIP_VALIDATION_20261007.md、docs/JJ_RSTOCK_MOMENTUM_EXPLORATION.md。 |
 | -14 | **🛡️ 網頁一律稱「動能鳥」＋指標 IP 保護現況盤點 (v64.17)** | `trading room/room.html`、`room.js`（移除 JJ 稱呼、元素 id 改名）；Worker 私有檔新增 `indicator=bird` 別名。詳見 HISTORY.md v64.17。 |
 | -13 | **🛠️ 指標庫 FVG/Order Blocks 勾選框接上 SMC (v64.16)** | `trading room/room.js`（`fetchSmcFromWorker()` 依勾選加 `fvg=1&swingob=1`）。詳見 HISTORY.md v64.16。 |
@@ -86,6 +87,10 @@
 | **8. TWSE 證交所每日價格指數 (MI-INDEX)** | `https://www.twse.com.tw/zh/trading/historical/mi-index.html` | 證交所官方大盤加權指數 (IX0001)、寶島指數及各大主題產業指數收盤與漲跌 |
 | **9. TWSE MIS 類股即時行情** | `https://mis.twse.com.tw/stock/spot-stock?lang=zhHant` | 證交所 33 大產業類股即時價量，歸納至 8 大精準主題資金輪動矩陣 |
 | **10. TAIFEX 每日外幣參考匯率** | `https://www.taifex.com.tw/cht/3/dailyFXRate` | 期交所官方台幣/美元、日圓/美元、美元指數每日參考匯率與歷史歷程 |
+| **11. TAIFEX 選擇權每日交易行情下載（optDataDown，GEX 的 OI／結算價／買賣價來源）** | `https://www.taifex.com.tw/cht/3/optDataDown?down_type=1&commodity_id=TXO&queryStartDate=YYYY/MM/DD&queryEndDate=YYYY/MM/DD` | 單次最多約一個月；2025-10 起可回溯（實測）。欄位（cp950）：[0]日期 [2]到期月份(週別) [3]履約價 [4]買賣權 [8]收盤 [10]結算價 [11]未沖銷 [12]最後最佳買 [13]最後最佳賣 [17]時段 [20]契約到期日；**約 2025-12 中旬前的檔無 [20]**，由合約代碼推導（`gex_v2.derive_expiry`）；OI 只在「一般」時段列 |
+| **12. TAIFEX 期貨每日交易行情下載（futDataDown，台指期 O/H/L/C）** | `https://www.taifex.com.tw/cht/3/futDataDown?down_type=1&commodity_id=TX&queryStartDate=...&queryEndDate=...` | 回測結果價格與台指期日線；取一般時段、成交量最大的月份合約 |
+| **13. TWSE 加權指數歷史（MI_5MINS_HIST，月檔）** | `https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST?date=YYYYMM01&response=json` | 每日開高低收（民國日期）；GEX v2 翻轉點掃描基準與回測結果價格 |
+| **14. TAIFEX 臺指 VIX 當日檔** | `https://www.taifex.com.tw/cht/7/getVixData?filesname=YYYYMMDD` | **只保留當月**；更早的日期回傳 HTML 錯誤頁（回補程式遇到會視為取不到，不用其他值頂替） |
 
 ---
 

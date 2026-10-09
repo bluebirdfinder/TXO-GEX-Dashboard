@@ -13,6 +13,7 @@
 - 與老墨 MOFI GEX 頁面對照：符號、乘數 50 與通行寫法一致；**我們少乘 0.01（數字為「每 1%」標準值的 100 倍）、σ 用單一 VIX（非每履約價 IV）、只算 w1/w2/fri/mth 四檔且限現價附近履約價**。10/8 實測 OI 涵蓋率：合約 82.3%、再限履約價後 27.0%（口數比例，非 GEX 比例）。翻轉點對 σ 最敏感，牆位置較穩。詳見 [docs/GEX_SCOPE_AND_METHOD_LIMITS.md](docs/GEX_SCOPE_AND_METHOD_LIMITS.md)、[docs/MOFI_GEX_COMPARISON_20261009.md](docs/MOFI_GEX_COMPARISON_20261009.md)。
 - 新增：`audit_vs_official.py` 的「GEX 引擎涵蓋率」資訊項；Call／Put Wall 卡片新增「到期組成」一行（牆所在履約價由哪些到期桶堆出，純讀既有逐桶 GEX）。
 - **通行版(v2) GEX 並行回補與累積**（2026-10-09，未動引擎、未升版）：`scripts/gex_v2.py`（Black-76、各到期 F、每履約價 IV、全合約、×0.01、淨 GEX 牆、價位掃描翻轉點）、`gex_v2_backfill.py`（回補 2025-10-01～2026-10-08 共 247 天）、`gex_v2_backtest.py`（回測，判斷標準事先登記）、`gex_v2_daily.py`（每日累積，已接 `auto_update.yml`，失敗不影響主流程）；輸出 `data/gex_v2_history.json`（獨立檔）。結果與限制見 [docs/GEX_V2_BACKTEST_20261009.md](docs/GEX_V2_BACKTEST_20261009.md)：翻轉點 v1−v2 平均 −63 點（最近一週 −254）、牆差常達千點關卡、總 GEX 中位數約 0.78 倍且 26/247 天正負號不同；回測**沒有證據顯示 v2 預測力優於 v1**；官方當日 VIX 檔只保留當月，歷史 v1 以代理 VIX 計算（已標示並驗證）。
+- 詳細演進見 [HISTORY.md](HISTORY.md) 2026-10-09 條目與 [HANDOFF.md](HANDOFF.md) T 列。
 - 待使用者決定（會動交易判斷數字）：補 ×0.01、每履約價 IV（期交所盤後檔已含結算價與最後買賣價）、全合約；建議先做並行第二版＋近 40 日回測。
 
 ## 📋 2026-10-06 ～ 10-08 現況更新（文件同步，未升版）

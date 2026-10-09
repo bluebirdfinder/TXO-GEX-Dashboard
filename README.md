@@ -7,6 +7,13 @@
 [![Live 儀表板](https://img.shields.io/badge/Live-TXO_GEX_Dashboard-00d2ff?style=flat&logo=googlechrome)](https://bluebirdfinder.github.io/TXO-GEX-Dashboard/)
 [![引擎版本](https://img.shields.io/badge/Engine-v64.17-ffd700?style=flat&logo=python)](scripts/fetch_and_calc_vision.py)
 
+## 📋 2026-10-09 GEX 範圍盤點與通行版(v2)並行累積（未升版、未改引擎數字）
+
+- 與老墨 MOFI GEX 頁面及美股通行寫法對照：符號、乘數 50 一致；**我們少乘 0.01（數字為標準值 100 倍）、σ 用單一當日 VIX、只算 4 檔合約且限現價 ±900**。10/8 實測 OI 涵蓋率合約 82.3%、再限履約價後 27.0%。老墨頁面的 OI 與官方不同，不可當逐點基準。見 [docs/GEX_SCOPE_AND_METHOD_LIMITS.md](docs/GEX_SCOPE_AND_METHOD_LIMITS.md)。
+- 新增通行版(v2)GEX：`scripts/gex_v2*.py`，回補 247 天、每日並行累積到 `data/gex_v2_history.json`（獨立檔，不碰 `gex_data.json`）；結果與限制見 [docs/GEX_V2_BACKTEST_20261009.md](docs/GEX_V2_BACKTEST_20261009.md)：翻轉點 v1−v2 平均 −63 點、牆常差千點關卡，回測**沒有證據顯示 v2 預測力較好**，目前兩版並存、不取代。
+- 新增：Call／Put Wall 卡片「到期組成」（牆由哪些到期堆出，週選到期後該份消失）；`audit_vs_official.py` 的 OI 涵蓋率檢查。
+- 一律是模型輸出、下單參考，不代表價格會停留或反轉。
+
 ## 📋 2026-10-06 ～ 10-08 現況更新（文件同步，未升版）
 
 - **對官方資料逐項對帳**：`scripts/audit_vs_official.py`（獨立向期交所／證交所重抓逐項比對，收盤後執行）；清除虛構資料（Max Pain 改全履約價、寫死的本週焦點週報、CPI／非農規則猜日期改讀 BLS 官方日程檔 `data/us_macro_calendar.json`、板塊輪動寫死占比、融資維持率、假成交量預設值等）。

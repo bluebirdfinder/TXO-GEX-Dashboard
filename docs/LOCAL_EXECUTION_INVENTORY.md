@@ -23,6 +23,7 @@ site-packages/fubon_neo/_fubon_neo.pyd
 |---|---|---|:---:|---|
 | `scripts/fetch_and_calc_vision.py`（GEX 主引擎） | ☁️ 雲端（GitHub Actions, Ubuntu） | `.github/workflows/auto_update.yml`，一天 9 個時間點（日夜盤收盤＋融資維持率窗口） | 否 | 已經在雲端跑，不受影響 |
 | `scripts/fetch_market_klines.py`（現貨/指數/CL/DXY/US10Y K 線 + 期貨日K來源） | ☁️ 雲端（同上 workflow） | 同上 | 否（期貨部分改抓 TAIFEX 官方 `futDataDown`，也不需要富邦） | 已經在雲端跑 |
+| `scripts/gex_v2_daily.py`（通行版 GEX 每日並行累積 → `data/gex_v2_history.json`；2026-10-09） | ☁️ 雲端（同上 workflow 的一個步驟，`continue-on-error`） | 同上 | 否（只抓期交所／證交所公開檔） | 已經在雲端跑 |
 | `scripts/live_price_server.py`（即時報價閘道：TXF/TAIEX/OTC 報價、五檔、逐筆成交、CVD、總經 DXY/US10Y/CL/VIX/VVIX） | 💻 本機常駐 | Windows 工作排程 `TXO-Live-Price-Server`，登入時啟動，掛掉自動重啟 | **是（核心功能）** | **不能**——即時報價/CVD 是這支的存在理由，全部要富邦 WebSocket |
 | `scripts/probe_publish_times.py`（只讀探針：量測期交所盤後各項資料實際公布時間；結果 `~/.txo_publish_probe/`） | 💻 本機、排程（2026-10-07 新增，量完 3 個交易日後可刪） | Windows 工作排程 `TXO-Probe-Publish-Day`（週一～五 13:30）、`TXO-Probe-Publish-Night`（週二～六 04:30）；已設為電池供電也執行，**未設喚醒電腦**，休眠時不會跑 | 否 | 可以，只讀公開網站，但目的是量這台電腦的結果，量完就刪 |
 | `live_price_server.py` 內的大戶散戶動能記錄執行緒（每 15 秒記錄、每 60 秒寫檔；`~/.txo_momentum_1m/`：每分鐘一筆＋台指期／聯電期每 15 秒原始五檔 `raw_YYYYMMDD.jsonl`） | 💻 本機常駐（隨 `TXO-Live-Price-Server`） | 同 `TXO-Live-Price-Server`；推送後要重啟服務才生效 | **是**（富邦 Books／Trades） | **不能**——資料只能在服務連線期間累積，檔案放在 repo 外、不進 git、只留 5 天 |
