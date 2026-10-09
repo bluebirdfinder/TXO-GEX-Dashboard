@@ -1,5 +1,7 @@
 # 老墨 MOFI「台指選擇權 GEX」對照報告(唯讀研究,2026-10-09)
 
+> ⚠️ **更正(2026-10-09 晚)**:老墨頁面的 OI 與期交所官方 OI 不同(遠月被大幅縮減),本報告中以他的 OI 算出的**量級**(翻轉點差 560~1,100 點、遠月影響約 0.4 億、賣權牆差 300 點由 IV 造成)**不可靠**。公式結構(符號、乘數、×0.01)的結論不變。修正後的數字與依據見 [GEX_SCOPE_AND_METHOD_LIMITS.md](GEX_SCOPE_AND_METHOD_LIMITS.md) 的「更正」段。
+
 來源:https://mofiinvestment.com/AI-RESEARCH/taiex-options-gex.html
 - 伺服器 `last-modified`:**2026-10-08 09:34:56 GMT(台灣 17:34)**;本次下載時間 2026-10-09 13:06 GMT。
 - 頁面內嵌資料戳記:`stamp = 2026-10-08 13:53`、`session = 日盤收盤後`,**單日快照、不即時更新**。
