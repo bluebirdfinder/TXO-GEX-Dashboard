@@ -1973,16 +1973,21 @@ function visibleMarkers(data) {
  */
 function computeStrongWeakLevels(candles, isFut) {
   const strong = [], weak = [];
-  let sessStart = null, hi = null, lo = null;
+  let lastSessStart = null, lastLabel = null, hi = null, lo = null;
   for (const c of candles) {
     const sess = tpeSessionAt(c.time, isFut);
     if (!sess) continue;                       // 場次空檔不畫（不補假線）
-    // 「當盤」＝整個交易日：從前一晚夜盤 15:00 起累計到日盤收盤，日盤 08:45 **不歸零**
+    // 「當盤」＝整個交易日：從夜盤 15:00 起累計到日盤收盤，日盤 08:45 **不歸零**
     // （2026-10-08 以 OP666 截圖驗證：10/8 09:11 強關 49681／弱關 49518 ＝ 10/7 15:00 起的最高 49946、最低 49253；
     //  10/2 10:3x 強關 48546／弱關 48417 ＝ 10/1 15:00 起的最高 48753、最低 48210；只算日盤會對不上）。
-    //  日盤的場次起點是當天 08:45，往前 17 小時 45 分就是前一日曆日 15:00＝這個交易日的夜盤起點。
-    const dayKey = (sess.label === '日盤') ? sess.start - 17 * 3600 - 45 * 60 : sess.start;
-    if (dayKey !== sessStart) { sessStart = dayKey; hi = c.high; lo = c.low; }
+    // 2026-10-12 修正：日盤是否延續，看「前一個場次是不是夜盤」，不是看「前一日曆日 15:00」。
+    //  10/12（週一，10/9 補假）日盤開盤強弱關沒有歸零，低點 48417 ＝ 10/8 夜盤（10/9 01 時）最低；
+    //  舊寫法（日盤起點往前 17h45）週一／連假後會落在沒有夜盤的週日／假日而誤歸零。
+    //  夜盤一律是新交易日的起點；日盤若緊接在夜盤之後就延續，若前一個場次是日盤（或沒有資料）才重新起算。
+    const isNewSess = sess.start !== lastSessStart;
+    const reset = isNewSess && !(sess.label === '日盤' && lastLabel === '夜盤');
+    if (isNewSess) { lastSessStart = sess.start; lastLabel = sess.label; }
+    if (reset || hi === null) { hi = c.high; lo = c.low; }
     else { if (c.high > hi) hi = c.high; if (c.low < lo) lo = c.low; }
     const range = hi - lo;
     strong.push({ time: c.time, value: lo + range * 0.618 });
