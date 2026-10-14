@@ -38,6 +38,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
+          # 排隊中的 run 預設會 checkout「派出當下」的 commit（github.sha），前一輪跑完推送後就是舊底版，
+          # 輪到它時 push 會與前一輪的資料檔 rebase 衝突（2026-10-14 16:03 那輪失敗）。明確取 main 最新版。
+          ref: main
           persist-credentials: true
 
       - name: Set up Python
