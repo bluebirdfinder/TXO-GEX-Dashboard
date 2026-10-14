@@ -66,6 +66,10 @@ class FubonAPIProvider:
                     self.CVD_SYMBOL_ALIAS[_code] = _code + "1!"
         except Exception as _e:
             logging.warning(f"stock-futures alias list not loaded ({_e}); only TXF/MXF/MTX/TMF will have CVD/momentum")
+        # 小型個股期貨（期交所 stockMargining 官方代碼：QFF=小型台積電期貨、PUF=小型聯發科期貨；2026-10-14 核對）。
+        # 不放進 tw_symbols_universe.json（那份是自動產生的目錄，會影響搜尋／選股），只在此額外訂閱，供還原 JJ 大戶散戶動能用。
+        for _mini in ("QFF", "PUF"):
+            self.CVD_SYMBOL_ALIAS.setdefault(_mini, _mini + "1!")
         self.last_cache = {
             'spot_price': None,
             'otc_price': None,
@@ -823,7 +827,7 @@ class FubonAPIProvider:
                     self._append_raw_snapshot(alias, now, book)
 
     # 還原 JJ（rStock）指標定義用：只對少數商品把每 15 秒的原始五檔＋該 15 秒成交寫成 jsonl（每天一個檔，不進 git）
-    _RAW_LOG_ALIASES = ("TXF1!", "CCF1!", "CDF1!", "DHF1!", "DVF1!")
+    _RAW_LOG_ALIASES = ("TXF1!", "CCF1!", "CDF1!", "DHF1!", "DVF1!", "QFF1!", "PUF1!", "CHF1!")
 
     def _append_raw_snapshot(self, alias, now, book):
         import json as _json
