@@ -1275,12 +1275,12 @@
     "call_wall_strike": 48300.0,
     "put_wall_strike": 48000.0,
     "max_pain_strike": 48000.0,
-    "pc_ratio": 84.56,
+    "pc_ratio": 74.44,
     "taifex_vix": 26.08,
     "us_vix": 16.87,
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "margin_balance_billion": null,
-    "written_at": "2026-10-15T05:34:35.392462+08:00"
+    "written_at": "2026-10-15T06:04:25.121376+08:00"
   }
 }
