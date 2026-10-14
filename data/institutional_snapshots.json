@@ -2213,7 +2213,7 @@
     "foreign_micro": 4264,
     "dealer_tx": -234,
     "dealer_tx_amt": -22.58,
-    "written_at": "2026-10-14T13:00:33.622159"
+    "written_at": "2026-10-14T13:13:12.167027"
   },
   "MARGIN_MAINT_EST_20261014": {
     "margin_maint_market": null,
@@ -2233,7 +2233,7 @@
     "foreign_tx_net": -86814,
     "foreign_call_net": -1.68,
     "foreign_put_net": 0.56,
-    "written_at": "2026-10-14T13:00:10.540181"
+    "written_at": "2026-10-14T13:12:48.676181"
   },
   "2026-10-14_INST_DAY": {
     "top5_net": 17504,
