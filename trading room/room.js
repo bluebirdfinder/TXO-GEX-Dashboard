@@ -4748,7 +4748,7 @@ async function callBridge(system, query, base64Image) {
   if (!(await bridgeAvailable())) return null;
   const r = await fetch(BRIDGE_BASE + '/ask', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ system, question: query, model: advisorModel(), image: base64Image || null })
+    body: JSON.stringify({ system, question: query, model: advisorModel(), image: base64Image || null, symbol: `${currentActiveSymbol?.name || ''} ${currentActiveSymbol?.symbol || ''}`.trim() })
   });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(j.error || `橋接錯誤 (${r.status})`);
@@ -4777,3 +4777,18 @@ async function showWeeklyMemoryReport() {
   } catch (e) {}
 }
 document.addEventListener('DOMContentLoaded', () => { setTimeout(showWeeklyMemoryReport, 2500); });
+
+// 到期提醒（前瞻記憶）：進頁面時、之後每 30 分鐘檢查一次；同一條一天只提醒一次
+async function checkMemoryDue() {
+  if (!(await bridgeAvailable())) return;
+  try {
+    const r = await (await fetch(BRIDGE_BASE + '/memory/due')).json();
+    const key = 'advisorDueShown:' + new Date().toISOString().slice(0, 10);
+    let shown = []; try { shown = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) {}
+    const fresh = (r.lines || []).filter(l => !shown.includes(l));
+    if (!fresh.length) return;
+    appendAdvisorMessage('ai', '<strong>幕僚鳥提醒</strong><br>' + fresh.map(escapeHtml).join('<br>'));
+    try { localStorage.setItem(key, JSON.stringify(shown.concat(fresh))); } catch (e) {}
+  } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', () => { setTimeout(checkMemoryDue, 3500); setInterval(checkMemoryDue, 30 * 60 * 1000); });

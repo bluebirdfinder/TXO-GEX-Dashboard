@@ -11,7 +11,7 @@
     reports/weekly_*.md      每週整理報告
     backups/                 整理前自動備份（保留 14 份）
 - 記憶分層（仿洋洋專案）：重要度 3＝核心（持倉、風險偏好、鐵律教訓，不會被自動淡化）；
-  2＝一般（90 天沒被用到降為 1）；1＝瑣碎（只在問題相關時才帶入）。過了有效期限自動封存。
+  2＝一般（依 ACT-R 啟動值淡化，久未想起降為 1）；1＝瑣碎（只在問題相關時才帶入）。過了有效期限自動封存。
 - 每週整理：橋接程式開著時，距上次 ≥7 天就自動跑（先備份→機械淡化→讓 Claude 回顧對話並提出增修封存→程式套用並如實列出變動）。
 - 只用標準函式庫，Windows / macOS 通用。
 
@@ -96,10 +96,49 @@ def _migrate_old_md():
     old.rename(old.with_suffix(".md.migrated"))
 
 
-def _new_item(content, importance=2, valid_until=None, source="使用者", date=None):
-    return {"id": uuid.uuid4().hex[:8], "content": re.sub(r"\s+", " ", content).strip(),
-            "importance": importance, "date": date or today_str(), "valid_until": valid_until,
-            "uses": [date or today_str()], "source": source}
+# ---------- 商品／主題標籤（聯想記憶）----------
+# 內建詞庫：別名 → 標準標籤。使用者可在 brain/memory/tag_vocab.json 加自己的（格式 {"標籤": ["別名1", "別名2"]}）。
+BASE_VOCAB = {
+    "選擇權": ["txo", "選擇權", "台指選", "週選", "月選", "週三選", "週五選", "w1", "w2", "w4", "w5", "f1", "f2"],
+    "台指期": ["txf", "台指期", "大台", "小台", "微台", "期貨"],
+    "價差單": ["價差", "sp ", "bp ", "sc ", "bc ", "鐵鷹", "鐵兀鷹", "垂直價差", "拆單"],
+    "洗價單": ["洗價", "ioc"],
+    "風控": ["停損", "停利", "風控", "保證金", "追價", "軋", "虧損", "爆倉"],
+    "GEX": ["gex", "call wall", "put wall", "zero gamma", "max pain", "天花板", "造市商", "gamma"],
+    "波動率": ["vix", "vvix", "波動率", "iv "],
+    "總經": ["dxy", "美元", "美債", "殖利率", "fed", "fomc", "cpi", "非農", "利率", "通膨", "總經"],
+    "黃金": ["黃金", "金價", "gc "],
+    "原油": ["原油", "油價", "cl "],
+    "美股指數": ["nq", "那斯達克", "標普", "s&p", "道瓊", "費半"],
+    "台股": ["加權", "櫃買", "大盤", "台股"],
+    "技術面": ["macd", "adx", "cci", "kd", "均線", "背離", "九轉", "demark", "k線", "k 線"],
+}
+
+
+def _vocab():
+    v = {k: list(a) for k, a in BASE_VOCAB.items()}
+    for k, a in _load_json(MEM_DIR / "tag_vocab.json", {}).items():
+        v.setdefault(k, []).extend(str(x).lower() for x in a)
+    return v
+
+
+def extract_tags(text):
+    t = (text or "").lower() + " "
+    tags = {tag for tag, aliases in _vocab().items() if any(a in t for a in aliases)}
+    tags.update("個股" + m for m in re.findall(r"(?<!\d)([1-9]\d{3})(?!\d)", t) if not re.match(r"^(19|20)\d\d$", m))
+    for name in ("台積電", "鴻海", "聯發科", "廣達", "緯創", "欣銓"):
+        if name in t:
+            tags.add("個股" + name)
+    return sorted(tags)
+
+
+def _new_item(content, importance=2, valid_until=None, source="使用者", date=None, **extra):
+    it = {"id": uuid.uuid4().hex[:8], "content": re.sub(r"\s+", " ", content).strip(),
+          "importance": importance, "date": date or today_str(), "valid_until": valid_until,
+          "uses": [date or today_str()], "source": source}
+    it["tags"] = extract_tags(it["content"])
+    it.update(extra)
+    return it
 
 
 def long_items():
@@ -201,28 +240,50 @@ def _grams(text):
     return g
 
 
-def select_memory_for(question):
-    """像人腦的提取：核心(3)一律在腦中；其餘依 相關度×重要度×近期活躍度（Park 2023 的三因子）排序取前 N 條。
-    被想起來的記憶會被「強化」（記下使用日，下次更容易想起、也不會被淡化）。"""
+def _tags_of(x):
+    return set(x.get("tags") or extract_tags(x["content"]))
+
+
+def select_memory_for(question, symbol=""):
+    """像人腦的提取：
+    1) 核心(3)一律在腦中。
+    2) 其餘依 相關度×重要度×近期活躍度（Park 2023 三因子）排序取前 N 條。
+    3) 聯想：問題（加上你正在看的商品＝情境線索）的標籤直接命中的記憶最相關；
+       與「被命中記憶」共用標籤的鄰居也會被喚起一點（擴散激發，一跳、權重 0.4）。
+    4) 被想起來的記憶會被「強化」（記下使用日）。"""
     qg = _grams(question)
+    qtags = set(extract_tags(question)) | set(extract_tags(symbol))
     with _lock:
         items = long_items()
+        direct_ids, hop_tags = set(), set()
+        for x in items:
+            if qtags & _tags_of(x):
+                direct_ids.add(x["id"])
+                hop_tags |= _tags_of(x)
+        hop_tags -= qtags
         scored = []
         for x in items:
             if x["importance"] == 3:
                 continue
-            ov = len(qg & _grams(x["content"]))
-            rel = min(1.0, ov / 3)
+            rel = min(1.0, len(qg & _grams(x["content"])) / 3)
+            if x["id"] in direct_ids:
+                rel = max(rel, 1.0)
+            elif hop_tags & _tags_of(x):
+                rel = max(rel, 0.4)
             act = 1 / (1 + math.exp(-(activation(x) + 1.5)))       # 壓到 0~1
             score = 3.0 * rel + 2.0 * (x["importance"] / 3) + 0.5 * act
             if rel == 0 and x["importance"] < 2:
                 continue                                              # 瑣碎且無關 → 不帶
             scored.append((score, rel, x))
         scored.sort(key=lambda t: -t[0])
-        picked = [x for x in items if x["importance"] == 3] + [x for _, _, x in scored[:INJECT_MAX_OTHER]]
+        # 沒被線索喚起的（rel=0）最多留 3 條「底噪」（重要且活躍的），其餘不進腦中，避免把不相干的塞滿
+        quiet = [t for t in scored if t[1] == 0][:3]
+        top = ([t for t in scored if t[1] > 0] + quiet)[:INJECT_MAX_OTHER]
+        top.sort(key=lambda t: -t[0])
+        picked = [x for x in items if x["importance"] == 3] + [x for _, _, x in top]
         touched = False
-        for _, rel, x in scored[:INJECT_MAX_OTHER]:
-            if rel > 0 and x.get("uses", [None])[-1] != today_str():   # 只有真的相關才算「被想起」
+        for _, rel, x in top:
+            if rel >= 0.6 and x.get("uses", [None])[-1] != today_str():   # 真的相關才算「被想起」（只是鄰居不算）
                 x.setdefault("uses", []).append(today_str())
                 x["uses"] = x["uses"][-USES_KEEP:]
                 touched = True
@@ -238,6 +299,124 @@ def select_memory_for(question):
             break
         out.append(line)
     return "\n".join(out)
+
+
+# ---------- 到期提醒（前瞻記憶：記得「未來要做的事」）----------
+EXPIRY_WARN_DAYS = 2
+
+
+def due_items():
+    """回傳 {'reminders': 已到提醒日、尚未完成的待辦, 'expiring': 即將到期的記憶（如持倉）}。"""
+    today = today_str()
+    soon = (datetime.now() + timedelta(days=EXPIRY_WARN_DAYS)).strftime("%Y-%m-%d")
+    rem, exp = [], []
+    for x in long_items():
+        if x.get("remind_on") and x["remind_on"] <= today and not x.get("done"):
+            rem.append(x)
+        elif x.get("valid_until") and today <= x["valid_until"] <= soon and not x.get("remind_on"):
+            exp.append(x)
+    return {"reminders": rem, "expiring": exp}
+
+
+def format_due(d):
+    lines = []
+    for x in d["reminders"]:
+        lines.append(f"⏰ 待辦（{x['remind_on']}）：{x['content']}（做完請說「完成：關鍵字」）")
+    for x in d["expiring"]:
+        lines.append(f"⚠️ 即將到期（{x['valid_until']}）：{x['content']}")
+    return lines
+
+
+def add_reminder(text, remind_on):
+    text = re.sub(r"\s+", " ", text or "").strip()
+    if not text or not re.match(r"^\d{4}-\d{2}-\d{2}$", remind_on or ""):
+        return False
+    with _lock:
+        items = long_items()
+        if any(x.get("remind_on") == remind_on and (text in x["content"] or x["content"] in text) for x in items):
+            return False
+        until = (datetime.strptime(remind_on, "%Y-%m-%d") + timedelta(days=7)).strftime("%Y-%m-%d")
+        it = _new_item(text, 3, until, "使用者（待辦）", remind_on=remind_on, done=False)
+        items.append(it)
+        _save_json(LONG_FILE, items)
+        _log_change("add", None, it, "待辦")
+    return True
+
+
+def complete_reminder(keyword):
+    with _lock:
+        items = long_items()
+        n = 0
+        for x in items:
+            if x.get("remind_on") and not x.get("done") and keyword in x["content"]:
+                x["done"] = True
+                x["importance"] = 1   # 做完的待辦變成瑣碎，之後自然淡出
+                _log_change("done", None, x, "使用者完成")
+                n += 1
+        if n:
+            _save_json(LONG_FILE, items)
+        return n
+
+
+# ---------- 行為模式（反思）：模型只能「提出候選」，你確認後才變成記憶 ----------
+PATTERN_FILE = MEM_DIR / "patterns.json"
+
+
+def load_patterns():
+    return _load_json(PATTERN_FILE, [])
+
+
+def _similar(a, b):
+    ga, gb = _grams(a), _grams(b)
+    return bool(ga and gb) and len(ga & gb) / len(ga | gb) >= 0.45
+
+
+def add_pattern_candidates(cands, conv_text):
+    """cands: [{'pattern','evidence':[引文...]}]。證據引文必須真的出現在對話裡（防止模型編造），至少 2 條才收。"""
+    added = []
+    with _lock:
+        pats = load_patterns()
+        for c in cands:
+            text = str(c.get("pattern", "")).strip()[:120]
+            ev = [str(e).strip() for e in c.get("evidence", []) if str(e).strip() and str(e).strip() in conv_text]
+            if not text or len(ev) < 2:
+                continue
+            dup = next((p for p in pats if _similar(p["pattern"], text)), None)
+            if dup:
+                if dup["status"] == "candidate":   # 重複出現 → 累積證據
+                    dup["evidence"] = (dup["evidence"] + [e for e in ev if e not in dup["evidence"]])[-6:]
+                    dup["seen"] = dup.get("seen", 1) + 1
+                continue                            # 已確認或已否決的不再重提
+            pats.append({"id": uuid.uuid4().hex[:6], "pattern": text, "evidence": ev[:4], "status": "candidate",
+                         "date": today_str(), "seen": 1})
+            added.append(text)
+        _save_json(PATTERN_FILE, pats)
+    return added
+
+
+def format_patterns():
+    pats = [p for p in load_patterns() if p["status"] == "candidate"]
+    if not pats:
+        return "目前沒有待確認的行為模式。每週整理時，如果我從對話裡觀察到反覆出現的習慣，會列在這裡讓你確認。"
+    lines = ["🔎 我觀察到的行為模式（尚未當成事實，需要你確認）："]
+    for p in pats:
+        lines.append(f"- {p['pattern']}（出現 {p.get('seen', 1)} 次；例：「{p['evidence'][0][:40]}」）")
+    lines.append("確認請說「確認模式：關鍵字」，不是的請說「否決模式：關鍵字」。")
+    return "\n".join(lines)
+
+
+def confirm_pattern(keyword, accept=True):
+    with _lock:
+        pats = load_patterns()
+        hit = [p for p in pats if p["status"] == "candidate" and keyword in p["pattern"]]
+        for p in hit:
+            p["status"] = "confirmed" if accept else "rejected"
+            _log_change("pattern_" + p["status"], None, p, "使用者")
+        _save_json(PATTERN_FILE, pats)
+    if accept:
+        for p in hit:
+            add_long(p["pattern"], 3, None, source="行為模式（你確認）")
+    return len(hit)
 
 
 # ---------- 短期記憶與流水帳 ----------
@@ -328,8 +507,26 @@ def handle_memory_command(q):
     if m:
         n = restore_items(m.group(1).strip())
         return {"reply": f"♻️ 已還原 {n} 條。" if n else "ℹ️ 封存裡找不到含這個關鍵字的條目。", "memory_changed": bool(n)}
+    m = re.match(r"^提醒\s*(\d{4}-\d{2}-\d{2})\s*[:：]\s*(.+)$", q, re.S)
+    if m:
+        ok = add_reminder(m.group(2), m.group(1))
+        return {"reply": f"⏰ 好，{m.group(1)} 我會主動提醒你。" if ok else "ℹ️ 日期格式不對，或已經有同一條待辦。", "memory_changed": ok}
+    m = re.match(r"^(?:完成|做完了)\s*[:：]\s*(.+)$", q, re.S)
+    if m:
+        n = complete_reminder(m.group(1).strip())
+        return {"reply": f"✅ 已標記完成 {n} 條待辦。" if n else "ℹ️ 找不到含這個關鍵字、尚未完成的待辦。", "memory_changed": bool(n)}
+    if q in ("查看模式", "行為模式", "我的模式"):
+        return {"reply": format_patterns()}
+    m = re.match(r"^(確認模式|否決模式)\s*[:：]\s*(.+)$", q, re.S)
+    if m:
+        ok = m.group(1) == "確認模式"
+        n = confirm_pattern(m.group(2).strip(), ok)
+        if not n:
+            return {"reply": "ℹ️ 找不到含這個關鍵字的待確認模式（可說「查看模式」）。"}
+        return {"reply": f"✅ 已確認 {n} 個模式，寫入核心記憶。" if ok else f"🚫 已否決 {n} 個模式，之後不會再提。", "memory_changed": True}
     if q in ("查看記憶", "記憶清單", "我的記憶", "memory"):
-        return {"reply": format_memory_list()}
+        lines = [format_memory_list()] + format_due(due_items())
+        return {"reply": "\n".join(lines)}
     if q in ("整理記憶", "每週整理", "consolidate"):
         rep = consolidate(force=True)
         return {"reply": rep["text"], "memory_changed": True}
@@ -347,9 +544,12 @@ def handle_ask(body):
         return cmd
 
     _last_ask_ts = time.time()
-    long_mem = select_memory_for(q)
+    long_mem = select_memory_for(q, body.get("symbol") or "")
     short = load_short()
     system = (body.get("system") or "你是幕僚鳥，用繁體中文回答。") + "\n" + MEMORY_RULES
+    due = format_due(due_items())
+    if due:
+        system += "\n【待辦與即將到期（請在回答的最前面先簡短提醒使用者，再回答問題）】\n" + "\n".join(due)
     now = datetime.now()
     system += f"\n【現在時間（台北）】{now:%Y-%m-%d %H:%M} 週{'一二三四五六日'[now.weekday()]}。不要憑印象猜日期。"
     system += "\n【長期記憶】\n" + (long_mem or "（尚無）")
@@ -438,12 +638,13 @@ REVIEW_SYSTEM = """你是幕僚鳥的「記憶整理員」。只輸出一個 JSO
  "update":[{"id":"既有條目id","content":"修正後內容"}],
  "archive":[{"id":"既有條目id","reason":"為什麼"}],
  "ask":["不確定、想跟使用者確認的問題"],
+ "patterns":[{"pattern":"行為模式一句話","evidence":["對話中的原句片段(逐字照抄)","第二句"]}],
  "note":"100字內給使用者的簡短說明"}
 規則：
 1) 只記使用者「親口明確陳述」的長期事實（持倉與成本、交易習慣、風險偏好、教訓）；幕僚鳥自己的分析、當下盤面數字、單純提問都不記。
 2) 持倉等只在一段時間有效的事實，一定要填 valid_until。重要度：3＝核心（風險偏好、鐵律教訓、固定習慣）、2＝一般、1＝瑣碎。
 3) 與既有記憶相同或相近的不要重複新增；發現既有記憶過時或矛盾，用 update 或 archive，不要刪除。虧損、停損、被軋、追價等親身教訓一律重要度 3。
-3b) 若你從多次對話觀察到使用者的行為模式（例如反覆在急殺時想追價），不要直接記，放進 ask 請使用者確認（推論不等於事實）。
+3b) 若你從「多次」對話觀察到使用者的行為模式（例如反覆在急殺時想追價、總在尾盤改單），不要放進 add，改放 patterns。每個模式至少 2 條 evidence，必須是對話原文的逐字片段（20 字內），不能改寫。推論不等於事實，使用者會再確認。
 4) 不確定的事不要動既有記憶，改放進 ask。不可記錄密碼、金鑰、帳號、證件資訊。
 5) 沒有需要變動的就回傳空陣列。"""
 
@@ -466,17 +667,18 @@ def consolidate(force=False):
         decay_report = decay_memory()
 
         turns = read_chatlog(since_ts)
-        review_err, note, asks, facts = None, "", [], []
+        review_err, note, asks, facts, new_patterns = None, "", [], [], []
         if turns:
             existing = long_items()
             mem_txt = "\n".join(f"id={x['id']} 重要度={x['importance']} [{x['date']}] {x['content']}" for x in existing) or "（尚無）"
-            conv = "\n".join(f"[{datetime.fromtimestamp(t['ts']):%m/%d %H:%M}] 使用者：{t['q']}\n幕僚鳥：{t['a'][:500]}" for t in turns)[-12000:]
-            prompt = f"今天是 {today_str()}。\n\n【既有長期記憶】\n{mem_txt}\n\n【上次整理後的對話】\n{conv}"
+            conv = "\n".join(f"[{datetime.fromtimestamp(t['ts']):%m/%d %H:%M}] 使用者：{t['q']}\n幕僚鳥：{t['a'][:500]}" for t in read_chatlog(0))[-14000:]
+            prompt = f"今天是 {today_str()}。上次整理日：{datetime.fromtimestamp(since_ts):%Y-%m-%d}。\n\n【既有長期記憶】\n{mem_txt}\n\n【近 21 天對話（新增/修正記憶以上次整理後為主；找行為模式可看全部）】\n{conv}"
             try:
                 reply, _ = run_claude(REVIEW_SYSTEM, prompt, "sonnet", timeout=300)
                 ops = _extract_json(reply)
                 note = str(ops.get("note", ""))[:300]
                 asks = [str(a)[:200] for a in ops.get("ask", [])][:5]
+                new_patterns = add_pattern_candidates(ops.get("patterns", []) or [], conv)
                 by_id = {x["id"]: x for x in long_items()}
                 for a in ops.get("add", []):
                     imp = a.get("importance") if a.get("importance") in (1, 2, 3) else 2
@@ -521,6 +723,10 @@ def consolidate(force=False):
         lines += [f"- {x}" for x in facts] or ["- 沒有新增或修改"]
         if decay_report:
             lines += ["", "**系統自動淡化：**"] + [f"- {x}" for x in decay_report]
+        cand = [p for p in load_patterns() if p["status"] == "candidate"]
+        if cand:
+            lines += ["", "**🔎 我觀察到的行為模式（推論，還不是事實；確認請說「確認模式：關鍵字」，不是請說「否決模式：關鍵字」）：**"]
+            lines += [f"- {p['pattern']}（出現 {p.get('seen', 1)} 次；例：「{p['evidence'][0][:40]}」）" + ("　🆕" if p["pattern"] in new_patterns else "") for p in cand]
         if asks:
             lines += ["", "**想跟你確認：**"] + [f"- {x}" for x in asks]
         lines += ["", "想忘掉哪件事，直接說「忘記：關鍵字」；說「查看記憶」可看全部。"]
@@ -606,6 +812,9 @@ class H(BaseHTTPRequestHandler):
             return self._send(200, {"ok": True, "claude": bool(CLAUDE), "models": list(MODELS)})
         if self.path == "/memory":
             return self._send(200, {"long": long_items(), "short": [{"q": t["q"]} for t in load_short()]})
+        if self.path == "/memory/due":
+            d = due_items()
+            return self._send(200, {"lines": format_due(d)})
         if self.path == "/memory/report/latest":
             return self._send(200, latest_report() or {})
         self._send(404, {"error": "not found"})
