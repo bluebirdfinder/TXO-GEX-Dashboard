@@ -2623,23 +2623,23 @@ function setupEventListeners() {
   if (btnCollapseRight) btnCollapseRight.addEventListener('click', toggleRightPanel);
   if (btnDockRight) btnDockRight.addEventListener('click', toggleRightPanel);
 
-  // 🔑 Gemini API Key Configuration Modal (Stored safely in client-side localStorage)
+  // 🔑 Claude API Key Configuration Modal (Stored safely in client-side localStorage)
   const geminiModal = document.getElementById('gemini-key-modal');
-  const openGeminiBtn = document.getElementById('btn-open-gemini-key');
-  const closeGeminiBtn = document.getElementById('close-gemini-key-modal-btn');
-  const saveGeminiBtn = document.getElementById('btn-save-gemini-key');
-  const clearGeminiBtn = document.getElementById('btn-clear-gemini-key');
+  const openClaudeBtn = document.getElementById('btn-open-gemini-key');
+  const closeClaudeBtn = document.getElementById('close-gemini-key-modal-btn');
+  const saveClaudeBtn = document.getElementById('btn-save-gemini-key');
+  const clearClaudeBtn = document.getElementById('btn-clear-gemini-key');
   const keyInput = document.getElementById('gemini-api-key-input');
 
-  if (openGeminiBtn && geminiModal) {
-    openGeminiBtn.addEventListener('click', () => {
-      if (keyInput) keyInput.value = localStorage.getItem('gemini_api_key') || '';
+  if (openClaudeBtn && geminiModal) {
+    openClaudeBtn.addEventListener('click', () => {
+      if (keyInput) keyInput.value = localStorage.getItem('claude_api_key') || '';
       geminiModal.classList.add('show');
     });
   }
 
-  if (closeGeminiBtn && geminiModal) {
-    closeGeminiBtn.addEventListener('click', () => geminiModal.classList.remove('show'));
+  if (closeClaudeBtn && geminiModal) {
+    closeClaudeBtn.addEventListener('click', () => geminiModal.classList.remove('show'));
   }
 
   if (geminiModal) {
@@ -2648,25 +2648,25 @@ function setupEventListeners() {
     });
   }
 
-  if (saveGeminiBtn && keyInput) {
-    saveGeminiBtn.addEventListener('click', () => {
+  if (saveClaudeBtn && keyInput) {
+    saveClaudeBtn.addEventListener('click', () => {
       const k = keyInput.value.trim();
       if (k) {
-        localStorage.setItem('gemini_api_key', k);
-        appendAdvisorMessage('ai', '✅ <strong>Gemini 2.5 API Key 設定成功！</strong> 已解鎖即時多模態視覺與無限制 AI 量化對話。');
+        localStorage.setItem('claude_api_key', k);
+        appendAdvisorMessage('ai', '✅ <strong>Claude API Key 設定成功！</strong> 已解鎖即時多模態視覺與無限制 AI 量化對話。');
       } else {
-        localStorage.removeItem('gemini_api_key');
+        localStorage.removeItem('claude_api_key');
       }
       if (geminiModal) geminiModal.classList.remove('show');
     });
   }
 
-  if (clearGeminiBtn && keyInput) {
-    clearGeminiBtn.addEventListener('click', () => {
-      localStorage.removeItem('gemini_api_key');
+  if (clearClaudeBtn && keyInput) {
+    clearClaudeBtn.addEventListener('click', () => {
+      localStorage.removeItem('claude_api_key');
       keyInput.value = '';
       if (geminiModal) geminiModal.classList.remove('show');
-      appendAdvisorMessage('ai', 'ℹ️ 已清除 Gemini API Key，恢復為本地內建量化風控引擎。');
+      appendAdvisorMessage('ai', 'ℹ️ 已清除 Claude API Key，恢復為本地內建量化風控引擎。');
     });
   }
 
@@ -2758,10 +2758,10 @@ function setupEventListeners() {
 }
 
 /**
- * 6. AI Quant Advisor (尋鳥 AI 量化軍師) Engine
- * Powered by Gemini Pro reasoning + AGENTS.md Highest Wind Control Redlines + Real Position Audit Engine
+ * 6. AI Quant Advisor (幕僚鳥) Engine
+ * Powered by Claude reasoning + AGENTS.md Highest Wind Control Redlines + Real Position Audit Engine
  */
-// 軍師診斷所需的 GEX 欄位。缺任何一個就回報 ok=false，由呼叫端明說「無法診斷」；不再用寫死的舊數字
+// 幕僚鳥診斷所需的 GEX 欄位。缺任何一個就回報 ok=false，由呼叫端明說「無法診斷」；不再用寫死的舊數字
 // （TXF 47187、VVIX 102.66、ROOM_CHART_DEFAULTS…）給實盤建議（AGENTS.md 紅線 4／6）。
 function gexAdviceInputs() {
   const g = gexData || {};
@@ -2775,12 +2775,12 @@ function gexAdviceInputs() {
   o.ok = o.txf !== null && o.zg !== null && o.cw !== null && o.pw !== null && o.mp !== null && !gexIsFallbackNow();
   return o;
 }
-// 載入失敗、畫面正在用過期預設值時（頂端有紅色橫幅），軍師也不能用它診斷
+// 載入失敗、畫面正在用過期預設值時（頂端有紅色橫幅），幕僚鳥也不能用它診斷
 function gexIsFallbackNow() {
   return !!gexData && gexData.txf_price === ROOM_CHART_DEFAULTS.txf_price && gexData.zero_gamma_level === ROOM_CHART_DEFAULTS.zero_gamma_level;
 }
 const ADVISOR_NO_DATA_HTML = '<div style="border-left: 3px solid #8b95a5; padding-left: 8px;"><strong>⚪ 目前無法診斷</strong>'
-  + '<p style="margin-top:6px; font-size:0.8rem; line-height:1.5;">GEX 資料缺欄位或載入失敗，軍師不會拿舊數字給實盤建議。請稍後重新整理，或到主頁確認資料更新時間。</p></div>';
+  + '<p style="margin-top:6px; font-size:0.8rem; line-height:1.5;">GEX 資料缺欄位或載入失敗，幕僚鳥不會拿舊數字給實盤建議。請稍後重新整理，或到主頁確認資料更新時間。</p></div>';
 
 function initAdvisorFeed() {
   const feed = document.getElementById('advisor-feed');
@@ -2810,7 +2810,7 @@ function initAdvisorFeed() {
   feed.innerHTML = `
     <div class="advisor-msg ai">
       <div class="msg-meta">
-        <span class="sender">🤖 尋鳥 AI 量化軍師 (Gemini Pro ✕ AGENTS.md)</span>
+        <span class="sender">🤖 幕僚鳥 (Claude ✕ AGENTS.md)</span>
         <span class="time">${new Date().toLocaleTimeString()}</span>
       </div>
       <div class="msg-bubble">
@@ -2823,7 +2823,7 @@ function initAdvisorFeed() {
           ・<strong>結算最大痛點 (Max Pain)</strong>：<code>${mp}</code>
         </p>
         <div class="topology-banner" style="margin-top: 6px;">
-          🛡️ <strong>軍師即時風控提醒 (AGENTS.md 鐵律)</strong>：<br>
+          🛡️ <strong>幕僚鳥即時風控提醒 (AGENTS.md 鐵律)</strong>：<br>
           1. <strong>嚴禁對週選價差單拆單 (No Legging Out)</strong>，避免解鎖無限風險引發多空雙巴。<br>
           2. <strong>盤中暴衝急拉/急殺時嚴禁追價</strong>，請等待 15M/30M DeMark 9★ 竭盡過濾。<br>
           3. 支援<strong>直接輸入持倉部位 (如: <code>W2 47000 SP / 46900 BP</code>)</strong>，我會立即為您進行真金白銀部位體檢與連續洗價單試算！
@@ -2915,7 +2915,7 @@ async function sendAdvisorQuery(query) {
       <div style="margin-bottom: 6px;">
         <img src="${attachedImgSrc}" alt="截圖" style="max-width: 100%; max-height: 180px; border-radius: 6px; border: 1px solid var(--primary-accent); display: block; margin-bottom: 4px;">
       </div>
-      <div>${escapeHtml(cleanQ) || '📷 [已傳送盤面/持倉截圖，請軍師診斷]'}</div>
+      <div>${escapeHtml(cleanQ) || '📷 [已傳送盤面/持倉截圖，請幕僚鳥診斷]'}</div>
     `;
   }
   appendAdvisorMessage('user', userMsgHtml);
@@ -2927,24 +2927,24 @@ async function sendAdvisorQuery(query) {
   const fileInput = document.getElementById('advisor-file-input');
   if (fileInput) fileInput.value = '';
 
-  const apiKey = localStorage.getItem('gemini_api_key');
+  const apiKey = localStorage.getItem('claude_api_key');
 
   if (apiKey) {
     const loadingId = 'ai-loading-' + Date.now();
-    appendAdvisorMessage('ai', `<div id="${loadingId}"><span style="color:var(--primary-accent);">⚡ 正在連線 Gemini 2.5 Flash 進行即時盤面多模態診斷中...</span></div>`);
+    appendAdvisorMessage('ai', `<div id="${loadingId}"><span style="color:var(--primary-accent);">⚡ 幕僚鳥思考中...</span></div>`);
     
     try {
-      const geminiReply = await callGeminiApi(apiKey, cleanQ, attachedImgSrc);
+      const geminiReply = await callClaudeApi(apiKey, cleanQ, attachedImgSrc);
       const loadingEl = document.getElementById(loadingId);
       if (loadingEl) {
-        loadingEl.parentElement.innerHTML = formatGeminiMarkdown(geminiReply);
+        loadingEl.parentElement.innerHTML = formatAdvisorMarkdown(geminiReply);
       }
     } catch (err) {
       const loadingEl = document.getElementById(loadingId);
       const fallbackHtml = generateQuantAdvisorResponse(cleanQ, !!attachedImgSrc);
       if (loadingEl) {
         loadingEl.parentElement.innerHTML = `
-          <div style="color: #ff9800; font-size: 0.76rem; margin-bottom: 6px;">⚠️ Gemini API 連線失敗 (${err.message})，自動切換至本地量化引擎：</div>
+          <div style="color: #ff9800; font-size: 0.76rem; margin-bottom: 6px;">⚠️ Claude API 連線失敗 (${err.message})，自動切換至本地量化引擎：</div>
           ${fallbackHtml}
         `;
       }
@@ -2954,7 +2954,7 @@ async function sendAdvisorQuery(query) {
       let responseHtml = generateQuantAdvisorResponse(cleanQ, !!attachedImgSrc);
       responseHtml += `
         <div style="margin-top: 8px; padding: 6px 8px; background: rgba(255, 215, 0, 0.08); border-radius: 4px; border: 1px dashed var(--gold-accent); font-size: 0.72rem; display: flex; justify-content: space-between; align-items: center;">
-          <span>💡 尚未配置 Gemini API Key，目前使用本地內建風控引擎</span>
+          <span>💡 尚未配置 Claude API Key，目前使用本地內建風控引擎</span>
           <button onclick="document.getElementById('btn-open-gemini-key').click()" style="background: var(--gold-accent); color: #080c14; border: none; border-radius: 3px; padding: 2px 6px; font-weight: 700; cursor: pointer;">🔑 配置 Key</button>
         </div>
       `;
@@ -2964,9 +2964,9 @@ async function sendAdvisorQuery(query) {
 }
 
 /**
- * Call Google Gemini 2.5 Multi-Modal REST API
+ * Call Anthropic Claude Messages API (browser direct access)
  */
-async function callGeminiApi(apiKey, query, base64Image) {
+async function callClaudeApi(apiKey, query, base64Image) {
   const currentPrice = realPriceFor(currentActiveSymbol?.symbol || 'TXF') ?? gexData?.txf_price ?? null;
   const _g = gexAdviceInputs();
   const cw = _g.ok ? _g.cw : '無資料';
@@ -2981,7 +2981,13 @@ async function callGeminiApi(apiKey, query, base64Image) {
   const dxy = dxyReal === null ? '無資料' : dxyReal;
   const us10y = us10yReal === null ? '無資料' : us10yReal;
 
-  const systemInstruction = `你是「尋鳥戰情交易室 AI 量化軍師 (Bird Quant Advisor)」，結合老墨 XQ 指標體系與 TXO GEX 造市商對沖模型。
+  const brainChunks = await retrieveBrain(query);
+  const brainText = brainChunks.length
+    ? '\n\n【本機知識庫相關段落（使用者自己的策略筆記，優先依此回答；沒涵蓋到的才用一般知識，並標明）】\n' + brainChunks.map(c => `〔${c.src}／${c.title}〕\n${c.text}`).join('\n---\n')
+    : '';
+
+  const systemInstruction = `你是「幕僚鳥」，尋鳥戰情交易室的 AI 幕僚。能回答：台指選擇權（洗價單建立、技術線圖多空分析、停損停利建議）、各商品（期貨/外匯/商品/美股/台股個股）多空技術分析、總經與個股問題。結合老墨 XQ 指標體系與 TXO GEX 造市商對沖模型，策略以使用者的 Lumi 專案筆記為準。
+不確定或無資料時明說，不捏造數字；你不是持牌顧問，建議僅供使用者自行判斷。
 最高風控鐵律與行為準則 (AGENTS.md)：
 1. 嚴禁對週選擇權 (W1/W2/W4/W5/F1) 垂直價差單建議「拆單 (No Legging Out)」，必須維持整組價差單平倉或轉倉。
 2. 盤中價格暴衝/急殺時嚴禁建議追價，等待 15M/30M DeMark 9★ 買賣盤竭盡。
@@ -2990,36 +2996,27 @@ async function callGeminiApi(apiKey, query, base64Image) {
 - 當前監控商品：${currentActiveSymbol?.name || '台指期'} (${currentActiveSymbol?.symbol || 'TXF'})，即時報價：${currentPrice === null ? '無即時報價' : currentPrice}
 - GEX 造市商五大防線：Call Wall: ${cw}, Zero Gamma: ${zg}, Put Wall: ${pw}, Max Pain: ${mp}
 - 波動率與宏觀雷達：VIX: ${vix}, VVIX: ${vvix}, DXY: ${dxy}, 美債10Y: ${us10y}${us10yReal === null ? '' : '%'}
-請以專業、精準、結構化的繁體中文 Markdown 回覆，重點條列空間拓撲與實戰建議。`;
+請以專業、精準、結構化的繁體中文 Markdown 回覆，重點條列空間拓撲與實戰建議。${brainText}`;
 
-  const parts = [];
+  const content = [];
   if (base64Image) {
-    const cleanB64 = base64Image.replace(/^data:image\/\w+;base64,/, '');
-    parts.push({
-      inline_data: {
-        mime_type: 'image/png',
-        data: cleanB64
-      }
-    });
+    const m = base64Image.match(/^data:(image\/\w+);base64,(.*)$/);
+    content.push({ type: 'image', source: { type: 'base64', media_type: m ? m[1] : 'image/png', data: m ? m[2] : base64Image } });
   }
+  content.push({ type: 'text', text: query || '請為我進行盤面走勢診斷與部位風控體檢。' });
 
-  parts.push({
-    text: query || '請為我進行盤面走勢診斷與部位風控體檢。'
-  });
+  // 保留最近幾輪對話，讓追問有上下文（圖片只送當輪）。
+  const messages = [..._advisorHistory.slice(-8), { role: 'user', content }];
 
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
-
-  const response = await fetch(url, {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-    body: JSON.stringify({
-      contents: [{ role: 'user', parts }],
-      system_instruction: { parts: [{ text: systemInstruction }] },
-      generationConfig: {
-        temperature: 0.4,
-        maxOutputTokens: 1500
-      }
-    })
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({ model: CLAUDE_ADVISOR_MODEL, max_tokens: 2500, system: systemInstruction, messages })
   });
 
   if (!response.ok) {
@@ -3028,18 +3025,48 @@ async function callGeminiApi(apiKey, query, base64Image) {
   }
 
   const result = await response.json();
-  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error('Gemini 未回傳有效文字內容');
+  const text = (result?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+  if (!text) throw new Error('Claude 未回傳有效文字內容');
+  _advisorHistory.push({ role: 'user', content: query || '（盤面診斷）' }, { role: 'assistant', content: text });
   return text;
 }
 
-// 把外部文字（Gemini 回覆、使用者輸入）當純文字塞進 innerHTML 前先跳脫，避免回覆或截圖內的惡意 HTML 執行，
-// 進而讀走存在 localStorage 的 Gemini API Key。
+const CLAUDE_ADVISOR_MODEL = 'claude-sonnet-5-5';
+const _advisorHistory = [];
+
+// 本機知識庫（trading room/brain/，gitignored）。線上版抓不到就回空陣列，幕僚鳥照常用一般知識回答。
+let _brainPromise = null;
+function loadBrain() {
+  if (!_brainPromise) {
+    _brainPromise = fetch('brain/manifest.json').then(r => r.ok ? r.json() : []).catch(() => []);
+  }
+  return _brainPromise;
+}
+async function retrieveBrain(query, k = 5) {
+  const chunks = await loadBrain();
+  if (!chunks.length || !query) return [];
+  const q = query.toLowerCase();
+  // 中文沒有空白分詞：用 2 字連續片段 + 英數詞比對
+  const grams = new Set();
+  const cjk = q.replace(/[^一-鿿]/g, '');
+  for (let i = 0; i < cjk.length - 1; i++) grams.add(cjk.slice(i, i + 2));
+  (q.match(/[a-z0-9]{2,}/g) || []).forEach(w => grams.add(w));
+  if (!grams.size) return [];
+  return chunks.map(c => {
+    const hay = (c.title + ' ' + c.text).toLowerCase();
+    let s = 0;
+    grams.forEach(g => { if (hay.includes(g)) s += (c.title.toLowerCase().includes(g) ? 3 : 1); });
+    return { c, s };
+  }).filter(x => x.s > 1).sort((a, b) => b.s - a.s).slice(0, k).map(x => x.c);
+}
+
+// 把外部文字（Claude 回覆、使用者輸入）當純文字塞進 innerHTML 前先跳脫，避免回覆或截圖內的惡意 HTML 執行，
+// 進而讀走存在 localStorage 的 Claude API Key。
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function formatGeminiMarkdown(md) {
+function formatAdvisorMarkdown(md) {
   if (!md) return '';
   let html = escapeHtml(md)
     .replace(/^### (.*$)/gim, '<h4 style="color:var(--primary-accent); margin:6px 0 3px 0; font-size:0.88rem;">$1</h4>')
@@ -3056,7 +3083,7 @@ function formatGeminiMarkdown(md) {
 
 /**
  * Intelligent AI Quant Reasoning & Position Parsing Engine
- * Powered by Gemini 2.5 Multi-modal Vision + AGENTS.md Highest Wind Control Redlines
+ * Powered by Claude + AGENTS.md Highest Wind Control Redlines
  */
 function generateQuantAdvisorResponse(query, hasImage = false) {
   const { txf, zg, cw, pw, mp, vvix, vix, ok: gexOk } = gexAdviceInputs();
@@ -3067,7 +3094,7 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
   if (hasImage) {
     imageBadge = `
       <div style="background: rgba(0, 210, 255, 0.12); border-left: 3px solid var(--primary-accent); padding: 5px 8px; border-radius: 4px; margin-bottom: 8px; font-size: 0.76rem;">
-        📸 <strong>[Gemini 2.5 盤面/對帳單截圖視覺辨識完成]</strong><br>
+        📸 <strong>[截圖已收到，以下為本地引擎規則診斷]</strong><br>
         已自動解析您的圖表走勢、DeMark 9★ 轉折標籤與持倉點位。
       </div>
     `;
@@ -3114,7 +3141,7 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
     const maxLoss = validCredit ? Math.round((spreadWidth - netCredit) * 100) / 100 : null;
     const rrText = validCredit
       ? `最大獲利 <strong>${netCredit} 點</strong> ($${netCredit * 50} TWD) / 最大風險 <strong>${maxLoss} 點</strong> ($${maxLoss * 50} TWD)（風報比 1 : ${(maxLoss / netCredit).toFixed(1)}）`
-      : '<strong>無法計算</strong>：請在問題中附上實際成交權利金（點數），例如「收 55 點」。軍師不會用假設的權利金替真實部位算風報比。';
+      : '<strong>無法計算</strong>：請在問題中附上實際成交權利金（點數），例如「收 55 點」。幕僚鳥不會用假設的權利金替真實部位算風報比。';
     // 2026-10-07：不再用「賣腳 ±20」死公式（賣腳離現價 3,000 點時永遠不會觸發，違反紅線 4 不可死套公式）。
     // 依「現價到賣腳還剩多少距離」分三級；賣腳已價內就直接標示立即處理。剩餘天數未知，所以只給比例定位，請自行對照 DTE。
     const isPutPos = posType.includes('Put');
@@ -3219,11 +3246,11 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
     `;
   }
 
-  // --- 5. General Gemini Reasoning & Quant Advice ---
+  // --- 5. General Claude Reasoning & Quant Advice ---
   return `
     <div style="border-left: 3px solid #38bdf8; padding-left: 8px;">
       ${imageBadge}
-      <h4 style="color: #38bdf8; margin-bottom: 4px;">🤖 尋鳥 AI 軍師即時研判與策略建議</h4>
+      <h4 style="color: #38bdf8; margin-bottom: 4px;">🤖 幕僚鳥即時研判與策略建議</h4>
       <p style="font-size: 0.8rem; line-height: 1.55;">
         針對您的提問：「<strong>${escapeHtml(query || '盤面截圖診斷')}</strong>」：<br><br>
         1. <strong>當前宏觀與波動率避險雷達</strong>：<br>
@@ -3250,7 +3277,7 @@ function appendAdvisorMessage(type, contentHtml) {
   msgEl.className = `advisor-msg ${type}`;
   msgEl.innerHTML = `
     <div class="msg-meta">
-      <span class="sender">${type === 'user' ? '交易員 (You)' : '🤖 尋鳥 AI 量化軍師'}</span>
+      <span class="sender">${type === 'user' ? '交易員 (You)' : '🤖 幕僚鳥'}</span>
       <span class="time">${new Date().toLocaleTimeString()}</span>
     </div>
     <div class="msg-bubble">${contentHtml}</div>
@@ -4321,17 +4348,26 @@ let lastTxfPrice = null;
 let _localGwRetryAt = 0;
 let _gatewayDown = false;   // 本機報價服務（/api/live_tick）最近一次是否連不上；用來顯示頂端紅帶
 function setGatewayBanner(down, source) {
+  // 2026-10-16：原本是蓋住整個標題列的全幅紅條，改成右下角小膠囊（可按 ✕ 關掉，本分頁不再顯示），不再遮畫面。
   let bar = document.getElementById('gateway-offline-bar');
-  if (!down) { if (bar) bar.style.display = 'none'; return; }
+  let dismissed = false;
+  try { dismissed = sessionStorage.getItem('gwBannerDismissed') === '1'; } catch (e) {}
+  if (!down || dismissed) { if (bar) bar.style.display = 'none'; return; }
+  const via = source === 'worker' ? '改用期交所／證交所轉發（約 3 秒延遲）' : (source === 'mis' ? '改用期交所 MIS 備援' : '沒有任何即時來源');
   if (!bar) {
     bar = document.createElement('div');
     bar.id = 'gateway-offline-bar';
-    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:5000;padding:3px 10px;background:#b71c1c;color:#fff;font-size:0.76rem;font-weight:700;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.5);';
+    bar.style.cssText = 'position:fixed;left:50%;bottom:34px;transform:translateX(-50%);z-index:5000;max-width:min(520px,92vw);padding:4px 8px 4px 12px;background:rgba(183,28,28,.92);color:#fff;font-size:0.72rem;font-weight:700;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;gap:8px;';
+    bar.innerHTML = '<span class="gw-msg"></span><button type="button" style="background:none;border:0;color:#fff;cursor:pointer;font-size:0.85rem;padding:0 2px;" title="關閉（本分頁不再提示）">✕</button>';
+    bar.querySelector('button').addEventListener('click', () => {
+      try { sessionStorage.setItem('gwBannerDismissed', '1'); } catch (e) {}
+      bar.style.display = 'none';
+    });
     document.body.appendChild(bar);
   }
-  const via = source === 'worker' ? '目前改用期交所／證交所轉發（約 3 秒延遲）' : (source === 'mis' ? '目前改用期交所 MIS 備援' : '目前沒有任何即時來源');
-  bar.textContent = `🔴 報價服務未連線（富邦即時、五檔、CVD 都不可用）— ${via}。請確認本機報價服務有開（start_live.bat），或用 localhost:8000 開啟本頁。`;
-  bar.style.display = 'block';
+  bar.querySelector('.gw-msg').textContent = `🔴 本機報價服務未連線（富邦即時／五檔／CVD 不可用）— ${via}`;
+  bar.title = '請確認本機報價服務有開（start_live.bat），或用 localhost:8000 開啟本頁。';
+  bar.style.display = 'flex';
 }
 let _misRetryAt = 0;
 let _workerQuoteRetryAt = 0;

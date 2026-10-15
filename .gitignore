@@ -63,3 +63,6 @@ logs/
 log/
 *.log
 scratch/
+
+# 幕僚鳥本機知識庫（含策略 IP，不公開）
+trading room/brain/

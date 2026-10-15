@@ -71,8 +71,8 @@
           <span id="icon-left-panel">◀</span>
           <span class="btn-label">左側行情</span>
         </button>
-        <button class="btn-panel-toggle" id="btn-toggle-right-panel" title="展開/收合右側 AI 量化軍師 (Alt+2)">
-          <span class="btn-label">AI 軍師</span>
+        <button class="btn-panel-toggle" id="btn-toggle-right-panel" title="展開/收合右側 幕僚鳥 (Alt+2)">
+          <span class="btn-label">幕僚鳥</span>
           <span id="icon-right-panel">▶</span>
         </button>
       </div>
@@ -83,9 +83,9 @@
           <span>📊</span>
           <span class="drawer-btn-label">行情/風控</span>
         </button>
-        <button class="btn-drawer-toggle" id="btn-toggle-right-drawer" title="開啟 AI 量化軍師">
+        <button class="btn-drawer-toggle" id="btn-toggle-right-drawer" title="開啟 幕僚鳥">
           <span>🤖</span>
-          <span class="drawer-btn-label">AI軍師</span>
+          <span class="drawer-btn-label">幕僚鳥</span>
         </button>
       </div>
 
@@ -535,8 +535,8 @@
     <button id="btn-dock-left" class="dock-panel-trigger dock-left" title="展開左側行情 (Alt+1)">
       <span>▶ 行情</span>
     </button>
-    <button id="btn-dock-right" class="dock-panel-trigger dock-right" title="展開 AI 軍師 (Alt+2)">
-      <span>◀ AI軍師</span>
+    <button id="btn-dock-right" class="dock-panel-trigger dock-right" title="展開 幕僚鳥 (Alt+2)">
+      <span>◀ 幕僚鳥</span>
     </button>
 
     <!-- RIGHT PANEL: AI Quant Advisor Panel -->
@@ -546,12 +546,12 @@
       <div class="advisor-header">
         <div class="advisor-title">
           <span>🤖</span>
-          <span>尋鳥 AI 量化軍師</span>
+          <span>幕僚鳥</span>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
-          <span class="model-badge">Gemini 2.5 ✕ AGENTS.md</span>
-          <button id="btn-open-gemini-key" class="btn-api-key-config" title="配置 Google Gemini API Key">🔑 Key</button>
-          <button class="btn-collapse-panel" id="btn-collapse-right" title="收合 AI 軍師面板 (▶)">收合 ▶</button>
+          <span class="model-badge">Claude ✕ AGENTS.md</span>
+          <button id="btn-open-gemini-key" class="btn-api-key-config" title="配置 Claude API Key">🔑 Key</button>
+          <button class="btn-collapse-panel" id="btn-collapse-right" title="收合 幕僚鳥面板 (▶)">收合 ▶</button>
           <button class="btn-close-drawer mobile-only" id="btn-close-right-drawer">✕</button>
         </div>
       </div>
@@ -578,7 +578,7 @@
       <div class="advisor-input-area">
         <input type="file" id="advisor-file-input" accept="image/*" style="display:none;">
         <button id="advisor-attach-btn" class="btn-advisor-attach has-tooltip" data-tooltip="📎 夾帶盤面截圖或對帳單&#10;💡 也可直接在輸入框按 Ctrl+V 貼上截圖！" title="上傳圖片">📎</button>
-        <input type="text" id="advisor-input" class="advisor-input" placeholder="詢問軍師盤勢或貼上截圖 (Ctrl+V)...">
+        <input type="text" id="advisor-input" class="advisor-input" placeholder="詢問幕僚鳥盤勢或貼上截圖 (Ctrl+V)...">
         <button id="advisor-send-btn" class="btn-send-advisor">發送 🚀</button>
       </div>
 
@@ -591,7 +591,7 @@
     <div id="mobile-bottom-bar">
       <button id="mb-left" type="button">📊 行情／風控</button>
       <div id="mb-price"><span id="mb-sym"></span> <b id="mb-val">—</b> <span id="mb-chg"></span></div>
-      <button id="mb-right" type="button">🤖 軍師</button>
+      <button id="mb-right" type="button">🤖 幕僚鳥</button>
     </div>
 
   </main>
@@ -602,20 +602,19 @@
       <div class="settings-header">
         <div class="settings-title">
           <span>🔑</span>
-          <span>Google Gemini 2.5 API Key 配置</span>
+          <span>Claude API Key 配置</span>
         </div>
         <button class="btn-close-modal" id="close-gemini-key-modal-btn">&times;</button>
       </div>
       <div class="settings-body">
         <p style="font-size: 0.82rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 14px;">
-          輸入您的 Google Gemini API Key，即可直接在戰情室讓 AI 量化軍師透過 <strong>Gemini 2.5 Flash / Pro 多模態視覺模型</strong> 進行無限制的即時 K 線分析、形態辨識與選擇權對帳單持倉體檢！
-        </p>
+          輸入您的 Anthropic API Key，幕僚鳥即可用 Claude 回答選擇權（洗價單、停損停利）、各商品多空技術分析、總經與個股問題，並可讀取盤面截圖。</p>
         <div style="margin-bottom: 12px;">
-          <label style="font-size: 0.76rem; color: var(--gold-accent); display: block; margin-bottom: 6px;">Gemini API Key (安全保存在您的瀏覽器本地 localStorage)：</label>
-          <input type="password" id="gemini-api-key-input" placeholder="AIzaSy..." style="width: 100%; padding: 8px 12px; background: #080c14; border: 1px solid var(--panel-border); border-radius: 6px; color: #fff; font-family: monospace; font-size: 0.85rem; box-sizing: border-box;">
+          <label style="font-size: 0.76rem; color: var(--gold-accent); display: block; margin-bottom: 6px;">Claude API Key (安全保存在您的瀏覽器本地 localStorage)：</label>
+          <input type="password" id="gemini-api-key-input" placeholder="sk-ant-..." style="width: 100%; padding: 8px 12px; background: #080c14; border: 1px solid var(--panel-border); border-radius: 6px; color: #fff; font-family: monospace; font-size: 0.85rem; box-sizing: border-box;">
         </div>
         <div style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.5; background: rgba(0, 210, 255, 0.06); padding: 8px 10px; border-radius: 6px; border-left: 3px solid var(--primary-accent);">
-          💡 <em>尚未取得 Key？可至 <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--primary-accent);">Google AI Studio</a> 免費建立專屬 API Key。若不輸入 Key，軍師將自動使用本地 AGENTS.md 內建量化邏輯。</em>
+          💡 <em>到 <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color: var(--primary-accent);">Anthropic Console</a> 建立 Key（API 另外計費，與 Claude 訂閱不同）。不輸入 Key 時，將使用本地內建 AGENTS.md 規則引擎。</em>
         </div>
       </div>
       <div class="settings-footer">
