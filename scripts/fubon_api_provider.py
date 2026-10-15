@@ -5,6 +5,37 @@ import datetime
 import time
 import threading
 from collections import deque
+from contextlib import contextmanager
+
+
+@contextmanager
+def _timed_lock(lock, timeout):
+    """Acquire a (non-reentrant) lock with a timeout so a hung holder can never block callers forever. Yields True/False."""
+    got = lock.acquire(timeout=timeout)
+    try:
+        yield got
+    finally:
+        if got:
+            lock.release()
+
+
+def _call_with_timeout(fn, timeout):
+    """Run fn() in a daemon thread; return 'timeout' if it does not finish in `timeout` seconds, else its result (re-raises its exception)."""
+    box = {}
+
+    def _runner():
+        try:
+            box["r"] = fn()
+        except BaseException as e:  # noqa: BLE001
+            box["e"] = e
+    t = threading.Thread(target=_runner, daemon=True, name="futopt-call-with-timeout")
+    t.start()
+    t.join(timeout)
+    if t.is_alive():
+        return "timeout"
+    if "e" in box:
+        raise box["e"]
+    return box.get("r")
 
 # Set up logging for Fubon Provider
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -118,6 +149,7 @@ class FubonAPIProvider:
         self._last_futopt_msg_ts = None
         self._proc_start_ts = time.time()
         self._futopt_watchdog_last_try = 0.0
+        self._futopt_watchdog_fires = 0   # forced reconnects since the feed was last healthy
 
         # Real Cumulative Volume Delta (CVD) — signed-volume running total built tick-by-tick
         # from the same confirmed tick-rule 'side' used for trades_log, kept as its own
@@ -354,7 +386,10 @@ class FubonAPIProvider:
         # Hold the lock across the whole check-connect-set sequence: without this,
         # two threads can both pass the "if self._futopt_connected" check above
         # before either sets it True, and both go on to call futopt_ws.connect().
-        with self._futopt_connect_lock:
+        with _timed_lock(self._futopt_connect_lock, 20) as _got_lock:
+            if not _got_lock:
+                logging.warning("_ensure_futopt_connected: connect lock busy for 20s (an earlier connect() may be hung); skipping this attempt")
+                return None
             if self._futopt_connected:  # re-check: another thread may have connected while we waited for the lock
                 return self._futopt_ws
 
@@ -368,7 +403,9 @@ class FubonAPIProvider:
             futopt_ws.on('error', lambda err: logging.warning(f"Fubon futopt WebSocket error: {err}"))
             futopt_ws.on('disconnect', lambda code, msg: self._on_futopt_disconnect(code, msg))
             try:
-                futopt_ws.connect()
+                if _call_with_timeout(futopt_ws.connect, 20) == "timeout":
+                    logging.warning("_ensure_futopt_connected: connect() did not return within 20s; abandoning this attempt")
+                    return None
             except Exception as e:
                 logging.warning(f"_ensure_futopt_connected: connect() failed: {e}")
                 return None
@@ -383,7 +420,8 @@ class FubonAPIProvider:
         stale data silently; live_price_server's watchdog calls this."""
         self._initialize_sdk()
         if self.is_active:
-            self._on_futopt_disconnect("relogin", "watchdog / pre-session refresh")
+            threading.Thread(target=self._on_futopt_disconnect, args=("relogin", "watchdog / pre-session refresh"),
+                             daemon=True, name="futopt-relogin-reconnect").start()
         return self.is_active
 
     def _on_futopt_disconnect(self, code, msg):
@@ -915,21 +953,37 @@ class FubonAPIProvider:
                 return False
             age = self.feed_age_sec()
             if age is not None and age < stale_after:
+                self._futopt_watchdog_fires = 0
                 return False
             if self._last_futopt_msg_ts is None and time.time() - getattr(self, '_proc_start_ts', time.time()) < stale_after:
                 return False   # 剛啟動、還沒等到第一則訊息
             now = time.time()
+            # Escalation: a forced reconnect >150 s ago did not bring data back (e.g. the SDK connection is wedged after
+            # Fubon's nightly maintenance restart, 2026-10-15 05:11) -> exit so the supervisor script restarts the server
+            # in ~15 s. Guarded by uptime so a persistent outage cannot cause a restart loop faster than every 10 min.
+            if (self._futopt_watchdog_fires >= 1 and now - self._futopt_watchdog_last_try >= 150
+                    and now - getattr(self, '_proc_start_ts', now) > 600):
+                logging.error("Fubon futopt watchdog: still no data 150s after a forced reconnect; exiting so the supervisor restarts the server")
+                try:
+                    logging.shutdown()
+                finally:
+                    os._exit(3)
             if now - self._futopt_watchdog_last_try < cooldown:
                 return False
             self._futopt_watchdog_last_try = now
+            self._futopt_watchdog_fires += 1
             logging.warning(f"Fubon futopt watchdog: no futopt message for {None if age is None else int(age)}s inside trading hours "
                             f"— forcing reconnect + re-subscribe")
-            try:
-                if self._futopt_ws is not None:
-                    self._futopt_ws.disconnect()
-            except Exception as e:
-                logging.warning(f"futopt watchdog: disconnect() failed (ignored): {e}")
-            self._on_futopt_disconnect("watchdog", "no futopt data")
+            # Do the disconnect + reconnect on its own thread: this method runs on the momentum-recorder thread, and a hung
+            # connect() used to freeze the recorder too (raw logs stopped at 08:45 on 2026-10-15).
+            def _reconnect_worker():
+                try:
+                    if self._futopt_ws is not None:
+                        self._futopt_ws.disconnect()
+                except Exception as e:
+                    logging.warning(f"futopt watchdog: disconnect() failed (ignored): {e}")
+                self._on_futopt_disconnect("watchdog", "no futopt data")
+            threading.Thread(target=_reconnect_worker, daemon=True, name="futopt-watchdog-reconnect").start()
             return True
         except Exception as e:
             logging.warning(f"futopt watchdog error: {e}")
