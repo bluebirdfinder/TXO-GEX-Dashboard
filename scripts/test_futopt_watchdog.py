@@ -39,6 +39,7 @@ p.is_active = True
 p._sub_modes = {("books", "X", False)}
 p._futopt_watchdog_last_try = 0.0
 p._futopt_watchdog_fires = 0
+p._last_trades_ts = {}
 p._last_futopt_msg_ts = 1.0
 p._proc_start_ts = time.time() - 3600
 p._futopt_ws = None
@@ -68,6 +69,73 @@ check("no self-exit within first 10 min of uptime", exits == [])
 p.feed_age_sec = lambda: 5.0
 p.futopt_watchdog()
 check("healthy feed resets fires counter", p._futopt_watchdog_fires == 0)
+
+# 4) trades-channel watchdog: books alive, TXF trades silent -> forced reconnect; then escalation
+import datetime
+Cls = cls
+q = Cls.__new__(Cls)
+q.is_active = True
+q._sub_modes = {("books", "TXF1!", False), ("trades", "TXF1!", False)}
+q._futopt_watchdog_last_try = 0.0
+q._futopt_watchdog_fires = 0
+q._last_futopt_msg_ts = time.time()
+q._proc_start_ts = time.time() - 7200
+q._futopt_ws = None
+q._in_taifex_trading_window = lambda now_ts=None: True
+q.feed_age_sec = lambda: 1.0                       # books are fresh
+q._last_trades_ts = {"TXF1!": time.time() - 30}    # a trade 30 s ago -> healthy
+rec = []
+q._on_futopt_disconnect = lambda c, mm: rec.append((c, mm))
+os._exit = lambda code: exits.append(code)
+exits.clear()
+check("healthy trades -> watchdog does nothing", q.futopt_watchdog() is False and not q._trades_channel_dead())
+q._last_trades_ts = {"TXF1!": time.time() - 900}   # no trade for 15 min while books are fresh
+check("silent trades channel detected", q._trades_channel_dead() is True)
+fired = q.futopt_watchdog()
+time.sleep(0.3)
+check("trades dead + books alive -> forced reconnect", fired is True and rec and rec[0][0] == "watchdog")
+q._futopt_watchdog_last_try = time.time() - 160
+q.futopt_watchdog()
+check("still silent 150s after reconnect -> self-exit", exits == [3])
+exits.clear()
+q._last_trades_ts = {"TXF1!": time.time()}         # trades resumed
+q._futopt_watchdog_last_try = time.time() - 160
+check("trades resumed -> no action, counter reset", q.futopt_watchdog() is False and q._futopt_watchdog_fires == 0 and exits == [])
+# symbol not subscribed for trades -> never 'dead'
+q._sub_modes = {("books", "TXF1!", False)}
+q._last_trades_ts = {}
+check("no trades subscription -> not dead", q._trades_channel_dead() is False)
+# session opened < 10 min ago -> not dead yet (window 10 min ago was closed)
+q._sub_modes = {("trades", "TXF1!", False)}
+q._in_taifex_trading_window = lambda now_ts=None: now_ts is None   # only 'now' is inside a session
+check("session just opened -> grace period", q._trades_channel_dead() is False)
+
+# 5) holiday-aware trading window (real class method, temp holiday file)
+import tempfile
+hf = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8")
+hf.write('{"holidays": ["2026-10-09"]}')
+hf.close()
+Cls._HOLIDAY_FILE = hf.name
+Cls._holiday_cache = (None, frozenset())
+tz = Cls._TAIPEI_TZ
+def ts(y, mo, d, h, mi):
+    return datetime.datetime(y, mo, d, h, mi, tzinfo=tz).timestamp()
+W = Cls._in_taifex_trading_window
+check("Thu 10/8 10:00 day session open", W(ts(2026, 10, 8, 10, 0)) is True)
+check("Thu 10/8 22:00 night session open (evening before a holiday still trades)", W(ts(2026, 10, 8, 22, 0)) is True)
+check("Fri 10/9 02:00 night session continues after Thu evening", W(ts(2026, 10, 9, 2, 0)) is True)
+check("Fri 10/9 10:00 holiday -> closed", W(ts(2026, 10, 9, 10, 0)) is False)
+check("Fri 10/9 16:00 holiday -> no night session", W(ts(2026, 10, 9, 16, 0)) is False)
+check("Sat 10/10 02:00 (previous day was a holiday) -> closed", W(ts(2026, 10, 10, 2, 0)) is False)
+check("Mon 10/12 10:00 open again", W(ts(2026, 10, 12, 10, 0)) is True)
+check("Sat 10/10 10:00 weekend closed", W(ts(2026, 10, 10, 10, 0)) is False)
+check("Wed 14:30 gap between sessions closed", W(ts(2026, 10, 14, 14, 30)) is False)
+check("Wed 05:30 gap closed", W(ts(2026, 10, 14, 5, 30)) is False)
+Cls._HOLIDAY_FILE = "does-not-exist.json"
+Cls._holiday_cache = (None, frozenset())
+check("missing holiday file -> falls back to weekday rule", W(ts(2026, 10, 9, 10, 0)) is True)
+os.unlink(hf.name)
+
 hang.set()
 os._exit = real_exit
 print("ALL PASS" if ok else "SOME FAILED")

@@ -150,6 +150,7 @@ class FubonAPIProvider:
         self._proc_start_ts = time.time()
         self._futopt_watchdog_last_try = 0.0
         self._futopt_watchdog_fires = 0   # forced reconnects since the feed was last healthy
+        self._last_trades_ts = {}         # alias -> time.time() of the last real trade print (for the trades-channel watchdog)
 
         # Real Cumulative Volume Delta (CVD) — signed-volume running total built tick-by-tick
         # from the same confirmed tick-rule 'side' used for trades_log, kept as its own
@@ -687,6 +688,7 @@ class FubonAPIProvider:
             prints = [data] if data.get('price') is not None and data.get('size') is not None else []
         if not prints:
             return
+        self._last_trades_ts[symbol] = time.time()
 
         serial = data.get('serial')
         if serial is not None:
@@ -932,18 +934,53 @@ class FubonAPIProvider:
         """距離上次收到任何 futopt（Books／Trades）訊息的秒數；從沒收到回 None。"""
         return None if self._last_futopt_msg_ts is None else max(0.0, time.time() - self._last_futopt_msg_ts)
 
+    _HOLIDAY_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "tw_holidays.json")
+    _holiday_cache = (None, frozenset())   # (mtime, dates)
+
+    @classmethod
+    def _tw_holidays(cls):
+        """Exchange holidays (YYYY-MM-DD strings) from data/tw_holidays.json, cached by file mtime. Empty set if unreadable."""
+        try:
+            mtime = os.path.getmtime(cls._HOLIDAY_FILE)
+            if cls._holiday_cache[0] != mtime:
+                import re
+                with open(cls._HOLIDAY_FILE, encoding="utf-8-sig") as f:
+                    cls._holiday_cache = (mtime, frozenset(re.findall(r"20\d\d-\d\d-\d\d", f.read())))
+        except Exception:
+            return frozenset()
+        return cls._holiday_cache[1]
+
     @staticmethod
     def _in_taifex_trading_window(now_ts=None):
-        """粗略的交易時段（台北時間）：日盤 08:45～13:45、夜盤 15:00～隔日 05:00；週一～五開盤（夜盤跨到週六凌晨）。
-        不含國定假日——假日沒訊息時看門狗最多每 5 分鐘重連一次，成本很低。"""
+        """交易時段（台北時間）：日盤 08:45～13:45、夜盤 15:00～隔日 05:00。
+        日期要是交易日（週一～五且不在 data/tw_holidays.json）；夜盤 15:00 起算那天須是交易日（假日前一晚照常開夜盤），
+        夜盤跨午夜後的 00:00～05:00 則看「前一個日曆日」是不是交易日。"""
         now_ts = now_ts if now_ts is not None else time.time()
         dt_ = datetime.datetime.fromtimestamp(now_ts, tz=FubonAPIProvider._TAIPEI_TZ)
         mins = dt_.hour * 60 + dt_.minute
-        wd = dt_.weekday()   # Mon=0
-        day = wd < 5 and 8 * 60 + 45 <= mins < 13 * 60 + 45
-        night_eve = wd < 5 and mins >= 15 * 60
-        night_morn = 1 <= wd <= 5 and mins < 5 * 60
+        hol = FubonAPIProvider._tw_holidays()
+
+        def is_td(d):
+            return d.weekday() < 5 and d.isoformat() not in hol
+        today = dt_.date()
+        yday = today - datetime.timedelta(days=1)
+        day = is_td(today) and 8 * 60 + 45 <= mins < 13 * 60 + 45
+        night_eve = is_td(today) and mins >= 15 * 60
+        night_morn = is_td(yday) and mins < 5 * 60
         return day or night_eve or night_morn
+
+    def _trades_channel_dead(self, symbol="TXF1!", dead_after=600):
+        """Books may keep flowing while a symbol's trades channel silently dies (seen 2026-10-15 20:24: TXF/CDF/CCF got no trades for 3 h
+        while books were fine, so the any-message watchdog never fired). TXF prints several times a minute whenever the market is open, so
+        `dead_after` seconds without a print, inside a session that has already been open for that long, means the channel is dead."""
+        if not any(m[0] == "trades" and m[1] == symbol for m in self._sub_modes):
+            return False
+        now = time.time()
+        start = getattr(self, "_proc_start_ts", now)
+        if now - start < dead_after or not self._in_taifex_trading_window(now - dead_after):
+            return False   # just started, or the session opened less than dead_after ago
+        last = self._last_trades_ts.get(symbol)
+        return now - (last if last is not None else start) > dead_after
 
     def futopt_watchdog(self, stale_after=180, cooldown=300):
         """交易時段內超過 stale_after 秒沒收到任何 futopt 訊息 → 關掉舊連線、重連並重新訂閱所有頻道。
@@ -952,7 +989,8 @@ class FubonAPIProvider:
             if not self.is_active or not self._sub_modes or not self._in_taifex_trading_window():
                 return False
             age = self.feed_age_sec()
-            if age is not None and age < stale_after:
+            trades_dead = self._trades_channel_dead()
+            if age is not None and age < stale_after and not trades_dead:
                 self._futopt_watchdog_fires = 0
                 return False
             if self._last_futopt_msg_ts is None and time.time() - getattr(self, '_proc_start_ts', time.time()) < stale_after:
@@ -972,8 +1010,9 @@ class FubonAPIProvider:
                 return False
             self._futopt_watchdog_last_try = now
             self._futopt_watchdog_fires += 1
-            logging.warning(f"Fubon futopt watchdog: no futopt message for {None if age is None else int(age)}s inside trading hours "
-                            f"— forcing reconnect + re-subscribe")
+            why = ("trades channel silent for >10 min while books are alive" if trades_dead and (age is not None and age < stale_after)
+                   else f"no futopt message for {None if age is None else int(age)}s")
+            logging.warning(f"Fubon futopt watchdog: {why} inside trading hours — forcing reconnect + re-subscribe")
             # Do the disconnect + reconnect on its own thread: this method runs on the momentum-recorder thread, and a hung
             # connect() used to freeze the recorder too (raw logs stopped at 08:45 on 2026-10-15).
             def _reconnect_worker():
