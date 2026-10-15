@@ -7,7 +7,9 @@
  * 的 fetch_official_taifex_retail_sentiment() 每日盤後寫入 gex_data.json（retail_sentiment_details）與
  * institutional_snapshots.json（*_INST_RETAIL），本檔只讀取、不計算、不編造：沒有資料就明講「尚未取得」。
  *
- * 這是每日一個數字的盤後籌碼，不是盤中走勢；OP666「散戶走勢」的盤中算法目前未知，這裡不冒充它。
+ * 這是每日一個數字的盤後籌碼，不是盤中走勢；OP 鳥鳥「散戶走勢」的盤中算法目前未知，這裡不冒充它。
+ * 命名（2026-10-16 使用者定案）：指標＝「OP 鳥鳥」（自製近似版）；Call 副圖＝「買權力道」、Put 副圖＝「賣權力道」、C−P＝「多空淨力道」。
+ * 這三個副圖尚未上線（Call／Put 規則未解），上線時沿用此名稱。
  */
 (function () {
   'use strict';
@@ -63,7 +65,7 @@
     const energyHtml = (energy === null)
       ? '<div style="margin-top:6px;font-size:.66rem;color:var(--text-muted)">多空能量：⚪ 外資小台淨未平倉尚未取得</div>'
       : `<div style="margin-top:6px;padding-top:5px;border-top:1px dashed var(--panel-border)">
-          <div style="font-size:.68rem;color:var(--text-muted)" title="自製公式：3 × 外資小台淨未平倉（與台新日報逐日吻合）；非台新官方數字">多空能量（外資小台，自製公式）</div>
+          <div style="font-size:.68rem;color:var(--text-muted)" title="自製公式：3 × 外資小台淨未平倉（與台新日報逐日吻合）；非台新官方數字">OP 鳥鳥・多空能量（外資小台，自製近似版）</div>
           <div style="font-weight:700;font-size:1rem;color:${clr(energy)}">${fmt(energy)}</div>
           <div style="font-size:.66rem;color:var(--gold-accent,#ffd700)">單日 ${fmt(energyChg)}　佔比 ${energyPct !== null ? (energyPct > 0 ? '+' : '') + energyPct.toFixed(2) + '%' : '—'}</div>
         </div>`;
