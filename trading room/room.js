@@ -4376,7 +4376,7 @@ async function fetchFubonOrPublicFallback() {
     if (misRes.ok) {
       const misData = await misRes.json();
       const quoteList = (misData.RtData && misData.RtData.QuoteList) ? misData.RtData.QuoteList : [];
-      const txItem = quoteList.find(q => q.SymbolID && q.SymbolID.startsWith('TX') && q.CLastPrice && parseFloat(q.CLastPrice) > 0);
+      const txItem = quoteList.find(q => q.SymbolID && /^TXF[A-Z]\d-[FM]$/.test(q.SymbolID) && q.CLastPrice && parseFloat(q.CLastPrice) > 0);
       if (txItem) {
         const price = parseFloat(txItem.CLastPrice);
         const change = parseFloat(txItem.NChangeVal || 0);

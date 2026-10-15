@@ -5,6 +5,14 @@
 
 ---
 
+### 2026-10-15 盤中 Zero Gamma 不跟價格動（前端修正，未升版號）
+
+- **現象**：台指期從 48,800 跌到 47,200，網頁 Zero Gamma 夜盤校正仍停在夜盤收盤值，加權指數漲跌幅顯示 +284（實際 -1,740）。
+- **澄清**：Max Pain／Call Wall／Put Wall 只用 OI 算，OI 收盤後才公布，盤中不動是設計；盤中會動的只有 Zero Gamma（台指期每動 1 點約動 0.62 點）。
+- **根因**：富邦本機閘道 `/api/live_tick` 新版（不再送假價）回 `{txf, taiex, otc}`，沒有頂層 `price`；`app.js` 只認 `data.price > 0`，台指期即時價進不來，Zero Gamma 推算停擺。雲端中繼站另外只回加權指數（Cloudflare 打期交所 MIS 回 HTTP 520，MIS 也沒開 CORS，瀏覽器不能直連）。
+- **修法**：`app.js` 認新格式並分別推 IX0001／IX0043／TXF1!；加權、櫃買漲跌幅改吃即時值（`setLiveChangeText`）。
+- **順手修**：MIS 取價用 `startsWith('TX')` 會先抓到 `TXF-S` 現貨；改成 `/^TXF[A-Z]\d-[FM]$/`（日盤 `-F`、夜盤 `-M`，夜盤現貨為 `TXF-P`）。涵蓋 `app.js`、`room.js`、`cloudflare/worker.js`、`scripts/cloudflare_worker.js`。
+- **限制**：閘道沒開時 Zero Gamma 仍不會動；雲端中繼站的 `POST /api/live_tick` 沒有身分驗證，任何人可寫入假報價，之後若要讓閘道推價到雲端，必須先加驗證。
 ### 2026-10-09 老墨 GEX 對照 ✕ GEX 範圍盤點 ✕ 通行版(v2) 並行回補／累積（未升版號、未改引擎數字）
 
 - **起因**：使用者要求研究老墨（MOFI）「台指選擇權 GEX」頁面並評估是否借鏡；進而問「我們的算式是否正確」「教科書／美股怎麼算」。

@@ -2931,7 +2931,7 @@ function initLiveTickPolling() {
       if (taifexRes.ok) {
         const misData = await taifexRes.json();
         const quoteList = (misData.RtData && misData.RtData.QuoteList) ? misData.RtData.QuoteList : [];
-        const txItems = quoteList.filter(q => q.SymbolID && q.SymbolID.startsWith('TX') && q.CLastPrice && parseFloat(q.CLastPrice) > 0);
+        const txItems = quoteList.filter(q => q.SymbolID && /^TXF[A-Z]\d-[FM]$/.test(q.SymbolID) && q.CLastPrice && parseFloat(q.CLastPrice) > 0);
         if (txItems.length > 0) {
           const livePrice = parseFloat(txItems[0].CLastPrice);
           if (!isNaN(livePrice) && livePrice > 0) {
