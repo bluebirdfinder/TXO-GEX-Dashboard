@@ -2925,15 +2925,18 @@ async function sendAdvisorQuery(query) {
 
   const apiKey = localStorage.getItem('claude_api_key');
 
-  if (apiKey) {
+  if (apiKey || await bridgeAvailable()) {
     const loadingId = 'ai-loading-' + Date.now();
     appendAdvisorMessage('ai', `<div id="${loadingId}"><span style="color:var(--primary-accent);">⚡ 幕僚鳥思考中...</span></div>`);
     
     try {
-      const geminiReply = await callClaudeApi(apiKey, cleanQ, attachedImgSrc);
+      const reply = await callClaudeApi(apiKey, cleanQ, attachedImgSrc);
       const loadingEl = document.getElementById(loadingId);
       if (loadingEl) {
-        loadingEl.parentElement.innerHTML = formatAdvisorMarkdown(geminiReply);
+        let extra = '';
+        if (reply.usage) extra += `<div style="margin-top:6px;font-size:0.66rem;color:var(--text-muted);">${escapeHtml(reply.model || '')}・輸入 ${reply.usage.in} / 輸出 ${reply.usage.out} tokens</div>`;
+        if (reply.suggest) extra += `<div style="margin-top:6px;padding:5px 8px;border:1px dashed var(--gold-accent);border-radius:4px;font-size:0.72rem;">💾 要記住嗎？${escapeHtml(reply.suggest)} <button data-text="${escapeHtml(reply.suggest)}" onclick="advisorRememberSuggest(this)" style="margin-left:6px;background:var(--gold-accent);color:#080c14;border:0;border-radius:3px;padding:1px 6px;font-weight:700;cursor:pointer;">記住這條</button></div>`;
+        loadingEl.parentElement.innerHTML = formatAdvisorMarkdown(reply.text) + extra;
       }
     } catch (err) {
       const loadingEl = document.getElementById(loadingId);
@@ -2994,6 +2997,11 @@ async function callClaudeApi(apiKey, query, base64Image) {
 - 波動率與宏觀雷達：VIX: ${vix}, VVIX: ${vvix}, DXY: ${dxy}, 美債10Y: ${us10y}${us10yReal === null ? '' : '%'}
 請以專業、精準、結構化的繁體中文 Markdown 回覆，重點條列空間拓撲與實戰建議。${brainText}`;
 
+  // 優先走本機橋接（用 Claude 訂閱，不另外計費）；橋接沒開才退回 API Key。
+  const bridged = await callBridge(systemInstruction, query, base64Image);
+  if (bridged) return bridged;
+  if (!apiKey) throw new Error('橋接程式未啟動（python "trading room/advisor_bridge.py"），也沒有設定 API Key');
+
   const content = [];
   if (base64Image) {
     const m = base64Image.match(/^data:(image\/\w+);base64,(.*)$/);
@@ -3024,7 +3032,7 @@ async function callClaudeApi(apiKey, query, base64Image) {
   const text = (result?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
   if (!text) throw new Error('Claude 未回傳有效文字內容');
   _advisorHistory.push({ role: 'user', content: query || '（盤面診斷）' }, { role: 'assistant', content: text });
-  return text;
+  return { text, suggest: null, usage: result.usage ? { in: result.usage.input_tokens, out: result.usage.output_tokens } : null, model: CLAUDE_ADVISOR_MODEL };
 }
 
 const CLAUDE_ADVISOR_MODEL = 'claude-sonnet-5-5';
@@ -4708,3 +4716,43 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('btn-auto-fit');
   if (btn) btn.addEventListener('click', resetPriceAutoScale);
 });
+
+
+// ===== 幕僚鳥橋接（本機 Claude Code，用訂閱回答）=====
+const BRIDGE_BASE = 'http://127.0.0.1:8765';
+let _bridgeUp = null, _bridgeCheckedAt = 0;
+async function bridgeAvailable() {
+  if (_bridgeUp !== null && Date.now() - _bridgeCheckedAt < (_bridgeUp ? 60000 : 10000)) return _bridgeUp;
+  try {
+    const c = new AbortController(); setTimeout(() => c.abort(), 800);
+    const r = await fetch(BRIDGE_BASE + '/health', { signal: c.signal });
+    _bridgeUp = r.ok;
+  } catch (e) { _bridgeUp = false; }
+  _bridgeCheckedAt = Date.now();
+  updateBridgeBadge();
+  return _bridgeUp;
+}
+function updateBridgeBadge() {
+  const b = document.querySelector('.model-badge');
+  if (b) b.textContent = _bridgeUp ? 'Claude 訂閱 ✕ AGENTS.md' : (localStorage.getItem('claude_api_key') ? 'Claude API ✕ AGENTS.md' : 'Claude 未連線（本地規則引擎）');
+}
+function advisorModel() { return document.getElementById('advisor-model-select')?.value || 'sonnet'; }
+async function callBridge(system, query, base64Image) {
+  if (!(await bridgeAvailable())) return null;
+  const r = await fetch(BRIDGE_BASE + '/ask', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ system, question: query, model: advisorModel(), image: base64Image || null })
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || `橋接錯誤 (${r.status})`);
+  return { text: j.reply, suggest: j.memory_suggest || null, usage: j.usage || null, model: j.model };
+}
+// 使用者按「記住這條」
+async function advisorRememberSuggest(btn) {
+  const text = btn.dataset.text;
+  try {
+    await fetch(BRIDGE_BASE + '/memory/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+    btn.textContent = '✅ 已記住'; btn.disabled = true;
+  } catch (e) { btn.textContent = '寫入失敗'; }
+}
+document.addEventListener('DOMContentLoaded', () => { bridgeAvailable(); });
