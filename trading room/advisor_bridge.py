@@ -683,6 +683,12 @@ def consolidate(force=False):
                 for a in ops.get("add", []):
                     imp = a.get("importance") if a.get("importance") in (1, 2, 3) else 2
                     vu = a.get("valid_until") if isinstance(a.get("valid_until"), str) else None
+                    # 防編造：內容或期限裡的具體日期，必須是使用者在對話裡親口講過的（或今天）；否則不收，改成請使用者補
+                    made_up = [d for d in set(re.findall(r"\d{4}-\d{2}-\d{2}", str(a.get("content", "")) + " " + (vu or "")))
+                               if d != today_str() and d not in conv]
+                    if made_up:
+                        asks.append(f"我想記「{str(a.get('content', ''))[:50]}」，但裡面的日期（{'、'.join(made_up)}）你沒說過，請告訴我正確日期，或用「記住到日期：…」自己寫入。")
+                        continue
                     if add_long(str(a.get("content", "")), imp, vu, source="每週整理"):
                         facts.append(f"新記住（{IMPORTANCE_LABEL[imp]}）：{a['content']}")
                 for u in ops.get("update", []):
