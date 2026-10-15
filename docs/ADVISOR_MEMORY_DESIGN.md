@@ -43,7 +43,10 @@
 - Cahill & McGaugh 1998, *Mechanisms of emotional arousal and lasting declarative memory*, Trends Neurosci, PMID 9683321（情緒喚起強化記憶鞏固；只確認條目，未精讀）。
 - McDaniel, Umanath, Einstein & Waldum 2015, *Dual pathways to prospective remembering*, Front Hum Neurosci, PMID 26236213（前瞻記憶＝記得在未來執行意圖；只讀到條目摘要）。
 
+Google 學術搜尋條目已確認存在（只看到列表，未讀全文）：
+- Schooler & Anderson 1997, *The role of process in the rational analysis of memory*, Cognitive Psychology（被引用 172 次）：ACT-R 記憶「理性分析」的後續論文。
+
 憑記憶、未驗證：
-- Anderson & Schooler 1991, *Reflections of the environment in memory*, Psychological Science（冪次遺忘與環境統計；DOI 與細節請自行查證）。ACT-R 基底啟動值公式出自 Anderson 的 ACT-R 系列，agent 應用參考 arXiv:2512.20651（二手來源，未精讀）。
+- Anderson & Schooler 1991, *Reflections of the environment in memory*, Psychological Science（冪次遺忘與環境統計；PubMed 與 Google 學術搜尋兩次都沒找到該條目，只憑記憶，請自行查證）。ACT-R 基底啟動值公式出自 Anderson 的 ACT-R 系列，agent 應用參考 arXiv:2512.20651（二手來源，未精讀）。
 
 沒找到可驗證條目、因此**不引用**：Nader 等 2000 的再鞏固論文（PubMed 搜尋無結果，我沒有確認過），「取代而非覆寫」的人腦對照只當設計比喻。
