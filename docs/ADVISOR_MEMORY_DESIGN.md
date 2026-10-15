@@ -34,8 +34,16 @@
 2. 取代而非覆寫（#4）：`update_memory` 改成封存舊的＋新增帶 `supersedes` 的新條目。
 3. 行為模式候選要有逐字證據（#6）：如果洋洋以後想讓她「觀察」使用者，這道驗證能擋掉編造。
 
-## 五、參考文獻（搜尋所得，未逐篇精讀）
+## 五、參考文獻（驗證狀態如實標註）
 
-- Park et al. 2023, *Generative Agents*（arXiv:2304.03442）：記憶流、三因子提取、反思。
-- ACT-R 基底啟動值與冪次遺忘：Anderson 等；agent 記憶應用可參考 arXiv:2512.20651。
-- Complementary Learning Systems：Kumaran, Hassabis & McClelland 2016（快速情節記憶＋慢速整合、睡眠回放）。
+已對照原文／PubMed 條目驗證：
+- Park et al. 2023, *Generative Agents: Interactive Simulacra of Human Behavior*（arXiv:2304.03442）。原文：近期度＝指數衰減（係數 0.995／遊戲小時）、重要度＝模型打 1~10 分、相關度＝嵌入向量餘弦相似度，三者 min-max 正規化後加權和（權重皆 1）；重要度累積超過 150 觸發反思。
+  - **我的實作只是借鏡、不是複製**：相關度用關鍵字／標籤重疊（沒有向量嵌入）、近期度改用 ACT-R 冪次曲線、權重是我自己抓的（3.0／2.0／0.5），沒有調參。
+- Kumaran, Hassabis & McClelland 2016, *What Learning Systems do Intelligent Agents Need? Complementary Learning Systems Theory Updated*, Trends Cogn Sci 20(7):512-534, PMID 27315762（只讀到摘要：智能體需要兩套互補學習系統，對應海馬迴與新皮質）。
+- Cahill & McGaugh 1998, *Mechanisms of emotional arousal and lasting declarative memory*, Trends Neurosci, PMID 9683321（情緒喚起強化記憶鞏固；只確認條目，未精讀）。
+- McDaniel, Umanath, Einstein & Waldum 2015, *Dual pathways to prospective remembering*, Front Hum Neurosci, PMID 26236213（前瞻記憶＝記得在未來執行意圖；只讀到條目摘要）。
+
+憑記憶、未驗證：
+- Anderson & Schooler 1991, *Reflections of the environment in memory*, Psychological Science（冪次遺忘與環境統計；DOI 與細節請自行查證）。ACT-R 基底啟動值公式出自 Anderson 的 ACT-R 系列，agent 應用參考 arXiv:2512.20651（二手來源，未精讀）。
+
+沒找到可驗證條目、因此**不引用**：Nader 等 2000 的再鞏固論文（PubMed 搜尋無結果，我沒有確認過），「取代而非覆寫」的人腦對照只當設計比喻。
