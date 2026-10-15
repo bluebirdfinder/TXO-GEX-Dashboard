@@ -2843,7 +2843,7 @@ function initLiveTickPolling() {
         if (data && (data.txf || data.taiex || data.otc)) {
           const prov = (data.txf && data.txf.provider) || data.active_provider || 'OFFICIAL';
           const tick = (ticker, q, name) => handleLiveTick({
-            ticker, price: q.price, change: q.change, pct: q.pct,
+            ticker, price: q.price, change: q.change, pct: q.pct, changeTrusted: true,
             provider: prov === 'FUBON' ? 'FUBON' : 'TAIFEX_MIS',
             provider_name: name, timestamp: Date.now(), time: Date.now()
           });
@@ -2953,7 +2953,9 @@ function initLiveTickPolling() {
 // 即時漲跌幅：來源有給 change/pct 才更新，避免卡片仍顯示上一盤的舊漲跌（曾顯示 +284 而實際 -1,740）。
 function setLiveChangeText(elId, data) {
   const el = document.getElementById(elId);
-  if (!el || typeof data.change !== 'number' || typeof data.pct !== 'number') return;
+  // 只信本機閘道（證交所 MIS 官方昨收）給的漲跌；雲端中繼站的 Yahoo 備援昨收是錯的
+  // （2026-10-15 實測：顯示 -1371.43，官方 -1655.96），寧可保留舊字也不顯示錯的。
+  if (!el || !data.changeTrusted || typeof data.change !== 'number' || typeof data.pct !== 'number') return;
   const sign = data.change >= 0 ? '+' : '';
   el.innerText = `${sign}${data.change.toFixed(2)} (${sign}${data.pct.toFixed(2)}%)`;
   el.style.color = data.change > 0 ? 'var(--call-color)' : (data.change < 0 ? 'var(--put-color)' : 'var(--text-muted)');

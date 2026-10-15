@@ -196,6 +196,20 @@ def fetch_official_taifex_tx_prices():
 
     return today_day_tx, night_tx, prev_day_tx
 
+def _yahoo_prev_close(chart_result):
+    """Yahoo 日線 (range=5d) 的「昨收」＝最後一根日線「之前」最後一個有值的收盤。
+    meta.previousClose 常為 None、chartPreviousClose 是整個區間起點（可能是 5 天前），用它算漲跌會嚴重失真
+    （2026-10-15 加權：資料檔 -1371.43，官方 -1655.96）。最後一根可能是當日（收盤前值為 None 或已定案），一律排除。"""
+    try:
+        closes = chart_result['indicators']['quote'][0]['close']
+        for c in reversed(closes[:-1]):
+            if c is not None and c > 0:
+                return float(c)
+    except Exception:
+        pass
+    return None
+
+
 def fetch_twse_realtime_indices():
     """
     Fetches exact TWSE 加權指數 (IX0001) and 櫃買指數 (IX0043) with multi-tier fallback:
@@ -246,13 +260,13 @@ def fetch_twse_realtime_indices():
     # Tier 2: Yahoo Finance API (^TWII and ^TWOII)
     try:
         if not spot_p:
-            y_url = "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII"
+            y_url = "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWII?range=5d&interval=1d"
             req = urllib.request.Request(y_url, headers=HEADERS)
             with urllib.request.urlopen(req, context=SSL_CTX, timeout=5) as resp:
                 y_res = json.loads(resp.read().decode('utf-8'))
                 meta = y_res.get('chart', {}).get('result', [{}])[0].get('meta', {})
                 p = meta.get('regularMarketPrice')
-                prev = meta.get('previousClose') or meta.get('chartPreviousClose')
+                prev = _yahoo_prev_close(y_res.get('chart', {}).get('result', [{}])[0])
                 if p and p > 0:
                     spot_p = float(p)
                     if prev and prev > 0:
@@ -260,13 +274,13 @@ def fetch_twse_realtime_indices():
                         spot_chg_pct = round((spot_chg / float(prev)) * 100, 2)
 
         if not otc_p:
-            y_url_otc = "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWOII"
+            y_url_otc = "https://query1.finance.yahoo.com/v8/finance/chart/%5ETWOII?range=5d&interval=1d"
             req = urllib.request.Request(y_url_otc, headers=HEADERS)
             with urllib.request.urlopen(req, context=SSL_CTX, timeout=5) as resp:
                 y_res = json.loads(resp.read().decode('utf-8'))
                 meta = y_res.get('chart', {}).get('result', [{}])[0].get('meta', {})
                 p = meta.get('regularMarketPrice')
-                prev = meta.get('previousClose') or meta.get('chartPreviousClose')
+                prev = _yahoo_prev_close(y_res.get('chart', {}).get('result', [{}])[0])
                 if p and p > 0:
                     otc_p = float(p)
                     if prev and prev > 0:
