@@ -2939,7 +2939,10 @@ async function sendAdvisorQuery(query) {
       if (loadingEl) {
         let extra = '';
         if (reply.usage) extra += `<div style="margin-top:6px;font-size:0.66rem;color:var(--text-muted);">${escapeHtml(reply.model || '')}・輸入 ${reply.usage.in} / 輸出 ${reply.usage.out} tokens</div>`;
-        if (reply.suggest) extra += `<div style="margin-top:6px;padding:5px 8px;border:1px dashed var(--gold-accent);border-radius:4px;font-size:0.72rem;">💾 要記住嗎？${escapeHtml(reply.suggest)} <button data-text="${escapeHtml(reply.suggest)}" onclick="advisorRememberSuggest(this)" style="margin-left:6px;background:var(--gold-accent);color:#080c14;border:0;border-radius:3px;padding:1px 6px;font-weight:700;cursor:pointer;">記住這條</button></div>`;
+        if (reply.suggest) {
+          const sg = reply.suggest, lv = { 3: '核心', 2: '一般', 1: '瑣碎' }[sg.importance] || '一般';
+          extra += `<div style="margin-top:6px;padding:5px 8px;border:1px dashed var(--gold-accent);border-radius:4px;font-size:0.72rem;">💾 要記住嗎？【${lv}】${escapeHtml(sg.text)}${sg.valid_until ? '（有效至 ' + escapeHtml(sg.valid_until) + '）' : ''} <button data-text="${escapeHtml(sg.text)}" data-imp="${sg.importance}" data-vu="${escapeHtml(sg.valid_until || '')}" onclick="advisorRememberSuggest(this)" style="margin-left:6px;background:var(--gold-accent);color:#080c14;border:0;border-radius:3px;padding:1px 6px;font-weight:700;cursor:pointer;">記住這條</button></div>`;
+        }
         loadingEl.parentElement.innerHTML = formatAdvisorMarkdown(reply.text) + extra;
       }
     } catch (err) {
@@ -4755,8 +4758,22 @@ async function callBridge(system, query, base64Image) {
 async function advisorRememberSuggest(btn) {
   const text = btn.dataset.text;
   try {
-    await fetch(BRIDGE_BASE + '/memory/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+    await fetch(BRIDGE_BASE + '/memory/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, importance: Number(btn.dataset.imp) || 2, valid_until: btn.dataset.vu || null }) });
     btn.textContent = '✅ 已記住'; btn.disabled = true;
   } catch (e) { btn.textContent = '寫入失敗'; }
 }
 document.addEventListener('DOMContentLoaded', () => { bridgeAvailable(); });
+
+// 每週記憶整理報告：有新的、沒看過就在對話串顯示一次
+async function showWeeklyMemoryReport() {
+  if (!(await bridgeAvailable())) return;
+  try {
+    const r = await (await fetch(BRIDGE_BASE + '/memory/report/latest')).json();
+    if (!r || !r.date) return;
+    let seen = null; try { seen = localStorage.getItem('advisorReportSeen'); } catch (e) {}
+    if (seen === r.date) return;
+    appendAdvisorMessage('ai', formatAdvisorMarkdown(r.text));
+    try { localStorage.setItem('advisorReportSeen', r.date); } catch (e) {}
+  } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', () => { setTimeout(showWeeklyMemoryReport, 2500); });
