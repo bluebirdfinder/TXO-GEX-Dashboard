@@ -2883,6 +2883,19 @@ function initLiveTickPolling() {
           handleLiveTick(data);
           return;
         }
+        // 新版閘道（不再送假價）回 {txf, taiex, otc} 各自一包，沒有頂層 price；
+        // 舊程式只認頂層 price，導致台指期即時價進不來、Zero Gamma 盤中推算整個停擺。
+        if (data && (data.txf || data.taiex || data.otc)) {
+          const prov = (data.txf && data.txf.provider) || data.active_provider || 'OFFICIAL';
+          const tick = (ticker, q, name) => handleLiveTick({
+            ticker, price: q.price, change: q.change, pct: q.pct,
+            provider: prov === 'FUBON' ? 'FUBON' : 'TAIFEX_MIS',
+            provider_name: name, timestamp: Date.now(), time: Date.now()
+          });
+          if (data.taiex && data.taiex.price > 0) tick('IX0001', data.taiex, data.provider_name || '本機閘道');
+          if (data.otc && data.otc.price > 0) tick('IX0043', data.otc, data.provider_name || '本機閘道');
+          if (data.txf && data.txf.price > 0) { tick('TXF1!', data.txf, data.provider_name || '本機閘道'); return; }
+        }
       }
     } catch (e) {
       // Local server not running, or blocked/timed out — fall through to the next tier
@@ -2982,6 +2995,15 @@ function initLiveTickPolling() {
   }, 2000);
 }
 
+// 即時漲跌幅：來源有給 change/pct 才更新，避免卡片仍顯示上一盤的舊漲跌（曾顯示 +284 而實際 -1,740）。
+function setLiveChangeText(elId, data) {
+  const el = document.getElementById(elId);
+  if (!el || typeof data.change !== 'number' || typeof data.pct !== 'number') return;
+  const sign = data.change >= 0 ? '+' : '';
+  el.innerText = `${sign}${data.change.toFixed(2)} (${sign}${data.pct.toFixed(2)}%)`;
+  el.style.color = data.change > 0 ? 'var(--call-color)' : (data.change < 0 ? 'var(--put-color)' : 'var(--text-muted)');
+}
+
 function handleLiveTick(data) {
   const freshnessText = document.getElementById('freshness-text');
   const feedDot = document.getElementById('live-feed-dot');
@@ -3017,6 +3039,7 @@ function handleLiveTick(data) {
     const spotEl = document.getElementById('stat-spot');
     if (spotEl) spotEl.innerText = data.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     if (gexData) gexData.spot_price = data.price;
+    setLiveChangeText('stat-spot-sub', data);
     return;
   }
 
@@ -3024,6 +3047,7 @@ function handleLiveTick(data) {
     const twoEl = document.getElementById('stat-two-price');
     if (twoEl) twoEl.innerText = data.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     if (gexData) gexData.two_price = data.price;
+    setLiveChangeText('stat-otc-sub', data);
     return;
   }
 
