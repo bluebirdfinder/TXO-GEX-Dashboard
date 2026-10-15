@@ -32,6 +32,7 @@ site-packages/fubon_neo/_fubon_neo.pyd
 | `scripts/run_screener_cache_task.ps1`（個股日報價 `fetch_real_quotes.py` → 選股快取＋個股日K分片 `build_screener_cache.py`） | 💻 本機、排程（**建議**，2026-10-07 新增腳本，尚未註冊） | Windows 工作排程 `TXO-Screener-Cache`，平日 16:30（註冊指令見腳本檔頭說明／HANDOFF） | 否（只用證交所／櫃買官方資料） | **不能**——`build_screener_cache.py` 會 import 私有指標資料夾 `txo-private\screener-indicators`（不在公開 repo），GitHub Actions 跑不了；報價檔那一步另在雲端 `auto_update.yml` 也有跑 |
 | `scripts/build_screener_cache.py`（選股雷達，1,400+ 檔全市場） | 💻 本機、**手動**執行 | **目前沒有排程**——一直是我在對話 session 裡手動跑完手動 commit（2026-09-30 查證確認，之前誤以為它在雲端排程裡，是我的錯誤假設） | 否（純 TWSE/TPEx 官方 HTTP 端點） | **可以**——沒有任何富邦依賴，理論上今天就能搬去雲端排程或 Mac mini，只是還沒設 |
 | `scripts/jj_ghost_claws.py`（動能鳥 8 訊號；2026-09-30 已搬私有資料夾，`build_screener_cache.py` 改由該處載入） | 跟著上面一起跑 | 同上 | 否 | 同上，可以搬 |
+| `trading room/advisor_bridge.py`（幕僚鳥橋接：戰情室 → 本機 `claude -p`，用 Claude 訂閱回答；記憶存 `trading room/brain/memory/`） | 💻 本機常駐（2026-10-16 新增，手動啟動 `trading room/start_advisor.bat`，尚未註冊排程） | 無 | 否（只需 Python 與已登入的 Claude Code） | **可以**——純標準函式庫，Windows/macOS 通用；搬 Mac mini 時要在那台裝 Claude Code 並登入，把 `trading room/brain/` 整個複製過去 |
 | 私有 Cloudflare Worker（`bluebird-indicators`：ADX／雙層MACD／CCI／AO／動能鳥 HUD／SMC） | ☁️ Cloudflare（獨立於 GitHub Actions） | 常駐服務，使用者手動部署 | 否 | 已經在雲端，不受影響 |
 
 ## 三、資料量與 git 歷史（2026-09-30 實測）
