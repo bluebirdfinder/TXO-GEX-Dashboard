@@ -1314,8 +1314,13 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
     total_vex_sum = 0.0
     total_gex_sum = 0.0
 
+    # 牆位定義（2026-10-16 起）：Call Wall＝現價「上方」Call GEX 最大的履約價（壓力）、Put Wall＝現價「下方」Put GEX 最大的履約價（支撐）。
+    # 舊版不限位置，10/16 出現 Call Wall 46300 落在現價 47111 下方 811 點、比 Put Wall 還低的誤導；原本的「±900 內不限位置的最大值」
+    # 保留為 call_gex_peak_strike / put_gex_peak_strike（Gamma 磁吸最大點）。
     call_wall_k, call_wall_max = base_strike + 300, -1.0
     put_wall_k, put_wall_max = base_strike - 300, -1.0
+    call_peak_k, call_peak_max = base_strike + 300, -1.0
+    put_peak_k, put_peak_max = base_strike - 300, -1.0
 
     strike_losses = {}
 
@@ -1371,10 +1376,16 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         call_oi_sum += (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
         put_oi_sum += (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
 
-        if cg_tot > call_wall_max:
+        if cg_tot > call_peak_max:
+            call_peak_max = cg_tot
+            call_peak_k = K
+        if abs(pg_tot) > put_peak_max:
+            put_peak_max = abs(pg_tot)
+            put_peak_k = K
+        if K >= spot_price and cg_tot > call_wall_max:
             call_wall_max = cg_tot
             call_wall_k = K
-        if abs(pg_tot) > put_wall_max:
+        if K <= spot_price and abs(pg_tot) > put_wall_max:
             put_wall_max = abs(pg_tot)
             put_wall_k = K
 
@@ -1451,6 +1462,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         "total_gex_plus": round(total_gex_plus_sum, 2),
         "call_wall_strike": call_wall_k,
         "put_wall_strike": put_wall_k,
+        "call_gex_peak_strike": call_peak_k,
+        "put_gex_peak_strike": put_peak_k,
         "max_pain_strike": max_pain_k,
         "pc_ratio": pc_ratio
     }
@@ -4880,6 +4893,8 @@ def generate_gex_payload():
         "gamma_flip_standard_close_date": gamma_flip_standard_close_date,
         "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'],
+        "call_gex_peak_strike": gex_profile.get('call_gex_peak_strike'),
+        "put_gex_peak_strike": gex_profile.get('put_gex_peak_strike'),
         "max_pain_strike": gex_profile['max_pain_strike'],
         # 資料完整度（2026-10-07）：當日期交所資料還沒公布時為 False；網頁據此顯示「資料尚未公布」，Lumi 等下游可據此不發有誤的盤後文字
         "data_completeness": {
