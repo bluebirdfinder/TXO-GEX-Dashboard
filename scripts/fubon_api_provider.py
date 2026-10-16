@@ -772,9 +772,19 @@ class FubonAPIProvider:
         log = self.trades_log.get(symbol)
         if not log:
             return []
+        # The websocket thread appends to this deque while the recorder thread reads it; iterating a deque that changes
+        # size raises RuntimeError("deque mutated during iteration") (seen ~450x in live_price_server.log, 2026-10-15/16).
+        # Take a snapshot, retrying if an append lands mid-copy.
+        for attempt in range(20):
+            try:
+                snap = list(log)
+                break
+            except RuntimeError:
+                if attempt == 19:
+                    raise   # never return a partial/empty list: the recorder would write zero counts into history
         if since_ts is None:
-            return list(log)
-        return [t for t in log if t['ts'] >= since_ts]
+            return snap
+        return [t for t in snap if t['ts'] >= since_ts]
 
     def get_momentum_bar_30m(self, symbol):
         """
