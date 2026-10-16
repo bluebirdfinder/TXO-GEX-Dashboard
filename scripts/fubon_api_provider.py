@@ -153,6 +153,7 @@ class FubonAPIProvider:
         self._last_trades_ts = {}         # alias -> time.time() of the last real trade print (for the trades-channel watchdog)
         self._trades_total = {}           # alias -> latest cumulative 'total' block of a trades frame (tradeVolume, totalBidMatch, totalAskMatch)
         self._books_logged_raw = set()    # aliases whose first raw books frame was logged (to see every field Fubon sends)
+        self._trade_frames = deque(maxlen=300000)   # every raw trades frame of the _RAW_LOG_ALIASES, flushed to trades_YYYYMMDD.jsonl by the recorder thread
 
         # Real Cumulative Volume Delta (CVD) — signed-volume running total built tick-by-tick
         # from the same confirmed tick-rule 'side' used for trades_log, kept as its own
@@ -698,6 +699,10 @@ class FubonAPIProvider:
         tot = data.get('total')
         if isinstance(tot, dict):   # exchange cumulative counters (since session open); was ignored before 2026-10-16
             self._trades_total[symbol] = dict(tot, t=round(time.time(), 1))
+        if symbol in self._RAW_LOG_ALIASES:   # keep EVERY trade print (the 15 s snapshots only caught ~91% of the volume on 2026-10-16)
+            self._trade_frames.append({'a': symbol, 'r': round(time.time(), 3), 'time': data.get('time'), 'serial': data.get('serial'),
+                                       'p': [[x.get('price'), x.get('size'), x.get('bid'), x.get('ask')] for x in prints if isinstance(x, dict)],
+                                       'tot': dict(tot) if isinstance(tot, dict) else None})
 
         serial = data.get('serial')
         if serial is not None:
@@ -878,6 +883,33 @@ class FubonAPIProvider:
     # 還原 JJ（rStock）指標定義用：只對少數商品把每 15 秒的原始五檔＋該 15 秒成交寫成 jsonl（每天一個檔，不進 git）
     _RAW_LOG_ALIASES = ("TXF1!", "CCF1!", "CDF1!", "DHF1!", "DVF1!", "QFF1!", "PUF1!", "CHF1!")
 
+    def flush_trade_frames(self):
+        """Write the buffered trades frames to <history dir>/trades_YYYYMMDD.jsonl (one JSON object per frame). Called by the recorder thread."""
+        import json as _json
+        rows = []
+        try:
+            while True:
+                rows.append(self._trade_frames.popleft())
+        except IndexError:
+            pass
+        if not rows:
+            return 0
+        try:
+            os.makedirs(self._mom_hist_dir, exist_ok=True)
+            by_day = {}
+            for r in rows:
+                day = datetime.datetime.fromtimestamp(r['r'], tz=self._TAIPEI_TZ).strftime('%Y%m%d')
+                by_day.setdefault(day, []).append(_json.dumps(r, separators=(',', ':')))
+            for day, lines in by_day.items():
+                with open(os.path.join(self._mom_hist_dir, f'trades_{day}.jsonl'), 'a', encoding='utf-8') as f:
+                    f.write(chr(10).join(lines) + chr(10))
+        except Exception as e:
+            logging.warning(f'trade frame log failed: {e}')
+            for r in reversed(rows):   # put them back so nothing is lost on a transient disk error
+                self._trade_frames.appendleft(r)
+            return 0
+        return len(rows)
+
     def _append_raw_snapshot(self, alias, now, book):
         import json as _json
         try:
@@ -1049,6 +1081,7 @@ class FubonAPIProvider:
             while True:
                 try:
                     self.record_momentum_bars()
+                    self.flush_trade_frames()
                     self.futopt_watchdog()
                     if time.time() - last_save >= 60:
                         self.save_momentum_history()
