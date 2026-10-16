@@ -2649,8 +2649,12 @@ def fetch_official_taifex_retail_sentiment():
     # to silently fall back to one magic-literal sentinel pair for BOTH at once).
     mtx_inst_l, mtx_inst_s = inst['MTX']['long'], inst['MTX']['short']
     if mtx_near_total is not None:
-        mtx_r_long = max(0, mtx_near_total - mtx_inst_l)
-        mtx_r_short = max(0, mtx_near_total - mtx_inst_s)
+        # Institutional long/short are ALL-month positions, so the retail side must be derived from the ALL-month total
+        # too. Using the near-month OI here clipped retail short to 0 whenever institutional short > near-month OI
+        # (TMF 2026-10-16: net 68,652 vs correct 72,659 -> 51.56% shown, official-derived 54.57%).
+        _mtx_base = mtx_total if mtx_total is not None else mtx_near_total
+        mtx_r_long = max(0, _mtx_base - mtx_inst_l)
+        mtx_r_short = max(0, _mtx_base - mtx_inst_s)
         mtx_r_net = mtx_r_long - mtx_r_short
         mtx_near_ratio = round((mtx_r_net / mtx_near_total) * 100, 2) if mtx_near_total > 0 else _prev.get('mtx_ratio', 0.0)
     else:
@@ -2662,8 +2666,12 @@ def fetch_official_taifex_retail_sentiment():
 
     tmf_inst_l, tmf_inst_s = inst['TMF']['long'], inst['TMF']['short']
     if tmf_near_total is not None:
-        tmf_r_long = max(0, tmf_near_total - tmf_inst_l)
-        tmf_r_short = max(0, tmf_near_total - tmf_inst_s)
+        # Institutional long/short are ALL-month positions, so the retail side must be derived from the ALL-month total
+        # too. Using the near-month OI here clipped retail short to 0 whenever institutional short > near-month OI
+        # (TMF 2026-10-16: net 68,652 vs correct 72,659 -> 51.56% shown, official-derived 54.57%).
+        _tmf_base = tmf_total if tmf_total is not None else tmf_near_total
+        tmf_r_long = max(0, _tmf_base - tmf_inst_l)
+        tmf_r_short = max(0, _tmf_base - tmf_inst_s)
         tmf_r_net = tmf_r_long - tmf_r_short
         tmf_near_ratio = round((tmf_r_net / tmf_near_total) * 100, 2) if tmf_near_total > 0 else _prev.get('tmf_ratio', 0.0)
     else:
