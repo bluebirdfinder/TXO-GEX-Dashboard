@@ -2432,7 +2432,7 @@
     "foreign_tx_net": -93675,
     "foreign_call_net": -0.14,
     "foreign_put_net": 1.29,
-    "written_at": "2026-10-16T21:34:06.045716"
+    "written_at": "2026-10-16T22:04:13.321273"
   },
   "2026-10-16_INST_NIGHT": {
     "foreign_tx": 772,
@@ -2441,7 +2441,7 @@
     "foreign_micro": 5450,
     "dealer_tx": 93,
     "dealer_tx_amt": 8.89,
-    "written_at": "2026-10-16T21:34:27.795326"
+    "written_at": "2026-10-16T22:04:31.278276"
   },
   "MARGIN_MAINT_EST_20261016": {
     "margin_maint_market": null,
@@ -2522,6 +2522,6 @@
     "dealer_opt_call_net": 4.23,
     "dealer_opt_put_net": 1.73,
     "pc_ratio": 67.6,
-    "written_at": "2026-10-16T21:34:27.792979"
+    "written_at": "2026-10-16T22:04:31.274652"
   }
 }
