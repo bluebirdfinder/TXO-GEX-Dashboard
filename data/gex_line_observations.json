@@ -112,15 +112,15 @@
   "sigma": 0.3061
  },
  "2026-10-16": {
-  "updated": "2026-10-16 20:11",
+  "updated": "2026-10-16 20:39",
   "session": "NIGHT",
   "engine": "v64.17",
   "spot": 47111.26,
   "txf_day": 47242.0,
-  "txf_night": 47276.0,
+  "txf_night": 47366.0,
   "zero_gamma_oi_boundary": 46241.2,
   "gex_plus_flip": 46241.2,
-  "gamma_flip_standard": 46246.7,
+  "gamma_flip_standard": 46248.2,
   "call_wall": 46300.0,
   "put_wall": 47000.0,
   "max_pain": 46500.0,
