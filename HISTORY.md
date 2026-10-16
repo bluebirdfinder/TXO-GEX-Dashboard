@@ -98,6 +98,7 @@
 
 | 版本 | 發布日期 | 核心主題與重大突破 |
 | :---: | :---: | :--- |
+| **`v64.18`** | 2026-10-17 | Call/Put Wall 改教科書定義（Call Wall=現價上方、Put Wall=現價下方；Max Pain 不動） |
 | **`v64.17`** | 2026-09-27 | 網頁一律稱動能鳥（移除JJ稱呼）✕ 指標IP保護現況盤點 |
 | **`v64.16`** | 2026-09-27 | 指標庫FVG/OrderBlocks勾選框接上SMC（原本沒畫任何東西） |
 | **`v64.15`** | 2026-09-27 | 戰情室SMC開關（畫圖端；演算法在私有Worker） |
@@ -133,6 +134,14 @@
 ---
 
 ## 🎯 各版本詳細更新紀錄
+
+### 🚀 v64.18 Call/Put Wall 改教科書定義（Call Wall=現價上方、Put Wall=現價下方；Max Pain 不動） (2026-10-17)
+
+- **根因**：舊引擎的 Call Wall＝買權側 GEX 最大的履約價、Put Wall＝賣權側 |GEX| 最大的履約價，**不限制在現價上方／下方**。10/16 盤後加權 47,111，Call Wall 顯示 46,300（現價下方 811 點，且低於 Put Wall 47,000），與教科書「天花板在上、地板在下」相反。這是定義問題，不是算錯。
+- **修正**（`scripts/fetch_and_calc_vision.py` 的 `calculate_true_gex_profile`）：Call Wall＝現價上方買權側 GEX 最大；Put Wall＝現價下方賣權側 |GEX| 最大。舊的不限位置峰值另存為 `call_gex_peak_strike`／`put_gex_peak_strike` 供對照。**Max Pain 算法與位置完全不動**（使用者長期觀察很準）。
+- **驗證**：`scripts/test_gex_walls.py` 8 項全過；重編譯後 10/16 資料 Call Wall 48,000、Put Wall 47,000、Max Pain 46,500（不變）、舊峰值 46,300 保留；8 大位置版次一致、現貨／期指方向性 Sanity 通過。
+- **未做（刻意分階段）**：頭條「只給下一檔到期」的 `weekly_focus` 欄位、Gamma Flip／OI 分界措辭、TG 與網頁文案，等多日（含 10/21 結算）並排驗證後再決定。
+- **下游注意**：Lumi `quant_advisor.py`／Cloudflare worker 直接讀牆位，語意改變，需與 Lumi 約同時上線。
 
 ### 🔍 v64.17 後續微調（未升版號）：戰情室網頁第三輪稽核——價格／漲跌／時間軸／設定欄位 (2026-10-01)
 

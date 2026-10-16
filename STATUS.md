@@ -1,8 +1,8 @@
-# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.17)
+# 📊 TXO GEX Dashboard — 專案現狀與版本紀錄 (v64.18)
 
-**當前版本**：`v64.17` (2026-09-27 網頁一律稱「動能鳥」；指標 IP 保護現況盤點)
-**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.17)
-**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.17)
+**當前版本**：`v64.18` (2026-09-27 網頁一律稱「動能鳥」；指標 IP 保護現況盤點)
+**資料與視覺引擎**：`scripts/fetch_and_calc_vision.py` (Black-Scholes VEX/GEX+ 引擎 v64.18)
+**即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.18)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：（不在文件中公開；不區分大小寫，預設自動通關解鎖）
 
