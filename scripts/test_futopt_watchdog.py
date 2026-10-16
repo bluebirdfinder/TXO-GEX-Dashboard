@@ -136,6 +136,38 @@ Cls._holiday_cache = (None, frozenset())
 check("missing holiday file -> falls back to weekday rule", W(ts(2026, 10, 9, 10, 0)) is True)
 os.unlink(hf.name)
 
+# 6) cumulative 'total' block of trades frames is kept and written into the 15 s raw snapshot
+import collections, json, tempfile as _tf
+z = Cls.__new__(Cls)
+z._trades_logged_raw = set()
+z._trades_last_serial = {}
+z._last_trades_ts = {}
+z._trades_total = {}
+z.books_cache = {}
+z.trades_log = {}
+z.cvd_session_start = {}
+z.cvd_cumulative = {}
+z.cvd_points = {}
+z._TRADES_LOG_MAXLEN = 100
+z._taifex_session_start_ts = lambda now: 0
+z._process_trades_data({'symbol': 'TXFJ6', 'trades': [{'price': 100, 'size': 2, 'bid': 99, 'ask': 100}],
+                        'total': {'tradeVolume': 4345, 'totalBidMatch': 3064, 'totalAskMatch': 3163}, 'serial': 1}, alias='TXF1!')
+check("trades frame 'total' stored", z._trades_total.get('TXF1!', {}).get('totalBidMatch') == 3064 and z._trades_total['TXF1!']['totalAskMatch'] == 3163)
+with _tf.TemporaryDirectory() as d:
+    z._mom_hist_dir = d
+    z.get_recent_trades = lambda alias, since_ts=None: []
+    z._append_raw_snapshot('TXF1!', time.time(), {'bids': [{'price': 99, 'size': 1}], 'asks': [{'price': 100, 'size': 1}]})
+    row = json.loads(open([os.path.join(d, f) for f in os.listdir(d)][0], encoding="utf-8").readline())
+    check("raw snapshot carries 'tot'", row.get('tot', {}).get('totalBidMatch') == 3064)
+    z._append_raw_snapshot('NOPE1!', time.time(), {'bids': [], 'asks': []})
+    last = [json.loads(l) for l in open([os.path.join(d, f) for f in os.listdir(d)][0], encoding="utf-8")][-1]
+    check("raw snapshot without totals has no 'tot'", 'tot' not in last)
+zb = Cls.__new__(Cls)
+zb.books_cache = {}
+zb._books_logged_raw = set()
+zb._process_books_data({'symbol': 'TXFJ6', 'bids': [{'price': 1, 'size': 2}], 'asks': [{'price': 2, 'size': 3}], 'extra': 'x'}, alias='TXF1!')
+check("books raw sample logged once", 'TXF1!' in zb._books_logged_raw and zb.books_cache['TXF1!']['bids'][0]['size'] == 2)
+
 hang.set()
 os._exit = real_exit
 print("ALL PASS" if ok else "SOME FAILED")

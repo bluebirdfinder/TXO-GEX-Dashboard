@@ -151,6 +151,8 @@ class FubonAPIProvider:
         self._futopt_watchdog_last_try = 0.0
         self._futopt_watchdog_fires = 0   # forced reconnects since the feed was last healthy
         self._last_trades_ts = {}         # alias -> time.time() of the last real trade print (for the trades-channel watchdog)
+        self._trades_total = {}           # alias -> latest cumulative 'total' block of a trades frame (tradeVolume, totalBidMatch, totalAskMatch)
+        self._books_logged_raw = set()    # aliases whose first raw books frame was logged (to see every field Fubon sends)
 
         # Real Cumulative Volume Delta (CVD) — signed-volume running total built tick-by-tick
         # from the same confirmed tick-rule 'side' used for trades_log, kept as its own
@@ -531,6 +533,10 @@ class FubonAPIProvider:
         def _normalize_side(levels):
             return [{'price': float(lvl['price']), 'size': int(lvl['size'])} for lvl in (levels or [])]
 
+        if symbol not in self._books_logged_raw:
+            logging.info(f"Fubon Books RAW sample for {symbol} (all fields Fubon sends): {data}")
+            self._books_logged_raw.add(symbol)
+
         derived_bid = data.get('derivedBid') or {'price': 0, 'size': 0}
         derived_ask = data.get('derivedAsk') or {'price': 0, 'size': 0}
 
@@ -689,6 +695,9 @@ class FubonAPIProvider:
         if not prints:
             return
         self._last_trades_ts[symbol] = time.time()
+        tot = data.get('total')
+        if isinstance(tot, dict):   # exchange cumulative counters (since session open); was ignored before 2026-10-16
+            self._trades_total[symbol] = dict(tot, t=round(time.time(), 1))
 
         serial = data.get('serial')
         if serial is not None:
@@ -879,6 +888,8 @@ class FubonAPIProvider:
                    'bids': [[l['price'], l['size']] for l in book.get('bids', [])],
                    'asks': [[l['price'], l['size']] for l in book.get('asks', [])],
                    'trades_15s': [[x['ts'], x['price'], x['size'], x['side']] for x in trades]}
+            if self._trades_total.get(alias):
+                row['tot'] = self._trades_total[alias]
             with open(os.path.join(self._mom_hist_dir, f"raw_{day}.jsonl"), "a", encoding="utf-8") as f:
                 f.write(_json.dumps(row, separators=(',', ':')) + "\n")
         except Exception as e:
