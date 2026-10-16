@@ -143,13 +143,23 @@ def cmd_backup(a):
     os.makedirs(dest_root, exist_ok=True)
     stamp = datetime.date.today().isoformat()
     dest = os.path.join(dest_root, stamp)
-    if os.path.exists(dest):
-        shutil.rmtree(dest)
-    shutil.copytree(STORE, dest)
+    # 不先刪除當天資料夾：OneDrive 同步中的檔案會鎖住（PermissionError，2026-10-16 實測），直接逐檔覆蓋；單一檔案失敗只記警告。
+    failed = []
+    for root, _dirs, files in os.walk(STORE):
+        rel = os.path.relpath(root, STORE)
+        tgt = dest if rel == "." else os.path.join(dest, rel)
+        os.makedirs(tgt, exist_ok=True)
+        for name in files:
+            try:
+                shutil.copy2(os.path.join(root, name), os.path.join(tgt, name))
+            except OSError as e:
+                failed.append(f"{os.path.join(rel, name)}: {e}")
     old = sorted(d for d in os.listdir(dest_root) if os.path.isdir(os.path.join(dest_root, d)))
     for d in old[:-14]:
         shutil.rmtree(os.path.join(dest_root, d), ignore_errors=True)
-    print("backup: ->", dest)
+    print("backup: ->", dest, ("(warnings: %d files not copied)" % len(failed)) if failed else "")
+    for f in failed[:5]:
+        print("backup warning:", f)
 
 
 def cmd_seed(a):
