@@ -479,6 +479,9 @@ async function loadDashboardData() {
           }
         }
       } catch (e) { /* 本機沒開：用下面 Pages 的那份 */ }
+      // 下載這份約 20MB 的檔案時，本機報價服務會被拖慢到 2～3 秒，/api/live_tick 的 1 秒逾時會誤判「本機斷線」並退避 60 秒、
+      // 期間改顯示 Worker 轉發的價（2026-10-17 實測：畫面現價跳回 47,242）。下載完立刻解除退避，下一輪就回富邦即時。
+      _localGwRetryAt = 0; _gatewayDown = false;
     }
     if (!klinesCacheData) {
       const klineRes = await fetch('../data/klines_cache.json?t=' + Math.floor(Date.now() / 300000));
