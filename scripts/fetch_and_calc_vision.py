@@ -1278,8 +1278,10 @@ def _standard_gamma_flip(spot, chain, T, sigma, r, span=2000, step=10):
     return round(min(xs, key=lambda x: abs(x - spot)), 1) if xs else None
 
 
-def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None, with_standard=False, days_w2=None):
+def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None, with_standard=False, days_w2=None, wall_extra=0):
     """
+    wall_extra: 牆位搜尋額外往兩側多看幾點（預設 0＝舊行為）。GEX 長條圖與總和仍只算 ±900 窗口，
+    只有 Call/Put Wall 的搜尋範圍放寬——夜盤現價離日盤收盤很遠時，窗口外的牆才不會被漏掉（2026-10-17）。
     option_chain: {strike: {"call_oi_w1":n, "put_oi_w1":n, "call_oi_w2":n, "put_oi_w2":n,
     "call_oi_fri":n, "put_oi_fri":n, "call_oi_mth":n, "put_oi_mth":n}}, built by
     build_real_option_chain() from fetch_taifex_txo_open_interest() — real TAIFEX open
@@ -1305,7 +1307,7 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
     # these are the strikes TAIFEX actually listed open interest for, not invented ones. Falls
     # back to the fixed grid only when option_chain is empty (the real fetch failed entirely).
     if option_chain:
-        strikes = sorted(k for k in option_chain.keys() if abs(k - base_strike) <= 900)
+        strikes = sorted(k for k in option_chain.keys() if abs(k - base_strike) <= 900 + wall_extra)
     else:
         strikes = [base_strike - 900 + i * 50 for i in range(37)]
 
@@ -1363,23 +1365,27 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         c_vex_tot = ((c_oi_w1 * v_w1 + c_oi_w2 * v_w2 + c_oi_f * v_fri + c_oi_m * v_mth) * spot_price * 50) / 1e8
         p_vex_tot = -((p_oi_w1 * v_w1 + p_oi_w2 * v_w2 + p_oi_f * v_fri + p_oi_m * v_mth) * spot_price * 50) / 1e8
         vex_net = c_vex_tot + p_vex_tot
-        total_vex_sum += vex_net
+        in_win = abs(K - base_strike) <= 900
+        if in_win:
+            total_vex_sum += vex_net
 
         cg_tot = c_gex_w + c_gex_f + c_gex_m
         pg_tot = p_gex_w + p_gex_f + p_gex_m
         ng_tot = cg_tot + pg_tot
-        total_gex_sum += ng_tot
+        if in_win:
+            total_gex_sum += ng_tot
 
         # GEX+ = Net GEX + 1.0 * Net VEX
         gex_plus_val = ng_tot + (1.0 * vex_net)
 
-        call_oi_sum += (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
-        put_oi_sum += (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
+        if in_win:
+            call_oi_sum += (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
+            put_oi_sum += (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
 
-        if cg_tot > call_peak_max:
+        if in_win and cg_tot > call_peak_max:
             call_peak_max = cg_tot
             call_peak_k = K
-        if abs(pg_tot) > put_peak_max:
+        if in_win and abs(pg_tot) > put_peak_max:
             put_peak_max = abs(pg_tot)
             put_peak_k = K
         if K >= spot_price and cg_tot > call_wall_max:
@@ -1389,6 +1395,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
             put_wall_max = abs(pg_tot)
             put_wall_k = K
 
+        if not in_win:
+            continue
         total_gex.append({
             "strike": K,
             "call_gex": round(cg_tot, 2),
@@ -3235,7 +3243,12 @@ def generate_gex_payload():
         }
 
     # Compute GEX Profile
-    gex_profile = calculate_true_gex_profile(spot_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, with_standard=True, days_w2=raw_days_w2)
+    # 夜盤（15:00～隔日 08:45）：加權現貨已收盤停在日盤收盤價，夜盤期貨可能已大幅偏離（10/16 夜盤 -1,144 點）。
+    # 點位若仍錨定日盤收盤現貨，牆位會落在現價同一側、窗口也涵蓋不到現價下方。夜盤改以夜盤期貨價錨定
+    # （與 active_night_spot、day_profile 用期貨價當 spot 的既有慣例一致），牆位搜尋範圍多放寬 600 點。Max Pain 只看 OI，不受影響。
+    _gex_anchor = night_txf_price if (is_night_session and night_txf_price is not None and night_txf_price > 10000) else spot_price
+    gex_profile = calculate_true_gex_profile(_gex_anchor, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, with_standard=True, days_w2=raw_days_w2, wall_extra=600)
+    gex_profile["gex_anchor_price"] = _gex_anchor
 
     # 日盤收盤時的標準 Gamma Flip（2026-10-07）：盤中的 gamma_flip_standard 會隨現價與剩餘時間即時重算；
     # 要和羊叔等「收盤值」比，另存收盤版：用 OI 所屬交易日 13:30 的到期天數＋當日收盤現價。
@@ -3275,7 +3288,7 @@ def generate_gex_payload():
     gex_profile["dte_dates"] = dte_dates
 
     # Day vs Night Session Shift Metrics
-    day_profile = calculate_true_gex_profile(day_txf_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, days_w2=raw_days_w2)
+    day_profile = calculate_true_gex_profile(day_txf_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, days_w2=raw_days_w2, wall_extra=600)
     day_zero_gamma = day_profile['zero_gamma_level']
     day_call_wall = day_profile['call_wall_strike']
     day_put_wall = day_profile['put_wall_strike']
@@ -4893,6 +4906,8 @@ def generate_gex_payload():
         "two_change_pct": otc_change_pct,
         "day_txf_price": day_txf_price,
         "night_txf_price": night_txf_price,
+        "gex_anchor_price": gex_profile.get("gex_anchor_price"),
+        "night_vs_day_close": (round(night_txf_price - day_txf_price, 1) if (night_txf_price and day_txf_price) else None),   # 夜盤期貨 − 日盤期貨收盤（不是基差：基差是同一時段期貨 − 現貨）
         "txf_price": txf_price,
         "zero_gamma_level": gex_profile['zero_gamma_level'],
         "gex_plus_flip": gex_profile['gex_plus_flip'],

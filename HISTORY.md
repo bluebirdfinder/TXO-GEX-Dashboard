@@ -141,6 +141,9 @@
 - **修正**（`scripts/fetch_and_calc_vision.py` 的 `calculate_true_gex_profile`）：Call Wall＝現價上方買權側 GEX 最大；Put Wall＝現價下方賣權側 |GEX| 最大。舊的不限位置峰值另存為 `call_gex_peak_strike`／`put_gex_peak_strike` 供對照。**Max Pain 算法與位置完全不動**（使用者長期觀察很準）。
 - **驗證**：`scripts/test_gex_walls.py` 8 項全過；重編譯後 10/16 資料 Call Wall 48,000、Put Wall 47,000、Max Pain 46,500（不變）、舊峰值 46,300 保留；8 大位置版次一致、現貨／期指方向性 Sanity 通過。
 - **未做（刻意分階段）**：頭條「只給下一檔到期」的 `weekly_focus` 欄位、Gamma Flip／OI 分界措辭、TG 與網頁文案，等多日（含 10/21 結算）並排驗證後再決定。
+- **同版追加 1：微台散戶多空比**：散戶多空頭由「近月 OI − 法人部位（全月份）」推得，近月 OI 比法人全月空單小時空頭被夾成 0（10/16 微台：淨 68,652 → 顯示 51.56%；正確 72,659 → 54.57%）。改用全月合計 OI 當基底，稽核由 FAIL 轉 PASS。
+- **同版追加 2：夜盤點位改以夜盤價錨定**（10/17 夜盤快訊 Call Wall 46,300、Put Wall 47,000 錯位的根因之一）：夜盤時加權現貨已收盤停在 47,111，夜盤期貨 46,140，點位與 ±900 履約價窗口仍錨定日盤收盤，現價下方的牆根本算不到。`calculate_true_gex_profile` 新增 `wall_extra`（牆位搜尋多看 600 點，長條圖與總和仍 ±900，Max Pain 只看 OI 不受影響），夜盤用夜盤期貨價當錨（與既有 `active_night_spot` 慣例一致）；新增輸出 `gex_anchor_price`、`night_vs_day_close`（夜盤期貨−日盤期貨收盤，**不是基差**）。模擬夜盤 05:30 實跑：Call Wall 46,300／Put Wall 46,000／Max Pain 46,500（不變）。測試 `scripts/test_gex_night_anchor.py` 4 項。
+- **未解**：「期現貨價差 (Basis)」文字由 Lumi 端組裝，夜盤拿夜盤期貨減日盤收盤現貨不是基差，需 Lumi 改用 `night_vs_day_close` 並改名；週末頁面「到期組成」仍含已結算 F3 的問題待查。
 - **下游注意**：Lumi `quant_advisor.py`／Cloudflare worker 直接讀牆位，語意改變，需與 Lumi 約同時上線。
 
 ### 🔍 v64.17 後續微調（未升版號）：戰情室網頁第三輪稽核——價格／漲跌／時間軸／設定欄位 (2026-10-01)
