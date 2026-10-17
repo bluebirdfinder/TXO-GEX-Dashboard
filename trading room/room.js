@@ -463,10 +463,29 @@ async function loadDashboardData() {
 
   // Phase 3: Load Multi-Asset Multi-Timeframe K-Lines Cache
   try {
-    const klineRes = await fetch('../data/klines_cache.json?t=' + Math.floor(Date.now() / 300000));
-    if (klineRes.ok) {
-      klinesCacheData = await klineRes.json();
-      console.log('✅ [Phase 3] Loaded real multi-timeframe K-line cache for 8 core assets.');
+    // 2026-10-17：GitHub Pages 上的 klines_cache.json 沒有富邦本機累積的最新分K（實測落後一整個場次：週六還停在週五日盤 47,366，
+    // 週五夜盤收 46,140 沒有）。在公開網頁開戰情室時，本機報價服務（localhost:8000）有開就優先讀它那份；讀不到才退回 Pages 的。
+    if (GATEWAY_BASE) {
+      try {
+        const ctl = new AbortController();
+        const timer = setTimeout(() => ctl.abort(), 8000);
+        const localRes = await fetch(GATEWAY_BASE + '/data/klines_cache.json?t=' + Math.floor(Date.now() / 60000), { signal: ctl.signal });
+        clearTimeout(timer);
+        if (localRes.ok) {
+          const localData = await localRes.json();
+          if (localData && localData.assets && Object.keys(localData.assets).length) {
+            klinesCacheData = localData;
+            console.log('✅ [Phase 3] Loaded K-line cache from local gateway (newer than GitHub Pages).');
+          }
+        }
+      } catch (e) { /* 本機沒開：用下面 Pages 的那份 */ }
+    }
+    if (!klinesCacheData) {
+      const klineRes = await fetch('../data/klines_cache.json?t=' + Math.floor(Date.now() / 300000));
+      if (klineRes.ok) {
+        klinesCacheData = await klineRes.json();
+        console.log('✅ [Phase 3] Loaded real multi-timeframe K-line cache for 8 core assets.');
+      }
     }
   } catch (e) {
     console.warn('⚠️ Could not load ../data/klines_cache.json', e);
@@ -4632,6 +4651,7 @@ const LIVE_BAR_SECONDS = { '1M': 60, '3M': 180, '5M': 300, '15M': 900, '30M': 18
 let liveBar = null;   // { tf, time, open, high, low, close, partial }
 function applyLiveTickToChart(price) {
   if (!candleSeries || !(price > 0)) return;
+  if (!isTaifexSessionOpenNow()) return;             // 休市（週末／盤間）不開新K棒：最後一根就是最近一個場次的收盤
   if ((currentActiveSymbol?.symbol || 'TXF') !== 'TXF') return;
   const step = LIVE_BAR_SECONDS[currentTf];
   if (!step) { setLiveBarNotice(''); return; }      // 4H／日／週／月K 的分段規則有盤別邊界，不在前端硬湊
