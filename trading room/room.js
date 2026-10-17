@@ -51,6 +51,19 @@ let cciLineSeries = null;
 let cciMarkers = [];
 
 let activeSub4 = 'adx'; // Default to ADX Pro V3
+// 大戶散戶動能的刻度：柱（委託口差，約 ±50）和線（成交筆數差，可到 ±1000+）單位差 30 倍，放同一軸柱子會被壓扁看不見，
+// 所以柱／黃線用右軸、青線用左軸；「聚焦」模式把刻度夾在 95% 資料範圍，尖峰不再把其他都壓平（右上角可切回完整）。
+let momentumFocus = true;
+const momentumVals = { big: [], retail: [] };
+function momentumFocusRange(key) {
+  const v = momentumVals[key].map(x => Math.abs(x)).filter(x => isFinite(x)).sort((a, b) => a - b);
+  if (v.length < 5) return null;
+  const lim = Math.max(v[Math.floor(v.length * 0.95)] * 1.25, 1);
+  return { priceRange: { minValue: -lim, maxValue: lim } };
+}
+function momentumAutoscale(key) {
+  return (orig) => (momentumFocus ? momentumFocusRange(key) : null) || orig();
+}
 let momentumPollTimer = null; // 大戶散戶動能：輪詢 /api/momentum 的計時器
 let cvdPollTimer = null; // CVD：輪詢 /api/cvd 的計時器
 let leftPanelCollapsed = false;
@@ -1408,6 +1421,8 @@ function renderSub4Chart(data) {
   if (sub4Series.adxLine) { subChart4.removeSeries(sub4Series.adxLine); sub4Series.adxLine = null; }
   if (sub4Series.ao) { subChart4.removeSeries(sub4Series.ao); sub4Series.ao = null; }
   if (sub4Series.cvd) { subChart4.removeSeries(sub4Series.cvd); sub4Series.cvd = null; }
+  subChart4.applyOptions({ leftPriceScale: { visible: false } });
+  { const mb = document.getElementById('momentum-scale-btn'); if (mb) mb.style.display = 'none'; }
   if (sub4Series.momentumHist) { subChart4.removeSeries(sub4Series.momentumHist); sub4Series.momentumHist = null; }
   if (sub4Series.momentumLine) { subChart4.removeSeries(sub4Series.momentumLine); sub4Series.momentumLine = null; }
   if (sub4Series.retailLine) { subChart4.removeSeries(sub4Series.retailLine); sub4Series.retailLine = null; }
@@ -1502,23 +1517,27 @@ function renderSub4Chart(data) {
     const isMomentumEligible = !!symbolCode;
     if (badge) {
       badge.innerText = isMomentumEligible
-        ? `🐂 大戶散戶動能 (${symbolCode} 真實 Books/Trades 即時串接；資料自服務啟動後累積)`
+        ? `🐂 大戶散戶動能 (${symbolCode})：柱＝大戶委託口差（右軸）｜青線＝散戶成交筆數差（左軸）｜黃虛線＝與柱同源`
         : '🐂 大戶散戶動能 (只有台指期／小台／微台與有個股期貨的股票才有委託簿數據，此商品沒有)';
     }
 
     // 1. 大戶委託口差 (紅柱=偏多掛單較多，綠柱=偏空掛單較多；來源：Books 五檔委買委賣總口數差)
     sub4Series.momentumHist = subChart4.addHistogramSeries({
       priceScaleId: 'right',
-      title: ''
+      title: '',
+      autoscaleInfoProvider: momentumAutoscale('big')
     });
 
     // 2. 散戶成交筆數差 (青綠色；來源：Trades 逐筆成交，買筆數-賣筆數，非口數)
     sub4Series.retailLine = subChart4.addLineSeries({
       color: '#00CEC9',
       lineWidth: 1.5,
-      priceScaleId: 'right',
-      title: ''
+      priceScaleId: 'left',
+      title: '',
+      autoscaleInfoProvider: momentumAutoscale('retail')
     });
+    subChart4.applyOptions({ leftPriceScale: { visible: true, borderColor: 'rgba(0, 206, 201, 0.5)', scaleMargins: { top: 0.26, bottom: 0.08 } } });
+    sub4Series.retailLine.createPriceLine({ price: 0, color: 'rgba(0, 206, 201, 0.35)', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '' });
 
     // 3. 市場委買委賣口差 (黃線；目前與大戶委託口差同源，見後端註解說明限制)
     sub4Series.marketOrderLine = subChart4.addLineSeries({
@@ -1526,8 +1545,10 @@ function renderSub4Chart(data) {
       lineWidth: 1,
       lineStyle: LightweightCharts.LineStyle.Dashed,
       priceScaleId: 'right',
-      title: ''
+      title: '',
+      autoscaleInfoProvider: momentumAutoscale('big')
     });
+    ensureMomentumScaleButton();
 
     // 4. 0 基準水平線
     sub4Series.momentumHist.createPriceLine({
@@ -1568,6 +1589,8 @@ async function fetchAndAppendMomentumBar(symbol) {
     const t = Math.floor(bar.bar_start_ts);
     const isBull = bar.big_order_diff >= 0;
 
+    momentumVals.big.push(bar.big_order_diff); momentumVals.retail.push(bar.retail_trade_count_diff);
+    if (momentumVals.big.length > 1500) { momentumVals.big.shift(); momentumVals.retail.shift(); }
     if (sub4Series.momentumHist) {
       sub4Series.momentumHist.update({
         time: t,
@@ -1600,6 +1623,8 @@ async function loadMomentumHistory(symbol) {
     if (!res.ok) return;
     const bars = ((await res.json()) || {}).bars || [];
     if (!bars.length || activeSub4 !== 'momentum' || !sub4Series.momentumHist) return;
+    momentumVals.big = bars.map(b => b.big);
+    momentumVals.retail = bars.map(b => b.retail);
     sub4Series.momentumHist.setData(bars.map(b => ({
       time: b.t, value: b.big,
       color: b.big >= 0 ? 'rgba(255, 71, 87, 0.85)' : 'rgba(46, 213, 115, 0.85)'
@@ -4788,3 +4813,31 @@ async function checkMemoryDue() {
   } catch (e) {}
 }
 document.addEventListener('DOMContentLoaded', () => { setTimeout(checkMemoryDue, 3500); setInterval(checkMemoryDue, 30 * 60 * 1000); });
+
+
+// 大戶散戶動能副圖右上角的「聚焦／完整」刻度切換鈕（只建一次；只在動能分頁顯示）
+function ensureMomentumScaleButton() {
+  const strip = document.querySelector('#sub-chart-pane-4 .sub4-tab-group');
+  if (!strip) return;
+  let btn = document.getElementById('momentum-scale-btn');
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'momentum-scale-btn';
+    btn.className = 'sub4-tab-btn';
+    btn.title = '聚焦：刻度夾在 95% 資料範圍，柱子看得清楚（尖峰會被截掉）。完整：含全部尖峰。也可直接在刻度上下拖曳縮放、雙擊還原。';
+    btn.addEventListener('click', () => {
+      momentumFocus = !momentumFocus;
+      paintMomentumScaleButton();
+      [sub4Series.momentumHist, sub4Series.retailLine, sub4Series.marketOrderLine].forEach(sr => { if (sr) sr.priceScale().applyOptions({ autoScale: true }); });
+      if (sub4Series.momentumHist) sub4Series.momentumHist.applyOptions({ autoscaleInfoProvider: momentumAutoscale('big') });
+      if (sub4Series.retailLine) sub4Series.retailLine.applyOptions({ autoscaleInfoProvider: momentumAutoscale('retail') });
+    });
+    strip.appendChild(btn);
+  }
+  btn.style.display = '';
+  paintMomentumScaleButton();
+}
+function paintMomentumScaleButton() {
+  const btn = document.getElementById('momentum-scale-btn');
+  if (btn) btn.textContent = momentumFocus ? '🔍 刻度：聚焦' : '🔍 刻度：完整';
+}
