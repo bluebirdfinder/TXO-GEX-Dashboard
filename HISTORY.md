@@ -137,6 +137,7 @@
 
 ### 🚀 v64.18 Call/Put Wall 改教科書定義（Call Wall=現價上方、Put Wall=現價下方；Max Pain 不動） (2026-10-17)
 
+- **空資料防護（2026-10-17）**：期交所未平倉抓取失敗（選擇權鏈為空）時，不再發布全 0 剖面（10/14 23:59 曾發布 Call/Put Wall 47,700/47,700、總 GEX 0、gamma_flip_standard 空）。改為沿用上一份正常 `gex_data.json` 的同名 GEX 欄位、輸出 `gex_chain_stale: true`、並跳過該輪場次快照寫入。測試 `scripts/test_gex_empty_chain_guard.py`；另有 `scripts/test_settled_exclusion.py`（結算日 13:30 後剔除已結算合約，引擎 9/16 起已具備）。
 - **根因**：舊引擎的 Call Wall＝買權側 GEX 最大的履約價、Put Wall＝賣權側 |GEX| 最大的履約價，**不限制在現價上方／下方**。10/16 盤後加權 47,111，Call Wall 顯示 46,300（現價下方 811 點，且低於 Put Wall 47,000），與教科書「天花板在上、地板在下」相反。這是定義問題，不是算錯。
 - **修正**（`scripts/fetch_and_calc_vision.py` 的 `calculate_true_gex_profile`）：Call Wall＝現價上方買權側 GEX 最大；Put Wall＝現價下方賣權側 |GEX| 最大。舊的不限位置峰值另存為 `call_gex_peak_strike`／`put_gex_peak_strike` 供對照。**Max Pain 算法與位置完全不動**（使用者長期觀察很準）。
 - **驗證**：`scripts/test_gex_walls.py` 8 項全過；重編譯後 10/16 資料 Call Wall 48,000、Put Wall 47,000、Max Pain 46,500（不變）、舊峰值 46,300 保留；8 大位置版次一致、現貨／期指方向性 Sanity 通過。
