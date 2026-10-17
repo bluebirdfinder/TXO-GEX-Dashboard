@@ -256,9 +256,10 @@ class FubonAPIProvider:
             return self.last_cache
 
         try:
-            now_h = datetime.datetime.now().hour
-            # Session determination: 15:00 ~ 08:45 uses AFTERHOURS / Night session, 08:45 ~ 14:00 uses REGULAR
-            session_mode = "AFTERHOURS" if (now_h >= 15 or now_h < 8 or (now_h == 8 and datetime.datetime.now().minute < 45)) else "REGULAR"
+            # Session determination: 15:00 ~ 08:45 uses AFTERHOURS / Night session, 08:45 ~ 15:00 uses REGULAR.
+            # 2026-10-17: 週末沒有日盤。週六 05:00 之後到週一 08:45 之前，「最近一個場次」是週五夜盤，
+            # 之前只看鐘點，週六上午被判成日盤，現價顯示週五日盤收盤 47,242，而 K 線與 TradingView 是夜盤收盤 46,140。
+            session_mode = self._quote_session_mode(datetime.datetime.now())
 
             # Query real-time futures quote.
             # Verified against the live API 2026-10-01: the `session` parameter only accepts "afterhours" (night session).
@@ -326,6 +327,18 @@ class FubonAPIProvider:
             return {'spot_price': None, 'otc_price': None, 'txf_price': None, 'change': 0.0, 'pct': 0.0,
                     'source': 'Fubon Neo API (no fresh quote)'}
         return self.last_cache
+
+    @staticmethod
+    def _quote_session_mode(now):
+        """現價要查哪個盤別（台北本機時間）。"AFTERHOURS"＝夜盤（含週末：最近一個場次是週五夜盤）。
+        不含國定假日（假日沒有日盤也沒有夜盤，仍會依鐘點判斷，Fubon 回傳的就是最近一個場次）。"""
+        hm = now.hour * 60 + now.minute
+        wd = now.weekday()  # Mon=0 … Sun=6
+        if wd == 6 or (wd == 5 and hm >= 5 * 60):
+            return "AFTERHOURS"
+        if hm >= 15 * 60 or hm < 8 * 60 + 45:
+            return "AFTERHOURS"
+        return "REGULAR"
 
     def get_stock_quote(self, symbol):
         """個股／ETF 即時報價（富邦 stock.intraday.quote）。2026-10-07 新增：戰情室個股報價原本只吃一份沒排程的舊檔。
