@@ -115,8 +115,57 @@ function buildCvdCandlesFromPoints(points, barSeconds) {
   return candles;
 }
 
+// ---- CVD 歷史段：TradingView 式估算（2026-10-17）----
+// TV 內建「Cumulative Volume Delta」不是逐筆資料，而是用更小週期（這裡用 1 分 K）的成交量，依該根漲跌分買賣：
+// 收>開 計買量、收<開 計賣量、收=開 看收盤與前收、再相同沿用上一根方向；每個場次（日盤 08:45／夜盤 15:00）起算歸零。
+// 這是「估算」不是真實買賣方向，所以只用來補「本服務開始累積之前」的歷史；即時段仍是真實逐筆 tick-rule。
+function cvdSessionKey(ts) {
+  const d = new Date((ts + 8 * 3600) * 1000);                     // 用 UTC 欄位讀台北時間
+  const hm = d.getUTCHours() * 60 + d.getUTCMinutes();
+  const ymd = (x) => x.toISOString().slice(0, 10);
+  if (hm >= 15 * 60) return ymd(d) + 'N';
+  if (hm < 5 * 60) return ymd(new Date(d.getTime() - 86400000)) + 'N';
+  return ymd(d) + 'D';
+}
+function buildTvStyleCvdCandles(symbol, barSeconds) {
+  const bars = localBarsFor(symbol, '1M', 9000);
+  if (!bars || !barSeconds) return [];
+  let cum = 0, prevKey = null, prevDir = 1, prevClose = null, cur = null;
+  const out = [];
+  for (const b of bars) {
+    const key = cvdSessionKey(b.time);
+    if (key !== prevKey) { cum = 0; prevKey = key; prevDir = 1; prevClose = null; }
+    let dir;
+    if (b.close > b.open) dir = 1;
+    else if (b.close < b.open) dir = -1;
+    else if (prevClose != null && b.close > prevClose) dir = 1;
+    else if (prevClose != null && b.close < prevClose) dir = -1;
+    else dir = prevDir;
+    prevDir = dir; prevClose = b.close;
+    const open = cum;
+    cum += dir * (b.volume || 0);
+    const bucket = Math.floor(b.time / barSeconds) * barSeconds;
+    if (!cur || cur.time !== bucket) {
+      if (cur) out.push(cur);
+      cur = { time: bucket, open, high: Math.max(open, cum), low: Math.min(open, cum), close: cum };
+    } else {
+      cur.high = Math.max(cur.high, cum); cur.low = Math.min(cur.low, cum); cur.close = cum;
+    }
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+// 歷史估算段 + 即時真實段（即時段第一根之前才用估算，兩段在畫面上以徽章說明）
+function mergeCvdCandles(est, live) {
+  if (!live || !live.length) return est;
+  const t0 = live[0].time;
+  return est.filter(c => c.time < t0).concat(live);
+}
+
 let sub4Series = {
+  skeleton: null,
   adx: null,
+  adxCloud: null,
   adxLine: null,
   ao: null,
   cvd: null,
@@ -974,24 +1023,47 @@ function generateIndicatorsData(tf) {
  * Render all 5 Charts with Datasets
  */
 // ---- 主圖與 ADX 副圖的指標運算：全部在私有 Cloudflare Worker（indicator=chart），網頁只畫結果 ----
-const CHART_BUNDLE_FIELDS = ['ma7', 'ma17', 'ma88', 'ma200', 'adxLine', 'adxHist', 'adxSignals', 'markers', 'demarkMarkers',
+const CHART_BUNDLE_FIELDS = ['ma7', 'ma17', 'ma88', 'ma200', 'adxLine', 'adxHist', 'adxSignals', 'adxMeta', 'markers', 'demarkMarkers',
   'vwapData', 'vwapUpper', 'vwapLower', 'smmaData', 'sarData', 'supertrendUp', 'supertrendDown', 'vrvpData'];
 const _chartBundleCache = {};
+// 2026-10-17：Worker 原本讀 GitHub Pages 上的 klines_cache.json，那份沒有富邦本機累積的最新分K（實測落後一整個場次），
+// 指標線會停在舊K棒。改成把「網頁手上這份最新K棒」用 POST 送給 Worker 算（K棒是公開資料；公式仍只在 Worker）。
+// 舊版 Worker 不認 POST（預檢被擋）→ 自動退回原本的 GET。
+function localBarsFor(symbol, tf, max) {
+  const arr = klinesCacheData && klinesCacheData.assets && klinesCacheData.assets[symbol] && klinesCacheData.assets[symbol].timeframes
+    ? klinesCacheData.assets[symbol].timeframes[tf] : null;
+  if (!Array.isArray(arr) || arr.length < 2) return null;
+  return arr.slice(-(max || 2500)).map(c => ({ time: c.time, open: c.open, high: c.high, low: c.low, close: c.close, volume: c.volume || 0 }));
+}
+async function workerPost(body) {
+  try {
+    const resp = await fetch(ADX_MTF_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!resp.ok) return null;
+    return await resp.json();
+  } catch (e) { return null; }
+}
 async function fetchChartBundle(symbol, tf) {
   const q = new URLSearchParams({
     indicator: 'chart', symbol, tf,
     smma: indicatorConfig.smmaLen || 200, rows: indicatorConfig.vrvpRows || 50, va: indicatorConfig.vrvpVa || 70,
     sar: indicatorConfig.sarStep || 0.02, stlen: indicatorConfig.stLen || 10, stmult: indicatorConfig.stMult || 3
   });
-  const key = q.toString();
+  const bars = localBarsFor(symbol, tf);
+  const key = q.toString() + (bars ? `|${bars.length}|${bars[bars.length - 1].time}|${bars[bars.length - 1].close}` : '');
   if (_chartBundleCache[key]) return _chartBundleCache[key];
+  const valid = (b) => b && Array.isArray(b.ma7) && Array.isArray(b.adxLine);
   const pr = (async () => {
     try {
-      const resp = await fetch(`${ADX_MTF_API}?${key}`);
+      if (bars) {
+        const params = {}; q.forEach((v, k) => { if (k !== 'indicator' && k !== 'symbol' && k !== 'tf') params[k] = v; });
+        const posted = await workerPost({ indicator: 'chart', symbol, tf, candles: bars, params });
+        if (valid(posted)) return posted;
+      }
+      const resp = await fetch(`${ADX_MTF_API}?${q.toString()}`);
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const b = await resp.json();
       // 舊版 Worker 不認得 indicator=chart，會當成 ADX 回 200；用欄位確認拿到的真的是運算結果
-      if (!b || !Array.isArray(b.ma7) || !Array.isArray(b.adxLine)) throw new Error('Worker 尚未更新（沒有 chart 端點）');
+      if (!valid(b)) throw new Error('Worker 尚未更新（沒有 chart 端點）');
       return b;
     } catch (e) {
       console.warn('⚠️ 主圖指標 Worker fetch failed:', e);
@@ -1001,6 +1073,19 @@ async function fetchChartBundle(symbol, tf) {
   })();
   _chartBundleCache[key] = pr;
   return pr;
+}
+// ADX 副圖資料／標記（精選模式：同 Pine 預設「僅精選」，隱藏假突破／假跌破）
+function adxMarkersFrom(signals) {
+  return (signals || [])
+    .filter(x => x.kind !== 'fakeBreakout' && x.kind !== 'fakeBreakdown')
+    .map(x => ({ time: x.time, position: x.position, color: x.color, shape: x.shape, text: x.text || '' }));
+}
+function setAdxData(data) {
+  if (!sub4Series.adx) return;
+  const line = data.adxLine || [];
+  sub4Series.adx.setData(line);
+  if (sub4Series.adxCloud) sub4Series.adxCloud.setData(line.map(p => ({ time: p.time, value: p.value })));
+  sub4Series.adx.setMarkers(adxMarkersFrom(data.adxSignals));
 }
 function applyChartBundle(data, b) {
   CHART_BUNDLE_FIELDS.forEach(k => { if (b[k] !== undefined) data[k] = b[k]; });
@@ -1149,10 +1234,7 @@ function renderChartData() {
       }
       setChartBundleNotice('');
       applyChartBundle(data, b);
-      if (activeSub4 === 'adx' && sub4Series.adx) {
-        sub4Series.adx.setData(data.adxLine);
-        sub4Series.adx.setMarkers(data.adxSignals);
-      }
+      if (activeSub4 === 'adx' && sub4Series.adx) setAdxData(data);
       renderMainOverlays(data);
     });
   } else {
@@ -1194,9 +1276,14 @@ async function fetchSmcFromWorker(symbol, tf) {
   if (hit && Date.now() - hit.at < 60000) return hit.value;
   let value = null;
   try {
-    const resp = await fetch(`${ADX_MTF_API}?indicator=smc&symbol=${encodeURIComponent(symbol)}&tf=${encodeURIComponent(tf)}${extra}`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const json = await resp.json();
+    const bars = localBarsFor(symbol, tf);
+    let json = null;
+    if (bars) json = await workerPost({ indicator: 'smc', symbol, tf, candles: bars, params: extra ? { fvg: 1, swingob: 1 } : {} });
+    if (!(json && Array.isArray(json.events))) {
+      const resp = await fetch(`${ADX_MTF_API}?indicator=smc&symbol=${encodeURIComponent(symbol)}&tf=${encodeURIComponent(tf)}${extra}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      json = await resp.json();
+    }
     if (json && Array.isArray(json.events)) value = json;
   } catch (e) {
     console.warn('⚠️ SMC Worker fetch failed (has the Worker been updated with indicator=smc?):', e);
@@ -1354,11 +1441,17 @@ let _momentumCacheKey = null;
 let _momentumCachePromise = null;
 
 async function fetchMomentumFromWorker(symbol, tf) {
-  const key = `${symbol}|${tf}`;
+  const _lb = localBarsFor(symbol, tf, 50);
+  const key = `${symbol}|${tf}|${_lb ? _lb[_lb.length - 1].time : ''}`;
   if (_momentumCacheKey === key && _momentumCachePromise) return _momentumCachePromise;
   _momentumCacheKey = key;
   _momentumCachePromise = (async () => {
     try {
+      const bars = localBarsFor(symbol, tf);
+      if (bars) {
+        const posted = await workerPost({ indicator: 'momentum', symbol, tf, candles: bars });
+        if (posted && posted.macd && posted.cci) return posted;
+      }
       const resp = await fetch(`${ADX_MTF_API}?indicator=momentum&symbol=${symbol}&tf=${tf}`);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       return await resp.json();
@@ -1397,17 +1490,39 @@ async function updateMomentumSeries(symbol, tf, data) {
 async function updateAdxMtfBadge() {
   const badge = document.getElementById('pane-4-badge');
   if (!badge) return;
+  const sym = currentActiveSymbol?.symbol || 'TXF';
   try {
-    const resp = await fetch(`${ADX_MTF_API}?symbol=TXF&mtf=1`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const j = await resp.json();
+    let j = null;
+    const tfs = {};
+    ['15M', '1H', '4H', '1D'].forEach(k => { const b = localBarsFor(sym, k, 800); if (b) tfs[k] = b; });
+    if (Object.keys(tfs).length === 4) j = await workerPost({ indicator: 'adx', symbol: sym, mtf: 1, tf: currentTf, tfs });
+    if (!j || !j.adx) {
+      const resp = await fetch(`${ADX_MTF_API}?symbol=${encodeURIComponent(sym)}&mtf=1`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      j = await resp.json();
+    }
     const adx = j.adx || {};
-    const fmt = (v) => (v == null ? '—' : v.toFixed(1));
-    badge.innerText = `🔥 ADX Pro V3 雙色趨勢強度 (台指期 EMA14 全時 15M:${fmt(adx['15M'])} 1H:${fmt(adx['1H'])} 4H:${fmt(adx['4H'])} 1D:${fmt(adx['1D'])})`;
+    // 與 Pine 看板同規則：>=30 紅燈、>=20 紫燈、其餘綠燈
+    const cell = (name, v) => (v == null ? `${name} —` : `${name} ${v.toFixed(1)} ${v >= 30 ? '🔴' : (v >= 20 ? '🟣' : '🟢')}`);
+    const mode = j.mode ? `${j.mode}　` : '';
+    badge.innerText = `🔥 ADX Pro V3　${mode}${cell('15M', adx['15M'])}　${cell('1H', adx['1H'])}　${cell('4H', adx['4H'])}　${cell('日', adx['1D'])}`;
   } catch (e) {
     console.warn('⚠️ ADX MTF badge fetch failed:', e);
-    badge.innerText = '🔥 ADX Pro V3 雙色趨勢強度 (台指期 EMA14 全時 — 暫時無法取得多週期數據)';
+    badge.innerText = '🔥 ADX Pro V3 (暫時無法取得多週期數據)';
   }
+}
+
+// 五張圖用「第幾根」對齊捲動位置。CVD／大戶散戶動能的資料筆數比主圖少（只有服務啟動後或最近幾個場次才有），
+// 不補的話它們會被擠在副圖最左邊、跟主圖的時間對不上（2026-10-17 使用者回報：柱子在最左邊）。
+// 放一條「只有時間、沒有數值」的隱形線，把主圖所有K棒時間都登記進來，指標資料就會落在正確的時間位置。
+function addTimeSkeleton(data) {
+  const times = (data && data.candles) || [];
+  if (!times.length) return;
+  sub4Series.skeleton = subChart4.addLineSeries({
+    color: 'rgba(0,0,0,0)', lineWidth: 1, priceScaleId: 'right',
+    lastValueVisible: false, priceLineVisible: false, crosshairMarkerVisible: false
+  });
+  sub4Series.skeleton.setData(times.map(c => ({ time: c.time })));
 }
 
 /**
@@ -1418,6 +1533,8 @@ function renderSub4Chart(data) {
   
   // Clear previous series
   if (sub4Series.adx) { subChart4.removeSeries(sub4Series.adx); sub4Series.adx = null; }
+  if (sub4Series.adxCloud) { subChart4.removeSeries(sub4Series.adxCloud); sub4Series.adxCloud = null; }
+  if (sub4Series.skeleton) { subChart4.removeSeries(sub4Series.skeleton); sub4Series.skeleton = null; }
   if (sub4Series.adxLine) { subChart4.removeSeries(sub4Series.adxLine); sub4Series.adxLine = null; }
   if (sub4Series.ao) { subChart4.removeSeries(sub4Series.ao); sub4Series.ao = null; }
   if (sub4Series.cvd) { subChart4.removeSeries(sub4Series.cvd); sub4Series.cvd = null; }
@@ -1433,34 +1550,38 @@ function renderSub4Chart(data) {
   const badge = document.getElementById('pane-4-badge');
 
   if (activeSub4 === 'adx') {
-    if (badge) badge.innerText = '🔥 ADX Pro V3 雙色趨勢強度 (台指期 EMA14 全時 讀取中...)';
+    if (badge) badge.innerText = '🔥 ADX Pro V3 讀取中...';
     updateAdxMtfBadge(); // async — fills in real 15M/1H/4H/1D values once the API responds
 
-    // 1. ADX Area Series with smooth gradient fill (1:1 對齊 TradingView)
-    sub4Series.adx = subChart4.addAreaSeries({
-      topColor: 'rgba(239, 83, 80, 0.38)',
-      bottomColor: 'rgba(38, 166, 154, 0.04)',
-      lineColor: '#FF5252',
-      lineWidth: 2,
-      priceScaleId: 'right',
-      title: '',
-      // 依可見資料自動縮放：下限固定 0、上限至少涵蓋 26.65 頂部門檻，避免整段被壓成平線
-      autoscaleInfoProvider: (original) => {
-        const res = original();
-        const dataMax = res && res.priceRange ? res.priceRange.maxValue : 0;
-        const top = Math.max(30, Math.min(dataMax * 1.1, 100));
-        return { priceRange: { minValue: 0, maxValue: top }, margins: res ? res.margins : undefined };
-      }
+    // 對照 Pine（adx_dual_color_v3.pine）的畫法：
+    //  - 主線 4 色（>=20 上升亮紅 #FF5252／下降淡紅 #FF8A80；<20 上升亮綠 #00E676／下降深綠 #1B5E20），顏色由 Worker 逐點算好
+    //  - 雲帶：ADX 與 20 之間填色（>=20 紅、<20 綠，透明度 85%）
+    //  - 水平線 20 灰點線、30 紫虛線、50 橘虛線、75 紅實線
+    const adxAutoscale = (original) => {
+      const res = original();
+      const dataMax = res && res.priceRange ? res.priceRange.maxValue : 0;
+      const top = Math.max(35, Math.min(dataMax * 1.1, 100));
+      return { priceRange: { minValue: 0, maxValue: top }, margins: res ? res.margins : undefined };
+    };
+    sub4Series.adxCloud = subChart4.addBaselineSeries({
+      baseValue: { type: 'price', price: 20 },
+      topLineColor: 'rgba(0,0,0,0)', bottomLineColor: 'rgba(0,0,0,0)',
+      topFillColor1: 'rgba(255, 82, 82, 0.15)', topFillColor2: 'rgba(255, 82, 82, 0.15)',
+      bottomFillColor1: 'rgba(0, 230, 118, 0.15)', bottomFillColor2: 'rgba(0, 230, 118, 0.15)',
+      lineWidth: 1, priceScaleId: 'right', lastValueVisible: false, priceLineVisible: false, crosshairMarkerVisible: false,
+      autoscaleInfoProvider: adxAutoscale
     });
+    sub4Series.adx = subChart4.addLineSeries({
+      color: '#FF5252', lineWidth: 2, priceScaleId: 'right', title: '',
+      autoscaleInfoProvider: adxAutoscale
+    });
+    const LS = LightweightCharts.LineStyle;
+    sub4Series.adx.createPriceLine({ price: 20, color: 'rgba(158, 158, 158, 0.5)', lineStyle: LS.Dotted, lineWidth: 1, title: '' });
+    sub4Series.adx.createPriceLine({ price: 30, color: 'rgba(156, 39, 176, 0.6)', lineStyle: LS.Dashed, lineWidth: 1, title: '' });
+    sub4Series.adx.createPriceLine({ price: 50, color: 'rgba(255, 152, 0, 0.6)', lineStyle: LS.Dashed, lineWidth: 1, title: '' });
+    sub4Series.adx.createPriceLine({ price: 75, color: 'rgba(244, 67, 54, 0.6)', lineStyle: LS.Solid, lineWidth: 1, title: '' });
 
-    // 2. 4 大標準門檻參考線 (26.65 頂部, 22.37 突破, 11.63 打底, 0.00)
-    sub4Series.adx.createPriceLine({ price: 26.65, color: '#EF5350', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1.5, title: '' });
-    sub4Series.adx.createPriceLine({ price: 22.37, color: '#FFA726', lineStyle: LightweightCharts.LineStyle.Dashed, lineWidth: 1, title: '' });
-    sub4Series.adx.createPriceLine({ price: 11.63, color: '#26A69A', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '' });
-    sub4Series.adx.createPriceLine({ price: 0, color: 'rgba(255, 255, 255, 0.25)', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '' });
-
-    sub4Series.adx.setData(data.adxLine);
-    sub4Series.adx.setMarkers(data.adxSignals);
+    setAdxData(data);
   } else if (activeSub4 === 'ao') {
     // 真公式已搬去Cloudflare Worker（見 fetchMomentumFromWorker()），非同步抵達
     if (badge) badge.innerText = '⚡ AO 震盪指標 (Awesome Oscillator，讀取中...)';
@@ -1480,6 +1601,7 @@ function renderSub4Chart(data) {
       }
     });
   } else if (activeSub4 === 'cvd') {
+    addTimeSkeleton(data);
     // 2026-09-25 真實化：不再用K棒開高低收公式湊近似值，改即時輪詢後端 /api/cvd
     // （真實逐筆tick-rule買賣方向累積），見 fetchAndRenderCvd()。此session開始前、或後端
     // 尚未連上富邦Trades時，故意留白不補假資料，比照大戶散戶動能的處理方式。
@@ -1508,6 +1630,7 @@ function renderSub4Chart(data) {
     });
     if (isCvdEligible) startCvdLivePolling(cvdSymbolCode);
   } else if (activeSub4 === 'momentum') {
+    addTimeSkeleton(data);
     // 2026-09-13 更正：此副圖過去用 K 棒公式湊假數據，已移除。
     // 現在只畫「這個 session 開始追蹤之後」真正收到的富邦 Books(五檔)/Trades(逐筆成交) 資料，
     // 30分鐘 bar 由 fetchAndAppendMomentumBar() 即時輪詢附加，見該函式與後端
@@ -1663,45 +1786,44 @@ function stopMomentumLivePolling() {
  */
 let _cvdRetryAt = 0;  // 連不到本機閘道（如手機）時 60 秒才試一次
 async function fetchAndRenderCvd(symbol) {
-  if (Date.now() < _cvdRetryAt) return;
+  const barSeconds = CVD_TF_SECONDS[currentTf];
+  const est = barSeconds ? buildTvStyleCvdCandles(symbol, barSeconds) : [];
+  const badge = document.getElementById('pane-4-badge');
+  const showEst = (why) => {
+    if (activeSub4 !== 'cvd' || !sub4Series.cvd) return;
+    sub4Series.cvd.setData(est);
+    if (badge) badge.innerText = est.length
+      ? `🎯 CVD 累積量差 K 線｜${why}｜目前只顯示「TV 式估算」歷史（1 分 K 成交量依漲跌分買賣，各場次歸零）`
+      : `🎯 CVD 累積量差 K 線｜${why}`;
+  };
+  if (Date.now() < _cvdRetryAt) { showEst('本機報價服務未連線'); return; }
   try {
     const res = await fetch(`${GATEWAY_BASE}/api/cvd?symbol=${encodeURIComponent(symbol)}`, { cache: 'no-store' });
-    if (!res.ok) { _cvdRetryAt = Date.now() + 60000; return; }
+    if (!res.ok) { _cvdRetryAt = Date.now() + 60000; showEst('本機報價服務未連線'); return; }
     const payload = await res.json();
     if (activeSub4 !== 'cvd' || !sub4Series.cvd) return;
 
-    const badge = document.getElementById('pane-4-badge');
     const series = payload && payload.series;
 
-    if (!payload.trades_subscribed) {
-      sub4Series.cvd.setData([]);
-      if (badge) badge.innerText = '🎯 CVD 累積量差 K 線 (後端尚未連上富邦 Trades — 檢查 live_price_server.py 是否已啟動)';
-      return;
-    }
-    if (!series) {
-      sub4Series.cvd.setData([]);
-      if (badge) badge.innerText = '🎯 CVD 累積量差 K 線 (本次連線後尚未收到真實逐筆成交，等待成交中)';
-      return;
-    }
-
-    const barSeconds = CVD_TF_SECONDS[currentTf];
+    if (!payload.trades_subscribed) { showEst('後端尚未連上富邦 Trades'); return; }
+    if (!series) { showEst(isTaifexSessionOpenNow() ? '本次連線後尚未收到逐筆成交，等待成交中' : '休市中，沒有即時逐筆成交'); return; }
     if (!barSeconds) {
       sub4Series.cvd.setData([]);
-      if (badge) badge.innerText = '🎯 CVD 累積量差 K 線 (此時間週期尚未支援即時重建，請切換至1分~4小時)';
+      if (badge) badge.innerText = '🎯 CVD 累積量差 K 線 (此時間週期尚未支援，請切換至1分~4小時)';
       return;
     }
 
-    sub4Series.cvd.setData(buildCvdCandlesFromPoints(series.points, barSeconds));
+    const live = buildCvdCandlesFromPoints(series.points, barSeconds);
+    sub4Series.cvd.setData(mergeCvdCandles(est, live));
     if (badge) {
       const sessionStartStr = series.session_start_ts
         ? new Date(series.session_start_ts * 1000).toLocaleTimeString('zh-TW', { hour12: false })
         : '?';
-      badge.innerText = `🎯 CVD 累積量差 K 線 (真實逐筆成交，自本session ${sessionStartStr} 開始累積，共 ${series.trade_count_in_session} 筆；累積淨口數 ${series.cumulative_delta})`;
+      badge.innerText = `🎯 CVD 累積量差 K 線｜${sessionStartStr} 起為真實逐筆（${series.trade_count_in_session} 筆，累積淨口數 ${series.cumulative_delta}）；之前為 TV 式估算`;
     }
   } catch (e) {
     _cvdRetryAt = Date.now() + 60000;
-    // Gateway server (live_price_server.py) not running locally — fail silently,
-    // this is expected whenever the user isn't running it (e.g. this cloud session).
+    showEst('本機報價服務未連線');
   }
 }
 
