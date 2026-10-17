@@ -15,10 +15,13 @@ import time
 import threading
 import urllib.request
 import ssl
+import datetime
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 # Ensure project root is in sys.path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from scripts.mis_session import mis_market_type, mis_quote_is_stale
 
 try:
     sys.stdout.reconfigure(encoding='utf-8')
@@ -205,8 +208,9 @@ def mis_polling_worker():
     while True:
         try:
             # Poll TAIFEX MIS for TXF
-            now_h = time.localtime().tm_hour
-            market_type = '1' if (now_h >= 15 or now_h < 5) else '0'
+            # 場次判斷與富邦共用同一套規則（含週末＝週五夜盤），原本只看鐘點，週六上午會查到週五日盤收盤。2026-10-17
+            now_dt = datetime.datetime.now()
+            market_type = mis_market_type(now_dt)
             url = "https://mis.taifex.com.tw/futures/api/getQuoteList"
             payload = json.dumps({'MarketType': market_type, 'SymbolType': 'F'}).encode('utf-8')
             headers = {
@@ -226,7 +230,8 @@ def mis_polling_worker():
                     main_tx = tx_items[0]
                     last_p = float(main_tx.get('CLastPrice', 0))
                     ref_p = float(main_tx.get('CRefPrice', last_p) or last_p)
-                    if last_p > 0:
+                    # 開盤中報價時間太舊（例如抓到昨天收盤）就不發布；休市時發的是最近一個場次的收盤價。
+                    if last_p > 0 and not mis_quote_is_stale(now_dt, main_tx.get('CTime')):
                         chg = round(last_p - ref_p, 2)
                         pct = round((chg / ref_p * 100), 2) if ref_p > 0 else 0.0
                         state.update_index('txf', last_p, chg, pct, provider="TAIFEX_MIS")
