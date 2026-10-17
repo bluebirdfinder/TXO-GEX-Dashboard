@@ -224,6 +224,20 @@ function liveMacroPrice(sym) {
   const v = (liveMacro && k && (Date.now() - liveMacro.at) < 120000) ? liveMacro[k] : null;
   return (typeof v === 'number' && isFinite(v) && v > 0) ? v : null;
 }
+function setStaleQuoteNote(show) {
+  const p = document.getElementById('left-main-price');
+  if (!p || !p.parentNode) return;
+  let n = document.getElementById('left-stale-quote-note');
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'left-stale-quote-note';
+    n.style.cssText = 'color:#ffd700;font-size:0.68rem;font-weight:600;margin-top:2px;';
+    p.insertAdjacentElement('afterend', n);
+  }
+  const t = gexData && gexData.last_updated_time ? `（資料時間 ${gexData.last_updated_time}）` : '';
+  n.textContent = show ? `⚠ 非即時：本機富邦報價未連線，此為網站資料檔的價，可能不是最新場次${t}` : '';
+  n.style.display = show ? 'block' : 'none';
+}
 function liveTxfPrice() {
   return (liveTxf && (Date.now() - liveTxf.at) < 15000) ? liveTxf.price : null;
 }
@@ -2376,6 +2390,9 @@ function renderLeftPanel() {
   if (pEl) {
     pEl.innerText = baseP === null ? '—' : (currentActiveSymbol.is_yield ? `${baseP.toFixed(3)}%` : (baseP < 500 ? baseP.toFixed(2) : baseP.toLocaleString()));
   }
+  // 台指期沒有即時報價（本機報價服務沒開、手機等）時，這裡顯示的是網站資料檔裡的價（可能是週五日盤收盤，不是最新場次），
+  // 如實標明；有即時報價進來（下方 live tick 處理）就會自動消失。2026-10-17：畫面曾顯示 47,242，夜盤實際收 46,140，卻沒任何標示。
+  setStaleQuoteNote(['TXF', 'MTX', 'MXF', 'TMF'].includes(currentActiveSymbol.symbol) && liveTxfPrice() === null && baseP !== null);
 
   // Distances（抽成 refreshGexDistances()：即時報價進來時也要用最新價格重算，否則距離停在載入時的舊價）
   refreshGexDistances(baseP, cw, zg, pw, mp);
@@ -4761,6 +4778,7 @@ function initFubonLivePriceStream() {
 
       // 3. 台指期 (TXF)
       if (data.txf) {
+        setStaleQuoteNote(false);
         const valEl = document.getElementById('top-val-txf');
         const chgEl = document.getElementById('top-chg-txf');
         const leftMainP = document.getElementById('left-main-price');
