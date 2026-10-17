@@ -1880,6 +1880,35 @@ def days_from_expiries(ref_dt, expiries, tw_tz):
     return out
 
 
+def carry_forward_gex_profile(profile, data_dir=None):
+    """
+    2026-10-17 防護：期交所未平倉抓取失敗（選擇權鏈為空）時，calculate_true_gex_profile 會降級成全 0 的剖面
+    （10/14 23:59 曾因此發布 Call/Put Wall 47,700/47,700、總 GEX 0、gamma_flip_standard 空的垃圾快照）。
+    這時改為沿用上一份正常的 data/gex_data.json 內同名欄位（那是上一輪用真實 OI 算出來的真值，不是編造），
+    並標記 gex_chain_stale=True；上一份也不可用才維持原樣。回傳 (profile, carried:bool)。
+    """
+    try:
+        base = data_dir or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
+        with open(os.path.join(base, 'gex_data.json'), 'r', encoding='utf-8') as fh:
+            old = json.load(fh)
+        if old.get('gex_chain_stale'):
+            # 上一份本身就是沿用品：仍可再沿用（內容仍是最後一份真實計算），但保留標記
+            pass
+        if not old.get('total_gex') or old.get('call_wall_strike') is None or not old.get('total_gex_val'):
+            return profile, False
+        out = dict(profile)
+        for k in ("total_gex", "weekly_gex", "friday_gex", "monthly_gex", "zero_gamma_level", "gex_plus_flip",
+                  "gamma_flip_standard", "total_vex", "total_gex_val", "total_gex_plus", "call_wall_strike",
+                  "put_wall_strike", "call_gex_peak_strike", "put_gex_peak_strike", "max_pain_strike", "pc_ratio"):
+            if k in old:
+                out[k] = old[k]
+        out["gex_chain_stale"] = True
+        return out, True
+    except Exception as e:
+        print(f"[Warning] carry_forward_gex_profile failed: {e}")
+        return profile, False
+
+
 def build_real_option_chain(day_data, buckets):
     """
     Builds the {strike: {"call_oi_w1":.., "put_oi_w1":.., ...}} dict calculate_true_gex_profile()
@@ -3248,7 +3277,14 @@ def generate_gex_payload():
     # （與 active_night_spot、day_profile 用期貨價當 spot 的既有慣例一致），牆位搜尋範圍多放寬 600 點。Max Pain 只看 OI，不受影響。
     _gex_anchor = night_txf_price if (is_night_session and night_txf_price is not None and night_txf_price > 10000) else spot_price
     gex_profile = calculate_true_gex_profile(_gex_anchor, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, with_standard=True, days_w2=raw_days_w2, wall_extra=600)
+    _gex_chain_ok = bool(real_option_chain)
+    if not _gex_chain_ok:
+        print("[GUARD] 期交所未平倉為空 — 沿用上一份正常 GEX 欄位，不發布全 0 剖面")
+        gex_profile, _carried = carry_forward_gex_profile(gex_profile)
+        if not _carried:
+            print("[GUARD] 上一份 gex_data.json 也不可用，維持降級結果")
     gex_profile["gex_anchor_price"] = _gex_anchor
+    gex_profile.setdefault("gex_chain_stale", False)
 
     # 日盤收盤時的標準 Gamma Flip（2026-10-07）：盤中的 gamma_flip_standard 會隨現價與剩餘時間即時重算；
     # 要和羊叔等「收盤值」比，另存收盤版：用 OI 所屬交易日 13:30 的到期天數＋當日收盤現價。
@@ -3289,6 +3325,8 @@ def generate_gex_payload():
 
     # Day vs Night Session Shift Metrics
     day_profile = calculate_true_gex_profile(day_txf_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, days_w2=raw_days_w2, wall_extra=600)
+    if not _gex_chain_ok:
+        day_profile = dict(gex_profile)  # 沒有未平倉就無從分日夜：位移量歸零，不用全 0 剖面
     day_zero_gamma = day_profile['zero_gamma_level']
     day_call_wall = day_profile['call_wall_strike']
     day_put_wall = day_profile['put_wall_strike']
@@ -4253,7 +4291,8 @@ def generate_gex_payload():
     _snap_cw   = day_call_wall  if session_type == "DAY" else gex_profile['call_wall_strike']
     _snap_pw   = day_put_wall   if session_type == "DAY" else gex_profile['put_wall_strike']
     _snap_mp   = day_max_pain   if session_type == "DAY" else gex_profile['max_pain_strike']
-    write_current_session_snapshot(
+    if _gex_chain_ok:
+      write_current_session_snapshot(
         now_dt=now_dt, session_type=session_type,
         key_date=(_night_label_date if session_type == "NIGHT" else None),
         spot_price=spot_price, otc_price=otc_price, txf_price=_snap_txf,
@@ -4314,7 +4353,7 @@ def generate_gex_payload():
     global_base_strike = round(spot_price / 100) * 100
     for sess_item in history_10_sessions:
         s_spot = sess_item['spot_price']
-        if s_spot is None or s_spot <= 0:
+        if s_spot is None or s_spot <= 0 or not _gex_chain_ok:
             sess_item['total_gex'] = None
             sess_item['weekly_gex'] = None
             sess_item['friday_gex'] = None
@@ -4907,6 +4946,7 @@ def generate_gex_payload():
         "day_txf_price": day_txf_price,
         "night_txf_price": night_txf_price,
         "gex_anchor_price": gex_profile.get("gex_anchor_price"),
+        "gex_chain_stale": bool(gex_profile.get("gex_chain_stale")),
         "night_vs_day_close": (round(night_txf_price - day_txf_price, 1) if (night_txf_price and day_txf_price) else None),   # 夜盤期貨 − 日盤期貨收盤（不是基差：基差是同一時段期貨 − 現貨）
         "txf_price": txf_price,
         "zero_gamma_level": gex_profile['zero_gamma_level'],
