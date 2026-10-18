@@ -37,6 +37,7 @@ BACKUP_DIR = MEM_DIR / "backups"
 SHORT_KEEP = 8            # 短期記憶保留輪數
 SHORT_TTL_H = 36          # 超過這麼久的對話自動丟掉（避免昨天的盤勢誤導今天）
 LONG_MAX_CHARS = 6000     # 長期記憶注入上限
+CORE_MAX_CHARS = 4200     # 其中核心記憶最多佔 70%，至少留 30% 給一般記憶，核心塞滿時相關的一般記憶才擠得進來
 CHATLOG_KEEP_DAYS = 21
 ACT_D = 0.5               # ACT-R 記憶衰退指數（冪次遺忘曲線，常用 0.3~0.7）
 ACT_DEMOTE = -2.2         # 啟動值低於此 → 重要度 2 降為 1（約「只用過一次、超過 85 天」）
@@ -237,6 +238,9 @@ def format_memory_list():
     for x in items:
         exp = f"，到 {x['valid_until']}" if x.get("valid_until") else ""
         lines.append(f"- 【{IMPORTANCE_LABEL[x['importance']]}】{x['content']}（{x['date']}{exp}）")
+    warn = core_warning()
+    if warn:
+        lines += ["", warn]
     return "\n".join(lines)
 
 
@@ -313,15 +317,47 @@ def select_memory_for(question, symbol=""):
         if touched:
             _save_json(LONG_FILE, items)
     picked.sort(key=lambda x: (-x["importance"], x["date"]))
-    out, total = [], 0
+    out, core_total, other_total = [], 0, 0
     for x in picked:
-        exp = f"（有效至 {x['valid_until']}）" if x.get("valid_until") else ""
-        line = f"- 【{IMPORTANCE_LABEL[x['importance']]}】[{x['date']}] {x['content']}{exp}"
-        total += len(line)
-        if total > LONG_MAX_CHARS:
-            break
+        line = _mem_line(x)
+        if x["importance"] == 3:
+            if core_total + len(line) > CORE_MAX_CHARS:
+                continue            # 核心超過自己的預算：放不下的不帶（週報與「查看記憶」會警示），但不擠掉一般記憶
+            core_total += len(line)
+        else:
+            if core_total + other_total + len(line) > LONG_MAX_CHARS:
+                break
+            other_total += len(line)
         out.append(line)
     return "\n".join(out)
+
+
+def _mem_line(x):
+    exp = f"（有效至 {x['valid_until']}）" if x.get("valid_until") else ""
+    return f"- 【{IMPORTANCE_LABEL[x['importance']]}】[{x['date']}] {x['content']}{exp}"
+
+
+def core_status():
+    """核心記憶佔用：(條數, 字數, 佔核心預算百分比, 放不進腦中的條數)。"""
+    core = sorted((x for x in long_items() if x["importance"] == 3), key=lambda x: x["date"])
+    total, dropped = 0, 0
+    for x in core:
+        n = len(_mem_line(x))
+        if total + n > CORE_MAX_CHARS:
+            dropped += 1
+        else:
+            total += n
+    used = sum(len(_mem_line(x)) for x in core)
+    return len(core), used, round(100 * used / CORE_MAX_CHARS), dropped
+
+
+def core_warning():
+    n, chars, pct, dropped = core_status()
+    if dropped:
+        return f"⚠️ 核心記憶共 {n} 條、約 {chars} 字，已超過核心預算（{CORE_MAX_CHARS} 字），有 {dropped} 條放不進腦中。請整理或降級一些核心。"
+    if pct >= 70:
+        return f"核心記憶共 {n} 條、約 {chars} 字，已用核心預算 {pct}%，快滿了，建議整理。"
+    return ""
 
 
 # ---------- 到期提醒（前瞻記憶：記得「未來要做的事」）----------
@@ -834,6 +870,9 @@ def consolidate(force=False):
             lines += [f"- {p['pattern']}（出現 {p.get('seen', 1)} 次；例：「{p['evidence'][0][:40]}」）" + ("　🆕" if p["pattern"] in new_patterns else "") for p in cand]
         if asks:
             lines += ["", "**想跟你確認：**"] + [f"- {x}" for x in asks]
+        warn = core_warning()
+        if warn:
+            lines += ["", warn]
         lines += ["", "想忘掉哪件事，直接說「忘記：關鍵字」；說「查看記憶」可看全部。"]
         text = "\n".join(lines)
         (REPORT_DIR / f"weekly_{today_str()}.md").write_text(text, encoding="utf-8")
