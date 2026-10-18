@@ -145,22 +145,40 @@ def long_items():
     return _load_json(LONG_FILE, [])
 
 
-def add_long(text, importance=2, valid_until=None, source="使用者"):
+ADDED_OK = ("added", "superseded")
+
+
+def add_long(text, importance=2, valid_until=None, source="使用者", allow_supersede=True):
+    """回傳狀態字串（空字串＝沒東西可寫）：
+    added 新增 / superseded 新句包含舊句、資訊更多 → 舊的封存留底並被新的取代 / dup 已有同義或更完整的條目 /
+    conflict 新句比舊句長但不允許自動取代（交給使用者決定）。"""
     text = re.sub(r"\s+", " ", text or "").strip()
     importance = importance if importance in (1, 2, 3) else 2
     if valid_until and not re.match(r"^\d{4}-\d{2}-\d{2}$", valid_until):
         valid_until = None
     if not text:
-        return False
+        return ""
     with _lock:
         items = long_items()
-        if any(text in x["content"] or x["content"] in text for x in items):
-            return False  # 去重
+        if any(text in x["content"] for x in items):
+            return "dup"  # 新句已被某條涵蓋（沒有新資訊）
+        longer = next((x for x in items if x["content"] in text), None)
+        if longer and not allow_supersede:
+            return "conflict"
         it = _new_item(text, importance, valid_until, source)
+        if longer:
+            # 新句包含舊句＝資訊更多：不丟棄新句；舊的封存留底（可還原），重要度與使用紀錄沿用
+            archive_items(lambda y, i=longer["id"]: y["id"] == i, "被更完整的新記憶取代")
+            it["importance"] = max(importance, longer["importance"])
+            it["supersedes"] = longer["id"]
+            it["uses"] = (longer.get("uses") or [])[-USES_KEEP:] or it["uses"]
+            if not valid_until:
+                it["valid_until"] = longer.get("valid_until")
+            items = long_items()
         items.append(it)
         _save_json(LONG_FILE, items)
-        _log_change("add", None, it, source)
-    return True
+        _log_change("supersede" if longer else "add", longer, it, source)
+    return "superseded" if longer else "added"
 
 
 def archive_items(pred, reason):
@@ -497,8 +515,11 @@ def handle_memory_command(q):
     m = CMD_REMEMBER.match(q)
     if m:
         imp = int(m.group(1)) if m.group(1) else 2
-        ok = add_long(m.group(3), imp, m.group(2))
-        return {"reply": f"✅ 已寫入長期記憶（{IMPORTANCE_LABEL[imp]}）。" if ok else "ℹ️ 長期記憶裡已經有這條了。", "memory_changed": ok}
+        st = add_long(m.group(3), imp, m.group(2))
+        reply = {"added": f"✅ 已寫入長期記憶（{IMPORTANCE_LABEL[imp]}）。",
+                 "superseded": "✅ 這句比原有的更完整，已寫入並取代舊的（舊的封存留底，可用「還原：關鍵字」找回）。"}.get(
+                     st, "ℹ️ 長期記憶裡已經有涵蓋這句話的條目了。")
+        return {"reply": reply, "memory_changed": st in ADDED_OK}
     m = re.match(r"^(?:忘記|刪除記憶|forget)\s*[:：]\s*(.+)$", q, re.S)
     if m:
         n = remove_long(m.group(1).strip())
@@ -689,8 +710,11 @@ def consolidate(force=False):
                     if made_up:
                         asks.append(f"我想記「{str(a.get('content', ''))[:50]}」，但裡面的日期（{'、'.join(made_up)}）你沒說過，請告訴我正確日期，或用「記住到日期：…」自己寫入。")
                         continue
-                    if add_long(str(a.get("content", "")), imp, vu, source="每週整理"):
+                    st = add_long(str(a.get("content", "")), imp, vu, source="每週整理", allow_supersede=False)
+                    if st in ADDED_OK:
                         facts.append(f"新記住（{IMPORTANCE_LABEL[imp]}）：{a['content']}")
+                    elif st == "conflict":
+                        asks.append(f"我想記「{str(a.get('content', ''))[:60]}」，它比既有的某條更完整，要取代舊的嗎？（取代請用「記住：…」重寫）")
                 for u in ops.get("update", []):
                     x = by_id.get(u.get("id"))
                     if not x:
@@ -834,7 +858,7 @@ class H(BaseHTTPRequestHandler):
             if self.path == "/ask":
                 return self._send(200, handle_ask(body))
             if self.path == "/memory/add":
-                return self._send(200, {"ok": add_long(body.get("text", ""), body.get("importance", 2), body.get("valid_until"))})
+                return self._send(200, {"ok": add_long(body.get("text", ""), body.get("importance", 2), body.get("valid_until")) in ADDED_OK})
             if self.path == "/memory/consolidate":
                 return self._send(200, consolidate(force=True))
             self._send(404, {"error": "not found"})
