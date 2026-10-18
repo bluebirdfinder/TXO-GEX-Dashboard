@@ -159,6 +159,10 @@ def add_long(text, importance=2, valid_until=None, source="使用者", allow_sup
     if not text:
         return ""
     with _lock:
+        if source == "每週整理" and any(
+                x.get("archive_reason") == "使用者要求遺忘" and (x["content"] in text or text in x["content"] or _similar(x["content"], text))
+                for x in _load_json(ARCHIVE_FILE, [])):
+            return "forgotten"  # 使用者明說要忘記的事，自動整理不可從流水帳再記回來（使用者手動「記住：」不受限）
         items = long_items()
         if any(text in x["content"] for x in items):
             return "dup"  # 新句已被某條涵蓋（沒有新資訊）
@@ -217,7 +221,8 @@ def restore_items(keyword):
 
 def remove_long(keyword):
     gone = archive_items(lambda x: keyword in x["content"], "使用者要求遺忘")
-    # 短期記憶與對話流水帳裡提到該關鍵字的輪次一併清掉，避免「忘記」後又從近期對話冒出來
+    # 只清短期記憶。流水帳（chat_log.jsonl）刻意保留：行為模式要引用逐字證據；
+    # 防止「忘記」後被每週整理從流水帳記回來，改由 add_long 比對封存區「使用者要求遺忘」條目處理。
     with _lock:
         short = [t for t in load_short() if keyword not in t["q"] and keyword not in t["a"]]
         _save_json(SHORT_FILE, short)
@@ -713,6 +718,8 @@ def consolidate(force=False):
                     st = add_long(str(a.get("content", "")), imp, vu, source="每週整理", allow_supersede=False)
                     if st in ADDED_OK:
                         facts.append(f"新記住（{IMPORTANCE_LABEL[imp]}）：{a['content']}")
+                    elif st == "forgotten":
+                        asks.append(f"對話裡又出現「{str(a.get('content', ''))[:50]}」，但你之前要我忘記這件事，所以我沒有記。要重新記住請說「記住：…」或「還原：關鍵字」。")
                     elif st == "conflict":
                         asks.append(f"我想記「{str(a.get('content', ''))[:60]}」，它比既有的某條更完整，要取代舊的嗎？（取代請用「記住：…」重寫）")
                 for u in ops.get("update", []):
