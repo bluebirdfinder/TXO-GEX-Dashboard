@@ -98,6 +98,13 @@ with tempfile.TemporaryDirectory() as tmp:
         os.makedirs(os.path.join(bk, f"2020-01-{i + 1:02d}"))
     run(root, store, "backup", backup=bk)
     check("backup prunes to 14 copies", len(os.listdir(bk)) == 14)
+    # a second backup on the same day overwrites in place (OneDrive may lock files, so the folder must not be deleted first)
+    today_dir = os.path.join(bk, os.listdir(bk)[-1])
+    with open(os.path.join(store, "futures_klines.json"), encoding="utf-8") as f:
+        before = f.read()
+    r2 = run(root, store, "backup", backup=bk)
+    again = [d for d in os.listdir(bk) if os.path.exists(os.path.join(bk, d, "futures_klines.json"))]
+    check("second same-day backup succeeds and keeps the dated copy", r2.returncode == 0 and len(again) >= 1)
     # cap
     big = bars(range(0, 9000), 1)
     write_cache(root, big)
