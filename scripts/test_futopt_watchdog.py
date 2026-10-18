@@ -149,6 +149,8 @@ z.cvd_session_start = {}
 z.cvd_cumulative = {}
 z.cvd_points = {}
 z._TRADES_LOG_MAXLEN = 100
+from collections import deque as _dq0
+z._trade_frames = _dq0(maxlen=10)
 z._taifex_session_start_ts = lambda now: 0
 z._process_trades_data({'symbol': 'TXFJ6', 'trades': [{'price': 100, 'size': 2, 'bid': 99, 'ask': 100}],
                         'total': {'tradeVolume': 4345, 'totalBidMatch': 3064, 'totalAskMatch': 3163}, 'serial': 1}, alias='TXF1!')
@@ -167,6 +169,30 @@ zb.books_cache = {}
 zb._books_logged_raw = set()
 zb._process_books_data({'symbol': 'TXFJ6', 'bids': [{'price': 1, 'size': 2}], 'asks': [{'price': 2, 'size': 3}], 'extra': 'x'}, alias='TXF1!')
 check("books raw sample logged once", 'TXF1!' in zb._books_logged_raw and zb.books_cache['TXF1!']['bids'][0]['size'] == 2)
+
+# 7) every trades frame of the raw-log aliases is buffered and flushed to trades_YYYYMMDD.jsonl
+from collections import deque as _dq
+f = Cls.__new__(Cls)
+f._trades_logged_raw = set(); f._trades_last_serial = {}; f._last_trades_ts = {}; f._trades_total = {}
+f.books_cache = {}; f.trades_log = {}; f.cvd_session_start = {}; f.cvd_cumulative = {}; f.cvd_points = {}
+f._TRADES_LOG_MAXLEN = 100; f._taifex_session_start_ts = lambda now: 0
+f._trade_frames = _dq(maxlen=300000)
+f._process_trades_data({'symbol': 'TXFJ6', 'trades': [{'price': 100, 'size': 2, 'bid': 99, 'ask': 100}, {'price': 99, 'size': 1, 'bid': 99, 'ask': 100}],
+                        'total': {'tradeVolume': 10, 'totalBidMatch': 4, 'totalAskMatch': 5}, 'time': 1792118642000000, 'serial': 7}, alias='TXF1!')
+f._process_trades_data({'symbol': 'XXXJ6', 'trades': [{'price': 1, 'size': 1, 'bid': 1, 'ask': 2}], 'serial': 8}, alias='ZZZ1!')   # not a raw-log alias
+check("only raw-log aliases are buffered", len(f._trade_frames) == 1 and f._trade_frames[0]['a'] == 'TXF1!')
+check("frame keeps every print + totals + serial", f._trade_frames[0]['p'] == [[100, 2, 99, 100], [99, 1, 99, 100]] and f._trade_frames[0]['tot']['totalBidMatch'] == 4 and f._trade_frames[0]['serial'] == 7)
+with _tf.TemporaryDirectory() as d:
+    f._mom_hist_dir = d
+    n = f.flush_trade_frames()
+    files = os.listdir(d)
+    rows_ = [json.loads(l) for l in open(os.path.join(d, files[0]), encoding="utf-8")]
+    check("flush writes one jsonl line per frame and empties the buffer", n == 1 and len(f._trade_frames) == 0 and files[0].startswith('trades_') and rows_[0]['p'][0][1] == 2)
+    check("flush with an empty buffer is a no-op", f.flush_trade_frames() == 0)
+    # a disk error must put the frames back
+    f._process_trades_data({'symbol': 'TXFJ6', 'trades': [{'price': 100, 'size': 3, 'bid': 99, 'ask': 100}], 'serial': 9}, alias='TXF1!')
+    f._mom_hist_dir = os.path.join(d, files[0], 'not-a-dir')   # a path under a regular file -> makedirs fails
+    check("failed flush keeps the frames", f.flush_trade_frames() == 0 and len(f._trade_frames) == 1)
 
 hang.set()
 os._exit = real_exit
