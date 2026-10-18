@@ -682,80 +682,148 @@ def _extract_json(text):
     return json.loads(m.group(0))
 
 
+CONSOLIDATE_CHARS = 11000    # 每批送進整理模型的「新對話」字數上限
+CONSOLIDATE_CTX_CHARS = 3000  # 另附的「更早對話」（只供找行為模式）字數上限
+CONSOLIDATE_MAX_BATCHES = 4   # 一次整理最多跑幾批；沒跑完的留到下次，不會漏掉
+
+
+def _format_turn(t):
+    return f"[{datetime.fromtimestamp(t['ts']):%m/%d %H:%M}] 使用者：{t['q']}\n幕僚鳥：{t['a'][:500]}"
+
+
+def _batch_turns(turns, budget=CONSOLIDATE_CHARS):
+    """由舊到新切批，每批字數不超過 budget（單輪超過也自成一批）。"""
+    batches, cur, size = [], [], 0
+    for t in turns:
+        s = len(_format_turn(t)) + 1
+        if cur and size + s > budget:
+            batches.append(cur)
+            cur, size = [], 0
+        cur.append(t)
+        size += s
+    if cur:
+        batches.append(cur)
+    return batches
+
+
+def _context_tail(turns, budget=CONSOLIDATE_CTX_CHARS):
+    out, size = [], 0
+    for t in reversed(turns):
+        s = len(_format_turn(t)) + 1
+        if size + s > budget:
+            break
+        out.append(t)
+        size += s
+    return list(reversed(out))
+
+
+def _apply_review_ops(ops, conv, facts, asks):
+    """把模型的整理建議套進記憶（每個動作各自拿鎖）。回傳 (note, 新行為模式)。"""
+    note = str(ops.get("note", ""))[:300]
+    asks.extend(str(a)[:200] for a in ops.get("ask", [])[:5])
+    new_patterns = add_pattern_candidates(ops.get("patterns", []) or [], conv)
+    by_id = {x["id"]: x for x in long_items()}
+    for a in ops.get("add", []):
+        imp = a.get("importance") if a.get("importance") in (1, 2, 3) else 2
+        vu = a.get("valid_until") if isinstance(a.get("valid_until"), str) else None
+        # 防編造：內容或期限裡的具體日期，必須是使用者在對話裡親口講過的（或今天）；否則不收，改成請使用者補
+        made_up = [d for d in set(re.findall(r"\d{4}-\d{2}-\d{2}", str(a.get("content", "")) + " " + (vu or "")))
+                   if d != today_str() and d not in conv]
+        if made_up:
+            asks.append(f"我想記「{str(a.get('content', ''))[:50]}」，但裡面的日期（{'、'.join(made_up)}）你沒說過，請告訴我正確日期，或用「記住到日期：…」自己寫入。")
+            continue
+        st = add_long(str(a.get("content", "")), imp, vu, source="每週整理", allow_supersede=False)
+        if st in ADDED_OK:
+            facts.append(f"新記住（{IMPORTANCE_LABEL[imp]}）：{a['content']}")
+        elif st == "forgotten":
+            asks.append(f"對話裡又出現「{str(a.get('content', ''))[:50]}」，但你之前要我忘記這件事，所以我沒有記。要重新記住請說「記住：…」或「還原：關鍵字」。")
+        elif st == "conflict":
+            asks.append(f"我想記「{str(a.get('content', ''))[:60]}」，它比既有的某條更完整，要取代舊的嗎？（取代請用「記住：…」重寫）")
+    for u in ops.get("update", []):
+        x = by_id.get(u.get("id"))
+        if not x:
+            continue
+        if x["importance"] == 3:
+            asks.append(f"核心記憶「{x['content'][:40]}」可能需要改成「{str(u.get('content', ''))[:60]}」，要改嗎？")
+            continue
+        newc = re.sub(r"\s+", " ", str(u.get("content", ""))).strip()
+        if newc:
+            # 不原地覆寫：舊的封存留底、新的記下並指向舊的（保留「以前是怎樣、何時改變」）
+            archive_items(lambda y, i=x["id"]: y["id"] == i, "被新記憶取代")
+            nx = _new_item(newc, x["importance"], x.get("valid_until"), "每週整理（修正）")
+            nx["supersedes"] = x["id"]
+            nx["uses"] = (x.get("uses") or [])[-USES_KEEP:] or nx["uses"]
+            with _lock:
+                items = long_items(); items.append(nx); _save_json(LONG_FILE, items)
+                _log_change("supersede", x, nx, "每週整理")
+            facts.append(f"更新：「{x['content'][:40]}」→「{newc[:40]}」（舊的已封存留底）")
+    for a in ops.get("archive", []):
+        x = by_id.get(a.get("id"))
+        if not x:
+            continue
+        if x["importance"] == 3:
+            asks.append(f"核心記憶「{x['content'][:40]}」看起來過時（{str(a.get('reason', ''))[:60]}），要封存嗎？")
+            continue
+        archive_items(lambda y, i=x["id"]: y["id"] == i, f"每週整理：{str(a.get('reason', ''))[:80]}")
+        facts.append(f"封存：{x['content'][:50]}（{str(a.get('reason', ''))[:40]}）")
+    return note, new_patterns
+
+
 def consolidate(force=False):
-    """備份 → 機械淡化 → Claude 回顧對話 → 程式套用並如實列出變動 → 寫週報。回顧失敗時不動既有記憶、不更新狀態。"""
+    """備份 → 機械淡化 → Claude 回顧對話（分批，且模型呼叫不持鎖，整理期間 /ask 不會被卡住）→ 程式套用並如實列出變動 → 寫週報。
+    回顧失敗時不動既有記憶；對話太多沒跑完時，狀態只前進到「已處理到的最後一輪」，剩下的下次接著補。"""
     with _lock:
         state = _load_json(STATE_FILE, {})
         since_ts = (datetime.fromisoformat(state["last_consolidation"]).timestamp() if state.get("last_consolidation")
                     else time.time() - CONSOLIDATE_EVERY_DAYS * 86400)
         backup_memory()
-        before_ids = {x["id"] for x in long_items()}
         decay_report = decay_memory()
+        snap_ts = time.time()   # 整理完成時狀態前進到這個時間點；整理期間新進的對話留給下次
+        all_turns = read_chatlog(0)
+    new_turns = [t for t in all_turns if t.get("ts", 0) >= since_ts]
+    old_turns = [t for t in all_turns if t.get("ts", 0) < since_ts]
 
-        turns = read_chatlog(since_ts)
-        review_err, note, asks, facts, new_patterns = None, "", [], [], []
-        if turns:
+    review_err, notes, asks, facts, new_patterns = None, [], [], [], []
+    processed_ts, remaining = None, 0
+    if new_turns:
+        ctx_txt = "\n".join(_format_turn(t) for t in _context_tail(old_turns))
+        batches = _batch_turns(new_turns)
+        for bi, batch in enumerate(batches):
+            if bi >= CONSOLIDATE_MAX_BATCHES:
+                remaining = sum(len(b) for b in batches[bi:])
+                break
             existing = long_items()
             mem_txt = "\n".join(f"id={x['id']} 重要度={x['importance']} [{x['date']}] {x['content']}" for x in existing) or "（尚無）"
-            conv = "\n".join(f"[{datetime.fromtimestamp(t['ts']):%m/%d %H:%M}] 使用者：{t['q']}\n幕僚鳥：{t['a'][:500]}" for t in read_chatlog(0))[-14000:]
-            prompt = f"今天是 {today_str()}。上次整理日：{datetime.fromtimestamp(since_ts):%Y-%m-%d}。\n\n【既有長期記憶】\n{mem_txt}\n\n【近 21 天對話（新增/修正記憶以上次整理後為主；找行為模式可看全部）】\n{conv}"
+            new_txt = "\n".join(_format_turn(t) for t in batch)
+            conv = new_txt + ("\n" + ctx_txt if ctx_txt else "")
+            prompt = (f"今天是 {today_str()}。上次整理日：{datetime.fromtimestamp(since_ts):%Y-%m-%d}。"
+                      f"（對話較多時分批整理，這是第 {bi + 1}／{len(batches)} 批）\n\n【既有長期記憶】\n{mem_txt}\n\n"
+                      f"【上次整理後的新對話（新增/修正記憶以這段為主）】\n{new_txt}\n\n"
+                      f"【更早的對話（只供找行為模式，不要據此新增記憶）】\n{ctx_txt or '（無）'}")
             try:
-                reply, _ = run_claude(REVIEW_SYSTEM, prompt, "sonnet", timeout=300)
+                reply, _ = run_claude(REVIEW_SYSTEM, prompt, "sonnet", timeout=300)   # 不持鎖：慢也不會卡住問答
                 ops = _extract_json(reply)
-                note = str(ops.get("note", ""))[:300]
-                asks = [str(a)[:200] for a in ops.get("ask", [])][:5]
-                new_patterns = add_pattern_candidates(ops.get("patterns", []) or [], conv)
-                by_id = {x["id"]: x for x in long_items()}
-                for a in ops.get("add", []):
-                    imp = a.get("importance") if a.get("importance") in (1, 2, 3) else 2
-                    vu = a.get("valid_until") if isinstance(a.get("valid_until"), str) else None
-                    # 防編造：內容或期限裡的具體日期，必須是使用者在對話裡親口講過的（或今天）；否則不收，改成請使用者補
-                    made_up = [d for d in set(re.findall(r"\d{4}-\d{2}-\d{2}", str(a.get("content", "")) + " " + (vu or "")))
-                               if d != today_str() and d not in conv]
-                    if made_up:
-                        asks.append(f"我想記「{str(a.get('content', ''))[:50]}」，但裡面的日期（{'、'.join(made_up)}）你沒說過，請告訴我正確日期，或用「記住到日期：…」自己寫入。")
-                        continue
-                    st = add_long(str(a.get("content", "")), imp, vu, source="每週整理", allow_supersede=False)
-                    if st in ADDED_OK:
-                        facts.append(f"新記住（{IMPORTANCE_LABEL[imp]}）：{a['content']}")
-                    elif st == "forgotten":
-                        asks.append(f"對話裡又出現「{str(a.get('content', ''))[:50]}」，但你之前要我忘記這件事，所以我沒有記。要重新記住請說「記住：…」或「還原：關鍵字」。")
-                    elif st == "conflict":
-                        asks.append(f"我想記「{str(a.get('content', ''))[:60]}」，它比既有的某條更完整，要取代舊的嗎？（取代請用「記住：…」重寫）")
-                for u in ops.get("update", []):
-                    x = by_id.get(u.get("id"))
-                    if not x:
-                        continue
-                    if x["importance"] == 3:
-                        asks.append(f"核心記憶「{x['content'][:40]}」可能需要改成「{str(u.get('content', ''))[:60]}」，要改嗎？")
-                        continue
-                    newc = re.sub(r"\s+", " ", str(u.get("content", ""))).strip()
-                    if newc:
-                        # 不原地覆寫：舊的封存留底、新的記下並指向舊的（保留「以前是怎樣、何時改變」）
-                        archive_items(lambda y, i=x["id"]: y["id"] == i, "被新記憶取代")
-                        nx = _new_item(newc, x["importance"], x.get("valid_until"), "每週整理（修正）")
-                        nx["supersedes"] = x["id"]
-                        nx["uses"] = (x.get("uses") or [])[-USES_KEEP:] or nx["uses"]
-                        with _lock:
-                            items = long_items(); items.append(nx); _save_json(LONG_FILE, items)
-                            _log_change("supersede", x, nx, "每週整理")
-                        facts.append(f"更新：「{x['content'][:40]}」→「{newc[:40]}」（舊的已封存留底）")
-                for a in ops.get("archive", []):
-                    x = by_id.get(a.get("id"))
-                    if not x:
-                        continue
-                    if x["importance"] == 3:
-                        asks.append(f"核心記憶「{x['content'][:40]}」看起來過時（{str(a.get('reason', ''))[:60]}），要封存嗎？")
-                        continue
-                    archive_items(lambda y, i=x["id"]: y["id"] == i, f"每週整理：{str(a.get('reason', ''))[:80]}")
-                    facts.append(f"封存：{x['content'][:50]}（{str(a.get('reason', ''))[:40]}）")
-            except Exception as e:  # 回顧失敗：既有記憶沒被動到，狀態不更新，下次再試
+                note, np_ = _apply_review_ops(ops, conv, facts, asks)
+                if note:
+                    notes.append(note)
+                new_patterns += np_
+                processed_ts = batch[-1]["ts"]
+            except Exception as e:  # 回顧失敗：這一批沒動到記憶；已完成的批次保留，下次從失敗那批接著補
                 review_err = str(e)[:200]
-        else:
-            note = "上次整理後沒有新對話。"
+                remaining = sum(len(b) for b in batches[bi:])
+                break
+    else:
+        notes.append("上次整理後沒有新對話。")
 
+    with _lock:
         lines = [f"# 🌙 幕僚鳥每週記憶整理 {today_str()}", ""]
-        lines.append(note if not review_err else f"這次回顧沒有成功（{review_err}），既有記憶都沒被動到，下次再試。")
+        if review_err:
+            lines.append(f"這次回顧沒有全部成功（{review_err}）。失敗那一批的記憶沒被動到，下次會接著補。")
+        else:
+            lines.append(" ".join(notes))
+        if remaining:
+            lines.append(f"⚠️ 本週對話較多：這次整理到 {datetime.fromtimestamp(processed_ts):%m/%d %H:%M}，還有 {remaining} 輪留到下次，不會漏掉。"
+                         if processed_ts else f"⚠️ 還有 {remaining} 輪對話尚未整理，留到下次。")
         lines += ["", "**本週實際變動（程式比對產生，不經模型）：**"]
         lines += [f"- {x}" for x in facts] or ["- 沒有新增或修改"]
         if decay_report:
@@ -769,8 +837,12 @@ def consolidate(force=False):
         lines += ["", "想忘掉哪件事，直接說「忘記：關鍵字」；說「查看記憶」可看全部。"]
         text = "\n".join(lines)
         (REPORT_DIR / f"weekly_{today_str()}.md").write_text(text, encoding="utf-8")
-        if review_err is None:
-            state["last_consolidation"] = datetime.now().isoformat(timespec="seconds")
+        state = _load_json(STATE_FILE, {})
+        if review_err is None and not remaining:
+            state["last_consolidation"] = datetime.fromtimestamp(snap_ts).isoformat(timespec="microseconds")
+            _save_json(STATE_FILE, state)
+        elif processed_ts is not None:
+            state["last_consolidation"] = datetime.fromtimestamp(processed_ts + 1e-3).isoformat(timespec="microseconds")
             _save_json(STATE_FILE, state)
         # 流水帳只留 21 天
         cutoff = time.time() - CHATLOG_KEEP_DAYS * 86400
@@ -778,7 +850,7 @@ def consolidate(force=False):
                 if (lambda t: t.get("ts", 0) >= cutoff)(json.loads(l) if l.strip() else {})]
         if CHATLOG_FILE.exists():
             CHATLOG_FILE.write_text("\n".join(keep) + ("\n" if keep else ""), encoding="utf-8")
-        return {"text": text, "ok": review_err is None}
+        return {"text": text, "ok": review_err is None and not remaining}
 
 
 def latest_report():
