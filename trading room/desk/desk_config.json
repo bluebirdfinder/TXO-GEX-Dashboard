@@ -1,0 +1,62 @@
+{
+  "_readme": "台選鳥虛擬下單簿設定。全部是模擬單。標 status=待確認 的數字是 Lumi 規格(2026-10-19)的建議值，使用者確認前不是定案。",
+  "multiplier": 50,
+  "accounts": {
+    "T0": {"capital": 1000000, "uses_tg_signals": false},
+    "T1": {"capital": 1000000, "uses_tg_signals": true}
+  },
+  "fees": {
+    "fee_per_lot_per_side": 13,
+    "tax_rate": 0.001,
+    "tax_rounding": "per_lot_half_up",
+    "expire_worthless_free": true,
+    "settle_itm_fee_per_lot": 13,
+    "settle_itm_fee_status": "待確認：價內結算是否收手續費/稅，對帳單範例只涵蓋放棄與平倉",
+    "source": "富邦期貨115年8月對帳單（Lumi視窗推得，規格第7節）",
+    "as_of": "2026-10-19",
+    "status": "待使用者確認；費率日後可能變動"
+  },
+  "margin": {
+    "model": "spread_width_max_loss_v0",
+    "per_expiry_offset": "max_of_put_side_and_call_side",
+    "status": "待確認：此為近似（價差寬度x乘數=最大可能虧損），須改成期交所官方公式與最新費率，不可當定值"
+  },
+  "quote_validity": {
+    "max_age_s": 120,
+    "max_bid_ask_spread_pts": 20,
+    "require_size_positive": true,
+    "status": "待確認：起手值，依盤中實測調整"
+  },
+  "fill": {
+    "validated": false,
+    "label_when_not_validated": "近似",
+    "note": "成交判定在報價紀錄器與券商實際報價比對通過前一律標「近似」"
+  },
+  "risk": {
+    "ladder_max_lots_per_side": 8,
+    "ladder_max_lots_status": "使用者2026-10-19決定；放大須使用者同意",
+    "max_ladder_sets": 2,
+    "ladder_one_side_max_loss_pct": 5.0,
+    "ladder_both_sides_max_loss_pct": 10.0,
+    "daily_loss_stop_pct": 3.0,
+    "drawdown_halve_pct": 15.0,
+    "drawdown_halt_pct": 25.0,
+    "margin_util_max_pct": 50.0,
+    "loss_limits_status": "待使用者確認（Lumi規格8.2建議值）",
+    "iv_cushion": [
+      {"iv_gt": 16, "min_distance_pts": 350},
+      {"iv_gt": 13, "min_distance_pts": 250},
+      {"iv_gt": 0, "min_distance_pts": 150}
+    ],
+    "iv_cushion_note": "IV>16%: 350~500點外(取下限350)；13~16%: 250~350點外(取下限250)；<13%: 禁止<150點",
+    "naked_buy_min_dte": 3,
+    "surge_block_pts": 500,
+    "surge_note": "盤中急拉急殺(>=500點)且沒有15M/30M九轉竭盡或均線走平訊號時，禁止新開倉與新掛階梯；平倉/不動作仍可",
+    "stage": "A",
+    "allowed_structures_by_stage": {
+      "A": ["bull_put_spread", "bear_call_spread", "iron_condor", "butterfly"],
+      "B": ["bull_put_spread", "bear_call_spread", "iron_condor", "butterfly", "long_call", "long_put"],
+      "C": ["bull_put_spread", "bear_call_spread", "iron_condor", "butterfly", "long_call", "long_put", "covered_call"]
+    }
+  }
+}

@@ -66,3 +66,7 @@ scratch/
 
 # å¹•åƒšé³¥æœ¬æ©ŸçŸ¥è­˜åº«ï¼ˆå«ç­–ç•¥ IPï¼Œä¸å…¬é–‹ï¼‰
 trading room/brain/
+
+# ¥x¿ï³¾µêÀÀ±b¥»»P¹ê½L¬ÛÃö¸ê®Æ¡]¤£¶i git¡^
+trading room/desk/data/
+trading room/desk/__pycache__/
