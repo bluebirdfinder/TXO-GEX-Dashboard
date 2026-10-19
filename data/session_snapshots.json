@@ -1305,21 +1305,21 @@
   "2026-10-19_NIGHT": {
     "date": "2026-10-19",
     "session": "NIGHT",
-    "spot_price": 46969.87,
-    "otc_price": 396.9,
+    "spot_price": 47111.26,
+    "otc_price": 400.26,
     "txf_price": 46140.0,
     "zero_gamma_level": 45334.8,
     "gex_plus_flip": 45334.6,
     "call_wall_strike": 46300.0,
     "put_wall_strike": 46000.0,
     "max_pain_strike": 46500.0,
-    "pc_ratio": 67.6,
+    "pc_ratio": 104.46,
     "taifex_vix": 26.33,
     "us_vix": 19.99,
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "margin_balance_billion": null,
-    "written_at": "2026-10-19T07:31:18.671441+08:00"
+    "written_at": "2026-10-19T08:04:51.268446+08:00"
   },
   "2026-10-17_DAY": {
     "date": "2026-10-17",
