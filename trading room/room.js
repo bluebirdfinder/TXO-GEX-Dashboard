@@ -1530,7 +1530,8 @@ async function updateAdxMtfBadge() {
   try {
     let j = null;
     const tfs = {};
-    ['15M', '1H', '4H', '1D'].forEach(k => { const b = localBarsFor(sym, k, 800); if (b) tfs[k] = b; });
+    // 15M 多送一些（2500 根≈7 週）：Worker 要用它依場次起點重組 4H（TV 的 4H 從夜盤 15:00／日盤 08:45 起算），根數不夠會退回快取的 4H。
+    ['15M', '1H', '4H', '1D'].forEach(k => { const b = localBarsFor(sym, k, k === '15M' ? 2500 : 800); if (b) tfs[k] = b; });
     if (Object.keys(tfs).length === 4) j = await workerPost({ indicator: 'adx', symbol: sym, mtf: 1, tf: currentTf, tfs });
     if (!j || !j.adx) {
       const resp = await fetch(`${ADX_MTF_API}?symbol=${encodeURIComponent(sym)}&mtf=1`);
