@@ -1345,18 +1345,18 @@
     "session": "NIGHT",
     "spot_price": 46822.08,
     "otc_price": 394.05,
-    "txf_price": 46834.0,
-    "zero_gamma_level": 45923.5,
-    "gex_plus_flip": 45923.5,
+    "txf_price": 46768.0,
+    "zero_gamma_level": 45923.7,
+    "gex_plus_flip": 45923.7,
     "call_wall_strike": 47000.0,
     "put_wall_strike": 46000.0,
     "max_pain_strike": 46400.0,
     "pc_ratio": 61.6,
     "taifex_vix": 29.7,
-    "us_vix": 17.91,
+    "us_vix": 17.89,
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "margin_balance_billion": 6406.18,
-    "written_at": "2026-10-19T22:29:04.146343+08:00"
+    "written_at": "2026-10-19T22:53:30.803246+08:00"
   }
 }
