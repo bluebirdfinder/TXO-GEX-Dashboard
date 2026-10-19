@@ -75,7 +75,7 @@ class QuoteChain:
 
 
 # ---- MIS 原始資料轉換 ----
-_SYM = re.compile(r"^(TX[A-Z0-9])(\d{5})([A-X])(\d)-([MN])$")
+_SYM = re.compile(r"^(TX[A-Z0-9])(\d{5})([A-X])(\d)-([A-Z])$")
 
 
 def parse_mis_symbol(sym):

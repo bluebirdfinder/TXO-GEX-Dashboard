@@ -80,7 +80,7 @@ class TestFeesAndExpiry(unittest.TestCase):
         self.assertEqual(parse_mis_symbol("TXY42200J6-N"), ("202610F4", "C", 42200))
         self.assertEqual(parse_mis_symbol("TX442200V6-N"), ("202610W4", "P", 42200))
         self.assertEqual(parse_mis_symbol("TXO33900J6-N"), ("202610", "C", 33900))
-        self.assertIsNone(parse_mis_symbol("TXO-R"))
+        self.assertEqual(parse_mis_symbol("TXO33900J6-O"), ("202610", "C", 33900))   # 2026-10-19 實測：日盤後綴是 -O\n        self.assertIsNone(parse_mis_symbol("TXO-R"))\n        self.assertIsNone(parse_mis_symbol("TXO-Q"))
 
 
 class TestQuotes(unittest.TestCase):
