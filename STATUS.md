@@ -8,6 +8,14 @@
 
 ---
 
+## 📋 2026-10-17 ～ 10-20 現況更新（未升版）
+
+- **現價**：週末／休市顯示最近一個場次（週五夜盤）收盤；富邦與 MIS 備援共用同一套場次規則（`scripts/mis_session.py`）。台指期沒有即時報價時，畫面標「非即時」。
+- **戰情室（GitHub Pages）**：本機報價服務有開時，K 線優先讀本機 `klines_cache.json`（Pages 那份缺最新場次）。
+- **ADX Pro V3**：微台 15M、4H 與 TV 一致；日線、1H 仍有差異（見 HISTORY.md 2026-10-17～10-20 條目）。Worker 為私有檔，由使用者自行部署（`bluebird-indicators`）。
+- **已知限制**：盤中主圖缺本盤別已過去的 K 棒；Worker 因期交所對 Cloudflare 回 520 拿不到台指期即時價。
+
+
 ## 📋 2026-10-09 GEX 範圍盤點與老墨對照（未升版、未改引擎數字）
 
 - 與老墨 MOFI GEX 頁面對照：符號、乘數 50 與通行寫法一致；**我們少乘 0.01（數字為「每 1%」標準值的 100 倍）、σ 用單一 VIX（非每履約價 IV）、只算 w1/w2/fri/mth 四檔且限現價附近履約價**。10/8 實測 OI 涵蓋率：合約 82.3%、再限履約價後 27.0%（口數比例，非 GEX 比例）。翻轉點對 σ 最敏感，牆位置較穩。詳見 [docs/GEX_SCOPE_AND_METHOD_LIMITS.md](docs/GEX_SCOPE_AND_METHOD_LIMITS.md)、[docs/MOFI_GEX_COMPARISON_20261009.md](docs/MOFI_GEX_COMPARISON_20261009.md)。
