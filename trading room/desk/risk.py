@@ -82,6 +82,8 @@ def check(decision, ctx, state):
     r = cfg["risk"]
     act = decision["action"]
     v = []
+    if ctx.get("session") == "closed" and act in ("open", "adjust", "close"):
+        v.append("休市時段報價鏈是凍結的，不能成交：只能掛階梯、撤單或觀望，開倉/調整/平倉等開盤後再做")
     if act in OPENING:
         miss = ctx.get("missing") or []
         miss = list(miss) + [n for n, k in (("現價", "spot"), ("IV", "iv")) if ctx.get(k) is None]
@@ -133,11 +135,19 @@ def check(decision, ctx, state):
                     v.append(f"{s['direction']} 階梯總口數 {lots} 超過單邊上限 {cap} 組（含已成交與掛單中；放大須使用者同意）")
                 lim = r["ladder_one_side_max_loss_pct"] / 100 * equity
                 if loss > lim:
-                    v.append(f"{s['direction']} 階梯全部成交的最壞虧損約 {loss:,.0f} 元 > 單方向上限 {lim:,.0f} 元（{r['ladder_one_side_max_loss_pct']}%）")
+                    if r.get("ladder_one_side_loss_mode") == "review":
+                        # 使用者 2026-10-20 決定：不擋開單，但必須有數字停損 stop_debit_pts 提早停損；到期結算仍超過就檢討策略（book.settle 會標記）
+                        if (decision.get("exit_plan") or {}).get("stop_debit_pts") is None:
+                            v.append(f"{s['direction']} 階梯全部成交的最壞虧損約 {loss:,.0f} 元 > {lim:,.0f} 元（{r['ladder_one_side_max_loss_pct']}%）：超過時必須有數字停損 stop_debit_pts 提早停損（不能只放到結算）")
+                    else:
+                        v.append(f"{s['direction']} 階梯全部成交的最壞虧損約 {loss:,.0f} 元 > 單方向上限 {lim:,.0f} 元（{r['ladder_one_side_max_loss_pct']}%）")
                 for rg in s["rungs"]:
                     v += _sell_distance_errors(rg["short_strike"], cp, ctx["spot"], floor)
             lim2 = r["ladder_both_sides_max_loss_pct"] / 100 * equity
-            if len(decision["side_sets"]) > 1 and both > lim2:
+            if len(decision["side_sets"]) > 1 and both > lim2 and r.get("ladder_one_side_loss_mode") == "review":
+                if (decision.get("exit_plan") or {}).get("stop_debit_pts") is None:
+                    v.append(f"多空雙邊同時全部成交的最壞虧損約 {both:,.0f} 元 > {lim2:,.0f} 元（{r['ladder_both_sides_max_loss_pct']}%）：超過時必須有數字停損 stop_debit_pts 提早停損")
+            elif len(decision["side_sets"]) > 1 and both > lim2:
                 v.append(f"多空雙邊同時全部成交的最壞虧損約 {both:,.0f} 元 > 雙邊上限 {lim2:,.0f} 元（{r['ladder_both_sides_max_loss_pct']}%）")
     elif act == "close":
         g = state.groups.get(decision.get("group_id"))

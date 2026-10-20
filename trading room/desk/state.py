@@ -134,7 +134,11 @@ class State:
             d = per.setdefault(g["expiry"], {"P": 0.0, "C": 0.0})
             for cp in ("P", "C"):
                 d[cp] += side_margin(g["legs"], cp, self.cfg)
-        return {k: max(v.values()) for k, v in per.items()}
+        # 期交所公告的價差規則是「每組價差＝履約價差x乘數」，網頁沒有寫多空雙邊互抵；預設保守相加（sum）。
+        # 若富邦實際對多差+空差只收單邊，設定檔改成 max_of_put_side_and_call_side。
+        if self.cfg["margin"].get("per_expiry_offset") == "max_of_put_side_and_call_side":
+            return {k: max(v.values()) for k, v in per.items()}
+        return {k: sum(v.values()) for k, v in per.items()}
 
     def margin_used(self, extra_groups=()):
         return sum(self.margin_by_expiry(extra_groups).values())

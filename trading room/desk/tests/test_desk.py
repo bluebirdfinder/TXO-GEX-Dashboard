@@ -291,17 +291,42 @@ class TestLadder(Base):
         self.desk.process_quotes(chain(BASE))
         st = self.desk.state
         self.assertEqual(len(st.groups), 2)
-        self.assertEqual(st.margin_used(), 200 * 50)          # 多空互抵：只收單邊（近似 v0）
+        self.assertEqual(st.margin_used(), 2 * 200 * 50)      # 預設保守相加：期交所網頁只寫單組價差=履約價差x乘數
+        st.cfg["margin"]["per_expiry_offset"] = "max_of_put_side_and_call_side"
+        self.assertEqual(st.margin_used(), 200 * 50)          # 若富邦實際只收單邊，設定檔切換即可
 
-    def test_ladder_worst_loss_limits(self):
-        # 8 口 x 200 點價差、信用 65：最壞 8x(200-65)x50=54,000 + 費用 > 5%x100 萬 → 被退回（規格自己的例子剛好在線上）
-        d = ladder(rungs_bp=((46300, 46100, 1, 65), (46300, 46100, 2, 65), (46300, 46100, 2, 65), (46300, 46100, 3, 65)))
-        r = self.desk.submit(d, CTX)
+    EIGHT = ((46300, 46100, 1, 65), (46300, 46100, 2, 65), (46300, 46100, 2, 65), (46300, 46100, 3, 65))
+
+    def test_ladder_worst_loss_review_mode_needs_numeric_stop(self):
+        # 使用者 2026-10-20：8 口 x 200 點、信用 65，最壞約 5.4 萬 > 5% 不擋，但一定要有 stop_debit_pts
+        no_stop = ladder(rungs_bp=self.EIGHT, exit_plan={"hold_to_settlement": True, "stop_debit_pts": None, "take_profit_debit_pts": None})
+        r = self.desk.submit(no_stop, CTX)
+        self.assertFalse(r["ok"])
+        self.assertTrue(any("必須有數字停損" in x for x in r["reasons"]), r["reasons"])
+        with_stop = ladder(rungs_bp=self.EIGHT, exit_plan={"stop_debit_pts": 150, "take_profit_debit_pts": None})
+        self.assertTrue(self.desk.submit(with_stop, CTX)["ok"])
+
+    def test_ladder_worst_loss_reject_mode_still_available(self):
+        self.desk.cfg["risk"]["ladder_one_side_loss_mode"] = "reject"
+        r = self.desk.submit(ladder(rungs_bp=self.EIGHT), CTX)
         self.assertFalse(r["ok"])
         self.assertTrue(any("最壞虧損" in x for x in r["reasons"]), r["reasons"])
-        # 150 點寬、信用 65：8x85x50=34,000+208 → 通過
-        ok = ladder(rungs_bp=((46300, 46150, 1, 65), (46300, 46150, 2, 65), (46300, 46150, 2, 65), (46300, 46150, 3, 65)))
-        self.assertTrue(self.desk.submit(ok, CTX)["ok"])
+
+    def test_settlement_loss_over_limit_flags_review(self):
+        self.desk.submit(ladder(rungs_bp=self.EIGHT, exit_plan={"stop_debit_pts": 999, "take_profit_debit_pts": None}), CTX)
+        self.desk.process_quotes(chain(BASE))
+        self.assertEqual(sum(g["legs"][0]["lots"] for g in self.desk.state.groups.values()), 8)
+        out = self.desk.settle(W4, 46000, date(2026, 10, 28))         # 兩腳全價內：每口 -200+65 → 8 口 -54,000 -費用 < -5 萬
+        flags = [e for e in out if e["type"] == "REVIEW_FLAG"]
+        self.assertEqual(len(flags), 1, out)
+        self.assertLess(flags[0]["pct"], -5.0)
+        self.assertIn("檢討策略", flags[0]["note"])
+
+    def test_settlement_small_loss_no_flag(self):
+        self.desk.submit(ladder(rungs_bp=((46300, 46100, 1, 65),), exit_plan={"stop_debit_pts": 999, "take_profit_debit_pts": None}), CTX)
+        self.desk.process_quotes(chain(BASE))
+        out = self.desk.settle(W4, 46000, date(2026, 10, 28))
+        self.assertFalse([e for e in out if e["type"] == "REVIEW_FLAG"])
 
     def test_lots_cap_8_and_resting_counted(self):
         self.assertTrue(self.desk.submit(ladder(rungs_bp=((46300, 46150, 5, 65),)), CTX)["ok"])
@@ -314,10 +339,21 @@ class TestLadder(Base):
         bc = ((46700, 46850, 8, 65),)       # 各 8x85x50=34,000+208，合計 68,416 < 10 萬，且各自 < 5%
         self.assertTrue(self.desk.submit(ladder(rungs_bp=bp, rungs_bc=bc), CTX)["ok"])
         self.desk.cfg["risk"]["ladder_both_sides_max_loss_pct"] = 5.0
+        self.desk.cfg["risk"]["ladder_one_side_loss_mode"] = "reject"        # reject 模式：超過直接擋
         d2 = ladder(rungs_bp=((46300, 46150, 1, 65),), rungs_bc=((46700, 46850, 1, 65),), expiry={"code": W4})
         d2["decided_at"] = "2026-10-26T10:05:00" + TW
         r = self.desk.submit(d2, CTX)
         self.assertFalse(r["ok"])
+
+    def test_both_sides_review_mode_needs_numeric_stop(self):
+        # 使用者 2026-10-20：雙邊 10% 也比照單邊——不擋，但必須有 stop_debit_pts
+        self.desk.cfg["risk"]["ladder_both_sides_max_loss_pct"] = 5.0
+        bp, bc = ((46300, 46150, 8, 65),), ((46700, 46850, 8, 65),)      # 單邊各 3.4 萬 < 5 萬、雙邊 6.8 萬 > 5 萬
+        no_stop = ladder(rungs_bp=bp, rungs_bc=bc, exit_plan={"hold_to_settlement": True, "stop_debit_pts": None, "take_profit_debit_pts": None})
+        r = self.desk.submit(no_stop, CTX)
+        self.assertFalse(r["ok"])
+        self.assertTrue(any("必須有數字停損" in x for x in r["reasons"]), r["reasons"])
+        self.assertTrue(self.desk.submit(ladder(rungs_bp=bp, rungs_bc=bc), CTX)["ok"])
 
     def test_ladder_sets_limit(self):
         for code in ("202610W4", "202610F4"):

@@ -679,6 +679,21 @@ def handle_ask(body):
                       "out": u.get("output_tokens", 0)}}
 
 
+def handle_decide(body):
+    """台選鳥等交易員的決策呼叫：不帶任何長短期記憶、不讀聊天內容、不寫 save_turn（規格第3節隔離原則）。
+    system 與 question 由呼叫端（desk/runner.py）完整提供。"""
+    system = (body.get("system") or "").strip()
+    q = (body.get("question") or "").strip()
+    if not system or not q:
+        raise ValueError("system 與 question 都必填")
+    reply, raw = run_claude(system, q, body.get("model", "sonnet"))
+    reply = re.sub(r"\n*[-—\s]*完成\s*\d+\s*%\s*$", "", reply).strip()
+    u = raw.get("usage", {})
+    return {"reply": reply, "model": body.get("model", "sonnet"),
+            "usage": {"in": (u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0) + u.get("cache_creation_input_tokens", 0)),
+                      "out": u.get("output_tokens", 0)}}
+
+
 def parse_suggest(s):
     """'重要度=3 | 有效至=2026-10-23 | 內容' → dict；格式不對就當一般記憶。"""
     imp, vu, text = 2, None, s
@@ -1008,6 +1023,8 @@ class H(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(n) or b"{}")
             if self.path == "/ask":
                 return self._send(200, handle_ask(body))
+            if self.path == "/decide":
+                return self._send(200, handle_decide(body))
             if self.path == "/memory/add":
                 return self._send(200, {"ok": add_long(body.get("text", ""), body.get("importance", 2), body.get("valid_until")) in ADDED_OK})
             if self.path == "/memory/consolidate":

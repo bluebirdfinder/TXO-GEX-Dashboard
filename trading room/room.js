@@ -3051,7 +3051,7 @@ function initAdvisorFeed() {
   feed.innerHTML = `
     <div class="advisor-msg ai">
       <div class="msg-meta">
-        <span class="sender">🤖 幕僚鳥 (Claude ✕ AGENTS.md)</span>
+        <span class="sender"><img src="../assets/advisor_bird.png" alt="" class="advisor-avatar-img sm"> 幕僚鳥 (Claude ✕ AGENTS.md)</span>
         <span class="time">${new Date().toLocaleTimeString()}</span>
       </div>
       <div class="msg-bubble">
@@ -3529,7 +3529,7 @@ function appendAdvisorMessage(type, contentHtml) {
   msgEl.className = `advisor-msg ${type}`;
   msgEl.innerHTML = `
     <div class="msg-meta">
-      <span class="sender">${type === 'user' ? '交易員 (You)' : '🤖 幕僚鳥'}</span>
+      <span class="sender">${type === 'user' ? '交易員 (You)' : '<img src="../assets/advisor_bird.png" alt="" class="advisor-avatar-img sm"> 幕僚鳥'}</span>
       <span class="time">${new Date().toLocaleTimeString()}</span>
     </div>
     <div class="msg-bubble">${contentHtml}</div>

@@ -42,8 +42,18 @@ class Desk:
         return not self.cfg["fill"]["validated"]
 
     def _next(self, prefix):
-        kinds = {"D": ("DECISION", "REJECT"), "G": ("FILL",), "O": ("ORDER",)}[prefix]
+        kinds = {"D": ("DECISION", "REJECT", "NO_DECISION"), "G": ("FILL",), "O": ("ORDER",)}[prefix]
         return f"{self.account}-{prefix}{sum(1 for e in self.ledger.events() if e['type'] in kinds) + 1}"
+
+    def record_no_decision(self, reasons, snapshot_path=None, sha=None, raw=None, at=None):
+        """資料缺漏、AI 回覆不合格式等「無決策」也要留紀錄（規格第5節：記錄『無決策：缺 XX 資料』）。"""
+        did = self._next("D")
+        self.ledger.append("NO_DECISION", decision_id=did, reasons=reasons, snapshot=str(snapshot_path) if snapshot_path else None,
+                           sha256=sha, raw=(raw or "")[:2000], at=at)
+        return did
+
+    def link_snapshot(self, decision_id, snapshot_path, sha):
+        self.ledger.append("SNAPSHOT_LINK", decision_id=decision_id, snapshot=str(snapshot_path), sha256=sha)
 
     # ---------------- 遞交決策單 ----------------
     def submit(self, d, ctx, chain=None):
@@ -229,6 +239,13 @@ class Desk:
             ev = self.ledger.append("SETTLE", gid=g["gid"], expiry=expiry, settle_px=settle_px, legs=legs, fees=fees, cash_delta=cash,
                                     reason="到期結算", fee_model="itm_assumed_same_rate" if itm else "worthless_free", at=str(today))
             out.append(ev)
+        st = self.state
+        total = sum(c["pnl"] for c in st.closed if c["expiry"] == expiry)
+        lim = self.cfg["risk"]["ladder_one_side_max_loss_pct"] / 100 * st.capital
+        if total < -lim:
+            # 使用者 2026-10-20：到期結算後虧損超過 5% 要檢討策略本身（下單位置、收取點數），不只是口數
+            out.append(self.ledger.append("REVIEW_FLAG", expiry=expiry, pnl=total, pct=100 * total / st.capital, limit_pct=self.cfg["risk"]["ladder_one_side_max_loss_pct"],
+                                          note="到期結算虧損超過上限：請檢討策略本身（下單位置、收取點數），不要只調口數", at=str(today)))
         return out
 
     def user_resume(self, note):
