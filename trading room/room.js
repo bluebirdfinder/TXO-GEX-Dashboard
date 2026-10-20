@@ -184,7 +184,8 @@ let overlaySeries = {
   smma: null,
   supertrend: { up: null, down: null },
   vwap: { vwap: null, upper1: null, lower1: null },
-  sar: null
+  sar: null,
+  swLevels: { strong: null, weak: null }
 };
 
 let priceLines = {};
@@ -371,11 +372,16 @@ let indicatorConfig = {
   vrvpVa: 70,
   sar: false,
   sarStep: 0.02,
-  fvg: false
+  fvg: false,
+  swLevels: true,   // 強弱關價（黃金切割 0.618／0.382）；僅台指期系列、分K週期
+  swStrongColor: '#e53935',   // 強關線顏色（個人偏好，存瀏覽器）
+  swWeakColor: '#2e7d32',     // 弱關線顏色
+  swStyle: 'dashed',          // 線條樣式：solid／dashed／dotted／large-dashed
+  swWidth: 1                  // 線寬 1–3
 };
 
 // 顏色偏好只存在使用者自己的瀏覽器（localStorage），不需登入；換裝置要重選。沒存過就用 TradingView 預設色。
-const IND_COLOR_KEYS = ['ma7Color', 'ma17Color', 'ma88Color', 'ma200Color', 'smmaColor', 'vwapColor'];
+const IND_COLOR_KEYS = ['ma7Color', 'ma17Color', 'ma88Color', 'ma200Color', 'smmaColor', 'vwapColor', 'swStrongColor', 'swWeakColor'];
 const IND_COLOR_DEFAULTS = {};
 IND_COLOR_KEYS.forEach(k => { IND_COLOR_DEFAULTS[k] = indicatorConfig[k]; });
 function loadIndicatorColors() {
@@ -391,15 +397,34 @@ function saveIndicatorColors() {
     localStorage.setItem('txo_ind_colors', JSON.stringify(out));
   } catch (e) { /* ignore */ }
 }
-const IND_COLOR_INPUTS = { ma7Color: 'col-ma7', ma17Color: 'col-ma17', ma88Color: 'col-ma88', ma200Color: 'col-ma200', smmaColor: 'col-smma', vwapColor: 'col-vwap' };
+const IND_COLOR_INPUTS = { ma7Color: 'col-ma7', ma17Color: 'col-ma17', ma88Color: 'col-ma88', ma200Color: 'col-ma200', smmaColor: 'col-smma', vwapColor: 'col-vwap', swStrongColor: 'col-sw-strong', swWeakColor: 'col-sw-weak' };
 function syncColorPickers() {
   Object.keys(IND_COLOR_INPUTS).forEach(k => { const el = document.getElementById(IND_COLOR_INPUTS[k]); if (el) el.value = indicatorConfig[k]; });
 }
+// 強弱關價的線條樣式／粗細：同樣只存在使用者自己的瀏覽器（localStorage）。
+const SW_STYLES = { solid: 0, dotted: 1, dashed: 2, 'large-dashed': 3 };
+function loadSwStyle() {
+  try {
+    const sv = JSON.parse(localStorage.getItem('txo_sw_style') || '{}');
+    if (sv.style in SW_STYLES) indicatorConfig.swStyle = sv.style;
+    if ([1, 2, 3].includes(sv.width)) indicatorConfig.swWidth = sv.width;
+  } catch (e) { /* storage blocked or corrupted: keep defaults */ }
+}
+function saveSwStyle() {
+  try { localStorage.setItem('txo_sw_style', JSON.stringify({ style: indicatorConfig.swStyle, width: indicatorConfig.swWidth })); } catch (e) { /* ignore */ }
+}
+function syncSwStyleControls() {
+  const a = document.getElementById('sel-sw-style'), b = document.getElementById('sel-sw-width');
+  if (a) a.value = indicatorConfig.swStyle;
+  if (b) b.value = String(indicatorConfig.swWidth);
+}
 loadIndicatorColors();
+loadSwStyle();
 
 // DOM Initialization
 document.addEventListener('DOMContentLoaded', async () => {
   syncColorPickers();
+  syncSwStyleControls();
   initGlobalSmartTooltips();
   await initTradingRoom();
   initFubonLivePriceStream();
@@ -1939,6 +1964,58 @@ function visibleMarkers(data) {
   return all.filter(m => !demarkKeys.has(`${m.time}|${m.text}`));
 }
 
+/**
+ * 強關價／弱關價（黃金切割率＝斐波那契 0.618／0.382）：
+ *   強關 = 當盤最低 + (當盤最高 − 當盤最低) × 0.618；弱關 = 當盤最低 + (當盤最高 − 當盤最低) × 0.382。
+ * 「當盤」＝整個交易日：前一晚夜盤 15:00 起，累計最高／最低到日盤收盤（日盤 08:45 不歸零），隔天夜盤 15:00 重新起算；
+ * 創新高或新低時兩條線同步移動（階梯狀）。公式來源：OP666 簡報與教學影片的公開說明，並以營業員提供的截圖逐點驗證。
+ * 只在台指期系列（GEX_SUPPORTED_SYMBOLS）與分K週期畫；日K以上沒有「當盤」概念，不畫。
+ */
+function computeStrongWeakLevels(candles, isFut) {
+  const strong = [], weak = [];
+  let lastSessStart = null, lastLabel = null, hi = null, lo = null;
+  for (const c of candles) {
+    const sess = tpeSessionAt(c.time, isFut);
+    if (!sess) continue;                       // 場次空檔不畫（不補假線）
+    // 「當盤」＝整個交易日：從夜盤 15:00 起累計到日盤收盤，日盤 08:45 **不歸零**
+    // （2026-10-08 以 OP666 截圖驗證：10/8 09:11 強關 49681／弱關 49518 ＝ 10/7 15:00 起的最高 49946、最低 49253；
+    //  10/2 10:3x 強關 48546／弱關 48417 ＝ 10/1 15:00 起的最高 48753、最低 48210；只算日盤會對不上）。
+    // 2026-10-12 修正：日盤是否延續，看「前一個場次是不是夜盤」，不是看「前一日曆日 15:00」。
+    //  10/12（週一，10/9 補假）日盤開盤強弱關沒有歸零，低點 48417 ＝ 10/8 夜盤（10/9 01 時）最低；
+    //  舊寫法（日盤起點往前 17h45）週一／連假後會落在沒有夜盤的週日／假日而誤歸零。
+    //  夜盤一律是新交易日的起點；日盤若緊接在夜盤之後就延續，若前一個場次是日盤（或沒有資料）才重新起算。
+    const isNewSess = sess.start !== lastSessStart;
+    const reset = isNewSess && !(sess.label === '日盤' && lastLabel === '夜盤');
+    if (isNewSess) { lastSessStart = sess.start; lastLabel = sess.label; }
+    if (reset || hi === null) { hi = c.high; lo = c.low; }
+    else { if (c.high > hi) hi = c.high; if (c.low < lo) lo = c.low; }
+    const range = hi - lo;
+    strong.push({ time: c.time, value: lo + range * 0.618 });
+    weak.push({ time: c.time, value: lo + range * 0.382 });
+  }
+  return { strong, weak };
+}
+function renderStrongWeakLevels(data) {
+  const code = (currentActiveSymbol?.symbol || activeContract || '').toUpperCase();
+  const intraday = !['1D', '1W', '1Mth'].includes(currentTf);
+  if (!indicatorConfig.swLevels || !intraday || !GEX_SUPPORTED_SYMBOLS.includes(code)) return;
+  if (!data.candles || data.candles.length === 0) return;
+  const { strong, weak } = computeStrongWeakLevels(data.candles, true);
+  if (!strong.length) return;
+  const lineStyle = SW_STYLES[indicatorConfig.swStyle] ?? SW_STYLES.dashed;
+  const lineWidth = [1, 2, 3].includes(indicatorConfig.swWidth) ? indicatorConfig.swWidth : 1;
+  overlaySeries.swLevels.strong = mainChart.addLineSeries({
+    color: indicatorConfig.swStrongColor, lineWidth, lineStyle, lineType: LightweightCharts.LineType.WithSteps,
+    priceLineVisible: false, lastValueVisible: true, title: ':強關'
+  });
+  overlaySeries.swLevels.weak = mainChart.addLineSeries({
+    color: indicatorConfig.swWeakColor, lineWidth, lineStyle, lineType: LightweightCharts.LineType.WithSteps,
+    priceLineVisible: false, lastValueVisible: true, title: ':弱關'
+  });
+  overlaySeries.swLevels.strong.setData(strong);
+  overlaySeries.swLevels.weak.setData(weak);
+}
+
 function renderMainOverlays(data) {
   // Clear old series
   if (overlaySeries.ribbons.ma7) { mainChart.removeSeries(overlaySeries.ribbons.ma7); overlaySeries.ribbons.ma7 = null; }
@@ -1952,6 +2029,10 @@ function renderMainOverlays(data) {
   if (overlaySeries.sar) { mainChart.removeSeries(overlaySeries.sar); overlaySeries.sar = null; }
   if (overlaySeries.supertrend.up) { mainChart.removeSeries(overlaySeries.supertrend.up); overlaySeries.supertrend.up = null; }
   if (overlaySeries.supertrend.down) { mainChart.removeSeries(overlaySeries.supertrend.down); overlaySeries.supertrend.down = null; }
+
+  if (overlaySeries.swLevels.strong) { mainChart.removeSeries(overlaySeries.swLevels.strong); overlaySeries.swLevels.strong = null; }
+  if (overlaySeries.swLevels.weak) { mainChart.removeSeries(overlaySeries.swLevels.weak); overlaySeries.swLevels.weak = null; }
+  renderStrongWeakLevels(data);
 
   // 1. 尋鳥多空彩帶 (MA7, MA17, MA88, MA200)
   if (indicatorConfig.ribbons) {
@@ -2770,7 +2851,9 @@ function setupEventListeners() {
   if (resetColorsBtn) {
     resetColorsBtn.addEventListener('click', () => {
       IND_COLOR_KEYS.forEach(k => { indicatorConfig[k] = IND_COLOR_DEFAULTS[k]; });
+      indicatorConfig.swStyle = 'dashed'; indicatorConfig.swWidth = 1; saveSwStyle();
       syncColorPickers();
+      syncSwStyleControls();
     });
   }
 
@@ -2796,6 +2879,13 @@ function setupEventListeners() {
       indicatorConfig.sar = document.getElementById('chk-sar').checked;
       indicatorConfig.sarStep = parseFloat(document.getElementById('param-sar-step').value) || 0.02;
       indicatorConfig.fvg = document.getElementById('chk-fvg').checked;
+      indicatorConfig.swLevels = document.getElementById('chk-sw').checked;
+      indicatorConfig.swStrongColor = document.getElementById('col-sw-strong').value || IND_COLOR_DEFAULTS.swStrongColor;
+      indicatorConfig.swWeakColor = document.getElementById('col-sw-weak').value || IND_COLOR_DEFAULTS.swWeakColor;
+      indicatorConfig.swStyle = document.getElementById('sel-sw-style').value;
+      indicatorConfig.swWidth = parseInt(document.getElementById('sel-sw-width').value) || 1;
+      saveIndicatorColors();
+      saveSwStyle();
       // Supertrend 週期／倍數：欄位一直存在但從沒被讀取（2026-10-01 稽核發現），改了沒有效果
       indicatorConfig.stLen = parseInt(document.getElementById('param-st-len').value) || 10;
       indicatorConfig.stMult = parseFloat(document.getElementById('param-st-mult').value) || 3.0;
