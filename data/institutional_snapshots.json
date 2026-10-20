@@ -2644,11 +2644,11 @@
     "margin_maint_stock": null
   },
   "2026-10-20_INST_RETAIL": {
-    "mtx_net_oi": 10701,
-    "mtx_ratio": 24.43,
-    "mtx_total_ratio": 24.43,
-    "mtx_long_oi": 38464,
-    "mtx_short_oi": 27763,
+    "mtx_net_oi": 9142,
+    "mtx_ratio": 21.2,
+    "mtx_total_ratio": 21.2,
+    "mtx_long_oi": 38085,
+    "mtx_short_oi": 28943,
     "tmf_net_oi": 42448,
     "tmf_ratio": 31.0,
     "tmf_total_ratio": 31.0,
@@ -2658,7 +2658,7 @@
     "foreign_call_net": 0.18,
     "foreign_put_net": 2.24,
     "foreign_mtx_net": 2104,
-    "written_at": "2026-10-20T18:10:30.086343"
+    "written_at": "2026-10-20T18:26:45.040638"
   },
   "2026-10-20_INST_DAY": {
     "top5_net": 21958,
