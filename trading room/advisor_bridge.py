@@ -23,6 +23,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
+sys.path.insert(0, str(Path(__file__).parent))
+import advisor_guard as guard   # 防套話：入口過濾／系統提示範圍規則／出口檢查／限速（說明見該檔案開頭）
+
 PORT = int(os.environ.get("ADVISOR_BRIDGE_PORT", "8765"))
 ROOT = Path(__file__).parent
 MEM_DIR = Path(os.environ.get("ADVISOR_MEM_DIR") or (ROOT / "brain" / "memory"))
@@ -53,6 +56,18 @@ IMPORTANCE_LABEL = {3: "核心", 2: "一般", 1: "瑣碎"}
 
 _lock = threading.RLock()
 _last_ask_ts = 0.0
+GUARD_ON = os.environ.get("ADVISOR_GUARD", "on").lower() != "off"   # 只有自己除錯時才設 ADVISOR_GUARD=off
+GUARD_LOG = MEM_DIR / "guard_log.jsonl"
+_guard_rl = guard.RateLimiter()
+
+
+def _guard_log(stage, why, q):
+    """被擋的提問留紀錄（只記提問前 200 字與原因，不記回覆內容）。"""
+    try:
+        with open(GUARD_LOG, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"ts": datetime.now().isoformat(timespec="seconds"), "stage": stage, "why": why, "q": (q or "")[:200]}, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
 for d in (MEM_DIR, REPORT_DIR, BACKUP_DIR):
     d.mkdir(parents=True, exist_ok=True)
 CLAUDE = shutil.which("claude") or shutil.which("claude.cmd")
@@ -605,10 +620,19 @@ def handle_ask(body):
     if cmd is not None:
         return cmd
 
+    if GUARD_ON:
+        if _guard_rl.cooling():
+            return {"reply": guard.REFUSAL_COOLDOWN, "guard": "cooldown"}
+        why = guard.check_input(q)
+        if why:
+            _guard_rl.record_block()
+            _guard_log("input", why, q)
+            return {"reply": guard.REFUSAL_INPUT, "guard": "input"}
+
     _last_ask_ts = time.time()
     long_mem = select_memory_for(q, body.get("symbol") or "")
     short = load_short()
-    system = (body.get("system") or "你是幕僚鳥，用繁體中文回答。") + "\n" + MEMORY_RULES
+    system = (body.get("system") or "你是幕僚鳥，用繁體中文回答。") + "\n" + MEMORY_RULES + ("\n" + guard.GUARD_RULES if GUARD_ON else "")
     due = format_due(due_items())
     if due:
         system += "\n【待辦與即將到期（請在回答的最前面先簡短提醒使用者，再回答問題）】\n" + "\n".join(due)
@@ -639,9 +663,18 @@ def handle_ask(body):
         reply = re.sub(r"\n?^MEMORY_SUGGEST:.*$", "", reply, flags=re.M).strip()
     # 使用者全域 CLAUDE.md 會漏進 claude -p（要求回覆附「完成 N%」），在這裡剝掉
     reply = re.sub(r"\n*[-—\s]*完成\s*\d+\s*%\s*$", "", reply).strip()
+    guard_flag = None
+    if GUARD_ON:
+        # 出口檢查：回覆含程式碼、金鑰、內部路徑或系統提示原文 → 整段換掉；內部檔名只遮蔽。系統提示的比對只用固定規則部分，
+        # 不含每次變動的即時行情，避免把正常引用盤面數字的回覆誤判成洩漏。
+        reply, guard_flag = guard.sanitize_output(reply, MEMORY_RULES + guard.GUARD_RULES)
+        if guard_flag:
+            _guard_log("output:" + guard_flag.split(":")[0], guard_flag, q)
+            if guard_flag.startswith("block"):
+                suggest = None
     save_turn(q, reply)
     u = raw.get("usage", {})
-    return {"reply": reply, "memory_suggest": suggest, "model": model,
+    return {"reply": reply, "memory_suggest": suggest, "model": model, "guard": guard_flag,
             "usage": {"in": (u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0) + u.get("cache_creation_input_tokens", 0)),
                       "out": u.get("output_tokens", 0)}}
 
