@@ -2323,6 +2323,41 @@ function renderNightSixSpotlight(dataObj) {
   `;
 }
 
+// 2026-10-20：個股現貨報價來自證交所，換日有時間差（10/20 05:09 引擎跑時還是 10/16 的值，畫面卻沒標）。
+// 引擎現在為每檔寫入 spot_date；與「籌碼基準日」(chip_base_date) 不同時，在現貨價旁標出資料日期，不假裝是最新。
+function spotExpectedDate() {
+  const base = gexData && gexData.chip_base_date;
+  if (!base) return null;
+  // 日盤時段（08:45~15:00）現貨價本來就是「前一交易日收盤」；夜盤時段（15:00~隔日 05:00）應已是當日收盤。
+  if (gexData.session_type !== 'DAY') return base;
+  const d = new Date(base + 'T00:00:00Z');
+  do { d.setUTCDate(d.getUTCDate() - 1); } while (d.getUTCDay() === 0 || d.getUTCDay() === 6);   // 前一個週間日（國定假日不另外處理，最多多標一天）
+  return d.toISOString().slice(0, 10);
+}
+function spotDateTag(item) {
+  const exp = spotExpectedDate();
+  const d = item && item.spot_date;
+  if (!exp || !d || d >= exp) return '';
+  return ` <span style="color:#ffb74d;font-size:0.68rem;font-weight:600;" title="證交所現貨報價尚未更新到 ${exp}，這檔顯示的是 ${d} 的收盤">(${d.slice(5)})</span>`;
+}
+function updateSpotDateNote(list) {
+  const tbody = document.getElementById('stock-futures-body');
+  const table = tbody && tbody.closest('table');
+  if (!table || !table.parentNode) return;
+  let n = document.getElementById('stock-spot-date-note');
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'stock-spot-date-note';
+    n.style.cssText = 'color:#ffb74d;font-size:0.78rem;font-weight:600;margin:4px 0 8px;';
+    table.parentNode.insertBefore(n, table);
+  }
+  const stale = (list || []).filter(it => spotDateTag(it));
+  if (!stale.length) { n.style.display = 'none'; n.textContent = ''; return; }
+  const dates = [...new Set(stale.map(it => it.spot_date))].sort();
+  n.textContent = `⚠ ${stale.length} 檔的現貨價是舊資料（${dates.map(x => x.slice(5)).join('、')}），證交所尚未更新到 ${spotExpectedDate().slice(5)}；已在現貨價旁標出日期。`;
+  n.style.display = 'block';
+}
+
 function populateStockFutures() {
   populateAiQuantDigest();
   try { renderNightSixSpotlight(gexData); } catch (e) { console.error('Night Six Spotlight Error:', e); }
@@ -2433,6 +2468,7 @@ function populateStockFutures() {
     ? ''
     : `<div style="font-size: 0.7rem; color: ${d > 0 ? 'var(--call-color)' : (d < 0 ? 'var(--put-color)' : '#888')};" title="較前一交易日增減">${d > 0 ? '+' : ''}${d.toLocaleString()}</div>`;
 
+  try { updateSpotDateNote(gexData.stock_futures); } catch (e) { console.warn('spot date note', e); }
   let html = '';
   list.forEach(item => {
     const spotPrice = item.spot_price || 0.0;
@@ -2530,7 +2566,7 @@ function populateStockFutures() {
       <td><strong>${item.name}</strong> ${top10Tag}</td>
       <td>${intentBadgeHtml}</td>
       <td>${itBadgeHtml}</td>
-      <td style="font-weight: 600;">${spotPrice.toFixed(2)}</td>
+      <td style="font-weight: 600;">${spotPrice.toFixed(2)}${spotDateTag(item)}</td>
       <td>${spotVol === null ? '<span style="color:#666;">—</span>' : spotVol.toLocaleString()}</td>
       <td>
         <div style="color: ${spotInstNet >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 700;">${spotNetSign}${spotInstNet.toLocaleString()}</div>

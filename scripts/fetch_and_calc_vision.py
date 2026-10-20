@@ -757,6 +757,16 @@ def fetch_5day_exchange_rates():
         "hot_money_summary_html": hot_money_summary_html
     }
 
+def _roc_date_to_iso(s):
+    """證交所民國日期 '1151016' → '2026-10-16'；格式不對回 None（畫面就不標日期，不猜）。"""
+    try:
+        s = str(s).strip()
+        if len(s) == 7 and s.isdigit():
+            return f"{int(s[:3]) + 1911:04d}-{s[3:5]}-{s[5:7]}"
+    except Exception:
+        pass
+    return None
+
 def fetch_twse_stock_spot_prices():
     """
     Fetches stock spot prices from TWSE with Multi-Tier Fallback:
@@ -777,7 +787,7 @@ def fetch_twse_stock_spot_prices():
                     chg_pct = float(q.get("pct_change", 0.0) or 0.0)
                     vol = int(q.get("volume") or 0)   # 沒有成交量就是 0，不放 1000 之類的假數字
                     if close_p > 0 and code not in ("TXF", "MXF", "TMF", "TWN"):
-                        stock_spot_dict[code] = {"price": close_p, "change_pct": chg_pct, "volume": vol}
+                        stock_spot_dict[code] = {"price": close_p, "change_pct": chg_pct, "volume": vol, "date": _roc_date_to_iso(q.get("date"))}
             if len(stock_spot_dict) > 100:
                 print(f"[OK] Loaded {len(stock_spot_dict)} stock spot prices from local tw_quotes_latest.json cache")
         except Exception as ex_q:
@@ -798,7 +808,7 @@ def fetch_twse_stock_spot_prices():
                     pct = round((chg_p / prev_p * 100), 2) if prev_p > 0 else 0.0
                     vol = int(int(d.get('TradeVolume', '0').replace(',', '')) / 1000)
                     if close_p > 0:
-                        stock_spot_dict[code] = {"price": close_p, "change_pct": pct, "volume": vol}
+                        stock_spot_dict[code] = {"price": close_p, "change_pct": pct, "volume": vol, "date": _roc_date_to_iso(d.get('Date'))}
                 except ValueError:
                     pass
             if len(stock_spot_dict) > 100:
@@ -3909,6 +3919,7 @@ def generate_gex_payload():
                 "liquidity": stk.get('liquidity', '中'),
                 "spot_price": spot_p,
                 "spot_volume": spot_vol,
+                "spot_date": twse_info.get('date'),   # 現貨報價的資料日期（證交所）；與最新交易日不同時前端會標示
                 "fut_price": fut_price,
                 "fut_volume": fut_vol,
                 "basis": basis,
