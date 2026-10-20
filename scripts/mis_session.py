@@ -50,3 +50,50 @@ def mis_quote_is_stale(now, ctime):
     now_sec = now.hour * 3600 + now.minute * 60 + now.second
     age = (now_sec - q_sec) % 86400  # 跨午夜也成立
     return age > STALE_SECONDS
+
+
+# ---- 期交所 MIS 1 分 K（getChartData1M）解析 ----
+# 2026-10-20：盤中主圖缺「本盤別已過去的 K 棒」（富邦分 K 一天只抓兩次）。MIS 的 1 分 K 是官方即時資料，
+# 列格式 [HHMMSS, O, H, L, C, V]：標籤＝K 棒「結束」時間；分鐘可寫成 60（例如 '226000'＝23:00:00）；沒有日期。
+import datetime as _dt
+
+_TPE = _dt.timezone(_dt.timedelta(hours=8))
+
+
+def _label_seconds(s):
+    s = str(s).strip().zfill(6)
+    return int(s[0:2]) * 3600 + int(s[2:4]) * 60 + int(s[4:6])
+
+
+def parse_mis_ticks(ticks, now):
+    """MIS Ticks → 1 分 K 清單 [{time(epoch 秒，K 棒開始), open, high, low, close, volume}]，時間由舊到新。
+    列沒有日期：從最新一列往回推，標籤變大（相較較新的一列）代表跨過午夜、日期減一；
+    標籤本身超過 24 小時（連續編號）也能處理。開高低收有任何一個不是正數的列丟掉，不補。"""
+    rows = []
+    for r in ticks or []:
+        try:
+            lab = _label_seconds(r[0])
+            o, h, l, c = (float(x) for x in r[1:5])
+            v = int(float(r[5]))
+        except (TypeError, ValueError, IndexError):
+            continue
+        if o > 0 and h > 0 and l > 0 and c > 0 and h >= l:
+            rows.append((lab, o, h, l, c, v))
+    if not rows:
+        return []
+    now = now.astimezone(_TPE) if now.tzinfo else now.replace(tzinfo=_TPE)
+    today0 = _dt.datetime(now.year, now.month, now.day, tzinfo=_TPE)
+    now_tod = now.hour * 3600 + now.minute * 60 + now.second
+    dayoff = -1 if rows[-1][0] > now_tod + 600 else 0   # 最新標籤比現在還晚：屬於前一個日曆日（或連續編號跨過午夜）
+    out, prev = [], None
+    for lab, o, h, l, c, v in reversed(rows):
+        if prev is not None and lab > prev:
+            dayoff -= 1
+        prev = lab
+        epoch = int((today0 + _dt.timedelta(days=dayoff)).timestamp()) + lab - 60
+        out.append({"time": epoch, "open": o, "high": h, "low": l, "close": c, "volume": v})
+    out.reverse()
+    by_time = {}
+    for b in out:          # 同一分鐘重複（例如 '225900' 與 '226000' 換分鐘瞬間同時出現）：保留較新的那一列
+        by_time[b["time"]] = b
+    return [by_time[t] for t in sorted(by_time)]

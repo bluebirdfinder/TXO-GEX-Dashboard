@@ -21,7 +21,8 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 # Ensure project root is in sys.path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from scripts.mis_session import mis_market_type, mis_quote_is_stale
+import re
+from scripts.mis_session import mis_market_type, mis_quote_is_stale, session_is_open, parse_mis_ticks
 
 try:
     sys.stdout.reconfigure(encoding='utf-8')
@@ -203,6 +204,53 @@ def fubon_trades_worker():
     except Exception as e:
         print(f"[Gateway] Fubon Trades Worker notice: {e}")
 
+# ---- 本盤別已過去的 1 分 K（期交所 MIS getChartData1M，官方即時資料；不造、不補）----
+# 2026-10-20：富邦分 K 排程一天只抓兩次（05:30、14:00），盤中主圖缺本盤別已過去的部分。前端載入時向這裡要，合併進 K 線快取。
+_SB_FRONT = {}   # (商品, 'M'|'F') -> (取得時間, MIS 代號)；近月代號 10 分鐘更新一次
+_SB_CACHE = {}   # (商品, 'M'|'F') -> (取得時間, 結果)；3 秒內重複請求直接回快取，不多打期交所
+_SB_SYMBOLS = ('TXF', 'MXF')   # MIS 有的：台指期、小型台指；微台（TMF）MIS 清單沒有
+
+
+def _mis_post_json(path, payload, timeout=6):
+    req = urllib.request.Request("https://mis.taifex.com.tw/futures/api/" + path, data=json.dumps(payload).encode('utf-8'),
+                                 headers={'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+    with urllib.request.urlopen(req, context=SSL_CTX, timeout=timeout) as resp:
+        return json.loads(resp.read().decode('utf-8'))
+
+
+def get_session_bars(symbol, now=None):
+    """回傳 dict：{symbol, session('N'夜盤/'D'日盤/'closed'), bars:[1 分 K...]}；出錯回 {error}。"""
+    sym = str(symbol or 'TXF').upper()
+    if sym not in _SB_SYMBOLS:
+        return {"error": "unsupported symbol", "supported": list(_SB_SYMBOLS)}
+    now = now or datetime.datetime.now()
+    if not session_is_open(now):
+        return {"symbol": sym, "session": "closed", "bars": []}
+    mt = mis_market_type(now)
+    suffix = 'M' if mt == '1' else 'F'
+    key = (sym, suffix)
+    hit = _SB_CACHE.get(key)
+    if hit and time.time() - hit[0] < 3:
+        return hit[1]
+    try:
+        fid = _SB_FRONT.get(key)
+        if not fid or time.time() - fid[0] > 600:
+            ql = _mis_post_json('getQuoteList', {'MarketType': mt, 'SymbolType': 'F'}).get('RtData', {}).get('QuoteList', [])
+            ids = [q.get('SymbolID', '') for q in ql if re.match(r'^' + sym + r'[A-Z]\d-' + suffix + r'$', q.get('SymbolID', ''))]
+            if not ids:
+                return {"error": "no front-month contract in MIS list"}
+            fid = (time.time(), ids[0])   # 期交所清單由近月排起
+            _SB_FRONT[key] = fid
+        d = _mis_post_json('getChartData1M', {'SymbolID': fid[1]}).get('RtData', {})
+        bars = parse_mis_ticks(d.get('Ticks'), now)
+        res = {"symbol": sym, "mis_symbol": fid[1], "session": "N" if mt == '1' else "D", "bars": bars,
+               "source": "TAIFEX MIS getChartData1M", "ts": time.time()}
+        _SB_CACHE[key] = (time.time(), res)
+        return res
+    except Exception as e:
+        return {"error": f"MIS unavailable: {type(e).__name__}"}
+
+
 def mis_polling_worker():
     """ Priority 2: Official TAIFEX / TWSE MIS API Polling Worker """
     while True:
@@ -345,6 +393,20 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                     res_data["macro"] = {**state.macro, "ts": state.macro_ts}
                 body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
                 self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(body)))
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(body)
+                self.wfile.flush()
+                return
+
+            # 本盤別已過去的 1 分 K（期交所 MIS）— ?symbol=TXF|MXF；休市回 session=closed 與空陣列
+            if parsed.path.startswith('/api/session_bars'):
+                qs = urllib.parse.parse_qs(parsed.query)
+                res_data = get_session_bars((qs.get('symbol', ['TXF'])[0]))
+                body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
+                self.send_response(200 if 'error' not in res_data else 502)
                 self.send_header('Content-Type', 'application/json; charset=utf-8')
                 self.send_header('Content-Length', str(len(body)))
                 self._send_cors()

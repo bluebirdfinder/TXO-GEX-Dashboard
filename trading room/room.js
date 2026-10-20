@@ -507,6 +507,9 @@ async function loadDashboardData() {
   } catch (e) {
     console.warn('⚠️ Could not load ../data/klines_cache.json', e);
   }
+  // 盤中：把「本盤別已過去的 1 分 K」（期交所 MIS，官方即時資料，由本機報價服務轉給網頁）合併進 K 線快取。
+  // 富邦分 K 一天只抓兩次（05:30、14:00），沒有這一步，盤中主圖只有上個場次加即時那一根。
+  try { await mergeSessionBarsIntoCache(); } catch (e) { console.warn('⚠️ 本盤別 K 棒合併失敗（維持原快取）', e); }
 
   // Phase 4: Load Institutional Momentum & Retail Small TX Data
   try {
@@ -1062,6 +1065,57 @@ function generateIndicatorsData(tf) {
 const CHART_BUNDLE_FIELDS = ['ma7', 'ma17', 'ma88', 'ma200', 'adxLine', 'adxHist', 'adxSignals', 'adxMeta', 'markers', 'demarkMarkers',
   'vwapData', 'vwapUpper', 'vwapLower', 'smmaData', 'sarData', 'supertrendUp', 'supertrendDown', 'vrvpData'];
 const _chartBundleCache = {};
+// ---- 本盤別 K 棒合併（2026-10-20）----
+// 來源：本機報價服務 /api/session_bars（期交所 MIS getChartData1M 的 1 分 K；實測開／高／低與富邦本盤別 100% 相同）。
+// 只在交易時段、且本機報價服務連得到時才做；只加入「比快取最後一根更新」的K棒，不覆蓋既有資料、不補不造。
+// 分段規則同快取：5M／15M 對齊整點刻度，30M／1H 從場次開盤起算（夜盤 15:00、日盤 08:45）。4H／日／週／月不動。
+const SESSION_BAR_TFS = { '5M': 300, '15M': 900, '30M': 1800, '1H': 3600 };
+const SESSION_BAR_SYMBOLS = { TXF: 'TXF', MXF: 'MXF' };   // MIS 有：台指期、小型台指（微台沒有）
+function _sessionAnchor(t) {   // 該根 1 分 K 所屬場次的開盤時間（epoch 秒）
+  const x = t + 8 * 3600, dayStart = Math.floor(x / 86400) * 86400, mins = (x - dayStart) / 60;
+  const start = mins >= 15 * 60 ? dayStart + 15 * 3600 : (mins < 5 * 60 ? dayStart - 86400 + 15 * 3600 : dayStart + (8 * 60 + 45) * 60);
+  return start - 8 * 3600;
+}
+function aggregateSessionBars(bars1m, stepSec) {
+  const out = new Map();
+  for (const b of bars1m) {
+    const a = _sessionAnchor(b.time), t0 = a + Math.floor((b.time - a) / stepSec) * stepSec, o = out.get(t0);
+    if (!o) out.set(t0, { time: t0, open: b.open, high: b.high, low: b.low, close: b.close, volume: b.volume || 0 });
+    else { o.high = Math.max(o.high, b.high); o.low = Math.min(o.low, b.low); o.close = b.close; o.volume += b.volume || 0; }
+  }
+  return [...out.values()].sort((p, q) => p.time - q.time);
+}
+let sessionBarsMergedInfo = null;   // { symbol: n 根 } 給畫面標示用
+async function mergeSessionBarsIntoCache() {
+  if (!klinesCacheData || !klinesCacheData.assets || !isTaifexSessionOpenNow()) return;
+  const merged = {};
+  for (const sym of Object.keys(SESSION_BAR_SYMBOLS)) {
+    const tfs = klinesCacheData.assets[sym] && klinesCacheData.assets[sym].timeframes;
+    if (!tfs) continue;
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 5000);
+    let res = null;
+    try {
+      const r = await fetch(`${GATEWAY_BASE}/api/session_bars?symbol=${SESSION_BAR_SYMBOLS[sym]}`, { signal: ctl.signal });
+      if (r.ok) res = await r.json();
+    } catch (e) { /* 本機報價服務沒開：維持原快取 */ } finally { clearTimeout(timer); }
+    if (!res || !Array.isArray(res.bars) || !res.bars.length) continue;
+    const bars = res.bars.filter(b => b && b.time > 0 && b.open > 0 && b.high > 0 && b.low > 0 && b.close > 0);
+    const sets = { '1M': bars };
+    for (const [tf, step] of Object.entries(SESSION_BAR_TFS)) sets[tf] = aggregateSessionBars(bars, step);
+    let added = 0;
+    for (const [tf, arr] of Object.entries(sets)) {
+      if (!Array.isArray(tfs[tf]) || !tfs[tf].length) continue;
+      const last = tfs[tf][tfs[tf].length - 1].time;
+      const fresh = arr.filter(b => b.time > last);
+      if (fresh.length) { tfs[tf] = tfs[tf].concat(fresh); if (tf === '1M') added = fresh.length; }
+    }
+    if (added) merged[sym] = added;
+  }
+  if (Object.keys(merged).length) {
+    sessionBarsMergedInfo = merged;
+    console.log('✅ 已合併本盤別 K 棒（期交所 MIS 1 分 K）：', merged);
+  }
+}
 // 2026-10-17：Worker 原本讀 GitHub Pages 上的 klines_cache.json，那份沒有富邦本機累積的最新分K（實測落後一整個場次），
 // 指標線會停在舊K棒。改成把「網頁手上這份最新K棒」用 POST 送給 Worker 算（K棒是公開資料；公式仍只在 Worker）。
 // 舊版 Worker 不認 POST（預檢被擋）→ 自動退回原本的 GET。
