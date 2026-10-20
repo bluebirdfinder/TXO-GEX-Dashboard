@@ -3141,24 +3141,18 @@ function initAdvisorFeed() {
   feed.innerHTML = `
     <div class="advisor-msg ai">
       <div class="msg-meta">
-        <span class="sender"><img src="../assets/advisor_bird.png" alt="" class="advisor-avatar-img sm"> 幕僚鳥 (Claude ✕ AGENTS.md)</span>
+        <span class="sender"><img src="../assets/advisor_bird.png" alt="" class="advisor-avatar-img sm"> 幕僚鳥</span>
         <span class="time">${new Date().toLocaleTimeString()}</span>
       </div>
       <div class="msg-bubble">
-        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v64.18)</h4>
+        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷</h4>
         <p style="font-size: 0.8rem; line-height: 1.55; margin-bottom: 6px;">
           🔹 <strong>當前空間拓撲</strong>：${topologyLabel}<br>
-          ⚡ <strong>GEX 狀態</strong>：台指期 (<strong>${txf}</strong>) 位於 Zero Gamma (<strong>${zg}</strong>) ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。<br>
-          ・<strong>${brokeCW ? 'Call Wall（價格已站上，轉為回測支撐位）' : '上檔天花板 (Call Wall)'}</strong>：<code>${cw}</code> (價格−價位 <strong>${sgn(distCW)} 點</strong>)<br>
-          ・<strong>${brokePW ? 'Put Wall（價格已跌破，轉為反壓位）' : '下檔防守線 (Put Wall)'}</strong>：<code>${pw}</code> (價格−價位 <strong>${sgn(distPW)} 點</strong>)<br>
-          ・<strong>結算最大痛點 (Max Pain)</strong>：<code>${mp}</code>
+          ⚡ <strong>Gamma 狀態</strong>：台指期位於 Zero Gamma ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。
         </p>
-        <div class="topology-banner" style="margin-top: 6px;">
-          🛡️ <strong>幕僚鳥即時風控提醒 (AGENTS.md 鐵律)</strong>：<br>
-          1. <strong>嚴禁對週選價差單拆單 (No Legging Out)</strong>，避免解鎖無限風險引發多空雙巴。<br>
-          2. <strong>盤中暴衝急拉/急殺時嚴禁追價</strong>，請等待 15M/30M DeMark 9★ 竭盡過濾。<br>
-          3. 支援<strong>直接輸入持倉部位 (如: <code>W2 47000 SP / 46900 BP</code>)</strong>，我會立即為您進行真金白銀部位體檢與連續洗價單試算！
-        </div>
+        <p style="font-size: 0.76rem; line-height: 1.5; color: var(--text-muted);">
+          各點位與距離請看左側 GEX 面板。可以直接輸入持倉部位（例如 <code>W2 47000 SP / 46900 BP</code>），我會幫你做部位體檢與洗價單試算。
+        </p>
       </div>
     </div>
   `;
@@ -3325,7 +3319,7 @@ async function callClaudeApi(apiKey, query, base64Image) {
 
   const systemInstruction = `你是「幕僚鳥」，尋鳥戰情交易室的 AI 幕僚。能回答：台指選擇權（洗價單建立、技術線圖多空分析、停損停利建議）、各商品（期貨/外匯/商品/美股/台股個股）多空技術分析、總經與個股問題。結合老墨 XQ 指標體系與 TXO GEX 造市商對沖模型，策略以使用者的 Lumi 專案筆記為準。
 不確定或無資料時明說，不捏造數字；你不是持牌顧問，建議僅供使用者自行判斷。
-最高風控鐵律與行為準則 (AGENTS.md)：
+最高風控鐵律與行為準則：
 1. 嚴禁對週選擇權 (W1/W2/W4/W5/F1) 垂直價差單建議「拆單 (No Legging Out)」，必須維持整組價差單平倉或轉倉。
 2. 盤中價格暴衝/急殺時嚴禁建議追價，等待 15M/30M DeMark 9★ 買賣盤竭盡。
 3. 診斷實盤真金白銀部位時，檢查賣腳安全邊際、未實現損益、IOC 洗價點數。
@@ -3514,7 +3508,7 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
         </p>
 
         <div style="background: rgba(255, 71, 87, 0.12); border: 1px solid rgba(255, 71, 87, 0.4); border-radius: 6px; padding: 6px 8px; margin: 6px 0; font-size: 0.78rem;">
-          🚨 <strong>AGENTS.md 最高風控鐵律審核</strong>：<br>
+          🚨 <strong>最高風控鐵律審核</strong>：<br>
           1. <strong>嚴禁拆單 (No Legging Out)</strong>：對週選擇權垂直價差單，<strong>絕不可先平倉賣腳留下買腳</strong>！拆單會解除有限風險保護，引發多空雙巴悲劇。<br>
           2. <strong>維持整組處理</strong>：平倉、轉倉或停損必須整組雙腳同步送出。
         </div>
@@ -5073,8 +5067,13 @@ async function bridgeAvailable() {
   return _bridgeUp;
 }
 function updateBridgeBadge() {
-  const b = document.querySelector('.model-badge');
-  if (b) b.textContent = _bridgeUp ? 'Claude 訂閱 ✕ AGENTS.md' : (localStorage.getItem('claude_api_key') ? 'Claude API ✕ AGENTS.md' : 'Claude 未連線（本地規則引擎）');
+  // 只留一顆小圓點（綠＝Claude 已連線、黃＝API Key 模式、灰＝未連線只用本地規則）；說明放在滑鼠懸停文字，畫面上不再顯示文字。
+  const b = document.getElementById('advisor-status-dot') || document.querySelector('.model-badge');
+  if (!b) return;
+  const hasKey = !!localStorage.getItem('claude_api_key');
+  b.textContent = '●';
+  b.style.color = _bridgeUp ? '#26a69a' : (hasKey ? '#ffd700' : '#8b95a5');
+  b.title = _bridgeUp ? '幕僚鳥：Claude 已連線' : (hasKey ? '幕僚鳥：使用 API Key 連線' : '幕僚鳥：未連線，目前只用本地規則回答');
 }
 function advisorModel() { return document.getElementById('advisor-model-select')?.value || 'sonnet'; }
 async function callBridge(system, query, base64Image) {

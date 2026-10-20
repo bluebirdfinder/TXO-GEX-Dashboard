@@ -553,9 +553,9 @@
           <span>幕僚鳥</span>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
-          <select id="advisor-model-select" title="模型：Sonnet 日常、Opus 深度分析、Haiku 快速" style="background:#080c14;color:#fff;border:1px solid var(--panel-border);border-radius:4px;font-size:0.7rem;padding:1px 2px;"><option value="sonnet">Sonnet</option><option value="opus">Opus</option><option value="haiku">Haiku</option></select>
-          <span class="model-badge">Claude ✕ AGENTS.md</span>
-          <button id="btn-open-gemini-key" class="btn-api-key-config" title="配置 Claude API Key">🔑 Key</button>
+          <!-- 連線狀態小圓點（文字與 Key 按鈕已隱藏；Key 按鈕保留在 DOM 內，因為程式仍會綁定它） -->
+          <span class="model-badge" id="advisor-status-dot" title="" style="background:none;border:0;padding:0;font-size:0.8rem;line-height:1;color:#8b95a5;">●</span>
+          <button id="btn-open-gemini-key" class="btn-api-key-config" title="配置 Claude API Key" style="display:none;">🔑 Key</button>
           <button class="btn-collapse-panel" id="btn-collapse-right" title="收合 幕僚鳥面板 (▶)">收合 ▶</button>
           <button class="btn-close-drawer mobile-only" id="btn-close-right-drawer">✕</button>
         </div>
@@ -585,6 +585,11 @@
         <button id="advisor-attach-btn" class="btn-advisor-attach has-tooltip" data-tooltip="📎 夾帶盤面截圖或對帳單&#10;💡 也可直接在輸入框按 Ctrl+V 貼上截圖！" title="上傳圖片">📎</button>
         <input type="text" id="advisor-input" class="advisor-input" placeholder="詢問幕僚鳥盤勢或貼上截圖 (Ctrl+V)...">
         <button id="advisor-send-btn" class="btn-send-advisor">發送 🚀</button>
+      </div>
+      <!-- 模型選擇：放在輸入欄下方（Sonnet 日常、Opus 深度分析、Haiku 快速） -->
+      <div class="advisor-model-row" style="display:flex;align-items:center;gap:6px;padding:2px 10px 8px;font-size:0.7rem;color:var(--text-muted);">
+        <span>模型</span>
+        <select id="advisor-model-select" title="模型：Sonnet 日常、Opus 深度分析、Haiku 快速" style="background:#080c14;color:#fff;border:1px solid var(--panel-border);border-radius:4px;font-size:0.72rem;padding:2px 4px;"><option value="sonnet">Sonnet</option><option value="opus">Opus</option><option value="haiku">Haiku</option></select>
       </div>
 
     </aside>
