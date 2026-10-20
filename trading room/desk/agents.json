@@ -1,0 +1,31 @@
+{
+  "_readme": "交易室角色清單。active＝已在運作；planned＝規劃中（blocked_by 寫還缺什麼）。新增角色＝在這裡加一筆，首頁就會出現；交易員有 account 才會有帳戶頁。",
+  "traders": [
+    {"id": "T0", "name": "台選鳥", "market": "台指選擇權", "status": "active", "account": "T0",
+     "note": "不看 TG 共振訊號（對照組基準）。全部是模擬單。"},
+    {"id": "T1", "name": "台選鳥（對照）", "market": "台指選擇權", "status": "planned", "account": "T1",
+     "blocked_by": "要先接上 Lumi 的 TG 快訊紀錄，並做訊號時效檢查（規格第 4 節）；累積 T0 幾週成績後再開"},
+    {"id": "TXF", "name": "台指鳥", "market": "台指期貨", "status": "planned",
+     "blocked_by": "下單簿要先支援期貨腿與期貨保證金；報價用期交所 MIS（已驗證可用）"},
+    {"id": "OF", "name": "海期鳥", "market": "海外期貨", "status": "planned",
+     "blocked_by": "富邦沒有海外期貨報價；使用者正在問群益 API 有沒有海期報價"},
+    {"id": "TW", "name": "台股鳥", "market": "台股", "status": "planned",
+     "blocked_by": "下單簿要支援股票；資料可用雪鴞台股資料庫"},
+    {"id": "US", "name": "美股鳥", "market": "美股", "status": "planned",
+     "blocked_by": "還沒有美股報價與歷史資料來源"},
+    {"id": "USO", "name": "美選鳥", "market": "美股選擇權", "status": "planned",
+     "blocked_by": "還沒有美國選擇權報價鏈來源；規則（保證金、結算）要另外定"}
+  ],
+  "researchers": [
+    {"id": "R_MACRO", "name": "總經分析師", "status": "planned", "blocked_by": "要先決定資料來源（經濟日曆、央行、利率）；寫報告前要有出處與日期"},
+    {"id": "R_IND", "name": "產業研究員", "status": "planned", "blocked_by": "資料來源待定；Obsidian 知識庫目前是空的"},
+    {"id": "R_TW", "name": "台股分析師", "status": "planned", "blocked_by": "可接雪鴞資料庫與期交所/證交所公開資料"},
+    {"id": "R_US", "name": "美股分析師", "status": "planned", "blocked_by": "還沒有美股資料來源"},
+    {"id": "R_FUT", "name": "期貨分析師", "status": "planned", "blocked_by": "可用期交所籌碼與 GEX 資料，優先度高"}
+  ],
+  "support": [
+    {"id": "ADVISOR", "name": "幕僚鳥", "status": "active", "role": "交易室主管：聊天顧問、記憶、分派與整合；自己不下單"},
+    {"id": "RISK", "name": "風控鳥", "status": "active", "role": "會議中的第二層風控：挑毛病、說最壞情況；不能覆蓋程式紅線"},
+    {"id": "CLERK", "name": "文書鳥", "status": "active", "role": "書記：只整理會議紀錄與待辦，不下判斷、沒有工具權限"}
+  ]
+}

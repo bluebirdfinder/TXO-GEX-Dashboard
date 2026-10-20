@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>台選鳥帳戶頁</title>
+<title>交易員帳戶頁</title>
 <style>
   :root {
     --bg: #0b0f1a; --panel: #121a2b; --panel2: #18223a; --line: #263250; --text: #e6ecff; --muted: #8b97b8;
@@ -42,6 +42,7 @@
   .legs span { display: inline-block; margin-right: 10px; white-space: nowrap; }
   .empty { color: var(--muted); padding: 6px 0; }
   .err { background: rgba(239,68,68,.12); border: 1px solid var(--bad); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+  .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; } .nav a { color: var(--accent); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; font-size: .85rem; } .nav a.on { background: var(--panel2); font-weight: 700; }
   footer { color: var(--muted); font-size: .78rem; margin: 18px 0 30px; }
   button { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
   @media (max-width: 560px) { .card .v { font-size: 1.15rem; } th, td { padding: 5px 5px; font-size: .8rem; } }
@@ -49,8 +50,9 @@
 </head>
 <body>
 <div class="wrap">
+  <nav class="nav" id="nav"></nav>
   <header>
-    <h1>🐦 台選鳥帳戶頁</h1>
+    <h1 id="h1">🐦 交易員帳戶頁</h1>
     <span class="sim">全部是模擬單</span>
     <span id="acct" class="badge"></span><span id="sess" class="badge"></span><span id="mon" class="badge"></span>
     <span id="led" class="badge"></span><span id="fillb" class="badge warn" title="成交判定在報價紀錄器與券商實際報價比對通過前一律標「近似」">成交判定：近似</span>
@@ -164,9 +166,13 @@ function render(d) {
   $("rev").innerHTML = d.review_flags.map(r => `<p><b>${esc(r.expiry)}</b>　${pct(r.pct)}　${esc(r.note)}</p>`).join("");
 }
 
+const ACCT = new URLSearchParams(location.search).get("account") || "T0";
+const NAV = [["/", "交易室首頁"], ["/trader?account=" + ACCT, "帳戶 " + ACCT, 1], ["/meeting", "會議室"], ["http://localhost:8000/trading%20room/room.html", "尋鳥戰情室 ↗"], ["http://localhost:8000/", "GEX 總覽 ↗"]];
+$("nav").innerHTML = NAV.map(([h, t, on]) => `<a href="${h}" class="${on ? "on" : ""}">${t}</a>`).join("");
+document.title = "帳戶 " + ACCT + "｜交易室"; $("h1").textContent = "🐦 帳戶 " + ACCT + "（模擬）";
 async function load() {
   try {
-    const r = await fetch("/api/desk?account=T0", { cache: "no-store" });
+    const r = await fetch("/api/desk?account=" + encodeURIComponent(ACCT), { cache: "no-store" });
     const d = await r.json();
     if (d.error) throw new Error(d.error);
     render(d);

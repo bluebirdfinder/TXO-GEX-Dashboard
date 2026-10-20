@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>會議室｜交易室</title>
+<style>
+  :root { --bg: #0b0f1a; --panel: #121a2b; --panel2: #18223a; --line: #263250; --text: #e6ecff; --muted: #8b97b8; --accent: #38bdf8; --warn: #f59e0b; --bad: #ef4444; --c0: #38bdf8; --c1: #f59e0b; --c2: #a78bfa; }
+  :root[data-theme="light"] { --bg: #f4f6fb; --panel: #ffffff; --panel2: #eef2fb; --line: #d5dcee; --text: #17203a; --muted: #5c6a8c; --accent: #0b7bb5; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 16px; }
+  .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
+  .nav a { color: var(--accent); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; font-size: .85rem; } .nav a.on { background: var(--panel2); font-weight: 700; }
+  button { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  h1 { font-size: 1.35rem; margin: 6px 0 2px; } .sub { color: var(--muted); font-size: .85rem; margin-bottom: 14px; }
+  .meeting { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  .meeting > h2 { font-size: 1.02rem; margin: 0 0 8px; color: var(--accent); } .meeting .at { color: var(--muted); font-size: .8rem; font-weight: 400; }
+  .turn { display: flex; gap: 10px; margin: 10px 0; } .who { flex: 0 0 4.4em; font-weight: 700; font-size: .85rem; padding-top: 6px; }
+  .bubble { flex: 1; background: var(--panel2); border: 1px solid var(--line); border-left: 4px solid var(--c0); border-radius: 10px; padding: 8px 12px; white-space: pre-wrap; font-size: .9rem; }
+  .turn.RISK .bubble { border-left-color: var(--c1); } .turn.CLERK .bubble { border-left-color: var(--c2); }
+  .turn.T0 .who { color: var(--c0); } .turn.RISK .who { color: var(--c1); } .turn.CLERK .who { color: var(--c2); }
+  .minutes { border-top: 1px dashed var(--line); margin-top: 12px; padding-top: 10px; }
+  .minutes h3 { font-size: .95rem; margin: 0 0 6px; } .minutes .t { white-space: pre-wrap; font-size: .9rem; }
+  .empty { color: var(--muted); } .err { background: rgba(239,68,68,.12); border: 1px solid var(--bad); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+  footer { color: var(--muted); font-size: .78rem; margin: 18px 0 30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" id="nav"></nav>
+  <h1>🗣️ 會議室</h1>
+  <div class="sub">每個交易時段結束後，台選鳥、風控鳥、文書鳥開一場短會：報告計畫 → 風控挑毛病 → 回應 → 整理紀錄。會議不下單、不改帳本；全部是模擬。</div>
+  <div id="errbox"></div>
+  <div id="list"></div>
+  <footer>之後有研究員時，他們的報告會成為會議資料並加入發言順序。風控鳥只提意見，不能覆蓋程式紅線。</footer>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+try { const t = localStorage.getItem("deskTheme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+const NAV = [["/", "交易室首頁"], ["/trader?account=T0", "台選鳥帳戶"], ["/meeting", "會議室", 1], ["http://localhost:8000/trading%20room/room.html", "尋鳥戰情室 ↗"], ["http://localhost:8000/", "GEX 總覽 ↗"]];
+$("nav").innerHTML = NAV.map(([h, t, on]) => `<a href="${h}" class="${on ? "on" : ""}">${t}</a>`).join("") + `<button id="theme" title="切換深淺色">☀/🌙</button>`;
+$("theme").onclick = () => { const r = document.documentElement; r.dataset.theme = r.dataset.theme === "light" ? "dark" : "light"; try { localStorage.setItem("deskTheme", r.dataset.theme); } catch (e) {} };
+async function load() {
+  try {
+    const m = await fetch("/api/meetings", { cache: "no-store" }).then(r => r.json());
+    $("errbox").innerHTML = "";
+    $("list").innerHTML = m.length ? m.map((x, i) => `<div class="meeting"><h2>${esc(x.topic)} <span class="at">${esc(x.at.replace("T", " ").slice(0, 16))}・帳戶 ${esc(x.account)}・模擬</span></h2>
+      ${x.turns.slice(0, -1).map(t => `<div class="turn ${esc(t.speaker)}"><div class="who">${esc(t.name)}</div><div class="bubble">${esc(t.text)}</div></div>`).join("")}
+      <div class="minutes"><h3>📝 會議紀錄（文書鳥整理）</h3><div class="t">${esc(x.minutes)}</div></div></div>`).join("")
+      : '<div class="empty">還沒有會議紀錄。日盤結束後 13:50、夜盤結束後 05:05 起，覆盤筆記寫完會自動開會（需要 AI 巡邏在跑）。</div>';
+  } catch (e) {
+    $("errbox").innerHTML = `<div class="err">讀不到資料：${esc(e.message)}。確認 server.py 有在跑。</div>`;
+  }
+}
+load(); setInterval(load, 30000);
+</script>
+</body>
+</html>

@@ -144,6 +144,65 @@ def build(account):
         "monitor": heartbeat(account), "fill_validated": cfg["fill"]["validated"]}
 
 
+def _get_json(url, timeout=1.5):
+    import urllib.request
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except Exception:
+        return None
+
+
+def services(account="T0"):
+    """各背景服務是否活著（只做便宜的檢查）。"""
+    out = {}
+    hb = heartbeat(account)
+    out["monitor"] = {"name": "規則巡邏", "ok": bool(hb.get("alive")), "detail": hb.get("last") or hb.get("note", "")}
+    try:
+        ps = json.loads((PRIVATE / account / "patrol_state.json").read_text(encoding="utf-8"))
+        n = sum(ps.get("calls", {}).values())
+        last = datetime.fromtimestamp(ps["last_call"], sources.TW).strftime("%m-%d %H:%M") if ps.get("last_call") else "—"
+        out["patrol"] = {"name": "AI 巡邏", "ok": True, "detail": f"今天已叫台選鳥 {n} 次；上次 {last}"}
+    except (OSError, ValueError):
+        out["patrol"] = {"name": "AI 巡邏", "ok": False, "detail": "還沒有狀態檔（沒在跑或還沒第一次叫過）"}
+    b = _get_json("http://127.0.0.1:8765/health")
+    out["bridge"] = {"name": "幕僚鳥橋接", "ok": bool(b and b.get("ok")), "detail": "8765" if b else "沒有回應"}
+    q = _get_json("http://127.0.0.1:8000/api/live_price", 2.5)
+    out["quotes"] = {"name": "報價服務", "ok": bool(q), "detail": (q or {}).get("provider_name", "沒有回應")}
+    files = sorted((PRIVATE.parent / "option_quotes").glob("health_*.csv"), key=lambda p: p.stat().st_mtime, reverse=True)
+    age = time.time() - files[0].stat().st_mtime if files else None
+    out["recorder"] = {"name": "選擇權報價紀錄器", "ok": age is not None and age < 180, "detail": "—" if age is None else f"{int(age)} 秒前寫入"}
+    return out
+
+
+def hub():
+    reg = json.loads((Path(__file__).parent / "agents.json").read_text(encoding="utf-8"))
+    for t in reg["traders"]:
+        t["summary"] = None
+        if t["status"] == "active" and t.get("account") and (PRIVATE / t["account"] / "ledger.jsonl").exists():
+            d = build(t["account"])
+            last = next((x for x in d["decisions"] if x["kind"] == "decision"), None)
+            t["summary"] = {"equity": d["equity"], "return_pct": d["return_pct"], "day_pnl": d["day_pnl"], "unrealized": d["unrealized"],
+                            "positions": len(d["positions"]), "orders": len(d["orders"]), "margin_util_pct": d["margin_util_pct"],
+                            "blind": [p["gid"] for p in d["positions"] if p.get("blind")],
+                            "last_decision": (last["at"] or "")[:16].replace("T", " ") + " " + str(last["action"]) if last else None,
+                            "monitor_alive": d["monitor"]["alive"]}
+    reg["services"] = services()
+    reg["as_of"] = datetime.now(sources.TW).isoformat(timespec="seconds")
+    reg["session"] = sm.session_of(datetime.now(sources.TW))
+    return reg
+
+
+def meetings(account="T0", n=8):
+    out = []
+    for f in sorted((PRIVATE / account / "meetings").glob("*.json"), reverse=True)[:n]:
+        try:
+            out.append(json.loads(f.read_text(encoding="utf-8")))
+        except ValueError:
+            continue
+    return out
+
+
 class H(BaseHTTPRequestHandler):
     def _ok_host(self):
         return (self.headers.get("Host") or "").split(":")[0] in ALLOWED_HOSTS
@@ -161,8 +220,16 @@ class H(BaseHTTPRequestHandler):
         if not self._ok_host():
             return self._send(403, {"error": "host not allowed"})
         path, _, qs = self.path.partition("?")
-        if path in ("/", "/index.html"):
-            return self._send(200, (WEB / "index.html").read_bytes(), "text/html; charset=utf-8")
+        pages = {"/": "hub.html", "/index.html": "hub.html", "/trader": "trader.html", "/meeting": "meeting.html"}
+        if path in pages:
+            return self._send(200, (WEB / pages[path]).read_bytes(), "text/html; charset=utf-8")
+        if path == "/api/hub":
+            try:
+                return self._send(200, hub())
+            except Exception as e:  # noqa: BLE001
+                return self._send(500, {"error": str(e)})
+        if path == "/api/meetings":
+            return self._send(200, meetings(dict(x.split("=", 1) for x in qs.split("&") if "=" in x).get("account", "T0")))
         if path == "/api/desk":
             acct = dict(x.split("=", 1) for x in qs.split("&") if "=" in x).get("account", "T0")
             try:

@@ -13,6 +13,7 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import meeting
 import review
 import runner
 import snapshot as sm
@@ -128,6 +129,12 @@ def main(argv):
                     sm.save(s, PRIVATE / account / "snapshots")
                     res = review.run_review(desk, s, kind, PRIVATE / account / "notes", book)
                     print(now.isoformat(), json.dumps(res, ensure_ascii=False)[:300], flush=True)
+                    if res.get("status") == "written":                # 筆記寫好後開一場短會（台選鳥、風控鳥、文書鳥）
+                        try:
+                            mres = meeting.run_meeting(desk, s, kind, PRIVATE / account / "meetings", PRIVATE / account / "notes")
+                            print(now.isoformat(), "會議：", json.dumps(mres, ensure_ascii=False)[:300], flush=True)
+                        except Exception as e:  # noqa: BLE001
+                            print(now.isoformat(), "會議失敗：", type(e).__name__, str(e)[:200], flush=True)
                     st = load_state(state_path)
                     att = st.get("review_attempts", {})
                     att[key] = att.get(key, 0) + 1

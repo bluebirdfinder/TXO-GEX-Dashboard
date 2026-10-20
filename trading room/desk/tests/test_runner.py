@@ -476,6 +476,59 @@ class TestSettlement(Base):
         self.assertEqual(len(self.desk.state.groups), 1)
 
 
+class TestMeetingAndHub(Base):
+    def test_meeting_flow_order_and_minutes(self):
+        import meeting
+        runner.run_decision(self.desk, snap(), self.dir / "snaps", ask=lambda s_, q, m: json.dumps(ladder_json()))
+        before = len(self.desk.ledger.events())
+        calls = []
+
+        def ask(system, question, model):
+            calls.append((system[:12], question))
+            return f"第{len(calls)}段發言"
+        r = meeting.run_meeting(self.desk, snap(), "day", self.dir / "meet", self.dir / "notes", ask=ask)
+        self.assertEqual(r["status"], "written")
+        m = json.loads(Path(r["path"]).read_text(encoding="utf-8"))
+        self.assertEqual([t["speaker"] for t in m["turns"]], ["T0", "RISK", "T0", "CLERK"])
+        self.assertEqual(m["minutes"], "第4段發言")
+        self.assertTrue(m["simulated"])
+        self.assertEqual(len(calls), 4)
+        self.assertIn("第1段發言", calls[1][1])                          # 風控鳥看得到台選鳥的發言
+        self.assertIn("第2段發言", calls[2][1])                          # 台選鳥回應時看得到風控鳥的質疑
+        self.assertEqual(len(self.desk.ledger.events()), before)         # 開會不改帳本
+        self.assertIn("程式算好的帳戶數字", calls[0][1])
+
+    def test_meeting_skipped_without_data(self):
+        import meeting
+        called = []
+        r = meeting.run_meeting(self.desk, snap(gex=None), "day", self.dir / "meet", self.dir / "notes", ask=lambda *a: called.append(1) or "x")
+        self.assertEqual((r["status"], called), ("skipped", []))
+
+    def test_agents_registry_is_valid(self):
+        reg = json.loads((Path(__file__).resolve().parent.parent / "agents.json").read_text(encoding="utf-8"))
+        ids = [a["id"] for k in ("traders", "researchers", "support") for a in reg[k]]
+        self.assertEqual(len(ids), len(set(ids)))
+        for a in reg["traders"] + reg["researchers"]:
+            self.assertIn(a["status"], ("active", "planned"))
+            if a["status"] == "planned":
+                self.assertTrue(a.get("blocked_by"), a["id"])            # 規劃中的角色一定寫清楚缺什麼
+        self.assertEqual([t["name"] for t in reg["traders"] if t["status"] == "active"], ["台選鳥"])
+
+    def test_hub_and_meetings_api(self):
+        import server
+        acct = self.dir / "T0"
+        acct.mkdir()
+        Desk(acct / "ledger.jsonl", "T0", copy.deepcopy(CFG))
+        (acct / "meetings").mkdir()
+        (acct / "meetings" / "a.json").write_text(json.dumps({"id": "a", "at": "2026-10-26T14:00:00+08:00", "turns": [], "minutes": "m"}), encoding="utf-8")
+        server.PRIVATE, server.live_rows, server.services = self.dir, (lambda now: []), (lambda account="T0": {})
+        h = server.hub()
+        t0 = next(t for t in h["traders"] if t["id"] == "T0")
+        self.assertEqual(t0["summary"]["positions"], 0)
+        self.assertEqual(t0["summary"]["equity"], 1000000.0)
+        self.assertEqual(server.meetings("T0")[0]["minutes"], "m")
+
+
 class TestMonitorPass(Base):
     def test_stop_triggers_in_session_but_not_when_closed(self):
         import monitor
