@@ -2743,16 +2743,16 @@
     "mtx_total_ratio": 24.09,
     "mtx_long_oi": 39796,
     "mtx_short_oi": 29560,
-    "tmf_net_oi": 38564,
-    "tmf_ratio": 31.36,
-    "tmf_total_ratio": 31.36,
-    "tmf_long_oi": 121406,
-    "tmf_short_oi": 82842,
+    "tmf_net_oi": 42448,
+    "tmf_ratio": 31.0,
+    "tmf_total_ratio": 31.0,
+    "tmf_long_oi": 115341,
+    "tmf_short_oi": 72893,
     "foreign_tx_net": -86072,
     "foreign_call_net": -0.66,
     "foreign_put_net": 1.25,
     "foreign_mtx_net": -1075,
-    "written_at": "2026-10-21T13:35:07.825577"
+    "written_at": "2026-10-21T13:50:51.140278"
   },
   "2026-10-21_INST_NIGHT": {
     "foreign_tx": 720,
