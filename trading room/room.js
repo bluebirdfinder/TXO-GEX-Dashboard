@@ -5097,9 +5097,9 @@ document.addEventListener('DOMContentLoaded', () => {
 const BRIDGE_BASE = 'http://127.0.0.1:8765';
 let _bridgeUp = null, _bridgeCheckedAt = 0;
 async function bridgeAvailable() {
-  if (_bridgeUp !== null && Date.now() - _bridgeCheckedAt < (_bridgeUp ? 60000 : 10000)) return _bridgeUp;
+  if (_bridgeUp !== null && Date.now() - _bridgeCheckedAt < (_bridgeUp ? 60000 : 3000)) return _bridgeUp;
   try {
-    const c = new AbortController(); setTimeout(() => c.abort(), 800);
+    const c = new AbortController(); setTimeout(() => c.abort(), 5000);
     const r = await fetch(BRIDGE_BASE + '/health', { signal: c.signal });
     _bridgeUp = r.ok;
   } catch (e) { _bridgeUp = false; }
