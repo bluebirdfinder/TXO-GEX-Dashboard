@@ -529,6 +529,48 @@ class TestMeetingAndHub(Base):
         self.assertEqual(server.meetings("T0")[0]["minutes"], "m")
 
 
+class TestMonitorSpreadThreshold(Base):
+    """已持有部位（損益/停損/平倉）用較寬的買賣價差門檻；新開倉與掛單成交仍用 20 點。"""
+    def wide_rows(self, ask=250):
+        return [{"SymbolID": "TX446300V6-O", "CBestBidPrice": "199", "CBestBidSize": "5", "CBestAskPrice": str(ask), "CBestAskSize": "5"},
+                {"SymbolID": "TX446100V6-O", "CBestBidPrice": "49", "CBestBidSize": "5", "CBestAskPrice": "50", "CBestAskSize": "5"}]
+
+    def chain_of(self, rows_):
+        return sm.chain_from_snapshot(snap(chain_rows=rows_), self.desk.cfg["quote_validity"])
+
+    def test_close_cost_accepts_moderately_wide_spread_but_entry_does_not(self):
+        c = self.chain_of(self.wide_rows(ask=240))          # 賣腳價差 41 點：> 20、≤ 60
+        cost, why = c.close_cost([{"expiry": "202610W4", "cp": "P", "strike": 46300, "side": "sell", "lots": 1},
+                                  {"expiry": "202610W4", "cp": "P", "strike": 46100, "side": "buy", "lots": 1}])
+        self.assertEqual((cost, why), (240 - 49, None))                                    # 最保守：賣腳付賣價、買腳收買價
+        self.assertIsNone(c.spread_credit("202610W4", "P", 46300, 46100)[0])                # 新成交判定仍然拒絕
+        self.assertEqual(c.leg_price(("202610W4", "P", 46300), "sell")[0], None)
+
+    def test_too_wide_still_invalid_for_monitoring(self):
+        c = self.chain_of(self.wide_rows(ask=500))          # 價差 301 點 > 60：視為假報價
+        cost, why = c.close_cost([{"expiry": "202610W4", "cp": "P", "strike": 46300, "side": "sell", "lots": 1}])
+        self.assertIsNone(cost)
+        self.assertIn("買賣價差過大", why)
+
+    def test_stop_triggers_with_wide_but_acceptable_spread(self):
+        import monitor
+        runner.run_decision(self.desk, snap(), self.dir / "snaps", ask=lambda s_, q, m: json.dumps(ladder_json()))
+        self.assertEqual(len(self.desk.state.groups), 1)
+        out = monitor.one_pass(self.desk, self.desk.cfg, NOW + timedelta(minutes=1), self.wide_rows(ask=240))   # 平倉成本 191 ≥ 停損 150
+        self.assertEqual(out[0][0], "stop")
+        self.assertEqual(self.desk.state.groups, {})
+
+
+class TestMisLabelQuirk(unittest.TestCase):
+    def test_minute_60_label_skipped(self):
+        import sources
+        now = datetime(2026, 10, 21, 5, 3, tzinfo=sources.TW)
+        fake = lambda sym: {"Ticks": [["045800", "1", "2", "0", "1", "1"], ["045900", "1", "2", "0", "1", "1"], ["046000", "9", "9", "9", "9", "9"], ["050000", "1", "2", "0", "1", "1"]]}
+        got = sources.live_kbars_mis(now, fetch=fake)
+        self.assertEqual([b["ts"] for b in got], ["2026-10-21 04:57", "2026-10-21 04:58", "2026-10-21 04:59"])
+        self.assertTrue(all(b["close"] != 9 for b in got))
+
+
 class TestMonitorPass(Base):
     def test_stop_triggers_in_session_but_not_when_closed(self):
         import monitor

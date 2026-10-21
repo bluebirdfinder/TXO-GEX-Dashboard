@@ -196,6 +196,8 @@ def live_kbars_mis(now, limit=300, fetch=None, timeout=15):
         return []
     out = []
     for day, tk in _assign_dates(ticks, now):
+        if int(tk[0][2:4]) >= 60:
+            continue    # 夜盤收盤前有一根標籤寫成 04:60 的特殊收盤根（2026-10-21 實測）：富邦/TradingView 都沒有這根，略過才與它們一致
         end = datetime.strptime(f"{day:%Y-%m-%d} {tk[0][:4]}", "%Y-%m-%d %H%M").replace(tzinfo=TW)
         if end <= now:                                  # 結束時刻還沒到的是形成中那根，丟掉
             t = end - timedelta(minutes=1)              # 輸出用「開始時刻」標籤，與富邦/TradingView 一致

@@ -125,9 +125,12 @@ def main(argv):
                 key = review.note_key(now, kind)
                 if key not in st.get("reviews", []):
                     print(now.isoformat(), "寫覆盤筆記：", key, flush=True)
-                    s, cfg2, book = make_snapshot(account, f"{review.KINDS[kind][0]}覆盤", cfg)
-                    sm.save(s, PRIVATE / account / "snapshots")
-                    res = review.run_review(desk, s, kind, PRIVATE / account / "notes", book)
+                    try:
+                        s, cfg2, book = make_snapshot(account, f"{review.KINDS[kind][0]}覆盤", cfg)
+                        sm.save(s, PRIVATE / account / "snapshots")
+                        res = review.run_review(desk, s, kind, PRIVATE / account / "notes", book)
+                    except Exception as e:  # noqa: BLE001 - 出錯也要算一次嘗試，最多 3 次，不能每分鐘無限重試
+                        res = {"status": "error", "reasons": [f"{type(e).__name__}: {str(e)[:150]}"]}
                     print(now.isoformat(), json.dumps(res, ensure_ascii=False)[:300], flush=True)
                     if res.get("status") == "written":                # 筆記寫好後開一場短會（台選鳥、風控鳥、文書鳥）
                         try:

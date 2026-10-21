@@ -148,7 +148,7 @@ class Desk:
         close_legs = []
         for lg in g["legs"]:
             k = (g["expiry"], lg["cp"], lg["strike"])
-            px, _, _ = chain.leg_price(k, "buy" if lg["side"] == "sell" else "sell")
+            px, _, _ = chain.leg_price(k, "buy" if lg["side"] == "sell" else "sell", wide=True)
             close_legs.append({"side": "buy" if lg["side"] == "sell" else "sell", "cp": lg["cp"], "strike": lg["strike"], "lots": lg["lots"], "px": px})
         fees = sum(leg_fees(l["px"], l["lots"], self.cfg) for l in close_legs)
         cash = legs_cash(close_legs, self.cfg) - fees
@@ -203,7 +203,7 @@ class Desk:
             px_map, stale = {}, False
             for i, lg in enumerate(g["legs"]):
                 key = (g["expiry"], lg["cp"], lg["strike"])
-                px, _, _ = chain.leg_price(key, "sell" if lg["side"] == "buy" else "buy")   # 多腳以買價、空腳以賣價清算
+                px, _, _ = chain.leg_price(key, "sell" if lg["side"] == "buy" else "buy", wide=True)   # 多腳以買價、空腳以賣價清算
                 if px is None:
                     px, stale = g["last_px"][i], True          # 沒有效報價就沿用上次價並標記，不憑空估
                 px_map[str(i)] = px

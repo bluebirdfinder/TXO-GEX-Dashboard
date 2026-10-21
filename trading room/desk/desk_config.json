@@ -43,18 +43,21 @@
     "gex_max_age_min": 480,
     "spot_max_age_s": 30,
     "min_kbars": 60,
-    "kbar_max_age_s": 180,
+    "kbar_max_age_s": 300,
     "surge_window_min": 60,
     "demark_recent_bars": 3,
     "demark_require_perfection": true,
     "demark_note": "九轉竭盡＝15M 或 30M 最近 3 根已收完的 K 棒內出現 9★（完美九轉）或 13；急殺看賣盤竭盡(買進Setup/Countdown)、急拉看買盤竭盡。只用已收完K棒。均線走平條件尚未實作（規格沒給定義）",
     "closed_max_age_min": 120,
+    "kbar_age_note": "1 分 K 標籤是開始時刻，最新已收完那根的結束時刻比開始晚 1 分鐘，期交所發布還會延遲；2026-10-21 凌晨因 180 秒太緊錯失 2 次決策（01:14、02:52），放寬到 300 秒",
     "closed_note": "休市時段(13:45-15:00、05:00-08:45)決策：K線與現價只要求在120分鐘內（Fubon 1分K一天只在05:30與14:00累積兩次，所以收盤後決策用剛收完那一盤）。休市時報價鏈是凍結的，不得成交，只能掛階梯或觀望",
     "status": "起手值，待使用者確認；GEX 一天只更新幾次所以放寬到 8 小時，實測後再收緊。surge_pts = 近 surge_window_min 分鐘內最新收盤相對區間低點(急拉)或高點(急殺)的點數，定義為起手版"
   },
   "quote_validity": {
     "max_age_s": 120,
     "max_bid_ask_spread_pts": 20,
+    "monitor_max_bid_ask_spread_pts": 60,
+    "monitor_note": "已持有部位的損益/停損/平倉專用的買賣價差門檻（平倉本來就用最不利價，價差寬只是成本高）；新開倉與掛單成交仍用上面的 20 點。使用者2026-10-21 提到穿價時價差可到 200 點——要放更寬就改這個數字",
     "require_size_positive": true,
     "status": "使用者2026-10-20確認先維持起手值；夜盤統計後再微調"
   },

@@ -23,8 +23,10 @@ class QuoteChain:
         self.quotes = quotes
         self.v = validity
 
-    def usable(self, key, side):
-        """side='sell' 需要買價與買量；'buy' 需要賣價與賣量。回傳 (價, 量) 或 (None, 原因)。"""
+    def usable(self, key, side, wide=False):
+        """side='sell' 需要買價與買量；'buy' 需要賣價與賣量。回傳 (價, 量) 或 (None, 原因)。
+        wide=True 是「已持有部位的損益/停損/平倉」專用：價差門檻改用 monitor_max_bid_ask_spread_pts（預設比開倉寬鬆），
+        因為平倉本來就用最不利的價（買回付賣價、賣出收買價），價差寬只是平倉成本高，不是假報價；新開倉與掛單成交仍用嚴格門檻。"""
         q = self.quotes.get(key)
         if q is None:
             return None, "無此履約價報價"
@@ -32,7 +34,8 @@ class QuoteChain:
             return None, "報價太舊"
         if q.ask < q.bid or q.bid < 0:
             return None, "買賣價異常"
-        if q.ask - q.bid > self.v["max_bid_ask_spread_pts"]:
+        limit = self.v.get("monitor_max_bid_ask_spread_pts", self.v["max_bid_ask_spread_pts"]) if wide else self.v["max_bid_ask_spread_pts"]
+        if q.ask - q.bid > limit:
             return None, "買賣價差過大"
         px, size = (q.bid, q.bid_size) if side == "sell" else (q.ask, q.ask_size)
         if self.v.get("require_size_positive", True) and size <= 0:
@@ -41,9 +44,9 @@ class QuoteChain:
             return None, "價格為0"
         return (px, size), None
 
-    def leg_price(self, key, side):
-        """賣出→買價，買進→賣價。"""
-        r, why = self.usable(key, side)
+    def leg_price(self, key, side, wide=False):
+        """賣出→買價，買進→賣價。wide=True 見 usable（只給已持有部位的平倉/計價）。"""
+        r, why = self.usable(key, side, wide)
         return (r[0], r[1], None) if r else (None, 0, why)
 
     def spread_credit(self, expiry, cp, short_strike, long_strike):
@@ -62,12 +65,12 @@ class QuoteChain:
         for lg in legs:
             key = (lg["expiry"], lg["cp"], lg["strike"])
             if lg["side"] == "sell":      # 空腳 → 買回 → 付賣價
-                r, why = self.usable(key, "buy")
+                r, why = self.usable(key, "buy", wide=True)
                 if not r:
                     return None, f"{lg['strike']}{lg['cp']} {why}"
                 total += r[0] * lg["lots"]
             else:                         # 多腳 → 賣出 → 收買價
-                r, why = self.usable(key, "sell")
+                r, why = self.usable(key, "sell", wide=True)
                 if not r:
                     return None, f"{lg['strike']}{lg['cp']} {why}"
                 total -= r[0] * lg["lots"]
