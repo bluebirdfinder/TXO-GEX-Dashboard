@@ -59,7 +59,7 @@ const momentumVals = { big: [], retail: [], jall: [] };
 // 資料來自本機閘道 /api/momentum 的 bar.jj，由期交所 MIS＋富邦成交頻道算出）。三條線量級接近、像 JJ 一樣共用右軸。
 // 其他商品暫時維持上面的五檔近似版（並在副圖標題如實註明）。
 let momentumJJ = false;
-const MOMENTUM_JJ_SYMBOLS = ['TXF'];
+const MOMENTUM_JJ_SYMBOLS = ['TXF'];            // 已對 JJ 驗證的商品；其餘商品同算法但標「待驗證」（後端 bar.jj.verified=false）
 function momentumFocusRange(key) {
   const v = momentumVals[key].map(x => Math.abs(x)).filter(x => isFinite(x)).sort((a, b) => a - b);
   if (v.length < 5) return null;
@@ -1759,14 +1759,14 @@ function renderSub4Chart(data) {
     // 沒有真數據可畫，故意留白，不補假資料。
     const symbolCode = flowFuturesCodeFor(currentActiveSymbol);   // 指數期貨、個股期貨；股票則對應其期貨合約
     const isMomentumEligible = !!symbolCode;
-    momentumJJ = isMomentumEligible && MOMENTUM_JJ_SYMBOLS.includes(symbolCode);
+    momentumJJ = isMomentumEligible;   // 台指期＝已驗證；小台／微台／個股期貨＝同算法、待驗證
     momentumVals.jall = [];
     if (badge) {
       badge.innerText = momentumJJ
-        ? `🐂 大戶散戶動能 (${symbolCode})：紅柱＝全市場委託口差｜黃線＝委託筆數差｜綠線＝時段累計外內盤成交筆數差（期交所 MIS＋富邦成交，與 JJ 同定義）`
-        : isMomentumEligible
-          ? `🐂 大戶散戶動能 (${symbolCode})【近似版】：柱＝前5檔委託口差（右軸）｜青線＝每30分鐘成交筆數差（左軸）｜黃虛線＝與柱同源（尚未接期交所全市場委託量）`
-          : '🐂 大戶散戶動能 (只有台指期／小台／微台與有個股期貨的股票才有委託簿數據，此商品沒有)';
+        ? (MOMENTUM_JJ_SYMBOLS.includes(symbolCode)
+            ? `🐂 大戶散戶動能 (${symbolCode})：紅柱＝全市場委託口差｜黃線＝委託筆數差｜綠線＝時段累計外內盤成交筆數差（期交所 MIS＋富邦成交，與 JJ 同定義）`
+            : `🐂 大戶散戶動能 (${symbolCode})【待驗證】：紅柱＝全市場委託口差｜黃線＝委託筆數差｜綠線＝時段累計外內盤成交筆數差（算法同台指期，但此商品尚未逐根對 JJ 驗證，數值僅供參考）`)
+        : '🐂 大戶散戶動能 (只有台指期／小台／微台與有個股期貨的股票才有委託簿數據，此商品沒有)';
     }
 
     // 1. 大戶委託口差 (紅柱=偏多掛單較多，綠柱=偏空掛單較多；來源：Books 五檔委買委賣總口數差)
@@ -1845,6 +1845,9 @@ async function fetchAndAppendMomentumBar(symbol) {
       if (!jj) {
         if (badge) badge.innerText = '⚪ 無即時數據：期交所 MIS 委託總量／富邦成交暫時取不到（重啟報價服務或稍後再看）';
         return;
+      }
+      if (badge && jj.verified === false && !String(badge.innerText).includes('待驗證')) {
+        badge.innerText = `🐂 大戶散戶動能【待驗證】：算法同台指期，但此商品尚未逐根對 JJ 驗證，數值僅供參考（紅柱＝全市場委託口差｜黃線＝委託筆數差｜綠線＝外內盤成交筆數差）`;
       }
       [jj.red, jj.yellow, jj.green].forEach(v => { if (v != null) momentumVals.jall.push(v); });
       if (momentumVals.jall.length > 4500) momentumVals.jall.splice(0, momentumVals.jall.length - 4500);
