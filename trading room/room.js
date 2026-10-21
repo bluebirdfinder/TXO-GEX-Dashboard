@@ -54,7 +54,12 @@ let activeSub4 = 'adx'; // Default to ADX Pro V3
 // 大戶散戶動能的刻度：柱（委託口差，約 ±50）和線（成交筆數差，可到 ±1000+）單位差 30 倍，放同一軸柱子會被壓扁看不見，
 // 所以柱／黃線用右軸、青線用左軸；「聚焦」模式把刻度夾在 95% 資料範圍，尖峰不再把其他都壓平（右上角可切回完整）。
 let momentumFocus = true;
-const momentumVals = { big: [], retail: [] };
+const momentumVals = { big: [], retail: [], jall: [] };
+// 2026-10-21：台指期改畫「真實三條線」（紅＝全市場委託口差、黃＝委託筆數差、綠＝時段累計外內盤成交筆數差；
+// 資料來自本機閘道 /api/momentum 的 bar.jj，由期交所 MIS＋富邦成交頻道算出）。三條線量級接近、像 JJ 一樣共用右軸。
+// 其他商品暫時維持上面的五檔近似版（並在副圖標題如實註明）。
+let momentumJJ = false;
+const MOMENTUM_JJ_SYMBOLS = ['TXF'];
 function momentumFocusRange(key) {
   const v = momentumVals[key].map(x => Math.abs(x)).filter(x => isFinite(x)).sort((a, b) => a - b);
   if (v.length < 5) return null;
@@ -1754,38 +1759,45 @@ function renderSub4Chart(data) {
     // 沒有真數據可畫，故意留白，不補假資料。
     const symbolCode = flowFuturesCodeFor(currentActiveSymbol);   // 指數期貨、個股期貨；股票則對應其期貨合約
     const isMomentumEligible = !!symbolCode;
+    momentumJJ = isMomentumEligible && MOMENTUM_JJ_SYMBOLS.includes(symbolCode);
+    momentumVals.jall = [];
     if (badge) {
-      badge.innerText = isMomentumEligible
-        ? `🐂 大戶散戶動能 (${symbolCode})：柱＝大戶委託口差（右軸）｜青線＝散戶成交筆數差（左軸）｜黃虛線＝與柱同源`
-        : '🐂 大戶散戶動能 (只有台指期／小台／微台與有個股期貨的股票才有委託簿數據，此商品沒有)';
+      badge.innerText = momentumJJ
+        ? `🐂 大戶散戶動能 (${symbolCode})：紅柱＝全市場委託口差｜黃線＝委託筆數差｜綠線＝時段累計外內盤成交筆數差（期交所 MIS＋富邦成交，與 JJ 同定義）`
+        : isMomentumEligible
+          ? `🐂 大戶散戶動能 (${symbolCode})【近似版】：柱＝前5檔委託口差（右軸）｜青線＝每30分鐘成交筆數差（左軸）｜黃虛線＝與柱同源（尚未接期交所全市場委託量）`
+          : '🐂 大戶散戶動能 (只有台指期／小台／微台與有個股期貨的股票才有委託簿數據，此商品沒有)';
     }
 
     // 1. 大戶委託口差 (紅柱=偏多掛單較多，綠柱=偏空掛單較多；來源：Books 五檔委買委賣總口數差)
+    const kHist = momentumJJ ? 'jall' : 'big';
     sub4Series.momentumHist = subChart4.addHistogramSeries({
       priceScaleId: 'right',
       title: '',
-      autoscaleInfoProvider: momentumAutoscale('big')
+      autoscaleInfoProvider: momentumAutoscale(kHist)
     });
 
-    // 2. 散戶成交筆數差 (青綠色；來源：Trades 逐筆成交，買筆數-賣筆數，非口數)
+    // 2. 散戶成交筆數差 (JJ 版＝綠線，時段累計外盤筆數－內盤筆數；近似版＝青線，30 分鐘 bar 內買筆數－賣筆數)
     sub4Series.retailLine = subChart4.addLineSeries({
-      color: '#00CEC9',
+      color: momentumJJ ? '#2ED573' : '#00CEC9',
       lineWidth: 1.5,
-      priceScaleId: 'left',
+      priceScaleId: momentumJJ ? 'right' : 'left',
       title: '',
-      autoscaleInfoProvider: momentumAutoscale('retail')
+      autoscaleInfoProvider: momentumAutoscale(momentumJJ ? 'jall' : 'retail')
     });
-    subChart4.applyOptions({ leftPriceScale: { visible: true, borderColor: 'rgba(0, 206, 201, 0.5)', scaleMargins: { top: 0.26, bottom: 0.08 } } });
-    sub4Series.retailLine.createPriceLine({ price: 0, color: 'rgba(0, 206, 201, 0.35)', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '' });
+    subChart4.applyOptions({ leftPriceScale: { visible: !momentumJJ, borderColor: 'rgba(0, 206, 201, 0.5)', scaleMargins: { top: 0.26, bottom: 0.08 } } });
+    if (!momentumJJ) {
+      sub4Series.retailLine.createPriceLine({ price: 0, color: 'rgba(0, 206, 201, 0.35)', lineStyle: LightweightCharts.LineStyle.Dotted, lineWidth: 1, title: '' });
+    }
 
-    // 3. 市場委買委賣口差 (黃線；目前與大戶委託口差同源，見後端註解說明限制)
+    // 3. 黃線：JJ 版＝全市場委託買筆數－賣筆數；近似版＝與柱同源（舊版限制，見後端註解）
     sub4Series.marketOrderLine = subChart4.addLineSeries({
       color: '#FFEB3B',
-      lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dashed,
+      lineWidth: momentumJJ ? 1.5 : 1,
+      lineStyle: momentumJJ ? LightweightCharts.LineStyle.Solid : LightweightCharts.LineStyle.Dashed,
       priceScaleId: 'right',
       title: '',
-      autoscaleInfoProvider: momentumAutoscale('big')
+      autoscaleInfoProvider: momentumAutoscale(kHist)
     });
     ensureMomentumScaleButton();
 
@@ -1826,6 +1838,23 @@ async function fetchAndAppendMomentumBar(symbol) {
     if (!bar || activeSub4 !== 'momentum') return;
 
     const t = Math.floor(bar.bar_start_ts);
+    const badge = document.getElementById('pane-4-badge');
+    if (momentumJJ) {
+      // 真實三條線（期交所 MIS＋富邦成交頻道）；任何一條沒有資料就不畫那條，不補假值
+      const jj = bar.jj;
+      if (!jj) {
+        if (badge) badge.innerText = '⚪ 無即時數據：期交所 MIS 委託總量／富邦成交暫時取不到（重啟報價服務或稍後再看）';
+        return;
+      }
+      [jj.red, jj.yellow, jj.green].forEach(v => { if (v != null) momentumVals.jall.push(v); });
+      if (momentumVals.jall.length > 4500) momentumVals.jall.splice(0, momentumVals.jall.length - 4500);
+      if (jj.red != null && sub4Series.momentumHist) {
+        sub4Series.momentumHist.update({ time: t, value: jj.red, color: jj.red >= 0 ? 'rgba(255, 71, 87, 0.85)' : 'rgba(46, 213, 115, 0.85)' });
+      }
+      if (jj.green != null && sub4Series.retailLine) sub4Series.retailLine.update({ time: t, value: jj.green });
+      if (jj.yellow != null && sub4Series.marketOrderLine) sub4Series.marketOrderLine.update({ time: t, value: jj.yellow });
+      return;
+    }
     const isBull = bar.big_order_diff >= 0;
 
     momentumVals.big.push(bar.big_order_diff); momentumVals.retail.push(bar.retail_trade_count_diff);
@@ -1844,7 +1873,6 @@ async function fetchAndAppendMomentumBar(symbol) {
       sub4Series.marketOrderLine.update({ time: t, value: bar.market_order_diff });
     }
 
-    const badge = document.getElementById('pane-4-badge');
     // 交易時段內富邦委託簿／成交超過 3 分鐘沒更新＝資料凍結，如實標示（2026-10-08：10/07 22:52 起凍結 10 小時沒人發現）
     if (badge && typeof payload.feed_age_sec === 'number' && payload.feed_age_sec > 180 && isTaifexSessionOpenNow()) {
       badge.innerText = `⚠️ 富邦委託簿／成交資料已 ${Math.round(payload.feed_age_sec / 60)} 分鐘沒更新（凍結中，下方數字不是即時）`;
@@ -1866,6 +1894,16 @@ async function loadMomentumHistory(symbol) {
     if (!res.ok) return;
     const bars = ((await res.json()) || {}).bars || [];
     if (!bars.length || activeSub4 !== 'momentum' || !sub4Series.momentumHist) return;
+    if (momentumJJ) {
+      // 只畫「真的存過」的 bar（有 jr／jy／jg 才畫；上線前的時段是空白，不補）
+      const pick = k => bars.filter(b => b[k] != null).map(b => ({ time: b.t, value: b[k] }));
+      const red = pick('jr');
+      momentumVals.jall = bars.flatMap(b => [b.jr, b.jy, b.jg].filter(v => v != null));
+      sub4Series.momentumHist.setData(red.map(p => ({ ...p, color: p.value >= 0 ? 'rgba(255, 71, 87, 0.85)' : 'rgba(46, 213, 115, 0.85)' })));
+      if (sub4Series.retailLine) sub4Series.retailLine.setData(pick('jg'));
+      if (sub4Series.marketOrderLine) sub4Series.marketOrderLine.setData(pick('jy'));
+      return;
+    }
     momentumVals.big = bars.map(b => b.big);
     momentumVals.retail = bars.map(b => b.retail);
     sub4Series.momentumHist.setData(bars.map(b => ({
@@ -5140,8 +5178,9 @@ function ensureMomentumScaleButton() {
       momentumFocus = !momentumFocus;
       paintMomentumScaleButton();
       [sub4Series.momentumHist, sub4Series.retailLine, sub4Series.marketOrderLine].forEach(sr => { if (sr) sr.priceScale().applyOptions({ autoScale: true }); });
-      if (sub4Series.momentumHist) sub4Series.momentumHist.applyOptions({ autoscaleInfoProvider: momentumAutoscale('big') });
-      if (sub4Series.retailLine) sub4Series.retailLine.applyOptions({ autoscaleInfoProvider: momentumAutoscale('retail') });
+      if (sub4Series.momentumHist) sub4Series.momentumHist.applyOptions({ autoscaleInfoProvider: momentumAutoscale(momentumJJ ? 'jall' : 'big') });
+      if (sub4Series.retailLine) sub4Series.retailLine.applyOptions({ autoscaleInfoProvider: momentumAutoscale(momentumJJ ? 'jall' : 'retail') });
+      if (momentumJJ && sub4Series.marketOrderLine) sub4Series.marketOrderLine.applyOptions({ autoscaleInfoProvider: momentumAutoscale('jall') });
     });
     strip.appendChild(btn);
   }

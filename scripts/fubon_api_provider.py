@@ -791,6 +791,41 @@ class FubonAPIProvider:
             return snap
         return [t for t in snap if t['ts'] >= since_ts]
 
+    # 大戶散戶動能「真實三條線」（紅＝全市場委託口差、黃＝委託筆數差、綠＝時段累計外內盤筆數差）的計算放在私有模組
+    # ~/txo-private/jj_momentum/jj_lines.py（可用環境變數 JJ_LINES_DIR 覆蓋）；公開 repo 只呼叫它、拿算好的數字。
+    # 找不到模組（如別台電腦）就回 None，前端退回舊的近似版並如實標示，不補假值。
+    _jj_mod = None
+    _jj_mod_tried = False
+
+    def _jj(self):
+        if self._jj_mod_tried:
+            return self._jj_mod
+        self._jj_mod_tried = True
+        try:
+            import importlib.util
+            d = os.getenv("JJ_LINES_DIR") or os.path.join(os.path.expanduser("~"), "txo-private", "jj_momentum")
+            p = os.path.join(d, "jj_lines.py")
+            if os.path.exists(p):
+                spec = importlib.util.spec_from_file_location("jj_lines", p)
+                m = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(m)
+                m.start()
+                self._jj_mod = m
+                logging.info("jj_lines (private) loaded")
+        except Exception as e:
+            logging.warning(f"jj_lines load failed: {e}")
+        return self._jj_mod
+
+    def _jj_lines(self, alias):
+        m = self._jj()
+        if not m:
+            return None
+        try:
+            return m.lines(alias, self._trades_total.get(alias))
+        except Exception as e:
+            logging.warning(f"jj_lines error: {e}")
+            return None
+
     def get_momentum_bar_30m(self, symbol):
         """
         Aggregates the current (in-progress) 30-minute bar's three momentum
@@ -837,7 +872,8 @@ class FubonAPIProvider:
             'market_order_diff': big_order_diff,  # see docstring: same source as big_order_diff for now
             'trade_count_in_bar': len(recent),
             'is_trial': bool(book.get('is_trial', False)),
-            'updated_ts': now
+            'updated_ts': now,
+            'jj': self._jj_lines(symbol)   # {'red','yellow','green'}；不支援的商品或沒資料＝None
         }
 
     def _mom_hist_path(self, alias):
@@ -898,6 +934,12 @@ class FubonAPIProvider:
                     rec['buy_v'] = sum(x['size'] for x in trades if x['side'] == 'buy')
                     rec['sell_v'] = sum(x['size'] for x in trades if x['side'] == 'sell')
                     rec['n'] = len(trades)
+                    if t == cur:
+                        jj = self._jj_lines(alias)   # 只記「目前這一分鐘」的最新值；沒資料就不寫（不補值）
+                        if jj:
+                            for k, f in (('jr', 'red'), ('jy', 'yellow'), ('jg', 'green')):
+                                if jj.get(f) is not None:
+                                    rec[k] = jj[f]
                     hist[t] = rec
                 self._mom_hist_dirty.add(alias)
                 if alias in self._RAW_LOG_ALIASES:
@@ -986,6 +1028,9 @@ class FubonAPIProvider:
             g['buy_v'] += r['buy_v']; g['sell_v'] += r['sell_v']; g['n'] += r['n']
             g['_ba'] += r['bid_avg']; g['_aa'] += r['ask_avg']; g['_m'] += 1
             g['bid'], g['ask'], g['big'] = r['bid'], r['ask'], r['big']
+            for k in ('jr', 'jy', 'jg'):   # 真實三條線：取該 bar 內最後一個有值的分鐘（等同 JJ 取 bar 收盤值）
+                if k in r:
+                    g[k] = r[k]
         res = []
         for k in sorted(out):
             g = out[k]
