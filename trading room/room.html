@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🦅 尋鳥戰情交易室 — TXO GEX 即時戰情室 (Bird Trading Room v64.17)</title>
+  <title>🦅 尋鳥戰情交易室 — TXO GEX 即時戰情室 (Bird Trading Room v64.18)</title>
   
   <!-- Modern FinTech Font (Outfit & Microsoft JhengHei) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,7 +27,7 @@
       <div class="room-logo">
         <img src="../assets/avatar.png" alt="尋鳥" class="user-avatar-img">
         <span>尋鳥戰情交易室</span>
-        <span class="badge-version">v64.17</span>
+        <span class="badge-version">v64.18</span>
       </div>
       
       <!-- Core Macro & Market Asset Quick Switcher (8 Core Assets) -->
@@ -89,6 +89,10 @@
         </button>
       </div>
 
+      <a href="http://127.0.0.1:8770/" target="_blank" rel="noopener" class="btn-nav-switch" title="交易室：交易員帳戶、會議室（模擬；只有你這台電腦開得起來，背景服務由 Windows 排程 TXO-Desk-* 啟動）">
+        <span>🏛️</span>
+        <span>交易室</span>
+      </a>
       <a href="../index.html" class="btn-nav-switch" title="返回宏觀 GEX 總覽大儀表板">
         <span>📊</span>
         <span>宏觀儀表板</span>
@@ -545,13 +549,13 @@
       <!-- Advisor Header -->
       <div class="advisor-header">
         <div class="advisor-title">
-          <span>🤖</span>
+          <img src="../assets/advisor_bird.png" alt="幕僚鳥" class="advisor-avatar-img">
           <span>幕僚鳥</span>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
-          <select id="advisor-model-select" title="模型：Sonnet 日常、Opus 深度分析、Haiku 快速" style="background:#080c14;color:#fff;border:1px solid var(--panel-border);border-radius:4px;font-size:0.7rem;padding:1px 2px;"><option value="sonnet">Sonnet</option><option value="opus">Opus</option><option value="haiku">Haiku</option></select>
-          <span class="model-badge">Claude ✕ AGENTS.md</span>
-          <button id="btn-open-gemini-key" class="btn-api-key-config" title="配置 Claude API Key">🔑 Key</button>
+          <!-- 連線狀態小圓點（文字與 Key 按鈕已隱藏；Key 按鈕保留在 DOM 內，因為程式仍會綁定它） -->
+          <span class="model-badge" id="advisor-status-dot" title="" style="background:none;border:0;padding:0;font-size:0.8rem;line-height:1;color:#8b95a5;">●</span>
+          <button id="btn-open-gemini-key" class="btn-api-key-config" title="配置 Claude API Key" style="display:none;">🔑 Key</button>
           <button class="btn-collapse-panel" id="btn-collapse-right" title="收合 幕僚鳥面板 (▶)">收合 ▶</button>
           <button class="btn-close-drawer mobile-only" id="btn-close-right-drawer">✕</button>
         </div>
@@ -581,6 +585,11 @@
         <button id="advisor-attach-btn" class="btn-advisor-attach has-tooltip" data-tooltip="📎 夾帶盤面截圖或對帳單&#10;💡 也可直接在輸入框按 Ctrl+V 貼上截圖！" title="上傳圖片">📎</button>
         <input type="text" id="advisor-input" class="advisor-input" placeholder="詢問幕僚鳥盤勢或貼上截圖 (Ctrl+V)...">
         <button id="advisor-send-btn" class="btn-send-advisor">發送 🚀</button>
+      </div>
+      <!-- 模型選擇：放在輸入欄下方（Sonnet 日常、Opus 深度分析、Haiku 快速） -->
+      <div class="advisor-model-row" style="display:flex;align-items:center;gap:6px;padding:2px 10px 8px;font-size:0.7rem;color:var(--text-muted);">
+        <span>模型</span>
+        <select id="advisor-model-select" title="模型：Sonnet 日常、Opus 深度分析、Haiku 快速" style="background:#080c14;color:#fff;border:1px solid var(--panel-border);border-radius:4px;font-size:0.72rem;padding:2px 4px;"><option value="sonnet">Sonnet</option><option value="opus">Opus</option><option value="haiku">Haiku</option></select>
       </div>
 
     </aside>
@@ -750,6 +759,31 @@
           </div>
           <div class="indicator-controls-col">
             <span style="font-size: 0.72rem; color: var(--primary-accent);">失衡區間塊</span>
+          </div>
+        </div>
+
+        <!-- 10. 強弱關價（黃金切割） -->
+        <div class="indicator-item-row">
+          <div class="indicator-info-col">
+            <input type="checkbox" id="chk-sw" class="indicator-checkbox" checked>
+            <span class="indicator-name">🎯 OP 鳥鳥・強弱關價（自製近似版，黃金切割 0.618／0.382，台指期分K）</span>
+          </div>
+          <div class="indicator-controls-col">
+            <span style="font-size: 0.72rem; color: var(--text-muted);">強</span>
+            <input type="color" id="col-sw-strong" class="color-picker-input" value="#e53935" title="強關線顏色">
+            <span style="font-size: 0.72rem; color: var(--text-muted);">弱</span>
+            <input type="color" id="col-sw-weak" class="color-picker-input" value="#2e7d32" title="弱關線顏色">
+            <select id="sel-sw-style" class="param-input" title="線條樣式">
+              <option value="dashed">虛線</option>
+              <option value="solid">實線</option>
+              <option value="dotted">點線</option>
+              <option value="large-dashed">長虛線</option>
+            </select>
+            <select id="sel-sw-width" class="param-input" title="線條粗細">
+              <option value="1">細 1</option>
+              <option value="2">中 2</option>
+              <option value="3">粗 3</option>
+            </select>
           </div>
         </div>
 
@@ -1001,7 +1035,8 @@
   </div>
 
   <!-- Trading Room Script Logic -->
-  <script src="room.js?v=v64.17&b=20261006k"></script>
+  <script src="room.js?v=v64.18&b=20261006k"></script>
+  <script src="room_retail.js?v=20261008a"></script>
 </body>
 </html>
 

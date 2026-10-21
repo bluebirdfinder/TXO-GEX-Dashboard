@@ -11,7 +11,7 @@ Fully audited engine:
   7. Encryption and Payload Export to gex_data.json and encrypted_gex.json.
 """
 
-ENGINE_VERSION = "v64.17"
+ENGINE_VERSION = "v64.18"
 
 import os
 import sys
@@ -757,6 +757,16 @@ def fetch_5day_exchange_rates():
         "hot_money_summary_html": hot_money_summary_html
     }
 
+def _roc_date_to_iso(s):
+    """證交所民國日期 '1151016' → '2026-10-16'；格式不對回 None（畫面就不標日期，不猜）。"""
+    try:
+        s = str(s).strip()
+        if len(s) == 7 and s.isdigit():
+            return f"{int(s[:3]) + 1911:04d}-{s[3:5]}-{s[5:7]}"
+    except Exception:
+        pass
+    return None
+
 def fetch_twse_stock_spot_prices():
     """
     Fetches stock spot prices from TWSE with Multi-Tier Fallback:
@@ -777,7 +787,7 @@ def fetch_twse_stock_spot_prices():
                     chg_pct = float(q.get("pct_change", 0.0) or 0.0)
                     vol = int(q.get("volume") or 0)   # 沒有成交量就是 0，不放 1000 之類的假數字
                     if close_p > 0 and code not in ("TXF", "MXF", "TMF", "TWN"):
-                        stock_spot_dict[code] = {"price": close_p, "change_pct": chg_pct, "volume": vol}
+                        stock_spot_dict[code] = {"price": close_p, "change_pct": chg_pct, "volume": vol, "date": _roc_date_to_iso(q.get("date"))}
             if len(stock_spot_dict) > 100:
                 print(f"[OK] Loaded {len(stock_spot_dict)} stock spot prices from local tw_quotes_latest.json cache")
         except Exception as ex_q:
@@ -798,7 +808,7 @@ def fetch_twse_stock_spot_prices():
                     pct = round((chg_p / prev_p * 100), 2) if prev_p > 0 else 0.0
                     vol = int(int(d.get('TradeVolume', '0').replace(',', '')) / 1000)
                     if close_p > 0:
-                        stock_spot_dict[code] = {"price": close_p, "change_pct": pct, "volume": vol}
+                        stock_spot_dict[code] = {"price": close_p, "change_pct": pct, "volume": vol, "date": _roc_date_to_iso(d.get('Date'))}
                 except ValueError:
                     pass
             if len(stock_spot_dict) > 100:
@@ -1210,33 +1220,41 @@ def black_scholes_vanna(S, K, T, r, sigma):
 
 def compute_days_to_expiries(ref_dt, tw_tz):
     """
-    Days from ref_dt to the next Wednesday, next Friday, and the front monthly settlement
-    (3rd Wednesday of the month, rolling to next month if already past) — as of ref_dt, not
-    necessarily "now". Used both for the live GEX profile and for historical backfill, where
-    ref_dt is a past trading day so the option Greeks use that day's real time-to-expiry
-    instead of today's.
+    Days (fractional) from ref_dt to the next Wednesday weekly, next Friday weekly, and the front
+    monthly settlement (3rd Wednesday of the month) — as of ref_dt, not necessarily "now". Used both
+    for the live GEX profile and for historical backfill, where ref_dt is a past trading day so the
+    option Greeks use that day's real time-to-expiry instead of today's.
+
+    2026-10-07 fix: all three are now measured to the REAL settlement moment (13:30 on the settlement
+    day), as fractional days. It used to count whole days by weekday only, and on a settlement day
+    itself (Wed / Fri, any time incl. before 13:30) returned 7 — treating the not-yet-settled series
+    as expiring next week — while classify_txo_contract_buckets() correctly still counted that series
+    as w1/fri. Net effect: every Wed/Fri morning the expiring series' gamma was badly understated
+    (10/07 02:51: standard Gamma Flip 49,132 vs ~49,590 with the real 0.44 day). At/after 13:30 on the
+    settlement day the series is dead (the classifier drops it) so the next one, 7 days out, is used.
     """
+    settle_h, settle_m = 13, 30
+
     def days_to_next_weekday(base_dt, target_weekday):
         d = (target_weekday - base_dt.weekday()) % 7
-        return max(d, 0) if d > 0 else 7
+        target = (base_dt + datetime.timedelta(days=d)).replace(hour=settle_h, minute=settle_m, second=0, microsecond=0)
+        if target <= base_dt:
+            target += datetime.timedelta(days=7)
+        return (target - base_dt).total_seconds() / 86400.0
 
     raw_days_wed = days_to_next_weekday(ref_dt, 2)
     raw_days_fri = days_to_next_weekday(ref_dt, 4)
 
+    def _third_wed(y, m):
+        first_day = datetime.datetime(y, m, 1, tzinfo=tw_tz)
+        offset = (2 - first_day.weekday()) % 7 + 14
+        return datetime.datetime(y, m, 1 + offset, tzinfo=tw_tz)
+
     year, month = ref_dt.year, ref_dt.month
-    first_day = datetime.datetime(year, month, 1, tzinfo=tw_tz)
-    third_wed_offset = (2 - first_day.weekday()) % 7 + 14
-    third_wed = datetime.datetime(year, month, 1 + third_wed_offset, tzinfo=tw_tz)
-    if third_wed <= ref_dt:
-        if month == 12:
-            first_next = datetime.datetime(year + 1, 1, 1, tzinfo=tw_tz)
-            offset = (2 - first_next.weekday()) % 7 + 14
-            third_wed = datetime.datetime(year + 1, 1, 1 + offset, tzinfo=tw_tz)
-        else:
-            first_next = datetime.datetime(year, month + 1, 1, tzinfo=tw_tz)
-            offset = (2 - first_next.weekday()) % 7 + 14
-            third_wed = datetime.datetime(year, month + 1, 1 + offset, tzinfo=tw_tz)
-    raw_days_mth = max((third_wed - ref_dt).days, 0)
+    third_wed = _third_wed(year, month)
+    if third_wed.replace(hour=settle_h, minute=settle_m) <= ref_dt:
+        third_wed = _third_wed(year + 1, 1) if month == 12 else _third_wed(year, month + 1)
+    raw_days_mth = max((third_wed.replace(hour=settle_h, minute=settle_m) - ref_dt).total_seconds() / 86400.0, 0.0)
     return raw_days_wed, raw_days_fri, raw_days_mth, third_wed
 
 
@@ -1270,8 +1288,10 @@ def _standard_gamma_flip(spot, chain, T, sigma, r, span=2000, step=10):
     return round(min(xs, key=lambda x: abs(x - spot)), 1) if xs else None
 
 
-def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None, with_standard=False):
+def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, days_mth, fixed_base_strike=None, with_standard=False, days_w2=None, wall_extra=0):
     """
+    wall_extra: 牆位搜尋額外往兩側多看幾點（預設 0＝舊行為）。GEX 長條圖與總和仍只算 ±900 窗口，
+    只有 Call/Put Wall 的搜尋範圍放寬——夜盤現價離日盤收盤很遠時，窗口外的牆才不會被漏掉（2026-10-17）。
     option_chain: {strike: {"call_oi_w1":n, "put_oi_w1":n, "call_oi_w2":n, "put_oi_w2":n,
     "call_oi_fri":n, "put_oi_fri":n, "call_oi_mth":n, "put_oi_mth":n}}, built by
     build_real_option_chain() from fetch_taifex_txo_open_interest() — real TAIFEX open
@@ -1288,7 +1308,7 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
 
     MIN_T_DAYS = 0.5
     T_w1 = max(float(days_wed), MIN_T_DAYS) / 365.0
-    T_w2 = T_w1 + 7.0 / 365.0  # TAIFEX weeklies are 7 days apart; the next Wednesday weekly
+    T_w2 = (max(float(days_w2), MIN_T_DAYS) / 365.0) if days_w2 is not None else (T_w1 + 7.0 / 365.0)  # 有真實結算日用真實的，否則假設與 w1 相隔 7 天
     T_fri = max(float(days_fri), MIN_T_DAYS) / 365.0
     T_mth = max(float(days_mth), MIN_T_DAYS) / 365.0
 
@@ -1297,7 +1317,7 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
     # these are the strikes TAIFEX actually listed open interest for, not invented ones. Falls
     # back to the fixed grid only when option_chain is empty (the real fetch failed entirely).
     if option_chain:
-        strikes = sorted(k for k in option_chain.keys() if abs(k - base_strike) <= 900)
+        strikes = sorted(k for k in option_chain.keys() if abs(k - base_strike) <= 900 + wall_extra)
     else:
         strikes = [base_strike - 900 + i * 50 for i in range(37)]
 
@@ -1306,8 +1326,13 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
     total_vex_sum = 0.0
     total_gex_sum = 0.0
 
+    # 牆位定義（2026-10-16 起）：Call Wall＝現價「上方」Call GEX 最大的履約價（壓力）、Put Wall＝現價「下方」Put GEX 最大的履約價（支撐）。
+    # 舊版不限位置，10/16 出現 Call Wall 46300 落在現價 47111 下方 811 點、比 Put Wall 還低的誤導；原本的「±900 內不限位置的最大值」
+    # 保留為 call_gex_peak_strike / put_gex_peak_strike（Gamma 磁吸最大點）。
     call_wall_k, call_wall_max = base_strike + 300, -1.0
     put_wall_k, put_wall_max = base_strike - 300, -1.0
+    call_peak_k, call_peak_max = base_strike + 300, -1.0
+    put_peak_k, put_peak_max = base_strike - 300, -1.0
 
     strike_losses = {}
 
@@ -1350,26 +1375,38 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         c_vex_tot = ((c_oi_w1 * v_w1 + c_oi_w2 * v_w2 + c_oi_f * v_fri + c_oi_m * v_mth) * spot_price * 50) / 1e8
         p_vex_tot = -((p_oi_w1 * v_w1 + p_oi_w2 * v_w2 + p_oi_f * v_fri + p_oi_m * v_mth) * spot_price * 50) / 1e8
         vex_net = c_vex_tot + p_vex_tot
-        total_vex_sum += vex_net
+        in_win = abs(K - base_strike) <= 900
+        if in_win:
+            total_vex_sum += vex_net
 
         cg_tot = c_gex_w + c_gex_f + c_gex_m
         pg_tot = p_gex_w + p_gex_f + p_gex_m
         ng_tot = cg_tot + pg_tot
-        total_gex_sum += ng_tot
+        if in_win:
+            total_gex_sum += ng_tot
 
         # GEX+ = Net GEX + 1.0 * Net VEX
         gex_plus_val = ng_tot + (1.0 * vex_net)
 
-        call_oi_sum += (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
-        put_oi_sum += (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
+        if in_win:
+            call_oi_sum += (c_oi_w1 + c_oi_w2 + c_oi_f + c_oi_m)
+            put_oi_sum += (p_oi_w1 + p_oi_w2 + p_oi_f + p_oi_m)
 
-        if cg_tot > call_wall_max:
+        if in_win and cg_tot > call_peak_max:
+            call_peak_max = cg_tot
+            call_peak_k = K
+        if in_win and abs(pg_tot) > put_peak_max:
+            put_peak_max = abs(pg_tot)
+            put_peak_k = K
+        if K >= spot_price and cg_tot > call_wall_max:
             call_wall_max = cg_tot
             call_wall_k = K
-        if abs(pg_tot) > put_wall_max:
+        if K <= spot_price and abs(pg_tot) > put_wall_max:
             put_wall_max = abs(pg_tot)
             put_wall_k = K
 
+        if not in_win:
+            continue
         total_gex.append({
             "strike": K,
             "call_gex": round(cg_tot, 2),
@@ -1443,6 +1480,8 @@ def calculate_true_gex_profile(spot_price, option_chain, days_wed, days_fri, day
         "total_gex_plus": round(total_gex_plus_sum, 2),
         "call_wall_strike": call_wall_k,
         "put_wall_strike": put_wall_k,
+        "call_gex_peak_strike": call_peak_k,
+        "put_gex_peak_strike": put_peak_k,
         "max_pain_strike": max_pain_k,
         "pc_ratio": pc_ratio
     }
@@ -1798,11 +1837,20 @@ def classify_txo_contract_buckets(day_data, now=None):
             continue
         if _is_dead(exp):
             continue
-        if len(code.strip()) == 6:  # "YYYYMM" — no weekly-letter suffix
+        c = code.strip()
+        if len(c) == 6:  # "YYYYMM" — no weekly-letter suffix
             mth_list.append((exp, code))
-        elif exp.weekday() == 2:  # Wednesday
+            continue
+        # 2026-10-08：週選種類以合約代碼的 W（週三選）／F（週五選）字母為準。原本看「結算日是不是週三／週五」，
+        # 但週五選遇國定假日休市會順延（例：202610F2 結算日 10/12 週一），結算日星期規則會把它整檔丟掉。
+        kind = c[6].upper() if len(c) > 6 else ''
+        if kind == 'W':
             wed_list.append((exp, code))
-        elif exp.weekday() == 4:  # Friday
+        elif kind == 'F':
+            fri_list.append((exp, code))
+        elif exp.weekday() == 2:  # 沒有字母可判斷時才退回結算日星期
+            wed_list.append((exp, code))
+        elif exp.weekday() == 4:
             fri_list.append((exp, code))
     wed_list.sort()
     fri_list.sort()
@@ -1813,6 +1861,62 @@ def classify_txo_contract_buckets(day_data, now=None):
         "fri": fri_list[0][1] if fri_list else None,
         "mth": mth_list[0][1] if mth_list else None,
     }
+
+
+def bucket_expiry_dates(day_data, buckets):
+    """{'w1'|'w2'|'fri'|'mth': date} — 各 bucket 合約在期交所資料裡的「真實結算日」（國定假日順延後的日期）。"""
+    out = {}
+    for key in ('w1', 'w2', 'fri', 'mth'):
+        code = buckets.get(key)
+        info = day_data.get(code) if code else None
+        if info:
+            try:
+                out[key] = datetime.datetime.strptime(info['expiry'], '%Y%m%d').date()
+            except Exception:
+                pass
+    return out
+
+
+def days_from_expiries(ref_dt, expiries, tw_tz):
+    """從 ref_dt 到各結算日 13:30 的小數天；該 bucket 沒有合約就回 None（呼叫端退回星期規則）。"""
+    out = {}
+    for k in ('w1', 'w2', 'fri', 'mth'):
+        d = expiries.get(k)
+        if d is None:
+            out[k] = None
+            continue
+        t = datetime.datetime(d.year, d.month, d.day, 13, 30, tzinfo=tw_tz)
+        out[k] = max((t - ref_dt).total_seconds() / 86400.0, 0.0)
+    return out
+
+
+def carry_forward_gex_profile(profile, data_dir=None):
+    """
+    2026-10-17 防護：期交所未平倉抓取失敗（選擇權鏈為空）時，calculate_true_gex_profile 會降級成全 0 的剖面
+    （10/14 23:59 曾因此發布 Call/Put Wall 47,700/47,700、總 GEX 0、gamma_flip_standard 空的垃圾快照）。
+    這時改為沿用上一份正常的 data/gex_data.json 內同名欄位（那是上一輪用真實 OI 算出來的真值，不是編造），
+    並標記 gex_chain_stale=True；上一份也不可用才維持原樣。回傳 (profile, carried:bool)。
+    """
+    try:
+        base = data_dir or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
+        with open(os.path.join(base, 'gex_data.json'), 'r', encoding='utf-8') as fh:
+            old = json.load(fh)
+        if old.get('gex_chain_stale'):
+            # 上一份本身就是沿用品：仍可再沿用（內容仍是最後一份真實計算），但保留標記
+            pass
+        if not old.get('total_gex') or old.get('call_wall_strike') is None or not old.get('total_gex_val'):
+            return profile, False
+        out = dict(profile)
+        for k in ("total_gex", "weekly_gex", "friday_gex", "monthly_gex", "zero_gamma_level", "gex_plus_flip",
+                  "gamma_flip_standard", "total_vex", "total_gex_val", "total_gex_plus", "call_wall_strike",
+                  "put_wall_strike", "call_gex_peak_strike", "put_gex_peak_strike", "max_pain_strike", "pc_ratio"):
+            if k in old:
+                out[k] = old[k]
+        out["gex_chain_stale"] = True
+        return out, True
+    except Exception as e:
+        print(f"[Warning] carry_forward_gex_profile failed: {e}")
+        return profile, False
 
 
 def build_real_option_chain(day_data, buckets):
@@ -2507,6 +2611,8 @@ def fetch_official_taifex_retail_sentiment():
                         if len(f_nums) >= 6 and len(t_nums) >= 6 and len(d_nums) >= 6:
                             inst[comm]['long'] = f_nums[-6] + t_nums[-6] + d_nums[-6]
                             inst[comm]['short'] = f_nums[-4] + t_nums[-4] + d_nums[-4]
+                            # 第三列＝外資（期交所列序：自營商、投信、外資；10/8 小台 2,504 多／3,106 空＝淨 -602，與台新日報多空能量 3×外資小台淨 吻合）
+                            inst[comm]['foreign_net'] = d_nums[-6] - d_nums[-4]
                             inst_ok[comm] = True
     except Exception as e:
         print(f"[Warning] Failed to fetch TAIFEX Institutional Futures OI: {e}")
@@ -2592,8 +2698,12 @@ def fetch_official_taifex_retail_sentiment():
     # to silently fall back to one magic-literal sentinel pair for BOTH at once).
     mtx_inst_l, mtx_inst_s = inst['MTX']['long'], inst['MTX']['short']
     if mtx_near_total is not None:
-        mtx_r_long = max(0, mtx_near_total - mtx_inst_l)
-        mtx_r_short = max(0, mtx_near_total - mtx_inst_s)
+        # Institutional long/short are ALL-month positions, so the retail side must be derived from the ALL-month total
+        # too. Using the near-month OI here clipped retail short to 0 whenever institutional short > near-month OI
+        # (TMF 2026-10-16: net 68,652 vs correct 72,659 -> 51.56% shown, official-derived 54.57%).
+        _mtx_base = mtx_total if mtx_total is not None else mtx_near_total
+        mtx_r_long = max(0, _mtx_base - mtx_inst_l)
+        mtx_r_short = max(0, _mtx_base - mtx_inst_s)
         mtx_r_net = mtx_r_long - mtx_r_short
         mtx_near_ratio = round((mtx_r_net / mtx_near_total) * 100, 2) if mtx_near_total > 0 else _prev.get('mtx_ratio', 0.0)
     else:
@@ -2605,8 +2715,12 @@ def fetch_official_taifex_retail_sentiment():
 
     tmf_inst_l, tmf_inst_s = inst['TMF']['long'], inst['TMF']['short']
     if tmf_near_total is not None:
-        tmf_r_long = max(0, tmf_near_total - tmf_inst_l)
-        tmf_r_short = max(0, tmf_near_total - tmf_inst_s)
+        # Institutional long/short are ALL-month positions, so the retail side must be derived from the ALL-month total
+        # too. Using the near-month OI here clipped retail short to 0 whenever institutional short > near-month OI
+        # (TMF 2026-10-16: net 68,652 vs correct 72,659 -> 51.56% shown, official-derived 54.57%).
+        _tmf_base = tmf_total if tmf_total is not None else tmf_near_total
+        tmf_r_long = max(0, _tmf_base - tmf_inst_l)
+        tmf_r_short = max(0, _tmf_base - tmf_inst_s)
         tmf_r_net = tmf_r_long - tmf_r_short
         tmf_near_ratio = round((tmf_r_net / tmf_near_total) * 100, 2) if tmf_near_total > 0 else _prev.get('tmf_ratio', 0.0)
     else:
@@ -2633,6 +2747,8 @@ def fetch_official_taifex_retail_sentiment():
     fut_inst_snap = fetch_official_taifex_futures_institutional_oi()
     opt_inst_snap = fetch_official_taifex_options_matrix()
     foreign_tx_net = fut_inst_snap.get('foreign')
+    # 外資小台淨未平倉（期交所當日公布；未公布時沿用前一筆真實值，不編造）→ 多空能量 = 3 × 此值
+    foreign_mtx_net = inst['MTX'].get('foreign_net') if inst_ok['MTX'] else _prev.get('foreign_mtx_net')
     foreign_call_net = opt_inst_snap.get('foreign', {}).get('call_net_amt')
     foreign_put_net = opt_inst_snap.get('foreign', {}).get('put_net_amt')
 
@@ -2640,6 +2756,7 @@ def fetch_official_taifex_retail_sentiment():
     mtx_prev_ratio = _prev.get('mtx_ratio')
     tmf_daily_change = (tmf_r_net - _prev['tmf_net_oi']) if (tmf_r_net is not None and _prev.get('tmf_net_oi') is not None) else None
     tmf_prev_ratio = _prev.get('tmf_ratio')
+    foreign_mtx_change = (foreign_mtx_net - _prev['foreign_mtx_net']) if (foreign_mtx_net is not None and _prev.get('foreign_mtx_net') is not None) else None
     foreign_tx_change = (foreign_tx_net - _prev['foreign_tx_net']) if ('foreign_tx_net' in _prev and foreign_tx_net is not None) else None
     foreign_call_change = (foreign_call_net - _prev['foreign_call_net']) if ('foreign_call_net' in _prev and foreign_call_net is not None) else None
     foreign_put_change = (foreign_put_net - _prev['foreign_put_net']) if ('foreign_put_net' in _prev and foreign_put_net is not None) else None
@@ -2649,7 +2766,8 @@ def fetch_official_taifex_retail_sentiment():
         'mtx_long_oi': mtx_r_long, 'mtx_short_oi': mtx_r_short,
         'tmf_net_oi': tmf_r_net, 'tmf_ratio': tmf_ratio, 'tmf_total_ratio': tmf_total_ratio,
         'tmf_long_oi': tmf_r_long, 'tmf_short_oi': tmf_r_short,
-        'foreign_tx_net': foreign_tx_net, 'foreign_call_net': foreign_call_net, 'foreign_put_net': foreign_put_net
+        'foreign_tx_net': foreign_tx_net, 'foreign_call_net': foreign_call_net, 'foreign_put_net': foreign_put_net,
+        'foreign_mtx_net': foreign_mtx_net
     })
 
     def _sentiment_tag(ratio):
@@ -2719,6 +2837,8 @@ def fetch_official_taifex_retail_sentiment():
                 "sentiment_tag": tmf_sentiment_tag
             },
             "broker_snapshot": {
+                "foreign_mtx_net": foreign_mtx_net,
+                "foreign_mtx_change": foreign_mtx_change,
                 "foreign_tx_net": foreign_tx_net,
                 "foreign_tx_change": foreign_tx_change,
                 "foreign_call_net": foreign_call_net,
@@ -3102,6 +3222,7 @@ def generate_gex_payload():
     txf_price = night_txf_price if is_night_session else day_txf_price
 
     raw_days_wed, raw_days_fri, raw_days_mth, third_wed = compute_days_to_expiries(now_dt, tw_tz)
+    raw_days_w2 = None   # 之後有真實結算日才設定（見下方 OI 取得後）
 
     # Compute exact expiration dates
     w1_dt = now_dt + datetime.timedelta(days=raw_days_wed)
@@ -3137,12 +3258,93 @@ def generate_gex_payload():
         real_option_chain = {}
         print("[Warning] No real TAIFEX TXO open interest available — GEX profile will be flat/zero, not a guessed curve.")
 
+    # 2026-10-08：到期天數改用「合約資料裡的真實結算日」（週五選遇休市順延到週一等情形，星期規則會算錯）；
+    # 該 bucket 沒有合約（或沒有 OI）時才沿用上面的星期規則。
+    _exp_dates = {}
+    if _txo_latest_date:
+        _exp_dates = bucket_expiry_dates(_txo_oi_by_date[_txo_latest_date], _txo_buckets)
+        _real_days = days_from_expiries(now_dt, _exp_dates, tw_tz)
+        if _real_days.get('w1') is not None:
+            raw_days_wed = _real_days['w1']
+        if _real_days.get('fri') is not None:
+            raw_days_fri = _real_days['fri']
+        if _real_days.get('mth') is not None:
+            raw_days_mth = _real_days['mth']
+        raw_days_w2 = _real_days.get('w2')
+        # 結算日標籤隨之更新
+        w1_dt = now_dt + datetime.timedelta(days=raw_days_wed)
+        w2_dt = (now_dt + datetime.timedelta(days=raw_days_w2)) if raw_days_w2 is not None else (w1_dt + datetime.timedelta(days=7))
+        fri_dt = now_dt + datetime.timedelta(days=raw_days_fri)
+        if _exp_dates.get('mth'):
+            _m = _exp_dates['mth']
+            mth_dt = datetime.datetime(_m.year, _m.month, _m.day, tzinfo=tw_tz)
+        w1_date_str = f"{w1_dt.strftime('%m/%d')}({weekdays_zh[w1_dt.weekday()]})"
+        w2_date_str = f"{w2_dt.strftime('%m/%d')}({weekdays_zh[w2_dt.weekday()]})"
+        fri_date_str = f"{fri_dt.strftime('%m/%d')}({weekdays_zh[fri_dt.weekday()]})"
+        mth_date_str = f"{mth_dt.strftime('%m/%d')}({weekdays_zh[mth_dt.weekday()]})"
+        dte_dates = {
+            "w1": f"{w1_date_str}結算",
+            "w2": f"{w2_date_str}結算",
+            "fri": f"{fri_date_str}結算",
+            "m1": f"{mth_date_str}結算"
+        }
+
     # Compute GEX Profile
-    gex_profile = calculate_true_gex_profile(spot_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, with_standard=True)
+    # 夜盤（15:00～隔日 08:45）：加權現貨已收盤停在日盤收盤價，夜盤期貨可能已大幅偏離（10/16 夜盤 -1,144 點）。
+    # 點位若仍錨定日盤收盤現貨，牆位會落在現價同一側、窗口也涵蓋不到現價下方。夜盤改以夜盤期貨價錨定
+    # （與 active_night_spot、day_profile 用期貨價當 spot 的既有慣例一致），牆位搜尋範圍多放寬 600 點。Max Pain 只看 OI，不受影響。
+    _gex_anchor = night_txf_price if (is_night_session and night_txf_price is not None and night_txf_price > 10000) else spot_price
+    gex_profile = calculate_true_gex_profile(_gex_anchor, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, with_standard=True, days_w2=raw_days_w2, wall_extra=600)
+    _gex_chain_ok = bool(real_option_chain)
+    if not _gex_chain_ok:
+        print("[GUARD] 期交所未平倉為空 — 沿用上一份正常 GEX 欄位，不發布全 0 剖面")
+        gex_profile, _carried = carry_forward_gex_profile(gex_profile)
+        if not _carried:
+            print("[GUARD] 上一份 gex_data.json 也不可用，維持降級結果")
+    gex_profile["gex_anchor_price"] = _gex_anchor
+    gex_profile.setdefault("gex_chain_stale", False)
+
+    # 日盤收盤時的標準 Gamma Flip（2026-10-07）：盤中的 gamma_flip_standard 會隨現價與剩餘時間即時重算；
+    # 要和羊叔等「收盤值」比，另存收盤版：用 OI 所屬交易日 13:30 的到期天數＋當日收盤現價。
+    # 只在日盤收盤後（≥13:45）到隔日開盤前（<08:45）重算；盤中沿用上一份 gex_data.json 的收盤值，不編造。
+    gamma_flip_standard_close, gamma_flip_standard_close_date = None, None
+    try:
+        _gp = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'gex_data.json')
+        if os.path.exists(_gp):
+            with open(_gp, 'r', encoding='utf-8') as _f:
+                _old = json.load(_f)
+            gamma_flip_standard_close = _old.get('gamma_flip_standard_close')
+            gamma_flip_standard_close_date = _old.get('gamma_flip_standard_close_date')
+    except Exception:
+        pass
+    _mins = now_dt.hour * 60 + now_dt.minute
+    _after_close = (_mins >= 13 * 60 + 45) or (_mins < 8 * 60 + 45)
+    if _after_close and _txo_latest_date and real_option_chain:
+        try:
+            _oi_d = datetime.date.fromisoformat(str(_txo_latest_date).replace('/', '-'))
+            # 13:45 之後要求 OI 就是今天的；隔日開盤前的 OI 日期則是最近一個交易日（週末／假日也成立）
+            if (_mins < 8 * 60 + 45) or _oi_d == now_dt.date():
+                _ref = datetime.datetime(_oi_d.year, _oi_d.month, _oi_d.day, 13, 30, tzinfo=tw_tz)
+                _dw, _df, _dm, _ = compute_days_to_expiries(_ref, tw_tz)
+                _rd = days_from_expiries(_ref, _exp_dates, tw_tz) if _exp_dates else {}
+                _dw = _rd.get('w1') if _rd.get('w1') is not None else _dw
+                _df = _rd.get('fri') if _rd.get('fri') is not None else _df
+                _dm = _rd.get('mth') if _rd.get('mth') is not None else _dm
+                _t1 = max(float(_dw), 0.5) / 365.0
+                _sig = _gex_sigma_info()["sigma"]
+                _v = _standard_gamma_flip(spot_price, real_option_chain,
+                                          {"w1": _t1, "w2": _t1 + 7.0 / 365.0, "fri": max(float(_df), 0.5) / 365.0, "mth": max(float(_dm), 0.5) / 365.0},
+                                          _sig, 0.015)
+                gamma_flip_standard_close = _v
+                gamma_flip_standard_close_date = _oi_d.isoformat() if _v is not None else None
+        except Exception as _e:
+            print(f"[Warning] gamma_flip_standard_close failed: {_e}")
     gex_profile["dte_dates"] = dte_dates
 
     # Day vs Night Session Shift Metrics
-    day_profile = calculate_true_gex_profile(day_txf_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth)
+    day_profile = calculate_true_gex_profile(day_txf_price, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, days_w2=raw_days_w2, wall_extra=600)
+    if not _gex_chain_ok:
+        day_profile = dict(gex_profile)  # 沒有未平倉就無從分日夜：位移量歸零，不用全 0 剖面
     day_zero_gamma = day_profile['zero_gamma_level']
     day_call_wall = day_profile['call_wall_strike']
     day_put_wall = day_profile['put_wall_strike']
@@ -3304,9 +3506,13 @@ def generate_gex_payload():
         result = fetch_fn(target_date=target_date)
         if result is not None:
             return result
-        _snaps = load_institutional_snapshots()
-        fallback = _snaps.get(snapshot_key) or dict(empty_shape)
+        # 2026-10-07：當日資料期交所還沒公布時，不再借用舊快照（LAST_REAL，雲端引擎不會把它更新，
+        # 曾每天早上固定顯示 9/16 的大額交易人數字冒充當日）。改回「全部 None＋not_published」，
+        # 前端與下游文字會顯示「—／資料尚未公布」。snapshot_key 參數保留以免動到呼叫端。
+        import copy as _copy
+        fallback = _copy.deepcopy(empty_shape)
         fallback['is_live'] = False
+        fallback['not_published'] = True
         return fallback
 
     opt_inst = _fresh_or_last_real(_today_date_slash, fetch_official_taifex_options_matrix, OPT_MATRIX_SNAPSHOT_KEY, {
@@ -3721,6 +3927,7 @@ def generate_gex_payload():
                 "liquidity": stk.get('liquidity', '中'),
                 "spot_price": spot_p,
                 "spot_volume": spot_vol,
+                "spot_date": twse_info.get('date'),   # 現貨報價的資料日期（證交所）；與最新交易日不同時前端會標示
                 "fut_price": fut_price,
                 "fut_volume": fut_vol,
                 "basis": basis,
@@ -4103,7 +4310,8 @@ def generate_gex_payload():
     _snap_cw   = day_call_wall  if session_type == "DAY" else gex_profile['call_wall_strike']
     _snap_pw   = day_put_wall   if session_type == "DAY" else gex_profile['put_wall_strike']
     _snap_mp   = day_max_pain   if session_type == "DAY" else gex_profile['max_pain_strike']
-    write_current_session_snapshot(
+    if _gex_chain_ok:
+      write_current_session_snapshot(
         now_dt=now_dt, session_type=session_type,
         key_date=(_night_label_date if session_type == "NIGHT" else None),
         spot_price=spot_price, otc_price=otc_price, txf_price=_snap_txf,
@@ -4164,7 +4372,7 @@ def generate_gex_payload():
     global_base_strike = round(spot_price / 100) * 100
     for sess_item in history_10_sessions:
         s_spot = sess_item['spot_price']
-        if s_spot is None or s_spot <= 0:
+        if s_spot is None or s_spot <= 0 or not _gex_chain_ok:
             sess_item['total_gex'] = None
             sess_item['weekly_gex'] = None
             sess_item['friday_gex'] = None
@@ -4175,7 +4383,7 @@ def generate_gex_payload():
         # fabricated curve) but not that specific past day's own OI, since per-strike history
         # backfill is out of scope here (only the scalar zero_gamma/call_wall/etc fields get a
         # true historical backfill, via backfill_snapshots.py).
-        sess_prof = calculate_true_gex_profile(s_spot, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, fixed_base_strike=global_base_strike)
+        sess_prof = calculate_true_gex_profile(s_spot, real_option_chain, raw_days_wed, raw_days_fri, raw_days_mth, fixed_base_strike=global_base_strike, days_w2=raw_days_w2)
         sess_item['total_gex'] = sess_prof['total_gex']
         sess_item['weekly_gex'] = sess_prof['weekly_gex']
         sess_item['friday_gex'] = sess_prof['friday_gex']
@@ -4756,13 +4964,26 @@ def generate_gex_payload():
         "two_change_pct": otc_change_pct,
         "day_txf_price": day_txf_price,
         "night_txf_price": night_txf_price,
+        "gex_anchor_price": gex_profile.get("gex_anchor_price"),
+        "gex_chain_stale": bool(gex_profile.get("gex_chain_stale")),
+        "night_vs_day_close": (round(night_txf_price - day_txf_price, 1) if (night_txf_price and day_txf_price) else None),   # 夜盤期貨 − 日盤期貨收盤（不是基差：基差是同一時段期貨 − 現貨）
         "txf_price": txf_price,
         "zero_gamma_level": gex_profile['zero_gamma_level'],
         "gex_plus_flip": gex_profile['gex_plus_flip'],
         "gamma_flip_standard": gex_profile.get('gamma_flip_standard'),
+        "gamma_flip_standard_close": gamma_flip_standard_close,
+        "gamma_flip_standard_close_date": gamma_flip_standard_close_date,
         "call_wall_strike": gex_profile['call_wall_strike'],
         "put_wall_strike": gex_profile['put_wall_strike'],
+        "call_gex_peak_strike": gex_profile.get('call_gex_peak_strike'),
+        "put_gex_peak_strike": gex_profile.get('put_gex_peak_strike'),
         "max_pain_strike": gex_profile['max_pain_strike'],
+        # 資料完整度（2026-10-07）：當日期交所資料還沒公布時為 False；網頁據此顯示「資料尚未公布」，Lumi 等下游可據此不發有誤的盤後文字
+        "data_completeness": {
+            "large_trader_futures": not lt_inst.get('not_published', False),
+            "large_trader_options": not opt_lt_inst.get('not_published', False),
+            "options_matrix": not opt_inst.get('not_published', False),
+        },
         "opt_large_trader": opt_lt_inst,
         "pc_ratio": gex_profile['pc_ratio'],
         "total_gex": gex_profile['total_gex'],

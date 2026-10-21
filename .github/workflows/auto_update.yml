@@ -38,6 +38,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
+          # 排隊中的 run 預設會 checkout「派出當下」的 commit（github.sha），前一輪跑完推送後就是舊底版，
+          # 輪到它時 push 會與前一輪的資料檔 rebase 衝突（2026-10-14 16:03 那輪失敗）。明確取 main 最新版。
+          ref: main
           persist-credentials: true
 
       - name: Set up Python
@@ -72,11 +75,18 @@ jobs:
         run: |
           python scripts/fetch_real_quotes.py
 
+      - name: Accumulate GEX v2 (textbook method, parallel to v1)
+        # 2026-10-09：並行累積「通行版(v2)」GEX 點位到 data/gex_v2_history.json，供與現行引擎(v1)回測比較。
+        # 完全獨立於主流程與 gex_data.json；官方資料未公布的日子不寫、取不到的欄位留 null。失敗不影響主流程。
+        continue-on-error: true
+        run: |
+          python scripts/gex_v2_daily.py
+
       - name: Commit and Push Official Payload
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/gex_data.json data/encrypted_gex.json data/embedded_data.js data/social_card_*.png data/klines_cache.json data/tw_quotes_latest.json data/session_snapshots.json data/institutional_snapshots.json data/gex_line_observations.json
+          git add data/gex_data.json data/encrypted_gex.json data/embedded_data.js data/social_card_*.png data/klines_cache.json data/tw_quotes_latest.json data/session_snapshots.json data/institutional_snapshots.json data/gex_line_observations.json data/gex_v2_history.json
           git status
           if git diff-index --quiet HEAD; then
             echo "No data changes to commit."

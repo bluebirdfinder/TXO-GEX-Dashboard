@@ -887,6 +887,19 @@ body.right-collapsed .dock-right { display: flex !important; }
   background: rgba(10, 14, 23, 0.5);
 }
 
+.advisor-avatar-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.advisor-title { white-space: nowrap; flex-shrink: 0; }
+.advisor-avatar-img.sm {
+  width: 18px;
+  height: 18px;
+}
+
 .advisor-title {
   font-size: 0.85rem;
   font-weight: 700;

@@ -1,0 +1,100 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>交接單 2026-10-21</title>
+<style>
+:root{--bg:#fff;--fg:#1f2328;--mut:#59636e;--bd:#d1d9e0;--bg2:#f6f8fa;--ac:#0969da}
+@media (prefers-color-scheme: dark){:root{--bg:#0d1117;--fg:#e6edf3;--mut:#9198a1;--bd:#30363d;--bg2:#161b22;--ac:#58a6ff}}
+body{background:var(--bg);color:var(--fg);font:15px/1.65 -apple-system,"Segoe UI","Noto Sans TC",sans-serif;margin:0;padding:16px;max-width:980px;margin-inline:auto}
+h1{font-size:1.5rem}h2{font-size:1.2rem;margin-top:2rem;border-bottom:1px solid var(--bd);padding-bottom:.3rem}
+table{border-collapse:collapse;width:100%;margin:.8rem 0;display:block;overflow-x:auto}
+th,td{border:1px solid var(--bd);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--bg2)}
+code{background:var(--bg2);padding:1px 5px;border-radius:4px;font-size:.9em}
+pre{background:var(--bg2);border:1px solid var(--bd);padding:12px;border-radius:6px;overflow-x:auto;white-space:pre-wrap}
+blockquote{margin:.8rem 0;padding:.4rem 1rem;border-left:4px solid var(--ac);background:var(--bg2);color:var(--mut)}
+</style></head><body>
+<h1>交接單 2026-10-21（給新視窗；先讀本檔，再讀 CLAUDE.md、AGENTS.md）</h1>
+<blockquote>舊視窗：本檔寫於 10/21 清晨～早上（台北）。新視窗確認讀懂後，才由使用者停止並封存舊視窗。</blockquote>
+<blockquote><strong>第一件事：開 Remote Control</strong>（<code>set_remote_control self=true</code>），再做開工檢查（<code>git fetch origin</code>、<code>git status</code>、<code>curl localhost:8000/api/live_tick</code> 應為 provider=FUBON）。</blockquote>
+<blockquote>使用者偏好：繁體中文、白話、進度用表格、回報完成百分比、要問就用選項卡片（每個選項寫詳細說明，並保留「Other」讓他打字）；<strong>git push 一律先問</strong>，核准是一批一批的；每次結尾明講「有沒有需要使用者回答的事」。</blockquote>
+<h2>0. 今天（10/21 週三）是發表截止日</h2>
+<table><thead><tr><th>事</th><th>誰做</th><th>狀態</th></tr></thead><tbody>
+<tr><td>補 4 項文字：真名、「目前結果」怎麼描述、結尾一句話、附件形式</td><td>使用者</td><td>未完成；<strong>我不替他編數字或感受</strong></td></tr>
+<tr><td>截圖做投影片（Win＋Shift＋S），截圖前不要露帳號、持倉、餘額、通行碼、指標公式</td><td>使用者截、我檢查</td><td>未完成；使用者貼圖來，我幫忙檢查</td></tr>
+<tr><td>寄信給 jane.chou@mdbs.com.tw，主旨【作品徵選】AI投資作戰系統＿姓名＋作品名稱</td><td><strong>使用者自己寄</strong>，我不替他寄</td><td>未完成</td></tr>
+<tr><td>10/24（六）現場分享</td><td>使用者</td><td>主線是「為什麼做、為什麼想用 AI、你的經歷」，不要教別人怎麼做</td></tr>
+</tbody></table>
+<p>文件在 repo：<code>發表投稿草稿_1021.md</code>（信與設計發想、實用情況文字）、<code>一頁總覽_發表前.md</code>、<code>錄影分鏡_1021.md</code>（使用者改成「給網址＋截圖投影片」，錄影可不做）、<code>進度總清單_TXO.md</code>。</p>
+<p><strong>對帳數字（10/20 早上實測）：1,485 項一致、3 項不一致、7 項略過；不要說 FAIL=0。</strong> 3 項不一致原因：Max Pain 我們只算 4 個到期週別（差 300 點）、Call Wall 是 Gamma 加權不是最大 OI、台指期「日盤收盤」是對帳程式把 10/20 夜盤行情表當日盤比對（我們的 46,779 才是 10/19 日盤收盤）。</p>
+<h2>1. 這個視窗做完的事（全部已在 origin/main）</h2>
+<table><thead><tr><th>事</th><th>commit</th><th>驗證</th></tr></thead><tbody>
+<tr><td>週末現價查夜盤（富邦）</td><td>6496435</td><td>線上 46,140 與 TV 一致</td></tr>
+<tr><td>MIS 備援場次判斷＋開盤中擋過期報價（<code>scripts/mis_session.py</code> 與測試）</td><td>21dbfca</td><td>單元測試＋真實 MIS</td></tr>
+<tr><td>Pages 頁優先讀本機 K 線快取；休市不開即時 K 棒</td><td>2f2751b</td><td>使用者確認 K 線正確</td></tr>
+<tr><td>下載 K 線後立刻解除報價退避（避免誤判斷線）</td><td>6cb6049</td><td>實測 live_tick 被拖慢 2～3 秒</td></tr>
+<tr><td>台指期沒有即時價時標「非即時」</td><td>15a49ea</td><td>本機模擬</td></tr>
+<tr><td>ADX 多週期請求多送 15M（2500 根）供 Worker 重組 4H</td><td>0838ecb</td><td>微台 4H = 41.2 與 TV 一致</td></tr>
+<tr><td>HISTORY／STATUS 補 10/17～10/20、刪 <code>start_live_with_advisor.bat</code></td><td>28e3890</td><td>—</td></tr>
+<tr><td>投稿文件對帳數字、錄影分鏡</td><td>96840e8、15d6508</td><td>—</td></tr>
+<tr><td>個股現貨標資料日期（引擎寫 <code>spot_date</code>、前端標 (MM-DD)）</td><td>1b4e5bd</td><td>4 種情境模擬；引擎函式用真實證交所資料跑過</td></tr>
+<tr><td>幕僚鳥防套話（<code>advisor_guard.py</code>、測試、橋接接線）</td><td>98dfe1b</td><td>50 多組測試＋真實 Claude(haiku) 4 句間接套話皆婉拒</td></tr>
+<tr><td><strong>盤中補本盤別 K 棒</strong>（MIS 1 分 K → <code>/api/session_bars</code> → 網頁合併）</td><td>700dd89</td><td>夜盤、日盤實測：開高低與富邦完全一致，主控台無錯誤</td></tr>
+<tr><td>幕僚鳥面板精簡（模型移輸入欄下、隱藏 Key／AGENTS.md、開場訊息精簡）</td><td>5c95ffb</td><td>桌面寬度截圖＋DOM 檢查</td></tr>
+</tbody></table>
+<h2>2. 現況</h2>
+<table><thead><tr><th>項目</th><th>狀態</th></tr></thead><tbody>
+<tr><td>報價服務 8000</td><td>排程 <code>TXO-Live-Price-Server</code> 從 <code>C:\Users\mingi\txo-klines-runner</code> 跑；<strong>每次啟動 hard-sync 到 origin/main</strong>；已跑新版（含 <code>/api/session_bars</code>），現價 FUBON</td></tr>
+<tr><td>K 線排程</td><td><code>TXO-Fubon-Futures-Klines</code> 每天 05:30、14:00；夜盤 05:00 後的 K 棒已補完</td></tr>
+<tr><td>私有 Worker</td><td><code>bluebird-indicators</code>，版本 <code>2026-10-20-adx-4h-session</code>（使用者已貼）；<strong>原始碼不在 git</strong>：<code>C:\Users\mingi\OneDrive\文件\TradingView 指標\我寫的指標\ADX MTF 後端運算 (Cloudflare Worker)\worker.js</code>；備份 <code>worker.js.bak_before_quote_session_20261017</code></td></tr>
+<tr><td>幕僚鳥橋接（<code>trading room\advisor_bridge.py</code>）</td><td>使用者正在跑的是<strong>舊版</strong>（共用資料夾）；防套話新版在 main，<strong>使用者說投稿後再換</strong>：要把 <code>advisor_bridge.py</code>、<code>advisor_guard.py</code> 放到跑橋接的資料夾並重開（<code>start_advisor.bat</code>）。橋接只准 localhost 來源；Pages 上用不了是設計</td></tr>
+<tr><td>共用資料夾</td><td><code>C:\Users\mingi\OneDrive\文件\TXO-GEX-Dashboard</code> 在分支 <code>claude/bold-galileo-dy1oxb</code>，<strong>不要在裡面切分支／pull／reset</strong>；改檔一律用獨立暫時 worktree（<code>multi-session-safety</code> skill）</td></tr>
+</tbody></table>
+<h2>3. 還沒做／不確定（依重要性）</h2>
+<table><thead><tr><th>#</th><th>事項</th><th>備註</th></tr></thead><tbody>
+<tr><td>1</td><td>使用者的發表文字、截圖、寄信</td><td>見第 0 節</td></tr>
+<tr><td>2</td><td>換新版橋接（防套話生效）</td><td>投稿後；要複製 2 個檔到共用資料夾，會讓 git status 不乾淨（小風險），先問</td></tr>
+<tr><td>3</td><td>ADX 1H 與日線和 TV 不一致</td><td>微台 1H 我們 50.2 vs TV 55，試 4 種對齊都不是；日線差在 TV 含夜盤、我們早期歷史沒有夜盤，兩種做法在 20～22.4 間搖擺，沒改。<strong>不要說「已對齊」</strong></td></tr>
+<tr><td>4</td><td>Worker 拿不到台指期即時價</td><td>期交所對 Cloudflare 回 HTTP 520；可能做法：本機把最新價 POST 給 Worker（要使用者再貼 Worker）</td></tr>
+<tr><td>5</td><td>動能鳥未對照 TV 驗證、JJ 大戶散戶動能公式未解</td><td>畫面有誠實標示，錄影／截圖不要特別展示</td></tr>
+<tr><td>6</td><td>個股現貨日期標示要等 GitHub 排程下一輪重算才出現 <code>spot_date</code></td><td>檢查 <code>data/gex_data.json</code> 的 <code>stock_futures[*].spot_date</code></td></tr>
+<tr><td>7</td><td>國定假日場次判斷</td><td>目前只看星期與鐘點</td></tr>
+<tr><td>8</td><td>幕僚鳥後續：開機自動啟動橋接（要使用者同意）、Opus 實測、知識庫手動同步到 runner、Mac mini 搬遷（10/24 後）、雲端多人版（要帳號與獨立記憶，工程大）</td><td>多人說明：記憶存在跑橋接那台電腦的 <code>trading room\brain\memory\</code>；別人的網頁連的是「他們自己電腦」的 127.0.0.1，看不到使用者的；橋接沒有帳號概念</td></tr>
+<tr><td>9</td><td>殘留：本機分支 <code>claude/advisor-bridge</code>、<code>claude/fix-weekend-quote</code>、<code>.git/worktrees/</code> 登記殘留（OneDrive 權限）</td><td><code>git worktree prune</code> 稍後再清，不影響運作</td></tr>
+</tbody></table>
+<h2>4. 踩過的坑</h2>
+<table><thead><tr><th>坑</th><th>處理</th></tr></thead><tbody>
+<tr><td>工具的安全檢查偶爾暫時失效（Bash／Edit 回「no verdict」）</td><td>不要連續重試，改用 Read／Grep／Write 等工具，稍後再試</td></tr>
+<tr><td>Bash heredoc 會吞掉 <code>\n</code>、<code>\u</code></td><td>補丁腳本用 Write 寫成 <code>.py</code> 檔再執行；字串內換行用 Edit 工具改</td></tr>
+<tr><td>證交所 openapi 憑證缺 Subject Key Identifier</td><td>Python 用 <code>ssl.create_default_context()</code> 並關閉 <code>VERIFY_X509_STRICT</code></td></tr>
+<tr><td>MIS <code>getChartData1M</code> 標籤＝K 棒<strong>結束</strong>時間，分鐘可寫 60（<code>&#x27;226000&#x27;</code>＝23:00:00），列沒有日期</td><td><code>scripts/mis_session.py</code> 的 <code>parse_mis_ticks</code> 已處理（含跨午夜、重複分鐘）；夜盤另有 04:60 特殊 K 棒（desk 視窗已修覆盤）</td></tr>
+<tr><td>專案檔是 CRLF</td><td>用 Python 讀（轉 LF）再以 <code>newline=&#x27;\n&#x27;</code> 寫回，git 會顯示最小 diff</td></tr>
+<tr><td><code>git worktree remove</code> 報 Permission denied（OneDrive）</td><td>資料夾已刪，登記殘留，不影響</td></tr>
+<tr><td>另一個「desk（台選鳥）」視窗也在改 <code>room.html</code>／<code>room.js</code>／main</td><td>push 前一律 <code>git fetch</code>、rebase 到最新 origin/main，確認純往前再推</td></tr>
+<tr><td>內建瀏覽器面板有時被隱藏，截圖會逾時</td><td>改用 <code>javascript_tool</code>／<code>read_page</code>；要截圖時 <code>resize_window</code> 到桌面寬度</td></tr>
+<tr><td>8000 是 runner 的 clone，不是共用資料夾</td><td>要讓 8000 看到新程式：push 到 main 後殺 8000 的 python（約 1 分鐘無報價，<strong>先告知使用者、休市時做</strong>），排程會重啟並 hard-sync；做完驗證 provider=FUBON</td></tr>
+</tbody></table>
+<h2>5. 千萬別做</h2>
+<table><thead><tr><th>別做</th><th>原因</th></tr></thead><tbody>
+<tr><td>把 Worker 原始碼放進公開 repo、貼進聊天或截圖</td><td>指標公式 IP；Worker 一律由使用者自己貼到 Cloudflare</td></tr>
+<tr><td>說 ADX／CVD「和 TV 完全一致」、說對帳「FAIL=0」</td><td>不是事實</td></tr>
+<tr><td>替使用者寄信、編他的績效或感受</td><td>他自己寫、自己寄</td></tr>
+<tr><td>在共用資料夾切分支／pull／reset</td><td>幕僚鳥橋接與 <code>brain/</code> 都在那裡</td></tr>
+<tr><td>動洋洋專案、Lumi 專案的檔案</td><td>別人的專案</td></tr>
+<tr><td>拆週選價差單、追價、用偽數據</td><td>AGENTS.md 紅線</td></tr>
+</tbody></table>
+<h2>6. 下一步順序</h2>
+<pre>
+ 開 Remote Control ─▶ 開工檢查（fetch / status / 8000 FUBON）
+        │
+        ▼
+ 使用者貼截圖／文字 ─▶ 我檢查有沒有露個資、潤飾文字（不編數字）─▶ 使用者自己寄信
+        │
+        ▼（投稿後）
+ 換新版橋接（防套話生效）─▶ ADX 1H／日線 ─▶ Worker 台指期即時價 ─▶ 幕僚鳥後續
+</pre>
+<h2>7. 驗證指令</h2>
+<pre>
+curl -s localhost:8000/api/live_tick | python -c &quot;import json,sys;d=json.load(sys.stdin)[&#x27;txf&#x27;];print(d[&#x27;provider&#x27;],d[&#x27;price&#x27;])&quot;
+curl -s &quot;localhost:8000/api/session_bars?symbol=TXF&quot; | python -c &quot;import json,sys;d=json.load(sys.stdin);print(d.get(&#x27;session&#x27;),len(d.get(&#x27;bars&#x27;,[])))&quot;
+curl -s localhost:8765/health   # 幕僚鳥橋接（舊版）
+python scripts/test_mis_session.py &amp;&amp; python scripts/test_mis_ticks.py &amp;&amp; python &quot;trading room/test_advisor_guard.py&quot;
+</pre>
+</body></html>

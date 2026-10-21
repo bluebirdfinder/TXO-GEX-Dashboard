@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交易員帳戶頁</title>
+<style>
+  :root {
+    --bg: #0b0f1a; --panel: #121a2b; --panel2: #18223a; --line: #263250; --text: #e6ecff; --muted: #8b97b8;
+    --accent: #38bdf8; --gold: #fbbf24; --up: #f0616d; --down: #2ecc9a; --warn: #f59e0b; --bad: #ef4444; --ok: #22c55e;
+  }
+  :root[data-theme="light"] { --bg: #f4f6fb; --panel: #ffffff; --panel2: #eef2fb; --line: #d5dcee; --text: #17203a; --muted: #5c6a8c;
+    --accent: #0b7bb5; --gold: #a16207; --up: #c62839; --down: #0f8a63; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  header { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin-bottom: 6px; }
+  h1 { font-size: 1.35rem; margin: 0; }
+  .sim { background: var(--warn); color: #1a1200; font-weight: 700; padding: 2px 10px; border-radius: 999px; font-size: .8rem; }
+  .badge { font-size: .78rem; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .badge.ok { color: var(--ok); border-color: var(--ok); } .badge.bad { color: var(--bad); border-color: var(--bad); } .badge.warn { color: var(--warn); border-color: var(--warn); }
+  .sub { color: var(--muted); font-size: .85rem; margin-bottom: 14px; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 14px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .card .k { color: var(--muted); font-size: .8rem; } .card .v { font-size: 1.35rem; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .card .s { color: var(--muted); font-size: .78rem; margin-top: 2px; }
+  .up { color: var(--up); } .down { color: var(--down); }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  section > h2 { font-size: 1rem; margin: 0 0 8px; color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: .88rem; }
+  th { color: var(--muted); font-weight: 600; font-size: .78rem; }
+  .tablewrap { overflow-x: auto; }
+  .bar { height: 10px; background: var(--panel2); border-radius: 6px; overflow: hidden; position: relative; margin: 4px 0 2px; }
+  .bar > i { display: block; height: 100%; background: var(--accent); }
+  .bar.warn > i { background: var(--warn); } .bar.bad > i { background: var(--bad); }
+  .risk { display: grid; gap: 10px 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .risk .t { display: flex; justify-content: space-between; font-size: .85rem; } .risk .t span:last-child { color: var(--muted); }
+  details { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; margin-bottom: 8px; background: var(--panel2); }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 6px 0; font-size: .86rem; } .muted { color: var(--muted); }
+  .legs span { display: inline-block; margin-right: 10px; white-space: nowrap; }
+  .empty { color: var(--muted); padding: 6px 0; }
+  .err { background: rgba(239,68,68,.12); border: 1px solid var(--bad); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+  .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; } .nav a { color: var(--accent); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; font-size: .85rem; } .nav a.on { background: var(--panel2); font-weight: 700; }
+  footer { color: var(--muted); font-size: .78rem; margin: 18px 0 30px; }
+  button { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  @media (max-width: 560px) { .card .v { font-size: 1.15rem; } th, td { padding: 5px 5px; font-size: .8rem; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" id="nav"></nav>
+  <header>
+    <h1 id="h1">🐦 交易員帳戶頁</h1>
+    <span class="sim">全部是模擬單</span>
+    <span id="acct" class="badge"></span><span id="sess" class="badge"></span><span id="mon" class="badge"></span>
+    <span id="led" class="badge"></span><span id="fillb" class="badge warn" title="成交判定在報價紀錄器與券商實際報價比對通過前一律標「近似」">成交判定：近似</span>
+    <button id="theme" title="切換深淺色">☀/🌙</button>
+  </header>
+  <div class="sub" id="asof">載入中…</div>
+  <div id="errbox"></div>
+
+  <div class="grid" id="kpis"></div>
+
+  <section><h2>距離各層風控上限</h2><div class="risk" id="risk"></div></section>
+  <section><h2>目前持倉</h2><div class="tablewrap" id="pos"></div></section>
+  <section><h2>掛單（還沒成交，不佔保證金）</h2><div class="tablewrap" id="ord"></div></section>
+  <section><h2>最近決策（含理由）</h2><div id="dec"></div></section>
+  <section><h2>覆盤與盤前規劃（收盤後自動寫，不下單）</h2><div id="notes"></div></section>
+  <section><h2>已了結</h2><div class="tablewrap" id="closed"></div></section>
+  <section id="revsec" style="display:none"><h2>到期結算虧損超標 → 請檢討策略</h2><div id="rev"></div></section>
+  <footer>資料直接讀你電腦上的私有帳本，由程式計算，AI 不轉述；每 15 秒自動更新。本頁為模擬交易紀錄，不構成投資建議。紅色＝賺、綠色＝賠（台股慣例），同時以 +/− 符號標示。</footer>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const n0 = v => v == null ? "—" : Math.round(v).toLocaleString("zh-TW");
+const sg = v => v == null ? "—" : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(Math.round(v)).toLocaleString("zh-TW");
+const cls = v => v > 0 ? "up" : v < 0 ? "down" : "";
+const pct = (v, d = 2) => v == null ? "—" : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d) + "%";
+const SESS = { day: "日盤交易中", night: "夜盤交易中", closed: "休市中（報價凍結）" };
+const STRUCT = { bull_put_spread: "Bull Put 價差", bear_call_spread: "Bear Call 價差", iron_condor: "鐵鷹", butterfly: "蝴蝶" };
+try { const t = localStorage.getItem("deskTheme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+$("theme").onclick = () => { const r = document.documentElement; r.dataset.theme = r.dataset.theme === "light" ? "dark" : "light"; try { localStorage.setItem("deskTheme", r.dataset.theme); } catch (e) {} };
+
+function bar(label, value, limit, unit, note) {
+  const ratio = limit ? Math.max(0, Math.min(1, value / limit)) : 0;
+  const c = ratio >= 1 ? "bad" : ratio >= .7 ? "warn" : "";
+  return `<div><div class="t"><span>${esc(label)}</span><span>${value.toFixed(2)}${unit} / 上限 ${limit}${unit}</span></div>
+    <div class="bar ${c}"><i style="width:${(ratio * 100).toFixed(0)}%"></i></div><div class="muted" style="font-size:.76rem">${esc(note || "")}</div></div>`;
+}
+function legs(ls) { return `<div class="legs">${(ls || []).map(l => `<span>${l.side === "sell" ? "賣" : "買"} ${esc(l.strike)}${esc(l.cp)}×${esc(l.lots)}${l.px != null ? " @" + esc(l.px) : ""}</span>`).join("")}</div>`; }
+
+function render(d) {
+  $("errbox").innerHTML = "";
+  $("acct").textContent = "帳戶 " + d.account;
+  $("sess").textContent = SESS[d.session] || d.session;
+  const m = d.monitor || {};
+  $("mon").textContent = m.alive ? "規則巡邏：運作中" : "規則巡邏：未運作";
+  $("mon").className = "badge " + (m.alive ? "ok" : "bad"); $("mon").title = m.note || ("最後心跳 " + (m.last || ""));
+  $("led").textContent = d.ledger_ok ? "帳本雜湊鏈：正常" : "帳本雜湊鏈：異常！";
+  $("led").className = "badge " + (d.ledger_ok ? "ok" : "bad");
+  $("asof").textContent = "更新時間 " + d.as_of.replace("T", " ").slice(0, 19) + "（台灣時間）　帳本事件 " + d.events + " 筆　" + (d.equity_is_live ? "損益用即時報價估算" : "部分持倉沒有有效報價，損益沿用上次計價");
+
+  const blind = d.positions.filter(p => p.blind);
+  if (blind.length) {
+    $("errbox").innerHTML = `<div class="err"><b>⚠️ 停損盯不到：</b>${blind.map(p => esc(p.gid) + "（" + esc(p.blind.reason) + "，自 " + esc(String(p.blind.since).slice(11, 16)) + " 起）").join("；")}。這組持倉沒有有效報價，損益未知、停損不會觸發；系統不會用中間價亂估。</div>`;
+  }
+  $("kpis").innerHTML = [
+    ["淨值", n0(d.equity), `本金 ${n0(d.capital)}`, ""],
+    ["累計報酬", pct(d.return_pct), `高水位 ${n0(d.high_water)}`, cls(d.return_pct)],
+    ["今日損益", sg(d.day_pnl), "含未實現", cls(d.day_pnl)],
+    ["未實現損益", sg(d.unrealized), "未扣平倉費用", cls(d.unrealized)],
+    ["已實現損益", sg(d.realized), `手續費＋稅累計 ${n0(d.fees_total)}`, cls(d.realized)],
+    ["保證金使用", n0(d.margin_used), `${d.margin_util_pct.toFixed(1)}% of 淨值`, ""],
+  ].map(([k, v, s, c]) => `<div class="card"><div class="k">${k}</div><div class="v ${c}">${v}</div><div class="s">${s}</div></div>`).join("");
+
+  const L = d.limits;
+  const loss = Math.max(0, -d.day_pnl) / d.capital * 100;
+  const maxSide = Math.max(0, ...Object.values(d.short_lots || {}), 0);
+  $("risk").innerHTML =
+    bar("單日虧損（達上限停止開新倉）", loss, L.daily_loss_stop_pct, "%", "今日已虧 " + n0(Math.max(0, -d.day_pnl)) + " 元") +
+    bar("自高點回撤（15% 砍半、25% 停機）", Math.max(0, d.drawdown_pct), L.drawdown_halt_pct, "%", d.dd_lock ? "已鎖定：" + d.dd_lock : "15% 時部位上限砍半，需你同意才恢復") +
+    bar("保證金使用率", d.margin_util_pct, L.margin_util_max_pct, "%", "超過就拒絕新單（目前相加算法，偏保守）") +
+    bar("單邊階梯口數", maxSide, L.ladder_max_lots_per_side, " 口", "放大規模須你同意") +
+    bar("同時存在的到期日", d.active_expiries.length, L.max_ladder_sets, " 個", d.active_expiries.join("、") || "目前沒有");
+
+  $("pos").innerHTML = d.positions.length ? `<table><tr><th>組合</th><th>腿</th><th>收（點）</th><th>現平倉成本</th><th>停損線</th><th>距停損</th><th>未實現</th><th>最大賺／賠</th></tr>` +
+    d.positions.map(p => {
+      const dist = (p.stop_debit_pts != null && p.close_cost_pts != null) ? p.stop_debit_pts - p.close_cost_pts : null;
+      const dcls = dist == null ? "" : dist < 10 ? "down" : "";
+      return `<tr><td><b>${esc(STRUCT[p.structure] || p.structure)}</b><br><span class="muted">${esc(p.expiry)}・${esc(p.gid)}${p.approx ? "・近似" : ""}</span></td>
+        <td>${legs(p.legs)}</td><td>${p.credit_pts.toFixed(1)}</td>
+        <td>${p.close_cost_pts == null ? '<span class="muted">' + esc(p.stale_reason) + "</span>" : p.close_cost_pts.toFixed(1)}</td>
+        <td>${p.stop_debit_pts ?? "—"}${p.take_profit_debit_pts != null ? "<br><span class='muted'>停利 ≤" + p.take_profit_debit_pts + "</span>" : ""}${p.hold_to_settlement ? "<br><span class='muted'>放到結算</span>" : ""}</td>
+        <td class="${dcls}">${dist == null ? "—" : dist.toFixed(1) + " 點"}</td>
+        <td class="${cls(p.unrealized)}">${sg(p.unrealized)}</td><td>+${n0(p.max_gain)} ／ −${n0(p.max_loss)}</td></tr>`;
+    }).join("") + "</table>" : '<div class="empty">目前沒有持倉</div>';
+
+  $("ord").innerHTML = d.orders.length ? `<table><tr><th>單號</th><th>到期</th><th>方向</th><th>賣腳／買腳</th><th>剩餘口數</th><th>要求權利金</th><th>有效至</th></tr>` +
+    d.orders.map(o => `<tr><td>${esc(o.oid)}</td><td>${esc(o.expiry)}</td><td>${o.direction === "bull_put" ? "Bull Put" : "Bear Call"}</td><td>${o.short}／${o.long}</td><td>${o.remaining}</td><td>≥ ${o.min_credit_pts} 點</td><td>${esc(o.valid_until)}</td></tr>`).join("") + "</table>"
+    : '<div class="empty">目前沒有掛單</div>';
+
+  $("dec").innerHTML = d.decisions.length ? d.decisions.map(x => {
+    const t = (x.at || "").replace("T", " ").slice(5, 16);
+    if (x.kind !== "decision") {
+      const lab = x.kind === "no_decision" ? "無決策" : "被退回";
+      return `<details><summary>${esc(t)}　${lab}　<span class="muted">${esc(x.id)}</span></summary>${(x.reasons || []).map(r => `<p>${esc(r)}</p>`).join("")}</details>`;
+    }
+    const f = x.fill ? `成交：收 ${sg(x.fill.cash_delta)} 元（費用 ${x.fill.fees}）${x.fill.approx ? "・近似" : ""}` : "";
+    return `<details${x === d.decisions[0] ? " open" : ""}><summary>${esc(t)}　${esc(x.action)}　${esc(STRUCT[x.structure] || x.structure || "")}　<span class="muted">${esc(x.id)}・${esc(x.manual_ref)}</span></summary>
+      <p><b>理由：</b>${esc(x.thesis)}</p><p><b>什麼情況代表判斷錯：</b>${esc(x.invalidation)}</p>
+      <p><b>出場計畫：</b>${esc(JSON.stringify(x.exit_plan))}</p><p>${esc(f)}</p>
+      ${x.snapshot ? `<p class="muted">當時快照：${esc(x.snapshot)}（sha256 ${esc(x.sha256)}）</p>` : ""}</details>`;
+  }).join("") : '<div class="empty">還沒有決策</div>';
+
+  $("notes").innerHTML = (d.notes || []).length ? d.notes.map((n, i) => `<details${i === 0 ? " open" : ""}><summary>${esc(n.title)}　<span class="muted">${esc(n.file)}</span></summary><div style="white-space:pre-wrap;font-size:.88rem">${esc(n.text)}</div></details>`).join("")
+    : '<div class="empty">還沒有筆記：日盤收盤後 13:50 起、夜盤收盤後 05:05 起會自動寫（需要 AI 巡邏在跑）</div>';
+
+  $("closed").innerHTML = d.closed.length ? `<table><tr><th>時間</th><th>組合</th><th>到期</th><th>損益</th><th>原因</th></tr>` +
+    d.closed.map(c => `<tr><td>${esc(c.closed_at || "")}</td><td>${esc(STRUCT[c.structure] || c.structure)}<br><span class="muted">${esc(c.gid)}</span></td><td>${esc(c.expiry)}</td><td class="${cls(c.pnl)}">${sg(c.pnl)}</td><td>${esc(c.reason)}</td></tr>`).join("") + "</table>"
+    : '<div class="empty">還沒有了結的單</div>';
+
+  $("revsec").style.display = d.review_flags.length ? "" : "none";
+  $("rev").innerHTML = d.review_flags.map(r => `<p><b>${esc(r.expiry)}</b>　${pct(r.pct)}　${esc(r.note)}</p>`).join("");
+}
+
+const ACCT = new URLSearchParams(location.search).get("account") || "T0";
+const NAV = [["/", "交易室首頁"], ["/trader?account=" + ACCT, "帳戶 " + ACCT, 1], ["/meeting", "會議室"], ["http://localhost:8000/trading%20room/room.html", "尋鳥戰情室 ↗"], ["http://localhost:8000/", "GEX 總覽 ↗"]];
+$("nav").innerHTML = NAV.map(([h, t, on]) => `<a href="${h}" class="${on ? "on" : ""}">${t}</a>`).join("");
+document.title = "帳戶 " + ACCT + "｜交易室"; $("h1").textContent = "🐦 帳戶 " + ACCT + "（模擬）";
+async function load() {
+  try {
+    const r = await fetch("/api/desk?account=" + encodeURIComponent(ACCT), { cache: "no-store" });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    render(d);
+  } catch (e) {
+    $("errbox").innerHTML = `<div class="err">讀不到資料：${esc(e.message)}。確認 server.py 有在跑（python server.py），帳本在 C:\\Users\\mingi\\txo-private\\desk\\T0\\。</div>`;
+  }
+}
+load(); setInterval(load, 15000);
+</script>
+</body>
+</html>

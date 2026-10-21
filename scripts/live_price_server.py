@@ -15,10 +15,14 @@ import time
 import threading
 import urllib.request
 import ssl
+import datetime
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 # Ensure project root is in sys.path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import re
+from scripts.mis_session import mis_market_type, mis_quote_is_stale, session_is_open, parse_mis_ticks
 
 try:
     sys.stdout.reconfigure(encoding='utf-8')
@@ -200,13 +204,61 @@ def fubon_trades_worker():
     except Exception as e:
         print(f"[Gateway] Fubon Trades Worker notice: {e}")
 
+# ---- 本盤別已過去的 1 分 K（期交所 MIS getChartData1M，官方即時資料；不造、不補）----
+# 2026-10-20：富邦分 K 排程一天只抓兩次（05:30、14:00），盤中主圖缺本盤別已過去的部分。前端載入時向這裡要，合併進 K 線快取。
+_SB_FRONT = {}   # (商品, 'M'|'F') -> (取得時間, MIS 代號)；近月代號 10 分鐘更新一次
+_SB_CACHE = {}   # (商品, 'M'|'F') -> (取得時間, 結果)；3 秒內重複請求直接回快取，不多打期交所
+_SB_SYMBOLS = ('TXF', 'MXF')   # MIS 有的：台指期、小型台指；微台（TMF）MIS 清單沒有
+
+
+def _mis_post_json(path, payload, timeout=6):
+    req = urllib.request.Request("https://mis.taifex.com.tw/futures/api/" + path, data=json.dumps(payload).encode('utf-8'),
+                                 headers={'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+    with urllib.request.urlopen(req, context=SSL_CTX, timeout=timeout) as resp:
+        return json.loads(resp.read().decode('utf-8'))
+
+
+def get_session_bars(symbol, now=None):
+    """回傳 dict：{symbol, session('N'夜盤/'D'日盤/'closed'), bars:[1 分 K...]}；出錯回 {error}。"""
+    sym = str(symbol or 'TXF').upper()
+    if sym not in _SB_SYMBOLS:
+        return {"error": "unsupported symbol", "supported": list(_SB_SYMBOLS)}
+    now = now or datetime.datetime.now()
+    if not session_is_open(now):
+        return {"symbol": sym, "session": "closed", "bars": []}
+    mt = mis_market_type(now)
+    suffix = 'M' if mt == '1' else 'F'
+    key = (sym, suffix)
+    hit = _SB_CACHE.get(key)
+    if hit and time.time() - hit[0] < 3:
+        return hit[1]
+    try:
+        fid = _SB_FRONT.get(key)
+        if not fid or time.time() - fid[0] > 600:
+            ql = _mis_post_json('getQuoteList', {'MarketType': mt, 'SymbolType': 'F'}).get('RtData', {}).get('QuoteList', [])
+            ids = [q.get('SymbolID', '') for q in ql if re.match(r'^' + sym + r'[A-Z]\d-' + suffix + r'$', q.get('SymbolID', ''))]
+            if not ids:
+                return {"error": "no front-month contract in MIS list"}
+            fid = (time.time(), ids[0])   # 期交所清單由近月排起
+            _SB_FRONT[key] = fid
+        d = _mis_post_json('getChartData1M', {'SymbolID': fid[1]}).get('RtData', {})
+        bars = parse_mis_ticks(d.get('Ticks'), now)
+        res = {"symbol": sym, "mis_symbol": fid[1], "session": "N" if mt == '1' else "D", "bars": bars,
+               "source": "TAIFEX MIS getChartData1M", "ts": time.time()}
+        _SB_CACHE[key] = (time.time(), res)
+        return res
+    except Exception as e:
+        return {"error": f"MIS unavailable: {type(e).__name__}"}
+
+
 def mis_polling_worker():
     """ Priority 2: Official TAIFEX / TWSE MIS API Polling Worker """
     while True:
         try:
             # Poll TAIFEX MIS for TXF
-            now_h = time.localtime().tm_hour
-            market_type = '1' if (now_h >= 15 or now_h < 5) else '0'
+            # 場次判斷與富邦共用同一套規則（含週末＝週五夜盤），原本只看鐘點，週六上午會查到週五日盤收盤。2026-10-17
+            now_dt = datetime.datetime.now()
+            market_type = mis_market_type(now_dt)
             url = "https://mis.taifex.com.tw/futures/api/getQuoteList"
             payload = json.dumps({'MarketType': market_type, 'SymbolType': 'F'}).encode('utf-8')
             headers = {
@@ -226,7 +278,8 @@ def mis_polling_worker():
                     main_tx = tx_items[0]
                     last_p = float(main_tx.get('CLastPrice', 0))
                     ref_p = float(main_tx.get('CRefPrice', last_p) or last_p)
-                    if last_p > 0:
+                    # 開盤中報價時間太舊（例如抓到昨天收盤）就不發布；休市時發的是最近一個場次的收盤價。
+                    if last_p > 0 and not mis_quote_is_stale(now_dt, main_tx.get('CTime')):
                         chg = round(last_p - ref_p, 2)
                         pct = round((chg / ref_p * 100), 2) if ref_p > 0 else 0.0
                         state.update_index('txf', last_p, chg, pct, provider="TAIFEX_MIS")
@@ -348,6 +401,20 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 self.wfile.flush()
                 return
 
+            # 本盤別已過去的 1 分 K（期交所 MIS）— ?symbol=TXF|MXF；休市回 session=closed 與空陣列
+            if parsed.path.startswith('/api/session_bars'):
+                qs = urllib.parse.parse_qs(parsed.query)
+                res_data = get_session_bars((qs.get('symbol', ['TXF'])[0]))
+                body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
+                self.send_response(200 if 'error' not in res_data else 502)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(body)))
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(body)
+                self.wfile.flush()
+                return
+
             # 個股／ETF 即時報價（富邦）— ?symbol=2330；富邦沒回就 404，前端改顯示資料日期
             if parsed.path.startswith('/api/stock_quote'):
                 from scripts.fubon_api_provider import fubon_provider
@@ -385,7 +452,7 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 self.wfile.flush()
                 return
 
-            # 大戶散戶動能歷史（重開機不歸零；只含服務真正收到的資料）— ?symbol=TXF&days=5
+            # 大戶散戶動能歷史（重開機不歸零；只含服務真正收到的資料）— ?symbol=TXF&days=5&tf=30（tf＝合成幾分鐘 K，1～240）
             if parsed.path.startswith('/api/momentum_history'):
                 from scripts.fubon_api_provider import fubon_provider
                 qs = urllib.parse.parse_qs(parsed.query)
@@ -394,7 +461,11 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                     days = max(1, min(14, int((qs.get('days', ['5'])[0]))))
                 except ValueError:
                     days = 5
-                res_data = {"symbol": symbol, "bars": fubon_provider.get_momentum_history(symbol, days), "ts": time.time()}
+                try:
+                    tf = max(1, min(240, int(qs.get('tf', ['30'])[0])))
+                except ValueError:
+                    tf = 30
+                res_data = {"symbol": symbol, "tf_minutes": tf, "bars": fubon_provider.get_momentum_history(symbol, days, tf), "ts": time.time()}
                 body = json.dumps(res_data, ensure_ascii=False).encode('utf-8')
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json; charset=utf-8')
@@ -417,6 +488,7 @@ class PriceGatewayHandler(BaseHTTPRequestHandler):
                 res_data = {
                     "symbol": symbol,
                     "bar": bar,
+                    "feed_age_sec": (None if fubon_provider.feed_age_sec() is None else round(fubon_provider.feed_age_sec(), 1)),
                     "books_subscribed": alias in fubon_provider._books_subscribed,
                     "trades_subscribed": alias in fubon_provider._trades_subscribed,
                     "ts": time.time()

@@ -35,6 +35,19 @@ CORE_FUTURES = [
 ]
 
 # 2. 期交所主要個股期貨對照表 (260+ 檔主力涵蓋)
+def _official_fut_code(sym, fallback):
+    """個股期貨代碼以期交所官方對照表（data/taifex_stock_futures_contract_map.json：股票代號→商品代碼）為準，
+    2026-10-07 發現下方手寫 STOCK_FUTURES_MAP 有 28 檔代碼對到別檔股票（例：CCF 實為聯電期、手寫卻標友達）。
+    官方表沒有這檔（如部分 ETF）才退回手寫值。"""
+    try:
+        _p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "taifex_stock_futures_contract_map.json")
+        with open(_p, encoding="utf-8") as _f:
+            _m = json.load(_f)
+        return _m[sym] + "F" if sym in _m else fallback
+    except Exception:
+        return fallback
+
+
 STOCK_FUTURES_MAP = {
     "2330": ("CDF", "台積電期貨", "半導體", 8.0),
     "2454": ("DVF", "聯發科期貨", "半導體", 8.0),
@@ -143,7 +156,7 @@ def fetch_twse_tpex_stocks():
                             bias_default = 5.0
                             
                         has_fut = sym in STOCK_FUTURES_MAP
-                        fut_code = STOCK_FUTURES_MAP[sym][0] if has_fut else ""
+                        fut_code = _official_fut_code(sym, STOCK_FUTURES_MAP[sym][0]) if has_fut else ""
                         
                         universe.append({
                             "symbol": sym,
@@ -169,7 +182,7 @@ def fetch_twse_tpex_stocks():
                 "category": cat,
                 "market": "TWSE",
                 "has_futures": True,
-                "futures_code": fut_code,
+                "futures_code": _official_fut_code(sym, fut_code),
                 "asset_type": "stock" if not sym.startswith("00") else "etf",
                 "bias_default": bias,
                 "mfi_thresh": 52.0,

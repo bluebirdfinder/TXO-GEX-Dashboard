@@ -491,6 +491,21 @@ function updateFreshnessIndicator(data) {
     const gm = data && data.gex_model;
     gexNote.textContent = gm ? `GEX／VEX 以 Black-Scholes 計算：波動率 σ＝${(gm.sigma * 100).toFixed(2)}%（${gm.sigma_source}），無風險利率 ${(gm.risk_free_rate * 100).toFixed(1)}%；未平倉量為期交所官方資料` : '';
   }
+  // 期交所當日資料尚未公布時的提示（engine data_completeness；欄位顯示 — 是正常的，不是故障）
+  const dcNote = document.getElementById('data-completeness-note');
+  if (dcNote) {
+    const dc = data && data.data_completeness;
+    const miss = [];
+    if (dc && dc.large_trader_futures === false) miss.push('大額交易人（期貨）');
+    if (dc && dc.large_trader_options === false) miss.push('大額交易人（選擇權）');
+    if (dc && dc.options_matrix === false) miss.push('三大法人選擇權');
+    if (miss.length) {
+      dcNote.style.display = 'inline-flex';
+      dcNote.textContent = '⚠️ 期交所資料尚未公布：' + miss.join('、') + '（欄位顯示 — 為正常，公布後下一輪自動更新）';
+    } else {
+      dcNote.style.display = 'none';
+    }
+  }
   if (data && data.engine_version) {
     const headerBadge = document.getElementById('app-header-version-badge');
     if (headerBadge) headerBadge.textContent = `TXO GEX 量化系統 ${data.engine_version}`;
@@ -653,7 +668,11 @@ function renderDashboard() {
 
   // 標準 Gamma Flip（價格軸）並排顯示；VEX 早鳥線與 Zero Gamma 幾乎重疊時註明
   const elGfs = document.getElementById('stat-gamma-flip-std');
-  if (elGfs) elGfs.innerText = (typeof gexData.gamma_flip_standard === 'number') ? gexData.gamma_flip_standard.toLocaleString() : '—（無轉折點）';
+  if (elGfs) elGfs.innerText = (typeof gexData.gamma_flip_standard === 'number') ? gexData.gamma_flip_standard.toLocaleString() : '—（現價±2,000 點內無轉折點）';
+  const elGfsClose = document.getElementById('stat-gamma-flip-std-close');
+  if (elGfsClose) elGfsClose.innerText = (typeof gexData.gamma_flip_standard_close === 'number') ? gexData.gamma_flip_standard_close.toLocaleString() : '—（±2,000 點內無轉折）';
+  const elGfsCloseDate = document.getElementById('stat-gamma-flip-std-close-date');
+  if (elGfsCloseDate) elGfsCloseDate.innerText = (typeof gexData.gamma_flip_standard_close === 'number' && gexData.gamma_flip_standard_close_date) ? '(' + String(gexData.gamma_flip_standard_close_date).slice(5).replace('-', '/') + ')' : '';
   const elOverlap = document.getElementById('stat-flip-overlap-note');
   if (elOverlap) elOverlap.innerText = (typeof gexData.gex_plus_flip === 'number' && typeof gexData.zero_gamma_level === 'number' && Math.abs(gexData.gex_plus_flip - gexData.zero_gamma_level) < 0.5) ? '（與 Zero Gamma 重疊）' : '';
 
@@ -709,6 +728,32 @@ function renderDashboard() {
   };
   renderLtBadge('stat-cw-lt-badge', optLt && optLt.call, '#ff5252', '#ffd700');
   renderLtBadge('stat-pw-lt-badge', optLt && optLt.put, '#00e676', '#ffd700');
+
+  // 3.6 牆的到期日組成：該牆所在履約價的 GEX 是哪些到期桶堆出來的。週選到期後那一份就消失（牆會蒸發），月選留得久。
+  // 只用資料檔既有的逐桶 GEX（w1/w2/fri/mth，真實 OI 計算），找不到該履約價就整行留空，不補數。
+  // 注意：這是「牆所屬那一側（買權側／賣權側）」的占比，與引擎牆的定義一致；引擎只算這四個桶，遠月未計入。
+  const renderWallExpiry = (elId, strike, side) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const row = (gexData.total_gex || []).find(r => Number(r.strike) === Number(strike));
+    if (!row) { el.innerText = ''; return; }
+    const dte = gexData.dte_dates || {};
+    const nm = (k) => String(dte[k] || '').replace('結算', '');
+    const parts = [
+      ['fri', `${nm('fri') ? nm('fri') + '週選' : '週五選'}`, Math.abs(row[`fri_${side}`] || 0)],
+      ['w1', `${nm('w1') ? nm('w1') + '週選' : '週三選'}`, Math.abs(row[`w1_${side}`] || 0)],
+      ['w2', `${nm('w2') ? nm('w2') + '週選' : '次週三選'}`, Math.abs(row[`w2_${side}`] || 0)],
+      ['mth', `${nm('m1') || '月選'}月選`, Math.abs(row[`mth_${side}`] || 0)],
+    ];
+    const tot = parts.reduce((a, p) => a + p[2], 0);
+    if (!(tot > 0)) { el.innerText = ''; return; }
+    const txt = parts.filter(p => p[2] / tot >= 0.01).sort((a, b) => b[2] - a[2])
+      .map(p => `${p[1]} ${Math.round(p[2] / tot * 100)}%`).join('｜');
+    el.innerText = `到期組成：${txt}`;
+    el.title = '該履約價 GEX 由各到期桶堆出的占比（僅含引擎納入的 w1/w2/fri/mth 四檔；週選到期後該份消失）。模型輸出，非預測。';
+  };
+  renderWallExpiry('stat-cw-exp', gexData.call_wall_strike, 'call');
+  renderWallExpiry('stat-pw-exp', gexData.put_wall_strike, 'put');
 
   // 5. Max Pain (日盤 vs 夜盤) & 空間籌碼結構拓撲 (Spatial Topology)
   const mpVal = gexData.max_pain_strike || CHART_DEFAULTS.max_pain_strike;
@@ -2278,6 +2323,41 @@ function renderNightSixSpotlight(dataObj) {
   `;
 }
 
+// 2026-10-20：個股現貨報價來自證交所，換日有時間差（10/20 05:09 引擎跑時還是 10/16 的值，畫面卻沒標）。
+// 引擎現在為每檔寫入 spot_date；與「籌碼基準日」(chip_base_date) 不同時，在現貨價旁標出資料日期，不假裝是最新。
+function spotExpectedDate() {
+  const base = gexData && gexData.chip_base_date;
+  if (!base) return null;
+  // 日盤時段（08:45~15:00）現貨價本來就是「前一交易日收盤」；夜盤時段（15:00~隔日 05:00）應已是當日收盤。
+  if (gexData.session_type !== 'DAY') return base;
+  const d = new Date(base + 'T00:00:00Z');
+  do { d.setUTCDate(d.getUTCDate() - 1); } while (d.getUTCDay() === 0 || d.getUTCDay() === 6);   // 前一個週間日（國定假日不另外處理，最多多標一天）
+  return d.toISOString().slice(0, 10);
+}
+function spotDateTag(item) {
+  const exp = spotExpectedDate();
+  const d = item && item.spot_date;
+  if (!exp || !d || d >= exp) return '';
+  return ` <span style="color:#ffb74d;font-size:0.68rem;font-weight:600;" title="證交所現貨報價尚未更新到 ${exp}，這檔顯示的是 ${d} 的收盤">(${d.slice(5)})</span>`;
+}
+function updateSpotDateNote(list) {
+  const tbody = document.getElementById('stock-futures-body');
+  const table = tbody && tbody.closest('table');
+  if (!table || !table.parentNode) return;
+  let n = document.getElementById('stock-spot-date-note');
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'stock-spot-date-note';
+    n.style.cssText = 'color:#ffb74d;font-size:0.78rem;font-weight:600;margin:4px 0 8px;';
+    table.parentNode.insertBefore(n, table);
+  }
+  const stale = (list || []).filter(it => spotDateTag(it));
+  if (!stale.length) { n.style.display = 'none'; n.textContent = ''; return; }
+  const dates = [...new Set(stale.map(it => it.spot_date))].sort();
+  n.textContent = `⚠ ${stale.length} 檔的現貨價是舊資料（${dates.map(x => x.slice(5)).join('、')}），證交所尚未更新到 ${spotExpectedDate().slice(5)}；已在現貨價旁標出日期。`;
+  n.style.display = 'block';
+}
+
 function populateStockFutures() {
   populateAiQuantDigest();
   try { renderNightSixSpotlight(gexData); } catch (e) { console.error('Night Six Spotlight Error:', e); }
@@ -2388,6 +2468,7 @@ function populateStockFutures() {
     ? ''
     : `<div style="font-size: 0.7rem; color: ${d > 0 ? 'var(--call-color)' : (d < 0 ? 'var(--put-color)' : '#888')};" title="較前一交易日增減">${d > 0 ? '+' : ''}${d.toLocaleString()}</div>`;
 
+  try { updateSpotDateNote(gexData.stock_futures); } catch (e) { console.warn('spot date note', e); }
   let html = '';
   list.forEach(item => {
     const spotPrice = item.spot_price || 0.0;
@@ -2485,7 +2566,7 @@ function populateStockFutures() {
       <td><strong>${item.name}</strong> ${top10Tag}</td>
       <td>${intentBadgeHtml}</td>
       <td>${itBadgeHtml}</td>
-      <td style="font-weight: 600;">${spotPrice.toFixed(2)}</td>
+      <td style="font-weight: 600;">${spotPrice.toFixed(2)}${spotDateTag(item)}</td>
       <td>${spotVol === null ? '<span style="color:#666;">—</span>' : spotVol.toLocaleString()}</td>
       <td>
         <div style="color: ${spotInstNet >= 0 ? 'var(--call-color)' : 'var(--put-color)'}; font-weight: 700;">${spotNetSign}${spotInstNet.toLocaleString()}</div>

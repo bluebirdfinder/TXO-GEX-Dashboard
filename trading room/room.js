@@ -1,5 +1,5 @@
 /**
- * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v64.17
+ * 🦅 尋鳥戰情交易室 (Bird Trading Room) Core Engine v64.18
  * True Multi-Pane Trading Terminal with 10 Timeframes & 4 Sub-Panes
  *   - Main Chart (44%): TXF K-Line + GEX 5 Levels + 尋鳥多空彩帶 + 8大進出場訊號 + DeMark 9★/13★ + VWAP + SMMA 200 + SAR + Supertrend
  *   - Sub-Chart 1 (14%): 成交量 Volume + 5MA & 10MA 雙均量線
@@ -184,7 +184,8 @@ let overlaySeries = {
   smma: null,
   supertrend: { up: null, down: null },
   vwap: { vwap: null, upper1: null, lower1: null },
-  sar: null
+  sar: null,
+  swLevels: { strong: null, weak: null }
 };
 
 let priceLines = {};
@@ -223,6 +224,20 @@ function liveMacroPrice(sym) {
   const k = MACRO_KEY_BY_SYMBOL[sym];
   const v = (liveMacro && k && (Date.now() - liveMacro.at) < 120000) ? liveMacro[k] : null;
   return (typeof v === 'number' && isFinite(v) && v > 0) ? v : null;
+}
+function setStaleQuoteNote(show) {
+  const p = document.getElementById('left-main-price');
+  if (!p || !p.parentNode) return;
+  let n = document.getElementById('left-stale-quote-note');
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'left-stale-quote-note';
+    n.style.cssText = 'color:#ffd700;font-size:0.68rem;font-weight:600;margin-top:2px;';
+    p.insertAdjacentElement('afterend', n);
+  }
+  const t = gexData && gexData.last_updated_time ? `（資料時間 ${gexData.last_updated_time}）` : '';
+  n.textContent = show ? `⚠ 非即時：本機富邦報價未連線，此為網站資料檔的價，可能不是最新場次${t}` : '';
+  n.style.display = show ? 'block' : 'none';
 }
 function liveTxfPrice() {
   return (liveTxf && (Date.now() - liveTxf.at) < 15000) ? liveTxf.price : null;
@@ -357,11 +372,16 @@ let indicatorConfig = {
   vrvpVa: 70,
   sar: false,
   sarStep: 0.02,
-  fvg: false
+  fvg: false,
+  swLevels: true,   // 強弱關價（黃金切割 0.618／0.382）；僅台指期系列、分K週期
+  swStrongColor: '#e53935',   // 強關線顏色（個人偏好，存瀏覽器）
+  swWeakColor: '#2e7d32',     // 弱關線顏色
+  swStyle: 'dashed',          // 線條樣式：solid／dashed／dotted／large-dashed
+  swWidth: 1                  // 線寬 1–3
 };
 
 // 顏色偏好只存在使用者自己的瀏覽器（localStorage），不需登入；換裝置要重選。沒存過就用 TradingView 預設色。
-const IND_COLOR_KEYS = ['ma7Color', 'ma17Color', 'ma88Color', 'ma200Color', 'smmaColor', 'vwapColor'];
+const IND_COLOR_KEYS = ['ma7Color', 'ma17Color', 'ma88Color', 'ma200Color', 'smmaColor', 'vwapColor', 'swStrongColor', 'swWeakColor'];
 const IND_COLOR_DEFAULTS = {};
 IND_COLOR_KEYS.forEach(k => { IND_COLOR_DEFAULTS[k] = indicatorConfig[k]; });
 function loadIndicatorColors() {
@@ -377,15 +397,34 @@ function saveIndicatorColors() {
     localStorage.setItem('txo_ind_colors', JSON.stringify(out));
   } catch (e) { /* ignore */ }
 }
-const IND_COLOR_INPUTS = { ma7Color: 'col-ma7', ma17Color: 'col-ma17', ma88Color: 'col-ma88', ma200Color: 'col-ma200', smmaColor: 'col-smma', vwapColor: 'col-vwap' };
+const IND_COLOR_INPUTS = { ma7Color: 'col-ma7', ma17Color: 'col-ma17', ma88Color: 'col-ma88', ma200Color: 'col-ma200', smmaColor: 'col-smma', vwapColor: 'col-vwap', swStrongColor: 'col-sw-strong', swWeakColor: 'col-sw-weak' };
 function syncColorPickers() {
   Object.keys(IND_COLOR_INPUTS).forEach(k => { const el = document.getElementById(IND_COLOR_INPUTS[k]); if (el) el.value = indicatorConfig[k]; });
 }
+// 強弱關價的線條樣式／粗細：同樣只存在使用者自己的瀏覽器（localStorage）。
+const SW_STYLES = { solid: 0, dotted: 1, dashed: 2, 'large-dashed': 3 };
+function loadSwStyle() {
+  try {
+    const sv = JSON.parse(localStorage.getItem('txo_sw_style') || '{}');
+    if (sv.style in SW_STYLES) indicatorConfig.swStyle = sv.style;
+    if ([1, 2, 3].includes(sv.width)) indicatorConfig.swWidth = sv.width;
+  } catch (e) { /* storage blocked or corrupted: keep defaults */ }
+}
+function saveSwStyle() {
+  try { localStorage.setItem('txo_sw_style', JSON.stringify({ style: indicatorConfig.swStyle, width: indicatorConfig.swWidth })); } catch (e) { /* ignore */ }
+}
+function syncSwStyleControls() {
+  const a = document.getElementById('sel-sw-style'), b = document.getElementById('sel-sw-width');
+  if (a) a.value = indicatorConfig.swStyle;
+  if (b) b.value = String(indicatorConfig.swWidth);
+}
 loadIndicatorColors();
+loadSwStyle();
 
 // DOM Initialization
 document.addEventListener('DOMContentLoaded', async () => {
   syncColorPickers();
+  syncSwStyleControls();
   initGlobalSmartTooltips();
   await initTradingRoom();
   initFubonLivePriceStream();
@@ -395,7 +434,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initTradingRoom() {
-  console.log('🦅 Initializing Multi-Pane Bird Trading Room v64.17...');
+  console.log('🦅 Initializing Multi-Pane Bird Trading Room v64.18...');
   
   // 1. Load Data
   await loadDashboardData();
@@ -463,14 +502,39 @@ async function loadDashboardData() {
 
   // Phase 3: Load Multi-Asset Multi-Timeframe K-Lines Cache
   try {
-    const klineRes = await fetch('../data/klines_cache.json?t=' + Date.now());
-    if (klineRes.ok) {
-      klinesCacheData = await klineRes.json();
-      console.log('✅ [Phase 3] Loaded real multi-timeframe K-line cache for 8 core assets.');
+    // 2026-10-17：GitHub Pages 上的 klines_cache.json 沒有富邦本機累積的最新分K（實測落後一整個場次：週六還停在週五日盤 47,366，
+    // 週五夜盤收 46,140 沒有）。在公開網頁開戰情室時，本機報價服務（localhost:8000）有開就優先讀它那份；讀不到才退回 Pages 的。
+    if (GATEWAY_BASE) {
+      try {
+        const ctl = new AbortController();
+        const timer = setTimeout(() => ctl.abort(), 8000);
+        const localRes = await fetch(GATEWAY_BASE + '/data/klines_cache.json?t=' + Math.floor(Date.now() / 60000), { signal: ctl.signal });
+        clearTimeout(timer);
+        if (localRes.ok) {
+          const localData = await localRes.json();
+          if (localData && localData.assets && Object.keys(localData.assets).length) {
+            klinesCacheData = localData;
+            console.log('✅ [Phase 3] Loaded K-line cache from local gateway (newer than GitHub Pages).');
+          }
+        }
+      } catch (e) { /* 本機沒開：用下面 Pages 的那份 */ }
+      // 下載這份約 20MB 的檔案時，本機報價服務會被拖慢到 2～3 秒，/api/live_tick 的 1 秒逾時會誤判「本機斷線」並退避 60 秒、
+      // 期間改顯示 Worker 轉發的價（2026-10-17 實測：畫面現價跳回 47,242）。下載完立刻解除退避，下一輪就回富邦即時。
+      _localGwRetryAt = 0; _gatewayDown = false;
+    }
+    if (!klinesCacheData) {
+      const klineRes = await fetch('../data/klines_cache.json?t=' + Math.floor(Date.now() / 300000));
+      if (klineRes.ok) {
+        klinesCacheData = await klineRes.json();
+        console.log('✅ [Phase 3] Loaded real multi-timeframe K-line cache for 8 core assets.');
+      }
     }
   } catch (e) {
     console.warn('⚠️ Could not load ../data/klines_cache.json', e);
   }
+  // 盤中：把「本盤別已過去的 1 分 K」（期交所 MIS，官方即時資料，由本機報價服務轉給網頁）合併進 K 線快取。
+  // 富邦分 K 一天只抓兩次（05:30、14:00），沒有這一步，盤中主圖只有上個場次加即時那一根。
+  try { await mergeSessionBarsIntoCache(); } catch (e) { console.warn('⚠️ 本盤別 K 棒合併失敗（維持原快取）', e); }
 
   // Phase 4: Load Institutional Momentum & Retail Small TX Data
   try {
@@ -1026,6 +1090,57 @@ function generateIndicatorsData(tf) {
 const CHART_BUNDLE_FIELDS = ['ma7', 'ma17', 'ma88', 'ma200', 'adxLine', 'adxHist', 'adxSignals', 'adxMeta', 'markers', 'demarkMarkers',
   'vwapData', 'vwapUpper', 'vwapLower', 'smmaData', 'sarData', 'supertrendUp', 'supertrendDown', 'vrvpData'];
 const _chartBundleCache = {};
+// ---- 本盤別 K 棒合併（2026-10-20）----
+// 來源：本機報價服務 /api/session_bars（期交所 MIS getChartData1M 的 1 分 K；實測開／高／低與富邦本盤別 100% 相同）。
+// 只在交易時段、且本機報價服務連得到時才做；只加入「比快取最後一根更新」的K棒，不覆蓋既有資料、不補不造。
+// 分段規則同快取：5M／15M 對齊整點刻度，30M／1H 從場次開盤起算（夜盤 15:00、日盤 08:45）。4H／日／週／月不動。
+const SESSION_BAR_TFS = { '5M': 300, '15M': 900, '30M': 1800, '1H': 3600 };
+const SESSION_BAR_SYMBOLS = { TXF: 'TXF', MXF: 'MXF' };   // MIS 有：台指期、小型台指（微台沒有）
+function _sessionAnchor(t) {   // 該根 1 分 K 所屬場次的開盤時間（epoch 秒）
+  const x = t + 8 * 3600, dayStart = Math.floor(x / 86400) * 86400, mins = (x - dayStart) / 60;
+  const start = mins >= 15 * 60 ? dayStart + 15 * 3600 : (mins < 5 * 60 ? dayStart - 86400 + 15 * 3600 : dayStart + (8 * 60 + 45) * 60);
+  return start - 8 * 3600;
+}
+function aggregateSessionBars(bars1m, stepSec) {
+  const out = new Map();
+  for (const b of bars1m) {
+    const a = _sessionAnchor(b.time), t0 = a + Math.floor((b.time - a) / stepSec) * stepSec, o = out.get(t0);
+    if (!o) out.set(t0, { time: t0, open: b.open, high: b.high, low: b.low, close: b.close, volume: b.volume || 0 });
+    else { o.high = Math.max(o.high, b.high); o.low = Math.min(o.low, b.low); o.close = b.close; o.volume += b.volume || 0; }
+  }
+  return [...out.values()].sort((p, q) => p.time - q.time);
+}
+let sessionBarsMergedInfo = null;   // { symbol: n 根 } 給畫面標示用
+async function mergeSessionBarsIntoCache() {
+  if (!klinesCacheData || !klinesCacheData.assets || !isTaifexSessionOpenNow()) return;
+  const merged = {};
+  for (const sym of Object.keys(SESSION_BAR_SYMBOLS)) {
+    const tfs = klinesCacheData.assets[sym] && klinesCacheData.assets[sym].timeframes;
+    if (!tfs) continue;
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 5000);
+    let res = null;
+    try {
+      const r = await fetch(`${GATEWAY_BASE}/api/session_bars?symbol=${SESSION_BAR_SYMBOLS[sym]}`, { signal: ctl.signal });
+      if (r.ok) res = await r.json();
+    } catch (e) { /* 本機報價服務沒開：維持原快取 */ } finally { clearTimeout(timer); }
+    if (!res || !Array.isArray(res.bars) || !res.bars.length) continue;
+    const bars = res.bars.filter(b => b && b.time > 0 && b.open > 0 && b.high > 0 && b.low > 0 && b.close > 0);
+    const sets = { '1M': bars };
+    for (const [tf, step] of Object.entries(SESSION_BAR_TFS)) sets[tf] = aggregateSessionBars(bars, step);
+    let added = 0;
+    for (const [tf, arr] of Object.entries(sets)) {
+      if (!Array.isArray(tfs[tf]) || !tfs[tf].length) continue;
+      const last = tfs[tf][tfs[tf].length - 1].time;
+      const fresh = arr.filter(b => b.time > last);
+      if (fresh.length) { tfs[tf] = tfs[tf].concat(fresh); if (tf === '1M') added = fresh.length; }
+    }
+    if (added) merged[sym] = added;
+  }
+  if (Object.keys(merged).length) {
+    sessionBarsMergedInfo = merged;
+    console.log('✅ 已合併本盤別 K 棒（期交所 MIS 1 分 K）：', merged);
+  }
+}
 // 2026-10-17：Worker 原本讀 GitHub Pages 上的 klines_cache.json，那份沒有富邦本機累積的最新分K（實測落後一整個場次），
 // 指標線會停在舊K棒。改成把「網頁手上這份最新K棒」用 POST 送給 Worker 算（K棒是公開資料；公式仍只在 Worker）。
 // 舊版 Worker 不認 POST（預檢被擋）→ 自動退回原本的 GET。
@@ -1494,7 +1609,8 @@ async function updateAdxMtfBadge() {
   try {
     let j = null;
     const tfs = {};
-    ['15M', '1H', '4H', '1D'].forEach(k => { const b = localBarsFor(sym, k, 800); if (b) tfs[k] = b; });
+    // 15M 多送一些（2500 根≈7 週）：Worker 要用它依場次起點重組 4H（TV 的 4H 從夜盤 15:00／日盤 08:45 起算），根數不夠會退回快取的 4H。
+    ['15M', '1H', '4H', '1D'].forEach(k => { const b = localBarsFor(sym, k, k === '15M' ? 2500 : 800); if (b) tfs[k] = b; });
     if (Object.keys(tfs).length === 4) j = await workerPost({ indicator: 'adx', symbol: sym, mtf: 1, tf: currentTf, tfs });
     if (!j || !j.adx) {
       const resp = await fetch(`${ADX_MTF_API}?symbol=${encodeURIComponent(sym)}&mtf=1`);
@@ -1729,6 +1845,10 @@ async function fetchAndAppendMomentumBar(symbol) {
     }
 
     const badge = document.getElementById('pane-4-badge');
+    // 交易時段內富邦委託簿／成交超過 3 分鐘沒更新＝資料凍結，如實標示（2026-10-08：10/07 22:52 起凍結 10 小時沒人發現）
+    if (badge && typeof payload.feed_age_sec === 'number' && payload.feed_age_sec > 180 && isTaifexSessionOpenNow()) {
+      badge.innerText = `⚠️ 富邦委託簿／成交資料已 ${Math.round(payload.feed_age_sec / 60)} 分鐘沒更新（凍結中，下方數字不是即時）`;
+    }
     if (badge && !payload.books_subscribed && !payload.trades_subscribed) {
       badge.innerText = '🐂 大戶散戶動能 (後端尚未連上富邦 Books/Trades — 檢查 live_price_server.py 是否已啟動)';
     }
@@ -1844,6 +1964,58 @@ function visibleMarkers(data) {
   return all.filter(m => !demarkKeys.has(`${m.time}|${m.text}`));
 }
 
+/**
+ * 強關價／弱關價（黃金切割率＝斐波那契 0.618／0.382）：
+ *   強關 = 當盤最低 + (當盤最高 − 當盤最低) × 0.618；弱關 = 當盤最低 + (當盤最高 − 當盤最低) × 0.382。
+ * 「當盤」＝整個交易日：前一晚夜盤 15:00 起，累計最高／最低到日盤收盤（日盤 08:45 不歸零），隔天夜盤 15:00 重新起算；
+ * 創新高或新低時兩條線同步移動（階梯狀）。公式來源：OP666 簡報與教學影片的公開說明，並以營業員提供的截圖逐點驗證。
+ * 只在台指期系列（GEX_SUPPORTED_SYMBOLS）與分K週期畫；日K以上沒有「當盤」概念，不畫。
+ */
+function computeStrongWeakLevels(candles, isFut) {
+  const strong = [], weak = [];
+  let lastSessStart = null, lastLabel = null, hi = null, lo = null;
+  for (const c of candles) {
+    const sess = tpeSessionAt(c.time, isFut);
+    if (!sess) continue;                       // 場次空檔不畫（不補假線）
+    // 「當盤」＝整個交易日：從夜盤 15:00 起累計到日盤收盤，日盤 08:45 **不歸零**
+    // （2026-10-08 以 OP666 截圖驗證：10/8 09:11 強關 49681／弱關 49518 ＝ 10/7 15:00 起的最高 49946、最低 49253；
+    //  10/2 10:3x 強關 48546／弱關 48417 ＝ 10/1 15:00 起的最高 48753、最低 48210；只算日盤會對不上）。
+    // 2026-10-12 修正：日盤是否延續，看「前一個場次是不是夜盤」，不是看「前一日曆日 15:00」。
+    //  10/12（週一，10/9 補假）日盤開盤強弱關沒有歸零，低點 48417 ＝ 10/8 夜盤（10/9 01 時）最低；
+    //  舊寫法（日盤起點往前 17h45）週一／連假後會落在沒有夜盤的週日／假日而誤歸零。
+    //  夜盤一律是新交易日的起點；日盤若緊接在夜盤之後就延續，若前一個場次是日盤（或沒有資料）才重新起算。
+    const isNewSess = sess.start !== lastSessStart;
+    const reset = isNewSess && !(sess.label === '日盤' && lastLabel === '夜盤');
+    if (isNewSess) { lastSessStart = sess.start; lastLabel = sess.label; }
+    if (reset || hi === null) { hi = c.high; lo = c.low; }
+    else { if (c.high > hi) hi = c.high; if (c.low < lo) lo = c.low; }
+    const range = hi - lo;
+    strong.push({ time: c.time, value: lo + range * 0.618 });
+    weak.push({ time: c.time, value: lo + range * 0.382 });
+  }
+  return { strong, weak };
+}
+function renderStrongWeakLevels(data) {
+  const code = (currentActiveSymbol?.symbol || activeContract || '').toUpperCase();
+  const intraday = !['1D', '1W', '1Mth'].includes(currentTf);
+  if (!indicatorConfig.swLevels || !intraday || !GEX_SUPPORTED_SYMBOLS.includes(code)) return;
+  if (!data.candles || data.candles.length === 0) return;
+  const { strong, weak } = computeStrongWeakLevels(data.candles, true);
+  if (!strong.length) return;
+  const lineStyle = SW_STYLES[indicatorConfig.swStyle] ?? SW_STYLES.dashed;
+  const lineWidth = [1, 2, 3].includes(indicatorConfig.swWidth) ? indicatorConfig.swWidth : 1;
+  overlaySeries.swLevels.strong = mainChart.addLineSeries({
+    color: indicatorConfig.swStrongColor, lineWidth, lineStyle, lineType: LightweightCharts.LineType.WithSteps,
+    priceLineVisible: false, lastValueVisible: true, title: ':強關'
+  });
+  overlaySeries.swLevels.weak = mainChart.addLineSeries({
+    color: indicatorConfig.swWeakColor, lineWidth, lineStyle, lineType: LightweightCharts.LineType.WithSteps,
+    priceLineVisible: false, lastValueVisible: true, title: ':弱關'
+  });
+  overlaySeries.swLevels.strong.setData(strong);
+  overlaySeries.swLevels.weak.setData(weak);
+}
+
 function renderMainOverlays(data) {
   // Clear old series
   if (overlaySeries.ribbons.ma7) { mainChart.removeSeries(overlaySeries.ribbons.ma7); overlaySeries.ribbons.ma7 = null; }
@@ -1857,6 +2029,10 @@ function renderMainOverlays(data) {
   if (overlaySeries.sar) { mainChart.removeSeries(overlaySeries.sar); overlaySeries.sar = null; }
   if (overlaySeries.supertrend.up) { mainChart.removeSeries(overlaySeries.supertrend.up); overlaySeries.supertrend.up = null; }
   if (overlaySeries.supertrend.down) { mainChart.removeSeries(overlaySeries.supertrend.down); overlaySeries.supertrend.down = null; }
+
+  if (overlaySeries.swLevels.strong) { mainChart.removeSeries(overlaySeries.swLevels.strong); overlaySeries.swLevels.strong = null; }
+  if (overlaySeries.swLevels.weak) { mainChart.removeSeries(overlaySeries.swLevels.weak); overlaySeries.swLevels.weak = null; }
+  renderStrongWeakLevels(data);
 
   // 1. 尋鳥多空彩帶 (MA7, MA17, MA88, MA200)
   if (indicatorConfig.ribbons) {
@@ -2350,6 +2526,9 @@ function renderLeftPanel() {
   if (pEl) {
     pEl.innerText = baseP === null ? '—' : (currentActiveSymbol.is_yield ? `${baseP.toFixed(3)}%` : (baseP < 500 ? baseP.toFixed(2) : baseP.toLocaleString()));
   }
+  // 台指期沒有即時報價（本機報價服務沒開、手機等）時，這裡顯示的是網站資料檔裡的價（可能是週五日盤收盤，不是最新場次），
+  // 如實標明；有即時報價進來（下方 live tick 處理）就會自動消失。2026-10-17：畫面曾顯示 47,242，夜盤實際收 46,140，卻沒任何標示。
+  setStaleQuoteNote(['TXF', 'MTX', 'MXF', 'TMF'].includes(currentActiveSymbol.symbol) && liveTxfPrice() === null && baseP !== null);
 
   // Distances（抽成 refreshGexDistances()：即時報價進來時也要用最新價格重算，否則距離停在載入時的舊價）
   refreshGexDistances(baseP, cw, zg, pw, mp);
@@ -2672,7 +2851,9 @@ function setupEventListeners() {
   if (resetColorsBtn) {
     resetColorsBtn.addEventListener('click', () => {
       IND_COLOR_KEYS.forEach(k => { indicatorConfig[k] = IND_COLOR_DEFAULTS[k]; });
+      indicatorConfig.swStyle = 'dashed'; indicatorConfig.swWidth = 1; saveSwStyle();
       syncColorPickers();
+      syncSwStyleControls();
     });
   }
 
@@ -2698,6 +2879,13 @@ function setupEventListeners() {
       indicatorConfig.sar = document.getElementById('chk-sar').checked;
       indicatorConfig.sarStep = parseFloat(document.getElementById('param-sar-step').value) || 0.02;
       indicatorConfig.fvg = document.getElementById('chk-fvg').checked;
+      indicatorConfig.swLevels = document.getElementById('chk-sw').checked;
+      indicatorConfig.swStrongColor = document.getElementById('col-sw-strong').value || IND_COLOR_DEFAULTS.swStrongColor;
+      indicatorConfig.swWeakColor = document.getElementById('col-sw-weak').value || IND_COLOR_DEFAULTS.swWeakColor;
+      indicatorConfig.swStyle = document.getElementById('sel-sw-style').value;
+      indicatorConfig.swWidth = parseInt(document.getElementById('sel-sw-width').value) || 1;
+      saveIndicatorColors();
+      saveSwStyle();
       // Supertrend 週期／倍數：欄位一直存在但從沒被讀取（2026-10-01 稽核發現），改了沒有效果
       indicatorConfig.stLen = parseInt(document.getElementById('param-st-len').value) || 10;
       indicatorConfig.stMult = parseFloat(document.getElementById('param-st-mult').value) || 3.0;
@@ -2953,24 +3141,18 @@ function initAdvisorFeed() {
   feed.innerHTML = `
     <div class="advisor-msg ai">
       <div class="msg-meta">
-        <span class="sender">🤖 幕僚鳥 (Claude ✕ AGENTS.md)</span>
+        <span class="sender"><img src="../assets/advisor_bird.png" alt="" class="advisor-avatar-img sm"> 幕僚鳥</span>
         <span class="time">${new Date().toLocaleTimeString()}</span>
       </div>
       <div class="msg-bubble">
-        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷 (v64.17)</h4>
+        <h4 style="color: var(--primary-accent); margin-bottom: 6px; font-size: 0.88rem;">🦅 戰情室即時全域量化診斷</h4>
         <p style="font-size: 0.8rem; line-height: 1.55; margin-bottom: 6px;">
           🔹 <strong>當前空間拓撲</strong>：${topologyLabel}<br>
-          ⚡ <strong>GEX 狀態</strong>：台指期 (<strong>${txf}</strong>) 位於 Zero Gamma (<strong>${zg}</strong>) ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。<br>
-          ・<strong>${brokeCW ? 'Call Wall（價格已站上，轉為回測支撐位）' : '上檔天花板 (Call Wall)'}</strong>：<code>${cw}</code> (價格−價位 <strong>${sgn(distCW)} 點</strong>)<br>
-          ・<strong>${brokePW ? 'Put Wall（價格已跌破，轉為反壓位）' : '下檔防守線 (Put Wall)'}</strong>：<code>${pw}</code> (價格−價位 <strong>${sgn(distPW)} 點</strong>)<br>
-          ・<strong>結算最大痛點 (Max Pain)</strong>：<code>${mp}</code>
+          ⚡ <strong>Gamma 狀態</strong>：台指期位於 Zero Gamma ${isPosGamma ? '上方，做市商正 Gamma 具備<span style="color:#26a69a;">減震收斂效應</span>' : '下方，處於負 Gamma <span style="color:#ff5252;">助漲助跌擴張區</span>'}。
         </p>
-        <div class="topology-banner" style="margin-top: 6px;">
-          🛡️ <strong>幕僚鳥即時風控提醒 (AGENTS.md 鐵律)</strong>：<br>
-          1. <strong>嚴禁對週選價差單拆單 (No Legging Out)</strong>，避免解鎖無限風險引發多空雙巴。<br>
-          2. <strong>盤中暴衝急拉/急殺時嚴禁追價</strong>，請等待 15M/30M DeMark 9★ 竭盡過濾。<br>
-          3. 支援<strong>直接輸入持倉部位 (如: <code>W2 47000 SP / 46900 BP</code>)</strong>，我會立即為您進行真金白銀部位體檢與連續洗價單試算！
-        </div>
+        <p style="font-size: 0.76rem; line-height: 1.5; color: var(--text-muted);">
+          各點位與距離請看左側 GEX 面板。可以直接輸入持倉部位（例如 <code>W2 47000 SP / 46900 BP</code>），我會幫你做部位體檢與洗價單試算。
+        </p>
       </div>
     </div>
   `;
@@ -3137,7 +3319,7 @@ async function callClaudeApi(apiKey, query, base64Image) {
 
   const systemInstruction = `你是「幕僚鳥」，尋鳥戰情交易室的 AI 幕僚。能回答：台指選擇權（洗價單建立、技術線圖多空分析、停損停利建議）、各商品（期貨/外匯/商品/美股/台股個股）多空技術分析、總經與個股問題。結合老墨 XQ 指標體系與 TXO GEX 造市商對沖模型，策略以使用者的 Lumi 專案筆記為準。
 不確定或無資料時明說，不捏造數字；你不是持牌顧問，建議僅供使用者自行判斷。
-最高風控鐵律與行為準則 (AGENTS.md)：
+最高風控鐵律與行為準則：
 1. 嚴禁對週選擇權 (W1/W2/W4/W5/F1) 垂直價差單建議「拆單 (No Legging Out)」，必須維持整組價差單平倉或轉倉。
 2. 盤中價格暴衝/急殺時嚴禁建議追價，等待 15M/30M DeMark 9★ 買賣盤竭盡。
 3. 診斷實盤真金白銀部位時，檢查賣腳安全邊際、未實現損益、IOC 洗價點數。
@@ -3326,7 +3508,7 @@ function generateQuantAdvisorResponse(query, hasImage = false) {
         </p>
 
         <div style="background: rgba(255, 71, 87, 0.12); border: 1px solid rgba(255, 71, 87, 0.4); border-radius: 6px; padding: 6px 8px; margin: 6px 0; font-size: 0.78rem;">
-          🚨 <strong>AGENTS.md 最高風控鐵律審核</strong>：<br>
+          🚨 <strong>最高風控鐵律審核</strong>：<br>
           1. <strong>嚴禁拆單 (No Legging Out)</strong>：對週選擇權垂直價差單，<strong>絕不可先平倉賣腳留下買腳</strong>！拆單會解除有限風險保護，引發多空雙巴悲劇。<br>
           2. <strong>維持整組處理</strong>：平倉、轉倉或停損必須整組雙腳同步送出。
         </div>
@@ -3431,7 +3613,7 @@ function appendAdvisorMessage(type, contentHtml) {
   msgEl.className = `advisor-msg ${type}`;
   msgEl.innerHTML = `
     <div class="msg-meta">
-      <span class="sender">${type === 'user' ? '交易員 (You)' : '🤖 幕僚鳥'}</span>
+      <span class="sender">${type === 'user' ? '交易員 (You)' : '<img src="../assets/advisor_bird.png" alt="" class="advisor-avatar-img sm"> 幕僚鳥'}</span>
       <span class="time">${new Date().toLocaleTimeString()}</span>
     </div>
     <div class="msg-bubble">${contentHtml}</div>
@@ -4628,6 +4810,7 @@ const LIVE_BAR_SECONDS = { '1M': 60, '3M': 180, '5M': 300, '15M': 900, '30M': 18
 let liveBar = null;   // { tf, time, open, high, low, close, partial }
 function applyLiveTickToChart(price) {
   if (!candleSeries || !(price > 0)) return;
+  if (!isTaifexSessionOpenNow()) return;             // 休市（週末／盤間）不開新K棒：最後一根就是最近一個場次的收盤
   if ((currentActiveSymbol?.symbol || 'TXF') !== 'TXF') return;
   const step = LIVE_BAR_SECONDS[currentTf];
   if (!step) { setLiveBarNotice(''); return; }      // 4H／日／週／月K 的分段規則有盤別邊界，不在前端硬湊
@@ -4734,6 +4917,7 @@ function initFubonLivePriceStream() {
 
       // 3. 台指期 (TXF)
       if (data.txf) {
+        setStaleQuoteNote(false);
         const valEl = document.getElementById('top-val-txf');
         const chgEl = document.getElementById('top-chg-txf');
         const leftMainP = document.getElementById('left-main-price');
@@ -4883,8 +5067,13 @@ async function bridgeAvailable() {
   return _bridgeUp;
 }
 function updateBridgeBadge() {
-  const b = document.querySelector('.model-badge');
-  if (b) b.textContent = _bridgeUp ? 'Claude 訂閱 ✕ AGENTS.md' : (localStorage.getItem('claude_api_key') ? 'Claude API ✕ AGENTS.md' : 'Claude 未連線（本地規則引擎）');
+  // 只留一顆小圓點（綠＝Claude 已連線、黃＝API Key 模式、灰＝未連線只用本地規則）；說明放在滑鼠懸停文字，畫面上不再顯示文字。
+  const b = document.getElementById('advisor-status-dot') || document.querySelector('.model-badge');
+  if (!b) return;
+  const hasKey = !!localStorage.getItem('claude_api_key');
+  b.textContent = '●';
+  b.style.color = _bridgeUp ? '#26a69a' : (hasKey ? '#ffd700' : '#8b95a5');
+  b.title = _bridgeUp ? '幕僚鳥：Claude 已連線' : (hasKey ? '幕僚鳥：使用 API Key 連線' : '幕僚鳥：未連線，目前只用本地規則回答');
 }
 function advisorModel() { return document.getElementById('advisor-model-select')?.value || 'sonnet'; }
 async function callBridge(system, query, base64Image) {

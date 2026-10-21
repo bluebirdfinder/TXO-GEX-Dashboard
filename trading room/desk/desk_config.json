@@ -1,0 +1,98 @@
+{
+  "_readme": "台選鳥虛擬下單簿設定。全部是模擬單。標 status=待確認 的數字是 Lumi 規格(2026-10-19)的建議值，使用者確認前不是定案。",
+  "multiplier": 50,
+  "accounts": {
+    "T0": {"capital": 1000000, "uses_tg_signals": false},
+    "T1": {"capital": 1000000, "uses_tg_signals": true}
+  },
+  "fees": {
+    "fee_per_lot_per_side": 13,
+    "tax_rate": 0.001,
+    "tax_rounding": "per_lot_half_up",
+    "expire_worthless_free": true,
+    "settle_itm_fee_per_lot": 13,
+    "settle_itm_fee_status": "使用者2026-10-20確認先維持（同平倉費率），等實單帳單再校正",
+    "source": "富邦期貨115年8月對帳單（Lumi視窗推得，規格第7節）",
+    "as_of": "2026-10-19",
+    "status": "待使用者確認；費率日後可能變動"
+  },
+  "margin": {
+    "model": "taifex_credit_spread_width_x_multiplier",
+    "per_expiry_offset": "sum",
+    "per_expiry_offset_note": "期交所網頁(margingReqIndexOpt)只寫單組價差=履約價差x乘數，沒寫多差+空差互抵，預設相加(保守)。若富邦實際只收單邊，改成 max_of_put_side_and_call_side；請對照富邦App上多差+空差的實際保證金。",
+    "official_reference": {
+      "source": "https://www.taifex.com.tw/cht/5/indexMarging 與 /cht/5/margingReqIndexOpt",
+      "page_updated": "2026-08-12",
+      "txo_initial_margin": {"A": 187000, "B": 94000, "C": 18800},
+      "txo_maintenance_margin": {"A": 143000, "B": 72000, "C": 14400},
+      "txo_clearing_margin": {"A": 138000, "B": 69000, "C": 13800},
+      "note": "A/B/C 只用於裸賣與混合部位(跨式/勒式)；本系統禁止裸賣，價差單用「履約價差x乘數」。買權多頭價差(買低賣高Call)與賣權多頭/買進價差無保證金；買方到期日必須與賣方相同才適用價差規則。"
+    },
+    "status": "使用者2026-10-20同意改官方公式；單組價差已對齊官網，多空互抵待對照富邦實際值"
+  },
+  "patrol": {
+    "min_interval_min": 30,
+    "first_delay_min": 5,
+    "move_trigger_pts": 150,
+    "cooldown_min": 5,
+    "event_cooldown_min": 2,
+    "max_calls_per_day": 40,
+    "status": "起手值，待實測調整。使用者2026-10-20要求台選鳥在日盤、夜盤盤中依行情自由決策；盤後做覆盤與盤前規劃。每次叫台選鳥約 1 次 Claude 呼叫（Sonnet）"
+  },
+  "snapshot": {
+    "gex_max_age_min": 480,
+    "spot_max_age_s": 30,
+    "min_kbars": 60,
+    "kbar_max_age_s": 300,
+    "surge_window_min": 60,
+    "demark_recent_bars": 3,
+    "demark_require_perfection": true,
+    "demark_note": "九轉竭盡＝15M 或 30M 最近 3 根已收完的 K 棒內出現 9★（完美九轉）或 13；急殺看賣盤竭盡(買進Setup/Countdown)、急拉看買盤竭盡。只用已收完K棒。均線走平條件尚未實作（規格沒給定義）",
+    "closed_max_age_min": 120,
+    "kbar_age_note": "1 分 K 標籤是開始時刻，最新已收完那根的結束時刻比開始晚 1 分鐘，期交所發布還會延遲；2026-10-21 凌晨因 180 秒太緊錯失 2 次決策（01:14、02:52），放寬到 300 秒",
+    "closed_note": "休市時段(13:45-15:00、05:00-08:45)決策：K線與現價只要求在120分鐘內（Fubon 1分K一天只在05:30與14:00累積兩次，所以收盤後決策用剛收完那一盤）。休市時報價鏈是凍結的，不得成交，只能掛階梯或觀望",
+    "status": "起手值，待使用者確認；GEX 一天只更新幾次所以放寬到 8 小時，實測後再收緊。surge_pts = 近 surge_window_min 分鐘內最新收盤相對區間低點(急拉)或高點(急殺)的點數，定義為起手版"
+  },
+  "quote_validity": {
+    "max_age_s": 120,
+    "max_bid_ask_spread_pts": 20,
+    "monitor_max_bid_ask_spread_pts": 60,
+    "monitor_note": "已持有部位的損益/停損/平倉專用的買賣價差門檻（平倉本來就用最不利價，價差寬只是成本高）；新開倉與掛單成交仍用上面的 20 點。使用者2026-10-21 提到穿價時價差可到 200 點——要放更寬就改這個數字",
+    "require_size_positive": true,
+    "status": "使用者2026-10-20確認先維持起手值；夜盤統計後再微調"
+  },
+  "fill": {
+    "validated": false,
+    "label_when_not_validated": "近似",
+    "note": "成交判定在報價紀錄器與券商實際報價比對通過前一律標「近似」"
+  },
+  "risk": {
+    "ladder_max_lots_per_side": 8,
+    "ladder_max_lots_status": "使用者2026-10-19決定；放大須使用者同意",
+    "max_ladder_sets": 2,
+    "ladder_one_side_max_loss_pct": 5.0,
+    "ladder_one_side_loss_mode": "review",
+    "ladder_one_side_loss_mode_note": "使用者2026-10-20決定：8口不縮；超過5%不擋開單，但必須有數字停損stop_debit_pts；到期結算虧損仍>5%則記REVIEW_FLAG，檢討策略（下單位置、收取點數）。雙邊10%上限同樣比照處理(2026-10-20)：不擋開單，但必須有stop_debit_pts。",
+    "ladder_both_sides_max_loss_pct": 10.0,
+    "daily_loss_stop_pct": 3.0,
+    "drawdown_halve_pct": 15.0,
+    "drawdown_halt_pct": 25.0,
+    "margin_util_max_pct": 50.0,
+    "loss_limits_status": "待使用者確認（Lumi規格8.2建議值）",
+    "iv_cushion": [
+      {"iv_gt": 16, "min_distance_pts": 350},
+      {"iv_gt": 13, "min_distance_pts": 250},
+      {"iv_gt": 0, "min_distance_pts": 150}
+    ],
+    "iv_cushion_note": "IV>16%: 350~500點外(取下限350)；13~16%: 250~350點外(取下限250)；<13%: 禁止<150點",
+    "naked_buy_min_dte": 3,
+    "surge_block_pts": 500,
+    "surge_note": "盤中急拉急殺(>=500點)且沒有15M/30M九轉竭盡或均線走平訊號時，禁止新開倉與新掛階梯；平倉/不動作仍可",
+    "stage": "A",
+    "allowed_structures_by_stage": {
+      "A": ["bull_put_spread", "bear_call_spread", "iron_condor", "butterfly"],
+      "B": ["bull_put_spread", "bear_call_spread", "iron_condor", "butterfly", "long_call", "long_put"],
+      "C": ["bull_put_spread", "bear_call_spread", "iron_condor", "butterfly", "long_call", "long_put", "covered_call"]
+    }
+  }
+}

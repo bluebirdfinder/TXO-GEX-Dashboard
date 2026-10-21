@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交易室首頁</title>
+<style>
+  :root { --bg: #0b0f1a; --panel: #121a2b; --panel2: #18223a; --line: #263250; --text: #e6ecff; --muted: #8b97b8; --accent: #38bdf8; --gold: #fbbf24; --up: #f0616d; --down: #2ecc9a; --warn: #f59e0b; --bad: #ef4444; --ok: #22c55e; }
+  :root[data-theme="light"] { --bg: #f4f6fb; --panel: #ffffff; --panel2: #eef2fb; --line: #d5dcee; --text: #17203a; --muted: #5c6a8c; --accent: #0b7bb5; --up: #c62839; --down: #0f8a63; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
+  .nav a { color: var(--accent); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; font-size: .85rem; } .nav a.on { background: var(--panel2); font-weight: 700; }
+  button { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+  h1 { font-size: 1.4rem; margin: 6px 0 2px; } .sub { color: var(--muted); font-size: .85rem; margin-bottom: 14px; }
+  h2 { font-size: 1rem; color: var(--accent); margin: 18px 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: .8rem; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .chip.ok { color: var(--ok); border-color: var(--ok); } .chip.bad { color: var(--bad); border-color: var(--bad); }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .card.planned { opacity: .72; border-style: dashed; }
+  .card h3 { margin: 0 0 2px; font-size: 1.05rem; } .tag { font-size: .75rem; color: var(--muted); }
+  .st { display: inline-block; font-size: .72rem; padding: 1px 8px; border-radius: 999px; margin-left: 6px; border: 1px solid var(--line); }
+  .st.active { color: var(--ok); border-color: var(--ok); } .st.planned { color: var(--muted); }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: .88rem; margin: 8px 0; font-variant-numeric: tabular-nums; } .kv span:nth-child(odd) { color: var(--muted); }
+  .up { color: var(--up); } .down { color: var(--down); }
+  .block { color: var(--muted); font-size: .82rem; margin-top: 6px; }
+  .warn { color: var(--bad); font-size: .85rem; margin: 4px 0; }
+  .card a.go { display: inline-block; margin-top: 6px; color: var(--accent); text-decoration: none; font-weight: 600; }
+  .minutes { white-space: pre-wrap; font-size: .88rem; }
+  .err { background: rgba(239,68,68,.12); border: 1px solid var(--bad); border-radius: 10px; padding: 10px 12px; }
+  footer { color: var(--muted); font-size: .78rem; margin: 18px 0 30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" id="nav"></nav>
+  <h1>🏛️ 交易室</h1>
+  <div class="sub" id="sub">載入中…　全部是模擬單，不連券商，不構成投資建議</div>
+  <div id="errbox"></div>
+  <h2>系統狀態</h2><div class="chips" id="svc"></div>
+  <h2>交易員</h2><div class="grid" id="traders"></div>
+  <h2>研究員（規劃中：只提供分析報告，不下單）</h2><div class="grid" id="researchers"></div>
+  <h2>主管與支援角色</h2><div class="grid" id="support"></div>
+  <h2>最新會議</h2><div id="meet"></div>
+  <footer>資料由本機程式讀取，每 20 秒更新。角色清單在 trading room/desk/agents.json，新增角色只要加一筆設定。紅色＝賺、綠色＝賠（台股慣例），同時以 +/− 符號標示。</footer>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const n0 = v => v == null ? "—" : Math.round(v).toLocaleString("zh-TW");
+const sg = v => v == null ? "—" : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(Math.round(v)).toLocaleString("zh-TW");
+const cls = v => v > 0 ? "up" : v < 0 ? "down" : "";
+const SESS = { day: "日盤交易中", night: "夜盤交易中", closed: "休市中" };
+try { const t = localStorage.getItem("deskTheme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+const NAV = [["/", "交易室首頁", 1], ["/trader?account=T0", "台選鳥帳戶"], ["/meeting", "會議室"], ["http://localhost:8000/trading%20room/room.html", "尋鳥戰情室 ↗"], ["http://localhost:8000/", "GEX 總覽 ↗"]];
+$("nav").innerHTML = NAV.map(([h, t, on]) => `<a href="${h}" class="${on ? "on" : ""}">${t}</a>`).join("") + `<button id="theme" title="切換深淺色">☀/🌙</button>`;
+$("theme").onclick = () => { const r = document.documentElement; r.dataset.theme = r.dataset.theme === "light" ? "dark" : "light"; try { localStorage.setItem("deskTheme", r.dataset.theme); } catch (e) {} };
+
+function traderCard(t) {
+  const act = t.status === "active";
+  let body = `<div class="tag">${esc(t.market)}</div>`;
+  if (act && t.summary) {
+    const s = t.summary;
+    body += `<div class="kv"><span>淨值</span><span>${n0(s.equity)}</span><span>累計報酬</span><span class="${cls(s.return_pct)}">${(s.return_pct > 0 ? "+" : s.return_pct < 0 ? "−" : "") + Math.abs(s.return_pct).toFixed(2)}%</span>
+      <span>今日損益</span><span class="${cls(s.day_pnl)}">${sg(s.day_pnl)}</span><span>持倉／掛單</span><span>${s.positions} 組／${s.orders} 筆</span>
+      <span>保證金使用</span><span>${s.margin_util_pct.toFixed(1)}%</span><span>最近決策</span><span>${esc(s.last_decision || "—")}</span></div>`;
+    if (s.blind.length) body += `<div class="warn">⚠️ 停損盯不到：${esc(s.blind.join("、"))}</div>`;
+    if (!s.monitor_alive) body += `<div class="warn">⚠️ 規則巡邏沒在跑</div>`;
+    body += `<a class="go" href="/trader?account=${encodeURIComponent(t.account)}">打開帳戶頁 →</a>`;
+  } else if (act) {
+    body += `<div class="block">帳本還沒建立</div>`;
+  } else {
+    body += `<div class="block">還沒開始：${esc(t.blocked_by || "")}</div>`;
+  }
+  return `<div class="card ${act ? "" : "planned"}"><h3>${esc(t.name)}<span class="st ${t.status}">${act ? "運作中" : "規劃中"}</span></h3>${body}${t.note ? `<div class="block">${esc(t.note)}</div>` : ""}</div>`;
+}
+function plainCard(t) {
+  const act = t.status === "active";
+  return `<div class="card ${act ? "" : "planned"}"><h3>${esc(t.name)}<span class="st ${t.status}">${act ? "運作中" : "規劃中"}</span></h3>
+    <div class="block">${esc(t.role || "")}${t.blocked_by ? "還沒開始：" + esc(t.blocked_by) : ""}</div></div>`;
+}
+async function load() {
+  try {
+    const [h, m] = await Promise.all([fetch("/api/hub", { cache: "no-store" }).then(r => r.json()), fetch("/api/meetings", { cache: "no-store" }).then(r => r.json())]);
+    if (h.error) throw new Error(h.error);
+    $("errbox").innerHTML = "";
+    $("sub").textContent = "更新時間 " + h.as_of.replace("T", " ") + "（台灣時間）　現在：" + (SESS[h.session] || h.session) + "　全部是模擬單，不連券商，不構成投資建議";
+    $("svc").innerHTML = Object.values(h.services).map(s => `<span class="chip ${s.ok ? "ok" : "bad"}" title="${esc(s.detail)}">${s.ok ? "●" : "○"} ${esc(s.name)}：${esc(s.detail)}</span>`).join("");
+    $("traders").innerHTML = h.traders.map(traderCard).join("");
+    $("researchers").innerHTML = h.researchers.map(plainCard).join("");
+    $("support").innerHTML = h.support.map(plainCard).join("");
+    $("meet").innerHTML = m.length ? `<div class="card"><b>${esc(m[0].topic)}</b>　<span class="tag">${esc(m[0].at.replace("T", " ").slice(0, 16))}</span><div class="minutes">${esc(m[0].minutes)}</div><a class="go" href="/meeting">看完整發言過程 →</a></div>`
+      : '<div class="card planned"><div class="block">還沒有會議紀錄：收盤後覆盤寫完（日盤後 13:50、夜盤後 05:05 起），台選鳥、風控鳥、文書鳥會自動開一場短會。</div></div>';
+  } catch (e) {
+    $("errbox").innerHTML = `<div class="err">讀不到資料：${esc(e.message)}。確認 server.py 有在跑。</div>`;
+  }
+}
+load(); setInterval(load, 20000);
+</script>
+</body>
+</html>

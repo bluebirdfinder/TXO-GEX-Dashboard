@@ -5,6 +5,37 @@ import datetime
 import time
 import threading
 from collections import deque
+from contextlib import contextmanager
+
+
+@contextmanager
+def _timed_lock(lock, timeout):
+    """Acquire a (non-reentrant) lock with a timeout so a hung holder can never block callers forever. Yields True/False."""
+    got = lock.acquire(timeout=timeout)
+    try:
+        yield got
+    finally:
+        if got:
+            lock.release()
+
+
+def _call_with_timeout(fn, timeout):
+    """Run fn() in a daemon thread; return 'timeout' if it does not finish in `timeout` seconds, else its result (re-raises its exception)."""
+    box = {}
+
+    def _runner():
+        try:
+            box["r"] = fn()
+        except BaseException as e:  # noqa: BLE001
+            box["e"] = e
+    t = threading.Thread(target=_runner, daemon=True, name="futopt-call-with-timeout")
+    t.start()
+    t.join(timeout)
+    if t.is_alive():
+        return "timeout"
+    if "e" in box:
+        raise box["e"]
+    return box.get("r")
 
 # Set up logging for Fubon Provider
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -66,6 +97,10 @@ class FubonAPIProvider:
                     self.CVD_SYMBOL_ALIAS[_code] = _code + "1!"
         except Exception as _e:
             logging.warning(f"stock-futures alias list not loaded ({_e}); only TXF/MXF/MTX/TMF will have CVD/momentum")
+        # 小型個股期貨（期交所 stockMargining 官方代碼：QFF=小型台積電期貨、PUF=小型聯發科期貨；2026-10-14 核對）。
+        # 不放進 tw_symbols_universe.json（那份是自動產生的目錄，會影響搜尋／選股），只在此額外訂閱，供還原 JJ 大戶散戶動能用。
+        for _mini in ("QFF", "PUF"):
+            self.CVD_SYMBOL_ALIAS.setdefault(_mini, _mini + "1!")
         self.last_cache = {
             'spot_price': None,
             'otc_price': None,
@@ -100,14 +135,25 @@ class FubonAPIProvider:
         self._trades_last_serial = {}  # symbol -> serial of the last trades frame, to drop exact replays
         self._trades_logged_raw = set()  # symbols we've logged one raw message for, for schema verification
         self._TRADES_LOG_MAXLEN = 20000  # ~a session's worth of prints per symbol; bounded so memory can't grow unbounded
-        # 大戶散戶動能 30 分 bar 歷史：每 15 秒把「進行中的 bar」存進記憶體並每 60 秒寫檔，重開機後可讀回。
+        # 大戶散戶動能 1 分鐘歷史（可合成 5／15／30 分）：每 15 秒更新「進行中的分鐘」並每 60 秒寫檔，重開機後可讀回。
         # 檔案放在 repo 外（預設 ~/.txo_momentum_history，可用 MOMENTUM_HISTORY_DIR 覆蓋），避免被 git add 進公開倉庫。
         # 只存真實收到的資料；沒開機／沒連線的時段不會補值。
-        self._mom_hist = {}   # alias -> {bar_start_ts(int): {'t','big','retail','mkt','n'}}
+        self._mom_hist = {}   # alias -> {minute_start_ts(int): 1 分鐘紀錄（欄位見 record_momentum_bars）}
+        self._mom_hist_dirty = set()
         self._mom_hist_lock = threading.Lock()
-        self._mom_hist_dir = os.getenv("MOMENTUM_HISTORY_DIR") or os.path.join(os.path.expanduser("~"), ".txo_momentum_history")
-        self._mom_hist_keep_days = 14
+        self._mom_hist_dir = os.getenv("MOMENTUM_HISTORY_DIR") or os.path.join(os.path.expanduser("~"), ".txo_momentum_1m")
+        self._mom_hist_keep_days = 5   # 1 分鐘資料量大，只留 5 天
         self._mom_hist_started = False
+        # 看門狗（2026-10-08）：futopt WebSocket 可能在沒有觸發 disconnect 事件下死掉（10/07 22:53 'NoneType'.sock 之後
+        # Books／Trades 凍結到隔天 09:12），所以記錄「最近一次收到任何 futopt 訊息」的時間，太久沒有就重連＋重新訂閱。
+        self._last_futopt_msg_ts = None
+        self._proc_start_ts = time.time()
+        self._futopt_watchdog_last_try = 0.0
+        self._futopt_watchdog_fires = 0   # forced reconnects since the feed was last healthy
+        self._last_trades_ts = {}         # alias -> time.time() of the last real trade print (for the trades-channel watchdog)
+        self._trades_total = {}           # alias -> latest cumulative 'total' block of a trades frame (tradeVolume, totalBidMatch, totalAskMatch)
+        self._books_logged_raw = set()    # aliases whose first raw books frame was logged (to see every field Fubon sends)
+        self._trade_frames = deque(maxlen=300000)   # every raw trades frame of the _RAW_LOG_ALIASES, flushed to trades_YYYYMMDD.jsonl by the recorder thread
 
         # Real Cumulative Volume Delta (CVD) — signed-volume running total built tick-by-tick
         # from the same confirmed tick-rule 'side' used for trades_log, kept as its own
@@ -211,9 +257,10 @@ class FubonAPIProvider:
             return self.last_cache
 
         try:
-            now_h = datetime.datetime.now().hour
-            # Session determination: 15:00 ~ 08:45 uses AFTERHOURS / Night session, 08:45 ~ 14:00 uses REGULAR
-            session_mode = "AFTERHOURS" if (now_h >= 15 or now_h < 8 or (now_h == 8 and datetime.datetime.now().minute < 45)) else "REGULAR"
+            # Session determination: 15:00 ~ 08:45 uses AFTERHOURS / Night session, 08:45 ~ 15:00 uses REGULAR.
+            # 2026-10-17: 週末沒有日盤。週六 05:00 之後到週一 08:45 之前，「最近一個場次」是週五夜盤，
+            # 之前只看鐘點，週六上午被判成日盤，現價顯示週五日盤收盤 47,242，而 K 線與 TradingView 是夜盤收盤 46,140。
+            session_mode = self._quote_session_mode(datetime.datetime.now())
 
             # Query real-time futures quote.
             # Verified against the live API 2026-10-01: the `session` parameter only accepts "afterhours" (night session).
@@ -282,6 +329,18 @@ class FubonAPIProvider:
                     'source': 'Fubon Neo API (no fresh quote)'}
         return self.last_cache
 
+    @staticmethod
+    def _quote_session_mode(now):
+        """現價要查哪個盤別（台北本機時間）。"AFTERHOURS"＝夜盤（含週末：最近一個場次是週五夜盤）。
+        不含國定假日（假日沒有日盤也沒有夜盤，仍會依鐘點判斷，Fubon 回傳的就是最近一個場次）。"""
+        hm = now.hour * 60 + now.minute
+        wd = now.weekday()  # Mon=0 … Sun=6
+        if wd == 6 or (wd == 5 and hm >= 5 * 60):
+            return "AFTERHOURS"
+        if hm >= 15 * 60 or hm < 8 * 60 + 45:
+            return "AFTERHOURS"
+        return "REGULAR"
+
     def get_stock_quote(self, symbol):
         """個股／ETF 即時報價（富邦 stock.intraday.quote）。2026-10-07 新增：戰情室個股報價原本只吃一份沒排程的舊檔。
         只回富邦真的給的欄位；失敗回 None（前端改顯示資料日期，不造數字）。每檔快取 2 秒避免瀏覽器輪詢打爆 API。"""
@@ -344,7 +403,10 @@ class FubonAPIProvider:
         # Hold the lock across the whole check-connect-set sequence: without this,
         # two threads can both pass the "if self._futopt_connected" check above
         # before either sets it True, and both go on to call futopt_ws.connect().
-        with self._futopt_connect_lock:
+        with _timed_lock(self._futopt_connect_lock, 20) as _got_lock:
+            if not _got_lock:
+                logging.warning("_ensure_futopt_connected: connect lock busy for 20s (an earlier connect() may be hung); skipping this attempt")
+                return None
             if self._futopt_connected:  # re-check: another thread may have connected while we waited for the lock
                 return self._futopt_ws
 
@@ -358,7 +420,9 @@ class FubonAPIProvider:
             futopt_ws.on('error', lambda err: logging.warning(f"Fubon futopt WebSocket error: {err}"))
             futopt_ws.on('disconnect', lambda code, msg: self._on_futopt_disconnect(code, msg))
             try:
-                futopt_ws.connect()
+                if _call_with_timeout(futopt_ws.connect, 20) == "timeout":
+                    logging.warning("_ensure_futopt_connected: connect() did not return within 20s; abandoning this attempt")
+                    return None
             except Exception as e:
                 logging.warning(f"_ensure_futopt_connected: connect() failed: {e}")
                 return None
@@ -373,7 +437,8 @@ class FubonAPIProvider:
         stale data silently; live_price_server's watchdog calls this."""
         self._initialize_sdk()
         if self.is_active:
-            self._on_futopt_disconnect("relogin", "watchdog / pre-session refresh")
+            threading.Thread(target=self._on_futopt_disconnect, args=("relogin", "watchdog / pre-session refresh"),
+                             daemon=True, name="futopt-relogin-reconnect").start()
         return self.is_active
 
     def _on_futopt_disconnect(self, code, msg):
@@ -401,6 +466,7 @@ class FubonAPIProvider:
         _process_books_data()/_process_trades_data() by the message's own
         'channel' field — never guesses which stream a message belongs to.
         """
+        self._last_futopt_msg_ts = time.time()
         try:
             import json as _json
             message = _json.loads(raw_message) if isinstance(raw_message, (str, bytes)) else raw_message
@@ -480,6 +546,10 @@ class FubonAPIProvider:
 
         def _normalize_side(levels):
             return [{'price': float(lvl['price']), 'size': int(lvl['size'])} for lvl in (levels or [])]
+
+        if symbol not in self._books_logged_raw:
+            logging.info(f"Fubon Books RAW sample for {symbol} (all fields Fubon sends): {data}")
+            self._books_logged_raw.add(symbol)
 
         derived_bid = data.get('derivedBid') or {'price': 0, 'size': 0}
         derived_ask = data.get('derivedAsk') or {'price': 0, 'size': 0}
@@ -638,6 +708,14 @@ class FubonAPIProvider:
             prints = [data] if data.get('price') is not None and data.get('size') is not None else []
         if not prints:
             return
+        self._last_trades_ts[symbol] = time.time()
+        tot = data.get('total')
+        if isinstance(tot, dict):   # exchange cumulative counters (since session open); was ignored before 2026-10-16
+            self._trades_total[symbol] = dict(tot, t=round(time.time(), 1))
+        if symbol in self._RAW_LOG_ALIASES:   # keep EVERY trade print (the 15 s snapshots only caught ~91% of the volume on 2026-10-16)
+            self._trade_frames.append({'a': symbol, 'r': round(time.time(), 3), 'time': data.get('time'), 'serial': data.get('serial'),
+                                       'p': [[x.get('price'), x.get('size'), x.get('bid'), x.get('ask')] for x in prints if isinstance(x, dict)],
+                                       'tot': dict(tot) if isinstance(tot, dict) else None})
 
         serial = data.get('serial')
         if serial is not None:
@@ -699,9 +777,19 @@ class FubonAPIProvider:
         log = self.trades_log.get(symbol)
         if not log:
             return []
+        # The websocket thread appends to this deque while the recorder thread reads it; iterating a deque that changes
+        # size raises RuntimeError("deque mutated during iteration") (seen ~450x in live_price_server.log, 2026-10-15/16).
+        # Take a snapshot, retrying if an append lands mid-copy.
+        for attempt in range(20):
+            try:
+                snap = list(log)
+                break
+            except RuntimeError:
+                if attempt == 19:
+                    raise   # never return a partial/empty list: the recorder would write zero counts into history
         if since_ts is None:
-            return list(log)
-        return [t for t in log if t['ts'] >= since_ts]
+            return snap
+        return [t for t in snap if t['ts'] >= since_ts]
 
     def get_momentum_bar_30m(self, symbol):
         """
@@ -773,36 +861,238 @@ class FubonAPIProvider:
         self._mom_hist[alias] = bars
 
     def record_momentum_bars(self):
-        """Snapshot the in-progress 30-minute bar of every subscribed symbol into the history store."""
+        """
+        每 15 秒呼叫：更新目前與上一個「分鐘」的紀錄（買賣筆數／口數由 trades_log 重算，重複呼叫結果相同）。
+        欄位：t 分鐘起點、bid／ask 該分鐘最後一次五檔買／賣量合計、bid_avg／ask_avg 該分鐘內快照平均、
+        big=bid-ask（與 get_momentum_bar_30m 同定義）、buy_n／sell_n 買／賣筆數、buy_v／sell_v 買／賣口數、n 成交筆數。
+        只存真實收到的資料；沒連線的分鐘不會補值。
+        """
+        now = time.time()
+        cur = int(now - now % 60)
         with self._mom_hist_lock:
             for alias in list(self._books_subscribed):
-                bar = self.get_momentum_bar_30m(alias)
-                if not bar:
+                book = self.books_cache.get(alias)
+                if not book:
                     continue
                 self._mom_hist_load(alias)
-                t = int(bar['bar_start_ts'])
-                self._mom_hist[alias][t] = {'t': t, 'big': bar['big_order_diff'], 'retail': bar['retail_trade_count_diff'],
-                                            'mkt': bar['market_order_diff'], 'n': bar['trade_count_in_bar']}
+                hist = self._mom_hist[alias]
+                bid = sum(l['size'] for l in book.get('bids', []))
+                ask = sum(l['size'] for l in book.get('asks', []))
+                for t in (cur - 60, cur):
+                    trades = [x for x in self.get_recent_trades(alias, since_ts=t) if x['ts'] < t + 60]
+                    rec = hist.get(t)
+                    if t == cur:
+                        if rec is None:
+                            rec = {'t': t, 'bid': bid, 'ask': ask, 'bid_avg': bid, 'ask_avg': ask, 'snaps': 1}
+                        else:
+                            k = rec.get('snaps', 1)
+                            rec['bid_avg'] = (rec['bid_avg'] * k + bid) / (k + 1)
+                            rec['ask_avg'] = (rec['ask_avg'] * k + ask) / (k + 1)
+                            rec['snaps'] = k + 1
+                            rec['bid'], rec['ask'] = bid, ask
+                    elif rec is None:
+                        continue   # 上一分鐘沒有任何快照（服務當時沒在跑）就不補
+                    rec['big'] = rec['bid'] - rec['ask']
+                    rec['buy_n'] = sum(1 for x in trades if x['side'] == 'buy')
+                    rec['sell_n'] = sum(1 for x in trades if x['side'] == 'sell')
+                    rec['buy_v'] = sum(x['size'] for x in trades if x['side'] == 'buy')
+                    rec['sell_v'] = sum(x['size'] for x in trades if x['side'] == 'sell')
+                    rec['n'] = len(trades)
+                    hist[t] = rec
+                self._mom_hist_dirty.add(alias)
+                if alias in self._RAW_LOG_ALIASES:
+                    self._append_raw_snapshot(alias, now, book)
+
+    # 還原 JJ（rStock）指標定義用：只對少數商品把每 15 秒的原始五檔＋該 15 秒成交寫成 jsonl（每天一個檔，不進 git）
+    _RAW_LOG_ALIASES = ("TXF1!", "CCF1!", "CDF1!", "DHF1!", "DVF1!", "QFF1!", "PUF1!", "CHF1!")
+
+    def flush_trade_frames(self):
+        """Write the buffered trades frames to <history dir>/trades_YYYYMMDD.jsonl (one JSON object per frame). Called by the recorder thread."""
+        import json as _json
+        rows = []
+        try:
+            while True:
+                rows.append(self._trade_frames.popleft())
+        except IndexError:
+            pass
+        if not rows:
+            return 0
+        try:
+            os.makedirs(self._mom_hist_dir, exist_ok=True)
+            by_day = {}
+            for r in rows:
+                day = datetime.datetime.fromtimestamp(r['r'], tz=self._TAIPEI_TZ).strftime('%Y%m%d')
+                by_day.setdefault(day, []).append(_json.dumps(r, separators=(',', ':')))
+            for day, lines in by_day.items():
+                with open(os.path.join(self._mom_hist_dir, f'trades_{day}.jsonl'), 'a', encoding='utf-8') as f:
+                    f.write(chr(10).join(lines) + chr(10))
+        except Exception as e:
+            logging.warning(f'trade frame log failed: {e}')
+            for r in reversed(rows):   # put them back so nothing is lost on a transient disk error
+                self._trade_frames.appendleft(r)
+            return 0
+        return len(rows)
+
+    def _append_raw_snapshot(self, alias, now, book):
+        import json as _json
+        try:
+            os.makedirs(self._mom_hist_dir, exist_ok=True)
+            day = datetime.datetime.fromtimestamp(now, tz=self._TAIPEI_TZ).strftime("%Y%m%d")
+            trades = self.get_recent_trades(alias, since_ts=now - 15)
+            row = {'ts': round(now, 1), 'alias': alias,
+                   'bids': [[l['price'], l['size']] for l in book.get('bids', [])],
+                   'asks': [[l['price'], l['size']] for l in book.get('asks', [])],
+                   'trades_15s': [[x['ts'], x['price'], x['size'], x['side']] for x in trades]}
+            if self._trades_total.get(alias):
+                row['tot'] = self._trades_total[alias]
+            with open(os.path.join(self._mom_hist_dir, f"raw_{day}.jsonl"), "a", encoding="utf-8") as f:
+                f.write(_json.dumps(row, separators=(',', ':')) + "\n")
+        except Exception as e:
+            logging.warning(f"raw snapshot log failed: {e}")
 
     def save_momentum_history(self):
         import json as _json
         cutoff = time.time() - self._mom_hist_keep_days * 86400
         with self._mom_hist_lock:
             os.makedirs(self._mom_hist_dir, exist_ok=True)
-            for alias, bars in self._mom_hist.items():
-                rows = sorted((b for b in bars.values() if b['t'] >= cutoff), key=lambda b: b['t'])
+            for alias in list(self._mom_hist_dirty):
+                rows = sorted((b for b in self._mom_hist[alias].values() if b['t'] >= cutoff), key=lambda b: b['t'])
+                self._mom_hist[alias] = {b['t']: b for b in rows}
                 tmp = self._mom_hist_path(alias) + ".tmp"
                 with open(tmp, "w", encoding="utf-8") as f:
-                    _json.dump(rows, f)
+                    _json.dump(rows, f, separators=(',', ':'))
                 os.replace(tmp, self._mom_hist_path(alias))
+            self._mom_hist_dirty.clear()
 
-    def get_momentum_history(self, symbol, days=5):
-        """Saved + in-memory 30-min bars for `symbol` (UI code or alias) of the last `days` days, oldest first."""
+    def get_momentum_history(self, symbol, days=5, tf_minutes=30):
+        """
+        1 分鐘紀錄合成 tf_minutes 分鐘的 bar（oldest first）。合成規則：big／bid／ask＝該 bar 最後一分鐘的快照
+        （與即時 30 分 bar 同定義）、bid_avg／ask_avg＝各分鐘平均再平均、買賣筆數與口數＝加總；
+        retail＝buy_n−sell_n、mkt＝big（與即時端點一致，來源相同）。
+        """
         alias = self.CVD_SYMBOL_ALIAS.get(symbol, symbol)
+        tf_sec = max(1, int(tf_minutes)) * 60
         with self._mom_hist_lock:
             self._mom_hist_load(alias)
             cutoff = time.time() - days * 86400
-            return sorted((b for b in self._mom_hist[alias].values() if b['t'] >= cutoff), key=lambda b: b['t'])
+            rows = sorted((b for b in self._mom_hist[alias].values() if b['t'] >= cutoff and 'buy_n' in b), key=lambda b: b['t'])
+        out = {}
+        for r in rows:
+            k = int(r['t'] // tf_sec * tf_sec)
+            g = out.get(k)
+            if g is None:
+                g = out[k] = {'t': k, 'buy_n': 0, 'sell_n': 0, 'buy_v': 0, 'sell_v': 0, 'n': 0, '_ba': 0.0, '_aa': 0.0, '_m': 0}
+            g['buy_n'] += r['buy_n']; g['sell_n'] += r['sell_n']
+            g['buy_v'] += r['buy_v']; g['sell_v'] += r['sell_v']; g['n'] += r['n']
+            g['_ba'] += r['bid_avg']; g['_aa'] += r['ask_avg']; g['_m'] += 1
+            g['bid'], g['ask'], g['big'] = r['bid'], r['ask'], r['big']
+        res = []
+        for k in sorted(out):
+            g = out[k]
+            m = g.pop('_m'); ba = g.pop('_ba'); aa = g.pop('_aa')
+            g['bid_avg'] = round(ba / m, 2); g['ask_avg'] = round(aa / m, 2)
+            g['retail'] = g['buy_n'] - g['sell_n']
+            g['mkt'] = g['big']
+            res.append(g)
+        return res
+
+    def feed_age_sec(self):
+        """距離上次收到任何 futopt（Books／Trades）訊息的秒數；從沒收到回 None。"""
+        return None if self._last_futopt_msg_ts is None else max(0.0, time.time() - self._last_futopt_msg_ts)
+
+    _HOLIDAY_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "tw_holidays.json")
+    _holiday_cache = (None, frozenset())   # (mtime, dates)
+
+    @classmethod
+    def _tw_holidays(cls):
+        """Exchange holidays (YYYY-MM-DD strings) from data/tw_holidays.json, cached by file mtime. Empty set if unreadable."""
+        try:
+            mtime = os.path.getmtime(cls._HOLIDAY_FILE)
+            if cls._holiday_cache[0] != mtime:
+                import re
+                with open(cls._HOLIDAY_FILE, encoding="utf-8-sig") as f:
+                    cls._holiday_cache = (mtime, frozenset(re.findall(r"20\d\d-\d\d-\d\d", f.read())))
+        except Exception:
+            return frozenset()
+        return cls._holiday_cache[1]
+
+    @staticmethod
+    def _in_taifex_trading_window(now_ts=None):
+        """交易時段（台北時間）：日盤 08:45～13:45、夜盤 15:00～隔日 05:00。
+        日期要是交易日（週一～五且不在 data/tw_holidays.json）；夜盤 15:00 起算那天須是交易日（假日前一晚照常開夜盤），
+        夜盤跨午夜後的 00:00～05:00 則看「前一個日曆日」是不是交易日。"""
+        now_ts = now_ts if now_ts is not None else time.time()
+        dt_ = datetime.datetime.fromtimestamp(now_ts, tz=FubonAPIProvider._TAIPEI_TZ)
+        mins = dt_.hour * 60 + dt_.minute
+        hol = FubonAPIProvider._tw_holidays()
+
+        def is_td(d):
+            return d.weekday() < 5 and d.isoformat() not in hol
+        today = dt_.date()
+        yday = today - datetime.timedelta(days=1)
+        day = is_td(today) and 8 * 60 + 45 <= mins < 13 * 60 + 45
+        night_eve = is_td(today) and mins >= 15 * 60
+        night_morn = is_td(yday) and mins < 5 * 60
+        return day or night_eve or night_morn
+
+    def _trades_channel_dead(self, symbol="TXF1!", dead_after=600):
+        """Books may keep flowing while a symbol's trades channel silently dies (seen 2026-10-15 20:24: TXF/CDF/CCF got no trades for 3 h
+        while books were fine, so the any-message watchdog never fired). TXF prints several times a minute whenever the market is open, so
+        `dead_after` seconds without a print, inside a session that has already been open for that long, means the channel is dead."""
+        if not any(m[0] == "trades" and m[1] == symbol for m in self._sub_modes):
+            return False
+        now = time.time()
+        start = getattr(self, "_proc_start_ts", now)
+        if now - start < dead_after or not self._in_taifex_trading_window(now - dead_after):
+            return False   # just started, or the session opened less than dead_after ago
+        last = self._last_trades_ts.get(symbol)
+        return now - (last if last is not None else start) > dead_after
+
+    def futopt_watchdog(self, stale_after=180, cooldown=300):
+        """交易時段內超過 stale_after 秒沒收到任何 futopt 訊息 → 關掉舊連線、重連並重新訂閱所有頻道。
+        每 cooldown 秒最多試一次。回傳是否有嘗試重連。"""
+        try:
+            if not self.is_active or not self._sub_modes or not self._in_taifex_trading_window():
+                return False
+            age = self.feed_age_sec()
+            trades_dead = self._trades_channel_dead()
+            if age is not None and age < stale_after and not trades_dead:
+                self._futopt_watchdog_fires = 0
+                return False
+            if self._last_futopt_msg_ts is None and time.time() - getattr(self, '_proc_start_ts', time.time()) < stale_after:
+                return False   # 剛啟動、還沒等到第一則訊息
+            now = time.time()
+            # Escalation: a forced reconnect >150 s ago did not bring data back (e.g. the SDK connection is wedged after
+            # Fubon's nightly maintenance restart, 2026-10-15 05:11) -> exit so the supervisor script restarts the server
+            # in ~15 s. Guarded by uptime so a persistent outage cannot cause a restart loop faster than every 10 min.
+            if (self._futopt_watchdog_fires >= 1 and now - self._futopt_watchdog_last_try >= 150
+                    and now - getattr(self, '_proc_start_ts', now) > 600):
+                logging.error("Fubon futopt watchdog: still no data 150s after a forced reconnect; exiting so the supervisor restarts the server")
+                try:
+                    logging.shutdown()
+                finally:
+                    os._exit(3)
+            if now - self._futopt_watchdog_last_try < cooldown:
+                return False
+            self._futopt_watchdog_last_try = now
+            self._futopt_watchdog_fires += 1
+            why = ("trades channel silent for >10 min while books are alive" if trades_dead and (age is not None and age < stale_after)
+                   else f"no futopt message for {None if age is None else int(age)}s")
+            logging.warning(f"Fubon futopt watchdog: {why} inside trading hours — forcing reconnect + re-subscribe")
+            # Do the disconnect + reconnect on its own thread: this method runs on the momentum-recorder thread, and a hung
+            # connect() used to freeze the recorder too (raw logs stopped at 08:45 on 2026-10-15).
+            def _reconnect_worker():
+                try:
+                    if self._futopt_ws is not None:
+                        self._futopt_ws.disconnect()
+                except Exception as e:
+                    logging.warning(f"futopt watchdog: disconnect() failed (ignored): {e}")
+                self._on_futopt_disconnect("watchdog", "no futopt data")
+            threading.Thread(target=_reconnect_worker, daemon=True, name="futopt-watchdog-reconnect").start()
+            return True
+        except Exception as e:
+            logging.warning(f"futopt watchdog error: {e}")
+            return False
 
     def start_momentum_recorder(self):
         """Idempotent: background thread that records every 15 s and saves to disk every 60 s."""
@@ -814,6 +1104,8 @@ class FubonAPIProvider:
             while True:
                 try:
                     self.record_momentum_bars()
+                    self.flush_trade_frames()
+                    self.futopt_watchdog()
                     if time.time() - last_save >= 60:
                         self.save_momentum_history()
                         last_save = time.time()
