@@ -2950,5 +2950,9 @@
     "dealer_opt_put_net": 1.91,
     "pc_ratio": 66.18,
     "written_at": "2026-10-23T00:37:20.319676"
+  },
+  "MARGIN_MAINT_EST_20261023": {
+    "margin_maint_market": null,
+    "margin_maint_stock": null
   }
 }
