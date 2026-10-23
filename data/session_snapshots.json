@@ -1422,17 +1422,17 @@
     "spot_price": 46041.43,
     "otc_price": 381.69,
     "txf_price": 45654.0,
-    "zero_gamma_level": 44864.3,
-    "gex_plus_flip": 44864.2,
+    "zero_gamma_level": 44864.4,
+    "gex_plus_flip": 44864.3,
     "call_wall_strike": 45700.0,
     "put_wall_strike": 45500.0,
     "max_pain_strike": 46050.0,
-    "pc_ratio": 66.18,
+    "pc_ratio": 147.25,
     "taifex_vix": 30.35,
     "us_vix": 19.03,
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "margin_balance_billion": null,
-    "written_at": "2026-10-23T06:04:14.192859+08:00"
+    "written_at": "2026-10-23T07:56:50.281069+08:00"
   }
 }
