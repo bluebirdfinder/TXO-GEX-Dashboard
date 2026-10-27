@@ -2974,7 +2974,7 @@
     "foreign_call_net": -0.73,
     "foreign_put_net": 1.33,
     "foreign_mtx_net": -2645,
-    "written_at": "2026-10-27T21:04:28.657915"
+    "written_at": "2026-10-27T22:04:26.483495"
   },
   "2026-10-27_INST_NIGHT": {
     "foreign_tx": 1049,
@@ -2983,7 +2983,7 @@
     "foreign_micro": 3835,
     "dealer_tx": 251,
     "dealer_tx_amt": 23.12,
-    "written_at": "2026-10-27T21:04:44.212004"
+    "written_at": "2026-10-27T22:04:51.522362"
   },
   "2026-10-27_INST_DAY": {
     "top5_net": 28900,
