@@ -208,19 +208,19 @@
   "sigma": 0.3035
  },
  "2026-10-27": {
-  "updated": "2026-10-27 09:21",
-  "session": "DAY",
+  "updated": "2026-10-27 15:06",
+  "session": "NIGHT",
   "engine": "v64.18",
-  "spot": 46286.0,
-  "txf_day": 46499.0,
-  "txf_night": 45654.0,
-  "zero_gamma_oi_boundary": 45449.3,
-  "gex_plus_flip": 45449.3,
-  "gamma_flip_standard": 46253.0,
+  "spot": 46096.23,
+  "txf_day": 46081.0,
+  "txf_night": 46072.0,
+  "zero_gamma_oi_boundary": 45234.2,
+  "gex_plus_flip": 45234.2,
+  "gamma_flip_standard": 45479.0,
   "call_wall": 47000.0,
   "put_wall": 46000.0,
-  "max_pain": 46200.0,
-  "taifex_vix": 30.35,
-  "sigma": 0.3035
+  "max_pain": 45700.0,
+  "taifex_vix": 29.86,
+  "sigma": 0.2986
  }
 }
