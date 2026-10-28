@@ -1444,21 +1444,32 @@ function renderGEXChart() {
   const isLegendVisible = typeof showChartLegend !== 'undefined' ? showChartLegend : true;
   const isHoriz = chartOrientation === 'horizontal';
 
-  // Calculate dynamic auto-adaptive GEX limit across dataset to guarantee zero clipping
-  let maxAbsGex = 0;
-  dataset.forEach(d => {
-    const c = Math.abs(d.call_gex || 0);
-    const p = Math.abs(d.put_gex || 0);
-    const n = Math.abs(d.net_gex || 0);
-    const sumCall = (d.w1_call || 0) + (d.w2_call || 0) + (d.mth_call || 0);
-    const sumPut = Math.abs((d.w1_put || 0) + (d.w2_put || 0) + (d.mth_put || 0));
-    if (c > maxAbsGex) maxAbsGex = c;
-    if (p > maxAbsGex) maxAbsGex = p;
-    if (n > maxAbsGex) maxAbsGex = n;
-    if (sumCall > maxAbsGex) maxAbsGex = sumCall;
-    if (sumPut > maxAbsGex) maxAbsGex = sumPut;
+  // 自動縮放的 GEX 軸上限：取「目前分頁在所有盤別 + 最新資料」的最大值，播放／切盤時共用同一把尺，
+  // 長條長短才能跨盤別直接比較（不會每盤各自縮放而掩蓋 GEX 強弱變化）。
+  const tabKey = { 'total-gex': 'total_gex', 'weekly-gex': 'weekly_gex', 'friday-gex': 'friday_gex', 'monthly-gex': 'monthly_gex' }[currentTab] || 'total_gex';
+  const maxAbsOf = (rows) => {
+    let m = 0;
+    (rows || []).forEach(d => {
+      const sumCall = (d.w1_call || 0) + (d.w2_call || 0) + (d.mth_call || 0);
+      const sumPut = Math.abs((d.w1_put || 0) + (d.w2_put || 0) + (d.mth_put || 0));
+      m = Math.max(m, Math.abs(d.call_gex || 0), Math.abs(d.put_gex || 0), Math.abs(d.net_gex || 0), sumCall, sumPut);
+    });
+    return m;
+  };
+  let maxAbsGex = Math.max(maxAbsOf(dataset), maxAbsOf(gexData[tabKey]));
+  (sessions || []).forEach(s => { maxAbsGex = Math.max(maxAbsGex, maxAbsOf(s[tabKey])); });
+  const gexLimit = Math.max(maxAbsGex * 1.18, 150);
+
+  // 履約價軸同理：取所有盤別的最小～最大履約價並固定，播放時畫面不會因窗口變動而晃動
+  let minStrike = Infinity, maxStrike = -Infinity;
+  const scanStrikes = (rows) => (rows || []).forEach(d => {
+    if (typeof d.strike === 'number') { minStrike = Math.min(minStrike, d.strike); maxStrike = Math.max(maxStrike, d.strike); }
   });
-  const gexLimit = Math.max(maxAbsGex * 1.18, 7200);
+  scanStrikes(dataset);
+  scanStrikes(gexData[tabKey]);
+  (sessions || []).forEach(s => scanStrikes(s[tabKey]));
+  // 上下各再留 500 點價外空間給 Put/Call Wall 標籤與浮水印（不納入現價，避免單一離群現價把整個軸撐大）
+  const strikeRange = (isFinite(minStrike) && maxStrike > minStrike) ? [minStrike - 500, maxStrike + 500] : undefined;
 
   let traces = [];
 
@@ -1655,11 +1666,13 @@ function renderGEXChart() {
       zerolinecolor: 'rgba(255,255,255,0.25)'
     } : {
       title: { text: '履約價 (Strike)', standoff: 8 },
-      gridcolor: 'rgba(255,255,255,0.05)'
+      gridcolor: 'rgba(255,255,255,0.05)',
+      range: strikeRange
     },
     yaxis: isHoriz ? {
       title: { text: '履約價 (Strike)', standoff: 12 },
       gridcolor: 'rgba(255,255,255,0.05)',
+      range: strikeRange,
       dtick: 100
     } : {
       title: { text: 'GEX 曝險金額 (億 TWD)', standoff: 16 },
