@@ -10,6 +10,8 @@
 
 不要重複造輪子，遇到對應問題先讀這些現成文件，而不是重新探索或猜測：
 
+- **現在做到哪、接下來做什麼**（新視窗第一個讀；唯一的交接檔）→ [HANDOFF.md](HANDOFF.md)
+- **舊交接單／已過期文件**（平常不用讀）→ [docs/archive/INDEX.md](docs/archive/INDEX.md)
 - **現在長怎樣**（目前版本、功能清單）→ [STATUS.md](STATUS.md)
 - **怎麼演變到這樣**（完整版本史，含每次修正的根因）→ [HISTORY.md](HISTORY.md)
 - **架構與 SOP**（新接手第一天要看的）→ [PROJECT_HANDOVER.md](PROJECT_HANDOVER.md)
@@ -17,6 +19,14 @@
 - **資料公布時程**→ [MARKET_DATA_SCHEDULE.md](MARKET_DATA_SCHEDULE.md)
 - **尋鳥戰情交易室（副專案）**→ [trading room/TRADING_ROOM_ARCH_PLAN.md](trading%20room/TRADING_ROOM_ARCH_PLAN.md)、[trading room/TRADING_ROOM_PROJECT_STATE.md](trading%20room/TRADING_ROOM_PROJECT_STATE.md)
 - **哪些功能一定要留在使用者電腦、哪些能搬去雲端或別台機器**（新增本機排程或雲端排程前，先看這份、事後也回來補）→ [docs/LOCAL_EXECUTION_INVENTORY.md](docs/LOCAL_EXECUTION_INVENTORY.md)
+
+## 文件規則（2026-10-30 整理後）
+
+1. **交接只改 [HANDOFF.md](HANDOFF.md)（覆寫），不要再新增 `HANDOFF_日期.md`。** 完成的待辦從 HANDOFF.md 刪掉，根因與驗證寫進 HISTORY.md。
+2. 新功能的設計或研究放 `docs/`，檔名用「主題_日期」；過期後搬進 `docs/archive/` 並在 [docs/archive/INDEX.md](docs/archive/INDEX.md) 補一列，**不刪除**。
+3. `STATUS.md`、`HISTORY.md`、`PROJECT_HANDOVER.md`、`README.md` 必須留在根目錄（`scripts/bump_version.py` 寫死路徑）。
+4. 不可進公開 repo 的內容（台選鳥交易室的個人規則、PDF、通行碼、憑證）不要 `git add`。
+5. 新視窗開場只讀：`CLAUDE.md`、`AGENTS.md`、`HANDOFF.md`。`HISTORY.md` 很長，只讀最新幾個條目。
 
 ## 發版
 
