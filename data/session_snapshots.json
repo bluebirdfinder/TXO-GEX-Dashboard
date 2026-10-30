@@ -1571,20 +1571,20 @@
   "2026-10-30_DAY": {
     "date": "2026-10-30",
     "session": "DAY",
-    "spot_price": 44736.92,
-    "otc_price": 366.56,
-    "txf_price": 44946.0,
-    "zero_gamma_level": 44770.8,
-    "gex_plus_flip": 44770.8,
+    "spot_price": 45039.33,
+    "otc_price": 369.17,
+    "txf_price": 45170.0,
+    "zero_gamma_level": 44773.0,
+    "gex_plus_flip": 44773.0,
     "call_wall_strike": 45200.0,
-    "put_wall_strike": 44500.0,
+    "put_wall_strike": 45000.0,
     "max_pain_strike": 46000.0,
-    "pc_ratio": 198.04,
+    "pc_ratio": 178.51,
     "taifex_vix": 28.26,
     "us_vix": 17.2,
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "margin_balance_billion": null,
-    "written_at": "2026-10-30T09:16:10.515676+08:00"
+    "written_at": "2026-10-30T09:48:16.021505+08:00"
   }
 }
