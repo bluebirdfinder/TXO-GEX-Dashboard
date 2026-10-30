@@ -23,6 +23,8 @@
 | 資料引擎排程 | GitHub Actions `auto_update.yml` ＋ Worker Cron `3,33 * * * *` 準時觸發 | GitHub 自己的 cron 結構性延遲 3～5 小時 |
 | 本機排程 | `TXO-Fubon-Futures-Klines`（05:30／14:00 累積富邦期貨 K）、`TXO-Static-Front-8001`、`TXO-Probe-Publish-Day/Night`（量完要刪） | 富邦只給最近一個場次，錯過補不回來 |
 | 私有資料夾 | `C:\Users\mingi\txo-private\`（不在 git） | 選股指標、SMC、備份、`desk/personas.json` 等 |
+| 本機資料每日備份 | `C:\Users\mingi\OneDrive\文件\TXO-runner-data-backup\<日期>\`（約 47MB／天） | 由 `txo-klines-runner\scripts\local_data_store.py backup` 產生，**程式內預設只留 14 份**（超過會自動輪替，總量約 650MB 封頂）。富邦 K 線錯過補不回來，這是保險，**不要手動刪**。是哪個排程呼叫它：未確認（可能是 `TXO-Fubon-Futures-Klines`） |
+| 台選鳥交易室服務 | 排程 `TXO-Desk-server／bridge／monitor／patrol／recorder` 的工作目錄是 `.claude/worktrees/option-quote-recorder` | **這個 worktree 是正在跑的服務，不能移除或切分支** |
 | 幕僚鳥橋接 | `trading room\advisor_bridge.py`，`127.0.0.1:8765`，用 `claude -p` | 沒有開機自動啟動；記憶在 `trading room\brain\memory\`（gitignore） |
 | 指標公式 | 只放私有 Worker／私有資料夾，網頁只拿結果 | 煙霧測試 `scripts/smoke_test_room.py` 有防護網（原始碼出現公式變數會失敗） |
 
@@ -59,7 +61,7 @@
 | 18 | 國定假日場次判斷：`_quote_session_mode()` 只看星期與鐘點 | 10/17 #4、10/21 #7 | |
 | 19 | Worker 拿不到台指期即時價（期交所對 Cloudflare 回 520）；可行做法是本機把最新價 POST 給 Worker（要使用者再貼 Worker） | 10/21 #4 | |
 | 20 | 個股現貨 `spot_date` 要等排程下一輪才出現，檢查 `data/gex_data.json` 的 `stock_futures[*].spot_date` | 10/21 #6 | |
-| 21 | 清理本機殘留 worktree／分支（`.git`、`.claude` 有繼承的 Everyone DENY 刪除權限）：**不要再用 `--force` 批次刪**，會留下半殘；保護分支 `backup/shared-folder-39d04e6-20260930`、`claude/elegant-heisenberg-b65af4`（有他人未 commit 的 `room.js`）要保留 | 10/04 I | 使用者決定先留著 |
+| 21 | 清理本機殘留 worktree／分支（`.git`、`.claude` 有繼承的 Everyone DENY 刪除權限）：**不要再用 `--force` 批次刪**，會留下半殘；保護分支 `backup/shared-folder-39d04e6-20260930`、`claude/elegant-heisenberg-b65af4`（有他人未 commit 的 `room.js`）要保留 | 10/04 I | 使用者決定先留著。**2026-10-31 狀態**：`OneDrive\文件\` 下 7 個暫時副本 `txo-wt-1007／colors／day／docs／handoff-key／nightmis／wf-fix`（各約 56～66MB）：1007／colors／handoff-key／nightmis／wf-fix 五個已全併入 main；用 `git worktree remove`（不加 `--force`）試過一次，仍報 Permission denied，結果是**登記已被 git 移除、資料夾還在（各少 1 個檔案）、`.git/worktrees/` 殘留空登記**，不影響運作，內容無遺失，分支都還在。這 5 個資料夾現在可直接刪（內容都在 main），尚待使用者同意。`txo-wt-day`（11 個引擎產生的資料檔有修改）與 `txo-wt-docs`（1 個未追蹤的 `data/gex_line_observations.json`）尚未比對，不要刪 |
 
 ### 2-3 長期未解（不要說已解決）
 
