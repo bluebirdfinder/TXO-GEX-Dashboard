@@ -61,16 +61,17 @@
 | 18 | 國定假日場次判斷：`_quote_session_mode()` 只看星期與鐘點 | 10/17 #4、10/21 #7 | |
 | 19 | Worker 拿不到台指期即時價（期交所對 Cloudflare 回 520）；可行做法是本機把最新價 POST 給 Worker（要使用者再貼 Worker） | 10/21 #4 | |
 | 20 | 個股現貨 `spot_date` 要等排程下一輪才出現，檢查 `data/gex_data.json` 的 `stock_futures[*].spot_date` | 10/21 #6 | |
-| 21 | 清理本機殘留 worktree／分支（`.git`、`.claude` 有繼承的 Everyone DENY 刪除權限）：**不要再用 `--force` 批次刪**，會留下半殘；保護分支 `backup/shared-folder-39d04e6-20260930`、`claude/elegant-heisenberg-b65af4`（有他人未 commit 的 `room.js`）要保留 | 10/04 I | 使用者決定先留著。**2026-10-31 狀態**：`OneDrive\文件\` 下 7 個暫時副本 `txo-wt-1007／colors／day／docs／handoff-key／nightmis／wf-fix`（各約 56～66MB）：1007／colors／handoff-key／nightmis／wf-fix 五個已全併入 main；用 `git worktree remove`（不加 `--force`）試過一次，仍報 Permission denied，結果是**登記已被 git 移除、資料夾還在（各少 1 個檔案）、`.git/worktrees/` 殘留空登記**，不影響運作，內容無遺失，分支都還在。這 5 個資料夾現在可直接刪（內容都在 main），尚待使用者同意。`txo-wt-day`（11 個引擎產生的資料檔有修改）與 `txo-wt-docs`（1 個未追蹤的 `data/gex_line_observations.json`）尚未比對，不要刪 |
+| 21 | 清理本機殘留 worktree／分支（`.git`、`.claude` 有繼承的 Everyone DENY 刪除權限）：**不要再用 `--force` 批次刪**，會留下半殘；保護分支 `backup/shared-folder-39d04e6-20260930`、`claude/elegant-heisenberg-b65af4`（有他人未 commit 的 `room.js`）要保留 | 10/04 I | 使用者決定先留著。**2026-10-31 狀態**：`OneDrive\文件\` 下 7 個暫時副本 `txo-wt-1007／colors／day／docs／handoff-key／nightmis／wf-fix`（各約 56～66MB）：1007／colors／handoff-key／nightmis／wf-fix 五個已全併入 main；用 `git worktree remove`（不加 `--force`）試過一次，仍報 Permission denied，結果是**登記已被 git 移除、資料夾還在（各少 1 個檔案）、`.git/worktrees/` 殘留空登記**，不影響運作，內容無遺失，分支都還在。這 5 個資料夾已由使用者於 2026-10-31 刪除（`.git/worktrees/` 的 5 個空登記殘留仍刪不掉，不影響運作）。`txo-wt-day`（10/06 的 11 個引擎產生檔，之後 main 已重新產生 200～334 次）與 `txo-wt-docs`（10/06 的觀察紀錄，main 的同日紀錄更新、已涵蓋）**2026-11-01 比對確認沒有獨有內容，可刪，尚待使用者動手**。**不可刪**：`TXO-runner-data-backup`、`.claude/worktrees/option-quote-recorder` |
 
 ### 2-3 長期未解（不要說已解決）
 
 | 事項 | 現況 |
 |---|---|
 | ADX 與 TradingView 不一致 | 微台 15M／4H 一致；1H（我們 50.2 vs TV 55）、日線（差在 TV 含夜盤）不一致，試過 4 種對齊都不是。**不要說「已對齊」** |
-| JJ（rStock）大戶散戶動能公式 | 未解；TV 版三個值在 ±1.2K、像累積算法；探索紀錄在 `docs/JJ_RSTOCK_MOMENTUM_EXPLORATION.md` |
+| JJ（rStock）大戶散戶動能公式 | **紅黃線已於 2026-10-20 破解**（紅＝MIS 委買口−委賣口、黃＝委買筆−委賣筆，來源 MIS `getQuoteDetail`；綠＝外盤成交筆−內盤成交筆；詳見使用者私有資料夾 `txo-private/jj_momentum/FINDINGS_20261015.md`，公式只放私有資料夾）。此行取自專案記憶，我沒有重新驗證程式端是否已套用；舊探索紀錄在 `docs/JJ_RSTOCK_MOMENTUM_EXPLORATION.md` |
 | 動能鳥未對照 TV 驗證 | 畫面有誠實標示，錄影／截圖不要特別展示 |
 | 官方對帳 `python scripts/audit_vs_official.py --sample 0` | 10/20：1,485 項一致、3 項不一致（Max Pain 4 個到期、Call Wall 設計、對帳程式把夜盤當日盤）、7 項略過。**不要說 FAIL=0** |
+| 舊 SELF_AUDIT 交接區塊遺留的低優先事項（9/17～9/24 寫的，**未確認是否仍成立**） | ①`futDailyMarketReport` 中文標籤編碼異常，只在 `parse_taifex_fut_oi()` 解過，沒全面搜其他解析點；②戰情室 CL／US10Y／DXY 的 `initOverseasLiveTickStream()` 名不符實、從未真輪詢；③`scripts/build_screener_cache.py` 全域關閉 SSL 驗證（`CERT_NONE`）只回報未修改。原文在 [docs/archive/handoffs/SELF_AUDIT_舊交接區塊_20260915-20260924.md](docs/archive/handoffs/SELF_AUDIT_舊交接區塊_20260915-20260924.md) |
 | 幕僚鳥後續構想 | 開機自動啟動橋接（要使用者同意）、Opus 實測、知識庫同步到 runner、Mac mini M2 搬遷、雲端多人版（要帳號與獨立記憶，工程大）、覆盤回饋 |
 
 ## 3. 別的視窗／別的專案（動檔前先確認）

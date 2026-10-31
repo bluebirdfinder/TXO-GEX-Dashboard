@@ -23,6 +23,7 @@ description: TXO-GEX-Dashboard 多視窗安全流程 — 用獨立暫時 worktre
 - 離線的 Remote Control／雲端視窗喚不醒也關不掉；本機視窗可用 `send_message` 喚醒詢問。
 
 ## C. 開新視窗交接
-1. 把待辦、未 commit 檔案清單與各自主人、風險寫成一段指令給使用者貼進新視窗。
+0. **交接不要新增檔案**（2026-10-30 起）：把現況、待辦、未 commit 檔案清單與各自主人、風險**更新進根目錄 `HANDOFF.md`（覆寫）**，不要建立 `HANDOFF_日期.md`／`HANDOVER_*.md`／日期交接 html；已完成的待辦從 HANDOFF.md 刪掉，根因與驗證寫進 `HISTORY.md`。新視窗開場指令固定一句：「讀 CLAUDE.md、AGENTS.md、HANDOFF.md，告訴我現在做到哪、下一步是什麼」。
+1. 在對話裡給使用者一段簡短的貼上指令（內容指向 HANDOFF.md，不重複寫一份完整交接單）。
 2. 新視窗確認讀懂後，才停止並封存舊視窗（`stop_session`／`archive_session`）；停止視窗不會刪除它已寫在資料夾裡的檔案，但會失去它的對話脈絡。
 3. 舊視窗的未 commit 工作要由新視窗接手：先確認是否驗證完成，再 commit 到分支。

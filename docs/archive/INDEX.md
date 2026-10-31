@@ -15,6 +15,16 @@
 | 2026-10-17 | [HANDOFF_20261017.md](handoffs/HANDOFF_20261017.md) | 幕僚鳥＋記憶、ADX Pro V3 對齊、週末現價、**架構事實（8000 是 runner 的 clone 等）** | 架構事實已併入 HANDOFF.md 第 1、5 節 |
 | 2026-10-21 | [HANDOFF_20261021.md](handoffs/HANDOFF_20261021.md)、[.html](handoffs/HANDOFF_20261021.html) | 發表截止日當天的修正與現況（md 為精簡版、html 為完整排版版，主題與重點事項相同） | 投稿已過；未完成技術項併入 HANDOFF.md |
 
+## 從大檔搬出來的舊內容（原文逐字保留）
+
+| 日期 | 檔案 | 從哪裡搬出 | 內容 |
+|---|---|---|---|
+| 2026-11-01 | [STATUS_版本亮點_v44-v64.14.md](STATUS_版本亮點_v44-v64.14.md) | [STATUS.md](../../STATUS.md)（889 → 約 100 行） | v64.14 到 v44.0 的各版本亮點。STATUS 只保留現況區塊與最近 3 版（v64.15～v64.17） |
+| 2026-11-01 | [README_版本亮點_v44-v64.14.md](README_版本亮點_v44-v64.14.md) | [README.md](../../README.md)（約 730 → 約 130 行） | 同上；GEX／VEX 白話懶人包、系統架構、本機執行、免責聲明仍留在 README |
+| 2026-11-01 | [handoffs/SELF_AUDIT_舊交接區塊_20260915-20260924.md](handoffs/SELF_AUDIT_舊交接區塊_20260915-20260924.md) | [SELF_AUDIT_FINDINGS_TODO.md](../../SELF_AUDIT_FINDINGS_TODO.md) 頂端 4 個日期交接區塊 | 9/15、9/16、9/17、9/24 的「接手待辦」；稽核發現清單本體留在原檔 |
+
+`HISTORY.md` 沒有動：它本來就是唯一一份按時間倒序的完整版本史，新視窗只讀最上面幾個條目。
+
 ## 沒有放進這裡、但你可能在找的
 
 | 檔案 | 位置與原因 |
