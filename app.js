@@ -3112,8 +3112,12 @@ function handleLiveTick(data) {
     (nowH === 13 && nowM >= 45) || (nowH === 14)
   );
   const targetEl = document.getElementById(isNightSession ? 'stat-txf-night' : 'stat-txf-day');
+  // 週末休市（週六 05:00 起～週一 08:45 前）：最後一筆報價是週五夜盤收盤，不可寫進日盤那格（週六白天會被當日盤時段）
+  const clkNow = taipeiClock();
+  const minsNow = clkNow.h * 60 + clkNow.m;
+  const isWeekendClosedTick = (clkNow.dow === 6 && minsNow >= 5 * 60) || clkNow.dow === 0 || (clkNow.dow === 1 && minsNow < 8 * 60 + 45);
 
-    if (targetEl) {
+    if (targetEl && !isWeekendClosedTick) {
       const formattedPrice = data.price.toLocaleString();
       if (targetEl.innerText !== formattedPrice) {
         targetEl.innerText = formattedPrice;
