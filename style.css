@@ -892,3 +892,20 @@ footer p {
 }
 
 
+
+/* 個股期貨明細表（16 欄）：桌面寬度下縮小字級與欄位內距，讓整張表剛好塞進面板、不用左右拖；
+   表頭可換行、數字欄不撐最小寬度。手機（<=768px）沿用上方 .matrix-table 的觸控規則（可橫向拖曳）。 */
+#stock-futures-panel .matrix-table {
+  font-size: 0.74rem;
+}
+#stock-futures-panel .matrix-table th,
+#stock-futures-panel .matrix-table td {
+  padding: 7px 3px;
+}
+#stock-futures-panel .matrix-table th {
+  white-space: normal;
+  line-height: 1.25;
+}
+#stock-futures-panel .matrix-table .cell-num-val {
+  min-width: 0 !important;
+}
