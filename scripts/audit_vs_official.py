@@ -457,10 +457,22 @@ def check_no_fabricated_events(d):
     bad = []
     focus = d.get("fubon_weekly_focus") or {}
     txt = json.dumps({"radar": d.get("macro_events_radar"), "schedule": focus.get("schedule")}, ensure_ascii=False)
+    # 財報：只有 data/us_earnings_calendar.json 內「confirmed=true 且附官方 source_url」的公司財報可以出現（公司官方 IR 公告）；
+    # 其餘財報（第三方預估、檔案沒有的公司）仍視為無官方來源。
+    try:
+        with open(os.path.join(ROOT, "data", "us_earnings_calendar.json"), "r", encoding="utf-8") as _f:
+            _earn = json.load(_f).get("events", [])
+    except Exception:
+        _earn = []
+    for e in _earn:
+        if e.get("confirmed") is True and str(e.get("source_url", "")).startswith("https://"):
+            txt = txt.replace(f"{e.get('name_zh', '')} {e.get('symbol', '')} 財報", "")
+        else:
+            bad.append(f"財報日未確認或無官方來源：{e.get('symbol')}")
     for kw in ("ADP", "ISM", "Broadcom", "博通", "HPE", "財報"):
         if kw in txt:
             bad.append(kw)
-    rec("事件行事曆", "不得含無官方來源的美國數據／財報事件", bad or "無", "無", not bad, "僅允許：期交所結算日、證交所休市日、FOMC（聯準會官方日曆）、BLS 官方日程的 CPI／非農（data/us_macro_calendar.json）、四巫日／MSCI／富台指（規則日曆）")
+    rec("事件行事曆", "不得含無官方來源的美國數據／財報事件", bad or "無", "無", not bad, "僅允許：期交所結算日、證交所休市日、FOMC（聯準會官方日曆）、BLS 官方日程的 CPI／非農（data/us_macro_calendar.json）、四巫日／MSCI／富台指（規則日曆）、公司官方 IR 已公告的財報日（data/us_earnings_calendar.json，confirmed=true 附出處）")
 
 
 def main():

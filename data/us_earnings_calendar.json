@@ -1,0 +1,28 @@
+{
+  "_說明": "美國科技巨頭財報日程。只收「公司官方投資人關係(IR)頁或官方新聞稿已公告」的日期，2026-10-31 由人工到官方頁面核對後手動抄錄；引擎只讀這份檔，不推算、不收第三方預估日。公司尚未公告的下一季（例如微軟、Google、亞馬遜、Meta、特斯拉 2027 年 1～2 月）一律不收，等公司公告後再補。每筆的 release_time_et 是官方公告的「財報電話會議」時間，不是新聞稿發布的精確秒數。過期的筆不顯示；每季財報季前後需手動補新一筆。",
+  "release_time_note": "官方原文時間為太平洋時間 2:00 p.m. PT = 美東 5:00 p.m. ET；2026-11-01 美國結束夏令時間，兩筆都在冬令時間（ET=UTC-5）。",
+  "events": [
+    {
+      "symbol": "AAPL",
+      "name_zh": "蘋果",
+      "release_date": "2026-11-02",
+      "release_time_et": "17:00",
+      "fiscal_period": "FY2026 第四季",
+      "confirmed": true,
+      "source_url": "https://investor.apple.com/investor-relations/default.aspx",
+      "source_quote": "conference call ... scheduled for Monday, November 2, 2026 at 2:00 p.m. PT / 5:00 p.m. ET",
+      "verified_on": "2026-10-31"
+    },
+    {
+      "symbol": "NVDA",
+      "name_zh": "輝達",
+      "release_date": "2026-11-17",
+      "release_time_et": "17:00",
+      "fiscal_period": "FY2027 第三季",
+      "confirmed": true,
+      "source_url": "https://nvidianews.nvidia.com/news/nvidia-sets-conference-call-for-third-quarter-financial-results-6928873",
+      "source_quote": "conference call on Tuesday, November 17, at 2 p.m. PT (5 p.m. ET)",
+      "verified_on": "2026-10-31"
+    }
+  ]
+}

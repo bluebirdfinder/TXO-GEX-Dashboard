@@ -4749,6 +4749,40 @@ def generate_gex_payload():
             _kept.append(c)
         candidates = _kept
 
+        # 美國科技巨頭財報日：只用 data/us_earnings_calendar.json（公司官方 IR／新聞稿已公告、人工核對後抄錄）。
+        # 沒有官方公告的日期（第三方預估）一律不收；confirmed 不是 True 的筆也不顯示。時間用官方公告的電話會議時間（美東）轉台灣時間。
+        try:
+            from zoneinfo import ZoneInfo
+            _ny_tz = ZoneInfo("America/New_York")
+        except Exception:
+            _ny_tz = None
+        try:
+            with open(os.path.join(_DATA_DIR, "us_earnings_calendar.json"), "r", encoding="utf-8") as _ef:
+                _earn_cal = json.load(_ef)
+            for _ev in _earn_cal.get("events", []):
+                if _ev.get("confirmed") is not True or _ny_tz is None:
+                    continue
+                _d0 = datetime.date.fromisoformat(_ev["release_date"])
+                _hh, _mm = (int(x) for x in _ev["release_time_et"].split(":"))
+                _edt = datetime.datetime(_d0.year, _d0.month, _d0.day, _hh, _mm, tzinfo=_ny_tz).astimezone(tw_tz)
+                if _edt <= curr_twd:
+                    continue
+                candidates.append({
+                    "id": "earnings_" + _ev["symbol"].lower(),
+                    "name": f"{_ev['name_zh']} {_ev['symbol']} 財報（{_ev.get('fiscal_period', '')}）",
+                    "category": "美股財報",
+                    "impact": "MEDIUM",
+                    "impact_label": "🟡 夜盤波動",
+                    "pattern_type": "POINT_TIME",
+                    "warning_lead_hours": 12,
+                    "critical_lead_mins": 90,
+                    "target_epoch": int(_edt.timestamp() * 1000),
+                    "date_display": _edt.strftime("%m/%d %H:%M (台灣時間)"),
+                    "gex_advice": f"美股盤後公布（台灣時間 {_edt.strftime('%m/%d %H:%M')} 前後），美股科技股夜盤跳空可能牽動台指期夜盤尾段與次日開盤，留意權值股與電子期連動。（日期出處：公司官方 IR 公告）"
+                })
+        except Exception as e:
+            print(f"[Calendar] us_earnings_calendar.json unavailable: {e}")
+
         if witching_d:
             candidates.append({
                 "id": "us_quad_witching",
