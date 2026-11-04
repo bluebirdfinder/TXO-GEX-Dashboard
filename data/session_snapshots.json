@@ -1685,20 +1685,20 @@
   "2026-11-04_DAY": {
     "date": "2026-11-04",
     "session": "DAY",
-    "spot_price": 43122.1,
-    "otc_price": 343.42,
-    "txf_price": 43250.0,
-    "zero_gamma_level": 42833.2,
-    "gex_plus_flip": 42833.1,
+    "spot_price": 43213.97,
+    "otc_price": 344.24,
+    "txf_price": 43424.0,
+    "zero_gamma_level": 42834.4,
+    "gex_plus_flip": 42834.3,
     "call_wall_strike": 44000.0,
     "put_wall_strike": 43000.0,
     "max_pain_strike": 44100.0,
-    "pc_ratio": 144.31,
+    "pc_ratio": 121.87,
     "taifex_vix": 36.83,
     "us_vix": 20.83,
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "margin_balance_billion": null,
-    "written_at": "2026-11-04T09:34:23.351427+08:00"
+    "written_at": "2026-11-04T10:04:33.884379+08:00"
   }
 }
