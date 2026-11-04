@@ -1714,10 +1714,10 @@
     "max_pain_strike": 42000.0,
     "pc_ratio": 49.37,
     "taifex_vix": 35.64,
-    "us_vix": 16.75,
+    "us_vix": 16.61,
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "margin_balance_billion": null,
-    "written_at": "2026-11-05T05:04:49.061599+08:00"
+    "written_at": "2026-11-05T05:34:18.154166+08:00"
   }
 }
