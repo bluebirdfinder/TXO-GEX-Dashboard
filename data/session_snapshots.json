@@ -1784,16 +1784,16 @@
     "otc_price": 303.78,
     "txf_price": 40298.0,
     "zero_gamma_level": 39692.5,
-    "gex_plus_flip": 39692.6,
+    "gex_plus_flip": 39692.5,
     "call_wall_strike": 41000.0,
     "put_wall_strike": 40000.0,
     "max_pain_strike": 40000.0,
     "pc_ratio": 39.73,
     "taifex_vix": 46.62,
-    "us_vix": 25.3,
+    "us_vix": 25.64,
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "margin_balance_billion": null,
-    "written_at": "2026-11-07T05:06:26.168837+08:00"
+    "written_at": "2026-11-07T05:34:01.814965+08:00"
   }
 }
