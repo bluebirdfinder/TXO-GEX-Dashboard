@@ -1871,5 +1871,24 @@
     "margin_maint_stock": null,
     "margin_balance_billion": null,
     "written_at": "2026-11-11T06:04:34.986860+08:00"
+  },
+  "2026-11-11_DAY": {
+    "date": "2026-11-11",
+    "session": "DAY",
+    "spot_price": 42825.49,
+    "otc_price": 334.71,
+    "txf_price": 42754.0,
+    "zero_gamma_level": 42036.1,
+    "gex_plus_flip": 42036.1,
+    "call_wall_strike": 43000.0,
+    "put_wall_strike": 42000.0,
+    "max_pain_strike": 41200.0,
+    "pc_ratio": 46.33,
+    "taifex_vix": 40.06,
+    "us_vix": 19.46,
+    "margin_maint_market": null,
+    "margin_maint_stock": null,
+    "margin_balance_billion": null,
+    "written_at": "2026-11-11T09:10:46.562515+08:00"
   }
 }
