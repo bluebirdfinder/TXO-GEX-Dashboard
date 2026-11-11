@@ -384,17 +384,17 @@
   "sigma": 0.4006
  },
  "2026-11-11": {
-  "updated": "2026-11-12 04:06",
+  "updated": "2026-11-12 04:18",
   "session": "NIGHT",
   "engine": "v64.18",
   "spot": 44257.15,
   "txf_day": 44091.0,
-  "txf_night": 44572.0,
-  "zero_gamma_oi_boundary": 44090.5,
-  "gex_plus_flip": 44090.6,
-  "gamma_flip_standard": 42825.0,
+  "txf_night": 44548.0,
+  "zero_gamma_oi_boundary": 43698.4,
+  "gex_plus_flip": 43698.4,
+  "gamma_flip_standard": 42825.6,
   "call_wall": 45000.0,
-  "put_wall": 44000.0,
+  "put_wall": 43000.0,
   "max_pain": 42700.0,
   "taifex_vix": 38.34,
   "sigma": 0.3834
