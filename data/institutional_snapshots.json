@@ -4567,7 +4567,7 @@
     "foreign_micro": 6024,
     "dealer_tx": -706,
     "dealer_tx_amt": -58.09,
-    "written_at": "2026-11-17T07:08:44.926020"
+    "written_at": "2026-11-17T07:39:44.786314"
   },
   "MARGIN_MAINT_EST_20261117": {
     "margin_maint_market": null,
@@ -4588,6 +4588,83 @@
     "foreign_call_net": 2.28,
     "foreign_put_net": 4.64,
     "foreign_mtx_net": 1327,
-    "written_at": "2026-11-17T07:05:02.526608"
+    "written_at": "2026-11-17T07:38:59.702858"
+  },
+  "2026-11-17_INST_DAY": {
+    "top5_net": 19988,
+    "top10_net": 2962,
+    "top5_spec_net": 19988,
+    "top10_spec_net": 2962,
+    "lt_near": {
+      "top5_net": -1074,
+      "top10_net": -1681,
+      "top5_spec_net": 748,
+      "top10_spec_net": 795
+    },
+    "lt_far": {
+      "top5_net": 21062,
+      "top10_net": 4643,
+      "top5_spec_net": 19240,
+      "top10_spec_net": 2167
+    },
+    "lt_total": {
+      "top5_net": 19988,
+      "top10_net": 2962,
+      "top5_spec_net": 19988,
+      "top10_spec_net": 2962
+    },
+    "opt_lt_call_top5_net": -41503,
+    "opt_lt_call_top10_net": -41284,
+    "opt_lt_call_top5_spec_net": -34417,
+    "opt_lt_call_top10_spec_net": -30745,
+    "opt_lt_call_week": {
+      "top5_net": -2447,
+      "top10_net": -2126,
+      "top5_spec_net": -11633,
+      "top10_spec_net": -11733
+    },
+    "opt_lt_call_total": {
+      "top5_net": -41503,
+      "top10_net": -41284,
+      "top5_spec_net": -34417,
+      "top10_spec_net": -30745
+    },
+    "opt_lt_put_top5_net": 5437,
+    "opt_lt_put_top10_net": 5346,
+    "opt_lt_put_top5_spec_net": -2979,
+    "opt_lt_put_top10_spec_net": -3002,
+    "opt_lt_put_week": {
+      "top5_net": 646,
+      "top10_net": 513,
+      "top5_spec_net": -25,
+      "top10_spec_net": -146
+    },
+    "opt_lt_put_total": {
+      "top5_net": 5437,
+      "top10_net": 5346,
+      "top5_spec_net": -2979,
+      "top10_spec_net": -3002
+    },
+    "foreign_fut_net": -97896,
+    "trust_fut_net": 91226,
+    "itrust_fut_net": 91226,
+    "dealer_fut_net": -436,
+    "foreign_stock_net": -380.94,
+    "trust_stock_net": -9.35,
+    "itrust_stock_net": -9.35,
+    "dealer_stock_net": -156.97,
+    "total_stock_net": -547.25,
+    "foreign_opt_net": 6.92,
+    "trust_opt_net": -11.65,
+    "itrust_opt_net": -11.65,
+    "dealer_opt_net": 10.58,
+    "foreign_opt_call_net": 2.28,
+    "foreign_opt_put_net": 4.64,
+    "trust_opt_call_net": -11.83,
+    "trust_opt_put_net": 0.18,
+    "dealer_opt_call_net": 8.95,
+    "dealer_opt_put_net": 1.63,
+    "pc_ratio": 54.08,
+    "written_at": "2026-11-17T07:39:44.780162"
   }
 }
