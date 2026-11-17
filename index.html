@@ -115,9 +115,9 @@
 
         <h4 style="color: var(--gold-accent); margin: 12px 0 6px 0;">2. 關鍵實戰應用判讀 (Trading Applications)</h4>
         <ul style="padding-left: 18px; color: var(--text-muted); margin-bottom: 14px;">
-          <li><strong style="color: #fff;">Call Wall (結算天花板)</strong>：全場最大根 Call GEX 履約價（例如 46,000 點）。接近此區間當沖多單宜停利入袋。</li>
-          <li><strong style="color: #fff;">Put Wall (下檔鐵板)</strong>：全場最大根 Put GEX 履約價（例如 45,500 點）。波段多頭極強防守堡壘。</li>
-          <li><strong style="color: var(--primary-accent);">Gamma 磁吸效應 (Magnet Effect)</strong>：週三結算日中午前，股價易被拉往全場最大正 GEX 履約價靠攏。</li>
+          <li><strong style="color: #fff;">Call Wall (結算天花板)</strong>：全場最大根 Call GEX 履約價（例如 46,000 點）。接近此區間可作為目標價／移動停利的參考（歷史回測：觸碰後守住率約 36%，與鄰近價位無差別，並非保證壓回）。</li>
+          <li><strong style="color: #fff;">Put Wall (下檔鐵板)</strong>：全場最大根 Put GEX 履約價（例如 45,500 點）。可作為防守參考位置（歷史回測：觸碰後守住率約 40%，僅略優於鄰近價位，跌破需停損）。</li>
+          <li><strong style="color: var(--primary-accent);">Gamma 磁吸效應 (Magnet Effect)</strong>：理論上週三結算日前股價可能被拉往最大正 GEX 履約價；此說法未經本專案回測驗證，請勿當作進出依據。</li>
         </ul>
 
         <div style="background: rgba(255, 215, 0, 0.05); border-left: 3px solid var(--gold-accent); padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); border-radius: 4px;">
@@ -301,9 +301,9 @@
         <div style="background: rgba(0, 230, 118, 0.06); border-left: 3px solid #00e676; padding: 10px 14px; border-radius: 6px; margin-bottom: 10px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <strong style="color: #00e676;">🟢 雙正共振 (+GEX / +VEX) ➔ 金髮女孩經濟（平穩收租）</strong>
-            <span style="font-size: 0.72rem; padding: 1px 6px; border-radius: 4px; background: rgba(0,230,118,0.2); color: #00e676;">適合賣方雙賣</span>
+            <span style="font-size: 0.72rem; padding: 1px 6px; border-radius: 4px; background: rgba(0,230,118,0.2); color: #00e676;">可考慮雙賣（需設停損）</span>
           </div>
-          <span style="font-size: 0.82rem; color: var(--text-muted);">指數在 Zero Gamma 之上且 VIX 緩步走低，即使有小利空也會被做市商買盤托底。極適合雙賣 (Sell Strangle/Iron Condor) 賺取時間價值 (Theta)。</span>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">指數在 Zero Gamma 之上且 VIX 緩步走低，小利空較不易被放大。可考慮雙賣 (Sell Strangle/Iron Condor) 賺取時間價值 (Theta)，但行情急變時雙賣容易穿價，須事先設定停損或加寬翼寬（此情境未經回測驗證）。</span>
         </div>
 
         <div style="background: rgba(255, 23, 68, 0.08); border-left: 3px solid #ff1744; padding: 10px 14px; border-radius: 6px; margin-bottom: 10px;">
@@ -331,7 +331,7 @@
         </div>
 
         <!-- 4. VIX Range Scale Table -->
-        <h4 style="color: var(--text-main); margin: 16px 0 8px 0; font-size: 0.95rem;">4. 台指 TAIFEX VIX 四級數值對照</h4>
+        <h4 style="color: var(--text-main); margin: 16px 0 8px 0; font-size: 0.95rem;">4. 台指 TAIFEX VIX 四級數值對照 <span style="font-size:0.72rem;color:var(--text-muted);font-weight:400;">（本分級為說明用；AGENTS 風控以 IV 13%／16% 為分界，口徑不同，下單請以風控規範為準）</span></h4>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; font-size: 0.78rem;">
           <div style="background: rgba(0,230,118,0.08); border: 1px solid #00e676; border-radius: 6px; padding: 8px; text-align: center;">
             <div style="color: #00e676; font-weight: 700;">🟢 &lt; 14.0 極度平靜</div>
@@ -1738,14 +1738,14 @@
               <td style="padding: 10px; border: 1px solid #475569;">46,100 點</td>
               <td style="padding: 10px; border: 1px solid #475569;">🧱 玻璃天花板</td>
               <td style="padding: 10px; border: 1px solid #475569;">做市商賣壓最大牆位</td>
-              <td style="padding: 10px; border: 1px solid #475569;">衝高易受阻，當沖多單宜停利，可做 Sell Call 價差</td>
+              <td style="padding: 10px; border: 1px solid #475569;">參考位置：可當目標價／移動停利參考；歷史上觸碰後守住率約 36%（與鄰近價位無差別），不保證壓回，Sell Call 價差須設停損</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: var(--put-color);">Put Wall</td>
               <td style="padding: 10px; border: 1px solid #475569;">44,500 點</td>
               <td style="padding: 10px; border: 1px solid #475569;">🛋️ 超大彈簧軟墊</td>
               <td style="padding: 10px; border: 1px solid #475569;">做市商護盤最大支撐牆</td>
-              <td style="padding: 10px; border: 1px solid #475569;">急殺至此易踩墊反彈，可建立多單或 Sell Put 價差</td>
+              <td style="padding: 10px; border: 1px solid #475569;">略有優勢（觸碰後守住率約 40%，僅高約 3 個百分點，未達統計門檻）；跌破須停損，不要預設會反彈</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: #ffd700;">Zero Gamma</td>
@@ -1759,7 +1759,7 @@
               <td style="padding: 10px; border: 1px solid #475569;">44,900 點</td>
               <td style="padding: 10px; border: 1px solid #475569;">🎯 週三抽獎箱</td>
               <td style="padding: 10px; border: 1px solid #475569;">散戶賠最多、莊家賺最多的結算點</td>
-              <td style="padding: 10px; border: 1px solid #475569;">週三結算前夕，指數常被主力磁吸壓回此點位附近</td>
+              <td style="padding: 10px; border: 1px solid #475569;">結算日收盤歷史上略近於 Max Pain（2022 年不成立、近期結算也未吸附），僅供參考，不當進出依據</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #475569; font-weight: bold; color: var(--put-color);">VEX (恐慌)</td>
@@ -1780,7 +1780,7 @@
               <td style="padding: 10px; border: 1px solid #475569;">44,848 點</td>
               <td style="padding: 10px; border: 1px solid #475569;">🚨 早鳥提早警報線</td>
               <td style="padding: 10px; border: 1px solid #475569;">結合恐慌感後，做市商真正的防守底線</td>
-              <td style="padding: 10px; border: 1px solid #475569;">靈敏預警！跌破此線代表做市商已提前轉空避險</td>
+              <td style="padding: 10px; border: 1px solid #475569;">參考線：本專案 Flip 為履約價軸算法，與標準 Gamma Flip 及他站版本不一致，僅供參考，尚未驗證跌破後的實際走勢</td>
             </tr>
           </tbody>
         </table>
@@ -1826,11 +1826,11 @@
                 <td style="padding: 10px; border: 1px solid #475569; color: #e2e8f0;">
                   市場整體最大痛點沉在低檔，機構以近端 Put Wall 建立關鍵防守線。<br>
                   • <strong>籌碼偏多 (Level +1/+2)</strong>：為踩牆軋空！<br>
-                  • <strong>籌碼偏空 (Level -1/-2)</strong>：則 Put Wall 脆弱，一旦跌破將順勢被下方 Max Pain 引力磁吸加速下殺！
+                  • <strong>籌碼偏空 (Level -1/-2)</strong>：則 Put Wall 防守可能偏弱；若跌破，下檔可能向 Max Pain 靠攏（假說，未回測；近期結算未見吸附）。
                 </td>
                 <td style="padding: 10px; border: 1px solid #475569; color: #e2e8f0;">
                   • <strong>首要防線</strong>：於 Put Wall 建立 Bull Put Spread (多差)。【2腳】Sell Put@Put Wall / Buy Put@Put Wall-200。<br>
-                  • <strong>破牆反應</strong>：若 5K 實體跌破 Put Wall，提防下檔 Max Pain 引力磁吸加速下探，順勢避險或追空看至 Max Pain。
+                  • <strong>破牆反應</strong>：若 5K 實體跌破 Put Wall，須提防下檔續跌（Max Pain 吸力未經驗證）；先停損或避險，不建議預設追空。
                 </td>
               </tr>
               <tr>
@@ -1882,7 +1882,7 @@
         <!-- 🌟 2D Resonance: 4 Topologies ✕ 3 Institutional Levels (12 Scenarios) -->
         <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 12px; padding: 16px; margin-top: 16px; line-height: 1.7; font-size: 0.84rem;">
           <h4 style="color: #c084fc; margin-top: 0; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
-            <span>🔥 二維共振升級：4 大空間拓撲 (X軸) ✕ 3 大籌碼強度 (Y軸) 實戰診斷矩陣 (12 種全情境)</span>
+            <span>🔥 二維共振升級：4 大空間拓撲 (X軸) ✕ 3 大籌碼強度 (Y軸) 實戰診斷矩陣 (12 種全情境)</span><span style="display:block;font-size:0.72rem;color:#fbbf24;font-weight:400;margin-top:4px;">⚠️ 驗證狀態：Y 軸「籌碼評級」本身尚未回測驗證，整張 12 格表為假說，請當情境思考框架，不作單獨進出依據。</span>
           </h4>
           <p style="color: #cbd5e1; font-size: 0.8rem; margin-bottom: 12px;">
             實務交易絕不能單看空間幾何（如 Max Pain &lt; Put Wall 就斷定軋空），必須與三大法人期現貨籌碼強度 Level 交叉共振，徹底杜絕認知矛盾：
@@ -1911,8 +1911,8 @@
                     受制於上方 Call OI 與下方 Put Wall 夾擊，於 Put Wall 外建立多差收租。
                   </td>
                   <td style="padding: 8px 10px; border: 1px solid #334155; color: #cbd5e1;">
-                    <strong style="color: #ef4444;">【A3: 假支撐磁吸下殺 ⚠️】</strong><br>
-                    Put Wall 弱不禁風隨時被摜破！跌破即引發負 Gamma 追殺，順勢被下方 Max Pain 引力磁吸大屠殺！
+                    <strong style="color: #ef4444;">【A3: 防守偏弱／下殺風險（假說，未回測） ⚠️】</strong><br>
+                    Put Wall 防守可能偏弱；跌破時有負 Gamma 追殺風險。Max Pain 吸力未經驗證，且 2026/11/11 此型態下指數單日反向大漲 1,445 點，不可單獨據此做空或買進 Put。
                   </td>
                 </tr>
                 <tr>
@@ -1945,8 +1945,8 @@
                     下檔支撐遙遠，禁止盲目接刀，改以 Bear Call Spread 空差或跨期日曆保護。
                   </td>
                   <td style="padding: 8px 10px; border: 1px solid #334155; color: #cbd5e1;">
-                    <strong style="color: #ef4444;">【C3: 順風避險大崩盤 ⚠️】</strong><br>
-                    外資法人大倒貨 ✕ 下檔開天窗，做市商負 Gamma 踩踏追殺，極度危險嚴禁做多！
+                    <strong style="color: #ef4444;">【C3: 順風避險／下檔空窗（假說，未回測） ⚠️】</strong><br>
+                    外資法人大倒貨 ✕ 下檔開天窗，可能出現負 Gamma 追殺；做多須嚴設停損、縮小部位（假說，未回測）。
                   </td>
                 </tr>
                 <tr>
@@ -1962,8 +1962,8 @@
                     痛點高懸但大盤動能平平，短線衝過 Call Wall 後易回踩 Zero Gamma 確認支撐。
                   </td>
                   <td style="padding: 8px 10px; border: 1px solid #334155; color: #cbd5e1;">
-                    <strong style="color: #ef4444;">【D3: 籌碼背離殺多頭 ⚠️】</strong><br>
-                    形態看似軋空但外資現貨大倒貨，標準「拉高出貨誘多盤」，暴衝後隨時大崩跌！
+                    <strong style="color: #ef4444;">【D3: 籌碼背離／回檔風險（假說，未回測） ⚠️】</strong><br>
+                    形態看似軋空但外資現貨大倒貨，可能是拉高出貨，暴衝後須提防回檔；但外資現貨賣超不等於後市必跌（假說，未回測）。
                   </td>
                 </tr>
               </tbody>
@@ -2001,8 +2001,8 @@
               • 排列組合: 現價 &gt; Zero Gamma &nbsp;|&nbsp; Max Pain 為 🔴 型態 A (Max Pain &lt; Put Wall) &nbsp;|&nbsp; VEX &ge; 0
             </div>
             <div style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.6;">
-              • <strong>盤面意涵</strong>：上方大額 Call OI 累積極重，痛點沉於低位；近端 Put Wall 護盤堅固。若守穩 Put Wall 則有多頭防禦力，若跌破則提防下殺至 Max Pain。<br>
-              • <strong>實戰策略</strong>：首防 Put Wall 建立【2腳】Bull Put Spread (多差)；若實體跌破 Put Wall 提防下檔磁吸下探，順勢避險或追空看至 Max Pain。
+              • <strong>盤面意涵</strong>：上方大額 Call OI 累積極重，痛點沉於低位；近端 Put Wall 護盤堅固。若守穩 Put Wall 則有多頭防禦力，若跌破須提防續跌（Max Pain 吸力未經驗證）。<br>
+              • <strong>實戰策略</strong>：首防 Put Wall 建立【2腳】Bull Put Spread (多差)；若實體跌破 Put Wall 須提防續跌，優先停損或避險；追空與否須另行評估（Max Pain 吸力未經驗證）。
             </div>
           </div>
 
@@ -2054,7 +2054,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=v64.18&b=20261031a"></script>
+  <script src="app.js?v=v64.18&b=20261117a"></script>
 </body>
 </html>
 

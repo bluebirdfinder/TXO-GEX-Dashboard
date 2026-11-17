@@ -788,10 +788,10 @@ function renderDashboard() {
       mpBadgeEl.style.color = '#ef4444';
       mpBadgeEl.style.border = '1px solid #ef4444';
       mpBadgeEl.title = isBearish
-        ? '⚠️【A3: 假支撐磁吸下殺 (地雷!)】外資期現大倒貨 ✕ 痛點沉底：Put Wall 脆弱易遭摜破，一旦跌破將被下方 Max Pain 引力磁吸加速下殺！'
+        ? '⚠️【A3: 防守偏弱／下殺風險（假說，未回測）】外資期現偏空 ✕ 痛點沉底：Put Wall 防守可能偏弱；若跌破，下檔可能向 Max Pain 靠攏（Max Pain 吸力未驗證，2026/11/11 此型態下指數單日反向大漲 1,445 點，不可單獨據此做空或買進 Put）。'
         : (isBullish
           ? '🔥【A1: 踩牆軋空爆發】籌碼偏多 ✕ 痛點沉底：近端 Put Wall 護盤固若金湯，踩穩即爆發軋空！'
-          : '【A2: 懸空防守震盪】上方大額 Call 累積極重，痛點沉於低位；首防 Put Wall 建立 Bull Put Spread，跌破提防下檔磁吸下探');
+          : '【A2: 懸空防守震盪】上方大額 Call 累積極重，痛點沉於低位；首防 Put Wall 建立 Bull Put Spread，跌破須提防續跌（Max Pain 吸力未經驗證）');
     } else {
       // 🟡 型態 B：對稱健康箱體 (Put Wall <= Max Pain <= Call Wall)
       // 型態 C（恐慌避險）已移除：A/D 用的是「順序」邊界，跟 B 一起窮盡了 mp 相對 pw/cw 的

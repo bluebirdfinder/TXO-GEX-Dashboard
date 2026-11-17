@@ -5,6 +5,7 @@
 **即時報價網關**：`scripts/fubon_api_provider.py` & `scripts/live_price_server.py` (WebSocket Fubon Gateway v64.18)
 **系統狀態**：`✅ 100% 運作正常`
 **網頁通行碼**：（不在文件中公開；不區分大小寫，預設自動通關解鎖）
+**教學文字校正（2026-11-17）**：index.html／app.js／README／docs/OPTIONS_QUANT_PLAYBOOK.md 的牆位、Max Pain、Flip 與 12 格共振表措辭已降級為「參考／假說，未回測」並標註驗證狀態（牆位觸碰守住率 Call 約 36%、Put 約 40%，與鄰近價位差距未達門檻；Max Pain 吸力近期未見；籌碼評級待回測）。僅文字修改，未動計算與推播邏輯、未改引擎版本。
 
 ---
 
