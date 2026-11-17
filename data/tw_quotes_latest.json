@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-11-17T09:11:18.976911",
+  "last_update": "2026-11-17T13:27:40.410569",
   "total_quotes": 6524,
   "quotes": {
     "TXF": {
@@ -21567,8 +21567,8 @@
       "close": 26.07,
       "change": -0.01,
       "pct_change": -0.04,
-      "volume": 15800748,
-      "amount": 411791446,
+      "volume": 19800748,
+      "amount": 505671446,
       "date": "1151117",
       "is_real": true
     },
@@ -24762,8 +24762,8 @@
       "close": 790.0,
       "change": 15.0,
       "pct_change": 1.94,
-      "volume": 2283557,
-      "amount": 1800396047,
+      "volume": 2483557,
+      "amount": 1958546047,
       "date": "1151117",
       "is_real": true
     },
@@ -28542,8 +28542,8 @@
       "close": 9875.0,
       "change": -925.0,
       "pct_change": -8.56,
-      "volume": 731417,
-      "amount": 7217769355,
+      "volume": 745417,
+      "amount": 7356019355,
       "date": "1151117",
       "is_real": true
     },
@@ -31137,8 +31137,8 @@
       "close": 790.0,
       "change": -87.0,
       "pct_change": -9.92,
-      "volume": 8814718,
-      "amount": 7044030219,
+      "volume": 9114718,
+      "amount": 7307130219,
       "date": "1151117",
       "is_real": true
     },
@@ -90552,8 +90552,8 @@
       "close": 66.7,
       "change": -5.7,
       "pct_change": -7.87,
-      "volume": 674193,
-      "amount": 46130945,
+      "volume": 1214193,
+      "amount": 81770945,
       "date": "1151117",
       "is_real": true
     },
@@ -91422,8 +91422,8 @@
       "close": 139.0,
       "change": 1.5,
       "pct_change": 1.09,
-      "volume": 11459005,
-      "amount": 1600027550,
+      "volume": 11894005,
+      "amount": 1660637910,
       "date": "1151117",
       "is_real": true
     },
@@ -91917,8 +91917,8 @@
       "close": 107.5,
       "change": -11.5,
       "pct_change": -9.66,
-      "volume": 141962,
-      "amount": 15260896,
+      "volume": 456962,
+      "amount": 56210896,
       "date": "1151117",
       "is_real": true
     },
