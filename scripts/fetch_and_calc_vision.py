@@ -977,7 +977,8 @@ def fetch_twse_institutional_t86_latest():
     day so repeated same-day runs don't re-fetch.
     """
     cache_file = os.path.join(_DATA_DIR, "twse_t86_cache.json")
-    today_str = datetime.date.today().isoformat()
+    # 台灣時區（UTC+8）的今天；runner 是 UTC，不可用 date.today()
+    today_str = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).date().isoformat()
     try:
         if os.path.exists(cache_file):
             with open(cache_file, "r", encoding="utf-8") as f:
@@ -2523,43 +2524,61 @@ def fetch_taifex_stock_futures_large_trader_batch(contract_map, stock_codes):
         m2 = re.match(r'([\d,]+)', cell)
         return (int(m2.group(1).replace(',', '')), 0) if m2 else (0, 0)
 
+    # 2026-11-18：原本單執行緒逐檔 sleep(0.35)、timeout 15 秒，期交所慢時 84 檔逾時就吃掉 20 分鐘以上，
+    # 拖慢整個 GEX 發佈（盤後快訊因此晚發）。改為 8 執行緒並行 + 單檔 timeout 6 秒 + 整批 150 秒預算，
+    # 超過預算就用已抓到的部分（沒抓到的檔不寫入，不補假數據）。
+    import concurrent.futures
+    _LT_WORKERS, _LT_TIMEOUT, _LT_BUDGET = 8, 6, 150
+
+    def _fetch_one(code, contract_id):
+        data = f"queryDate={query_date}&contractId={contract_id}".encode()
+        req = urllib.request.Request(
+            "https://www.taifex.com.tw/cht/3/largeTraderFutQry",
+            data=data,
+            headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded"}
+        )
+        with urllib.request.urlopen(req, context=SSL_CTX, timeout=_LT_TIMEOUT) as resp:
+            html = resp.read().decode('utf-8', errors='ignore')
+        soup = BeautifulSoup(html, 'html.parser')
+        for t in soup.find_all('table'):
+            for r in t.find_all('tr'):
+                cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
+                if cols and cols[0] == '所有契約' and len(cols) >= 9:
+                    buy5, buy5_inst = _parse_pair(cols[1])
+                    buy10, buy10_inst = _parse_pair(cols[3])
+                    sell5, sell5_inst = _parse_pair(cols[5])
+                    sell10, sell10_inst = _parse_pair(cols[7])
+                    return {
+                        "top5_net_oi": buy5 - sell5,
+                        "top10_net_oi": buy10 - sell10,
+                        "top5_inst_oi": buy5_inst - sell5_inst,
+                        "top10_inst_oi": buy10_inst - sell10_inst,
+                    }
+        return None
+
     fetched = 0
-    for code in stock_codes:
-        contract_id = contract_map.get(code)
-        if not contract_id:
-            continue
-        try:
-            data = f"queryDate={query_date}&contractId={contract_id}".encode()
-            req = urllib.request.Request(
-                "https://www.taifex.com.tw/cht/3/largeTraderFutQry",
-                data=data,
-                headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded"}
-            )
-            with urllib.request.urlopen(req, context=SSL_CTX, timeout=15) as resp:
-                html = resp.read().decode('utf-8', errors='ignore')
-            soup = BeautifulSoup(html, 'html.parser')
-            for t in soup.find_all('table'):
-                for r in t.find_all('tr'):
-                    cols = [c.get_text(strip=True) for c in r.find_all(['td', 'th'])]
-                    if cols and cols[0] == '所有契約' and len(cols) >= 9:
-                        buy5, buy5_inst = _parse_pair(cols[1])
-                        buy10, buy10_inst = _parse_pair(cols[3])
-                        sell5, sell5_inst = _parse_pair(cols[5])
-                        sell10, sell10_inst = _parse_pair(cols[7])
-                        result[code] = {
-                            "top5_net_oi": buy5 - sell5,
-                            "top10_net_oi": buy10 - sell10,
-                            "top5_inst_oi": buy5_inst - sell5_inst,
-                            "top10_inst_oi": buy10_inst - sell10_inst,
-                        }
-                        fetched += 1
-                        break
-        except Exception as e:
-            print(f"[Warning] TAIFEX large-trader fetch failed for {code} ({contract_id}): {e}")
-        time.sleep(0.35)
+    targets = [(c, contract_map[c]) for c in stock_codes if contract_map.get(c)]
+    ex = concurrent.futures.ThreadPoolExecutor(max_workers=_LT_WORKERS)
+    futs = {ex.submit(_fetch_one, c, cid): (c, cid) for c, cid in targets}
+    try:
+        for fut in concurrent.futures.as_completed(futs, timeout=_LT_BUDGET):
+            code, cid = futs[fut]
+            try:
+                row = fut.result()
+                if row:
+                    result[code] = row
+                    fetched += 1
+            except Exception as e:
+                print(f"[Warning] TAIFEX large-trader fetch failed for {code} ({cid}): {e}")
+    except concurrent.futures.TimeoutError:
+        print(f"[Warning] TAIFEX large-trader batch hit {_LT_BUDGET}s budget; using {fetched}/{len(targets)} tickers fetched so far")
+    finally:
+        ex.shutdown(wait=False, cancel_futures=True)
 
     print(f"[OK] TAIFEX Stock Futures Large Trader: {fetched}/{len(stock_codes)} tickers fetched for {query_date}")
     try:
+        if len(targets) and fetched < len(targets) * 0.9:
+            raise RuntimeError("incomplete batch, not caching")  # 不完整就不存，避免同日重跑沿用殘缺快取
         os.makedirs(_DATA_DIR, exist_ok=True)
         with open(cache_file, "w", encoding="utf-8") as f:
             json.dump({"_date": today_str, "query_date": query_date, "data": result}, f, ensure_ascii=False)
