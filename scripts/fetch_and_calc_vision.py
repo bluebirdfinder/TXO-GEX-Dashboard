@@ -4508,6 +4508,11 @@ def generate_gex_payload():
             offset = (2 - first_next.weekday()) % 7 + 14
             third_wed = datetime.datetime(y_next, m_next, 1 + offset, 13, 30, tzinfo=tw_tz)
 
+        # 2026-11-18 修正：每月第 3 個週三是「月選」結算日，不可再標成「週台指選擇權」（週選另一組，結算日在其他週三）。
+        # 若本週三剛好就是月結算日，週結算事件順延到下一個週三（台灣時區 UTC+8）。
+        if next_wed_dt.date() == third_wed.date():
+            next_wed_dt = next_wed_dt + datetime.timedelta(days=7)
+
         # 3. FTSE Taiwan Futures Settlement (富台指結算): 2nd-to-last trading day of month at 13:45 TWD
         ld_num = calendar.monthrange(year, month)[1]
         last_dt = datetime.datetime(year, month, ld_num, 13, 45, tzinfo=tw_tz)
