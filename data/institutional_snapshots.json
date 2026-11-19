@@ -4781,18 +4781,18 @@
     "foreign_micro": -692,
     "dealer_tx": 262,
     "dealer_tx_amt": 20.68,
-    "written_at": "2026-11-19T17:18:54.736010"
+    "written_at": "2026-11-19T21:08:49.459467"
   },
   "MARGIN_MAINT_EST_20261119": {
     "margin_maint_market": null,
     "margin_maint_stock": null
   },
   "2026-11-19_INST_RETAIL": {
-    "mtx_net_oi": 1974,
-    "mtx_ratio": 6.29,
-    "mtx_total_ratio": 6.29,
-    "mtx_long_oi": 25532,
-    "mtx_short_oi": 23558,
+    "mtx_net_oi": 5582,
+    "mtx_ratio": 16.37,
+    "mtx_total_ratio": 16.37,
+    "mtx_long_oi": 29994,
+    "mtx_short_oi": 24412,
     "tmf_net_oi": 50499,
     "tmf_ratio": 55.41,
     "tmf_total_ratio": 55.41,
@@ -4802,7 +4802,7 @@
     "foreign_call_net": 2.62,
     "foreign_put_net": 1.98,
     "foreign_mtx_net": 2135,
-    "written_at": "2026-11-19T17:18:25.811768"
+    "written_at": "2026-11-19T21:08:19.035311"
   },
   "2026-11-19_INST_DAY": {
     "top5_net": 24810,
