@@ -4802,7 +4802,7 @@
     "foreign_call_net": 2.62,
     "foreign_put_net": 1.98,
     "foreign_mtx_net": 2135,
-    "written_at": "2026-11-19T21:17:48.429120"
+    "written_at": "2026-11-19T21:34:45.106245"
   },
   "2026-11-19_INST_DAY": {
     "top5_net": 24810,
@@ -4879,6 +4879,6 @@
     "dealer_opt_call_net": 2.52,
     "dealer_opt_put_net": 1.28,
     "pc_ratio": 41.0,
-    "written_at": "2026-11-19T21:18:06.365112"
+    "written_at": "2026-11-19T21:35:27.819367"
   }
 }
