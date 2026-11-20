@@ -4892,7 +4892,7 @@
     "foreign_micro": 4093,
     "dealer_tx": -366,
     "dealer_tx_amt": -29.0,
-    "written_at": "2026-11-20T20:59:47.017404"
+    "written_at": "2026-11-20T21:05:08.573056"
   },
   "2026-11-20_INST_RETAIL": {
     "mtx_net_oi": -565,
@@ -4909,7 +4909,7 @@
     "foreign_call_net": 10.31,
     "foreign_put_net": 3.03,
     "foreign_mtx_net": 1733,
-    "written_at": "2026-11-20T20:59:25.050501"
+    "written_at": "2026-11-20T21:04:48.464223"
   },
   "2026-11-20_INST_DAY": {
     "top5_net": 22200,
@@ -4986,6 +4986,6 @@
     "dealer_opt_call_net": 5.06,
     "dealer_opt_put_net": 1.55,
     "pc_ratio": 30.05,
-    "written_at": "2026-11-20T20:59:47.011850"
+    "written_at": "2026-11-20T21:05:08.568288"
   }
 }
