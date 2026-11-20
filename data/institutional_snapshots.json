@@ -4884,5 +4884,14 @@
   "MARGIN_MAINT_EST_20261120": {
     "margin_maint_market": null,
     "margin_maint_stock": null
+  },
+  "2026-11-20_INST_NIGHT": {
+    "foreign_tx": 2657,
+    "foreign_tx_amt": 208.28,
+    "foreign_mtx": 1311,
+    "foreign_micro": 4093,
+    "dealer_tx": -366,
+    "dealer_tx_amt": -29.0,
+    "written_at": "2026-11-20T02:30:22.998156"
   }
 }
