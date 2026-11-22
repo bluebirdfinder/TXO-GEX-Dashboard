@@ -20,6 +20,12 @@
 - **尋鳥戰情交易室（副專案）**→ [trading room/TRADING_ROOM_ARCH_PLAN.md](trading%20room/TRADING_ROOM_ARCH_PLAN.md)、[trading room/TRADING_ROOM_PROJECT_STATE.md](trading%20room/TRADING_ROOM_PROJECT_STATE.md)
 - **哪些功能一定要留在使用者電腦、哪些能搬去雲端或別台機器**（新增本機排程或雲端排程前，先看這份、事後也回來補）→ [docs/LOCAL_EXECUTION_INVENTORY.md](docs/LOCAL_EXECUTION_INVENTORY.md)
 
+## 改檔前先查專案地圖（2026-11-12）
+
+- **改任何程式檔或資料檔之前**，先跑 `python tools/build_project_map.py --impact <檔名>`，看哪些檔案會被連帶影響；或查 [docs/PROJECT_MAP.md](docs/PROJECT_MAP.md)（入口與排程、資料檔誰寫誰讀、孤兒檔）。
+- 地圖是靜態掃描的「推測」（讀／寫方向靠關鍵字猜、動態組出的檔名抓不到），僅作導航，結論仍要回原始碼確認。
+- 新增或大幅改動腳本後，重跑 `python tools/build_project_map.py` 更新地圖。
+
 ## 文件規則（2026-10-30 整理後）
 
 1. **交接只改 [HANDOFF.md](HANDOFF.md)（覆寫），不要再新增 `HANDOFF_日期.md`。** 完成的待辦從 HANDOFF.md 刪掉，根因與驗證寫進 HISTORY.md。
