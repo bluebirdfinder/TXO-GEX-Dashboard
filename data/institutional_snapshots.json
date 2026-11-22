@@ -4892,7 +4892,7 @@
     "foreign_micro": 4093,
     "dealer_tx": -366,
     "dealer_tx_amt": -29.0,
-    "written_at": "2026-11-22T21:04:43.665915"
+    "written_at": "2026-11-22T21:34:44.534321"
   },
   "2026-11-20_INST_RETAIL": {
     "mtx_net_oi": -565,
@@ -4909,7 +4909,7 @@
     "foreign_call_net": 10.31,
     "foreign_put_net": 3.03,
     "foreign_mtx_net": 1733,
-    "written_at": "2026-11-22T21:04:17.287250"
+    "written_at": "2026-11-22T21:34:09.872274"
   },
   "2026-11-20_INST_DAY": {
     "top5_net": 22200,
