@@ -101,6 +101,15 @@
 3. 把 `social_video_sample/out/` 等生成物加進 `.gitignore`（需使用者同意，動到 tracked 的 `.gitignore`）。
 4. 搬遷切換前，Lumi 要用的 `fix/tv-cross-platform-keys` 是否合進 main，要先問使用者；Lumi 共用資料夾的舊版修改不要用來覆蓋 origin。
 
+### 2-00c 分支整理結果（2026-11-22 晚，TXO；使用者授權「內容在 main 就刪、缺的開 PR 合併」）
+
+- **已合進 main（PR #4～#9，merge commit）**：專案地圖、移出獲利策略指南、GEX 點位說明表（含測試）、幕僚鳥健康檢查 5 秒、舊交接單歸檔（4 條交接分支的 10 份文件進 `docs/archive/handoffs/`）、`room_panels.js` 面板機制（瀏覽器實測：載入 200、console 無錯、圖表渲染；面板儲存操作本身未驗證）。
+- **已刪（遠端＋本機）**：所有已是 origin/main 祖先的分支，以及內容逐檔比對確認已在 main 的 `jj-order-lines`、`retail-clip-fix`、`teaching-downgrade-20261112`、`gex-wall-definition`、`gex-textbook`、`remove-monetization-guide`、`advisor-health-timeout`、`handoff-20261016`、`handoff-20261017`、`handoff-20261022`（`mac/screener-cache-runner` 因仍掛在舊 worktree 沒刪成）。
+- **桌面代理人程式碼（desk-*、worktree-option-quote-recorder、`integration/desk-20261122`）**：使用者決定維持只在本機，不進公開 repo。已備份 git bundle 到 `C:\Users\mingi\txo-private\backup_desk_1122\integration_desk_20261122.bundle`（含 4 條分支，約 1.2GB；備份後的 `git bundle verify` 輸出只看到 hash 演算法一行，完整驗證結果未確認，需要時自行跑 `git bundle verify` 檢查）。
+- **仍保留、待使用者決定**：`claude/schedule-1600`（cron 15:03→16:03，影響實盤自動更新，使用者要自己先確認）、`backup/shared-folder-39d04e6-20260930`、`tmp/runner-head`、`claude/elegant-heisenberg-b65af4`、`release-wall-def`、`handoff-jj-20261017`、`op666-chip`（內容已進 main，舊分支與 `op666_recorder.py` 公開舊版待決定）。
+- **刪不掉的舊分支**：`audit`、`ci-check`、`docs-slim`、`handoff-update`、`local-execution-inventory`、`op666-stage1`、`post-v647`、`raw-log-cdf`、`workflow-push-retry`、`mac/screener-cache-runner` 仍掛在 `AppData\Local\Temp` 的舊 worktree，且各有 150～330 筆未 commit（疑為換行字元雜訊，**未驗證**），所以沒用強制刪除。
+- **共用資料夾 40 個未 commit 檔案**：使用者決定全部不動。16 個已修改（`README.md`、`STATUS.md`、`index.html`、`docs/OPTIONS_QUANT_PLAYBOOK.md`、11 個 `data/*` 重新產生檔／社群圖 PNG）；24 個未追蹤（`social_video_sample/`、`投稿截圖/`、3 份 `【作品徵選】…pptx/pdf`、`投稿簡報_尋鳥TXO_草稿.pptx`、藍鳥／藍羽 PNG、`assets/` 兩張徽章、`docs/SOCIAL_COMPLIANCE_*`、`docs/TG_ALERT_REWRITE_*`、`docs/WENGE_BP_*`、`docs/MIGRATION_*`、`docs/mac_migration/`、`scripts/compliance_check.py`、`scripts/post_social_cards.py`、`HANDOFF_20261022.html`、社群圖 JPG）。PPT／PDF／投稿截圖不可進公開 repo；`docs/MIGRATION_*`、`docs/mac_migration/` 在 main 已有版本。
+
 ### 2-0 交易室軌道 A：幕僚鳥／研究員（2026-11-16 交接，只列現況與待辦）
 
 **程式位置**：開發版在 `C:\Users\mingi\txo-wt-desk-friction`（分支 `desk-friction-guard`，commit 皆只在本機、**未 push**；最新 eab972f）。執行版在 `C:\Users\mingi\txo-private\desk\intel`（幕僚鳥 `staff_bot.py`、`quota_gate.py`、`intel_jobs.py`）與部署資料夾 `.claude\worktrees\option-quote-recorder\trading room`（橋接 `advisor_bridge.py`，埠 8765）。**改執行版前一律先備份**到 `txo-private\desk\deploy_backup_20261111\`，並先問使用者。
