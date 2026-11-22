@@ -1,0 +1,22 @@
+【第一件事】用 ToolSearch 載入 mcp__ccd_session_mgmt__set_remote_control，對 session_id "self" 呼叫 enabled: true，打開 Remote Control，打開後用一句話告訴我。
+
+接手 TXO-GEX-Dashboard（資料夾 C:\Users\mingi\OneDrive\文件\TXO-GEX-Dashboard），接續「2026-10-16 GEX 點位修正（週選導向）＋JJ 大戶散戶動能還原」未完成的工作。我是做週選擇權的實盤交易者，10/16 因連續下殺虧損約 3 萬台幣，我需要正確又準確的 GEX 點位，而且新版本要照教科書定義。
+
+不要重新探索，照這個順序讀：
+1. git fetch origin
+2. git show claude/handoff-20261016:docs/HANDOFF_GEX_WEEKLY_20261016.md   ← 完整事實、分支與提交總表、待決定事項、規則、踩過的坑，全在這份（若已推送到 main，改用 origin/main:docs/...；也可直接讀 C:\Users\mingi\txo-private\handoff-20261016\ 內的同名檔與 HTML）
+3. git show origin/main:HANDOFF.md 的第 0 節與最新列（U 列在分支 claude/handoff-20261016 上）
+4. CLAUDE.md、AGENTS.md、記憶資料夾；JJ 細節與公式只在私有資料夾 C:\Users\mingi\txo-private\jj_momentum\（公開 repo 不放定義）
+
+交接檔最後有「附錄」，是 10/16 夜我們最新的決定，一定要讀：
+- 我的做法：週三晚組當週五選、週五晚組下週三選；10/21 是 10 月月選結算日，剛好就是「下週三那一檔」，不算遠月。
+- 點位只給「下一檔要下單的到期」一組（Call Wall／Put Wall／Gamma Flip／Max Pain），全部到期合併縮成一行背景，OI 太小標「參考性低」。
+- Max Pain 我觀察一直很準：算法與位置維持現狀不要動，只有 Call／Put Wall 改教科書定義。
+
+先做這幾件事：
+a. 用 list_sessions 看同資料夾與 Lumi 還有哪些視窗在跑，不碰別人未 commit 的檔案；看 Lumi 視窗「GEX_VEX 審查 (參考羊叔)」有沒有回覆我們 10/16 夜的通知（牆位定義問題與 quant_advisor.py 風險）。
+b. 抽樣驗證現況：報價服務 feed_age_sec、今天 14:00 與 16:35 排程日誌（資料庫寫入成功、備份步驟有已知 bug，修正在分支 claude/store-backup-fix）、runner 狀態乾淨、各未推送分支（claude/gex-wall-definition、claude/gex-textbook、claude/log-all-trades、claude/store-backup-fix）都還在。
+c. 把交接檔 §4.3 需要我決定的四件事整理成 AskUserQuestion 一次問完（發版牆位新定義、「只給下一檔到期」的欄位格式、TG／網頁文案、推送並重啟）。
+d. 依我的答案走發版流程（release skill）與 Lumi 約同一時間上線，並以 audit_vs_official.py --sample 0 驗證。
+
+規則：git push 一律先問我，且要先確認 auto_update.yml 最新一輪 completed；用暫時 worktree，只 add 自己的檔案；做完就 commit 到自己的分支，不要把成果留在未提交狀態（上次 git checkout -- . 把未提交的引擎改動還原掉過）；JJ 網站不要按儲存、不要蓋 Q 姐的版面、不要調整 JJ 視窗大小；我看不到 .md 檔，文件請同時給 HTML 或直接貼在對話；要我決定的事用 AskUserQuestion 卡片；任何任務回報完成百分比；進度用表格、流程用 code block 圖；我不在時只做不影響線上的事（不推送、不改線上），但報價服務卡死可以自己重啟；不得建議追價、不得建議拆週選價差單，點位只是模型輸出、不構成投資建議。

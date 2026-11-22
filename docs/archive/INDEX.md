@@ -14,6 +14,10 @@
 | 2026-10-16 | [HANDOFF_20261016.md](handoffs/HANDOFF_20261016.md) | 投稿時間線（10/21 截止、10/24 分享）、官方對帳、加權漲跌修正、不要碰的 Lumi 檔 | 投稿已過；未完成技術項併入 HANDOFF.md |
 | 2026-10-17 | [HANDOFF_20261017.md](handoffs/HANDOFF_20261017.md) | 幕僚鳥＋記憶、ADX Pro V3 對齊、週末現價、**架構事實（8000 是 runner 的 clone 等）** | 架構事實已併入 HANDOFF.md 第 1、5 節 |
 | 2026-10-21 | [HANDOFF_20261021.md](handoffs/HANDOFF_20261021.md)、[.html](handoffs/HANDOFF_20261021.html) | 發表截止日當天的修正與現況（md 為精簡版、html 為完整排版版，主題與重點事項相同） | 投稿已過；未完成技術項併入 HANDOFF.md |
+| 2026-10-16 | [HANDOFF_GEX_WEEKLY_20261016.md](handoffs/HANDOFF_GEX_WEEKLY_20261016.md)、[.html](handoffs/HANDOFF_GEX_WEEKLY_20261016.html)、[NEW_WINDOW_PROMPT_20261016.txt](handoffs/NEW_WINDOW_PROMPT_20261016.txt) | GEX 週選相關交接與新視窗開場提示（原在 claude/handoff-20261016 分支，2026-11-22 歸檔） |
+| 2026-10-17 | [HANDOFF_GEX_20261017.md](handoffs/HANDOFF_GEX_20261017.md)、[.html](handoffs/HANDOFF_GEX_20261017.html) | GEX 交接（原在 claude/handoff-20261017 分支） |
+| 2026-10-17 | [HANDOFF_JJ_SERVICE_20261017.md](handoffs/HANDOFF_JJ_SERVICE_20261017.md)、[.html](handoffs/HANDOFF_JJ_SERVICE_20261017.html)、[NEW_WINDOW_PROMPT_JJ_20261017.txt](handoffs/NEW_WINDOW_PROMPT_JJ_20261017.txt) | JJ 服務交接與新視窗提示（原在 claude/handoff-jj-20261017 分支） |
+| 2026-10-22 | [HANDOFF_20261022.md](handoffs/HANDOFF_20261022.md)、[.html](handoffs/HANDOFF_20261022.html) | 10/22 交接（原在 claude/handoff-20261022 分支） |
 
 ## 從大檔搬出來的舊內容（原文逐字保留）
 
