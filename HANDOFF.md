@@ -43,6 +43,7 @@
 | 報價服務（8000） | `com.txo.live-price-mac` | `~/AI/txo-klines-runner` |
 | 選擇權報價鏈（30 秒） | `com.txo.optrec-mac` | `~/AI/option_quotes_mac`（腳本要自己從 OneDrive 工作區 `tools/` 複製到 `~/AI/optrec/`） |
 | 看門狗 v3 | `com.txo.watchdog-mac` | `~/AI/watchdog`（日誌 `watchdog.log`；沒檔案＝沒事件） |
+| 選股快取（11/22 晚新增；**不推 GitHub**，兩台並行不衝突） | `com.txo.screener-mac`（平日 16:30） | 腳本 `scripts/run_screener_cache_task.sh`（已進 main，`3744240`）；資料庫 `~/.txo_local_store`（Mac 自己的，**目前是空的，不含 Dell 那 48MB 歷史**）；日誌 `~/AI/txo-klines-runner/logs/screener_cache.log`。11/22 18:26 乾跑通過（`dry run: skipped…`＋`--- done ---`，私有選股模組在 Mac Python 3.9.6 可跑），排程已載入（`launchctl list` 有 `-  0  com.txo.screener-mac`）。**第一次正式執行＝11/23 16:30，會真的寫入 Mac 的庫**；正式切換（停 Dell）前要先把 Dell 的庫複製過去。步驟與退出方式見 `docs/mac_migration/SCREENER_MAC_STEPS.md` |
 | 電源／自動登入／重開機測試 | — | sleep 0、autorestart 1、FileVault Off、自動登入 alex；**重開機後服務自動恢復已實測（休市）** |
 
 | 還沒搬（先留 Dell 或待處理） | 備註 |
@@ -68,7 +69,8 @@
 2. `txo-private\jj_momentum\history\jj_20261123.jsonl` 出現並成長（證明動能鳥自己啟動）。
 3. 兩邊選擇權報價鏈 `health_*.csv` 的 status 都是 ok。
 4. Mac 的 `~/AI/watchdog/watchdog.log` 看有沒有重啟或限流暫停紀錄。
-5. 都通過後才規劃切換（葡萄先、再富邦期貨 K）；Dell 關機是最後一步。
+5. 使用者回家後在 Mac 貼：`grep "$(date +%Y-%m-%d)" ~/AI/txo-klines-runner/logs/screener_cache.log | grep -E "done|ERROR|absorb" | tail -10`，要有 `--- done ---` 且無 `ERROR`（選股快取首次正式執行 16:30，使用者下班前看不到，事後看日誌即可；Mac 沒開遠端登入，Dell 連不上，Mac 側驗證靠使用者貼結果）。
+6. 都通過後才規劃切換（葡萄先、再富邦期貨 K）；Tailscale 入口（先搬 8001，8770／8792 要等交易室搬完與查出 8792 的服務）週一驗證後再做；Dell 關機是最後一步。
 
 ### 2-00b 未 commit／分支盤點與整合（2026-11-22；Lumi 與 TXO 兩個 repo，只列現況與待辦）
 
@@ -93,7 +95,7 @@
 **還留在共用 TXO 資料夾的未 commit（沒動）**：引擎重新產生的 11 個 `data/*` 檔（建議丟掉不 commit，GitHub Actions 每天會自己推）；`social_video_sample/out/` 1,080 個檔 168MB（應進 `.gitignore`）；社群合規文件與腳本（`docs/SOCIAL_COMPLIANCE_*`、`scripts/compliance_check.py`、`scripts/post_social_cards.py`，屬社群工作線）；根目錄的 PPT／PDF（依文件規則 4 不可 `git add`）。暫時資料夾裡約 15 個舊 worktree 有 150～330 個「已刪除」檔，是空殼殘骸，可整批 `git worktree prune` 後清掉（不要 `--force` 批次刪）。**Lumi 共用資料夾**另有 `log/`（728K 舊日誌）等未 commit 檔，沒動。
 
 **待辦**
-1. 使用者決定：`mac/screener-cache-runner` 是否要推；`integration/desk-20261122` 何時部署到 Dell（建議搬遷穩定後、先備份、有人盯著）。
+1. `mac/screener-cache-runner` 的內容已於 11/22 用 `cherry-pick -x` 進 main（`16cd667`、`85c921b`），舊分支可留著不用推；使用者決定：`integration/desk-20261122` 何時部署到 Dell（建議搬遷穩定後、先備份、有人盯著）。
 2. 整合另外 3 條舊分支前先跑 `git merge-tree` 試合併，一次一個主題。
 3. 把 `social_video_sample/out/` 等生成物加進 `.gitignore`（需使用者同意，動到 tracked 的 `.gitignore`）。
 4. 搬遷切換前，Lumi 要用的 `fix/tv-cross-platform-keys` 是否合進 main，要先問使用者；Lumi 共用資料夾的舊版修改不要用來覆蓋 origin。
