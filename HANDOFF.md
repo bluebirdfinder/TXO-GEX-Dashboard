@@ -69,6 +69,7 @@
 2. `txo-private\jj_momentum\history\jj_20261123.jsonl` 出現並成長（證明動能鳥自己啟動）。
 3. 兩邊選擇權報價鏈 `health_*.csv` 的 status 都是 ok。
 4. Mac 的 `~/AI/watchdog/watchdog.log` 看有沒有重啟或限流暫停紀錄。
+4b. **Mac 檢查視窗（11/22 晚建立並實測）**：Mac 上有一個 Claude 視窗「Mac mini 檢查視窗」，工作資料夾是空的 `~/AI/mac-check`（刻意不選服務資料夾、不選 OneDrive 專案資料夾，避免誤改與同步），Remote Control 已開；使用者實測手機可看到、可傳訊息、可收到回覆。可用它在 Mac 本機跑唯讀指令（`launchctl list`、`tail` 日誌、看檔案時間），**不能** sudo、不能操作使用者的終端機視窗；讀資料夾外的檔案時核准提示會跳到手機，看到要讀 `~/AI/txo-mac.env`（富邦金鑰檔）一律拒絕。Mac「遠端登入（SSH）」維持關閉。以後在 Mac 開發要另用 git clone 的一般本機資料夾，不要用 OneDrive 專案資料夾。
 5. 使用者回家後在 Mac 貼：`grep "$(date +%Y-%m-%d)" ~/AI/txo-klines-runner/logs/screener_cache.log | grep -E "done|ERROR|absorb" | tail -10`，要有 `--- done ---` 且無 `ERROR`（選股快取首次正式執行 16:30，使用者下班前看不到，事後看日誌即可；Mac 沒開遠端登入，Dell 連不上，Mac 側驗證靠使用者貼結果）。
 6. 都通過後才規劃切換（葡萄先、再富邦期貨 K）；Tailscale 入口（先搬 8001，8770／8792 要等交易室搬完與查出 8792 的服務）週一驗證後再做；Dell 關機是最後一步。
 
