@@ -52,8 +52,8 @@
 | 富邦期貨 K（05:30／14:00） | 一個月內補得回來；只能一台推 GitHub |
 | 交易室服務（desk 八項）、幕僚鳥、情報鳥、Telegram 機器人 | 開發中、不能兩台同跑 → 先留 Dell；暫停前先確認 T0／T2／W0 沒有未平倉與掛單（11/22 帳本最後決策皆「無決策」，但沒找到持倉檔，**未直接確認**） |
 | Tailnet 入口 `TXO-Tailnet-Gate`（`txo-private\tailnet\gate.py`，只綁 Dell 的 Tailscale IP，轉發 8001／8770／8792，入口頁 8800） | Dell 關機前要在 Mac 另做入口並改轉發目標；戰情室網頁抓的是 Dell 的報價服務，要一起規劃 |
-| Mac 上 `com.txo.static-front` | 來源不明（不是 11/22 裝的），**待查是什麼** |
-| macOS 27.2.1 更新 | 使用者 11/22 傍晚要在回家前更新（只裝 27.2.1，Command Line Tools 不裝）；**未確認是否完成**；更新後把「自動安裝 macOS 更新」關掉 |
+| Mac 上 `com.txo.static-front` | **已查明（11/22 晚）**：跑 `/usr/bin/python3 ~/AI/txo-static/static_front.py`（= repo 的 `docs/mac_migration/static_front.py`，8001 靜態前台，只綁 127.0.0.1，`/api/*` 轉給 8000），根目錄是 Mac 上 OneDrive 的 `TXO-GEX-Dashboard`；RunAtLoad＋KeepAlive。Dell `TXO-Static-Front-8001` 的 Mac 版，屬唯讀靜態服務，兩台同跑不衝突。安裝日期未確認（腳本檔日期 11/10，推測當時裝的）。留著即可 |
+| macOS 27.2.1 更新 | **已完成（11/22 晚實測 `sw_vers`＝27.2.1）**；「自動安裝 macOS 更新」已關（`AutomaticallyInstallMacOSUpdates`＝0）。之後只在週末手動更新，更新後重跑 `launchctl list \| grep com.txo` 確認四個服務＋static-front 起來。重開機後 optrec／op666／live-price／static-front 都有 PID，watchdog 無常駐 PID（疑為定時工作，`watchdog.log` 不存在＝沒事件）。**Mac「遠端登入」是 Off**，所以 Dell 連不上 Mac（SSH port 22 拒絕）；要不要打開由使用者決定（系統安全設定，Claude 不自己開） |
 | Lumi 側 | `fix/tv-cross-platform-keys` 是否 push 要先問使用者；GITHUB_TOKEN 約 12/23 前換；Dell 17 個停用 Lumi 任務約一週後再刪；`Haiqi-TV-Auto-Sync` 失敗待處理；`TXO-Probe-Publish-Day/Night` 刪除要同意 |
 
 **踩過的坑（已查證）**
