@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.txo.optrec-mac</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>__HOME__/AI/fubon-test/bin/python</string>
+    <string>-I</string>
+    <string>__HOME__/AI/optrec/option_quote_recorder.py</string>
+    <string>30</string>
+    <string>__HOME__/AI/option_quotes_mac</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ThrottleInterval</key><integer>15</integer>
+  <key>StandardOutPath</key><string>__HOME__/AI/option_quotes_mac/launchd.out.log</string>
+  <key>StandardErrorPath</key><string>__HOME__/AI/option_quotes_mac/launchd.err.log</string>
+</dict>
+</plist>
