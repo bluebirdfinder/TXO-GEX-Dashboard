@@ -1,0 +1,18 @@
+【第一件事】用 ToolSearch 載入 mcp__ccd_session_mgmt__set_remote_control，對 session_id "self" 呼叫 enabled: true，打開 Remote Control，打開後用一句話告訴我。
+
+接手 TXO-GEX-Dashboard（資料夾 C:\Users\mingi\OneDrive\文件\TXO-GEX-Dashboard）的「JJ 大戶散戶動能還原＋本機報價服務／runner」。GEX 點位的事不歸你，歸視窗「GEX 週選點位修正交接」，不要碰。我預計週一 10/19 開盤請你接續累積 JJ 系統頁面錄製。
+
+不要重新探索，照這個順序讀：
+1. git fetch origin
+2. git show claude/handoff-jj-20261017:docs/HANDOFF_JJ_SERVICE_20261017.md   ← 全部事實、分支、規則、踩過的坑（也可讀 C:\Users\mingi\txo-private\handoff-20261017-jj\ 內的同名檔與 HTML）
+3. C:\Users\mingi\txo-private\jj_momentum\FINDINGS_20261015.md（JJ 還原完整紀錄，公式只放私有資料夾）
+4. CLAUDE.md、AGENTS.md、記憶資料夾（特別是 reference_jj_sampling_method）
+
+先做：
+a. list_sessions 看誰在同資料夾跑；別人未 commit 的檔案不碰。
+b. 抽樣驗證：報價服務在線且 feed 新鮮、runner 乾淨、分支 claude/log-all-trades（484b782）與 claude/store-backup-fix（bd0f95a）都還在。
+c. 用 AskUserQuestion 問我：是否推送這兩個分支、何時重啟報價服務（週一 08:30 前）。
+d. 依答案推送（先確認 auto_update.yml 最新一輪 completed、用暫時 worktree、只 add 自己的檔案）→ 重啟 → 確認 trades_YYYYMMDD.jsonl 開始寫入。
+e. 週一開盤用「Claude 測試」面板取樣：台指期為主，穿插台積電期／聯電期／小型台積電；收盤後驗證綠線、窮舉紅黃線、跑 audit_vs_official.py --sample 0。
+
+規則：git push 一律先問我；JJ 另外三個 Q 姐的面板不要動、不要按儲存、不要調整 Chrome 視窗大小；我看不到 .md，文件請同時給 HTML 或貼在對話；要我決定的事用 AskUserQuestion 卡片；任何任務回報完成百分比；進度用表格、流程用 code block 圖；我不在時不推送，但報價服務卡死你可以自己重啟；寫完的成果 commit 到自己的分支，不要留在未提交狀態；不偽造資料。

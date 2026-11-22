@@ -1,0 +1,72 @@
+<!doctype html><meta charset=utf-8><title>交接單 2026-10-22</title><style>body{font-family:'Microsoft JhengHei',sans-serif;max-width:980px;margin:24px auto;padding:0 16px;line-height:1.6}table{border-collapse:collapse;width:100%;margin:8px 0}td,th{border:1px solid #bbb;padding:6px 8px;vertical-align:top}th{background:#eee}pre{background:#f4f4f4;padding:10px;overflow:auto}code{background:#f0f0f0;padding:0 3px}blockquote{border-left:4px solid #09c;margin:8px 0;padding:4px 12px;background:#f5fbff}</style><h1>交接單 2026-10-22（給新視窗；先讀本檔，再讀 CLAUDE.md、AGENTS.md）</h1>
+<blockquote>舊視窗：「接手 TXO-GEX-Dashboard 10/21」（投稿、報價服務穩定性、群益 API 測試）。新視窗確認讀懂後，才由使用者停止並封存舊視窗。</blockquote>
+<blockquote><b>第一件事：開 Remote Control</b>（<code>set_remote_control self=true</code>），再做開工檢查（<code>git fetch origin</code>、<code>git status</code>、<code>curl localhost:8000/api/live_tick</code>、<code>curl localhost:8001/index.html</code>）。</blockquote>
+<blockquote>使用者偏好：繁體中文、白話、進度用表格、回報完成百分比、要問就用選項卡片（選項寫詳細說明）；<b>git push 一律先問</b>；每次結尾明講「有沒有需要使用者回答的事」；每回合結尾一行額度（quota-watch skill）。</blockquote>
+<h2>0. 名詞（使用者糾正過）</h2>
+<table>
+<tr><th>說法</th><th>指什麼</th></tr>
+<tr><td><b>交易室</b></td><td>AI 交易室：主管（幕僚鳥）、研究員五種功能、交易員（台選鳥等）。<b>不是</b>戰情室。</td></tr>
+<tr><td><b>戰情室</b></td><td><code>trading room/room.html</code> 盯盤頁</td></tr>
+<tr><td>唯一交易室設計視窗</td><td>「台選鳥交易室交接與檢查」<code>local_d67710b1…</code>（使用者 10/22 指定），本視窗不再談交易室設計</td></tr>
+</table>
+<h2>1. 這個視窗做完的事</h2>
+<table>
+<tr><th>事</th><th>結果</th></tr>
+<tr><td>投稿</td><td>截圖 10 張＋2 張（選股雷達、指標庫）在 <code>投稿截圖/</code>；草稿簡報 <code>投稿簡報_尋鳥TXO_草稿.pptx</code>（共 19 頁）。使用者已自己做出最終版 PDF（資料夾內 <code>【作品徵選】…pdf</code>，<b>內含網頁密碼，絕不可 commit</b>）</td></tr>
+<tr><td>8000 報價服務卡死</td><td>結束舊程式、排程自動重啟（約 6 分鐘才起來，卡在啟動前的 <code>git fetch</code>）。根因未找到</td></tr>
+<tr><td><b>新增 8001 靜態網頁服務</b></td><td><code>C:\Users\mingi\txo-static\static_front.py</code>；排程 <code>TXO-Static-Front-8001</code>（登入時啟動）。只送 runner 資料夾的靜態檔，<code>/api/*</code> 轉給 8000、8000 沒回應 3 秒內回 503。<b>網頁請用 <code>http://localhost:8001/…</code></b></td></tr>
+<tr><td>幕僚鳥答非所問</td><td>原因：<code>room.js</code> 的 <code>bridgeAvailable()</code> 只等橋接 0.8 秒，稍慢就退回本地模板。修法在分支 <code>claude/advisor-health-timeout</code>（commit <code>71d43ed</code>，worktree <code>C:\Users\mingi\txo-wt-advisor-timeout</code>），<b>未 push</b>，等 JJ 視窗整合完再說（使用者決定）</td></tr>
+<tr><td>角色定位找回</td><td>權威規格：<code>C:\Users\mingi\OneDrive\文件\TG 自動化機器人\露米籌碼監控機器人\給TXO視窗_幕僚鳥交易室_台選鳥規格_20261019.md</code> 第 2 節；已發訊息給交易室視窗收斂</td></tr>
+<tr><td>群益 API</td><td>讀完老墨教學與 <code>C:\Capital\capital-skcom-api\</code>；已裝 <code>comtypes</code>、<code>pywin32</code></td></tr>
+</table>
+<h2>2. 還沒做／等使用者</h2>
+<table>
+<tr><th>#</th><th>事項</th><th>備註</th></tr>
+<tr><td>1</td><td>群益元件註冊</td><td>使用者要以<b>系統管理員</b>執行 <code>C:\Capital\CapitalAPI_2.13.59_PythonExample\元件\x64\install.bat</code>，把訊息告訴我</td></tr>
+<tr><td>2</td><td>群益登入測試</td><td>使用者自己在 PowerShell 設 <code>$env:SKCOM_ID</code>、<code>$env:SKCOM_PWD</code>（不貼給 AI）；之後跑 <code>C:\Capital\capital-skcom-api\scripts\quickstart_osquote.py</code>（唯讀）測 GC、CL、ZN、DX。教學附錄：GC=<code>NYM,GC0000</code>、CL=<code>NYM,CL0000</code>，沒看到 ICE 美元指數，只有 <code>ICESG,SDX0000</code></td></tr>
+<tr><td>3</td><td>8000 卡住根因</td><td>日誌：昨天 09:06 起富邦 <code>SSLError</code> 共 83 次、WebSocket <code>10053</code>、<code>MIS 429</code>（jj_lines 記錄器被期交所限流）。<b>「重複登入」的猜測目前沒證據</b>。CPU 28%、記憶體 81%，不是資源耗盡</td></tr>
+<tr><td>4</td><td>幕僚鳥查個股會寫錯代號、沒資料硬寫</td><td>例：定穎投控寫成 3815（使用者問的是 3715）。紅線：沒有真實資料要明說</td></tr>
+<tr><td>5</td><td>交易室角色與人設</td><td><b>已由交易室視窗收斂</b>：規格檔 <code>C:\Users\mingi\txo-wt-desk-friction\docs\TRADING_ROOM_ROLES_SPEC.md</code>（分支 <code>desk-friction-guard</code>、fdc2ebf，未 push）；人物設定原文在私人檔 <code>C:\Users\mingi\txo-private\desk\personas.json</code>（不進 git）。使用者 10/22 決定：研究員成為獨立 AI 並可餵資料、保留可轉債分析師、交易員不上網只讀研究員報告、研究員做 EPS 估值三情境。仍待使用者提供：產業研究員人設、麥可鄧講義與錄音。<b>不要另寫規格</b></td></tr>
+<tr><td>6</td><td>公開 repo 搬遷</td><td><b>週六（10/24）發表後</b>才規劃。repo 目前 PUBLIC；改 private 要先處理 Pages、每日排程、Telegram、露米連結</td></tr>
+<tr><td>7</td><td>另一個視窗在整合</td><td>JJ 視窗（<code>local_71e47402…</code>）在做 <code>claude/jj-order-lines</code> 與共用資料夾分支（29 個未 push commit）的合併，衝突 11 檔。<b>共用資料夾不要 merge／rebase／reset／stash／切分支</b></td></tr>
+</table>
+<h2>3. 踩過的坑</h2>
+<table>
+<tr><th>坑</th><th>處理</th></tr>
+<tr><td>Bash 傳含中文的 curl <code>-d</code> 會被 cp950 弄壞</td><td>先用 Python 寫成 UTF-8 JSON 檔，再 <code>--data-binary @檔</code></td></tr>
+<tr><td><code>curl</code> 測 8000 可能連 8 秒都沒回</td><td>8000 卡死時網頁整個開不出來；改走 8001</td></tr>
+<tr><td>8000 重啟：結束 python 後排程會自己重啟，但啟動前要 <code>git fetch</code>，可能要 5～6 分鐘</td><td>先告知使用者，休市時做；驗證 provider</td></tr>
+<tr><td><code>pdftoppm</code> 沒裝</td><td>讀 PDF 用 <code>pymupdf</code>（<code>import pymupdf</code>）</td></tr>
+<tr><td>Windows 的 <code>sleep N</code> 被擋</td><td>用 Monitor 的 until 迴圈</td></tr>
+<tr><td>工作目錄跑到 <code>trading room/</code>、再跑回來</td><td>指令前用絕對路徑</td></tr>
+<tr><td>憑證 <code>C:\Capital\*.pfx</code></td><td><b>不要讀</b>；它是使用者的群益憑證</td></tr>
+</table>
+<h2>4. 千萬別做</h2>
+<table>
+<tr><th>別做</th><th>原因</th></tr>
+<tr><td>把 Worker 原始碼放進公開 repo、貼進聊天</td><td>IP</td></tr>
+<tr><td>替使用者寄信、編績效或感受（他自己寫的「本金 15 萬、獲利約 11 萬」不是我驗證的）</td><td>他自己的事</td></tr>
+<tr><td>在共用資料夾做 git 狀態變更</td><td>見上</td></tr>
+<tr><td>把 PDF、密碼、群益憑證、帳密 commit 或貼出來</td><td>公開 repo</td></tr>
+<tr><td>說 ADX／CVD 與 TV 完全一致、對帳 FAIL=0</td><td>不是事實</td></tr>
+</table>
+<h2>5. 下一步順序</h2>
+<pre>
+ 開 Remote Control ─▶ 開工檢查（fetch / status / 8000 FUBON / 8001）
+        │
+        ▼
+ 群益：使用者註冊元件＋設環境變數 ─▶ 小測海外報價（GC/CL/ZN/DX）
+        │
+        ▼
+ JJ 視窗整合完 ─▶ 問使用者是否 push 幕僚鳥修法（71d43ed）
+        │
+        ▼（週六 10/24 發表後）
+ 查 8000 卡住根因 ─▶ 公開 repo 搬遷清單 ─▶ 幕僚鳥防幻覺（個股代號）
+</pre>
+<h2>6. 驗證指令</h2>
+<pre>
+curl -s -o /dev/null -w &#x27;%{http_code} %{time_total}s\n&#x27; -m 8 localhost:8001/index.html
+curl -s -m 8 localhost:8000/api/live_tick | python -c &quot;import json,sys;d=json.load(sys.stdin);print(d.get(&#x27;active_provider&#x27;))&quot;
+tail -5 /c/Users/mingi/txo-klines-runner/logs/live_price_server.log
+powershell -NoProfile -Command &quot;Get-ScheduledTask TXO-Static-Front-8001 | Select State&quot;
+</pre>
