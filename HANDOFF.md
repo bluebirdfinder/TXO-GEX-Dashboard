@@ -1,7 +1,7 @@
 # HANDOFF.md — 現在做到哪、接下來做什麼（唯一的交接檔，永遠覆寫）
 
 > **用法**：新視窗只需讀 `CLAUDE.md`、`AGENTS.md`（風控紅線）、本檔。交接時**只改這一份**，不要再新增 `HANDOFF_日期.md`。
-> **資料新鮮度**：本檔於 2026-10-30 由 2026-10-04～10-22 的 5 份交接單合併而成。**10/22 之後的進展沒有被併入**（看 `git log` 與 `HISTORY.md` 最上面幾個條目補齊）。標「未確認」的是我沒能核實是否已做完。**2026-11-22 的 Mac 搬遷現況已併入 §2-00。**
+> **資料新鮮度**：本檔於 2026-10-30 由 2026-10-04～10-22 的 5 份交接單合併而成。**10/22 之後的進展沒有被併入**（看 `git log` 與 `HISTORY.md` 最上面幾個條目補齊）。標「未確認」的是我沒能核實是否已做完。**2026-11-22 的 Mac 搬遷現況已併入 §2-00，同日的 git 未 commit／分支盤點與整合結果在 §2-00b。**
 > 舊交接單原文全部在 [docs/archive/handoffs/](docs/archive/handoffs/)（索引見 [docs/archive/INDEX.md](docs/archive/INDEX.md)），不是刪除。
 
 ## 0. 開工前檢查（每次）
@@ -11,7 +11,8 @@
 3. `git status` 看有沒有別的視窗未 commit 的檔案；不是自己改的不碰。
 4. 報價服務：`curl localhost:8000/api/live_tick` 應為 provider=FUBON；靜態前台 `localhost:8001/index.html`。8000 是 `txo-klines-runner` 的 clone，由排程 `TXO-Live-Price-Server` 管理，**不要自己另開 8000**。
 5. **`git push` 一律先問使用者**，核准是一批一批的，不可沿用。
-6. 使用者偏好：繁體中文、白話、進度用表格、回報完成百分比、要問用選項卡片（選項寫詳細）、每次結尾明講「有沒有需要使用者回答的事」。
+6. 要合併分支、解衝突、同步 main、push 前檢查：先載入全域 skill `branch-hygiene`（先 `git merge-tree` 試合併、不在共用資料夾動 git 狀態），細節見 §2-00b。
+7. 使用者偏好：繁體中文、白話、進度用表格、回報完成百分比、要問用選項卡片（選項寫詳細）、每次結尾明講「有沒有需要使用者回答的事」。
 
 ## 1. 系統地圖（長期有效）
 
@@ -68,6 +69,34 @@
 3. 兩邊選擇權報價鏈 `health_*.csv` 的 status 都是 ok。
 4. Mac 的 `~/AI/watchdog/watchdog.log` 看有沒有重啟或限流暫停紀錄。
 5. 都通過後才規劃切換（葡萄先、再富邦期貨 K）；Dell 關機是最後一步。
+
+### 2-00b 未 commit／分支盤點與整合（2026-11-22；Lumi 與 TXO 兩個 repo，只列現況與待辦）
+
+**已 push（11/22 使用者核准，只這 3 筆）**
+
+| 專案 | 內容 | 目的地 |
+|---|---|---|
+| TXO | 搬遷文件、`docs/mac_migration/`、本檔（`1a9230b`） | main（純往前） |
+| TXO | `claude/bold-galileo-dy1oxb`（專案地圖 `tools/build_project_map.py`、`docs/PROJECT_MAP.md`） | 同名分支，沒進 main |
+| Lumi | `fix/tv-cross-platform-keys`（macOS 快捷鍵用 Meta；fetch 失敗會通知） | 遠端新分支，沒進 main，Mac 要用時 fetch 該分支 |
+
+**只在本機、沒 push**
+
+| 分支（本機） | 內容 | 狀態與限制 |
+|---|---|---|
+| TXO `integration/desk-20261122`（暫時 worktree `AppData\Local\Temp\txo-wt-integ-1122`） | 交易室開發版 `desk-friction-guard` ＋ origin/main ＋ Dell 服務分支 `worktree-option-quote-recorder`，另帶 Dell 執行中版本才有的 `run_service.ps1`（w0／monitor2／patrol2）與 `server.py`（Tailscale 位址） | 單元測試 316 個全過、對最新 origin/main 試合併 0 衝突；**含私有文件與 Tailscale 位址，不可推公開 repo**；**尚未部署到 Dell**（搬遷期間交易室程式凍結）。衝突解法與依據在 commit message |
+| Lumi `claude/migration-wip-20261122`（暫時 worktree `AppData\Local\Temp\lumi-wt-wip-1122`） | 共用資料夾 6 個已修改檔＋17 個沒有備份的新檔（V6／溫哥 BP／葡萄回測報告與腳本） | **只當備份，不可合進 main**：它的 `send_tg_alert.ps1`、`fetch_chip_data.ps1` 是舊版，origin 已有 11/17、11/18 的新措辭與守門員（PR #6），合進去會蓋回舊版 |
+| 其餘舊分支 | TXO：`desk-friction-guard`（88／510，9 衝突，已整合進上列分支）、`jj-order-lines`（1 衝突）、`op666-chip`（2）、`release-wall-def`（9）、`mac/screener-cache-runner`（0 衝突，是否 Mac 選股快取要用**未確認**）；Lumi：`tg-wording-20261112`（已被 origin 新版取代，不建議整合） | 試合併結果見 `branch-hygiene` skill 的做法重跑；舊分支內容我沒逐一讀過 |
+
+**衝突根因（已查證部分）**：交易室程式在 main 與開發分支各 commit 了一份（cherry-pick 沒加 `-x`，hash 不同，對應 `4726e90`／`a7336d6` 與 dfg 的 `018b1da`／`97753bc`），之後各自再改 500 多個 commit → 合併時 add/add。「當初為什麼分開」是推測。
+
+**還留在共用 TXO 資料夾的未 commit（沒動）**：引擎重新產生的 11 個 `data/*` 檔（建議丟掉不 commit，GitHub Actions 每天會自己推）；`social_video_sample/out/` 1,080 個檔 168MB（應進 `.gitignore`）；社群合規文件與腳本（`docs/SOCIAL_COMPLIANCE_*`、`scripts/compliance_check.py`、`scripts/post_social_cards.py`，屬社群工作線）；根目錄的 PPT／PDF（依文件規則 4 不可 `git add`）。暫時資料夾裡約 15 個舊 worktree 有 150～330 個「已刪除」檔，是空殼殘骸，可整批 `git worktree prune` 後清掉（不要 `--force` 批次刪）。**Lumi 共用資料夾**另有 `log/`（728K 舊日誌）等未 commit 檔，沒動。
+
+**待辦**
+1. 使用者決定：`mac/screener-cache-runner` 是否要推；`integration/desk-20261122` 何時部署到 Dell（建議搬遷穩定後、先備份、有人盯著）。
+2. 整合另外 3 條舊分支前先跑 `git merge-tree` 試合併，一次一個主題。
+3. 把 `social_video_sample/out/` 等生成物加進 `.gitignore`（需使用者同意，動到 tracked 的 `.gitignore`）。
+4. 搬遷切換前，Lumi 要用的 `fix/tv-cross-platform-keys` 是否合進 main，要先問使用者；Lumi 共用資料夾的舊版修改不要用來覆蓋 origin。
 
 ### 2-0 交易室軌道 A：幕僚鳥／研究員（2026-11-16 交接，只列現況與待辦）
 
