@@ -5002,21 +5002,21 @@
     "margin_maint_stock": null
   },
   "2026-11-23_INST_RETAIL": {
-    "mtx_net_oi": -3708,
-    "mtx_ratio": -11.64,
-    "mtx_total_ratio": -11.64,
-    "mtx_long_oi": 21122,
-    "mtx_short_oi": 24830,
-    "tmf_net_oi": 33282,
-    "tmf_ratio": 40.98,
-    "tmf_total_ratio": 40.98,
-    "tmf_long_oi": 68692,
-    "tmf_short_oi": 35410,
+    "mtx_net_oi": -565,
+    "mtx_ratio": -1.79,
+    "mtx_total_ratio": -1.79,
+    "mtx_long_oi": 23588,
+    "mtx_short_oi": 24153,
+    "tmf_net_oi": 47192,
+    "tmf_ratio": 52.99,
+    "tmf_total_ratio": 52.99,
+    "tmf_long_oi": 85192,
+    "tmf_short_oi": 38000,
     "foreign_tx_net": -103432,
     "foreign_call_net": 12.4,
     "foreign_put_net": 2.57,
-    "foreign_mtx_net": 5745,
-    "written_at": "2026-11-23T22:04:17.726723"
+    "foreign_mtx_net": 1733,
+    "written_at": "2026-11-24T00:40:56.258122"
   },
   "2026-11-23_INST_DAY": {
     "top5_net": 24175,
