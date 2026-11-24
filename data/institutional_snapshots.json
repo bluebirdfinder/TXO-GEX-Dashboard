@@ -5102,7 +5102,7 @@
     "foreign_micro": -993,
     "dealer_tx": -1501,
     "dealer_tx_amt": -121.28,
-    "written_at": "2026-11-24T22:58:52.254929"
+    "written_at": "2026-11-24T23:12:55.926501"
   },
   "MARGIN_MAINT_EST_20261124": {
     "margin_maint_market": null,
@@ -5123,7 +5123,7 @@
     "foreign_call_net": 33.05,
     "foreign_put_net": 1.56,
     "foreign_mtx_net": 1553,
-    "written_at": "2026-11-24T22:58:32.482374"
+    "written_at": "2026-11-24T23:12:16.160954"
   },
   "2026-11-24_INST_DAY": {
     "top5_net": 28285,
