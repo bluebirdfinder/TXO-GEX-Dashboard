@@ -1,5 +1,5 @@
 {
-  "last_update": "2026-11-25T08:08:16.525382",
+  "last_update": "2026-11-25T13:07:30.851718",
   "total_quotes": 5470,
   "quotes": {
     "TXF": {
@@ -25572,8 +25572,8 @@
       "close": 336.0,
       "change": -37.0,
       "pct_change": -9.92,
-      "volume": 8053801,
-      "amount": 2801691564,
+      "volume": 8173801,
+      "amount": 2846451564,
       "date": "1151125",
       "is_real": true
     },
@@ -29037,8 +29037,8 @@
       "close": 8795.0,
       "change": -345.0,
       "pct_change": -3.77,
-      "volume": 731127,
-      "amount": 6614904390,
+      "volume": 738127,
+      "amount": 6680564390,
       "date": "1151125",
       "is_real": true
     },
@@ -30792,8 +30792,8 @@
       "close": 18.35,
       "change": -1.5,
       "pct_change": -7.56,
-      "volume": 373417,
-      "amount": 6936667,
+      "volume": 2373417,
+      "amount": 43636667,
       "date": "1151125",
       "is_real": true
     },
