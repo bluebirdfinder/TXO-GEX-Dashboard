@@ -5230,7 +5230,7 @@
     "foreign_call_net": 14.05,
     "foreign_put_net": 3.06,
     "foreign_mtx_net": -1977,
-    "written_at": "2026-11-25T07:35:26.364551"
+    "written_at": "2026-11-25T08:04:42.630654"
   },
   "2026-11-25_INST_DAY": {
     "top5_net": 26620,
@@ -5307,6 +5307,6 @@
     "dealer_opt_call_net": 4.38,
     "dealer_opt_put_net": 0.3,
     "pc_ratio": 39.84,
-    "written_at": "2026-11-25T07:36:09.292157"
+    "written_at": "2026-11-25T08:05:30.539294"
   }
 }
