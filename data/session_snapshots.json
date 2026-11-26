@@ -2314,7 +2314,7 @@
     "session": "NIGHT",
     "spot_price": 39151.81,
     "otc_price": 289.84,
-    "txf_price": 39254.0,
+    "txf_price": 39294.0,
     "zero_gamma_level": 38546.8,
     "gex_plus_flip": 38546.8,
     "call_wall_strike": 40000.0,
@@ -2326,6 +2326,6 @@
     "margin_maint_market": null,
     "margin_maint_stock": null,
     "margin_balance_billion": null,
-    "written_at": "2026-11-26T15:04:05.817732+08:00"
+    "written_at": "2026-11-26T15:34:11.424717+08:00"
   }
 }
