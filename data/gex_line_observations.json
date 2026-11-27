@@ -574,5 +574,21 @@
   "max_pain": 37600.0,
   "taifex_vix": 55.18,
   "sigma": 0.5518
+ },
+ "2026-11-27": {
+  "updated": "2026-11-27 11:35",
+  "session": "DAY",
+  "engine": "v64.18",
+  "spot": 39324.22,
+  "txf_day": 39403.0,
+  "txf_night": 39492.0,
+  "zero_gamma_oi_boundary": 38546.7,
+  "gex_plus_flip": 38546.7,
+  "gamma_flip_standard": null,
+  "call_wall": 40000.0,
+  "put_wall": 39000.0,
+  "max_pain": 37600.0,
+  "taifex_vix": 55.18,
+  "sigma": 0.5518
  }
 }
